@@ -1,0 +1,6 @@
+{
+  "editor.formatOnSave": true,
+  "typescriptHero.imports.organizeOnSave": false,
+  "typescriptHero.imports.multiLineWrapThreshold": 120,
+  "typescriptHero.imports.insertSemicolons": true
+}
