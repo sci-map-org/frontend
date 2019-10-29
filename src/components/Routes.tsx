@@ -5,6 +5,7 @@ import { AboutPage } from './pages/AboutPage';
 import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
+import { ProfilePage, profilePagePath } from './pages/ProfilePage';
 
 export default function Routes() {
   return (
@@ -20,6 +21,9 @@ export default function Routes() {
       </Route>
       <Route path="/about">
         <AboutPage />
+      </Route>
+      <Route path={profilePagePath()}>
+        <ProfilePage />
       </Route>
       <Route path="/">
         <HomePage />

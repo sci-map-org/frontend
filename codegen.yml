@@ -1,0 +1,23 @@
+overwrite: true
+schema: "http://localhost:8000/graphql"
+generates:
+  src/graphql/generated/types.tsx:
+    documents: "src/**/*.graphql"
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+    config:
+      preResolveTypes: true
+      operationResultSuffix: Result
+  src/graphql/generated/queries.ts:
+    documents: "src/graphql/queries/**/*.graphql"
+    plugins:
+      - "typescript-document-nodes"
+    config:
+      nameSuffix: Query
+  src/graphql/generated/mutations.ts:
+    documents: "src/graphql/mutations/**/*.graphql"
+    plugins:
+      - "typescript-document-nodes"
+    config:
+      nameSuffix: Mutation

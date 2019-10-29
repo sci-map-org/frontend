@@ -24,7 +24,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "codegen": "graphql-codegen --config codegen.yml && prettier --write src/graphql/generated/{queries,mutations}.ts"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -42,6 +43,11 @@
     ]
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^1.8.2",
+    "@graphql-codegen/introspection": "1.8.2",
+    "@graphql-codegen/typescript": "1.8.2",
+    "@graphql-codegen/typescript-document-nodes": "^1.8.2",
+    "@graphql-codegen/typescript-operations": "1.8.2",
     "@types/js-cookie": "^2.2.4",
     "@types/react-router-dom": "^5.1.0"
   },

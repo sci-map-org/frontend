@@ -1,8 +1,9 @@
 import { useQuery } from '@apollo/react-hooks';
-import { CURRENT_USER } from '../graphql/queries/auth';
+import { CurrentUserQuery } from '../graphql/generated/queries';
+import { CurrentUserQueryResult } from '../graphql/generated/types';
 
 export const useCurrentUser = () => {
-  const { loading, error, data } = useQuery(CURRENT_USER);
+  const { loading, error, data } = useQuery<CurrentUserQueryResult>(CurrentUserQuery);
   return {
     loading,
     error,
