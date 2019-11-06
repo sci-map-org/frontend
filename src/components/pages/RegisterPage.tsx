@@ -21,10 +21,10 @@ export const RegisterPage: React.FC<{}> = () => {
   const [email, setEmail] = useState('');
 
   const [displayName, setDisplayName] = useState('');
-  const [uniqueName, setUniqueName] = useState('');
+  const [key, setKey] = useState('');
   const [password, setPassword] = useState('');
 
-  const { register, loading, error } = useRegister();
+  const { register } = useRegister();
   return (
     <Grid container direction="column" spacing={2} className={classes.root}>
       <Grid item>
@@ -48,7 +48,7 @@ export const RegisterPage: React.FC<{}> = () => {
       <Grid>
         <FormControl>
           <InputLabel htmlFor="register-unique-name">Unique alias</InputLabel>
-          <Input id="register-unique-name" value={uniqueName} onChange={e => setUniqueName(e.target.value)}></Input>
+          <Input id="register-unique-name" value={key} onChange={e => setKey(e.target.value)}></Input>
         </FormControl>
       </Grid>
       <Grid item>
@@ -69,7 +69,7 @@ export const RegisterPage: React.FC<{}> = () => {
             register({
               variables: {
                 payload: {
-                  uniqueName,
+                  key,
                   email,
                   password,
                   displayName,

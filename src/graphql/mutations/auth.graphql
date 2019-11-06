@@ -4,7 +4,7 @@ mutation login($email: String!, $password: String!) {
     currentUser {
       _id
       email
-      uniqueName
+      key
     }
   }
 }
@@ -13,6 +13,6 @@ mutation register($payload: RegisterPayload!) {
   register(payload: $payload) {
     _id
     email
-    uniqueName
+    key
   }
 }

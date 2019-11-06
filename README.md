@@ -30,8 +30,9 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 
 ## TODO
 
-- Register / Login / Auth
-  - Redirect after login
-  - Signout
-- Setup API / State management
-- Create blog post / edit in MD
+  - Create blog post / edit in MD
+  - profile drawer
+  - Create About page
+  - Find markdown editor lib
+  - setup api to save / edit
+  - Display articles

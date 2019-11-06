@@ -8,12 +8,32 @@ export type Scalars = {
   Float: number,
 };
 
+export type Article = {
+   __typename?: 'Article',
+  _id: Scalars['String'],
+  key: Scalars['String'],
+  contentType: ArticleContentType,
+  title: Scalars['String'],
+  content: Scalars['String'],
+  authorId: Scalars['String'],
+};
+
+export enum ArticleContentType {
+  Markdown = 'markdown'
+}
+
+export type CreateArticlePayload = {
+  contentType: ArticleContentType,
+  title: Scalars['String'],
+  content: Scalars['String'],
+};
+
 export type CurrentUser = {
    __typename?: 'CurrentUser',
   _id: Scalars['String'],
   email: Scalars['String'],
   displayName: Scalars['String'],
-  uniqueName: Scalars['String'],
+  key: Scalars['String'],
 };
 
 export type LoginResponse = {
@@ -26,6 +46,8 @@ export type Mutation = {
    __typename?: 'Mutation',
   login: LoginResponse,
   register: CurrentUser,
+  createArticle: Article,
+  updateArticle: Article,
 };
 
 
@@ -39,25 +61,46 @@ export type MutationRegisterArgs = {
   payload: RegisterPayload
 };
 
+
+export type MutationCreateArticleArgs = {
+  payload: CreateArticlePayload
+};
+
+
+export type MutationUpdateArticleArgs = {
+  id: Scalars['String'],
+  payload: UpdateArticlePayload
+};
+
 export type Query = {
    __typename?: 'Query',
   currentUser: CurrentUser,
+  getArticle: Article,
+};
+
+
+export type QueryGetArticleArgs = {
+  id: Scalars['String']
 };
 
 export type RegisterPayload = {
   displayName: Scalars['String'],
-  uniqueName: Scalars['String'],
+  key: Scalars['String'],
   email: Scalars['String'],
   password: Scalars['String'],
 };
 
-export type User = {
-   __typename?: 'User',
-  _id: Scalars['String'],
-  email: Scalars['String'],
-  displayName: Scalars['String'],
-  uniqueName: Scalars['String'],
+export type UpdateArticlePayload = {
+  title?: Maybe<Scalars['String']>,
+  content?: Maybe<Scalars['String']>,
 };
+
+export type CreateArticleMutationVariables = {
+  payload: CreateArticlePayload
+};
+
+
+export type CreateArticleMutationResult = { __typename?: 'Mutation', createArticle: { __typename?: 'Article', _id: string, key: string, contentType: ArticleContentType, title: string, content: string, authorId: string } };
 
 export type LoginMutationVariables = {
   email: Scalars['String'],
@@ -65,16 +108,16 @@ export type LoginMutationVariables = {
 };
 
 
-export type LoginMutationResult = { __typename?: 'Mutation', login: { __typename?: 'LoginResponse', jwt: string, currentUser: { __typename?: 'CurrentUser', _id: string, email: string, uniqueName: string } } };
+export type LoginMutationResult = { __typename?: 'Mutation', login: { __typename?: 'LoginResponse', jwt: string, currentUser: { __typename?: 'CurrentUser', _id: string, email: string, key: string } } };
 
 export type RegisterMutationVariables = {
   payload: RegisterPayload
 };
 
 
-export type RegisterMutationResult = { __typename?: 'Mutation', register: { __typename?: 'CurrentUser', _id: string, email: string, uniqueName: string } };
+export type RegisterMutationResult = { __typename?: 'Mutation', register: { __typename?: 'CurrentUser', _id: string, email: string, key: string } };
 
 export type CurrentUserQueryVariables = {};
 
 
-export type CurrentUserQueryResult = { __typename?: 'Query', currentUser: { __typename?: 'CurrentUser', _id: string, email: string, uniqueName: string } };
+export type CurrentUserQueryResult = { __typename?: 'Query', currentUser: { __typename?: 'CurrentUser', _id: string, email: string, key: string } };

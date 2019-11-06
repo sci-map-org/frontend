@@ -1,4 +1,4 @@
-import { Button, FormControl, Grid, Input, InputLabel, makeStyles } from '@material-ui/core';
+import { Button, FormControl, Grid, Input, InputLabel, makeStyles, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 import { useLogin } from '../../hooks/auth.hooks';
 import { useHistory } from 'react-router';
@@ -21,7 +21,7 @@ export const LoginPage: React.FC<{}> = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const { login, loading, error } = useLogin();
+  const { login, error } = useLogin();
   const history = useHistory();
   const classes = useStyles();
   return (
@@ -55,6 +55,13 @@ export const LoginPage: React.FC<{}> = () => {
           Login
         </Button>
       </Grid>
+      {!!error && (
+        <Grid item>
+          <Typography variant="caption" color="error">
+            Invalid credentials
+          </Typography>
+        </Grid>
+      )}
     </Grid>
   );
 };

@@ -1,3 +1,4 @@
+import { useApolloClient } from '@apollo/react-hooks';
 import { IconButton, Menu, MenuItem } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
@@ -5,17 +6,17 @@ import { makeStyles } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import AccountCircle from '@material-ui/icons/AccountCircle';
+import Cookies from 'js-cookie';
 import React, { useState } from 'react';
 import { NavLink, useHistory } from 'react-router-dom';
-import { useCurrentUser } from '../../hooks/users.hooks';
-import { useApolloClient } from '@apollo/react-hooks';
-import Cookies from 'js-cookie';
+
 import { CurrentUserQuery } from '../../graphql/generated/queries';
-import { profilePagePath } from '../pages/ProfilePage';
+import { useCurrentUser } from '../../hooks/users.hooks';
+import { profilePagePath } from '../pages/Profile/ProfilePage';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    flexGrow: 1,
+    // flexGrow: 1,
   },
   grow: {
     flexGrow: 1,
@@ -37,7 +38,7 @@ const useStyles = makeStyles(theme => ({
 
 export const Header: React.FC<{}> = () => {
   const classes = useStyles({});
-  const { currentUser, loading, error } = useCurrentUser();
+  const { currentUser, loading } = useCurrentUser();
   const [anchorEl, setAnchorEl] = useState(null);
   const isMenuOpen = Boolean(anchorEl);
 
@@ -67,16 +68,15 @@ export const Header: React.FC<{}> = () => {
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar>
-          {/* <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-            <MenuIcon />
-          </IconButton> */}
-
           <Typography variant="h6">
             <NavLink to="/" className={classes.title}>
               Apollo Project {!!currentUser && currentUser.email}
             </NavLink>
           </Typography>
           <div className={classes.grow}></div>
+          <NavLink to="/about" className={classes.buttonLink}>
+            <Button color="inherit">About</Button>
+          </NavLink>
           {!currentUser && !loading && (
             <>
               <NavLink to="/register" className={classes.buttonLink}>
@@ -111,7 +111,7 @@ export const Header: React.FC<{}> = () => {
               >
                 <MenuItem
                   onClick={() => {
-                    history.push(profilePagePath(currentUser.uniqueName));
+                    history.push(profilePagePath(currentUser.key));
                   }}
                 >
                   Profile
