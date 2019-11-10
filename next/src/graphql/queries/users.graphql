@@ -1,0 +1,8 @@
+query currentUser {
+  currentUser {
+    _id
+    email
+    key
+    # use fragmets, to sync with the return value of login
+  }
+}
