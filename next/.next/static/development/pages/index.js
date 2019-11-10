@@ -67,7 +67,7 @@ const Home = () => __jsx("div", {
 
 /***/ }),
 
-/***/ 1:
+/***/ 0:
 /*!******************************************************************************************************************************************************!*\
   !*** multi next-client-pages-loader?page=%2F&absolutePagePath=%2FUsers%2Folivier.ramier%2Fwork%2Fsrc%2Fapollo%2Ffrontend%2Fnext%2Fpages%2Findex.tsx ***!
   \******************************************************************************************************************************************************/
@@ -90,5 +90,5 @@ module.exports = dll_e9ad7d891b372a4221cf;
 
 /***/ })
 
-},[[1,"static/runtime/webpack.js"]]]);
+},[[0,"static/runtime/webpack.js"]]]);
 //# sourceMappingURL=index.js.map

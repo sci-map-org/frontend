@@ -36,6 +36,20 @@ export type CurrentUser = {
   key: Scalars['String'],
 };
 
+export type ListArticlesFilter = {
+  authorId?: Maybe<Scalars['String']>,
+};
+
+export type ListArticlesOptions = {
+  filter?: Maybe<ListArticlesFilter>,
+  pagination?: Maybe<PaginationOptions>,
+};
+
+export type ListArticlesResult = {
+   __typename?: 'ListArticlesResult',
+  items: Array<Article>,
+};
+
 export type LoginResponse = {
    __typename?: 'LoginResponse',
   currentUser: CurrentUser,
@@ -72,15 +86,26 @@ export type MutationUpdateArticleArgs = {
   payload: UpdateArticlePayload
 };
 
+export type PaginationOptions = {
+  limit?: Maybe<Scalars['Int']>,
+  offset?: Maybe<Scalars['Int']>,
+};
+
 export type Query = {
    __typename?: 'Query',
   currentUser: CurrentUser,
   getArticle: Article,
+  listArticles: ListArticlesResult,
 };
 
 
 export type QueryGetArticleArgs = {
-  id: Scalars['String']
+  key: Scalars['String']
+};
+
+
+export type QueryListArticlesArgs = {
+  options: ListArticlesOptions
 };
 
 export type RegisterPayload = {
