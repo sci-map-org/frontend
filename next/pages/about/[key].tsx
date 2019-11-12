@@ -1,8 +1,8 @@
 import { NextPage } from 'next';
 import { Box, Link } from '@chakra-ui/core';
 import NextLink from 'next/link';
-import { withApollo } from '../src/graphql/apollo';
 import { useRouter } from 'next/router';
+import { withApollo } from '../../src/graphql/apollo';
 
 interface Article {
   _id: string;
@@ -18,6 +18,10 @@ const About: NextPage<{ articlesMenuItems: ArticleMenuItem[]; article: Article }
   articlesMenuItems,
   article,
 }) => {
+  const router = useRouter();
+
+  const { key } = router.query;
+
   return (
     <Box display="flex" flexDirection="row">
       <Box borderRightWidth={1} borderRightColor="gray.500" w="56" h="100%" pl={1}>
@@ -31,7 +35,9 @@ const About: NextPage<{ articlesMenuItems: ArticleMenuItem[]; article: Article }
           );
         })}
       </Box>
-      <Box p="2">{JSON.stringify(article)}</Box>
+      <Box p="2">
+        {key} | {JSON.stringify(article)}
+      </Box>
     </Box>
   );
 };
@@ -62,4 +68,4 @@ About.getInitialProps = async () => {
   };
 };
 
-export default withApollo(About);
+export default About;

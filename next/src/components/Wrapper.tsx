@@ -7,15 +7,13 @@ import client from '../graphql/client';
 
 export const Wrapper: React.FC = ({ children }) => {
   return (
-    <>
-      <ThemeProvider>
-        <CSSReset />
-        <ColorModeProvider>
-          <ApolloProvider client={client}>
-            <Layout>{children}</Layout>
-          </ApolloProvider>
-        </ColorModeProvider>
-      </ThemeProvider>
-    </>
+    <ThemeProvider>
+      <CSSReset />
+      <ColorModeProvider>
+        {/* <ApolloProvider client={client}> */}
+        <Layout>{children}</Layout>
+        {/* </ApolloProvider> */}
+      </ColorModeProvider>
+    </ThemeProvider>
   );
 };

@@ -1,4 +1,3 @@
-import 'cross-fetch/polyfill';
 import ApolloClient, { InMemoryCache } from 'apollo-boost';
 import Cookies from 'js-cookie';
 
