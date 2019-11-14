@@ -1,19 +1,29 @@
+import { ColorModeProvider, CSSReset, ThemeProvider } from '@chakra-ui/core';
 import React from 'react';
-import { ApolloProvider } from '@apollo/react-hooks';
-import { ThemeProvider, ColorModeProvider, CSSReset } from '@chakra-ui/core';
 
-import { Layout } from './Layout/Layout';
-import client from '../graphql/client';
+import { Layout } from './layout/Layout';
+import { withApollo } from '../graphql/apollo';
 
-export const Wrapper: React.FC = ({ children }) => {
+const LeanWrapper: React.FC = ({ children }) => {
   return (
     <ThemeProvider>
       <CSSReset />
       <ColorModeProvider>
-        {/* <ApolloProvider client={client}> */}
         <Layout>{children}</Layout>
-        {/* </ApolloProvider> */}
       </ColorModeProvider>
+      <style global jsx>
+        {`
+          html,
+          body,
+          body > div:first-child,
+          div#__next,
+          div#__next > div {
+            height: 100%;
+          }
+        `}
+      </style>
     </ThemeProvider>
   );
 };
+
+export const Wrapper = withApollo(LeanWrapper);

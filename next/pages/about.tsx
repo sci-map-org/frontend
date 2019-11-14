@@ -62,4 +62,4 @@ About.getInitialProps = async () => {
   };
 };
 
-export default withApollo(About);
+export default About;

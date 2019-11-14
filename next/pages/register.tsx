@@ -13,16 +13,35 @@ const RegisterPage: React.FC = () => {
   const { register } = useRegister();
   return (
     <Box display="flex" flexDirection="column" alignItems="center">
-      <Box width="40rem">
+      <Box width="36rem" pt={6}>
         <Stack spacing={6} textAlign="center">
-          <Text fontSize="6xl">Register</Text>
-          <Input placeholder="Email" size="md" variant="flushed" />
-          <Input placeholder="Display Name" size="md" variant="flushed" />
-          <Input placeholder="Unique alias" size="sm" variant="flushed" />
+          <Text fontSize="5xl">Register</Text>
+          <Input
+            placeholder="Email"
+            size="md"
+            variant="flushed"
+            value={email}
+            onChange={(e: any) => setEmail(e.target.value)} // TODO Why event type not inferred ?
+          />
+          <Input
+            placeholder="Display Name"
+            size="md"
+            variant="flushed"
+            value={displayName}
+            onChange={(e: any) => setDisplayName(e.target.value)}
+          />
+          <Input
+            placeholder="Unique alias"
+            size="sm"
+            variant="flushed"
+            value={key}
+            onChange={(e: any) => setKey(e.target.value)}
+          />
 
-          <InputRightElement size="md">
+          <InputGroup size="md">
             <Input
               pr="4.5rem"
+              variant="flushed"
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e: any) => setPassword(e.target.value)}
@@ -33,12 +52,29 @@ const RegisterPage: React.FC = () => {
                 {showPassword ? 'Hide' : 'Show'}
               </Button>
             </InputRightElement>
-          </InputRightElement>
-          <Button>Register</Button>
+          </InputGroup>
+          <Button
+            size="lg"
+            variant="solid"
+            onClick={() =>
+              register({
+                variables: {
+                  payload: {
+                    email,
+                    displayName,
+                    key,
+                    password,
+                  },
+                },
+              })
+            }
+          >
+            Register
+          </Button>
         </Stack>
       </Box>
     </Box>
   );
 };
 
-export default withApollo(RegisterPage);
+export default RegisterPage;
