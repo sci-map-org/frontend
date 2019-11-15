@@ -1,9 +1,10 @@
-import { Box, Stack, Input, Button } from '@chakra-ui/core';
-import { useState } from 'react';
-import { PasswordInput } from '../src/components/input/PasswordInput';
-import { useLogin } from '../src/hooks/auth.hooks';
+import { Box, Button, Input, Stack } from '@chakra-ui/core';
 import Router from 'next/router';
+import { useState } from 'react';
+
+import { PasswordInput } from '../src/components/input/PasswordInput';
 import { withApollo } from '../src/graphql/apollo';
+import { useLogin } from '../src/hooks/auth.hooks';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -41,4 +42,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default withApollo(Login);

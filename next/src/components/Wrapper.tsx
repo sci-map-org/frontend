@@ -1,16 +1,12 @@
 import { ColorModeProvider, CSSReset, ThemeProvider } from '@chakra-ui/core';
 import React from 'react';
-
 import { Layout } from './layout/Layout';
-import { withApollo } from '../graphql/apollo';
 
 const LeanWrapper: React.FC = ({ children }) => {
   return (
     <ThemeProvider>
       <CSSReset />
-      <ColorModeProvider>
-        <Layout>{children}</Layout>
-      </ColorModeProvider>
+      <ColorModeProvider>{children}</ColorModeProvider>
       <style global jsx>
         {`
           html,
@@ -26,4 +22,4 @@ const LeanWrapper: React.FC = ({ children }) => {
   );
 };
 
-export const Wrapper = withApollo(LeanWrapper);
+export const Wrapper = LeanWrapper;
