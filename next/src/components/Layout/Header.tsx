@@ -32,11 +32,11 @@ export const Header: React.FC = () => {
               </Avatar>
             </MenuButton>
             <MenuList placement="bottom-end" bg="inherit">
-              <MenuItem>
-                <NextLink href={`/profile/${currentUser.key}`}>
+              <NextLink href={`/profile/${currentUser.key}`}>
+                <MenuItem>
                   <Link>Profile</Link>
-                </NextLink>
-              </MenuItem>
+                </MenuItem>
+              </NextLink>
               <MenuItem onClick={logout}>Logout</MenuItem>
             </MenuList>
           </Menu>
