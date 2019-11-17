@@ -15,7 +15,7 @@ export type Article = {
   contentType: ArticleContentType,
   title: Scalars['String'],
   content: Scalars['String'],
-  authorId: Scalars['String'],
+  author?: Maybe<User>,
 };
 
 export enum ArticleContentType {
@@ -34,10 +34,16 @@ export type CurrentUser = {
   email: Scalars['String'],
   displayName: Scalars['String'],
   key: Scalars['String'],
+  articles?: Maybe<ListArticlesResult>,
+};
+
+
+export type CurrentUserArticlesArgs = {
+  options: ListArticlesOptions
 };
 
 export type ListArticlesFilter = {
-  authorId?: Maybe<Scalars['String']>,
+  contentType?: Maybe<ArticleContentType>,
 };
 
 export type ListArticlesOptions = {
@@ -120,12 +126,26 @@ export type UpdateArticlePayload = {
   content?: Maybe<Scalars['String']>,
 };
 
+export type User = {
+   __typename?: 'User',
+  _id: Scalars['String'],
+  email: Scalars['String'],
+  displayName: Scalars['String'],
+  key: Scalars['String'],
+  articles?: Maybe<ListArticlesResult>,
+};
+
+
+export type UserArticlesArgs = {
+  options: ListArticlesOptions
+};
+
 export type CreateArticleMutationVariables = {
   payload: CreateArticlePayload
 };
 
 
-export type CreateArticleMutationResult = { __typename?: 'Mutation', createArticle: { __typename?: 'Article', _id: string, key: string, contentType: ArticleContentType, title: string, content: string, authorId: string } };
+export type CreateArticleMutationResult = { __typename?: 'Mutation', createArticle: { __typename?: 'Article', _id: string, key: string, contentType: ArticleContentType, title: string, content: string } };
 
 export type LoginMutationVariables = {
   email: Scalars['String'],

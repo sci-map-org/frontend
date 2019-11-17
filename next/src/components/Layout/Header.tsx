@@ -37,6 +37,11 @@ export const Header: React.FC = () => {
                   <Link>Profile</Link>
                 </MenuItem>
               </NextLink>
+              <NextLink href="/articles/new">
+                <MenuItem>
+                  <Link>New Article</Link>
+                </MenuItem>
+              </NextLink>
               <MenuItem onClick={logout}>Logout</MenuItem>
             </MenuList>
           </Menu>
