@@ -44,4 +44,4 @@ const NewArticlePage: NextPage = () => {
   );
 };
 
-export default withApollo(NewArticlePage, { ssr: false });
+export default withApollo(NewArticlePage);

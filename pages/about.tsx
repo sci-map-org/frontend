@@ -1,8 +1,8 @@
-import { NextPage } from 'next';
 import { Box, Link } from '@chakra-ui/core';
+import { NextPage } from 'next';
 import NextLink from 'next/link';
+
 import { withApollo } from '../src/graphql/apollo';
-import { useRouter } from 'next/router';
 
 interface Article {
   _id: string;

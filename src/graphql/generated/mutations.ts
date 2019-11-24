@@ -8,7 +8,6 @@ export const CreateArticleMutation = gql`
       contentType
       title
       content
-      authorId
     }
   }
 `;
