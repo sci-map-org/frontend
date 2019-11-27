@@ -139,30 +139,3 @@ export type User = {
 export type UserArticlesArgs = {
   options: ListArticlesOptions
 };
-
-export type CreateArticleMutationVariables = {
-  payload: CreateArticlePayload
-};
-
-
-export type CreateArticleMutationResult = { __typename?: 'Mutation', createArticle: { __typename?: 'Article', _id: string, key: string, contentType: ArticleContentType, title: string, content: string } };
-
-export type LoginMutationVariables = {
-  email: Scalars['String'],
-  password: Scalars['String']
-};
-
-
-export type LoginMutationResult = { __typename?: 'Mutation', login: { __typename?: 'LoginResponse', jwt: string, currentUser: { __typename?: 'CurrentUser', _id: string, email: string, key: string } } };
-
-export type RegisterMutationVariables = {
-  payload: RegisterPayload
-};
-
-
-export type RegisterMutationResult = { __typename?: 'Mutation', register: { __typename?: 'CurrentUser', _id: string, email: string, key: string } };
-
-export type CurrentUserQueryVariables = {};
-
-
-export type CurrentUserQueryResult = { __typename?: 'Query', currentUser: { __typename?: 'CurrentUser', _id: string, email: string, key: string } };

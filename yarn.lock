@@ -1028,6 +1028,14 @@
   resolved "https://registry.npmjs.org/@emotion/weak-memoize/-/weak-memoize-0.2.4.tgz#622a72bebd1e3f48d921563b4b60a762295a81fc"
   integrity sha512-6PYY5DVdAY1ifaQW6XYTnOMihmBVT27elqSjEoodchsGjzYlEsTQMcEhSud99kVawatyTZRTiVkJ/c6lwbQ7nA==
 
+"@graphql-codegen/add@1.8.3":
+  version "1.8.3"
+  resolved "https://registry.npmjs.org/@graphql-codegen/add/-/add-1.8.3.tgz#669d83dc0a1cf98f0584e29486df97b634296050"
+  integrity sha512-m1gIBKWBdv6LlYxQZqnYr6VBy3/g0HX54gSnNzFXsvO6vh2fWAtGYLZ9jf+D6U/kUA0LV4Ltxq5nN8oXEnMjTQ==
+  dependencies:
+    "@graphql-codegen/plugin-helpers" "1.8.3"
+    tslib "1.10.0"
+
 "@graphql-codegen/cli@^1.8.3":
   version "1.8.3"
   resolved "https://registry.npmjs.org/@graphql-codegen/cli/-/cli-1.8.3.tgz#f90971f28561e869bb19c2abfb0eefd79a11ea6d"
@@ -1094,6 +1102,15 @@
   dependencies:
     "@graphql-codegen/plugin-helpers" "1.8.3"
     tslib "1.10.0"
+
+"@graphql-codegen/near-operation-file-preset@^1.9.0":
+  version "1.9.0"
+  resolved "https://registry.npmjs.org/@graphql-codegen/near-operation-file-preset/-/near-operation-file-preset-1.9.0.tgz#d7b70067a4db2176efd790c23ef054da2a950651"
+  integrity sha512-YAHchcAX/DHRvtgh3NmCilGf780f8pS4+edgTjqme7oYZDPJZj6/VGVV4PHzzuy6OchRDro9/F9CNwQP/e2FsA==
+  dependencies:
+    "@graphql-codegen/add" "1.8.3"
+    "@graphql-codegen/plugin-helpers" "1.8.3"
+    "@graphql-codegen/visitor-plugin-common" "1.8.3"
 
 "@graphql-codegen/plugin-helpers@1.8.3":
   version "1.8.3"

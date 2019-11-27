@@ -1,26 +1,41 @@
-import { NextPage } from 'next';
 import { Box, Link } from '@chakra-ui/core';
+import { NextPage } from 'next';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
+
+import { ArticleReader } from '../../src/components/articles/ArticleReader';
 import { withApollo } from '../../src/graphql/apollo';
 
-interface Article {
-  _id: string;
-  content: string;
-}
 interface ArticleMenuItem {
   _id: string;
   menuTitle: string;
   key: string;
 }
 
-const About: NextPage<{ articlesMenuItems: ArticleMenuItem[]; article: Article }> = ({
-  articlesMenuItems,
-  article,
-}) => {
+const articlesMenuItems: ArticleMenuItem[] = [
+  {
+    _id: '0',
+    menuTitle: 'About',
+    key: 'intro',
+  },
+  {
+    _id: '1',
+    menuTitle: 'Hello',
+    key: 'hello',
+  },
+  {
+    _id: '2',
+    menuTitle: 'World',
+    key: 'world',
+  },
+];
+
+const About: NextPage = () => {
   const router = useRouter();
 
   const { key } = router.query;
+
+  if (typeof key !== 'string') throw new Error('key not string');
 
   return (
     <Box display="flex" flexDirection="row">
@@ -36,36 +51,10 @@ const About: NextPage<{ articlesMenuItems: ArticleMenuItem[]; article: Article }
         })}
       </Box>
       <Box p="2">
-        {key} | {JSON.stringify(article)}
+        <ArticleReader key={key} />
       </Box>
     </Box>
   );
-};
-
-About.getInitialProps = async () => {
-  return {
-    article: {
-      _id: 'X',
-      content: 'content',
-    },
-    articlesMenuItems: [
-      {
-        _id: '0',
-        menuTitle: 'About',
-        key: 'intro',
-      },
-      {
-        _id: '1',
-        menuTitle: 'Hello',
-        key: 'hello',
-      },
-      {
-        _id: '2',
-        menuTitle: 'World',
-        key: 'world',
-      },
-    ],
-  };
 };
 
 export default withApollo(About);

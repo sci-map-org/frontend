@@ -3,7 +3,7 @@ import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 
 import { withApollo } from '../../src/graphql/apollo';
-import { useCurrentUser } from '../../src/hooks/users.hooks';
+import { useCurrentUser } from '../../src/graphql/users/users.hooks';
 
 const ProfilePage: NextPage<{}> = () => {
   const router = useRouter();

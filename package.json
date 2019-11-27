@@ -7,7 +7,7 @@
     "dev": "next",
     "build": "next build",
     "start": "next start",
-    "codegen": "graphql-codegen --config codegen.yml && prettier --write src/graphql/generated/{queries,mutations}.ts"
+    "codegen": "graphql-codegen --config codegen.yml && prettier --write src/graphql/**/*.generated.ts"
   },
   "author": "",
   "license": "ISC",
@@ -17,6 +17,7 @@
     "@chakra-ui/core": "^0.4.1",
     "@emotion/core": "^10.0.22",
     "@emotion/styled": "^10.0.23",
+    "@graphql-codegen/near-operation-file-preset": "^1.9.0",
     "@types/cookie": "^0.3.3",
     "@zeit/next-css": "^1.0.1",
     "apollo-boost": "^0.4.4",

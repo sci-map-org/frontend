@@ -1,0 +1,36 @@
+fragment ArticleViewer on Article {
+  _id
+  key
+  title
+  content
+  contentType
+  author {
+    key
+    displayName
+  }
+}
+
+mutation createArticle($payload: CreateArticlePayload!) {
+  createArticle(payload: $payload) {
+    _id
+    key
+    contentType
+    title
+    content
+  }
+}
+
+query getArticleByKey($key: String!) {
+  getArticle(key: $key) {
+    ...ArticleViewer
+    #   _id
+    #   key
+    #   title
+    #   content
+    #   contentType
+    #   author {
+    #     key
+    #     displayName
+    #   }
+  }
+}

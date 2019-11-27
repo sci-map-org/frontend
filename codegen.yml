@@ -1,23 +1,16 @@
-overwrite: true
 schema: "http://localhost:8000/graphql"
+documents: 'src/graphql/**/*.graphql'
 generates:
-  src/graphql/generated/types.tsx:
-    documents: "src/**/*.graphql"
+  src/graphql/types.ts:
+    - typescript
+  src/graphql:
+    preset: near-operation-file
+    presetConfig:
+      extension: .generated.ts
+      baseTypesPath: types.ts
     plugins:
-      - "typescript"
-      - "typescript-operations"
+      - typescript-operations
+      - typescript-document-nodes
     config:
-      preResolveTypes: true
+      nameSuffix: Operation
       operationResultSuffix: Result
-  src/graphql/generated/queries.ts:
-    documents: "src/graphql/queries/**/*.graphql"
-    plugins:
-      - "typescript-document-nodes"
-    config:
-      nameSuffix: Query
-  src/graphql/generated/mutations.ts:
-    documents: "src/graphql/mutations/**/*.graphql"
-    plugins:
-      - "typescript-document-nodes"
-    config:
-      nameSuffix: Mutation

@@ -1,17 +1,16 @@
-import React from 'react';
-import PropTypes, { object } from 'prop-types';
-import cookie from 'cookie';
-import Head from 'next/head';
-import { ApolloClient } from 'apollo-client';
-import { InMemoryCache } from 'apollo-cache-inmemory';
-import { HttpLink } from 'apollo-link-http';
-import { setContext } from 'apollo-link-context';
 import { ApolloProvider } from '@apollo/react-hooks';
-import fetch from 'isomorphic-unfetch';
-import { NextPage, NextPageContext, NextApiRequest } from 'next';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { ApolloClient } from 'apollo-client';
+import { setContext } from 'apollo-link-context';
+import { HttpLink } from 'apollo-link-http';
+import cookie from 'cookie';
 import { IncomingMessage } from 'http';
-import { CurrentUserQuery } from './generated/queries';
-import { CurrentUserQueryResult } from './generated/types';
+import fetch from 'isomorphic-unfetch';
+import { NextPage, NextPageContext } from 'next';
+import Head from 'next/head';
+import PropTypes from 'prop-types';
+import React from 'react';
+
 import { Layout } from '../components/layout/Layout';
 
 // TODO Fix types
