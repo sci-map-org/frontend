@@ -1,127 +1,65 @@
 import { useApolloClient } from '@apollo/react-hooks';
-import { IconButton, Menu, MenuItem } from '@material-ui/core';
-import AppBar from '@material-ui/core/AppBar';
-import Button from '@material-ui/core/Button';
-import { makeStyles } from '@material-ui/core/styles';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import AccountCircle from '@material-ui/icons/AccountCircle';
+import { Avatar, AvatarBadge, Box, Link, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/core';
 import Cookies from 'js-cookie';
-import React, { useState } from 'react';
-import { NavLink, useHistory } from 'react-router-dom';
+import NextLink from 'next/link';
+import Router from 'next/router';
 
-import { CurrentUserQuery } from '../../graphql/generated/queries';
-import { useCurrentUser } from '../../hooks/users.hooks';
-import { profilePagePath } from '../pages/Profile/ProfilePage';
+import { CurrentUserOperation } from '../../graphql/users/users.generated';
+import { useCurrentUser } from '../../graphql/users/users.hooks';
+import { HeaderLink } from './HeaderLink';
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    // flexGrow: 1,
-  },
-  grow: {
-    flexGrow: 1,
-  },
-  menuButton: {
-    marginRight: theme.spacing(2),
-  },
-  title: {
-    flexGrow: 1,
-    textAlign: 'left',
-    color: 'inherit',
-    textDecoration: 'none',
-  },
-  buttonLink: {
-    color: 'inherit',
-    textDecoration: 'none',
-  },
-}));
-
-export const Header: React.FC<{}> = () => {
-  const classes = useStyles({});
-  const { currentUser, loading } = useCurrentUser();
-  const [anchorEl, setAnchorEl] = useState(null);
-  const isMenuOpen = Boolean(anchorEl);
-
-  const handleProfileMenuOpen = (event: any) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
+export const Header: React.FC = () => {
   const client = useApolloClient();
+  const { currentUser, loading } = useCurrentUser();
 
   const logout = () => {
     Cookies.remove('jwt_token');
     client.writeData({ data: { isLoggedIn: false } });
     client.writeQuery({
-      query: CurrentUserQuery,
+      query: CurrentUserOperation,
       data: { currentUser: null },
     });
-    handleMenuClose();
   };
 
-  const menuId = 'primary-search-account-menu';
-  const history = useHistory();
-
   return (
-    <div className={classes.root}>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6">
-            <NavLink to="/" className={classes.title}>
-              Apollo Project {!!currentUser && currentUser.email}
-            </NavLink>
-          </Typography>
-          <div className={classes.grow}></div>
-          <NavLink to="/about" className={classes.buttonLink}>
-            <Button color="inherit">About</Button>
-          </NavLink>
-          {!currentUser && !loading && (
-            <>
-              <NavLink to="/register" className={classes.buttonLink}>
-                <Button color="inherit">Register</Button>
-              </NavLink>
-              <NavLink to="/login" className={classes.buttonLink}>
-                <Button color="inherit">Login</Button>
-              </NavLink>
-            </>
-          )}
-          {!!currentUser && (
-            <>
-              <IconButton
-                // edge="end"
-                // aria-label="account of current user"
-                // aria-controls="primary-search-account-menu"
-                // aria-haspopup="true"
-                // color="inherit"
-                onClick={handleProfileMenuOpen}
-              >
-                <AccountCircle />
-              </IconButton>
-
-              <Menu
-                anchorEl={anchorEl}
-                // anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-                id={menuId}
-                keepMounted
-                // transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                open={isMenuOpen}
-                onClose={handleMenuClose}
-              >
-                <MenuItem
-                  onClick={() => {
-                    history.push(profilePagePath(currentUser.key));
-                  }}
-                >
-                  Profile
+    <Box py={2} bg="gray.200" pl={2} fontSize="lg" display="flex" flexDirection="row">
+      <HeaderLink to="/">Apollo Project</HeaderLink>
+      <Box flexGrow={1} />
+      <HeaderLink to="/about/intro">About</HeaderLink>
+      {!!currentUser ? (
+        <Box pr="2">
+          <Menu>
+            <MenuButton>
+              <Avatar size="xs">
+                <AvatarBadge bg="green.500" size="0.7rem" />
+              </Avatar>
+            </MenuButton>
+            <MenuList placement="bottom-end" bg="inherit">
+              <NextLink href={`/profile/${currentUser.key}`}>
+                <MenuItem>
+                  <Link>Profile</Link>
                 </MenuItem>
-                <MenuItem onClick={logout}>Logout</MenuItem>
-              </Menu>
-            </>
-          )}
-        </Toolbar>
-      </AppBar>
-    </div>
+              </NextLink>
+              <NextLink href={`/articles/new`}>
+                <MenuItem>
+                  <Link>New Article</Link>
+                </MenuItem>
+              </NextLink>
+              <NextLink href={`/profile/try`}>
+                <MenuItem>
+                  <Link>Profile</Link>
+                </MenuItem>
+              </NextLink>
+              <MenuItem onClick={logout}>Logout</MenuItem>
+            </MenuList>
+          </Menu>
+        </Box>
+      ) : (
+        <>
+          <HeaderLink to="/register">Register</HeaderLink>
+          <HeaderLink to="/login">Login</HeaderLink>
+        </>
+      )}
+    </Box>
   );
 };

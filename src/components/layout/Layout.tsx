@@ -1,13 +1,11 @@
-import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
-
+import { Box } from '@chakra-ui/core';
 import { Header } from './Header';
 
-export const Layout: React.FC<{}> = function Layout({ children }) {
+export const Layout: React.FC = ({ children }) => {
   return (
-    <Router>
-      <Header></Header>
+    <Box>
+      <Header />
       {children}
-    </Router>
+    </Box>
   );
 };
