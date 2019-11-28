@@ -22,15 +22,15 @@ mutation createArticle($payload: CreateArticlePayload!) {
 
 query getArticleByKey($key: String!) {
   getArticle(key: $key) {
-    ...ArticleViewer
-    #   _id
-    #   key
-    #   title
-    #   content
-    #   contentType
-    #   author {
-    #     key
-    #     displayName
-    #   }
+    # ...ArticleViewer
+    _id
+    key
+    title
+    content
+    contentType
+    author {
+      key
+      displayName
+    }
   }
 }

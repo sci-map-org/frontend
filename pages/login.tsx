@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { PasswordInput } from '../src/components/input/PasswordInput';
 import { withApollo } from '../src/graphql/apollo';
-import { useLogin } from '../src/hooks/auth.hooks';
+import { useLogin } from '../src/graphql/users/users.hooks';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');

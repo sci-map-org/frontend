@@ -2,6 +2,7 @@ import { useApolloClient } from '@apollo/react-hooks';
 import { Avatar, AvatarBadge, Box, Link, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/core';
 import Cookies from 'js-cookie';
 import NextLink from 'next/link';
+import Router from 'next/router';
 
 import { CurrentUserOperation } from '../../graphql/users/users.generated';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
@@ -39,9 +40,14 @@ export const Header: React.FC = () => {
                   <Link>Profile</Link>
                 </MenuItem>
               </NextLink>
-              <NextLink href="/articles/new">
+              <NextLink href={`/articles/new`}>
                 <MenuItem>
                   <Link>New Article</Link>
+                </MenuItem>
+              </NextLink>
+              <NextLink href={`/profile/try`}>
+                <MenuItem>
+                  <Link>Profile</Link>
                 </MenuItem>
               </NextLink>
               <MenuItem onClick={logout}>Logout</MenuItem>

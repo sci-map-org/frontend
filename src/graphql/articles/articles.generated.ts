@@ -18,7 +18,9 @@ export type GetArticleByKeyQueryVariables = {
 };
 
 export type GetArticleByKeyQueryResult = { __typename?: 'Query' } & {
-  getArticle: { __typename?: 'Article' } & ArticleViewerFragment;
+  getArticle: { __typename?: 'Article' } & Pick<Types.Article, '_id' | 'key' | 'title' | 'content' | 'contentType'> & {
+      author: Types.Maybe<{ __typename?: 'User' } & Pick<Types.User, 'key' | 'displayName'>>;
+    };
 };
 
 import gql from 'graphql-tag';
@@ -49,8 +51,15 @@ export const CreateArticleOperation = gql`
 export const GetArticleByKeyOperation = gql`
   query getArticleByKey($key: String!) {
     getArticle(key: $key) {
-      ...ArticleViewer
+      _id
+      key
+      title
+      content
+      contentType
+      author {
+        key
+        displayName
+      }
     }
   }
-  ${ArticleViewer}
 `;

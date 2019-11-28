@@ -9,6 +9,7 @@ const ProfilePage: NextPage<{}> = () => {
   const router = useRouter();
 
   const { key } = router.query;
+  if (!key || key === 'undefined') return null;
   const { currentUser, loading } = useCurrentUser();
 
   if (currentUser && currentUser.key === key) {

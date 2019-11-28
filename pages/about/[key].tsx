@@ -1,30 +1,26 @@
 import { Box, Link } from '@chakra-ui/core';
 import { NextPage } from 'next';
 import NextLink from 'next/link';
-import { useRouter } from 'next/router';
-
+import Router, { useRouter } from 'next/router';
+import React from 'react';
 import { ArticleReader } from '../../src/components/articles/ArticleReader';
 import { withApollo } from '../../src/graphql/apollo';
 
 interface ArticleMenuItem {
-  _id: string;
   menuTitle: string;
   key: string;
 }
 
 const articlesMenuItems: ArticleMenuItem[] = [
   {
-    _id: '0',
     menuTitle: 'About',
     key: 'intro',
   },
   {
-    _id: '1',
     menuTitle: 'Hello',
     key: 'hello',
   },
   {
-    _id: '2',
     menuTitle: 'World',
     key: 'world',
   },
@@ -34,8 +30,9 @@ const About: NextPage = () => {
   const router = useRouter();
 
   const { key } = router.query;
+  if (!key || key === 'undefined') return null; // necessary because of an issue with apollo and next
 
-  if (typeof key !== 'string') throw new Error('key not string');
+  if (typeof key !== 'string') return null;
 
   return (
     <Box display="flex" flexDirection="row">
@@ -50,9 +47,7 @@ const About: NextPage = () => {
           );
         })}
       </Box>
-      <Box p="2">
-        <ArticleReader key={key} />
-      </Box>
+      <Box p="2">{key && <ArticleReader articleKey={key} />}</Box>
     </Box>
   );
 };
