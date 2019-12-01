@@ -1,7 +1,7 @@
 import React from 'react';
 import { NextPage } from 'next';
 import { withApollo } from '../../src/graphql/apollo';
-// import '../../static/easymde.min.css';
+import 'easymde/dist/easymde.min.css';
 import { Box, Text, Stack, Input, Button } from '@chakra-ui/core';
 import NoSSR from 'react-no-ssr';
 // import SimpleMDE from 'react-simplemde-editor';
