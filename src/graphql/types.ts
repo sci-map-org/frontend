@@ -42,6 +42,11 @@ export type CurrentUserArticlesArgs = {
   options: ListArticlesOptions
 };
 
+export type DeleteEntityResult = {
+   __typename?: 'DeleteEntityResult',
+  success: Scalars['Boolean'],
+};
+
 export type ListArticlesFilter = {
   contentType?: Maybe<ArticleContentType>,
 };
@@ -68,6 +73,7 @@ export type Mutation = {
   register: CurrentUser,
   createArticle: Article,
   updateArticle: Article,
+  deleteArticle: DeleteEntityResult,
 };
 
 
@@ -92,6 +98,11 @@ export type MutationUpdateArticleArgs = {
   payload: UpdateArticlePayload
 };
 
+
+export type MutationDeleteArticleArgs = {
+  id: Scalars['String']
+};
+
 export type PaginationOptions = {
   limit?: Maybe<Scalars['Int']>,
   offset?: Maybe<Scalars['Int']>,
@@ -100,8 +111,14 @@ export type PaginationOptions = {
 export type Query = {
    __typename?: 'Query',
   currentUser: CurrentUser,
+  getUser: User,
   getArticle: Article,
   listArticles: ListArticlesResult,
+};
+
+
+export type QueryGetUserArgs = {
+  key: Scalars['String']
 };
 
 

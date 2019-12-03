@@ -1,8 +1,10 @@
-import { Box, Link } from '@chakra-ui/core';
+import Box from '@chakra-ui/core/dist/Box';
+import Link from '@chakra-ui/core/dist/Link';
 import { NextPage } from 'next';
 import NextLink from 'next/link';
-import Router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import React from 'react';
+
 import { ArticleReader } from '../../src/components/articles/ArticleReader';
 import { withApollo } from '../../src/graphql/apollo';
 
@@ -30,7 +32,6 @@ const About: NextPage = () => {
   const router = useRouter();
 
   const { key } = router.query;
-  if (!key || key === 'undefined') return null; // necessary because of an issue with apollo and next
 
   if (typeof key !== 'string') return null;
 
@@ -47,7 +48,9 @@ const About: NextPage = () => {
           );
         })}
       </Box>
-      <Box p="2">{key && <ArticleReader articleKey={key} />}</Box>
+      <Box p="2" width="100%">
+        {key && <ArticleReader articleKey={key} />}
+      </Box>
     </Box>
   );
 };

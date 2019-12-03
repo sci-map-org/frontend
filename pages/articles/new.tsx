@@ -8,12 +8,13 @@ import NoSSR from 'react-no-ssr';
 import dynamic from 'next/dynamic';
 import { useCreateArticle } from '../../src/graphql/articles/articles.hooks';
 import { ArticleContentType } from '../../src/graphql/types';
+import Router from 'next/router';
 const SimpleMDE = dynamic(() => import('react-simplemde-editor'));
 
 const NewArticlePage: NextPage = () => {
   // return <div>New </div>;
   const [title, setTitle] = React.useState('');
-  const { createArticle, error, loading } = useCreateArticle();
+  const { createArticle, error, loading, createdArticle } = useCreateArticle();
   const [content, setContent] = React.useState('');
   return (
     <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" width="100%" pt="2rem">
@@ -33,15 +34,21 @@ const NewArticlePage: NextPage = () => {
           <SimpleMDE key="new_article_mde" id="1fdfre" onChange={e => setContent(e)} value={content} />
           {/* </NoSSR> */}
         </Box>
-        <Button
-          size="lg"
-          variant="solid"
-          onClick={async () => {
-            createArticle({ variables: { payload: { content, title, contentType: ArticleContentType.Markdown } } });
-          }}
-        >
-          Create
-        </Button>
+        <Box>
+          <Button
+            size="lg"
+            variant="solid"
+            onClick={async () => {
+              createArticle({
+                variables: { payload: { content, title, contentType: ArticleContentType.Markdown } },
+              }).then(({ data }) => {
+                data && Router.push(`/articles/${data.createArticle.key}`);
+              });
+            }}
+          >
+            Create
+          </Button>
+        </Box>
       </Box>
     </Box>
   );

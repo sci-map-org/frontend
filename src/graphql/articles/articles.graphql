@@ -1,4 +1,4 @@
-fragment ArticleViewer on Article {
+fragment ArticleViewerData on Article {
   _id
   key
   title
@@ -7,6 +7,16 @@ fragment ArticleViewer on Article {
   author {
     key
     displayName
+  }
+}
+
+fragment ArticlePreviewData on Article {
+  _id
+  key
+  title
+  contentType
+  author {
+    key
   }
 }
 
@@ -22,15 +32,29 @@ mutation createArticle($payload: CreateArticlePayload!) {
 
 query getArticleByKey($key: String!) {
   getArticle(key: $key) {
-    # ...ArticleViewer
-    _id
-    key
-    title
-    content
-    contentType
-    author {
-      key
-      displayName
+    ...ArticleViewerData
+  }
+}
+
+mutation updateArticle($id: String!, $payload: UpdateArticlePayload!) {
+  updateArticle(id: $id, payload: $payload) {
+    ...ArticleViewerData
+  }
+}
+
+mutation deleteArticle($id: String!) {
+  deleteArticle(id: $id) {
+    success
+  }
+}
+
+query listUserArticlePreviews($userKey: String!, $options: ListArticlesOptions!) {
+  getUser(key: $userKey) {
+    displayName
+    articles(options: $options) {
+      items {
+        ...ArticlePreviewData
+      }
     }
   }
 }
