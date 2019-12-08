@@ -1,12 +1,9 @@
-import Box from '@chakra-ui/core/dist/Box';
-import Link from '@chakra-ui/core/dist/Link';
-import { NextPage } from 'next';
+import { Box, Link } from '@chakra-ui/core';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
 
 import { ArticleReader } from '../../src/components/articles/ArticleReader';
-import { withApollo } from '../../src/graphql/apollo';
 
 interface ArticleMenuItem {
   menuTitle: string;
@@ -28,7 +25,7 @@ const articlesMenuItems: ArticleMenuItem[] = [
   },
 ];
 
-const About: NextPage = () => {
+const About: React.FC = () => {
   const router = useRouter();
 
   const { key } = router.query;
@@ -55,4 +52,4 @@ const About: NextPage = () => {
   );
 };
 
-export default withApollo(About);
+export default About;

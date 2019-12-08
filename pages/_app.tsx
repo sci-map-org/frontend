@@ -1,20 +1,27 @@
-import App from 'next/app';
+import NextApp from 'next/app';
 import React from 'react';
 
-import '../static/easymde.min.css';
-// I tried to import directly from node_module in the appropriate page, it blocks the links to that page.abs
-// See https://github.com/zeit/next-plugins/issues/282
-import { Wrapper } from '../src/components/Wrapper';
+import '../static/empty.css';
 
-class MyApp extends App {
+import { Wrapper } from '../src/components/Wrapper';
+import { withApollo } from '../src/hoc/withApollo';
+import ApolloClient from 'apollo-client';
+import { NormalizedCacheObject } from 'apollo-cache-inmemory';
+
+interface AppProps {
+  apolloClient: ApolloClient<NormalizedCacheObject>;
+}
+
+class App extends NextApp<AppProps> {
   render() {
-    const { Component, pageProps } = this.props;
+    const { Component, pageProps, apolloClient } = this.props;
+
     return (
-      <Wrapper>
+      <Wrapper apolloClient={apolloClient}>
         <Component {...pageProps} />
       </Wrapper>
     );
   }
 }
 
-export default MyApp;
+export default withApollo(App);
