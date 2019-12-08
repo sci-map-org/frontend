@@ -3,7 +3,6 @@ import Router from 'next/router';
 import { useState } from 'react';
 
 import { PasswordInput } from '../src/components/input/PasswordInput';
-import { withApollo } from '../src/graphql/apollo';
 import { useLogin } from '../src/graphql/users/users.hooks';
 
 const Login: React.FC = () => {
@@ -42,4 +41,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default withApollo(Login);
+export default Login;

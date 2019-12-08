@@ -1,19 +1,27 @@
-import App from 'next/app';
+import NextApp from 'next/app';
 import React from 'react';
 
 import '../static/empty.css';
 
 import { Wrapper } from '../src/components/Wrapper';
+import { withApollo } from '../src/hoc/withApollo';
+import ApolloClient from 'apollo-client';
+import { NormalizedCacheObject } from 'apollo-cache-inmemory';
 
-class MyApp extends App {
+interface AppProps {
+  apolloClient: ApolloClient<NormalizedCacheObject>;
+}
+
+class App extends NextApp<AppProps> {
   render() {
-    const { Component, pageProps } = this.props;
+    const { Component, pageProps, apolloClient } = this.props;
+
     return (
-      <Wrapper>
+      <Wrapper apolloClient={apolloClient}>
         <Component {...pageProps} />
       </Wrapper>
     );
   }
 }
 
-export default MyApp;
+export default withApollo(App);

@@ -1,4 +1,3 @@
-import { ApolloProvider } from '@apollo/react-hooks';
 import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
 import { ApolloClient } from 'apollo-client';
 import { setContext } from 'apollo-link-context';
@@ -6,68 +5,51 @@ import { HttpLink } from 'apollo-link-http';
 import cookie from 'cookie';
 import { IncomingMessage } from 'http';
 import fetch from 'isomorphic-unfetch';
-import { NextPage, NextPageContext } from 'next';
+import NextApp, { AppProps as NextAppProps, AppContext as NextAppContext } from 'next/app';
 import Head from 'next/head';
 import React from 'react';
-
-import { Layout } from '../components/layout/Layout';
 
 interface WithApolloInitialProps {
   apolloState?: NormalizedCacheObject;
 }
 
-interface WithApolloProps extends WithApolloInitialProps {
+interface WithApolloProps extends WithApolloInitialProps, NextAppProps {
   apolloClient?: ApolloClient<NormalizedCacheObject>;
 }
 
 /**
  * Creates and provides the apolloContext
- * to a next.js PageTree. Use it by wrapping
- * your PageComponent via HOC pattern.
- * @param {Function|Class} PageComponent
- * @param {Object} [config]
- * @param {Boolean} [config.ssr=true]
+ * to a next.js PageTree.
  */
-export function withApollo<P, IP>(PageComponent: NextPage<P, IP>) {
-  const WithApollo = (props: WithApolloProps & P) => {
+export function withApollo(AppComponent: typeof NextApp) {
+  const WithApollo = (props: WithApolloProps) => {
     const { apolloClient, apolloState } = props;
     const client = apolloClient || initApolloClient({ initialState: apolloState || {}, getToken });
 
-    // We wrap the client here since the layout requires the apollo client
-    return (
-      <ApolloProvider client={client}>
-        <Layout>
-          <PageComponent {...(props as P)} />
-        </Layout>
-      </ApolloProvider>
-    );
+    return <AppComponent {...props} apolloClient={client} />;
   };
 
-  if (process.env.NODE_ENV !== 'production') {
-    const displayName = PageComponent.displayName || PageComponent.name || 'Component';
-    WithApollo.displayName = `withApollo(${displayName})`;
-  }
-
-  WithApollo.getInitialProps = async (ctx: NextPageContext): Promise<WithApolloInitialProps> => {
-    const { AppTree } = ctx;
-
-    const apolloClient = initApolloClient({
-      initialState: {},
-      getToken: () => getToken(ctx.req),
-    });
-
-    const pageProps = PageComponent.getInitialProps ? await PageComponent.getInitialProps(ctx) : {};
-
+  WithApollo.getInitialProps = async (appCtx: NextAppContext): Promise<WithApolloInitialProps> => {
     // Exit early unless on the server
     if (typeof window !== 'undefined') {
       return {};
     }
+
+    const { ctx } = appCtx;
 
     // When redirecting, the response is finished.
     // No point in continuing to render
     if (ctx.res && ctx.res.finished) {
       return {};
     }
+
+    const apolloClient = initApolloClient({
+      initialState: {},
+      getToken: () => getToken(ctx.req),
+    });
+
+    const pageProps = AppComponent.getInitialProps ? await AppComponent.getInitialProps(appCtx) : {};
+    const { AppTree } = ctx;
 
     try {
       // Run all GraphQL queries
@@ -147,7 +129,8 @@ function createApolloClient(config: CreateApolloClientConfig): ApolloClient<Norm
   });
 
   return new ApolloClient({
-    ssrMode: typeof window === 'undefined', // Disables forceFetch on the server (so queries are only run once)
+    // Disables forceFetch on the server (so queries are only run once)
+    ssrMode: typeof window === 'undefined',
     link: authLink.concat(httpLink),
     cache: new InMemoryCache().restore(config.initialState),
   });
