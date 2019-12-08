@@ -40,7 +40,7 @@ export type DeleteArticleMutationVariables = {
 };
 
 export type DeleteArticleMutationResult = { __typename?: 'Mutation' } & {
-  deleteArticle: { __typename?: 'DeleteEntityResult' } & Pick<Types.DeleteEntityResult, 'success'>;
+  deleteArticle: { __typename?: 'Article' } & Pick<Types.Article, '_id' | 'key'>;
 };
 
 export type ListUserArticlePreviewsQueryVariables = {
@@ -113,7 +113,8 @@ export const UpdateArticleOperation = gql`
 export const DeleteArticleOperation = gql`
   mutation deleteArticle($id: String!) {
     deleteArticle(id: $id) {
-      success
+      _id
+      key
     }
   }
 `;

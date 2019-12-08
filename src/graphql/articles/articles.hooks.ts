@@ -57,7 +57,12 @@ export const useUpdateArticle = () => {
 
 export const useDeleteArticle = () => {
   const [deleteArticle, { loading, error }] = useMutation<DeleteArticleMutationResult, DeleteArticleMutationVariables>(
-    DeleteArticleOperation // TODO: update cache to remove article
+    DeleteArticleOperation, // TODO: update cache to remove article
+    {
+      update: (a, { data }) => {
+        console.log(a, data && data.deleteArticle._id);
+      },
+    }
   );
   return {
     deleteArticle,

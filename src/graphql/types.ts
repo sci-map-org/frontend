@@ -42,11 +42,6 @@ export type CurrentUserArticlesArgs = {
   options: ListArticlesOptions
 };
 
-export type DeleteEntityResult = {
-   __typename?: 'DeleteEntityResult',
-  success: Scalars['Boolean'],
-};
-
 export type ListArticlesFilter = {
   contentType?: Maybe<ArticleContentType>,
 };
@@ -73,7 +68,7 @@ export type Mutation = {
   register: CurrentUser,
   createArticle: Article,
   updateArticle: Article,
-  deleteArticle: DeleteEntityResult,
+  deleteArticle: Article,
 };
 
 

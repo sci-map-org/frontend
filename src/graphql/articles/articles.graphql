@@ -44,7 +44,8 @@ mutation updateArticle($id: String!, $payload: UpdateArticlePayload!) {
 
 mutation deleteArticle($id: String!) {
   deleteArticle(id: $id) {
-    success
+    _id
+    key
   }
 }
 
