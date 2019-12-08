@@ -29,7 +29,6 @@ const About: React.FC = () => {
   const router = useRouter();
 
   const { key } = router.query;
-  if (!key || key === 'undefined') return null; // necessary because of an issue with apollo and next
 
   if (typeof key !== 'string') return null;
 
@@ -46,7 +45,9 @@ const About: React.FC = () => {
           );
         })}
       </Box>
-      <Box p="2">{key && <ArticleReader articleKey={key} />}</Box>
+      <Box p="2" width="100%">
+        {key && <ArticleReader articleKey={key} />}
+      </Box>
     </Box>
   );
 };
