@@ -1,6 +1,5 @@
 import { Text, Box, Stack, Input, Button, InputGroup, InputRightElement } from '@chakra-ui/core';
 import { useState } from 'react';
-import { withApollo } from '../src/graphql/apollo';
 import { useRegister } from '../src/graphql/users/users.hooks';
 
 const RegisterPage: React.FC = () => {
@@ -77,4 +76,4 @@ const RegisterPage: React.FC = () => {
   );
 };
 
-export default withApollo(RegisterPage);
+export default RegisterPage;

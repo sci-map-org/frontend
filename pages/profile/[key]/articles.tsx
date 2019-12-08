@@ -1,14 +1,7 @@
 import { Box, Stack, Text } from '@chakra-ui/core';
-import { NextPage } from 'next';
-import { useRouter } from 'next/router';
+import React from 'react';
 
-import { withApollo } from '../../../src/graphql/apollo';
-
-const ListArticlePage: NextPage = () => {
-  const router = useRouter();
-
-  const { key } = router.query;
-
+export const ListArticlePage: React.FC = () => {
   // const {data, error, loading } = useQuery()
   return (
     <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" width="100%" pt="1rem">
@@ -19,4 +12,4 @@ const ListArticlePage: NextPage = () => {
   );
 };
 
-export default withApollo(ListArticlePage);
+export default ListArticlePage;
