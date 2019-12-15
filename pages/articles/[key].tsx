@@ -1,11 +1,9 @@
 import { Box } from '@chakra-ui/core';
-import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 
-import { withApollo } from '../../src/graphql/apollo';
 import { ArticleReader } from '../../src/components/articles/ArticleReader';
 
-const ArticlePage: NextPage<{}> = () => {
+const ArticlePage: React.FC = () => {
   const router = useRouter();
 
   const { key } = router.query;
@@ -18,4 +16,4 @@ const ArticlePage: NextPage<{}> = () => {
   );
 };
 
-export default withApollo(ArticlePage);
+export default ArticlePage;
