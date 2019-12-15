@@ -1,7 +1,6 @@
 import { Box } from '@chakra-ui/core';
 import { useRouter } from 'next/router';
 
-import { withApollo } from '../../src/graphql/apollo';
 import { useGetDomainByKey } from '../../src/graphql/domains/domains.hooks';
 
 const DomainPage: React.FC = () => {
@@ -19,4 +18,4 @@ const DomainPage: React.FC = () => {
   );
 };
 
-export default withApollo(DomainPage);
+export default DomainPage;

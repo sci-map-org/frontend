@@ -1,6 +1,18 @@
+fragment DomainData on Domain {
+  _id
+  name
+  key
+  description
+}
+
 query getDomainByKey($key: String!) {
   getDomainByKey(key: $key) {
-    _id
-    name
+    ...DomainData
+  }
+}
+
+mutation createDomain($payload: CreateDomainPayload!) {
+  createDomain(payload: $payload) {
+    ...DomainData
   }
 }

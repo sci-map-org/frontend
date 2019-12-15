@@ -6,6 +6,7 @@ import NextLink from 'next/link';
 import { CurrentUserOperation } from '../../graphql/users/users.generated';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { HeaderLink } from './HeaderLink';
+import { UserRole } from '../../graphql/types';
 
 export const Header: React.FC = () => {
   const client = useApolloClient();
@@ -50,6 +51,13 @@ export const Header: React.FC = () => {
                   <Link>My articles</Link>
                 </MenuItem>
               </NextLink>
+              {currentUser && currentUser.role === UserRole.Admin && (
+                <NextLink href={`/domains/new`}>
+                  <MenuItem>
+                    <Link>New Domain</Link>
+                  </MenuItem>
+                </NextLink>
+              )}
               <MenuItem onClick={logout}>Logout</MenuItem>
             </MenuList>
           </Menu>

@@ -1,8 +1,12 @@
+fragment CurrentUserData on CurrentUser {
+  _id
+  email
+  key
+  role
+}
 query currentUser {
   currentUser {
-    _id
-    email
-    key
+    ...CurrentUserData
     # use fragmets, to sync with the return value of login
   }
 }
@@ -11,17 +15,13 @@ mutation login($email: String!, $password: String!) {
   login(email: $email, password: $password) {
     jwt
     currentUser {
-      _id
-      email
-      key
+      ...CurrentUserData
     }
   }
 }
 
 mutation register($payload: RegisterPayload!) {
   register(payload: $payload) {
-    _id
-    email
-    key
+    ...CurrentUserData
   }
 }
