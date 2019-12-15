@@ -1,5 +1,7 @@
-import { useApolloClient, useMutation, useQuery } from '@apollo/react-hooks';
+import { useApolloClient, useMutation } from '@apollo/react-hooks';
 import Cookies from 'js-cookie';
+
+import { useQuery } from '../hooks/useQuery';
 
 import {
   CurrentUserOperation,

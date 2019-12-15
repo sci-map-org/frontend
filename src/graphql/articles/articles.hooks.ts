@@ -1,4 +1,6 @@
-import { useMutation, useQuery } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/react-hooks';
+
+import { useQuery } from '../hooks/useQuery';
 
 import {
   CreateArticleMutationResult,
