@@ -23,7 +23,7 @@ export type GetArticleByKeyQueryVariables = {
 };
 
 export type GetArticleByKeyQueryResult = { __typename?: 'Query' } & {
-  getArticle: { __typename?: 'Article' } & ArticleViewerDataFragment;
+  getArticleByKey: { __typename?: 'Article' } & ArticleViewerDataFragment;
 };
 
 export type UpdateArticleMutationVariables = {
@@ -40,7 +40,7 @@ export type DeleteArticleMutationVariables = {
 };
 
 export type DeleteArticleMutationResult = { __typename?: 'Mutation' } & {
-  deleteArticle: { __typename?: 'Article' } & Pick<Types.Article, '_id' | 'key'>;
+  deleteArticle: { __typename?: 'DeleteArticleResponse' } & Pick<Types.DeleteArticleResponse, '_id' | 'success'>;
 };
 
 export type ListUserArticlePreviewsQueryVariables = {
@@ -96,7 +96,7 @@ export const CreateArticleOperation = gql`
 `;
 export const GetArticleByKeyOperation = gql`
   query getArticleByKey($key: String!) {
-    getArticle(key: $key) {
+    getArticleByKey(key: $key) {
       ...ArticleViewerData
     }
   }
@@ -114,7 +114,7 @@ export const DeleteArticleOperation = gql`
   mutation deleteArticle($id: String!) {
     deleteArticle(id: $id) {
       _id
-      key
+      success
     }
   }
 `;

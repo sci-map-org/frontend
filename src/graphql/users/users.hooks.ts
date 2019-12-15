@@ -13,7 +13,9 @@ import {
 } from './users.generated';
 
 export const useCurrentUser = () => {
-  const { loading, error, data } = useQuery<CurrentUserQueryResult>(CurrentUserOperation);
+  const { loading, error, data } = useQuery<CurrentUserQueryResult>(CurrentUserOperation, {
+    errorPolicy: 'all',
+  });
   return {
     loading,
     error,

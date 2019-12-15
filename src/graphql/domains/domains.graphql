@@ -1,0 +1,6 @@
+query getDomainByKey($key: String!) {
+  getDomainByKey(key: $key) {
+    _id
+    name
+  }
+}
