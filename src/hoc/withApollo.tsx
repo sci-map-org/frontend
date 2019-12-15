@@ -58,8 +58,8 @@ export function withApollo(AppComponent: typeof NextApp) {
         <AppTree
           pageProps={{
             ...pageProps,
-            apolloClient,
           }}
+          apolloClient={apolloClient}
         />
       );
     } catch (error) {
