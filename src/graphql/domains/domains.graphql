@@ -11,6 +11,14 @@ query getDomainByKey($key: String!) {
   }
 }
 
+query searchDomains($options: SearchDomainsOptions!) {
+  searchDomains(options: $options) {
+    items {
+      ...DomainData
+    }
+  }
+}
+
 mutation createDomain($payload: CreateDomainPayload!) {
   createDomain(payload: $payload) {
     ...DomainData

@@ -6,6 +6,9 @@ import {
   CreateDomainMutationResult,
   CreateDomainMutationVariables,
   CreateDomainOperation,
+  SearchDomainsQueryResult,
+  SearchDomainsQueryVariables,
+  SearchDomainsOperation,
 } from './domains.generated';
 
 export const useGetDomainByKey = (key: string) => {
@@ -17,6 +20,30 @@ export const useGetDomainByKey = (key: string) => {
     domain: !!data && data.getDomainByKey,
     loading,
     error,
+  };
+};
+
+export const useSearchDomains = () => {
+  const { loading, error, data, fetchMore } = useQuery<SearchDomainsQueryResult, SearchDomainsQueryVariables>(
+    SearchDomainsOperation,
+    {
+      variables: {
+        options: {
+          query: '',
+          pagination: {
+            offset: 0,
+            limit: 10,
+          },
+        },
+      },
+    }
+  );
+
+  return {
+    domains: !!data && !!data.searchDomains && data.searchDomains.items,
+    loading,
+    error,
+    fetchMore,
   };
 };
 

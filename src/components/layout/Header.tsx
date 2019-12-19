@@ -25,6 +25,7 @@ export const Header: React.FC = () => {
     <Box py={2} bg="gray.200" pl={2} fontSize="lg" display="flex" flexDirection="row">
       <HeaderLink to="/">Apollo Project</HeaderLink>
       <Box flexGrow={1} />
+      <HeaderLink to="/domains">Domains</HeaderLink>
       <HeaderLink to="/about/intro">About</HeaderLink>
       {!!currentUser ? (
         <Box pr="2">
