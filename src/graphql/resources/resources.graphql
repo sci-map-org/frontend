@@ -1,0 +1,22 @@
+fragment ResourceData on Resource {
+  _id
+  name
+}
+
+query getResourceById($id: String!) {
+  getResourceById(id: $id) {
+    ...ResourceData
+  }
+}
+
+mutation createResource($payload: CreateResourcePayload!) {
+  createResource(payload: $payload) {
+    ...ResourceData
+  }
+}
+
+mutation addResourceToDomain($domainId: String!, $payload: CreateResourcePayload!) {
+  addResourceToDomain(domainId: $domainId, payload: $payload) {
+    ...ResourceData
+  }
+}
