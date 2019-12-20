@@ -47,6 +47,7 @@ export type CreateResourcePayload = {
   mediaType: ResourceMediaType,
   url: Scalars['String'],
   description?: Maybe<Scalars['String']>,
+  approaches?: Maybe<Array<PedagogicalApproach>>,
 };
 
 export type CurrentUser = {
@@ -191,6 +192,17 @@ export type PaginationOptions = {
   offset?: Maybe<Scalars['Int']>,
 };
 
+export enum PedagogicalApproach {
+  Practical = 'practical',
+  Theoretical = 'theoretical',
+  Intuitive = 'intuitive',
+  Gamified = 'gamified',
+  Visual = 'visual',
+  Interactive = 'interactive',
+  Abstract = 'abstract',
+  Detailed = 'detailed'
+}
+
 export type Query = {
    __typename?: 'Query',
   currentUser: CurrentUser,
@@ -247,6 +259,7 @@ export type Resource = {
   mediaType: ResourceMediaType,
   url: Scalars['String'],
   description?: Maybe<Scalars['String']>,
+  approaches?: Maybe<Array<PedagogicalApproach>>,
 };
 
 export enum ResourceMediaType {

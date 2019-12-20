@@ -86,7 +86,7 @@ export const NewResource: React.FC<NewResourceProps> = ({ domain }) => {
               });
             } else {
               createResource({ variables: { payload } }).then(({ data }) => {
-                data && Router.push(`/resouces/${data.createResource._id}`);
+                data && Router.push(`/resources/${data.createResource._id}`);
               });
             }
           }}

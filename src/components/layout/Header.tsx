@@ -59,6 +59,11 @@ export const Header: React.FC = () => {
                   </MenuItem>
                 </NextLink>
               )}
+              <NextLink href={`/resources/new`}>
+                <MenuItem>
+                  <Link>New Resource</Link>
+                </MenuItem>
+              </NextLink>
               <MenuItem onClick={logout}>Logout</MenuItem>
             </MenuList>
           </Menu>
