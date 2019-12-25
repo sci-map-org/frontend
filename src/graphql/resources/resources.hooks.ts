@@ -9,6 +9,9 @@ import {
   GetResourceByIdQueryResult,
   GetResourceByIdQueryVariables,
   GetResourceByIdOperation,
+  ListDomainResourcePreviewsQueryResult,
+  ListDomainResourcePreviewsQueryVariables,
+  ListDomainResourcePreviewsOperation,
 } from './resources.generated';
 
 export const useGetResourceById = (_id: string) => {
@@ -20,6 +23,26 @@ export const useGetResourceById = (_id: string) => {
     resource: !!data && data.getResourceById,
     loading,
     error,
+  };
+};
+
+export const useListDomainResourcesPreviews = (domainKey: string) => {
+  const { loading, error, data, fetchMore } = useQuery<
+    ListDomainResourcePreviewsQueryResult,
+    ListDomainResourcePreviewsQueryVariables
+  >(ListDomainResourcePreviewsOperation, {
+    variables: {
+      domainKey,
+      options: {
+        pagination: {},
+      },
+    },
+  });
+  return {
+    resourcePreviews: !!data && !!data.getDomainByKey.resources && data.getDomainByKey.resources.items,
+    loading,
+    error,
+    fetchMore,
   };
 };
 

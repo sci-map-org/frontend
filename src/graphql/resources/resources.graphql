@@ -1,22 +1,44 @@
-fragment ResourceData on Resource {
+fragment Resource on Resource {
   _id
   name
+  type
+  mediaType
+  url
+  description
+}
+
+fragment ResourcePreview on Resource {
+  _id
+  name
+  type
 }
 
 query getResourceById($id: String!) {
   getResourceById(id: $id) {
-    ...ResourceData
+    ...Resource
+  }
+}
+
+query listDomainResourcePreviews($domainKey: String!, $options: DomainResourcesOptions!) {
+  getDomainByKey(key: $domainKey) {
+    _id
+    name
+    resources(options: $options) {
+      items {
+        ...ResourcePreview
+      }
+    }
   }
 }
 
 mutation createResource($payload: CreateResourcePayload!) {
   createResource(payload: $payload) {
-    ...ResourceData
+    ...Resource
   }
 }
 
 mutation addResourceToDomain($domainId: String!, $payload: CreateResourcePayload!) {
   addResourceToDomain(domainId: $domainId, payload: $payload) {
-    ...ResourceData
+    ...Resource
   }
 }
