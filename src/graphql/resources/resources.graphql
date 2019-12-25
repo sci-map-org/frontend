@@ -1,0 +1,44 @@
+fragment Resource on Resource {
+  _id
+  name
+  type
+  mediaType
+  url
+  description
+}
+
+fragment ResourcePreview on Resource {
+  _id
+  name
+  type
+}
+
+query getResourceById($id: String!) {
+  getResourceById(id: $id) {
+    ...Resource
+  }
+}
+
+query listDomainResourcePreviews($domainKey: String!, $options: DomainResourcesOptions!) {
+  getDomainByKey(key: $domainKey) {
+    _id
+    name
+    resources(options: $options) {
+      items {
+        ...ResourcePreview
+      }
+    }
+  }
+}
+
+mutation createResource($payload: CreateResourcePayload!) {
+  createResource(payload: $payload) {
+    ...Resource
+  }
+}
+
+mutation addResourceToDomain($domainId: String!, $payload: CreateResourcePayload!) {
+  addResourceToDomain(domainId: $domainId, payload: $payload) {
+    ...Resource
+  }
+}

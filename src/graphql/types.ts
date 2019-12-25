@@ -29,10 +29,23 @@ export enum ArticleContentType {
   Markdown = 'markdown'
 }
 
+export type Concept = {
+   __typename?: 'Concept',
+  _id: Scalars['String'],
+  name: Scalars['String'],
+  description?: Maybe<Scalars['String']>,
+  domain?: Maybe<Domain>,
+};
+
 export type CreateArticlePayload = {
   contentType: ArticleContentType,
   title: Scalars['String'],
   content: Scalars['String'],
+};
+
+export type CreateConceptPayload = {
+  name: Scalars['String'],
+  description?: Maybe<Scalars['String']>,
 };
 
 export type CreateDomainPayload = {
@@ -47,6 +60,7 @@ export type CreateResourcePayload = {
   mediaType: ResourceMediaType,
   url: Scalars['String'],
   description?: Maybe<Scalars['String']>,
+  approaches?: Maybe<Array<PedagogicalApproach>>,
 };
 
 export type CurrentUser = {
@@ -70,6 +84,12 @@ export type DeleteArticleResponse = {
   success: Scalars['Boolean'],
 };
 
+export type DeleteConceptResult = {
+   __typename?: 'DeleteConceptResult',
+  success: Scalars['Boolean'],
+  _id: Scalars['String'],
+};
+
 export type DeleteDomainResponse = {
    __typename?: 'DeleteDomainResponse',
   _id: Scalars['String'],
@@ -82,6 +102,36 @@ export type Domain = {
   name: Scalars['String'],
   key: Scalars['String'],
   description?: Maybe<Scalars['String']>,
+  concepts?: Maybe<DomainConceptsResults>,
+  resources?: Maybe<DomainResourcesResults>,
+};
+
+
+export type DomainConceptsArgs = {
+  options: DomainConceptsOptions
+};
+
+
+export type DomainResourcesArgs = {
+  options: DomainResourcesOptions
+};
+
+export type DomainConceptsOptions = {
+  pagination: PaginationOptions,
+};
+
+export type DomainConceptsResults = {
+   __typename?: 'DomainConceptsResults',
+  items: Array<Concept>,
+};
+
+export type DomainResourcesOptions = {
+  pagination: PaginationOptions,
+};
+
+export type DomainResourcesResults = {
+   __typename?: 'DomainResourcesResults',
+  items: Array<Resource>,
 };
 
 export type ListArticlesFilter = {
@@ -118,6 +168,9 @@ export type Mutation = {
   createResource: Resource,
   addResourceToDomain: Resource,
   attachResourceToDomain: Resource,
+  addConceptToDomain: Concept,
+  updateConcept: Concept,
+  deleteConcept: DeleteConceptResult,
 };
 
 
@@ -186,10 +239,38 @@ export type MutationAttachResourceToDomainArgs = {
   resourceId: Scalars['String']
 };
 
+
+export type MutationAddConceptToDomainArgs = {
+  domainId: Scalars['String'],
+  payload: CreateConceptPayload
+};
+
+
+export type MutationUpdateConceptArgs = {
+  _id: Scalars['String'],
+  payload: UpdateConceptPayload
+};
+
+
+export type MutationDeleteConceptArgs = {
+  _id: Scalars['String']
+};
+
 export type PaginationOptions = {
   limit?: Maybe<Scalars['Int']>,
   offset?: Maybe<Scalars['Int']>,
 };
+
+export enum PedagogicalApproach {
+  Practical = 'practical',
+  Theoretical = 'theoretical',
+  Intuitive = 'intuitive',
+  Gamified = 'gamified',
+  Visual = 'visual',
+  Interactive = 'interactive',
+  Abstract = 'abstract',
+  Detailed = 'detailed'
+}
 
 export type Query = {
    __typename?: 'Query',
@@ -200,6 +281,7 @@ export type Query = {
   searchDomains: SearchDomainsResult,
   getDomainByKey: Domain,
   getResourceById: Resource,
+  getConcept: Concept,
 };
 
 
@@ -232,6 +314,11 @@ export type QueryGetResourceByIdArgs = {
   id: Scalars['String']
 };
 
+
+export type QueryGetConceptArgs = {
+  _id: Scalars['String']
+};
+
 export type RegisterPayload = {
   displayName: Scalars['String'],
   key: Scalars['String'],
@@ -247,6 +334,7 @@ export type Resource = {
   mediaType: ResourceMediaType,
   url: Scalars['String'],
   description?: Maybe<Scalars['String']>,
+  approaches?: Maybe<Array<PedagogicalApproach>>,
 };
 
 export enum ResourceMediaType {
@@ -273,6 +361,11 @@ export type SearchDomainsResult = {
 export type UpdateArticlePayload = {
   title?: Maybe<Scalars['String']>,
   content?: Maybe<Scalars['String']>,
+};
+
+export type UpdateConceptPayload = {
+  name?: Maybe<Scalars['String']>,
+  description?: Maybe<Scalars['String']>,
 };
 
 export type UpdateDomainPayload = {

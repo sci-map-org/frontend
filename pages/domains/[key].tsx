@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 
 import { useGetDomainByKey } from '../../src/graphql/domains/domains.hooks';
 import Link from 'next/link';
+import { ResourceList } from '../../src/components/resources/ResourceList';
 
 const DomainPage: React.FC = () => {
   const router = useRouter();
@@ -22,6 +23,7 @@ const DomainPage: React.FC = () => {
           <Button>+ Add resource</Button>
         </Link>
       </Flex>
+      <ResourceList domainKey={domain.key} />
     </Box>
   );
 };
