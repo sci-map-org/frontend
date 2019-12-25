@@ -39,7 +39,7 @@ export const useGetArticleByKey = (key: string) => {
     { variables: { key } }
   );
   return {
-    article: !!data && data.getArticle,
+    article: !!data && data.getArticleByKey,
     loading,
     error,
   };

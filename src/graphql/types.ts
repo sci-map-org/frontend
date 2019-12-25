@@ -8,6 +8,13 @@ export type Scalars = {
   Float: number,
 };
 
+export type AdminUpdateUserPayload = {
+  displayName?: Maybe<Scalars['String']>,
+  key?: Maybe<Scalars['String']>,
+  email?: Maybe<Scalars['String']>,
+  role?: Maybe<UserRole>,
+};
+
 export type Article = {
    __typename?: 'Article',
   _id: Scalars['String'],
@@ -28,18 +35,53 @@ export type CreateArticlePayload = {
   content: Scalars['String'],
 };
 
+export type CreateDomainPayload = {
+  name: Scalars['String'],
+  key: Scalars['String'],
+  description?: Maybe<Scalars['String']>,
+};
+
+export type CreateResourcePayload = {
+  name: Scalars['String'],
+  type: ResourceType,
+  mediaType: ResourceMediaType,
+  url: Scalars['String'],
+  description?: Maybe<Scalars['String']>,
+};
+
 export type CurrentUser = {
    __typename?: 'CurrentUser',
   _id: Scalars['String'],
   email: Scalars['String'],
   displayName: Scalars['String'],
   key: Scalars['String'],
+  role: UserRole,
   articles?: Maybe<ListArticlesResult>,
 };
 
 
 export type CurrentUserArticlesArgs = {
   options: ListArticlesOptions
+};
+
+export type DeleteArticleResponse = {
+   __typename?: 'DeleteArticleResponse',
+  _id: Scalars['String'],
+  success: Scalars['Boolean'],
+};
+
+export type DeleteDomainResponse = {
+   __typename?: 'DeleteDomainResponse',
+  _id: Scalars['String'],
+  success: Scalars['Boolean'],
+};
+
+export type Domain = {
+   __typename?: 'Domain',
+  _id: Scalars['String'],
+  name: Scalars['String'],
+  key: Scalars['String'],
+  description?: Maybe<Scalars['String']>,
 };
 
 export type ListArticlesFilter = {
@@ -66,9 +108,16 @@ export type Mutation = {
    __typename?: 'Mutation',
   login: LoginResponse,
   register: CurrentUser,
+  adminUpdateUser: User,
   createArticle: Article,
   updateArticle: Article,
-  deleteArticle: Article,
+  deleteArticle: DeleteArticleResponse,
+  createDomain: Domain,
+  updateDomain: Domain,
+  deleteDomain: DeleteDomainResponse,
+  createResource: Resource,
+  addResourceToDomain: Resource,
+  attachResourceToDomain: Resource,
 };
 
 
@@ -80,6 +129,12 @@ export type MutationLoginArgs = {
 
 export type MutationRegisterArgs = {
   payload: RegisterPayload
+};
+
+
+export type MutationAdminUpdateUserArgs = {
+  id: Scalars['String'],
+  payload: AdminUpdateUserPayload
 };
 
 
@@ -98,6 +153,39 @@ export type MutationDeleteArticleArgs = {
   id: Scalars['String']
 };
 
+
+export type MutationCreateDomainArgs = {
+  payload: CreateDomainPayload
+};
+
+
+export type MutationUpdateDomainArgs = {
+  id: Scalars['String'],
+  payload: UpdateDomainPayload
+};
+
+
+export type MutationDeleteDomainArgs = {
+  id: Scalars['String']
+};
+
+
+export type MutationCreateResourceArgs = {
+  payload: CreateResourcePayload
+};
+
+
+export type MutationAddResourceToDomainArgs = {
+  domainId: Scalars['String'],
+  payload: CreateResourcePayload
+};
+
+
+export type MutationAttachResourceToDomainArgs = {
+  domainId: Scalars['String'],
+  resourceId: Scalars['String']
+};
+
 export type PaginationOptions = {
   limit?: Maybe<Scalars['Int']>,
   offset?: Maybe<Scalars['Int']>,
@@ -107,8 +195,11 @@ export type Query = {
    __typename?: 'Query',
   currentUser: CurrentUser,
   getUser: User,
-  getArticle: Article,
+  getArticleByKey: Article,
   listArticles: ListArticlesResult,
+  searchDomains: SearchDomainsResult,
+  getDomainByKey: Domain,
+  getResourceById: Resource,
 };
 
 
@@ -117,13 +208,28 @@ export type QueryGetUserArgs = {
 };
 
 
-export type QueryGetArticleArgs = {
+export type QueryGetArticleByKeyArgs = {
   key: Scalars['String']
 };
 
 
 export type QueryListArticlesArgs = {
   options: ListArticlesOptions
+};
+
+
+export type QuerySearchDomainsArgs = {
+  options: SearchDomainsOptions
+};
+
+
+export type QueryGetDomainByKeyArgs = {
+  key: Scalars['String']
+};
+
+
+export type QueryGetResourceByIdArgs = {
+  id: Scalars['String']
 };
 
 export type RegisterPayload = {
@@ -133,9 +239,46 @@ export type RegisterPayload = {
   password: Scalars['String'],
 };
 
+export type Resource = {
+   __typename?: 'Resource',
+  _id: Scalars['String'],
+  name: Scalars['String'],
+  type: ResourceType,
+  mediaType: ResourceMediaType,
+  url: Scalars['String'],
+  description?: Maybe<Scalars['String']>,
+};
+
+export enum ResourceMediaType {
+  Video = 'video',
+  Text = 'text'
+}
+
+export enum ResourceType {
+  Article = 'article',
+  Tutorial = 'tutorial',
+  Introduction = 'introduction'
+}
+
+export type SearchDomainsOptions = {
+  query?: Maybe<Scalars['String']>,
+  pagination: PaginationOptions,
+};
+
+export type SearchDomainsResult = {
+   __typename?: 'SearchDomainsResult',
+  items: Array<Domain>,
+};
+
 export type UpdateArticlePayload = {
   title?: Maybe<Scalars['String']>,
   content?: Maybe<Scalars['String']>,
+};
+
+export type UpdateDomainPayload = {
+  name?: Maybe<Scalars['String']>,
+  key?: Maybe<Scalars['String']>,
+  description?: Maybe<Scalars['String']>,
 };
 
 export type User = {
@@ -151,3 +294,8 @@ export type User = {
 export type UserArticlesArgs = {
   options: ListArticlesOptions
 };
+
+export enum UserRole {
+  Admin = 'ADMIN',
+  User = 'USER'
+}

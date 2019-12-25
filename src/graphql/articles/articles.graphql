@@ -31,7 +31,7 @@ mutation createArticle($payload: CreateArticlePayload!) {
 }
 
 query getArticleByKey($key: String!) {
-  getArticle(key: $key) {
+  getArticleByKey(key: $key) {
     ...ArticleViewerData
   }
 }
@@ -45,7 +45,7 @@ mutation updateArticle($id: String!, $payload: UpdateArticlePayload!) {
 mutation deleteArticle($id: String!) {
   deleteArticle(id: $id) {
     _id
-    key
+    success
   }
 }
 
