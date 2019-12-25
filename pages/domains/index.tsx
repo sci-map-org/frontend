@@ -16,7 +16,7 @@ import {
   Flex,
 } from '@chakra-ui/core';
 import NextLink from 'next/link';
-
+import Router from 'next/router';
 import { useSearchDomains } from '../../src/graphql/domains/domains.hooks';
 import { UserRole } from '../../src/graphql/types';
 import { useCurrentUser } from '../../src/graphql/users/users.hooks';
@@ -71,6 +71,7 @@ const DomainsPage: React.FC = () => {
             })}
           <Box></Box>
         </Flex>
+        <Button onClick={() => Router.push('/domains/new')}>+ New Domain</Button>
       </Stack>
     </Box>
   );
