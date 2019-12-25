@@ -3,7 +3,8 @@ import { Box, Text, Stack, Flex, Link } from '@chakra-ui/core';
 import { ResourceList } from '../../../../src/components/resources/ResourceList';
 import { useGetDomainByKey } from '../../../../src/graphql/domains/domains.hooks';
 import NextLink from 'next/link';
-export const ResourceListPage: React.FC = () => {
+
+const ResourceListPage: React.FC = () => {
   const router = useRouter();
 
   const { key } = router.query;
