@@ -29,7 +29,7 @@ const ResourceListPage: React.FC = () => {
         </Box>
         <Box></Box>
       </Flex>
-      <Box width="80%">
+      <Box width="80%" py={5}>
         <ResourceList domainKey={domain.key} />
       </Box>
     </Box>

@@ -36,7 +36,7 @@ export const ArticlePreview: React.FC<ArticlePreviewProps> = ({ articlePreview }
       )}
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent bg="inherit">
+        <ModalContent bg="white">
           <ModalHeader>Delete Article</ModalHeader>
           <ModalCloseButton />
           <ModalBody>

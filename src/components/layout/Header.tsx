@@ -36,7 +36,7 @@ export const Header: React.FC = () => {
                 <AvatarBadge bg="green.500" size="0.7rem" />
               </Avatar> */}
             </MenuButton>
-            <MenuList placement="bottom-end" bg="inherit">
+            <MenuList placement="bottom-end" bg="white">
               <NextLink href={`/profile/${currentUser.key}`}>
                 <MenuItem>
                   <Link>Profile</Link>
