@@ -12,6 +12,9 @@ import {
   ListDomainResourcePreviewsQueryResult,
   ListDomainResourcePreviewsQueryVariables,
   ListDomainResourcePreviewsOperation,
+  AttachResourceCoversConceptsMutationResult,
+  AttachResourceCoversConceptsMutationVariables,
+  AttachResourceCoversConceptsOperation,
 } from './resources.generated';
 
 export const useGetResourceById = (_id: string) => {
@@ -69,5 +72,18 @@ export const useAddResourceToDomain = () => {
     loading,
     error,
     createdResource: data && data.addResourceToDomain,
+  };
+};
+
+export const useAttachResourceCoversConcepts = () => {
+  const [attachResourceCoversConcepts, { loading, error, data }] = useMutation<
+    AttachResourceCoversConceptsMutationResult,
+    AttachResourceCoversConceptsMutationVariables
+  >(AttachResourceCoversConceptsOperation);
+  return {
+    attachResourceCoversConcepts,
+    loading,
+    error,
+    updatedResource: data && data.attachResourceCoversConcepts,
   };
 };

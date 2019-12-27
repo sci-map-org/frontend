@@ -1,9 +1,9 @@
-import { ResourcePreviewFragment } from '../../graphql/resources/resources.generated';
+import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.generated';
 import { Box, Link } from '@chakra-ui/core';
 import NextLink from 'next/link';
 
 interface ResourcePreviewProps {
-  resourcePreview: ResourcePreviewFragment;
+  resourcePreview: ResourcePreviewDataFragment;
 }
 export const ResourcePreview: React.FC<ResourcePreviewProps> = ({ resourcePreview }) => {
   return (

@@ -1,4 +1,4 @@
-fragment Resource on Resource {
+fragment ResourceData on Resource {
   _id
   name
   type
@@ -7,7 +7,7 @@ fragment Resource on Resource {
   description
 }
 
-fragment ResourcePreview on Resource {
+fragment ResourcePreviewData on Resource {
   _id
   name
   type
@@ -15,7 +15,7 @@ fragment ResourcePreview on Resource {
 
 query getResourceById($id: String!) {
   getResourceById(id: $id) {
-    ...Resource
+    ...ResourceData
   }
 }
 
@@ -25,7 +25,7 @@ query listDomainResourcePreviews($domainKey: String!, $options: DomainResourcesO
     name
     resources(options: $options) {
       items {
-        ...ResourcePreview
+        ...ResourcePreviewData
       }
     }
   }
@@ -33,12 +33,18 @@ query listDomainResourcePreviews($domainKey: String!, $options: DomainResourcesO
 
 mutation createResource($payload: CreateResourcePayload!) {
   createResource(payload: $payload) {
-    ...Resource
+    ...ResourceData
   }
 }
 
 mutation addResourceToDomain($domainId: String!, $payload: CreateResourcePayload!) {
   addResourceToDomain(domainId: $domainId, payload: $payload) {
-    ...Resource
+    ...ResourceData
+  }
+}
+
+mutation attachResourceCoversConcepts($resourceId: String!, $conceptIds: [String!]!) {
+  attachResourceCoversConcepts(resourceId: $resourceId, conceptIds: $conceptIds) {
+    ...ResourceData
   }
 }

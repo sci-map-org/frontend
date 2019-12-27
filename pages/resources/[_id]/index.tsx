@@ -1,6 +1,6 @@
 import { Box, Flex, Text } from '@chakra-ui/core';
 import { useRouter } from 'next/router';
-import { useGetResourceById } from '../../src/graphql/resources/resources.hooks';
+import { useGetResourceById } from '../../../src/graphql/resources/resources.hooks';
 
 const DomainPage: React.FC = () => {
   const router = useRouter();

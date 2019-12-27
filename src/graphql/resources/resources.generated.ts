@@ -1,18 +1,18 @@
 import * as Types from '../types';
 
-export type ResourceFragment = { __typename?: 'Resource' } & Pick<
+export type ResourceDataFragment = { __typename?: 'Resource' } & Pick<
   Types.Resource,
   '_id' | 'name' | 'type' | 'mediaType' | 'url' | 'description'
 >;
 
-export type ResourcePreviewFragment = { __typename?: 'Resource' } & Pick<Types.Resource, '_id' | 'name' | 'type'>;
+export type ResourcePreviewDataFragment = { __typename?: 'Resource' } & Pick<Types.Resource, '_id' | 'name' | 'type'>;
 
 export type GetResourceByIdQueryVariables = {
   id: Types.Scalars['String'];
 };
 
 export type GetResourceByIdQueryResult = { __typename?: 'Query' } & {
-  getResourceById: { __typename?: 'Resource' } & ResourceFragment;
+  getResourceById: { __typename?: 'Resource' } & ResourceDataFragment;
 };
 
 export type ListDomainResourcePreviewsQueryVariables = {
@@ -24,7 +24,7 @@ export type ListDomainResourcePreviewsQueryResult = { __typename?: 'Query' } & {
   getDomainByKey: { __typename?: 'Domain' } & Pick<Types.Domain, '_id' | 'name'> & {
       resources: Types.Maybe<
         { __typename?: 'DomainResourcesResults' } & {
-          items: Array<{ __typename?: 'Resource' } & ResourcePreviewFragment>;
+          items: Array<{ __typename?: 'Resource' } & ResourcePreviewDataFragment>;
         }
       >;
     };
@@ -35,7 +35,7 @@ export type CreateResourceMutationVariables = {
 };
 
 export type CreateResourceMutationResult = { __typename?: 'Mutation' } & {
-  createResource: { __typename?: 'Resource' } & ResourceFragment;
+  createResource: { __typename?: 'Resource' } & ResourceDataFragment;
 };
 
 export type AddResourceToDomainMutationVariables = {
@@ -44,12 +44,21 @@ export type AddResourceToDomainMutationVariables = {
 };
 
 export type AddResourceToDomainMutationResult = { __typename?: 'Mutation' } & {
-  addResourceToDomain: { __typename?: 'Resource' } & ResourceFragment;
+  addResourceToDomain: { __typename?: 'Resource' } & ResourceDataFragment;
+};
+
+export type AttachResourceCoversConceptsMutationVariables = {
+  resourceId: Types.Scalars['String'];
+  conceptIds: Array<Types.Scalars['String']>;
+};
+
+export type AttachResourceCoversConceptsMutationResult = { __typename?: 'Mutation' } & {
+  attachResourceCoversConcepts: { __typename?: 'Resource' } & ResourceDataFragment;
 };
 
 import gql from 'graphql-tag';
-export const Resource = gql`
-  fragment Resource on Resource {
+export const ResourceData = gql`
+  fragment ResourceData on Resource {
     _id
     name
     type
@@ -58,8 +67,8 @@ export const Resource = gql`
     description
   }
 `;
-export const ResourcePreview = gql`
-  fragment ResourcePreview on Resource {
+export const ResourcePreviewData = gql`
+  fragment ResourcePreviewData on Resource {
     _id
     name
     type
@@ -68,10 +77,10 @@ export const ResourcePreview = gql`
 export const GetResourceByIdOperation = gql`
   query getResourceById($id: String!) {
     getResourceById(id: $id) {
-      ...Resource
+      ...ResourceData
     }
   }
-  ${Resource}
+  ${ResourceData}
 `;
 export const ListDomainResourcePreviewsOperation = gql`
   query listDomainResourcePreviews($domainKey: String!, $options: DomainResourcesOptions!) {
@@ -80,26 +89,34 @@ export const ListDomainResourcePreviewsOperation = gql`
       name
       resources(options: $options) {
         items {
-          ...ResourcePreview
+          ...ResourcePreviewData
         }
       }
     }
   }
-  ${ResourcePreview}
+  ${ResourcePreviewData}
 `;
 export const CreateResourceOperation = gql`
   mutation createResource($payload: CreateResourcePayload!) {
     createResource(payload: $payload) {
-      ...Resource
+      ...ResourceData
     }
   }
-  ${Resource}
+  ${ResourceData}
 `;
 export const AddResourceToDomainOperation = gql`
   mutation addResourceToDomain($domainId: String!, $payload: CreateResourcePayload!) {
     addResourceToDomain(domainId: $domainId, payload: $payload) {
-      ...Resource
+      ...ResourceData
     }
   }
-  ${Resource}
+  ${ResourceData}
+`;
+export const AttachResourceCoversConceptsOperation = gql`
+  mutation attachResourceCoversConcepts($resourceId: String!, $conceptIds: [String!]!) {
+    attachResourceCoversConcepts(resourceId: $resourceId, conceptIds: $conceptIds) {
+      ...ResourceData
+    }
+  }
+  ${ResourceData}
 `;

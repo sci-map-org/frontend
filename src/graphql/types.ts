@@ -35,6 +35,21 @@ export type Concept = {
   name: Scalars['String'],
   description?: Maybe<Scalars['String']>,
   domain?: Maybe<Domain>,
+  coveredByResources?: Maybe<ConceptCoveredByResourcesResults>,
+};
+
+
+export type ConceptCoveredByResourcesArgs = {
+  options: ConceptCoveredByResourcesOptions
+};
+
+export type ConceptCoveredByResourcesOptions = {
+  pagination?: Maybe<PaginationOptions>,
+};
+
+export type ConceptCoveredByResourcesResults = {
+   __typename?: 'ConceptCoveredByResourcesResults',
+  items: Array<Resource>,
 };
 
 export type CreateArticlePayload = {
@@ -168,6 +183,8 @@ export type Mutation = {
   createResource: Resource,
   addResourceToDomain: Resource,
   attachResourceToDomain: Resource,
+  attachResourceCoversConcepts: Resource,
+  detachResourceCoversConcepts: Resource,
   addConceptToDomain: Concept,
   updateConcept: Concept,
   deleteConcept: DeleteConceptResult,
@@ -237,6 +254,18 @@ export type MutationAddResourceToDomainArgs = {
 export type MutationAttachResourceToDomainArgs = {
   domainId: Scalars['String'],
   resourceId: Scalars['String']
+};
+
+
+export type MutationAttachResourceCoversConceptsArgs = {
+  resourceId: Scalars['String'],
+  conceptIds: Array<Scalars['String']>
+};
+
+
+export type MutationDetachResourceCoversConceptsArgs = {
+  resourceId: Scalars['String'],
+  conceptIds: Array<Scalars['String']>
 };
 
 
@@ -335,6 +364,21 @@ export type Resource = {
   url: Scalars['String'],
   description?: Maybe<Scalars['String']>,
   approaches?: Maybe<Array<PedagogicalApproach>>,
+  coveredConcepts?: Maybe<ResourceCoveredConceptsResults>,
+};
+
+
+export type ResourceCoveredConceptsArgs = {
+  options: ResourceCoveredConceptsOptions
+};
+
+export type ResourceCoveredConceptsOptions = {
+  pagination?: Maybe<PaginationOptions>,
+};
+
+export type ResourceCoveredConceptsResults = {
+   __typename?: 'ResourceCoveredConceptsResults',
+  items: Array<Concept>,
 };
 
 export enum ResourceMediaType {
