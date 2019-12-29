@@ -15,6 +15,40 @@ export type GetResourceByIdQueryResult = { __typename?: 'Query' } & {
   getResourceById: { __typename?: 'Resource' } & ResourceDataFragment;
 };
 
+export type GetResourceWithCoveredConceptsQueryVariables = {
+  id: Types.Scalars['String'];
+  coveredConceptsOptions: Types.ResourceCoveredConceptsOptions;
+  domainsOptions: Types.ResourceDomainsOptions;
+  domainConceptsOptions: Types.DomainConceptsOptions;
+};
+
+export type GetResourceWithCoveredConceptsQueryResult = { __typename?: 'Query' } & {
+  getResourceById: { __typename?: 'Resource' } & {
+    coveredConcepts: Types.Maybe<
+      { __typename?: 'ResourceCoveredConceptsResults' } & {
+        items: Array<
+          { __typename?: 'Concept' } & Pick<Types.Concept, '_id' | 'name'> & {
+              domain: Types.Maybe<{ __typename?: 'Domain' } & Pick<Types.Domain, '_id' | 'key' | 'name'>>;
+            }
+        >;
+      }
+    >;
+    domains: Types.Maybe<
+      { __typename?: 'ResourceDomainsResults' } & {
+        items: Array<
+          { __typename?: 'Domain' } & Pick<Types.Domain, '_id' | 'key' | 'name'> & {
+              concepts: Types.Maybe<
+                { __typename?: 'DomainConceptsResults' } & {
+                  items: Array<{ __typename?: 'Concept' } & Pick<Types.Concept, '_id' | 'name'>>;
+                }
+              >;
+            }
+        >;
+      }
+    >;
+  } & ResourceDataFragment;
+};
+
 export type ListDomainResourcePreviewsQueryVariables = {
   domainKey: Types.Scalars['String'];
   options: Types.DomainResourcesOptions;
@@ -38,6 +72,15 @@ export type CreateResourceMutationResult = { __typename?: 'Mutation' } & {
   createResource: { __typename?: 'Resource' } & ResourceDataFragment;
 };
 
+export type UpdateResourceMutationVariables = {
+  _id: Types.Scalars['String'];
+  payload: Types.UpdateResourcePayload;
+};
+
+export type UpdateResourceMutationResult = { __typename?: 'Mutation' } & {
+  updateResource: { __typename?: 'Resource' } & ResourceDataFragment;
+};
+
 export type AddResourceToDomainMutationVariables = {
   domainId: Types.Scalars['String'];
   payload: Types.CreateResourcePayload;
@@ -53,7 +96,28 @@ export type AttachResourceCoversConceptsMutationVariables = {
 };
 
 export type AttachResourceCoversConceptsMutationResult = { __typename?: 'Mutation' } & {
-  attachResourceCoversConcepts: { __typename?: 'Resource' } & ResourceDataFragment;
+  attachResourceCoversConcepts: { __typename?: 'Resource' } & {
+    coveredConcepts: Types.Maybe<
+      { __typename?: 'ResourceCoveredConceptsResults' } & {
+        items: Array<{ __typename?: 'Concept' } & Pick<Types.Concept, '_id' | 'name'>>;
+      }
+    >;
+  } & ResourceDataFragment;
+};
+
+export type DetachResourceCoversConceptsMutationVariables = {
+  resourceId: Types.Scalars['String'];
+  conceptIds: Array<Types.Scalars['String']>;
+};
+
+export type DetachResourceCoversConceptsMutationResult = { __typename?: 'Mutation' } & {
+  detachResourceCoversConcepts: { __typename?: 'Resource' } & {
+    coveredConcepts: Types.Maybe<
+      { __typename?: 'ResourceCoveredConceptsResults' } & {
+        items: Array<{ __typename?: 'Concept' } & Pick<Types.Concept, '_id' | 'name'>>;
+      }
+    >;
+  } & ResourceDataFragment;
 };
 
 import gql from 'graphql-tag';
@@ -82,6 +146,43 @@ export const GetResourceByIdOperation = gql`
   }
   ${ResourceData}
 `;
+export const GetResourceWithCoveredConceptsOperation = gql`
+  query getResourceWithCoveredConcepts(
+    $id: String!
+    $coveredConceptsOptions: ResourceCoveredConceptsOptions!
+    $domainsOptions: ResourceDomainsOptions!
+    $domainConceptsOptions: DomainConceptsOptions!
+  ) {
+    getResourceById(id: $id) {
+      ...ResourceData
+      coveredConcepts(options: $coveredConceptsOptions) {
+        items {
+          _id
+          name
+          domain {
+            _id
+            key
+            name
+          }
+        }
+      }
+      domains(options: $domainsOptions) {
+        items {
+          _id
+          key
+          name
+          concepts(options: $domainConceptsOptions) {
+            items {
+              _id
+              name
+            }
+          }
+        }
+      }
+    }
+  }
+  ${ResourceData}
+`;
 export const ListDomainResourcePreviewsOperation = gql`
   query listDomainResourcePreviews($domainKey: String!, $options: DomainResourcesOptions!) {
     getDomainByKey(key: $domainKey) {
@@ -104,6 +205,14 @@ export const CreateResourceOperation = gql`
   }
   ${ResourceData}
 `;
+export const UpdateResourceOperation = gql`
+  mutation updateResource($_id: String!, $payload: UpdateResourcePayload!) {
+    updateResource(_id: $_id, payload: $payload) {
+      ...ResourceData
+    }
+  }
+  ${ResourceData}
+`;
 export const AddResourceToDomainOperation = gql`
   mutation addResourceToDomain($domainId: String!, $payload: CreateResourcePayload!) {
     addResourceToDomain(domainId: $domainId, payload: $payload) {
@@ -116,6 +225,26 @@ export const AttachResourceCoversConceptsOperation = gql`
   mutation attachResourceCoversConcepts($resourceId: String!, $conceptIds: [String!]!) {
     attachResourceCoversConcepts(resourceId: $resourceId, conceptIds: $conceptIds) {
       ...ResourceData
+      coveredConcepts(options: {}) {
+        items {
+          _id
+          name
+        }
+      }
+    }
+  }
+  ${ResourceData}
+`;
+export const DetachResourceCoversConceptsOperation = gql`
+  mutation detachResourceCoversConcepts($resourceId: String!, $conceptIds: [String!]!) {
+    detachResourceCoversConcepts(resourceId: $resourceId, conceptIds: $conceptIds) {
+      ...ResourceData
+      coveredConcepts(options: {}) {
+        items {
+          _id
+          name
+        }
+      }
     }
   }
   ${ResourceData}

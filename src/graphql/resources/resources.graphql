@@ -19,6 +19,41 @@ query getResourceById($id: String!) {
   }
 }
 
+query getResourceWithCoveredConcepts(
+  $id: String!
+  $coveredConceptsOptions: ResourceCoveredConceptsOptions!
+  $domainsOptions: ResourceDomainsOptions!
+  $domainConceptsOptions: DomainConceptsOptions!
+) {
+  getResourceById(id: $id) {
+    ...ResourceData
+    coveredConcepts(options: $coveredConceptsOptions) {
+      items {
+        _id
+        name
+        domain {
+          _id
+          key
+          name
+        }
+      }
+    }
+    domains(options: $domainsOptions) {
+      items {
+        _id
+        key
+        name
+        concepts(options: $domainConceptsOptions) {
+          items {
+            _id
+            name
+          }
+        }
+      }
+    }
+  }
+}
+
 query listDomainResourcePreviews($domainKey: String!, $options: DomainResourcesOptions!) {
   getDomainByKey(key: $domainKey) {
     _id
@@ -37,6 +72,12 @@ mutation createResource($payload: CreateResourcePayload!) {
   }
 }
 
+mutation updateResource($_id: String!, $payload: UpdateResourcePayload!) {
+  updateResource(_id: $_id, payload: $payload) {
+    ...ResourceData
+  }
+}
+
 mutation addResourceToDomain($domainId: String!, $payload: CreateResourcePayload!) {
   addResourceToDomain(domainId: $domainId, payload: $payload) {
     ...ResourceData
@@ -46,5 +87,23 @@ mutation addResourceToDomain($domainId: String!, $payload: CreateResourcePayload
 mutation attachResourceCoversConcepts($resourceId: String!, $conceptIds: [String!]!) {
   attachResourceCoversConcepts(resourceId: $resourceId, conceptIds: $conceptIds) {
     ...ResourceData
+    coveredConcepts(options: {}) {
+      items {
+        _id
+        name
+      }
+    }
+  }
+}
+
+mutation detachResourceCoversConcepts($resourceId: String!, $conceptIds: [String!]!) {
+  detachResourceCoversConcepts(resourceId: $resourceId, conceptIds: $conceptIds) {
+    ...ResourceData
+    coveredConcepts(options: {}) {
+      items {
+        _id
+        name
+      }
+    }
   }
 }

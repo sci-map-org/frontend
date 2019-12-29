@@ -15,6 +15,12 @@ import {
   AttachResourceCoversConceptsMutationResult,
   AttachResourceCoversConceptsMutationVariables,
   AttachResourceCoversConceptsOperation,
+  GetResourceWithCoveredConceptsQueryResult,
+  GetResourceWithCoveredConceptsQueryVariables,
+  GetResourceWithCoveredConceptsOperation,
+  DetachResourceCoversConceptsMutationResult,
+  DetachResourceCoversConceptsMutationVariables,
+  DetachResourceCoversConceptsOperation,
 } from './resources.generated';
 
 export const useGetResourceById = (_id: string) => {
@@ -22,6 +28,20 @@ export const useGetResourceById = (_id: string) => {
     GetResourceByIdOperation,
     { variables: { id: _id } }
   );
+  return {
+    resource: !!data && data.getResourceById,
+    loading,
+    error,
+  };
+};
+
+export const useGetResourceWithCoveredConcepts = (_id: string) => {
+  const { loading, error, data } = useQuery<
+    GetResourceWithCoveredConceptsQueryResult,
+    GetResourceWithCoveredConceptsQueryVariables
+  >(GetResourceWithCoveredConceptsOperation, {
+    variables: { id: _id, coveredConceptsOptions: {}, domainsOptions: {}, domainConceptsOptions: {} },
+  });
   return {
     resource: !!data && data.getResourceById,
     loading,
@@ -79,11 +99,42 @@ export const useAttachResourceCoversConcepts = () => {
   const [attachResourceCoversConcepts, { loading, error, data }] = useMutation<
     AttachResourceCoversConceptsMutationResult,
     AttachResourceCoversConceptsMutationVariables
-  >(AttachResourceCoversConceptsOperation);
+  >(AttachResourceCoversConceptsOperation, {
+    // update(cache, { data }) { // Seems to work without... Not sure to understand
+    //   console.log(data);
+    //   if (!data || !data.attachResourceCoversConcepts) return;
+    //   const x = cache.readQuery<
+    //     GetResourceWithCoveredConceptsQueryResult,
+    //     GetResourceWithCoveredConceptsQueryVariables
+    //   >({
+    //     query: GetResourceWithCoveredConceptsOperation,
+    //     variables: {
+    //       id: data.attachResourceCoversConcepts._id,
+    //       coveredConceptsOptions: {},
+    //       domainsOptions: {},
+    //       domainConceptsOptions: {},
+    //     },
+    //   });
+    //   console.log(data, x);
+    // },
+  });
   return {
     attachResourceCoversConcepts,
     loading,
     error,
     updatedResource: data && data.attachResourceCoversConcepts,
+  };
+};
+
+export const useDetachResourceCoversConcepts = () => {
+  const [detachResourceCoversConcepts, { loading, error, data }] = useMutation<
+    DetachResourceCoversConceptsMutationResult,
+    DetachResourceCoversConceptsMutationVariables
+  >(DetachResourceCoversConceptsOperation);
+  return {
+    detachResourceCoversConcepts,
+    loading,
+    error,
+    updatedResource: data && data.detachResourceCoversConcepts,
   };
 };
