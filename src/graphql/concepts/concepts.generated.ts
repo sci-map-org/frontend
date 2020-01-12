@@ -33,7 +33,13 @@ export type GetConceptQueryVariables = {
 };
 
 export type GetConceptQueryResult = { __typename?: 'Query' } & {
-  getConcept: { __typename?: 'Concept' } & ConceptDataFragment;
+  getConcept: { __typename?: 'Concept' } & {
+    coveredByResources: Types.Maybe<
+      { __typename?: 'ConceptCoveredByResourcesResults' } & {
+        items: Array<{ __typename?: 'Resource' } & Pick<Types.Resource, '_id' | 'name' | 'type'>>;
+      }
+    >;
+  } & ConceptDataFragment;
 };
 
 export type ListDomainConceptsQueryVariables = {
@@ -85,6 +91,13 @@ export const GetConceptOperation = gql`
   query getConcept($_id: String!) {
     getConcept(_id: $_id) {
       ...ConceptData
+      coveredByResources(options: {}) {
+        items {
+          _id
+          name
+          type
+        }
+      }
     }
   }
   ${ConceptData}

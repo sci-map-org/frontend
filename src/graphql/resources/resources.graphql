@@ -1,4 +1,4 @@
-fragment Resource on Resource {
+fragment ResourceData on Resource {
   _id
   name
   type
@@ -7,7 +7,7 @@ fragment Resource on Resource {
   description
 }
 
-fragment ResourcePreview on Resource {
+fragment ResourcePreviewData on Resource {
   _id
   name
   type
@@ -15,7 +15,42 @@ fragment ResourcePreview on Resource {
 
 query getResourceById($id: String!) {
   getResourceById(id: $id) {
-    ...Resource
+    ...ResourceData
+  }
+}
+
+query getResourceWithCoveredConcepts(
+  $id: String!
+  $coveredConceptsOptions: ResourceCoveredConceptsOptions!
+  $domainsOptions: ResourceDomainsOptions!
+  $domainConceptsOptions: DomainConceptsOptions!
+) {
+  getResourceById(id: $id) {
+    ...ResourceData
+    coveredConcepts(options: $coveredConceptsOptions) {
+      items {
+        _id
+        name
+        domain {
+          _id
+          key
+          name
+        }
+      }
+    }
+    domains(options: $domainsOptions) {
+      items {
+        _id
+        key
+        name
+        concepts(options: $domainConceptsOptions) {
+          items {
+            _id
+            name
+          }
+        }
+      }
+    }
   }
 }
 
@@ -25,7 +60,7 @@ query listDomainResourcePreviews($domainKey: String!, $options: DomainResourcesO
     name
     resources(options: $options) {
       items {
-        ...ResourcePreview
+        ...ResourcePreviewData
       }
     }
   }
@@ -33,12 +68,42 @@ query listDomainResourcePreviews($domainKey: String!, $options: DomainResourcesO
 
 mutation createResource($payload: CreateResourcePayload!) {
   createResource(payload: $payload) {
-    ...Resource
+    ...ResourceData
+  }
+}
+
+mutation updateResource($_id: String!, $payload: UpdateResourcePayload!) {
+  updateResource(_id: $_id, payload: $payload) {
+    ...ResourceData
   }
 }
 
 mutation addResourceToDomain($domainId: String!, $payload: CreateResourcePayload!) {
   addResourceToDomain(domainId: $domainId, payload: $payload) {
-    ...Resource
+    ...ResourceData
+  }
+}
+
+mutation attachResourceCoversConcepts($resourceId: String!, $conceptIds: [String!]!) {
+  attachResourceCoversConcepts(resourceId: $resourceId, conceptIds: $conceptIds) {
+    ...ResourceData
+    coveredConcepts(options: {}) {
+      items {
+        _id
+        name
+      }
+    }
+  }
+}
+
+mutation detachResourceCoversConcepts($resourceId: String!, $conceptIds: [String!]!) {
+  detachResourceCoversConcepts(resourceId: $resourceId, conceptIds: $conceptIds) {
+    ...ResourceData
+    coveredConcepts(options: {}) {
+      items {
+        _id
+        name
+      }
+    }
   }
 }

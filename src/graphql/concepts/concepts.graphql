@@ -26,6 +26,13 @@ mutation deleteConcept($_id: String!) {
 query getConcept($_id: String!) {
   getConcept(_id: $_id) {
     ...ConceptData
+    coveredByResources(options: {}) {
+      items {
+        _id
+        name
+        type
+      }
+    }
   }
 }
 

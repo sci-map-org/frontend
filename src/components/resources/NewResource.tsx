@@ -11,8 +11,8 @@ interface NewResourceProps {
 }
 export const NewResource: React.FC<NewResourceProps> = ({ domain }) => {
   const [name, setName] = useState('');
-  const [mediaType, setMediaType] = useState();
-  const [type, setType] = useState();
+  const [mediaType, setMediaType] = useState<ResourceMediaType>(ResourceMediaType.Text);
+  const [type, setType] = useState<ResourceType>(ResourceType.Article);
   const [url, setUrl] = useState('');
   const [description, setDescription] = useState('');
 
@@ -30,19 +30,15 @@ export const NewResource: React.FC<NewResourceProps> = ({ domain }) => {
         value={name}
         onChange={(e: any) => setName(e.target.value)}
       ></Input>
-      {/* <Select placeholder="Media Type">
-          <option value={ResourceMediaType.Text}>Text</option>
-          <option value={ResourceMediaType.Video}>Video</option>
-        </Select> */}
       <Flex flexDirection="row">
         <Text fontWeight={600}>Media Type:</Text>
-        <RadioGroup isInline onChange={e => setMediaType(e.target.value)} value={mediaType}>
+        <RadioGroup isInline onChange={e => setMediaType(e.target.value as ResourceMediaType)} value={mediaType}>
           <Radio value={ResourceMediaType.Text}>Text</Radio>
           <Radio value={ResourceMediaType.Video}>Video</Radio>
         </RadioGroup>
         <Box flexGrow={1}></Box>
         <Text fontWeight={600}>Type:</Text>
-        <RadioGroup isInline onChange={e => setType(e.target.value)} value={type}>
+        <RadioGroup isInline onChange={e => setType(e.target.value as ResourceType)} value={type}>
           <Radio value={ResourceType.Article}>Article</Radio>
           <Radio value={ResourceType.Introduction}>Introduction</Radio>
           <Radio value={ResourceType.Tutorial}>Tutorial</Radio>

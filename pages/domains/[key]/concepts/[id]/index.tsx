@@ -22,6 +22,7 @@ import { useGetConcept, useDeleteConcept } from '../../../../../src/graphql/conc
 import { useGetDomainByKey } from '../../../../../src/graphql/domains/domains.hooks';
 import { useCurrentUser } from '../../../../../src/graphql/users/users.hooks';
 import { UserRole } from '../../../../../src/graphql/types';
+import { ResourcePreview } from '../../../../../src/components/resources/ResourcePreview';
 
 const ConceptPage: React.FC = () => {
   const router = useRouter();
@@ -83,6 +84,9 @@ const ConceptPage: React.FC = () => {
       <Box pt={10} width="80%">
         <Text pb={5}>{concept.description}</Text>
         <Text fontSize="2xl">Covered by: (resources)</Text>
+        {concept.coveredByResources?.items.map(resource => (
+          <ResourcePreview key={resource._id} resourcePreview={resource} />
+        ))}
         <Text fontSize="2xl">Related concepts</Text>
         <Text fontSize="xl">Refers to</Text>
         <Text fontSize="xl">Referenced by</Text>
