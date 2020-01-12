@@ -10,11 +10,12 @@ import {
   Stack,
   Text,
   Textarea,
+  Link,
 } from '@chakra-ui/core';
 import { differenceBy } from 'lodash';
 import { useState } from 'react';
 import Autosuggest from 'react-autosuggest';
-
+import NextLink from 'next/link';
 import { GetResourceWithCoveredConceptsQueryResult } from '../../graphql/resources/resources.generated';
 import {
   useAttachResourceCoversConcepts,
@@ -40,7 +41,7 @@ const CoveredConceptsSelector: React.FC<{
   const possibleConceptSuggestions = differenceBy(conceptList, coveredConcepts, c => c._id);
 
   const inputProps = {
-    placeholder: 'Type a programming language',
+    placeholder: 'Search concepts',
     value,
     onChange: (event: any, { newValue }: { newValue: string }) => {
       setValue(newValue);
@@ -78,9 +79,9 @@ const CoveredConceptsSelector: React.FC<{
           onSuggestionSelected={(e, { suggestion }) => selectConcept(suggestion._id)}
           renderSuggestion={suggestion => <Box>{suggestion.name}</Box>}
           getSuggestionValue={suggestion => suggestion.name}
+          renderInputComponent={(inputProps: any) => <Input {...inputProps} size="sm" width="18rem" />}
         />
       </Box>
-      <Text fontSize="xl">Domains</Text>
     </Box>
   );
 };
@@ -166,6 +167,16 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
           coveredConcepts={resource.coveredConcepts.items}
           conceptList={conceptList}
         />
+      )}
+      {resource.domains && (
+        <Box>
+          <Text fontSize="xl">Domains</Text>
+          {resource.domains.items.map(domain => (
+            <NextLink key={domain._id} href={`/domains/${domain.key}`}>
+              <Link>{domain.name}</Link>
+            </NextLink>
+          ))}
+        </Box>
       )}
       <Button
         size="lg"
