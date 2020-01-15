@@ -5,6 +5,7 @@ import ApolloClient from 'apollo-client';
 import { ApolloProvider } from '@apollo/react-hooks';
 
 import { Layout } from '../components/layout/Layout';
+import { theme } from '../theme/theme';
 
 interface WrapperProps {
   apolloClient: ApolloClient<NormalizedCacheObject>;
@@ -13,7 +14,7 @@ interface WrapperProps {
 export const Wrapper: React.FC<WrapperProps> = ({ children, apolloClient }) => {
   return (
     <ApolloProvider client={apolloClient}>
-      <ThemeProvider>
+      <ThemeProvider theme={theme}>
         <CSSReset />
         <ColorModeProvider>
           <Layout>{children}</Layout>
