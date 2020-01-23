@@ -4,7 +4,7 @@ import NoSSR from 'react-no-ssr';
 import { UserRole } from '../../../graphql/types';
 import { CurrentUserDataFragment } from '../../../graphql/users/users.generated';
 import { useMockedFeaturesEnabled } from '../../../hooks/useMockedFeaturesEnabled';
-import { PageLayout } from '../../layout/Page';
+import { PageLayout } from '../../layout/PageLayout';
 
 export const CurrentUserProfilePage: React.FC<{ currentUser: CurrentUserDataFragment }> = ({ currentUser }) => {
   const { mockedFeaturesEnabled, setMockedFeaturesEnabled } = useMockedFeaturesEnabled();

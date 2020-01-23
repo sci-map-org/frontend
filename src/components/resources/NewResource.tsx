@@ -21,7 +21,7 @@ export const NewResource: React.FC<NewResourceProps> = ({ domain }) => {
   return (
     <Stack spacing={4} m={5}>
       <Text fontSize="2xl" textAlign="center">
-        Add resource
+        Add resource{domain && ` to ${domain.name}`}
       </Text>
       <Input
         placeholder="Name"
