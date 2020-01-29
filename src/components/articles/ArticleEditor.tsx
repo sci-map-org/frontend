@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic';
 import Router from 'next/router';
 import React from 'react';
 
-import { ArticleViewerDataFragment } from '../../graphql/articles/articles.generated';
+import { ArticleViewerDataFragment } from '../../graphql/articles/articles.fragments.generated';
 import { useUpdateArticle } from '../../graphql/articles/articles.hooks';
 
 const SimpleMDE = dynamic(() => import('react-simplemde-editor'));

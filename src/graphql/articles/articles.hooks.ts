@@ -1,30 +1,16 @@
 import { useMutation } from '@apollo/react-hooks';
 
 import { useQuery } from '../hooks/useQuery';
-
 import {
-  CreateArticleMutationResult,
-  CreateArticleMutationVariables,
-  CreateArticleOperation,
-  GetArticleByKeyOperation,
-  GetArticleByKeyQueryResult,
-  GetArticleByKeyQueryVariables,
-  ListUserArticlePreviewsQueryResult,
-  ListUserArticlePreviewsOperation,
-  ListUserArticlePreviewsQueryVariables,
-  UpdateArticleMutationResult,
-  UpdateArticleMutationVariables,
-  UpdateArticleOperation,
-  DeleteArticleMutationResult,
-  DeleteArticleMutationVariables,
-  DeleteArticleOperation,
-} from './articles.generated';
+  useCreateArticleMutation,
+  useGetArticleByKeyQuery,
+  useUpdateArticleMutation,
+  useDeleteArticleMutation,
+  useListUserArticlePreviewsQuery,
+} from './articles.operations.generated';
 
 export const useCreateArticle = () => {
-  const [createArticle, { loading, error, data }] = useMutation<
-    CreateArticleMutationResult,
-    CreateArticleMutationVariables
-  >(CreateArticleOperation, {});
+  const [createArticle, { loading, error, data }] = useCreateArticleMutation();
   return {
     createArticle,
     loading,
@@ -34,10 +20,7 @@ export const useCreateArticle = () => {
 };
 
 export const useGetArticleByKey = (key: string) => {
-  const { loading, error, data } = useQuery<GetArticleByKeyQueryResult, GetArticleByKeyQueryVariables>(
-    GetArticleByKeyOperation,
-    { variables: { key } }
-  );
+  const { loading, error, data } = useGetArticleByKeyQuery({ variables: { key } });
   return {
     article: !!data && data.getArticleByKey,
     loading,
@@ -46,10 +29,7 @@ export const useGetArticleByKey = (key: string) => {
 };
 
 export const useUpdateArticle = () => {
-  const [updateArticle, { loading, error }] = useMutation<UpdateArticleMutationResult, UpdateArticleMutationVariables>(
-    UpdateArticleOperation,
-    {}
-  );
+  const [updateArticle, { loading, error }] = useUpdateArticleMutation();
   return {
     updateArticle,
     loading,
@@ -58,14 +38,7 @@ export const useUpdateArticle = () => {
 };
 
 export const useDeleteArticle = () => {
-  const [deleteArticle, { loading, error }] = useMutation<DeleteArticleMutationResult, DeleteArticleMutationVariables>(
-    DeleteArticleOperation, // TODO: update cache to remove article
-    {
-      update: (a, { data }) => {
-        console.log(a, data && data.deleteArticle._id);
-      },
-    }
-  );
+  const [deleteArticle, { loading, error }] = useDeleteArticleMutation();
   return {
     deleteArticle,
     loading,
@@ -74,15 +47,7 @@ export const useDeleteArticle = () => {
 };
 
 export const useListUserArticlePreviews = (userKey: string) => {
-  const { loading, error, data, fetchMore } = useQuery<
-    ListUserArticlePreviewsQueryResult,
-    ListUserArticlePreviewsQueryVariables
-  >(ListUserArticlePreviewsOperation, {
-    variables: {
-      userKey,
-      options: {},
-    },
-  });
+  const { loading, error, data, fetchMore } = useListUserArticlePreviewsQuery({ variables: { userKey, options: {} } });
 
   return {
     articlePreviews: !!data && !!data.getUser.articles && data.getUser.articles.items,
