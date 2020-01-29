@@ -1,14 +1,49 @@
 import { Box, Text } from '@chakra-ui/core';
+import gql from 'graphql-tag';
 
 import { PageLayout } from '../../../components/layout/PageLayout';
 import { ResourceEditor } from '../../../components/resources/ResourceEditor';
-import { useGetResourceWithCoveredConcepts } from '../../../graphql/resources/resources.hooks';
+import { ResourceData } from '../../../graphql/resources/resources.fragments';
+import { useGetResourceEditResourcePageQuery } from './EditResourcePage.generated';
+
+export const getResourceEditResourcePage = gql`
+  query getResourceEditResourcePage($id: String!) {
+    getResourceById(id: $id) {
+      ...ResourceData
+      coveredConcepts(options: {}) {
+        items {
+          _id
+          name
+          domain {
+            _id
+            key
+            name
+          }
+        }
+      }
+      domains(options: {}) {
+        items {
+          _id
+          key
+          name
+          concepts(options: {}) {
+            items {
+              _id
+              name
+            }
+          }
+        }
+      }
+    }
+  }
+  ${ResourceData}
+`;
 
 const EditResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) => {
-  const { resource } = useGetResourceWithCoveredConcepts(resourceId);
+  const { data } = useGetResourceEditResourcePageQuery({ variables: { id: resourceId } });
 
-  if (!resource) return <Box>Resource not found !</Box>;
-
+  if (!data || !data.getResourceById) return <Box>Resource not found !</Box>;
+  const { getResourceById: resource } = data;
   return (
     <PageLayout>
       <Text mb={5} fontSize="3xl">

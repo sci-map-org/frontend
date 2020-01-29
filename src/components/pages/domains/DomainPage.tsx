@@ -37,6 +37,11 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
           </Box>
         )}
       </Flex>
+      {domain.description && (
+        <Box mb={2} fontWeight={250}>
+          {domain.description}
+        </Box>
+      )}
       <Box mb={4}>
         <NextLink href={`${router.asPath}/resources`}>
           <Link>Resources </Link>

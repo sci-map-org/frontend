@@ -1,10 +1,30 @@
-import { Input, Select, Stack, Text, RadioGroup, Radio, Box, Flex, Textarea, Button } from '@chakra-ui/core';
+import { Box, Button, Flex, Input, Radio, RadioGroup, Stack, Text, Textarea } from '@chakra-ui/core';
+import gql from 'graphql-tag';
+import Router from 'next/router';
 import { useState } from 'react';
 
 import { DomainDataFragment } from '../../graphql/domains/domains.generated';
+import { ResourceData } from '../../graphql/resources/resources.fragments';
 import { ResourceMediaType, ResourceType } from '../../graphql/types';
-import { useCreateResource, useAddResourceToDomain } from '../../graphql/resources/resources.hooks';
-import Router from 'next/router';
+import { useAddResourceToDomainMutation, useCreateResourceMutation } from './NewResource.generated';
+
+export const createResource = gql`
+  mutation createResource($payload: CreateResourcePayload!) {
+    createResource(payload: $payload) {
+      ...ResourceData
+    }
+  }
+  ${ResourceData}
+`;
+
+export const addResourceToDomain = gql`
+  mutation addResourceToDomain($domainId: String!, $payload: CreateResourcePayload!) {
+    addResourceToDomain(domainId: $domainId, payload: $payload) {
+      ...ResourceData
+    }
+  }
+  ${ResourceData}
+`;
 
 interface NewResourceProps {
   domain?: DomainDataFragment;
@@ -16,8 +36,9 @@ export const NewResource: React.FC<NewResourceProps> = ({ domain }) => {
   const [url, setUrl] = useState('');
   const [description, setDescription] = useState('');
 
-  const { createResource } = useCreateResource();
-  const { addResourceToDomain } = useAddResourceToDomain();
+  const [createResource] = useCreateResourceMutation();
+
+  const [addResourceToDomain] = useAddResourceToDomainMutation();
   return (
     <Stack spacing={4} m={5}>
       <Text fontSize="2xl" textAlign="center">

@@ -75,6 +75,7 @@ export type CreateResourcePayload = {
   mediaType: ResourceMediaType,
   url: Scalars['String'],
   description?: Maybe<Scalars['String']>,
+  tags?: Maybe<Array<Scalars['String']>>,
 };
 
 export type CurrentUser = {
@@ -179,6 +180,8 @@ export type Mutation = {
   createDomain: Domain,
   updateDomain: Domain,
   deleteDomain: DeleteDomainResponse,
+  addTagsToResource: Resource,
+  removeTagsFromResource: Resource,
   createResource: Resource,
   updateResource: Resource,
   addResourceToDomain: Resource,
@@ -237,6 +240,18 @@ export type MutationUpdateDomainArgs = {
 
 export type MutationDeleteDomainArgs = {
   id: Scalars['String']
+};
+
+
+export type MutationAddTagsToResourceArgs = {
+  resourceId: Scalars['String'],
+  tags: Array<Scalars['String']>
+};
+
+
+export type MutationRemoveTagsFromResourceArgs = {
+  resourceId: Scalars['String'],
+  tags: Array<Scalars['String']>
 };
 
 
@@ -304,6 +319,7 @@ export type Query = {
   listArticles: ListArticlesResult,
   searchDomains: SearchDomainsResult,
   getDomainByKey: Domain,
+  searchResourceTags: Array<ResourceTagSearchResult>,
   getResourceById: Resource,
   getConcept: Concept,
 };
@@ -334,6 +350,11 @@ export type QueryGetDomainByKeyArgs = {
 };
 
 
+export type QuerySearchResourceTagsArgs = {
+  options: SearchResourceTagsOptions
+};
+
+
 export type QueryGetResourceByIdArgs = {
   id: Scalars['String']
 };
@@ -356,8 +377,10 @@ export type Resource = {
   name: Scalars['String'],
   type: ResourceType,
   mediaType: ResourceMediaType,
+  tags?: Maybe<Array<ResourceTag>>,
   url: Scalars['String'],
   description?: Maybe<Scalars['String']>,
+  durationMn?: Maybe<Scalars['Int']>,
   coveredConcepts?: Maybe<ResourceCoveredConceptsResults>,
   domains?: Maybe<ResourceDomainsResults>,
 };
@@ -392,13 +415,26 @@ export type ResourceDomainsResults = {
 
 export enum ResourceMediaType {
   Video = 'video',
-  Text = 'text'
+  Text = 'text',
+  Audio = 'audio'
 }
+
+export type ResourceTag = {
+   __typename?: 'ResourceTag',
+  name: Scalars['String'],
+};
+
+export type ResourceTagSearchResult = {
+   __typename?: 'ResourceTagSearchResult',
+  name: Scalars['String'],
+  usageCount?: Maybe<Scalars['Int']>,
+};
 
 export enum ResourceType {
   Article = 'article',
   Tutorial = 'tutorial',
-  Introduction = 'introduction'
+  Introduction = 'introduction',
+  Course = 'course'
 }
 
 export type SearchDomainsOptions = {
@@ -409,6 +445,11 @@ export type SearchDomainsOptions = {
 export type SearchDomainsResult = {
    __typename?: 'SearchDomainsResult',
   items: Array<Domain>,
+};
+
+export type SearchResourceTagsOptions = {
+  query: Scalars['String'],
+  pagination: PaginationOptions,
 };
 
 export type UpdateArticlePayload = {

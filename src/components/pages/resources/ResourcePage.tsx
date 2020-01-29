@@ -1,22 +1,16 @@
 import { Box, Flex, Link, Stack, Text } from '@chakra-ui/core';
 import NextLink from 'next/link';
 import gql from 'graphql-tag';
-import { ResourceData } from '../../../graphql/resources/resources.generated';
-import { useGetResourceWithCoveredConcepts } from '../../../graphql/resources/resources.hooks';
 import { useRouter } from 'next/router';
 import { PageLayout } from '../../layout/PageLayout';
+import { useGetResourceResourcePageQuery } from './ResourcePage.generated';
+import { ResourceData } from '../../../graphql/resources/resources.fragments';
 
-export const GetResource = gql`
-  query getResource(
-    $id: String!
-    $coveredConceptsOptions: ResourceCoveredConceptsOptions!
-    $domainsOptions: ResourceDomainsOptions!
-    $domainConceptsOptions: DomainConceptsOptions!
-  ) {
+export const getResourceResourcePage = gql`
+  query getResourceResourcePage($id: String!) {
     getResourceById(id: $id) {
-      _id
-      name
-      coveredConcepts(options: $coveredConceptsOptions) {
+      ...ResourceData
+      coveredConcepts(options: {}) {
         items {
           _id
           name
@@ -27,12 +21,12 @@ export const GetResource = gql`
           }
         }
       }
-      domains(options: $domainsOptions) {
+      domains(options: {}) {
         items {
           _id
           key
           name
-          concepts(options: $domainConceptsOptions) {
+          concepts(options: {}) {
             items {
               _id
               name
@@ -46,9 +40,10 @@ export const GetResource = gql`
 `;
 
 export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) => {
-  const { resource } = useGetResourceWithCoveredConcepts(resourceId);
+  const { data } = useGetResourceResourcePageQuery({ variables: { id: resourceId } });
   const router = useRouter();
-  if (!resource) return <Box>Resource not found !</Box>;
+  if (!data) return <Box>Resource not found !</Box>;
+  const resource = data.getResourceById;
 
   return (
     <PageLayout>
@@ -68,20 +63,21 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
         </Text>
         <Box>
           <Text fontSize="2xl">Domains</Text>
-          {resource.domains?.items.map(domain => (
-            <Box key={domain._id}>
-              <Text fontSize="xl">{domain.name}</Text>
-              {!!resource.coveredConcepts &&
-                domain.concepts &&
-                domain.concepts.items
-                  .filter(
-                    concept =>
-                      // resource.coveredConcepts.items
-                      resource.coveredConcepts && resource.coveredConcepts.items.find(c => c._id === concept._id)
-                  )
-                  .map(concept => <Box key={concept._id}>{concept.name}</Box>)}
-            </Box>
-          ))}
+          {resource.domains &&
+            resource.domains.items.map(domain => (
+              <Box key={domain._id}>
+                <Text fontSize="xl">{domain.name}</Text>
+                {!!resource.coveredConcepts &&
+                  domain.concepts &&
+                  domain.concepts.items
+                    .filter(
+                      concept =>
+                        // resource.coveredConcepts.items
+                        resource.coveredConcepts && resource.coveredConcepts.items.find(c => c._id === concept._id)
+                    )
+                    .map(concept => <Box key={concept._id}>{concept.name}</Box>)}
+              </Box>
+            ))}
         </Box>
       </Stack>
     </PageLayout>

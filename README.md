@@ -8,6 +8,7 @@ Next.js, apollo client, Chakra UI
 
 Using avatar triggers a useless request all the time -> https://github.com/chakra-ui/chakra-ui/issues/149
 Do not use local storage (next.js...)
+Codegen: use same name for the export as the graphql query/mutation name -> c.f. ResourcePage (https://github.com/dotansimha/graphql-code-generator/issues/3244)
 
 ## Possible Improvements
 
@@ -15,3 +16,5 @@ Better graphql support: have queries in component files and generate hooks next 
 Have fragments and common queries in graphql folder, shared files ?
 Do not use .graphql again, but rather .gql.ts
 One single generated file ? Would be easier to manage ? Name conflicts (queries have to be named)
+
+
