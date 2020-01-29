@@ -1,5 +1,6 @@
-import { DomainDataFragment } from '../../graphql/domains/domains.generated';
-import { Box, Flex, Text, Link, Stack, Checkbox } from '@chakra-ui/core';
+import { Checkbox, Flex, Link, Stack, Text } from '@chakra-ui/core';
+
+import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 
 export const DomainConceptList: React.FC<{ domain: DomainDataFragment }> = ({ domain }) => {
   const concepts = [

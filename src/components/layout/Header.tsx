@@ -3,20 +3,20 @@ import { Box, Link, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/core
 import Cookies from 'js-cookie';
 import NextLink from 'next/link';
 
-import { CurrentUserOperation } from '../../graphql/users/users.generated';
-import { useCurrentUser } from '../../graphql/users/users.hooks';
-import { HeaderLink } from './HeaderLink';
 import { UserRole } from '../../graphql/types';
+import { useCurrentUser } from '../../graphql/users/users.hooks';
+import { getCurrentUser } from '../../graphql/users/users.operations';
+import { HeaderLink } from './HeaderLink';
 
 export const Header: React.FC = () => {
   const client = useApolloClient();
-  const { currentUser, loading } = useCurrentUser();
+  const { currentUser } = useCurrentUser();
 
   const logout = () => {
     Cookies.remove('jwt_token');
     client.writeData({ data: { isLoggedIn: false } });
     client.writeQuery({
-      query: CurrentUserOperation,
+      query: getCurrentUser,
       data: { currentUser: null },
     });
   };

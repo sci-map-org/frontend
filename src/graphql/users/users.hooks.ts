@@ -1,21 +1,11 @@
-import { useApolloClient, useMutation } from '@apollo/react-hooks';
+import { useApolloClient } from '@apollo/react-hooks';
 import Cookies from 'js-cookie';
 
-import { useQuery } from '../hooks/useQuery';
-
-import {
-  CurrentUserOperation,
-  CurrentUserQueryResult,
-  LoginMutationResult,
-  LoginMutationVariables,
-  LoginOperation,
-  RegisterMutationResult,
-  RegisterMutationVariables,
-  RegisterOperation,
-} from './users.generated';
+import { getCurrentUser } from './users.operations';
+import { useGetCurrentUserQuery, useLoginMutation, useRegisterMutation } from './users.operations.generated';
 
 export const useCurrentUser = () => {
-  const { loading, error, data } = useQuery<CurrentUserQueryResult>(CurrentUserOperation);
+  const { loading, error, data } = useGetCurrentUserQuery();
   return {
     loading,
     error,
@@ -25,7 +15,7 @@ export const useCurrentUser = () => {
 
 export const useLogin = () => {
   const client = useApolloClient();
-  const [login, { loading, error }] = useMutation<LoginMutationResult, LoginMutationVariables>(LoginOperation, {
+  const [login, { loading, error }] = useLoginMutation({
     onCompleted({ login }) {
       Cookies.set('jwt_token', login.jwt);
       client.writeData({ data: { isLoggedIn: true } });
@@ -33,7 +23,7 @@ export const useLogin = () => {
     update(cache, { data }) {
       if (!data) return;
       cache.writeQuery({
-        query: CurrentUserOperation,
+        query: getCurrentUser,
         data: { currentUser: data.login.currentUser },
       });
     },
@@ -47,10 +37,7 @@ export const useLogin = () => {
 };
 
 export const useRegister = () => {
-  const [register, { loading, error }] = useMutation<RegisterMutationResult, RegisterMutationVariables>(
-    RegisterOperation,
-    {}
-  );
+  const [register, { loading, error }] = useRegisterMutation();
   return {
     register,
     loading,

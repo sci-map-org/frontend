@@ -1,13 +1,10 @@
 import * as Types from '../types';
 
-import * as Operations from './domains.generated';
+import { DomainDataFragment } from './domains.fragments.generated';
+import * as Operations from './domains.operations';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
 
-export type DomainDataFragment = (
-  { __typename?: 'Domain' }
-  & Pick<Types.Domain, '_id' | 'name' | 'key' | 'description'>
-);
 
 export type GetDomainByKeyQueryVariables = {
   key: Types.Scalars['String']

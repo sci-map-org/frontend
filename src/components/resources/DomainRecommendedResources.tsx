@@ -1,31 +1,28 @@
 import {
+  Badge,
   Box,
+  Checkbox,
   Flex,
   IconButton,
   Input,
-  Text,
   Link,
-  Badge,
-  Checkbox,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTrigger,
   Stack,
   Tag,
-  TagIcon,
   TagLabel,
-  Button,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverArrow,
-  PopoverHeader,
-  PopoverCloseButton,
-  PopoverBody,
-  PopoverFooter,
+  Text,
   Tooltip,
 } from '@chakra-ui/core';
-import { useState } from 'react';
 import NextLink from 'next/link';
+import { useState } from 'react';
 
-import { DomainDataFragment } from '../../graphql/domains/domains.generated';
+import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 
 export const DomainRecommendedResources: React.FC<{ domain: DomainDataFragment }> = ({ domain }) => {
   const recommendedResources = [
