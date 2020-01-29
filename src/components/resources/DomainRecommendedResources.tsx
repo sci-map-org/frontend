@@ -1,33 +1,28 @@
 import {
+  Badge,
   Box,
+  Checkbox,
   Flex,
   IconButton,
   Input,
-  Text,
   Link,
-  Badge,
-  Checkbox,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTrigger,
   Stack,
   Tag,
-  TagIcon,
   TagLabel,
-  Button,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverArrow,
-  PopoverHeader,
-  PopoverCloseButton,
-  PopoverBody,
-  PopoverFooter,
+  Text,
   Tooltip,
 } from '@chakra-ui/core';
-import { useState } from 'react';
 import NextLink from 'next/link';
+import { useState } from 'react';
 
-import { DomainDataFragment } from '../../graphql/domains/domains.generated';
-import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.generated';
-import NoSSR from 'react-no-ssr';
+import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 
 export const DomainRecommendedResources: React.FC<{ domain: DomainDataFragment }> = ({ domain }) => {
   const recommendedResources = [
@@ -134,7 +129,7 @@ export const DomainRecommendedResources: React.FC<{ domain: DomainDataFragment }
                     <Box mx={4}>
                       <Popover>
                         <PopoverTrigger>
-                          <Link color="gray.400" fontWeight={200}>
+                          <Link color="gray.600" fontWeight={200}>
                             4 Concepts Covered
                           </Link>
                         </PopoverTrigger>
@@ -153,7 +148,7 @@ export const DomainRecommendedResources: React.FC<{ domain: DomainDataFragment }
                       </Popover>
                     </Box>
                     <Box>
-                      <Link color="gray.400" fontWeight={200}>
+                      <Link color="gray.600" fontWeight={200}>
                         12 comments
                       </Link>
                     </Box>

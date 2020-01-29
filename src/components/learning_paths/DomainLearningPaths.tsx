@@ -1,5 +1,6 @@
-import { DomainDataFragment } from '../../graphql/domains/domains.generated';
-import { Box, Flex, Text, Link, Tag } from '@chakra-ui/core';
+import { Box, Flex, Link, Tag, Text } from '@chakra-ui/core';
+
+import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 
 export const DomainLearningPaths: React.FC<{ domain: DomainDataFragment }> = ({ domain }) => {
   const learningPaths = [

@@ -1,27 +1,14 @@
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import {
-  AddConceptToDomainMutationResult,
-  AddConceptToDomainMutationVariables,
-  AddConceptToDomainOperation,
-  ListDomainConceptsQueryResult,
-  ListDomainConceptsQueryVariables,
-  ListDomainConceptsOperation,
-  GetConceptOperation,
-  GetConceptQueryResult,
-  GetConceptQueryVariables,
-  UpdateConceptMutationResult,
-  UpdateConceptMutationVariables,
-  UpdateConceptOperation,
-  DeleteConceptMutationResult,
-  DeleteConceptMutationVariables,
-  DeleteConceptOperation,
-} from './concepts.generated';
+  useAddConceptToDomainMutation,
+  useUpdateConceptMutation,
+  useDeleteConceptMutation,
+  useGetConceptQuery,
+  useListDomainConceptsQuery,
+} from './concepts.operations.generated';
 
 export const useAddConceptToDomain = () => {
-  const [addConceptToDomain, { loading, error, data }] = useMutation<
-    AddConceptToDomainMutationResult,
-    AddConceptToDomainMutationVariables
-  >(AddConceptToDomainOperation);
+  const [addConceptToDomain, { loading, error, data }] = useAddConceptToDomainMutation();
   return {
     addConceptToDomain,
     loading,
@@ -31,10 +18,7 @@ export const useAddConceptToDomain = () => {
 };
 
 export const useUpdateConcept = () => {
-  const [updateConcept, { loading, error }] = useMutation<UpdateConceptMutationResult, UpdateConceptMutationVariables>(
-    UpdateConceptOperation,
-    {}
-  );
+  const [updateConcept, { loading, error }] = useUpdateConceptMutation();
   return {
     updateConcept,
     loading,
@@ -43,14 +27,12 @@ export const useUpdateConcept = () => {
 };
 
 export const useDeleteConcept = () => {
-  const [deleteConcept, { loading, error }] = useMutation<DeleteConceptMutationResult, DeleteConceptMutationVariables>(
-    DeleteConceptOperation, // TODO: update cache to remove concept
-    {
-      update: (a, { data }) => {
-        console.log(a, data && data.deleteConcept._id);
-      },
-    }
-  );
+  const [deleteConcept, { loading, error }] = useDeleteConceptMutation({
+    update: (a, { data }) => {
+      console.log(a, data && data.deleteConcept._id);
+    },
+  });
+
   return {
     deleteConcept,
     loading,
@@ -59,7 +41,7 @@ export const useDeleteConcept = () => {
 };
 
 export const useGetConcept = (_id: string) => {
-  const { loading, error, data } = useQuery<GetConceptQueryResult, GetConceptQueryVariables>(GetConceptOperation, {
+  const { loading, error, data } = useGetConceptQuery({
     variables: { _id },
   });
   return {
@@ -70,17 +52,7 @@ export const useGetConcept = (_id: string) => {
 };
 
 export const useListDomainConcepts = (domainKey: string) => {
-  const { loading, error, data, fetchMore } = useQuery<ListDomainConceptsQueryResult, ListDomainConceptsQueryVariables>(
-    ListDomainConceptsOperation,
-    {
-      variables: {
-        domainKey,
-        options: {
-          pagination: {},
-        },
-      },
-    }
-  );
+  const { loading, error, data, fetchMore } = useListDomainConceptsQuery({ variables: { domainKey, options: {} } });
   return {
     concepts: !!data && !!data.getDomainByKey.concepts && data.getDomainByKey.concepts.items,
     loading,

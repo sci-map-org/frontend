@@ -1,8 +1,8 @@
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 
-import { CurrentUserProfilePage } from '../../src/components/pages/profile/CurrentUserProfilePage';
-import { UserProfilePage } from '../../src/components/pages/profile/UserProfilePage';
+import { CurrentUserProfilePage } from '../../src/pages/profile/CurrentUserProfilePage';
+import { UserProfilePage } from '../../src/pages/profile/UserProfilePage';
 import { useCurrentUser } from '../../src/graphql/users/users.hooks';
 
 const ProfilePage: NextPage<{}> = () => {

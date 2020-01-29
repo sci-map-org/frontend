@@ -1,8 +1,8 @@
 import { Box, Heading, HeadingProps } from '@chakra-ui/core';
 import ReactMarkdown from 'react-markdown';
 
-import { ArticleViewerDataFragment } from '../../graphql/articles/articles.generated';
 import { ArticleContentType } from '../../graphql/types';
+import { ArticleViewerDataFragment } from '../../graphql/articles/articles.fragments.generated';
 
 interface ArticleViewerProps {
   article: ArticleViewerDataFragment;

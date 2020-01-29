@@ -1,19 +1,38 @@
-import { Box, Text } from '@chakra-ui/core';
+import { Box } from '@chakra-ui/core';
+import gql from 'graphql-tag';
 
-import { useListDomainResourcesPreviews } from '../../graphql/resources/resources.hooks';
+import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
+import { useListDomainResourcePreviewsQuery } from './ResourceList.generated';
 import { ResourcePreview } from './ResourcePreview';
+
+export const listDomainResourcePreviews = gql`
+  query listDomainResourcePreviews($domainKey: String!, $options: DomainResourcesOptions!) {
+    getDomainByKey(key: $domainKey) {
+      _id
+      name
+      resources(options: $options) {
+        items {
+          ...ResourcePreviewData
+        }
+      }
+    }
+  }
+  ${ResourcePreviewData}
+`;
 
 interface ResourceListProps {
   domainKey: string;
 }
 
 export const ResourceList: React.FC<ResourceListProps> = ({ domainKey }) => {
-  const { resourcePreviews } = useListDomainResourcesPreviews(domainKey);
+  const { data } = useListDomainResourcePreviewsQuery({ variables: { domainKey, options: { pagination: {} } } });
 
   return (
     <Box borderWidth={1} borderColor="gray.200" borderRadius={4} p={4} width="100%">
-      {resourcePreviews &&
-        resourcePreviews.map(preview => <ResourcePreview key={preview._id} resourcePreview={preview} />)}
+      {data?.getDomainByKey.resources?.items &&
+        data?.getDomainByKey.resources?.items.map(preview => (
+          <ResourcePreview key={preview._id} resourcePreview={preview} />
+        ))}
     </Box>
   );
 };

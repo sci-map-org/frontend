@@ -2,5 +2,6 @@
   "editor.formatOnSave": true,
   "typescriptHero.imports.organizeOnSave": false,
   "typescriptHero.imports.multiLineWrapThreshold": 120,
-  "typescriptHero.imports.insertSemicolons": true
+  "typescriptHero.imports.insertSemicolons": true,
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

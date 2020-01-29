@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 
-import { DomainPage } from '../../src/components/pages/domains/DomainPage';
+import { DomainPage } from '../../src/pages/domains/DomainPage';
 
 const Page: React.FC = () => {
   const router = useRouter();

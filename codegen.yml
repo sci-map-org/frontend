@@ -1,16 +1,19 @@
 schema: "http://localhost:8000/graphql"
-documents: 'src/graphql/**/*.graphql'
+documents: 'src/**/*.{tsx|ts}'
 generates:
   src/graphql/types.ts:
     - typescript
-  src/graphql:
+  src/:
     preset: near-operation-file
     presetConfig:
-      extension: .generated.ts
-      baseTypesPath: types.ts
+      extension: .generated.tsx
+      baseTypesPath: graphql/types.ts
     plugins:
       - typescript-operations
-      - typescript-document-nodes
+      - typescript-react-apollo
     config:
-      nameSuffix: Operation
-      operationResultSuffix: Result
+      withHooks: true
+      withHOC: false
+      withComponent: false
+      documentMode: external
+      importDocumentNodeExternallyFrom: near-operation-file

@@ -15,9 +15,9 @@ import {
 } from '@chakra-ui/core';
 import NextLink from 'next/link';
 
-import { ArticlePreviewDataFragment } from '../../graphql/articles/articles.generated';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { useDeleteArticle } from '../../graphql/articles/articles.hooks';
+import { ArticlePreviewDataFragment } from '../../graphql/articles/articles.fragments.generated';
 
 interface ArticlePreviewProps {
   articlePreview: ArticlePreviewDataFragment;

@@ -1,3 +1,3 @@
-import { DomainsListPage } from '../../src/components/pages/domains/DomainListPage';
+import { DomainsListPage } from '../../src/pages/domains/DomainListPage';
 
 export default DomainsListPage;

@@ -1,6 +1,7 @@
-import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.generated';
 import { Box, Link, Text } from '@chakra-ui/core';
 import NextLink from 'next/link';
+
+import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 
 interface ResourcePreviewProps {
   resourcePreview: ResourcePreviewDataFragment;
