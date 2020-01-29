@@ -2,14 +2,14 @@ import { Box, Button, Flex, Link, Text, Stack } from '@chakra-ui/core';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
-import { useGetDomainByKey } from '../../../graphql/domains/domains.hooks';
-import { useMockedFeaturesEnabled } from '../../../hooks/useMockedFeaturesEnabled';
-import { ConceptList } from '../../concepts/ConceptList';
-import { PageLayout } from '../../layout/PageLayout';
-import { DomainRecommendedResources } from '../../resources/DomainRecommendedResources';
-import { ResourceList } from '../../resources/ResourceList';
-import { DomainLearningPaths } from '../../learning_paths/DomainLearningPaths';
-import { DomainConceptList } from '../../concepts/DomainConceptList';
+import { useGetDomainByKey } from '../../graphql/domains/domains.hooks';
+import { useMockedFeaturesEnabled } from '../../hooks/useMockedFeaturesEnabled';
+import { ConceptList } from '../../components/concepts/ConceptList';
+import { PageLayout } from '../../components/layout/PageLayout';
+import { DomainRecommendedResources } from '../../components/resources/DomainRecommendedResources';
+import { ResourceList } from '../../components/resources/ResourceList';
+import { DomainLearningPaths } from '../../components/learning_paths/DomainLearningPaths';
+import { DomainConceptList } from '../../components/concepts/DomainConceptList';
 
 export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
   const router = useRouter();

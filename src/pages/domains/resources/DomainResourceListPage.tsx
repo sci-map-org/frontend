@@ -1,8 +1,8 @@
 import { Box, Flex, Link, Text } from '@chakra-ui/core';
 import NextLink from 'next/link';
 
-import { ResourceList } from '../../../../components/resources/ResourceList';
-import { useGetDomainByKey } from '../../../../graphql/domains/domains.hooks';
+import { ResourceList } from '../../../components/resources/ResourceList';
+import { useGetDomainByKey } from '../../../graphql/domains/domains.hooks';
 
 export const DomainResourceListPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
   const { domain } = useGetDomainByKey(domainKey);

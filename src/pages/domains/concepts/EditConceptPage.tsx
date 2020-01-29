@@ -2,9 +2,9 @@ import { Button, Input, Stack, Text, Textarea } from '@chakra-ui/core';
 import Router from 'next/router';
 import { useState } from 'react';
 
-import { useGetConcept, useUpdateConcept } from '../../../../../src/graphql/concepts/concepts.hooks';
-import { useGetDomainByKey } from '../../../../../src/graphql/domains/domains.hooks';
-import { PageLayout } from '../../../layout/PageLayout';
+import { useGetConcept, useUpdateConcept } from '../../../graphql/concepts/concepts.hooks';
+import { useGetDomainByKey } from '../../../graphql/domains/domains.hooks';
+import { PageLayout } from '../../../components/layout/PageLayout';
 
 export const EditConceptPage: React.FC<{ domainKey: string; conceptId: string }> = ({ conceptId, domainKey }) => {
   const { concept } = useGetConcept(conceptId);

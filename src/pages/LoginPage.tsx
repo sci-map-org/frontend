@@ -2,9 +2,9 @@ import { Box, Button, Input, Stack, Flex } from '@chakra-ui/core';
 import Router from 'next/router';
 import { useState } from 'react';
 
-import { useLogin } from '../../graphql/users/users.hooks';
-import { PasswordInput } from '../input/PasswordInput';
-import { PageLayout } from '../layout/PageLayout';
+import { useLogin } from '../graphql/users/users.hooks';
+import { PasswordInput } from '../components/input/PasswordInput';
+import { PageLayout } from '../components/layout/PageLayout';
 
 export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');

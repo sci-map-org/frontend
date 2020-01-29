@@ -3,7 +3,7 @@ import { NextPage } from 'next';
 import Router from 'next/router';
 import React from 'react';
 
-import { useCreateDomain } from '../../../graphql/domains/domains.hooks';
+import { useCreateDomain } from '../../graphql/domains/domains.hooks';
 
 export const NewDomainPage: NextPage = () => {
   const [name, setName] = React.useState('');

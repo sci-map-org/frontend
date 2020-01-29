@@ -2,9 +2,9 @@ import { Box, Flex, Link, Stack, Text } from '@chakra-ui/core';
 import NextLink from 'next/link';
 import gql from 'graphql-tag';
 import { useRouter } from 'next/router';
-import { PageLayout } from '../../layout/PageLayout';
+import { PageLayout } from '../../components/layout/PageLayout';
 import { useGetResourceResourcePageQuery } from './ResourcePage.generated';
-import { ResourceData } from '../../../graphql/resources/resources.fragments';
+import { ResourceData } from '../../graphql/resources/resources.fragments';
 
 export const getResourceResourcePage = gql`
   query getResourceResourcePage($id: String!) {

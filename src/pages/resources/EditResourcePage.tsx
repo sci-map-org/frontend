@@ -1,9 +1,9 @@
 import { Box, Text } from '@chakra-ui/core';
 import gql from 'graphql-tag';
 
-import { PageLayout } from '../../../components/layout/PageLayout';
-import { ResourceEditor } from '../../../components/resources/ResourceEditor';
-import { ResourceData } from '../../../graphql/resources/resources.fragments';
+import { PageLayout } from '../../components/layout/PageLayout';
+import { ResourceEditor } from '../../components/resources/ResourceEditor';
+import { ResourceData } from '../../graphql/resources/resources.fragments';
 import { useGetResourceEditResourcePageQuery } from './EditResourcePage.generated';
 
 export const getResourceEditResourcePage = gql`

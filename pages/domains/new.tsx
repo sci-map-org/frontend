@@ -1,3 +1,3 @@
-import { NewDomainPage } from '../../src/components/pages/domains/NewDomainPage';
+import { NewDomainPage } from '../../src/pages/domains/NewDomainPage';
 
 export default NewDomainPage;

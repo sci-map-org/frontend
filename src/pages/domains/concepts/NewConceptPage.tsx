@@ -2,8 +2,8 @@ import { Box, Flex, Input, Text, Textarea, Button } from '@chakra-ui/core';
 import Router, { useRouter } from 'next/router';
 import { useState } from 'react';
 
-import { useAddConceptToDomain } from '../../../../graphql/concepts/concepts.hooks';
-import { useGetDomainByKey } from '../../../../graphql/domains/domains.hooks';
+import { useAddConceptToDomain } from '../../../graphql/concepts/concepts.hooks';
+import { useGetDomainByKey } from '../../../graphql/domains/domains.hooks';
 
 export const NewConceptPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
   const { domain } = useGetDomainByKey(domainKey);

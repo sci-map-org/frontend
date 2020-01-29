@@ -2,9 +2,9 @@ import { Box, Button, Stack, Text, Flex } from '@chakra-ui/core';
 import Link from 'next/link';
 import React from 'react';
 
-import { useListUserArticlePreviews } from '../../../../graphql/articles/articles.hooks';
-import { ArticlePreview } from '../../../articles/ArticlePreview';
-import { PageLayout } from '../../../layout/PageLayout';
+import { useListUserArticlePreviews } from '../../../graphql/articles/articles.hooks';
+import { ArticlePreview } from '../../../components/articles/ArticlePreview';
+import { PageLayout } from '../../../components/layout/PageLayout';
 
 export const UserArticleListPage: React.FC<{ userKey: string }> = ({ userKey }) => {
   const { articlePreviews } = useListUserArticlePreviews(userKey);

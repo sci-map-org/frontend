@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 
-import { AddResourceToDomainPage } from '../../../../src/components/pages/domains/resources/AddResourceToDomainPage';
+import { AddResourceToDomainPage } from '../../../../src/pages/domains/resources/AddResourceToDomainPage';
 
 const Page: React.FC = () => {
   const router = useRouter();

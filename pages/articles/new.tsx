@@ -1,3 +1,3 @@
-import { NewArticlePage } from '../../src/components/pages/articles/NewArticlePage';
+import { NewArticlePage } from '../../src/pages/articles/NewArticlePage';
 
 export default NewArticlePage;

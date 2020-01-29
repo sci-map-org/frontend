@@ -1,4 +1,4 @@
-import { NewResourcePage } from '../../src/components/pages/resources/NewResourcePage';
+import { NewResourcePage } from '../../src/pages/resources/NewResourcePage';
 
 const Page: React.FC = () => {
   return <NewResourcePage />;

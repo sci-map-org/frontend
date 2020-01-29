@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 
-import { EditConceptPage } from '../../../../../src/components/pages/domains/concepts/EditConceptPage';
+import { EditConceptPage } from '../../../../../src/pages/domains/concepts/EditConceptPage';
 
 const Page: React.FC = () => {
   const router = useRouter();

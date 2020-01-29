@@ -1,6 +1,6 @@
 import { Text, Box, Stack, Input, Button, InputGroup, InputRightElement } from '@chakra-ui/core';
 import { useState } from 'react';
-import { useRegister } from '../../graphql/users/users.hooks';
+import { useRegister } from '../graphql/users/users.hooks';
 
 export const RegisterPage: React.FC = () => {
   const [email, setEmail] = useState('');

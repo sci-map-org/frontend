@@ -17,9 +17,9 @@ import {
 } from '@chakra-ui/core';
 import NextLink from 'next/link';
 import Router from 'next/router';
-import { useSearchDomains } from '../../../graphql/domains/domains.hooks';
-import { UserRole } from '../../../graphql/types';
-import { useCurrentUser } from '../../../graphql/users/users.hooks';
+import { useSearchDomains } from '../../graphql/domains/domains.hooks';
+import { UserRole } from '../../graphql/types';
+import { useCurrentUser } from '../../graphql/users/users.hooks';
 
 export const DomainsListPage: React.FC = () => {
   const { currentUser } = useCurrentUser();

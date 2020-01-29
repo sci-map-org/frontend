@@ -18,12 +18,12 @@ import {
 import NextLink from 'next/link';
 import Router from 'next/router';
 
-import { ResourcePreview } from '../../../../../src/components/resources/ResourcePreview';
-import { useDeleteConcept, useGetConcept } from '../../../../../src/graphql/concepts/concepts.hooks';
-import { useGetDomainByKey } from '../../../../../src/graphql/domains/domains.hooks';
-import { UserRole } from '../../../../../src/graphql/types';
-import { useCurrentUser } from '../../../../../src/graphql/users/users.hooks';
-import { PageLayout } from '../../../layout/PageLayout';
+import { ResourcePreview } from '../../../components/resources/ResourcePreview';
+import { useDeleteConcept, useGetConcept } from '../../../graphql/concepts/concepts.hooks';
+import { useGetDomainByKey } from '../../../graphql/domains/domains.hooks';
+import { UserRole } from '../../../graphql/types';
+import { useCurrentUser } from '../../../graphql/users/users.hooks';
+import { PageLayout } from '../../../components/layout/PageLayout';
 
 export const ConceptPage: React.FC<{ domainKey: string; conceptId: string }> = ({ domainKey, conceptId }) => {
   const { currentUser } = useCurrentUser();

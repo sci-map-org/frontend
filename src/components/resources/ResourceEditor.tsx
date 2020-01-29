@@ -16,7 +16,7 @@ import NextLink from 'next/link';
 import { useState } from 'react';
 
 import { ResourceMediaType, ResourceType, UpdateResourcePayload } from '../../graphql/types';
-import { GetResourceEditResourcePageQuery } from '../pages/resources/EditResourcePage.generated';
+import { GetResourceEditResourcePageQuery } from '../../pages/resources/EditResourcePage.generated';
 import { CoveredConceptsSelector } from './CoveredConceptsSelector';
 
 interface ResourceEditorProps {

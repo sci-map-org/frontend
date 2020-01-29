@@ -6,8 +6,8 @@ import dynamic from 'next/dynamic';
 import Router from 'next/router';
 import React from 'react';
 
-import { useCreateArticle } from '../../../graphql/articles/articles.hooks';
-import { ArticleContentType } from '../../../graphql/types';
+import { useCreateArticle } from '../../graphql/articles/articles.hooks';
+import { ArticleContentType } from '../../graphql/types';
 
 const SimpleMDE = dynamic(() => import('react-simplemde-editor'));
 
