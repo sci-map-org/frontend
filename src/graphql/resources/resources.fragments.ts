@@ -1,4 +1,5 @@
 import gql from 'graphql-tag';
+import { ConceptData } from '../concepts/concepts.fragments';
 
 // Define fragment based on components use cases
 
@@ -18,5 +19,17 @@ export const ResourcePreviewData = gql`
     _id
     name
     type
+    mediaType
+    url
+    description
+    tags {
+      name
+    }
+    coveredConcepts(options: {}) {
+      items {
+        ...ConceptData
+      }
+    }
   }
+  ${ConceptData}
 `;

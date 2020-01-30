@@ -1,61 +1,84 @@
-import {
-  Badge,
-  Box,
-  Checkbox,
-  Flex,
-  IconButton,
-  Input,
-  Link,
-  Popover,
-  PopoverArrow,
-  PopoverBody,
-  PopoverCloseButton,
-  PopoverContent,
-  PopoverHeader,
-  PopoverTrigger,
-  Stack,
-  Tag,
-  TagLabel,
-  Text,
-  Tooltip,
-} from '@chakra-ui/core';
-import NextLink from 'next/link';
+import { Box, Checkbox, Flex, Input, Stack, Text, useToast } from '@chakra-ui/core';
 import { useState } from 'react';
 
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
+import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { ResourceMediaType, ResourceType } from '../../graphql/types';
+import { ResourcePreviewCard } from './ResourcePreviewCard';
 
 export const DomainRecommendedResources: React.FC<{ domain: DomainDataFragment }> = ({ domain }) => {
-  const recommendedResources = [
+  const recommendedResources: Array<ResourcePreviewDataFragment & {
+    durationMn?: number;
+    isChecked: boolean;
+    comments: {
+      items: Array<{
+        _id: string;
+        message: string;
+      }>;
+    };
+  }> = [
     {
       _id: 'fewrfg',
       name: 'My Amazing resource',
       durationMn: 5,
-      type: 'Article',
+      type: ResourceType.Article,
+      mediaType: ResourceMediaType.Text,
       url: 'https://google.com',
-      keywords: ['Practical', 'Visual'],
+      tags: [{ name: 'Practical' }, { name: 'Visual' }],
       description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, 
       sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
       Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip...`,
-
-      checked: false,
+      isChecked: false,
+      coveredConcepts: {
+        items: [
+          {
+            _id: '1',
+            name: 'one concept',
+          },
+        ],
+      },
+      comments: {
+        items: [
+          {
+            _id: 'fwerg',
+            message: 'ferbg',
+          },
+          {
+            _id: 'fwergfew',
+            message: 'ferbg',
+          },
+        ],
+      },
     },
     {
       _id: 'efgbfh',
       name: 'My Great resource',
       durationMn: 30,
-      type: 'Video tutorial',
+      type: ResourceType.Course,
+      mediaType: ResourceMediaType.Video,
       url: 'https://google.com',
-      keywords: ['Theoritical', 'Abstract'],
-      expectedKnowledge: ['programming basics', 'mathematics basics'],
+      tags: [{ name: 'Theoritical' }, { name: 'Abstract' }],
       description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, 
       sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
       Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip...`,
-      checked: false,
+      isChecked: false,
+      coveredConcepts: {
+        items: [
+          {
+            _id: '1',
+            name: 'one concept',
+          },
+        ],
+      },
+      comments: {
+        items: [],
+      },
     },
   ];
   const [resources, setResources] = useState(recommendedResources);
   const [searchQuery, setSearchQuery] = useState('');
   const [showCheckedResources, setShowCheckedResources] = useState(false);
+  const checkedResourceToast = useToast();
   return (
     <Flex direction="column" mb={4}>
       <Stack direction="row" isInline alignItems="center" spacing={4} mb={3}>
@@ -80,99 +103,30 @@ export const DomainRecommendedResources: React.FC<{ domain: DomainDataFragment }
       <Box>
         <Box borderTop="1px solid" borderTopColor="gray.200" width="100%">
           {resources
-            .filter(r => !!showCheckedResources || !r.checked)
+            .filter(r => !!showCheckedResources || !r.isChecked)
             .map((preview, previewIdx) => (
-              <Flex
-                direction="row"
-                alignItems="center"
-                borderLeftColor="gray.200"
-                borderRightColor="gray.200"
-                borderLeftWidth={1}
-                borderRightWidth={1}
-                borderBottomColor="gray.200"
-                borderBottomWidth={1}
+              <ResourcePreviewCard
                 key={preview._id}
-                pb={2}
-              >
-                <Flex direction="column" alignItems="center" px={1}>
-                  <IconButton size="sm" aria-label="upvote" icon="chevron-up" variant="ghost" />
-                  <Text>32</Text>
-                  <IconButton size="sm" aria-label="downvote" icon="chevron-down" variant="ghost" />
-                </Flex>
-                <Flex direction="column" flexGrow={1}>
-                  <Flex direction="row" alignItems="flex-end">
-                    <NextLink href={`/resources/${preview._id}`}>
-                      <Link fontSize="xl">{preview.name}</Link>
-                    </NextLink>
-                    <Link fontSize="xl" href={preview.url} isExternal>
-                      <IconButton aria-label="upvote" size="sm" variant="ghost" icon="external-link" />
-                    </Link>
-                    <Text fontSize="sm" color="gray.400" mb={1}>
-                      {preview.durationMn}mn
-                    </Text>
-                    <Badge variantColor="blue" ml={2} mb={1}>
-                      {preview.type}
-                    </Badge>
-                  </Flex>
-                  <Text fontWeight={250} pb={2}>
-                    {preview.description}
-                  </Text>
-                  <Flex direction="row">
-                    <Stack direction="row">
-                      {preview.keywords.map((keyword, idx) => (
-                        <Tag size="sm" variantColor="gray" key={idx}>
-                          <TagLabel>{keyword}</TagLabel>
-                        </Tag>
-                      ))}
-                    </Stack>
-                    <Box flexGrow={1} />
-                    <Box mx={4}>
-                      <Popover>
-                        <PopoverTrigger>
-                          <Link color="gray.600" fontWeight={200}>
-                            4 Concepts Covered
-                          </Link>
-                        </PopoverTrigger>
-                        <PopoverContent zIndex={4} backgroundColor="white">
-                          <PopoverArrow />
-                          <PopoverHeader>Concepts</PopoverHeader>
-                          <PopoverCloseButton />
-                          <PopoverBody>
-                            <Stack direction="column">
-                              {['concept 1', 'concept 2'].map(concept => (
-                                <Link key={concept}>{concept}</Link>
-                              ))}
-                            </Stack>
-                          </PopoverBody>
-                        </PopoverContent>
-                      </Popover>
-                    </Box>
-                    <Box>
-                      <Link color="gray.600" fontWeight={200}>
-                        12 comments
-                      </Link>
-                    </Box>
-                  </Flex>
-                </Flex>
-                <Flex>
-                  <Tooltip aria-label="Welcome home" label="Mark as read/watched" placement="top">
-                    <Checkbox
-                      size="lg"
-                      m={4}
-                      isChecked={preview.checked}
-                      onChange={e => {
-                        const r = [...resources];
-                        r.splice(
-                          resources.findIndex(r => r._id === preview._id),
-                          1,
-                          { ...preview, checked: e.target.checked }
-                        );
-                        setResources(r);
-                      }}
-                    />
-                  </Tooltip>
-                </Flex>
-              </Flex>
+                resource={preview}
+                onChecked={id => {
+                  const r = [...resources];
+                  r.splice(
+                    resources.findIndex(r => r._id === id),
+                    1,
+                    { ...preview, isChecked: !preview.isChecked }
+                  );
+                  setResources(r);
+                  checkedResourceToast({
+                    position: 'bottom-left',
+                    title: 'Resource completed',
+                    description: 'The resource was marked as completed',
+                    status: 'info',
+                    duration: 3000,
+                    isClosable: true,
+                  });
+                  //TODO: Undo button on the toast
+                }}
+              />
             ))}
         </Box>
       </Box>

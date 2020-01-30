@@ -28,6 +28,9 @@ export const Wrapper: React.FC<WrapperProps> = ({ children, apolloClient }) => {
             div#__next > div {
               height: 100%;
             }
+            ul {
+              list-style-type: none;
+            }
           `}
         </style>
       </ThemeProvider>

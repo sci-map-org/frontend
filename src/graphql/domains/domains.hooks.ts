@@ -1,5 +1,4 @@
-import { useQuery, useMutation } from '@apollo/react-hooks';
-import { useGetDomainByKeyQuery, useSearchDomainsQuery, useCreateDomainMutation } from './domains.operations.generated';
+import { useCreateDomainMutation, useGetDomainByKeyQuery, useSearchDomainsQuery } from './domains.operations.generated';
 
 export const useGetDomainByKey = (key: string) => {
   const { loading, error, data } = useGetDomainByKeyQuery({ variables: { key } });
