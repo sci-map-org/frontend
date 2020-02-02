@@ -1,7 +1,8 @@
-import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
-import Autosuggest from 'react-autosuggest';
+import { Box, Input, Text } from '@chakra-ui/core';
 import { useState } from 'react';
-import { Box, Input } from '@chakra-ui/core';
+import Autosuggest from 'react-autosuggest';
+
+import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 
 const getConceptSuggestions = (concepts: ConceptDataFragment[], value: string): ConceptDataFragment[] => {
   const inputValue = value.trim().toLowerCase();
@@ -14,8 +15,8 @@ const getConceptSuggestions = (concepts: ConceptDataFragment[], value: string): 
 
 export const DomainConceptSelector: React.FC<{
   conceptList: ConceptDataFragment[];
-  onChange: (concept: ConceptDataFragment) => any;
-}> = ({ conceptList, onChange }) => {
+  onSelect: (concept: ConceptDataFragment) => any;
+}> = ({ conceptList, onSelect }) => {
   const [conceptSuggestions, setConceptSuggestions] = useState<ConceptDataFragment[]>([]);
   const [value, setValue] = useState('');
 
@@ -35,12 +36,12 @@ export const DomainConceptSelector: React.FC<{
         onSuggestionsFetchRequested={({ value: v }) => setConceptSuggestions(getConceptSuggestions(conceptList, v))}
         onSuggestionsClearRequested={() => setConceptSuggestions(getConceptSuggestions(conceptList, value))}
         onSuggestionSelected={(e, { suggestion }) => {
-          onChange(suggestion);
+          onSelect(suggestion);
           setValue('');
         }}
         renderSuggestion={suggestion => (
-          <Box px={5} py={1} borderBottomWidth={1} fontWeight={500}>
-            {suggestion.name}
+          <Box px={5} py={1} borderBottomWidth={1}>
+            <Text fontWeight={500}>{suggestion.name}</Text>
           </Box>
         )}
         renderSuggestionsContainer={({ containerProps, children }) => (

@@ -2,56 +2,36 @@ import {
   Box,
   Button,
   Flex,
-  Input,
-  Radio,
-  RadioGroup,
-  Stack,
-  Text,
-  Textarea,
   FormControl,
-  FormLabel,
-  Select,
   FormHelperText,
+  Input,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
+  Select,
+  Stack,
+  Tag,
+  TagCloseButton,
+  TagLabel,
+  Text,
+  Textarea,
 } from '@chakra-ui/core';
-import gql from 'graphql-tag';
-import Router from 'next/router';
-import { useState } from 'react';
+import { uniqBy, upperFirst, values } from 'lodash';
+import React, { useState } from 'react';
 
-import { ResourceData } from '../../graphql/resources/resources.fragments';
-import { ResourceMediaType, ResourceType } from '../../graphql/types';
-import { useAddResourceToDomainMutation, useCreateResourceMutation } from './NewResource.generated';
-import { DomainDataFragment, DomainWithConceptsDataFragment } from '../../graphql/domains/domains.fragments.generated';
-import { values, upperFirst } from 'lodash';
-import { DomainConceptSelector } from '../concepts/DomainConceptSelector';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
-
-export const createResource = gql`
-  mutation createResource($payload: CreateResourcePayload!) {
-    createResource(payload: $payload) {
-      ...ResourceData
-    }
-  }
-  ${ResourceData}
-`;
-
-export const addResourceToDomain = gql`
-  mutation addResourceToDomain($domainId: String!, $payload: CreateResourcePayload!) {
-    addResourceToDomain(domainId: $domainId, payload: $payload) {
-      ...ResourceData
-    }
-  }
-  ${ResourceData}
-`;
+import { DomainWithConceptsDataFragment } from '../../graphql/domains/domains.fragments.generated';
+import { CreateResourcePayload, ResourceMediaType, ResourceTag, ResourceType } from '../../graphql/types';
+import { DomainConceptSelector } from '../concepts/DomainConceptSelector';
+import { ResourceTagSelector } from '../input/ResourceTagSelector';
 
 interface NewResourceProps {
   domain?: DomainWithConceptsDataFragment;
+  onCreate: (payload: CreateResourcePayload) => any;
 }
-export const NewResource: React.FC<NewResourceProps> = ({ domain }) => {
+export const NewResource: React.FC<NewResourceProps> = ({ domain, onCreate }) => {
   const [name, setName] = useState('');
   const [mediaType, setMediaType] = useState<ResourceMediaType>(ResourceMediaType.Text);
   const [type, setType] = useState<ResourceType>(ResourceType.Article);
@@ -59,13 +39,13 @@ export const NewResource: React.FC<NewResourceProps> = ({ domain }) => {
   const [description, setDescription] = useState('');
   const [durationMn, setDurationMn] = useState<number>();
   const [selectedCoveredConcepts, setSelectedCoveredConcepts] = useState<ConceptDataFragment[]>([]);
-  const [createResource] = useCreateResourceMutation();
 
-  const [addResourceToDomain] = useAddResourceToDomainMutation();
+  const [selectedTags, setSelectedTags] = useState<ResourceTag[]>([]);
+
   return (
     <Stack spacing={4} py={5} px="10rem">
       <Text fontSize="2xl" textAlign="center">
-        Add resource{domain && ` to ${domain.name}`}
+        {domain ? 'Add' : 'Create'} resource{domain && ` to ${domain.name}`}
       </Text>
       <Input
         placeholder="Title"
@@ -86,18 +66,7 @@ export const NewResource: React.FC<NewResourceProps> = ({ domain }) => {
             ))}
           </Select>
         </FormControl> */}
-        <Stack direction="row" alignItems="center">
-          <Box fontWeight={600} whiteSpace="nowrap">
-            Media Type
-          </Box>
-          <Select placeholder="Select Media Type" onChange={e => setMediaType(e.target.value as ResourceMediaType)}>
-            {values(ResourceMediaType).map(mediaType => (
-              <option key={mediaType} value={mediaType}>
-                {upperFirst(mediaType)}
-              </option>
-            ))}
-          </Select>
-        </Stack>
+
         {/* <RadioGroup isInline onChange={e => setMediaType(e.target.value as ResourceMediaType)} value={mediaType}>
           <Radio value={ResourceMediaType.Text}>Text</Radio>
           <Radio value={ResourceMediaType.Video}>Video</Radio>
@@ -113,6 +82,7 @@ export const NewResource: React.FC<NewResourceProps> = ({ domain }) => {
             ))}
           </Select>
         </Stack>
+
         {/* <Text fontWeight={600}>Type:</Text>
         <RadioGroup isInline onChange={e => setType(e.target.value as ResourceType)} value={type}>
           <Radio value={ResourceType.Article}>Article</Radio>
@@ -120,7 +90,33 @@ export const NewResource: React.FC<NewResourceProps> = ({ domain }) => {
           <Radio value={ResourceType.Tutorial}>Tutorial</Radio>
         </RadioGroup> */}
       </Flex>
-      <Flex direction="row" alignItems="center">
+      <Flex direction="row">
+        <Stack direction="row" alignItems="center" flexGrow={1}>
+          <Text fontWeight={600}>Tags</Text>
+          <ResourceTagSelector onSelect={r => setSelectedTags(uniqBy(selectedTags.concat({ name: r.name }), 'name'))} />
+        </Stack>
+        <Stack spacing={2} direction="row" flexGrow={1} alignItems="flex-start">
+          {selectedTags.map(selectedTag => (
+            <Tag size="md" variantColor="gray" key={selectedTag.name}>
+              <TagLabel>{selectedTag.name}</TagLabel>
+              <TagCloseButton onClick={() => setSelectedTags(selectedTags.filter(s => s.name !== selectedTag.name))} />
+            </Tag>
+          ))}
+        </Stack>
+      </Flex>
+      <Flex direction="row" alignItems="center" justifyContent="space-between">
+        <Stack direction="row" alignItems="center">
+          <Box fontWeight={600} whiteSpace="nowrap">
+            Media Type
+          </Box>
+          <Select placeholder="Select Media Type" onChange={e => setMediaType(e.target.value as ResourceMediaType)}>
+            {values(ResourceMediaType).map(mediaType => (
+              <option key={mediaType} value={mediaType}>
+                {upperFirst(mediaType)}
+              </option>
+            ))}
+          </Select>
+        </Stack>
         <Stack direction="row" alignItems="center">
           <Text fontWeight={600}>Estimated Duration</Text>
           <NumberInput step={5} min={0} max={600} value={durationMn} onChange={(value: any) => setDurationMn(value)}>
@@ -145,11 +141,16 @@ export const NewResource: React.FC<NewResourceProps> = ({ domain }) => {
         </FormHelperText>
       </FormControl>
       {domain && domain.concepts && (
-        <>
-          <DomainConceptSelector
-            conceptList={domain.concepts.items.filter(c => !selectedCoveredConcepts.find(s => s._id === c._id))}
-            onChange={c => setSelectedCoveredConcepts(selectedCoveredConcepts.concat([c]))}
-          />
+        <Stack spacing={10} direction="row">
+          <Box>
+            <Text fontSize="xl">Covered concepts</Text>
+            <Box width="300px">
+              <DomainConceptSelector
+                conceptList={domain.concepts.items.filter(c => !selectedCoveredConcepts.find(s => s._id === c._id))}
+                onSelect={c => setSelectedCoveredConcepts(selectedCoveredConcepts.concat([c]))}
+              />
+            </Box>
+          </Box>
           <Stack>
             {selectedCoveredConcepts.map(concept => (
               <Stack direction="row" alignItems="center" key={concept._id}>
@@ -163,35 +164,22 @@ export const NewResource: React.FC<NewResourceProps> = ({ domain }) => {
               </Stack>
             ))}
           </Stack>
-        </>
+        </Stack>
       )}
       <Box>
         <Button
           size="lg"
           variant="solid"
-          onClick={async () => {
-            const payload = {
+          onClick={() =>
+            onCreate({
               name,
               description,
               type,
               mediaType,
               url,
-            };
-            if (domain) {
-              addResourceToDomain({
-                variables: {
-                  domainId: domain._id,
-                  payload,
-                },
-              }).then(({ data }) => {
-                data && Router.push(`/resources/${data.addResourceToDomain._id}`);
-              });
-            } else {
-              createResource({ variables: { payload } }).then(({ data }) => {
-                data && Router.push(`/resources/${data.createResource._id}`);
-              });
-            }
-          }}
+              tags: selectedTags.map(t => t.name),
+            })
+          }
         >
           Create
         </Button>
