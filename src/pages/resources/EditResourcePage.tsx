@@ -45,10 +45,7 @@ const EditResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) => {
   if (!data || !data.getResourceById) return <Box>Resource not found !</Box>;
   const { getResourceById: resource } = data;
   return (
-    <PageLayout>
-      <Text mb={5} fontSize="3xl">
-        Edit - {resource.name}
-      </Text>
+    <PageLayout mode="form">
       <ResourceEditor resource={resource} onSave={editedResource => console.log(editedResource)}></ResourceEditor>
     </PageLayout>
   );

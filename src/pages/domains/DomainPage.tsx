@@ -44,11 +44,11 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
       )}
       <Box mb={4}>
         <NextLink href={`${router.asPath}/resources`}>
-          <Link>Resources </Link>
+          <Link>All Resources </Link>
         </NextLink>
         |
         <NextLink href={`${router.asPath}/concepts`}>
-          <Link> Concepts</Link>
+          <Link> Detailed Concept List</Link>
         </NextLink>
       </Box>
       {mockedFeaturesEnabled ? (

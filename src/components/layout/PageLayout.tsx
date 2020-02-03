@@ -1,8 +1,8 @@
 import { Box, Flex } from '@chakra-ui/core';
 
-export const PageLayout: React.FC<{}> = ({ children }) => {
+export const PageLayout: React.FC<{ mode?: 'form' }> = ({ children, mode }) => {
   return (
-    <Flex direction="column" px={50} py={50} mx={50} mt={10} borderWidth={1} borderRadius={2}>
+    <Flex direction="column" px={mode === 'form' ? '10rem' : '80px'} py="30px">
       {children}
     </Flex>
   );

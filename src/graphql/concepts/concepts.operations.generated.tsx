@@ -1,9 +1,11 @@
 import * as Types from '../types';
 
 import { ConceptDataFragment } from './concepts.fragments.generated';
+import { ResourcePreviewDataFragment } from '../resources/resources.fragments.generated';
 import * as Operations from './concepts.operations';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
+
 
 
 export type AddConceptToDomainMutationVariables = {
@@ -60,7 +62,7 @@ export type GetConceptQuery = (
       { __typename?: 'ConceptCoveredByResourcesResults' }
       & { items: Array<(
         { __typename?: 'Resource' }
-        & Pick<Types.Resource, '_id' | 'name' | 'type'>
+        & ResourcePreviewDataFragment
       )> }
     )> }
     & ConceptDataFragment

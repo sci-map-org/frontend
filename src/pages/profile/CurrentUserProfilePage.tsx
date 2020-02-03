@@ -1,10 +1,10 @@
 import { Box, Checkbox, Stack, Text } from '@chakra-ui/core';
 import NoSSR from 'react-no-ssr';
 
-import { UserRole } from '../../graphql/types';
-import { CurrentUserDataFragment } from '../../graphql/users/users.generated';
-import { useMockedFeaturesEnabled } from '../../hooks/useMockedFeaturesEnabled';
 import { PageLayout } from '../../components/layout/PageLayout';
+import { UserRole } from '../../graphql/types';
+import { CurrentUserDataFragment } from '../../graphql/users/users.fragments.generated';
+import { useMockedFeaturesEnabled } from '../../hooks/useMockedFeaturesEnabled';
 
 export const CurrentUserProfilePage: React.FC<{ currentUser: CurrentUserDataFragment }> = ({ currentUser }) => {
   const { mockedFeaturesEnabled, setMockedFeaturesEnabled } = useMockedFeaturesEnabled();

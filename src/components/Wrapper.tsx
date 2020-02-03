@@ -16,9 +16,7 @@ export const Wrapper: React.FC<WrapperProps> = ({ children, apolloClient }) => {
     <ApolloProvider client={apolloClient}>
       <ThemeProvider theme={theme}>
         <CSSReset />
-        <ColorModeProvider>
-          <Layout>{children}</Layout>
-        </ColorModeProvider>
+        <Layout>{children}</Layout>
         <style global jsx>
           {`
             html,
@@ -27,6 +25,9 @@ export const Wrapper: React.FC<WrapperProps> = ({ children, apolloClient }) => {
             div#__next,
             div#__next > div {
               height: 100%;
+            }
+            ul {
+              list-style-type: none;
             }
           `}
         </style>
