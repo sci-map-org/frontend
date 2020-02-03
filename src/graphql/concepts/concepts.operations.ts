@@ -1,5 +1,6 @@
 import { ConceptData } from './concepts.fragments';
 import gql from 'graphql-tag';
+import { ResourcePreviewData } from '../resources/resources.fragments';
 
 export const addConceptToDomain = gql`
   mutation addConceptToDomain($domainId: String!, $payload: CreateConceptPayload!) {
@@ -34,14 +35,13 @@ export const getConcept = gql`
       ...ConceptData
       coveredByResources(options: {}) {
         items {
-          _id
-          name
-          type
+          ...ResourcePreviewData
         }
       }
     }
   }
   ${ConceptData}
+  ${ResourcePreviewData}
 `;
 
 export const listDomainConcepts = gql`

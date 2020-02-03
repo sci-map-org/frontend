@@ -39,7 +39,7 @@ export const AddResourceToDomainPage: React.FC<{ domainKey: string }> = ({ domai
     },
   });
   return (
-    <PageLayout>
+    <PageLayout mode="form">
       <NewResource
         domain={data.getDomainByKey}
         onCreate={payload =>

@@ -18,6 +18,7 @@ import { useState } from 'react';
 import { ResourceMediaType, ResourceType, UpdateResourcePayload } from '../../graphql/types';
 import { GetResourceEditResourcePageQuery } from '../../pages/resources/EditResourcePage.generated';
 import { CoveredConceptsSelector } from './CoveredConceptsSelector';
+import { ResourceTypeSelector, ResourceMediaTypeSelector } from './NewResource';
 
 interface ResourceEditorProps {
   resource: GetResourceEditResourcePageQuery['getResourceById'];
@@ -37,20 +38,33 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
     })
     .reduce((acc, c) => acc.concat(c), []);
   return (
-    <Stack spacing={5}>
+    <Stack spacing={4}>
+      <Text mb={5} fontSize="3xl" textAlign="center">
+        Edit - {resource.name}
+      </Text>
       <FormControl isRequired isInvalid={!name}>
         <FormLabel htmlFor="name">Resource Name</FormLabel>
         <Input
           id="name"
           placeholder="name"
           size="md"
-          variant="flushed"
           value={name}
           onChange={(e: any) => setName(e.target.value)}
         ></Input>
       </FormControl>
+      <FormControl isRequired>
+        <FormLabel htmlFor="url">Url</FormLabel>
+        <Input
+          id="url"
+          placeholder="https://example.com"
+          size="md"
+          value={url}
+          onChange={(e: any) => setUrl(e.target.value)}
+        ></Input>
+      </FormControl>
       <Flex flexDirection="row">
-        <FormControl isRequired>
+        <ResourceMediaTypeSelector value={mediaType} onSelect={t => setMediaType(t)} />
+        {/* <FormControl isRequired>
           <FormLabel htmlFor="mediaType">Media Type</FormLabel>
           <RadioGroup
             id="mediaType"
@@ -61,29 +75,19 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
             <Radio value={ResourceMediaType.Text}>Text</Radio>
             <Radio value={ResourceMediaType.Video}>Video</Radio>
           </RadioGroup>
-        </FormControl>
+        </FormControl> */}
         <Box flexGrow={1}></Box>
-
-        <FormControl isRequired>
+        <ResourceTypeSelector value={type} onSelect={t => setType(t)} />
+        {/* <FormControl isRequired>
           <FormLabel htmlFor="mediaType">Type</FormLabel>
           <RadioGroup id="type" isInline onChange={e => setType(e.target.value as ResourceType)} value={type}>
             <Radio value={ResourceType.Article}>Article</Radio>
             <Radio value={ResourceType.Introduction}>Introduction</Radio>
             <Radio value={ResourceType.Tutorial}>Tutorial</Radio>
           </RadioGroup>
-        </FormControl>
+        </FormControl> */}
       </Flex>
-      <FormControl isRequired>
-        <FormLabel htmlFor="url">Url</FormLabel>
-        <Input
-          id="url"
-          placeholder="https://example.com"
-          size="md"
-          variant="flushed"
-          value={url}
-          onChange={(e: any) => setUrl(e.target.value)}
-        ></Input>
-      </FormControl>
+
       <FormControl>
         <FormLabel htmlFor="description">Description</FormLabel>
         <Textarea

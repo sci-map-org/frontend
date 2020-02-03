@@ -27,6 +27,69 @@ import { CreateResourcePayload, ResourceMediaType, ResourceTag, ResourceType } f
 import { DomainConceptSelector } from '../concepts/DomainConceptSelector';
 import { ResourceTagSelector } from '../input/ResourceTagSelector';
 
+export const SelectedTagsEditor: React.FC<{
+  selectedTags: ResourceTag[];
+  setSelectedTags: (tags: ResourceTag[]) => any;
+}> = ({ selectedTags, setSelectedTags }) => {
+  return (
+    <Flex direction="row">
+      <Stack direction="row" alignItems="center" flexGrow={1}>
+        <Text fontWeight={600}>Tags</Text>
+        <ResourceTagSelector onSelect={r => setSelectedTags(uniqBy(selectedTags.concat({ name: r.name }), 'name'))} />
+      </Stack>
+      <Stack spacing={2} direction="row" flexGrow={1} alignItems="flex-start">
+        {selectedTags.map(selectedTag => (
+          <Tag size="md" variantColor="gray" key={selectedTag.name}>
+            <TagLabel>{selectedTag.name}</TagLabel>
+            <TagCloseButton onClick={() => setSelectedTags(selectedTags.filter(s => s.name !== selectedTag.name))} />
+          </Tag>
+        ))}
+      </Stack>
+    </Flex>
+  );
+};
+
+export const ResourceTypeSelector: React.FC<{ value: ResourceType; onSelect: (type: ResourceType) => void }> = ({
+  onSelect,
+  value,
+}) => {
+  return (
+    <Stack direction="row" alignItems="center">
+      <Text fontWeight={600}>Type</Text>
+      <Select placeholder="Select Type" value={value} onChange={e => onSelect(e.target.value as ResourceType)}>
+        {values(ResourceType).map(type => (
+          <option key={type} value={type}>
+            {upperFirst(type)}
+          </option>
+        ))}
+      </Select>
+    </Stack>
+  );
+};
+
+export const ResourceMediaTypeSelector: React.FC<{
+  value: ResourceMediaType;
+  onSelect: (mediaType: ResourceMediaType) => void;
+}> = ({ onSelect, value }) => {
+  return (
+    <Stack direction="row" alignItems="center">
+      <Box fontWeight={600} whiteSpace="nowrap">
+        Media Type
+      </Box>
+      <Select
+        placeholder="Select Media Type"
+        value={value}
+        onChange={e => onSelect(e.target.value as ResourceMediaType)}
+      >
+        {values(ResourceMediaType).map(mediaType => (
+          <option key={mediaType} value={mediaType}>
+            {upperFirst(mediaType)}
+          </option>
+        ))}
+      </Select>
+    </Stack>
+  );
+};
 interface NewResourceProps {
   domain?: DomainWithConceptsDataFragment;
   onCreate: (payload: CreateResourcePayload) => any;
@@ -43,17 +106,11 @@ export const NewResource: React.FC<NewResourceProps> = ({ domain, onCreate }) =>
   const [selectedTags, setSelectedTags] = useState<ResourceTag[]>([]);
 
   return (
-    <Stack spacing={4} py={5} px="10rem">
-      <Text fontSize="2xl" textAlign="center">
+    <Stack spacing={4}>
+      <Text fontSize="3xl" textAlign="center">
         {domain ? 'Add' : 'Create'} resource{domain && ` to ${domain.name}`}
       </Text>
-      <Input
-        placeholder="Title"
-        size="md"
-        // variant="flushed"
-        value={name}
-        onChange={(e: any) => setName(e.target.value)}
-      ></Input>
+      <Input placeholder="Title" size="md" value={name} onChange={(e: any) => setName(e.target.value)}></Input>
       <Input placeholder="Url" size="md" value={url} onChange={(e: any) => setUrl(e.target.value)}></Input>
       <Flex flexDirection="row" justifyContent="space-between">
         {/* <FormControl>
@@ -72,16 +129,8 @@ export const NewResource: React.FC<NewResourceProps> = ({ domain, onCreate }) =>
           <Radio value={ResourceMediaType.Video}>Video</Radio>
         </RadioGroup> */}
         {/* <Box flexGrow={1}></Box> */}
-        <Stack direction="row" alignItems="center">
-          <Text fontWeight={600}>Type</Text>
-          <Select placeholder="Select Type" onChange={e => setType(e.target.value as ResourceType)}>
-            {values(ResourceType).map(type => (
-              <option key={type} value={type}>
-                {upperFirst(type)}
-              </option>
-            ))}
-          </Select>
-        </Stack>
+
+        <ResourceTypeSelector value={type} onSelect={t => setType(t)} />
 
         {/* <Text fontWeight={600}>Type:</Text>
         <RadioGroup isInline onChange={e => setType(e.target.value as ResourceType)} value={type}>
@@ -90,33 +139,9 @@ export const NewResource: React.FC<NewResourceProps> = ({ domain, onCreate }) =>
           <Radio value={ResourceType.Tutorial}>Tutorial</Radio>
         </RadioGroup> */}
       </Flex>
-      <Flex direction="row">
-        <Stack direction="row" alignItems="center" flexGrow={1}>
-          <Text fontWeight={600}>Tags</Text>
-          <ResourceTagSelector onSelect={r => setSelectedTags(uniqBy(selectedTags.concat({ name: r.name }), 'name'))} />
-        </Stack>
-        <Stack spacing={2} direction="row" flexGrow={1} alignItems="flex-start">
-          {selectedTags.map(selectedTag => (
-            <Tag size="md" variantColor="gray" key={selectedTag.name}>
-              <TagLabel>{selectedTag.name}</TagLabel>
-              <TagCloseButton onClick={() => setSelectedTags(selectedTags.filter(s => s.name !== selectedTag.name))} />
-            </Tag>
-          ))}
-        </Stack>
-      </Flex>
+      <SelectedTagsEditor selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
       <Flex direction="row" alignItems="center" justifyContent="space-between">
-        <Stack direction="row" alignItems="center">
-          <Box fontWeight={600} whiteSpace="nowrap">
-            Media Type
-          </Box>
-          <Select placeholder="Select Media Type" onChange={e => setMediaType(e.target.value as ResourceMediaType)}>
-            {values(ResourceMediaType).map(mediaType => (
-              <option key={mediaType} value={mediaType}>
-                {upperFirst(mediaType)}
-              </option>
-            ))}
-          </Select>
-        </Stack>
+        <ResourceMediaTypeSelector value={mediaType} onSelect={t => setMediaType(t)} />
         <Stack direction="row" alignItems="center">
           <Text fontWeight={600}>Estimated Duration</Text>
           <NumberInput step={5} min={0} max={600} value={durationMn} onChange={(value: any) => setDurationMn(value)}>
