@@ -6,7 +6,10 @@ import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.f
 import { ResourceMediaType, ResourceType } from '../../graphql/types';
 import { ResourcePreviewCard } from './ResourcePreviewCard';
 
-export const DomainRecommendedResources: React.FC<{ domain: DomainDataFragment }> = ({ domain }) => {
+export const DomainRecommendedResources: React.FC<{
+  domain: DomainDataFragment;
+  resourcePreviews: ResourcePreviewDataFragment[];
+}> = ({ domain, resourcePreviews }) => {
   const recommendedResources: Array<ResourcePreviewDataFragment & {
     durationMn?: number;
     isChecked: boolean;
@@ -75,7 +78,9 @@ export const DomainRecommendedResources: React.FC<{ domain: DomainDataFragment }
       },
     },
   ];
-  const [resources, setResources] = useState(recommendedResources);
+  const [resources, setResources] = useState<Array<ResourcePreviewDataFragment & { isChecked?: boolean }>>(
+    resourcePreviews
+  );
   const [searchQuery, setSearchQuery] = useState('');
   const [showCheckedResources, setShowCheckedResources] = useState(false);
   const checkedResourceToast = useToast();
@@ -107,6 +112,7 @@ export const DomainRecommendedResources: React.FC<{ domain: DomainDataFragment }
             .map((preview, previewIdx) => (
               <ResourcePreviewCard
                 key={preview._id}
+                domainKey={domain.key}
                 resource={preview}
                 onChecked={id => {
                   const r = [...resources];

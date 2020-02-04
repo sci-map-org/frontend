@@ -6,6 +6,20 @@ import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
 
 
+export type UpdateResourceResourcePageMutationVariables = {
+  id: Types.Scalars['String'],
+  payload: Types.UpdateResourcePayload
+};
+
+
+export type UpdateResourceResourcePageMutation = (
+  { __typename?: 'Mutation' }
+  & { updateResource: (
+    { __typename?: 'Resource' }
+    & ResourceDataFragment
+  ) }
+);
+
 export type GetResourceEditResourcePageQueryVariables = {
   id: Types.Scalars['String']
 };
@@ -44,6 +58,32 @@ export type GetResourceEditResourcePageQuery = (
 );
 
 
+export type UpdateResourceResourcePageMutationFn = ApolloReactCommon.MutationFunction<UpdateResourceResourcePageMutation, UpdateResourceResourcePageMutationVariables>;
+
+/**
+ * __useUpdateResourceResourcePageMutation__
+ *
+ * To run a mutation, you first call `useUpdateResourceResourcePageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateResourceResourcePageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateResourceResourcePageMutation, { data, loading, error }] = useUpdateResourceResourcePageMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      payload: // value for 'payload'
+ *   },
+ * });
+ */
+export function useUpdateResourceResourcePageMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<UpdateResourceResourcePageMutation, UpdateResourceResourcePageMutationVariables>) {
+        return ApolloReactHooks.useMutation<UpdateResourceResourcePageMutation, UpdateResourceResourcePageMutationVariables>(Operations.updateResourceResourcePage, baseOptions);
+      }
+export type UpdateResourceResourcePageMutationHookResult = ReturnType<typeof useUpdateResourceResourcePageMutation>;
+export type UpdateResourceResourcePageMutationResult = ApolloReactCommon.MutationResult<UpdateResourceResourcePageMutation>;
+export type UpdateResourceResourcePageMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateResourceResourcePageMutation, UpdateResourceResourcePageMutationVariables>;
 
 /**
  * __useGetResourceEditResourcePageQuery__

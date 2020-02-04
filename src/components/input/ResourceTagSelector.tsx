@@ -8,6 +8,7 @@ import { uniqBy } from 'lodash';
 
 interface ResourceTagSelectorProps {
   onSelect: (tag: ResourceTagSearchResult | { name: string; new: true }) => any;
+  width?: string;
 }
 
 export const searchResourceTags = gql`
@@ -18,30 +19,34 @@ export const searchResourceTags = gql`
     }
   }
 `;
-export const ResourceTagSelector: React.FC<ResourceTagSelectorProps> = ({ onSelect }) => {
+export const ResourceTagSelector: React.FC<ResourceTagSelectorProps> = ({ onSelect, width }) => {
+  width = width || '200px';
   const [value, setValue] = useState('');
   const [refetch, { data }] = useSearchResourceTagsLazyQuery();
 
   const suggestions: ResourceTagSearchResult[] = uniqBy(
-    (data?.searchResourceTags || []).concat({
-      name: value,
-      usageCount: 0,
-    }),
+    [
+      {
+        name: value,
+        usageCount: 0,
+      },
+      ...(data?.searchResourceTags || []),
+    ],
     'name'
   );
 
   const inputProps = {
-    placeholder: 'Search concepts',
+    placeholder: 'Search tags...',
     value,
     onChange: (
       event: any,
       { newValue, method }: { newValue: string; method: 'down' | 'up' | 'escape' | 'enter' | 'click' | 'type' }
     ) => {
-      setValue(newValue);
+      method === 'type' && setValue(newValue);
     },
   };
   return (
-    <Box marginBottom="16px">
+    <Box marginBottom="16px" flexBasis={width} flexShrink={0}>
       <Autosuggest
         suggestions={suggestions}
         inputProps={inputProps}
@@ -70,7 +75,14 @@ export const ResourceTagSelector: React.FC<ResourceTagSelectorProps> = ({ onSele
           </Flex>
         )}
         renderSuggestionsContainer={({ containerProps, children }) => (
-          <Box {...containerProps} borderLeftWidth={1} borderRightWidth={1}>
+          <Box
+            {...containerProps}
+            borderLeftWidth={1}
+            borderRightWidth={1}
+            zIndex={1000}
+            position="absolute"
+            width={width}
+          >
             {children}
           </Box>
         )}

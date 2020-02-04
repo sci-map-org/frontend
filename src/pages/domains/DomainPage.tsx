@@ -1,20 +1,43 @@
-import { Box, Button, Flex, Link, Text, Stack } from '@chakra-ui/core';
+import { Box, Button, Flex, Link, Stack, Text } from '@chakra-ui/core';
+import gql from 'graphql-tag';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
-import { useGetDomainByKey } from '../../graphql/domains/domains.hooks';
-import { useMockedFeaturesEnabled } from '../../hooks/useMockedFeaturesEnabled';
-import { ConceptList } from '../../components/concepts/ConceptList';
-import { PageLayout } from '../../components/layout/PageLayout';
-import { DomainRecommendedResources } from '../../components/resources/DomainRecommendedResources';
-import { ResourceList } from '../../components/resources/ResourceList';
-import { DomainLearningPaths } from '../../components/learning_paths/DomainLearningPaths';
 import { DomainConceptList } from '../../components/concepts/DomainConceptList';
+import { PageLayout } from '../../components/layout/PageLayout';
+import { DomainLearningPaths } from '../../components/learning_paths/DomainLearningPaths';
+import { DomainRecommendedResources } from '../../components/resources/DomainRecommendedResources';
+import { ConceptData } from '../../graphql/concepts/concepts.fragments';
+import { DomainData } from '../../graphql/domains/domains.fragments';
+import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
+import { useMockedFeaturesEnabled } from '../../hooks/useMockedFeaturesEnabled';
+import { useGetDomainByKeyDomainPageQuery } from './DomainPage.generated';
+
+export const getDomainByKeyDomainPage = gql`
+  query getDomainByKeyDomainPage($key: String!) {
+    getDomainByKey(key: $key) {
+      ...DomainData
+      concepts(options: {}) {
+        items {
+          ...ConceptData
+        }
+      }
+      resources(options: { pagination: { limit: 30 } }) {
+        items {
+          ...ResourcePreviewData
+        }
+      }
+    }
+  }
+  ${DomainData}
+  ${ConceptData}
+  ${ResourcePreviewData}
+`;
 
 export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
   const router = useRouter();
-  const { domain } = useGetDomainByKey(domainKey);
-
+  const { data } = useGetDomainByKeyDomainPageQuery({ variables: { key: domainKey } });
+  const domain = data?.getDomainByKey;
   const { mockedFeaturesEnabled } = useMockedFeaturesEnabled();
 
   if (!domain) return <Box>Domain not found !</Box>;
@@ -25,7 +48,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
         <Text fontSize="4xl">Learn {domain.name}</Text>
         <Box flexGrow={1}></Box>
         <NextLink href={router.asPath + '/resources/new'}>
-          <Button>+ Add resource</Button>
+          <Button variant="outline">+ Add resource</Button>
         </NextLink>
         {mockedFeaturesEnabled && (
           <Box ml={2}>
@@ -42,24 +65,28 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
           {domain.description}
         </Box>
       )}
-      <Box mb={4}>
+      {/* <Box mb={4}>
         <NextLink href={`${router.asPath}/resources`}>
           <Link>All Resources </Link>
-        </NextLink>
-        |
+        </NextLink> */}
+      {/* |
         <NextLink href={`${router.asPath}/concepts`}>
           <Link> Detailed Concept List</Link>
-        </NextLink>
-      </Box>
-      {mockedFeaturesEnabled ? (
-        <Flex direction="row">
-          <Flex direction="column" flexShrink={1}>
-            <DomainConceptList domain={domain} />
+        </NextLink> */}
+      {/* </Box> */}
+      <Flex direction="row">
+        {domain.concepts && (
+          <Flex direction="column" flexShrink={0}>
+            <DomainConceptList domain={domain} concepts={domain.concepts.items} />
           </Flex>
-          <Flex direction="column" flexShrink={2}>
-            <DomainRecommendedResources domain={domain} />
-            <DomainLearningPaths domain={domain} />
+        )}
+        {domain.resources && (
+          <Flex direction="column" flexShrink={1} flexGrow={1}>
+            <DomainRecommendedResources domain={domain} resourcePreviews={domain.resources.items} />
+            {mockedFeaturesEnabled && <DomainLearningPaths domain={domain} />}
           </Flex>
+        )}
+        {mockedFeaturesEnabled && (
           <Stack spacing={4} direction="column" ml={6} flexShrink={1}>
             <Box>
               <Text fontSize="2xl">Sub domains</Text>
@@ -90,23 +117,22 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
               <Stack direction="column"></Stack>
             </Box>
           </Stack>
-        </Flex>
-      ) : (
-        <Box>
-          <Box mb={4}>
-            <Text fontSize="2xl">Resources</Text>
-            <Box mt={2}>
-              <ResourceList domainKey={domain.key} />
-            </Box>
-          </Box>
-          <Box mb={4}>
-            <Text fontSize="2xl">Concepts</Text>
-            <Box mt={2}>
-              <ConceptList domainKey={domain.key} />
-            </Box>
+        )}
+      </Flex>
+      {/* <Box>
+        <Box mb={4}>
+          <Text fontSize="2xl">Resources</Text>
+          <Box mt={2}>
+            <ResourceList domainKey={domain.key} />
           </Box>
         </Box>
-      )}
+        <Box mb={4}>
+          <Text fontSize="2xl">Concepts</Text>
+          <Box mt={2}>
+            <ConceptList domainKey={domain.key} />
+          </Box>
+        </Box>
+      </Box> */}
     </PageLayout>
   );
 };

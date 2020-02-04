@@ -5,12 +5,16 @@ import { ConceptDataFragment } from '../concepts/concepts.fragments.generated';
 
 export type ResourceDataFragment = (
   { __typename?: 'Resource' }
-  & Pick<Types.Resource, '_id' | 'name' | 'type' | 'mediaType' | 'url' | 'description'>
+  & Pick<Types.Resource, '_id' | 'name' | 'type' | 'mediaType' | 'url' | 'description' | 'durationMn'>
+  & { tags: Types.Maybe<Array<(
+    { __typename?: 'ResourceTag' }
+    & Pick<Types.ResourceTag, 'name'>
+  )>> }
 );
 
 export type ResourcePreviewDataFragment = (
   { __typename?: 'Resource' }
-  & Pick<Types.Resource, '_id' | 'name' | 'type' | 'mediaType' | 'url' | 'description'>
+  & Pick<Types.Resource, '_id' | 'name' | 'type' | 'mediaType' | 'url' | 'description' | 'durationMn'>
   & { tags: Types.Maybe<Array<(
     { __typename?: 'ResourceTag' }
     & Pick<Types.ResourceTag, 'name'>

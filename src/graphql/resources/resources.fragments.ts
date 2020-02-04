@@ -11,6 +11,10 @@ export const ResourceData = gql`
     mediaType
     url
     description
+    durationMn
+    tags {
+      name
+    }
   }
 `;
 
@@ -22,6 +26,7 @@ export const ResourcePreviewData = gql`
     mediaType
     url
     description
+    durationMn
     tags {
       name
     }

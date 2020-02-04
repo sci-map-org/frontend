@@ -1,24 +1,13 @@
-import {
-  Box,
-  Button,
-  Flex,
-  FormControl,
-  FormLabel,
-  Input,
-  Link,
-  Radio,
-  RadioGroup,
-  Stack,
-  Text,
-  Textarea,
-} from '@chakra-ui/core';
+import { Box, Button, Flex, FormControl, FormLabel, Input, Link, Stack, Text } from '@chakra-ui/core';
 import NextLink from 'next/link';
 import { useState } from 'react';
 
-import { ResourceMediaType, ResourceType, UpdateResourcePayload } from '../../graphql/types';
+import { UpdateResourcePayload } from '../../graphql/types';
 import { GetResourceEditResourcePageQuery } from '../../pages/resources/EditResourcePage.generated';
 import { CoveredConceptsSelector } from './CoveredConceptsSelector';
-import { ResourceTypeSelector, ResourceMediaTypeSelector } from './NewResource';
+import { ResourceMediaTypeSelector, ResourceTypeSelector } from './NewResource';
+import { ResourceDescriptionInput } from './ResourceDescription';
+import { ResourceDurationMnSelector } from './ResourceDuration';
 
 interface ResourceEditorProps {
   resource: GetResourceEditResourcePageQuery['getResourceById'];
@@ -29,21 +18,26 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
   const [name, setName] = useState(resource.name);
   const [mediaType, setMediaType] = useState(resource.mediaType);
   const [type, setType] = useState(resource.type);
+
   const [url, setUrl] = useState(resource.url);
-  const [description, setDescription] = useState(resource.description);
+  const [durationMn, setDurationMn] = useState(resource.durationMn || undefined);
+  const [description, setDescription] = useState(resource.description || undefined);
+
   if (!resource.domains) return null;
+
   const conceptList: { _id: string; name: string }[] = resource.domains.items
     .map(domain => {
       return !!domain.concepts ? domain.concepts.items : [];
     })
     .reduce((acc, c) => acc.concat(c), []);
+
   return (
     <Stack spacing={4}>
       <Text mb={5} fontSize="3xl" textAlign="center">
         Edit - {resource.name}
       </Text>
       <FormControl isRequired isInvalid={!name}>
-        <FormLabel htmlFor="name">Resource Name</FormLabel>
+        <FormLabel htmlFor="name">Title</FormLabel>
         <Input
           id="name"
           placeholder="name"
@@ -62,43 +56,15 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
           onChange={(e: any) => setUrl(e.target.value)}
         ></Input>
       </FormControl>
+      <Flex direction="row">
+        <ResourceTypeSelector value={type} onSelect={t => setType(t)} />
+      </Flex>
       <Flex flexDirection="row">
         <ResourceMediaTypeSelector value={mediaType} onSelect={t => setMediaType(t)} />
-        {/* <FormControl isRequired>
-          <FormLabel htmlFor="mediaType">Media Type</FormLabel>
-          <RadioGroup
-            id="mediaType"
-            isInline
-            onChange={e => setMediaType(e.target.value as ResourceMediaType)}
-            value={mediaType}
-          >
-            <Radio value={ResourceMediaType.Text}>Text</Radio>
-            <Radio value={ResourceMediaType.Video}>Video</Radio>
-          </RadioGroup>
-        </FormControl> */}
         <Box flexGrow={1}></Box>
-        <ResourceTypeSelector value={type} onSelect={t => setType(t)} />
-        {/* <FormControl isRequired>
-          <FormLabel htmlFor="mediaType">Type</FormLabel>
-          <RadioGroup id="type" isInline onChange={e => setType(e.target.value as ResourceType)} value={type}>
-            <Radio value={ResourceType.Article}>Article</Radio>
-            <Radio value={ResourceType.Introduction}>Introduction</Radio>
-            <Radio value={ResourceType.Tutorial}>Tutorial</Radio>
-          </RadioGroup>
-        </FormControl> */}
+        <ResourceDurationMnSelector value={durationMn} onChange={v => setDurationMn(v)} />
       </Flex>
-
-      <FormControl>
-        <FormLabel htmlFor="description">Description</FormLabel>
-        <Textarea
-          id="description"
-          placeholder="description..."
-          size="md"
-          variant="flushed"
-          value={description || ''}
-          onChange={(e: any) => setDescription(e.target.value || undefined)}
-        ></Textarea>
-      </FormControl>
+      <ResourceDescriptionInput value={description} onChange={d => setDescription(d)} />
       {resource.domains && resource.coveredConcepts && (
         <CoveredConceptsSelector
           resourceId={resource._id}
@@ -128,6 +94,7 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
             type,
             url,
             description,
+            durationMn,
           })
         }
       >

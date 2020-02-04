@@ -23,7 +23,7 @@ export const DomainConceptSelector: React.FC<{
   const inputProps = {
     placeholder: 'Search concepts',
     value,
-    onChange: (event: any, { newValue }: { newValue: string }) => {
+    onChange: (_event: any, { newValue }: { newValue: string }) => {
       setValue(newValue);
     },
   };

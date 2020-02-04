@@ -1,53 +1,14 @@
-import {
-  Box,
-  Button,
-  Flex,
-  FormControl,
-  FormHelperText,
-  Input,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  Select,
-  Stack,
-  Tag,
-  TagCloseButton,
-  TagLabel,
-  Text,
-  Textarea,
-} from '@chakra-ui/core';
-import { uniqBy, upperFirst, values } from 'lodash';
+import { Box, Button, Flex, Input, Select, Stack, Text } from '@chakra-ui/core';
+import { upperFirst, values } from 'lodash';
 import React, { useState } from 'react';
 
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { DomainWithConceptsDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { CreateResourcePayload, ResourceMediaType, ResourceTag, ResourceType } from '../../graphql/types';
 import { DomainConceptSelector } from '../concepts/DomainConceptSelector';
-import { ResourceTagSelector } from '../input/ResourceTagSelector';
-
-export const SelectedTagsEditor: React.FC<{
-  selectedTags: ResourceTag[];
-  setSelectedTags: (tags: ResourceTag[]) => any;
-}> = ({ selectedTags, setSelectedTags }) => {
-  return (
-    <Flex direction="row">
-      <Stack direction="row" alignItems="center" flexGrow={1}>
-        <Text fontWeight={600}>Tags</Text>
-        <ResourceTagSelector onSelect={r => setSelectedTags(uniqBy(selectedTags.concat({ name: r.name }), 'name'))} />
-      </Stack>
-      <Stack spacing={2} direction="row" flexGrow={1} alignItems="flex-start">
-        {selectedTags.map(selectedTag => (
-          <Tag size="md" variantColor="gray" key={selectedTag.name}>
-            <TagLabel>{selectedTag.name}</TagLabel>
-            <TagCloseButton onClick={() => setSelectedTags(selectedTags.filter(s => s.name !== selectedTag.name))} />
-          </Tag>
-        ))}
-      </Stack>
-    </Flex>
-  );
-};
+import { ResourceDescriptionInput } from './ResourceDescription';
+import { ResourceDurationMnSelector } from './ResourceDuration';
+import { SelectedTagsEditor } from './ResourceTagsEditor';
 
 export const ResourceTypeSelector: React.FC<{ value: ResourceType; onSelect: (type: ResourceType) => void }> = ({
   onSelect,
@@ -99,7 +60,7 @@ export const NewResource: React.FC<NewResourceProps> = ({ domain, onCreate }) =>
   const [mediaType, setMediaType] = useState<ResourceMediaType>(ResourceMediaType.Text);
   const [type, setType] = useState<ResourceType>(ResourceType.Article);
   const [url, setUrl] = useState('');
-  const [description, setDescription] = useState('');
+  const [description, setDescription] = useState<string | undefined>(undefined);
   const [durationMn, setDurationMn] = useState<number>();
   const [selectedCoveredConcepts, setSelectedCoveredConcepts] = useState<ConceptDataFragment[]>([]);
 
@@ -113,58 +74,14 @@ export const NewResource: React.FC<NewResourceProps> = ({ domain, onCreate }) =>
       <Input placeholder="Title" size="md" value={name} onChange={(e: any) => setName(e.target.value)}></Input>
       <Input placeholder="Url" size="md" value={url} onChange={(e: any) => setUrl(e.target.value)}></Input>
       <Flex flexDirection="row" justifyContent="space-between">
-        {/* <FormControl>
-          <FormLabel htmlFor="resourceMediaType">Media Type</FormLabel>
-          <Select placeholder="Select Media Type">
-            {values(ResourceMediaType).map(mediaType => (
-              <option key={mediaType} value={mediaType}>
-                {upperFirst(mediaType)}
-              </option>
-            ))}
-          </Select>
-        </FormControl> */}
-
-        {/* <RadioGroup isInline onChange={e => setMediaType(e.target.value as ResourceMediaType)} value={mediaType}>
-          <Radio value={ResourceMediaType.Text}>Text</Radio>
-          <Radio value={ResourceMediaType.Video}>Video</Radio>
-        </RadioGroup> */}
-        {/* <Box flexGrow={1}></Box> */}
-
         <ResourceTypeSelector value={type} onSelect={t => setType(t)} />
-
-        {/* <Text fontWeight={600}>Type:</Text>
-        <RadioGroup isInline onChange={e => setType(e.target.value as ResourceType)} value={type}>
-          <Radio value={ResourceType.Article}>Article</Radio>
-          <Radio value={ResourceType.Introduction}>Introduction</Radio>
-          <Radio value={ResourceType.Tutorial}>Tutorial</Radio>
-        </RadioGroup> */}
       </Flex>
       <SelectedTagsEditor selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
       <Flex direction="row" alignItems="center" justifyContent="space-between">
         <ResourceMediaTypeSelector value={mediaType} onSelect={t => setMediaType(t)} />
-        <Stack direction="row" alignItems="center">
-          <Text fontWeight={600}>Estimated Duration</Text>
-          <NumberInput step={5} min={0} max={600} value={durationMn} onChange={(value: any) => setDurationMn(value)}>
-            <NumberInputField />
-            <NumberInputStepper>
-              <NumberIncrementStepper />
-              <NumberDecrementStepper />
-            </NumberInputStepper>
-          </NumberInput>
-        </Stack>
+        <ResourceDurationMnSelector value={durationMn} onChange={(duration: number) => setDurationMn(duration)} />
       </Flex>
-      <FormControl isInvalid={description.length > 200}>
-        <Textarea
-          id="description"
-          placeholder="Description (optional)"
-          size="md"
-          value={description}
-          onChange={(e: any) => setDescription(e.target.value)}
-        ></Textarea>
-        <FormHelperText textAlign="right" id="description-helper-text">
-          {description.length}/200
-        </FormHelperText>
-      </FormControl>
+      <ResourceDescriptionInput value={description} onChange={d => setDescription(d)} />
       {domain && domain.concepts && (
         <Stack spacing={10} direction="row">
           <Box>
@@ -202,6 +119,7 @@ export const NewResource: React.FC<NewResourceProps> = ({ domain, onCreate }) =>
               type,
               mediaType,
               url,
+              durationMn,
               tags: selectedTags.map(t => t.name),
             })
           }
