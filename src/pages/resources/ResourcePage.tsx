@@ -87,10 +87,15 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
             <Link>Edit</Link>
           </NextLink>
         </Flex>
-        <Link isExternal color="blue.700" href={resource.url}>
-          {resource.url}
-          <Icon name="external-link" mx="2px" />
-        </Link>
+        <Stack direction="row" spacing={2} alignItems="baseline">
+          <Link isExternal color="blue.700" href={resource.url}>
+            {resource.url}
+            <Icon name="external-link" mx="2px" />
+          </Link>
+          <Text fontSize="sm" color="gray.400" mb={1}>
+            {resource.durationMn}mn
+          </Text>
+        </Stack>
         <Text>{resource.description}</Text>
         <Box>
           <ResourceTypeBadge type={resource.type} /> - <ResourceMediaTypeBadge mediaType={resource.mediaType} />
