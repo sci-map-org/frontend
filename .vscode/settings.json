@@ -3,5 +3,7 @@
   "typescriptHero.imports.organizeOnSave": false,
   "typescriptHero.imports.multiLineWrapThreshold": 120,
   "typescriptHero.imports.insertSemicolons": true,
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "eslint.enable": true,
+  "eslint.validate": ["typescriptreact", "typescript"]
 }
