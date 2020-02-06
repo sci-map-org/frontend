@@ -1,6 +1,11 @@
 schema: "http://localhost:8000/graphql"
 documents: 'src/**/*.{tsx|ts}'
 generates:
+  schema.graphql:
+    plugins:
+      - schema-ast
+    config:
+      commentDescriptions: true
   src/graphql/types.ts:
     - typescript
   src/:
