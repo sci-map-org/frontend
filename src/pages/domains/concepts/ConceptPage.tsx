@@ -18,20 +18,23 @@ import {
 import NextLink from 'next/link';
 import Router from 'next/router';
 
+import { PageLayout } from '../../../components/layout/PageLayout';
 import { ResourcePreview } from '../../../components/resources/ResourcePreview';
-import { useDeleteConcept, useGetConcept } from '../../../graphql/concepts/concepts.hooks';
+import { useDeleteConcept } from '../../../graphql/concepts/concepts.hooks';
+import { useGetConceptByKeyQuery } from '../../../graphql/concepts/concepts.operations.generated';
 import { useGetDomainByKey } from '../../../graphql/domains/domains.hooks';
 import { UserRole } from '../../../graphql/types';
 import { useCurrentUser } from '../../../graphql/users/users.hooks';
-import { PageLayout } from '../../../components/layout/PageLayout';
+import { NotFoundPage } from '../../NotFoundPage';
 
-export const ConceptPage: React.FC<{ domainKey: string; conceptId: string }> = ({ domainKey, conceptId }) => {
+export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = ({ domainKey, conceptKey }) => {
   const { currentUser } = useCurrentUser();
   const { deleteConcept } = useDeleteConcept();
   const { domain } = useGetDomainByKey(domainKey);
-  const { concept } = useGetConcept(conceptId);
+  const { data } = useGetConceptByKeyQuery({ variables: { key: conceptKey } });
+  const concept = data?.getConceptByKey;
   const { isOpen, onOpen, onClose } = useDisclosure();
-  if (!domain || !concept) return null;
+  if (!domain || !concept) return <NotFoundPage />;
   return (
     <PageLayout>
       <Flex direction="row" justify="space-between" align="center">

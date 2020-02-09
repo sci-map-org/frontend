@@ -32,6 +32,7 @@ export enum ArticleContentType {
 export type Concept = {
    __typename?: 'Concept',
   _id: Scalars['String'],
+  key: Scalars['String'],
   name: Scalars['String'],
   description?: Maybe<Scalars['String']>,
   domain?: Maybe<Domain>,
@@ -59,6 +60,7 @@ export type CreateArticlePayload = {
 };
 
 export type CreateConceptPayload = {
+  key?: Maybe<Scalars['String']>,
   name: Scalars['String'],
   description?: Maybe<Scalars['String']>,
 };
@@ -323,6 +325,7 @@ export type Query = {
   searchResourceTags: Array<ResourceTagSearchResult>,
   getResourceById: Resource,
   getConcept: Concept,
+  getConceptByKey: Concept,
 };
 
 
@@ -363,6 +366,11 @@ export type QueryGetResourceByIdArgs = {
 
 export type QueryGetConceptArgs = {
   _id: Scalars['String']
+};
+
+
+export type QueryGetConceptByKeyArgs = {
+  key: Scalars['String']
 };
 
 export type RegisterPayload = {
@@ -459,6 +467,7 @@ export type UpdateArticlePayload = {
 };
 
 export type UpdateConceptPayload = {
+  key?: Maybe<Scalars['String']>,
   name?: Maybe<Scalars['String']>,
   description?: Maybe<Scalars['String']>,
 };

@@ -44,6 +44,21 @@ export const getConcept = gql`
   ${ResourcePreviewData}
 `;
 
+export const getConceptByKey = gql`
+  query getConceptByKey($key: String!) {
+    getConceptByKey(key: $key) {
+      ...ConceptData
+      coveredByResources(options: {}) {
+        items {
+          ...ResourcePreviewData
+        }
+      }
+    }
+  }
+  ${ConceptData}
+  ${ResourcePreviewData}
+`;
+
 export const listDomainConcepts = gql`
   query listDomainConcepts($domainKey: String!, $options: DomainConceptsOptions!) {
     getDomainByKey(key: $domainKey) {

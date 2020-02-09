@@ -9,6 +9,7 @@ import {
   useUpdateResourceResourcePageMutation,
 } from './EditResourcePage.generated';
 import Router from 'next/router';
+import { ConceptData } from '../../graphql/concepts/concepts.fragments';
 
 export const updateResourceResourcePage = gql`
   mutation updateResourceResourcePage($id: String!, $payload: UpdateResourcePayload!) {
@@ -25,8 +26,7 @@ export const getResourceEditResourcePage = gql`
       ...ResourceData
       coveredConcepts(options: {}) {
         items {
-          _id
-          name
+          ...ConceptData
           domain {
             _id
             key
@@ -41,8 +41,7 @@ export const getResourceEditResourcePage = gql`
           name
           concepts(options: {}) {
             items {
-              _id
-              name
+              ...ConceptData
             }
           }
         }
@@ -50,6 +49,7 @@ export const getResourceEditResourcePage = gql`
     }
   }
   ${ResourceData}
+  ${ConceptData}
 `;
 
 const EditResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) => {

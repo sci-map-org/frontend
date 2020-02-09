@@ -1,9 +1,11 @@
 import * as Types from '../../graphql/types';
 
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import * as Operations from './EditResourcePage';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
+
 
 
 export type UpdateResourceResourcePageMutationVariables = {
@@ -33,11 +35,11 @@ export type GetResourceEditResourcePageQuery = (
       { __typename?: 'ResourceCoveredConceptsResults' }
       & { items: Array<(
         { __typename?: 'Concept' }
-        & Pick<Types.Concept, '_id' | 'name'>
         & { domain: Types.Maybe<(
           { __typename?: 'Domain' }
           & Pick<Types.Domain, '_id' | 'key' | 'name'>
         )> }
+        & ConceptDataFragment
       )> }
     )>, domains: Types.Maybe<(
       { __typename?: 'ResourceDomainsResults' }
@@ -48,7 +50,7 @@ export type GetResourceEditResourcePageQuery = (
           { __typename?: 'DomainConceptsResults' }
           & { items: Array<(
             { __typename?: 'Concept' }
-            & Pick<Types.Concept, '_id' | 'name'>
+            & ConceptDataFragment
           )> }
         )> }
       )> }

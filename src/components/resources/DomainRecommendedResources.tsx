@@ -37,6 +37,7 @@ export const DomainRecommendedResources: React.FC<{
           {
             _id: '1',
             name: 'one concept',
+            key: 'fw',
           },
         ],
       },
@@ -70,6 +71,7 @@ export const DomainRecommendedResources: React.FC<{
           {
             _id: '1',
             name: 'one concept',
+            key: 'few',
           },
         ],
       },

@@ -12,6 +12,7 @@ import { ResourceData } from '../../graphql/resources/resources.fragments';
 import { ResourceTypeBadge } from '../../components/resources/ResourceType';
 import { ResourceMediaTypeBadge } from '../../components/resources/ResourceMediaType';
 import { SelectedTagsEditor } from '../../components/resources/ResourceTagsEditor';
+import { ConceptData } from '../../graphql/concepts/concepts.fragments';
 
 export const addTagsToResourceResourceEditor = gql`
   mutation addTagsToResourceResourceEditor($resourceId: String!, $tags: [String!]!) {
@@ -41,8 +42,7 @@ export const getResourceResourcePage = gql`
       ...ResourceData
       coveredConcepts(options: {}) {
         items {
-          _id
-          name
+          ...ConceptData
           domain {
             _id
             key
@@ -57,8 +57,7 @@ export const getResourceResourcePage = gql`
           name
           concepts(options: {}) {
             items {
-              _id
-              name
+              ...ConceptData
             }
           }
         }
@@ -66,6 +65,7 @@ export const getResourceResourcePage = gql`
     }
   }
   ${ResourceData}
+  ${ConceptData}
 `;
 
 export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) => {
@@ -126,7 +126,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
                           )
                           .map(concept => (
                             <Box key={concept._id} ml={2}>
-                              <NextLink href={`/domains/${domain.key}/concepts/${concept._id}`}>
+                              <NextLink href={`/domains/${domain.key}/concepts/${concept.key}`}>
                                 <Link fontSize="md">{concept.name}</Link>
                               </NextLink>
                             </Box>

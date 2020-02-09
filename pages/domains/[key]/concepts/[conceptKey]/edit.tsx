@@ -5,12 +5,12 @@ import { EditConceptPage } from '../../../../../src/pages/domains/concepts/EditC
 const Page: React.FC = () => {
   const router = useRouter();
 
-  const { id, key } = router.query;
+  const { conceptKey, key } = router.query;
 
-  if (!id || typeof id !== 'string') return null;
+  if (!conceptKey || typeof conceptKey !== 'string') return null;
   if (!key || typeof key !== 'string') return null;
 
-  return <EditConceptPage domainKey={key} conceptId={id} />;
+  return <EditConceptPage domainKey={key} conceptKey={conceptKey} />;
 };
 
 export default Page;

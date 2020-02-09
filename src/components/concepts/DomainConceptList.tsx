@@ -34,7 +34,9 @@ export const DomainConceptList: React.FC<{ domain: DomainDataFragment; concepts:
         {concepts.map(concept => (
           <Flex key={concept._id} direction="row" alignItems="center">
             <Checkbox mr={4} />
-            <Link>{concept.name}</Link>
+            <NextLink href={`/domains/${domain.key}/concepts/${concept.key}`}>
+              <Link>{concept.name}</Link>
+            </NextLink>
           </Flex>
         ))}
       </Stack>

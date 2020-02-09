@@ -8,6 +8,7 @@ import {
   useAttachResourceCoversConceptsMutation,
   useDetachResourceCoversConceptsMutation,
 } from './CoveredConceptsSelector.generated';
+import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 
 export const attachResourceCoversConcepts = gql`
   mutation attachResourceCoversConcepts($resourceId: String!, $conceptIds: [String!]!) {
@@ -38,8 +39,8 @@ export const detachResourceCoversConcepts = gql`
 
 export const CoveredConceptsSelector: React.FC<{
   resourceId: string;
-  coveredConcepts: { _id: string; name: string }[];
-  conceptList: { _id: string; name: string }[];
+  coveredConcepts: ConceptDataFragment[];
+  conceptList: ConceptDataFragment[];
 }> = ({ coveredConcepts, conceptList, resourceId }) => {
   const possibleConceptSuggestions = differenceBy(conceptList, coveredConcepts, c => c._id);
 
@@ -51,7 +52,6 @@ export const CoveredConceptsSelector: React.FC<{
   const removeConcept = async (conceptId: string) => {
     await detachResourceCoversConcepts({ variables: { resourceId, conceptIds: [conceptId] } });
   };
-  console.log(possibleConceptSuggestions);
   return (
     <Box>
       <Text fontSize="xl">Covered concepts</Text>

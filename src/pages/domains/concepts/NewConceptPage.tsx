@@ -1,13 +1,14 @@
-import { Box, Flex, Input, Text, Textarea, Button } from '@chakra-ui/core';
-import Router, { useRouter } from 'next/router';
+import { Box, Button, Flex, Input, Text, Textarea } from '@chakra-ui/core';
+import Router from 'next/router';
 import { useState } from 'react';
-
 import { useAddConceptToDomain } from '../../../graphql/concepts/concepts.hooks';
 import { useGetDomainByKey } from '../../../graphql/domains/domains.hooks';
+import { generateUrlKey } from '../../../services/url.service';
 
 export const NewConceptPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
   const { domain } = useGetDomainByKey(domainKey);
   const [name, setName] = useState('');
+  const [key, setKey] = useState('');
   const [description, setDescription] = useState('');
   if (!domain) return <Box>Domain not found !</Box>;
   const { addConceptToDomain, loading, error } = useAddConceptToDomain();
@@ -20,9 +21,18 @@ export const NewConceptPage: React.FC<{ domainKey: string }> = ({ domainKey }) =
           size="md"
           variant="flushed"
           value={name}
-          onChange={(e: any) => setName(e.target.value)}
+          onChange={(e: any) => {
+            if (key === generateUrlKey(name)) setKey(generateUrlKey(e.target.value));
+            setName(e.target.value);
+          }}
         ></Input>
-
+        <Input
+          placeholder="Concept Url Key"
+          size="md"
+          variant="flushed"
+          value={key}
+          onChange={(e: any) => setKey(e.target.value)}
+        ></Input>
         <Textarea
           placeholder="Description"
           size="md"

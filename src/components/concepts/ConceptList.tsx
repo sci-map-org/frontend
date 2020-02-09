@@ -14,7 +14,7 @@ export const ConceptList: React.FC<ConceptListProps> = ({ domainKey }) => {
       {concepts && concepts.length ? (
         concepts.map(concept => (
           <Box key={concept._id} p={2}>
-            <NextLink href={`/domains/${domainKey}/concepts/${concept._id}`}>
+            <NextLink href={`/domains/${domainKey}/concepts/${concept.key}`}>
               <Link fontSize="l" fontWeight={500}>
                 {concept.name}
               </Link>

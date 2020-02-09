@@ -71,7 +71,9 @@ export const DomainsListPage: React.FC = () => {
             })}
           <Box></Box>
         </Flex>
-        <Button onClick={() => Router.push('/domains/new')}>+ New Domain</Button>
+        {currentUser && currentUser.role === UserRole.Admin && (
+          <Button onClick={() => Router.push('/domains/new')}>+ New Domain</Button>
+        )}
       </Stack>
     </Box>
   );

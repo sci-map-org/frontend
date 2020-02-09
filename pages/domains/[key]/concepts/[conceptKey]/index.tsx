@@ -5,11 +5,11 @@ import { ConceptPage } from '../../../../../src/pages/domains/concepts/ConceptPa
 const Page: React.FC = () => {
   const router = useRouter();
 
-  const { key, id } = router.query;
+  const { key, conceptKey } = router.query;
   if (!key || typeof key !== 'string') return null;
-  if (!id || typeof id !== 'string') return null;
+  if (!conceptKey || typeof conceptKey !== 'string') return null;
 
-  return <ConceptPage domainKey={key} conceptId={id} />;
+  return <ConceptPage domainKey={key} conceptKey={conceptKey} />;
 };
 
 export default Page;

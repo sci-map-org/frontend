@@ -8,6 +8,7 @@ import { CoveredConceptsSelector } from './CoveredConceptsSelector';
 import { ResourceMediaTypeSelector, ResourceTypeSelector } from './NewResource';
 import { ResourceDescriptionInput } from './ResourceDescription';
 import { ResourceDurationMnSelector } from './ResourceDuration';
+import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 
 interface ResourceEditorProps {
   resource: GetResourceEditResourcePageQuery['getResourceById'];
@@ -25,7 +26,7 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
 
   if (!resource.domains) return null;
 
-  const conceptList: { _id: string; name: string }[] = resource.domains.items
+  const conceptList: ConceptDataFragment[] = resource.domains.items
     .map(domain => {
       return !!domain.concepts ? domain.concepts.items : [];
     })

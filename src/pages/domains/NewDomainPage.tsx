@@ -4,6 +4,7 @@ import Router from 'next/router';
 import React from 'react';
 
 import { useCreateDomain } from '../../graphql/domains/domains.hooks';
+import { generateUrlKey } from '../../services/url.service';
 
 export const NewDomainPage: NextPage = () => {
   const [name, setName] = React.useState('');
@@ -23,7 +24,10 @@ export const NewDomainPage: NextPage = () => {
             size="md"
             variant="flushed"
             value={name}
-            onChange={(e: any) => setName(e.target.value)}
+            onChange={(e: any) => {
+              if (key === generateUrlKey(name)) setKey(generateUrlKey(e.target.value));
+              setName(e.target.value);
+            }}
           ></Input>
           <Input
             placeholder="Key"

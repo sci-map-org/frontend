@@ -110,7 +110,7 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({ domain
                   <Stack direction="column">
                     {resource.coveredConcepts.items.map(concept => (
                       <Box key={concept._id}>
-                        <NextLink href={`/domains/${domainKey}/concepts/${concept._id}`}>
+                        <NextLink href={`/domains/${domainKey}/concepts/${concept.key}`}>
                           <Link>{concept.name}</Link>
                         </NextLink>
                       </Box>

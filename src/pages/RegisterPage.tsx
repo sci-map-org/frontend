@@ -1,6 +1,7 @@
 import { Text, Box, Stack, Input, Button, InputGroup, InputRightElement } from '@chakra-ui/core';
 import { useState } from 'react';
-import { useRegister } from '../graphql/users/users.hooks';
+import { useRegister, useLogin } from '../graphql/users/users.hooks';
+import Router from 'next/router';
 
 export const RegisterPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -10,6 +11,27 @@ export const RegisterPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const { register } = useRegister();
+  const { login } = useLogin();
+
+  const onRegister = async () => {
+    await register({
+      variables: {
+        payload: {
+          email,
+          displayName,
+          key,
+          password,
+        },
+      },
+    });
+    await login({
+      variables: {
+        email,
+        password,
+      },
+    });
+    Router.push(`/`);
+  };
   return (
     <Box display="flex" flexDirection="column" alignItems="center">
       <Box width="36rem" pt={6}>
@@ -52,22 +74,7 @@ export const RegisterPage: React.FC = () => {
               </Button>
             </InputRightElement>
           </InputGroup>
-          <Button
-            size="lg"
-            variant="solid"
-            onClick={() =>
-              register({
-                variables: {
-                  payload: {
-                    email,
-                    displayName,
-                    key,
-                    password,
-                  },
-                },
-              })
-            }
-          >
+          <Button size="lg" variant="solid" onClick={onRegister}>
             Register
           </Button>
         </Stack>
