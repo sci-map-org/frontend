@@ -12,6 +12,7 @@ import { DomainData } from '../../graphql/domains/domains.fragments';
 import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
 import { useMockedFeaturesEnabled } from '../../hooks/useMockedFeaturesEnabled';
 import { useGetDomainByKeyDomainPageQuery } from './DomainPage.generated';
+import { useCurrentUser } from '../../graphql/users/users.hooks';
 
 export const getDomainByKeyDomainPage = gql`
   query getDomainByKeyDomainPage($key: String!) {
@@ -39,7 +40,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
   const { data } = useGetDomainByKeyDomainPageQuery({ variables: { key: domainKey } });
   const domain = data?.getDomainByKey;
   const { mockedFeaturesEnabled } = useMockedFeaturesEnabled();
-
+  const { currentUser } = useCurrentUser();
   if (!domain) return <Box>Domain not found !</Box>;
 
   return (
@@ -47,9 +48,11 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
       <Flex direction="row" alignItems="center">
         <Text fontSize="4xl">Learn {domain.name}</Text>
         <Box flexGrow={1}></Box>
-        <NextLink href={router.asPath + '/resources/new'}>
-          <Button variant="outline">+ Add resource</Button>
-        </NextLink>
+        {currentUser && (
+          <NextLink href={router.asPath + '/resources/new'}>
+            <Button variant="outline">+ Add resource</Button>
+          </NextLink>
+        )}
         {mockedFeaturesEnabled && (
           <Box ml={2}>
             <NextLink href={router.asPath + '/resources/indexing_queue'}>

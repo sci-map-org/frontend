@@ -92,9 +92,11 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
             {resource.url}
             <Icon name="external-link" mx="2px" />
           </Link>
-          <Text fontSize="sm" color="gray.400" mb={1}>
-            {resource.durationMn}mn
-          </Text>
+          {resource.durationMn && (
+            <Text fontSize="sm" color="gray.400" mb={1}>
+              {resource.durationMn}mn
+            </Text>
+          )}
         </Stack>
         <Text>{resource.description}</Text>
         <Box>

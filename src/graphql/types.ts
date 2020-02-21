@@ -6,6 +6,7 @@ export type Scalars = {
   Boolean: boolean,
   Int: number,
   Float: number,
+  DateTime: any,
 };
 
 export type AdminUpdateUserPayload = {
@@ -37,6 +38,7 @@ export type Concept = {
   description?: Maybe<Scalars['String']>,
   domain?: Maybe<Domain>,
   coveredByResources?: Maybe<ConceptCoveredByResourcesResults>,
+  known?: Maybe<KnownConcept>,
 };
 
 
@@ -51,6 +53,12 @@ export type ConceptCoveredByResourcesOptions = {
 export type ConceptCoveredByResourcesResults = {
    __typename?: 'ConceptCoveredByResourcesResults',
   items: Array<Resource>,
+};
+
+export type ConsumedResource = {
+   __typename?: 'ConsumedResource',
+  openedAt?: Maybe<Scalars['DateTime']>,
+  consumedAt?: Maybe<Scalars['DateTime']>,
 };
 
 export type CreateArticlePayload = {
@@ -95,6 +103,7 @@ export type CurrentUser = {
 export type CurrentUserArticlesArgs = {
   options: ListArticlesOptions
 };
+
 
 export type DeleteArticleResponse = {
    __typename?: 'DeleteArticleResponse',
@@ -152,6 +161,11 @@ export type DomainResourcesResults = {
   items: Array<Resource>,
 };
 
+export type KnownConcept = {
+   __typename?: 'KnownConcept',
+  level: Scalars['Float'],
+};
+
 export type ListArticlesFilter = {
   contentType?: Maybe<ArticleContentType>,
 };
@@ -191,9 +205,12 @@ export type Mutation = {
   attachResourceToDomain: Resource,
   attachResourceCoversConcepts: Resource,
   detachResourceCoversConcepts: Resource,
+  setResourcesConsumed: Array<Resource>,
   addConceptToDomain: Concept,
   updateConcept: Concept,
   deleteConcept: DeleteConceptResult,
+  setConceptsKnown: Array<Concept>,
+  setConceptsUnknown: Array<Concept>,
 };
 
 
@@ -293,6 +310,11 @@ export type MutationDetachResourceCoversConceptsArgs = {
 };
 
 
+export type MutationSetResourcesConsumedArgs = {
+  payload: SetResourcesConsumedPayload
+};
+
+
 export type MutationAddConceptToDomainArgs = {
   domainId: Scalars['String'],
   payload: CreateConceptPayload
@@ -307,6 +329,16 @@ export type MutationUpdateConceptArgs = {
 
 export type MutationDeleteConceptArgs = {
   _id: Scalars['String']
+};
+
+
+export type MutationSetConceptsKnownArgs = {
+  payload: SetConceptKnownPayload
+};
+
+
+export type MutationSetConceptsUnknownArgs = {
+  conceptIds: Array<Scalars['String']>
 };
 
 export type PaginationOptions = {
@@ -390,6 +422,7 @@ export type Resource = {
   url: Scalars['String'],
   description?: Maybe<Scalars['String']>,
   durationMn?: Maybe<Scalars['Int']>,
+  consumed?: Maybe<ConsumedResource>,
   coveredConcepts?: Maybe<ResourceCoveredConceptsResults>,
   domains?: Maybe<ResourceDomainsResults>,
 };
@@ -443,7 +476,8 @@ export enum ResourceType {
   Article = 'article',
   Tutorial = 'tutorial',
   Introduction = 'introduction',
-  Course = 'course'
+  Course = 'course',
+  ArticleSeries = 'article_series'
 }
 
 export type SearchDomainsOptions = {
@@ -459,6 +493,25 @@ export type SearchDomainsResult = {
 export type SearchResourceTagsOptions = {
   query: Scalars['String'],
   pagination: PaginationOptions,
+};
+
+export type SetConceptKnownPayload = {
+  concepts: Array<SetConceptKnownPayloadConceptsField>,
+};
+
+export type SetConceptKnownPayloadConceptsField = {
+  conceptId: Scalars['String'],
+  level?: Maybe<Scalars['Float']>,
+};
+
+export type SetResourcesConsumedPayload = {
+  resources: Array<SetResourcesConsumedPayloadResourcesField>,
+};
+
+export type SetResourcesConsumedPayloadResourcesField = {
+  resourceId: Scalars['String'],
+  consumed?: Maybe<Scalars['Boolean']>,
+  opened?: Maybe<Scalars['Boolean']>,
 };
 
 export type UpdateArticlePayload = {

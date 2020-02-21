@@ -6,5 +6,8 @@ export const ConceptData = gql`
     key
     name
     description
+    known {
+      level
+    }
   }
 `;

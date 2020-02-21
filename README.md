@@ -17,3 +17,4 @@ Better graphql support: have queries in component files and generate hooks next 
 Have fragments and common queries in graphql folder, shared files ?
 Do not use .graphql again, but rather .gql.ts
 One single generated file ? Would be easier to manage ? Name conflicts (queries have to be named)
+

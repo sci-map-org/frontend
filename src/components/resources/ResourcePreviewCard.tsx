@@ -2,7 +2,6 @@ import {
   Box,
   Checkbox,
   Flex,
-  Icon,
   IconButton,
   Link,
   Popover,
@@ -18,26 +17,42 @@ import {
   Text,
   Tooltip,
 } from '@chakra-ui/core';
+import gql from 'graphql-tag';
 import NextLink from 'next/link';
 
+import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { useMockedFeaturesEnabled } from '../../hooks/useMockedFeaturesEnabled';
-import { toUrlPreview } from '../../services/url.service';
+import { useSetResourceConsumedMutation } from './ResourcePreviewCard.generated';
 import { ResourceTypeBadge } from './ResourceType';
+import { ResourceUrlLink } from './ResourceUrl';
 
 const shortenDescription = (description: string, maxLength = 200) => {
   return description.length > 200 ? description.slice(0, 200) + '...' : description;
 };
 
+export const setResourceConsumed = gql`
+  mutation setResourceConsumed($resourceId: String!, $consumed: Boolean!) {
+    setResourcesConsumed(payload: { resources: [{ resourceId: $resourceId, consumed: $consumed }] }) {
+      ...ResourcePreviewData
+    }
+  }
+  ${ResourcePreviewData}
+`;
+
 interface ResourcePreviewCardProps {
   domainKey: string;
-  resource: ResourcePreviewDataFragment & {
-    isChecked?: boolean;
-  };
-  onChecked: (id: string) => void;
+  resource: ResourcePreviewDataFragment;
+  onResourceConsumed: (resource: ResourcePreviewDataFragment) => void;
 }
-export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({ domainKey, resource, onChecked }) => {
+export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
+  domainKey,
+  resource,
+  onResourceConsumed,
+}) => {
   const { mockedFeaturesEnabled } = useMockedFeaturesEnabled();
+  const [setResourceConsumed] = useSetResourceConsumedMutation();
+
   return (
     <Flex
       direction="row"
@@ -65,10 +80,7 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({ domain
               <Link fontSize="xl">{resource.name}</Link>
             </NextLink>
           </Text>
-          <Link fontSize="sm" color="blue.700" href={resource.url} isExternal>
-            {toUrlPreview(resource.url)}
-            <Icon name="external-link" mx="2px" />
-          </Link>
+          <ResourceUrlLink resource={resource} />
           <ResourceTypeBadge type={resource.type} />
           {resource.durationMn && (
             <Text fontSize="sm" color="gray.400" mb={1}>
@@ -134,9 +146,12 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({ domain
           <Checkbox
             size="lg"
             m={4}
-            isChecked={resource.isChecked}
-            onChange={e => {
-              onChecked(resource._id);
+            isChecked={!!resource.consumed && !!resource.consumed.consumedAt}
+            onChange={async e => {
+              await setResourceConsumed({
+                variables: { resourceId: resource._id, consumed: !resource.consumed || !resource.consumed.consumedAt },
+              });
+              onResourceConsumed(resource);
             }}
           />
         </Tooltip>

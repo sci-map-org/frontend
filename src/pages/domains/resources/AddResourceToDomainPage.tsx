@@ -31,25 +31,24 @@ export const addResourceToDomain = gql`
 
 export const AddResourceToDomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
   const { data } = useGetDomainByKeyWithConceptsQuery({ variables: { key: domainKey } });
-  if (!data) return <Box>Domain not found</Box>;
 
-  const [addResourceToDomain] = useAddResourceToDomainMutation({
-    onCompleted: data => {
-      Router.push(`/resources/${data.addResourceToDomain._id}`);
-    },
-  });
+  const [addResourceToDomain] = useAddResourceToDomainMutation();
+  if (!data) return <Box>Domain not found</Box>;
   return (
     <PageLayout mode="form">
       <NewResource
         domain={data.getDomainByKey}
-        onCreate={payload =>
-          addResourceToDomain({
+        onCreate={async payload => {
+          const { data: result } = await addResourceToDomain({
             variables: {
               domainId: data.getDomainByKey._id,
               payload,
             },
-          })
-        }
+          });
+          if (result) {
+            Router.push(`/resources/${result.addResourceToDomain._id}`);
+          }
+        }}
       />
     </PageLayout>
   );

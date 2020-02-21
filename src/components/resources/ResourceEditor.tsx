@@ -2,13 +2,14 @@ import { Box, Button, Flex, FormControl, FormLabel, Input, Link, Stack, Text } f
 import NextLink from 'next/link';
 import { useState } from 'react';
 
+import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { UpdateResourcePayload } from '../../graphql/types';
 import { GetResourceEditResourcePageQuery } from '../../pages/resources/EditResourcePage.generated';
 import { CoveredConceptsSelector } from './CoveredConceptsSelector';
-import { ResourceMediaTypeSelector, ResourceTypeSelector } from './NewResource';
 import { ResourceDescriptionInput } from './ResourceDescription';
 import { ResourceDurationMnSelector } from './ResourceDuration';
-import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
+import { ResourceMediaTypeSelector } from './ResourceMediaType';
+import { ResourceTypeSelector } from './ResourceType';
 
 interface ResourceEditorProps {
   resource: GetResourceEditResourcePageQuery['getResourceById'];
@@ -21,7 +22,7 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
   const [type, setType] = useState(resource.type);
 
   const [url, setUrl] = useState(resource.url);
-  const [durationMn, setDurationMn] = useState(resource.durationMn || undefined);
+  const [durationMn, setDurationMn] = useState(resource.durationMn);
   const [description, setDescription] = useState(resource.description || undefined);
 
   if (!resource.domains) return null;

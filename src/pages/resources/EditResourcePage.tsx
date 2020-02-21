@@ -1,15 +1,15 @@
-import { Box, Text } from '@chakra-ui/core';
+import { Box } from '@chakra-ui/core';
 import gql from 'graphql-tag';
+import Router from 'next/router';
 
 import { PageLayout } from '../../components/layout/PageLayout';
 import { ResourceEditor } from '../../components/resources/ResourceEditor';
+import { ConceptData } from '../../graphql/concepts/concepts.fragments';
 import { ResourceData } from '../../graphql/resources/resources.fragments';
 import {
   useGetResourceEditResourcePageQuery,
   useUpdateResourceResourcePageMutation,
 } from './EditResourcePage.generated';
-import Router from 'next/router';
-import { ConceptData } from '../../graphql/concepts/concepts.fragments';
 
 export const updateResourceResourcePage = gql`
   mutation updateResourceResourcePage($id: String!, $payload: UpdateResourcePayload!) {
@@ -66,7 +66,9 @@ const EditResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) => {
     <PageLayout mode="form">
       <ResourceEditor
         resource={resource}
-        onSave={editedResource => updateResource({ variables: { id: resource._id, payload: editedResource } })}
+        onSave={editedResource => {
+          updateResource({ variables: { id: resource._id, payload: editedResource } });
+        }}
       ></ResourceEditor>
     </PageLayout>
   );

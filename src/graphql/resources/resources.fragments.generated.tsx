@@ -18,7 +18,10 @@ export type ResourcePreviewDataFragment = (
   & { tags: Types.Maybe<Array<(
     { __typename?: 'ResourceTag' }
     & Pick<Types.ResourceTag, 'name'>
-  )>>, coveredConcepts: Types.Maybe<(
+  )>>, consumed: Types.Maybe<(
+    { __typename?: 'ConsumedResource' }
+    & Pick<Types.ConsumedResource, 'openedAt' | 'consumedAt'>
+  )>, coveredConcepts: Types.Maybe<(
     { __typename?: 'ResourceCoveredConceptsResults' }
     & { items: Array<(
       { __typename?: 'Concept' }

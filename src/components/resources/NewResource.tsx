@@ -1,5 +1,4 @@
-import { Box, Button, Flex, Input, Select, Stack, Text } from '@chakra-ui/core';
-import { upperFirst, values } from 'lodash';
+import { Box, Button, Flex, Input, Stack, Text } from '@chakra-ui/core';
 import React, { useState } from 'react';
 
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
@@ -8,49 +7,10 @@ import { CreateResourcePayload, ResourceMediaType, ResourceTag, ResourceType } f
 import { DomainConceptSelector } from '../concepts/DomainConceptSelector';
 import { ResourceDescriptionInput } from './ResourceDescription';
 import { ResourceDurationMnSelector } from './ResourceDuration';
+import { ResourceMediaTypeSelector } from './ResourceMediaType';
 import { SelectedTagsEditor } from './ResourceTagsEditor';
+import { ResourceTypeSelector } from './ResourceType';
 
-export const ResourceTypeSelector: React.FC<{ value: ResourceType; onSelect: (type: ResourceType) => void }> = ({
-  onSelect,
-  value,
-}) => {
-  return (
-    <Stack direction="row" alignItems="center">
-      <Text fontWeight={600}>Type</Text>
-      <Select placeholder="Select Type" value={value} onChange={e => onSelect(e.target.value as ResourceType)}>
-        {values(ResourceType).map(type => (
-          <option key={type} value={type}>
-            {upperFirst(type)}
-          </option>
-        ))}
-      </Select>
-    </Stack>
-  );
-};
-
-export const ResourceMediaTypeSelector: React.FC<{
-  value: ResourceMediaType;
-  onSelect: (mediaType: ResourceMediaType) => void;
-}> = ({ onSelect, value }) => {
-  return (
-    <Stack direction="row" alignItems="center">
-      <Box fontWeight={600} whiteSpace="nowrap">
-        Media Type
-      </Box>
-      <Select
-        placeholder="Select Media Type"
-        value={value}
-        onChange={e => onSelect(e.target.value as ResourceMediaType)}
-      >
-        {values(ResourceMediaType).map(mediaType => (
-          <option key={mediaType} value={mediaType}>
-            {upperFirst(mediaType)}
-          </option>
-        ))}
-      </Select>
-    </Stack>
-  );
-};
 interface NewResourceProps {
   domain?: DomainWithConceptsDataFragment;
   onCreate: (payload: CreateResourcePayload) => any;
@@ -61,7 +21,7 @@ export const NewResource: React.FC<NewResourceProps> = ({ domain, onCreate }) =>
   const [type, setType] = useState<ResourceType>(ResourceType.Article);
   const [url, setUrl] = useState('');
   const [description, setDescription] = useState<string | undefined>(undefined);
-  const [durationMn, setDurationMn] = useState<number>();
+  const [durationMn, setDurationMn] = useState<number | null>();
   const [selectedCoveredConcepts, setSelectedCoveredConcepts] = useState<ConceptDataFragment[]>([]);
 
   const [selectedTags, setSelectedTags] = useState<ResourceTag[]>([]);
@@ -79,7 +39,10 @@ export const NewResource: React.FC<NewResourceProps> = ({ domain, onCreate }) =>
       <SelectedTagsEditor selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
       <Flex direction="row" alignItems="center" justifyContent="space-between">
         <ResourceMediaTypeSelector value={mediaType} onSelect={t => setMediaType(t)} />
-        <ResourceDurationMnSelector value={durationMn} onChange={(duration: number) => setDurationMn(duration)} />
+        <ResourceDurationMnSelector
+          value={durationMn}
+          onChange={(duration?: number | null) => setDurationMn(duration)}
+        />
       </Flex>
       <ResourceDescriptionInput value={description} onChange={d => setDescription(d)} />
       {domain && domain.concepts && (

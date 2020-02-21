@@ -30,6 +30,10 @@ export const ResourcePreviewData = gql`
     tags {
       name
     }
+    consumed {
+      openedAt
+      consumedAt
+    }
     coveredConcepts(options: {}) {
       items {
         ...ConceptData

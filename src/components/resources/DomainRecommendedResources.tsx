@@ -3,89 +3,16 @@ import { useState } from 'react';
 
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
-import { ResourceMediaType, ResourceType } from '../../graphql/types';
 import { ResourcePreviewCard } from './ResourcePreviewCard';
 
 export const DomainRecommendedResources: React.FC<{
   domain: DomainDataFragment;
   resourcePreviews: ResourcePreviewDataFragment[];
 }> = ({ domain, resourcePreviews }) => {
-  const recommendedResources: Array<ResourcePreviewDataFragment & {
-    durationMn?: number;
-    isChecked: boolean;
-    comments: {
-      items: Array<{
-        _id: string;
-        message: string;
-      }>;
-    };
-  }> = [
-    {
-      _id: 'fewrfg',
-      name: 'My Amazing resource',
-      durationMn: 5,
-      type: ResourceType.Article,
-      mediaType: ResourceMediaType.Text,
-      url: 'https://google.com',
-      tags: [{ name: 'Practical' }, { name: 'Visual' }],
-      description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, 
-      sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-      Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip...`,
-      isChecked: false,
-      coveredConcepts: {
-        items: [
-          {
-            _id: '1',
-            name: 'one concept',
-            key: 'fw',
-          },
-        ],
-      },
-      comments: {
-        items: [
-          {
-            _id: 'fwerg',
-            message: 'ferbg',
-          },
-          {
-            _id: 'fwergfew',
-            message: 'ferbg',
-          },
-        ],
-      },
-    },
-    {
-      _id: 'efgbfh',
-      name: 'My Great resource',
-      durationMn: 30,
-      type: ResourceType.Course,
-      mediaType: ResourceMediaType.Video,
-      url: 'https://google.com',
-      tags: [{ name: 'Theoritical' }, { name: 'Abstract' }],
-      description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, 
-      sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-      Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip...`,
-      isChecked: false,
-      coveredConcepts: {
-        items: [
-          {
-            _id: '1',
-            name: 'one concept',
-            key: 'few',
-          },
-        ],
-      },
-      comments: {
-        items: [],
-      },
-    },
-  ];
-  const [resources, setResources] = useState<Array<ResourcePreviewDataFragment & { isChecked?: boolean }>>(
-    resourcePreviews
-  );
   const [searchQuery, setSearchQuery] = useState('');
   const [showCheckedResources, setShowCheckedResources] = useState(false);
   const checkedResourceToast = useToast();
+
   return (
     <Flex direction="column" mb={4}>
       <Stack direction="row" isInline alignItems="center" spacing={4} mb={3}>
@@ -109,21 +36,14 @@ export const DomainRecommendedResources: React.FC<{
 
       <Box>
         <Box borderTop="1px solid" borderTopColor="gray.200" width="100%">
-          {resources
-            .filter(r => !!showCheckedResources || !r.isChecked)
-            .map((preview, previewIdx) => (
+          {resourcePreviews
+            .filter(r => !!showCheckedResources || !r.consumed || !r.consumed.consumedAt)
+            .map(preview => (
               <ResourcePreviewCard
                 key={preview._id}
                 domainKey={domain.key}
                 resource={preview}
-                onChecked={id => {
-                  const r = [...resources];
-                  r.splice(
-                    resources.findIndex(r => r._id === id),
-                    1,
-                    { ...preview, isChecked: !preview.isChecked }
-                  );
-                  setResources(r);
+                onResourceConsumed={r => {
                   checkedResourceToast({
                     position: 'bottom-left',
                     title: 'Resource completed',
