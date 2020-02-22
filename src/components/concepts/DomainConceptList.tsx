@@ -5,7 +5,7 @@ import Router from 'next/router';
 
 import { ConceptData } from '../../graphql/concepts/concepts.fragments';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
-import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
+import { DomainDataFragment, DomainWithConceptsDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { useSetConceptsKnownMutation, useSetConceptsUnknownMutation } from './DomainConceptList.generated';
@@ -28,13 +28,12 @@ export const setConceptsUnknown = gql`
   ${ConceptData}
 `;
 
-export const DomainConceptList: React.FC<{ domain: DomainDataFragment; concepts: ConceptDataFragment[] }> = ({
-  domain,
-  concepts,
-}) => {
+export const DomainConceptList: React.FC<{ domain: DomainWithConceptsDataFragment }> = ({ domain }) => {
   const { currentUser } = useCurrentUser();
   const [setConceptKnown] = useSetConceptsKnownMutation();
   const [setConceptUnknown] = useSetConceptsUnknownMutation();
+
+  const domainConceptItems = domain.concepts?.items;
   const toggleConceptKnown = async (concept: ConceptDataFragment) => {
     if (!concept.known) {
       await setConceptKnown({
@@ -52,6 +51,7 @@ export const DomainConceptList: React.FC<{ domain: DomainDataFragment; concepts:
       await setConceptUnknown({ variables: { conceptIds: [concept._id] } });
     }
   };
+  if (!domainConceptItems) return null;
   return (
     <Flex borderWidth={0} borderColor="gray.200" mr={8} direction="column">
       <Stack direction="row" spacing={2}>
@@ -73,7 +73,7 @@ export const DomainConceptList: React.FC<{ domain: DomainDataFragment; concepts:
         )}
       </Stack>
       <Stack direction="column" spacing={1} alignItems="flex-start">
-        {concepts.map(concept => (
+        {domainConceptItems.map(({ concept }) => (
           <Flex key={concept._id} direction="row" alignItems="center">
             <Checkbox mr={4} onChange={() => toggleConceptKnown(concept)} isChecked={!!concept.known} />
             <NextLink href={`/domains/${domain.key}/concepts/${concept.key}`}>

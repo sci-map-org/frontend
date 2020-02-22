@@ -18,7 +18,7 @@ export const getDomainByKeyDomainPage = gql`
   query getDomainByKeyDomainPage($key: String!) {
     getDomainByKey(key: $key) {
       ...DomainData
-      concepts(options: {}) {
+      concepts(options: { sorting: { entity: relationship, field: index, direction: ASC } }) {
         items {
           concept {
             ...ConceptData
@@ -85,7 +85,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
       <Flex direction="row">
         {domain.concepts && (
           <Flex direction="column" flexShrink={0}>
-            <DomainConceptList domain={domain} concepts={domain.concepts.items} />
+            <DomainConceptList domain={domain} />
           </Flex>
         )}
         {domain.resources && (
