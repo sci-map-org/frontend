@@ -1,4 +1,4 @@
-import { Box, Button, Link, Text } from '@chakra-ui/core';
+import { Box, Button, Link, Text, Flex } from '@chakra-ui/core';
 import NextLink from 'next/link';
 import Router, { useRouter } from 'next/router';
 
@@ -26,16 +26,19 @@ export const ConceptListPage: React.FC<{ domainKey: string }> = ({ domainKey }) 
       <Box>
         <Text fontSize="3xl">{domain.name} - Concepts</Text>
       </Box>
-      <Box>
-        {currentUser && currentUser.role === UserRole.Admin && (
-          <>
-            <Button onClick={() => Router.push(`${router.asPath}/new`)}>+ Add concept</Button>
-          </>
-        )}
-      </Box>
-      <Box width="80%" py={5}>
-        <ConceptList domainKey={domain.key} />
-      </Box>
+
+      <Flex direction="column" py={5} alignItems="center">
+        <Box width="80%">
+          <ConceptList domainKey={domain.key} />
+        </Box>
+        <Box p={5}>
+          {currentUser && currentUser.role === UserRole.Admin && (
+            <>
+              <Button onClick={() => Router.push(`${router.asPath}/new`)}>+ Add concept</Button>
+            </>
+          )}
+        </Box>
+      </Flex>
     </PageLayout>
   );
 };

@@ -49,8 +49,11 @@ export type GetResourceEditResourcePageQuery = (
         & { concepts: Types.Maybe<(
           { __typename?: 'DomainConceptsResults' }
           & { items: Array<(
-            { __typename?: 'Concept' }
-            & ConceptDataFragment
+            { __typename?: 'DomainConceptsItem' }
+            & { concept: (
+              { __typename?: 'Concept' }
+              & ConceptDataFragment
+            ) }
           )> }
         )> }
       )> }

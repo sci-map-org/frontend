@@ -9,6 +9,13 @@ export type Scalars = {
   DateTime: any,
 };
 
+export type AddConceptToDomainPayload = {
+  key?: Maybe<Scalars['String']>,
+  name: Scalars['String'],
+  description?: Maybe<Scalars['String']>,
+  index?: Maybe<Scalars['Float']>,
+};
+
 export type AdminUpdateUserPayload = {
   displayName?: Maybe<Scalars['String']>,
   key?: Maybe<Scalars['String']>,
@@ -46,6 +53,11 @@ export type ConceptCoveredByResourcesArgs = {
   options: ConceptCoveredByResourcesOptions
 };
 
+export type ConceptBelongsToDomain = {
+   __typename?: 'ConceptBelongsToDomain',
+  index: Scalars['Float'],
+};
+
 export type ConceptCoveredByResourcesOptions = {
   pagination?: Maybe<PaginationOptions>,
 };
@@ -65,12 +77,6 @@ export type CreateArticlePayload = {
   contentType: ArticleContentType,
   title: Scalars['String'],
   content: Scalars['String'],
-};
-
-export type CreateConceptPayload = {
-  key?: Maybe<Scalars['String']>,
-  name: Scalars['String'],
-  description?: Maybe<Scalars['String']>,
 };
 
 export type CreateDomainPayload = {
@@ -143,13 +149,36 @@ export type DomainResourcesArgs = {
   options: DomainResourcesOptions
 };
 
+export type DomainConceptsItem = {
+   __typename?: 'DomainConceptsItem',
+  concept: Concept,
+  relationship: ConceptBelongsToDomain,
+};
+
 export type DomainConceptsOptions = {
   pagination?: Maybe<PaginationOptions>,
+  sorting?: Maybe<DomainConceptSortingOptions>,
+};
+
+export enum DomainConceptSortingEntities {
+  Concept = 'concept',
+  Relationship = 'relationship'
+}
+
+export enum DomainConceptSortingFields {
+  Id = '_id',
+  Index = 'index'
+}
+
+export type DomainConceptSortingOptions = {
+  entity: DomainConceptSortingEntities,
+  field: DomainConceptSortingFields,
+  direction: SortingDirection,
 };
 
 export type DomainConceptsResults = {
    __typename?: 'DomainConceptsResults',
-  items: Array<Concept>,
+  items: Array<DomainConceptsItem>,
 };
 
 export type DomainResourcesOptions = {
@@ -211,6 +240,7 @@ export type Mutation = {
   deleteConcept: DeleteConceptResult,
   setConceptsKnown: Array<Concept>,
   setConceptsUnknown: Array<Concept>,
+  updateConceptBelongsToDomain: ConceptBelongsToDomain,
 };
 
 
@@ -317,7 +347,7 @@ export type MutationSetResourcesConsumedArgs = {
 
 export type MutationAddConceptToDomainArgs = {
   domainId: Scalars['String'],
-  payload: CreateConceptPayload
+  payload: AddConceptToDomainPayload
 };
 
 
@@ -339,6 +369,13 @@ export type MutationSetConceptsKnownArgs = {
 
 export type MutationSetConceptsUnknownArgs = {
   conceptIds: Array<Scalars['String']>
+};
+
+
+export type MutationUpdateConceptBelongsToDomainArgs = {
+  conceptId: Scalars['String'],
+  domainId: Scalars['String'],
+  payload: UpdateConceptBelongsToDomainPayload
 };
 
 export type PaginationOptions = {
@@ -514,9 +551,18 @@ export type SetResourcesConsumedPayloadResourcesField = {
   opened?: Maybe<Scalars['Boolean']>,
 };
 
+export enum SortingDirection {
+  Asc = 'ASC',
+  Desc = 'DESC'
+}
+
 export type UpdateArticlePayload = {
   title?: Maybe<Scalars['String']>,
   content?: Maybe<Scalars['String']>,
+};
+
+export type UpdateConceptBelongsToDomainPayload = {
+  index?: Maybe<Scalars['Float']>,
 };
 
 export type UpdateConceptPayload = {

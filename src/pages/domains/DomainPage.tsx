@@ -20,7 +20,12 @@ export const getDomainByKeyDomainPage = gql`
       ...DomainData
       concepts(options: {}) {
         items {
-          ...ConceptData
+          concept {
+            ...ConceptData
+          }
+          relationship {
+            index
+          }
         }
       }
       resources(options: { pagination: { limit: 30 } }) {

@@ -18,7 +18,12 @@ export const DomainWithConceptsData = gql`
     description
     concepts(options: {}) {
       items {
-        ...ConceptData
+        relationship {
+          index
+        }
+        concept {
+          ...ConceptData
+        }
       }
     }
   }

@@ -41,7 +41,9 @@ export const getResourceEditResourcePage = gql`
           name
           concepts(options: {}) {
             items {
-              ...ConceptData
+              concept {
+                ...ConceptData
+              }
             }
           }
         }

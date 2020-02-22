@@ -14,8 +14,14 @@ export type DomainWithConceptsDataFragment = (
   & { concepts: Types.Maybe<(
     { __typename?: 'DomainConceptsResults' }
     & { items: Array<(
-      { __typename?: 'Concept' }
-      & ConceptDataFragment
+      { __typename?: 'DomainConceptsItem' }
+      & { relationship: (
+        { __typename?: 'ConceptBelongsToDomain' }
+        & Pick<Types.ConceptBelongsToDomain, 'index'>
+      ), concept: (
+        { __typename?: 'Concept' }
+        & ConceptDataFragment
+      ) }
     )> }
   )> }
 );

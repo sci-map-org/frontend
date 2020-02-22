@@ -1,10 +1,8 @@
-import { useMutation, useQuery } from '@apollo/react-hooks';
 import {
   useAddConceptToDomainMutation,
-  useUpdateConceptMutation,
   useDeleteConceptMutation,
   useGetConceptQuery,
-  useListDomainConceptsQuery,
+  useUpdateConceptMutation,
 } from './concepts.operations.generated';
 
 export const useAddConceptToDomain = () => {
@@ -48,15 +46,5 @@ export const useGetConcept = (_id: string) => {
     concept: !!data && data.getConcept,
     loading,
     error,
-  };
-};
-
-export const useListDomainConcepts = (domainKey: string) => {
-  const { loading, error, data, fetchMore } = useListDomainConceptsQuery({ variables: { domainKey, options: {} } });
-  return {
-    concepts: !!data && !!data.getDomainByKey.concepts && data.getDomainByKey.concepts.items,
-    loading,
-    error,
-    fetchMore,
   };
 };

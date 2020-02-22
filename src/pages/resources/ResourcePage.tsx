@@ -13,6 +13,7 @@ import { ResourceTypeBadge } from '../../components/resources/ResourceType';
 import { ResourceMediaTypeBadge } from '../../components/resources/ResourceMediaType';
 import { SelectedTagsEditor } from '../../components/resources/ResourceTagsEditor';
 import { ConceptData } from '../../graphql/concepts/concepts.fragments';
+import { DomainData } from '../../graphql/domains/domains.fragments';
 
 export const addTagsToResourceResourceEditor = gql`
   mutation addTagsToResourceResourceEditor($resourceId: String!, $tags: [String!]!) {
@@ -52,18 +53,12 @@ export const getResourceResourcePage = gql`
       }
       domains(options: {}) {
         items {
-          _id
-          key
-          name
-          concepts(options: {}) {
-            items {
-              ...ConceptData
-            }
-          }
+          ...DomainData
         }
       }
     }
   }
+  ${DomainData}
   ${ResourceData}
   ${ConceptData}
 `;

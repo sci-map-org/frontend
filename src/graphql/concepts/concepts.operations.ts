@@ -3,7 +3,7 @@ import gql from 'graphql-tag';
 import { ResourcePreviewData } from '../resources/resources.fragments';
 
 export const addConceptToDomain = gql`
-  mutation addConceptToDomain($domainId: String!, $payload: CreateConceptPayload!) {
+  mutation addConceptToDomain($domainId: String!, $payload: AddConceptToDomainPayload!) {
     addConceptToDomain(domainId: $domainId, payload: $payload) {
       ...ConceptData
     }
@@ -57,19 +57,4 @@ export const getConceptByKey = gql`
   }
   ${ConceptData}
   ${ResourcePreviewData}
-`;
-
-export const listDomainConcepts = gql`
-  query listDomainConcepts($domainKey: String!, $options: DomainConceptsOptions!) {
-    getDomainByKey(key: $domainKey) {
-      _id
-      name
-      concepts(options: $options) {
-        items {
-          ...ConceptData
-        }
-      }
-    }
-  }
-  ${ConceptData}
 `;
