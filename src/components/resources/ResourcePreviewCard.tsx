@@ -17,6 +17,11 @@ import {
   Text,
   Tooltip,
   useToast,
+  Button,
+  Alert,
+  AlertIcon,
+  CloseButton,
+  AlertDescription,
 } from '@chakra-ui/core';
 import gql from 'graphql-tag';
 import NextLink from 'next/link';
@@ -150,16 +155,52 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
             m={4}
             isChecked={!!resource.consumed && !!resource.consumed.consumedAt}
             onChange={async e => {
+              const setResourceConsumedValue = !resource.consumed || !resource.consumed.consumedAt;
               await setResourceConsumed({
-                variables: { resourceId: resource._id, consumed: !resource.consumed || !resource.consumed.consumedAt },
+                variables: {
+                  resourceId: resource._id,
+                  consumed: setResourceConsumedValue,
+                },
               });
               checkedResourceToast({
+                render: ({ onClose, id }) => (
+                  <Alert
+                    status="success"
+                    variant="solid"
+                    id={id}
+                    textAlign="left"
+                    boxShadow="lg"
+                    rounded="md"
+                    alignItems="start"
+                    m={2}
+                    pr={8}
+                  >
+                    <AlertIcon />
+                    <Box flexDirection="row" alignItems="baseline" flex="1">
+                      <AlertDescription>
+                        The resource was marked as {setResourceConsumedValue ? `consumed` : 'not consumed'}
+                        <Button
+                          ml={6}
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            setResourceConsumed({
+                              variables: {
+                                resourceId: resource._id,
+                                consumed: !setResourceConsumedValue,
+                              },
+                            }).then(() => onClose())
+                          }
+                        >
+                          Undo
+                        </Button>
+                      </AlertDescription>
+                    </Box>
+                    <CloseButton size="sm" onClick={onClose} position="absolute" right="4px" top="4px" />
+                  </Alert>
+                ),
                 position: 'bottom-left',
-                title: 'Resource completed',
-                description: 'The resource was marked as completed',
-                status: 'info',
                 duration: 3000,
-                isClosable: true,
               });
               onResourceConsumed && onResourceConsumed(resource);
             }}

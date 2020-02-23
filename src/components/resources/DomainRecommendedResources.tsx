@@ -24,7 +24,7 @@ export const DomainRecommendedResources: React.FC<{
           onChange={(e: any) => setSearchQuery(e.target.value)}
         ></Input>
         <Box flexGrow={1} />
-        <Text fontWeight={300}>Show all</Text>
+        <Text fontWeight={300}>Show completed</Text>
         <Checkbox
           size="lg"
           px={1}
