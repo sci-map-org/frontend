@@ -13,6 +13,15 @@ import { ResourcePreviewData } from '../../graphql/resources/resources.fragments
 import { useMockedFeaturesEnabled } from '../../hooks/useMockedFeaturesEnabled';
 import { useGetDomainByKeyDomainPageQuery } from './DomainPage.generated';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
+import { BreadcrumbLink } from '../../components/layout/NavigationBreadcrumbs';
+import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
+
+export const DomainPagePath = (domainKey: string) => `/domains/${domainKey}`;
+
+export const DomainPageInfo = (domain: DomainDataFragment): BreadcrumbLink => ({
+  name: domain.name,
+  path: DomainPagePath(domain.key),
+});
 
 export const getDomainByKeyDomainPage = gql`
   query getDomainByKeyDomainPage($key: String!) {

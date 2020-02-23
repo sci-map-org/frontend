@@ -16,6 +16,7 @@ import {
   TagLabel,
   Text,
   Tooltip,
+  useToast,
 } from '@chakra-ui/core';
 import gql from 'graphql-tag';
 import NextLink from 'next/link';
@@ -43,7 +44,7 @@ export const setResourceConsumed = gql`
 interface ResourcePreviewCardProps {
   domainKey: string;
   resource: ResourcePreviewDataFragment;
-  onResourceConsumed: (resource: ResourcePreviewDataFragment) => void;
+  onResourceConsumed?: (resource: ResourcePreviewDataFragment) => void;
 }
 export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
   domainKey,
@@ -52,6 +53,7 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
 }) => {
   const { mockedFeaturesEnabled } = useMockedFeaturesEnabled();
   const [setResourceConsumed] = useSetResourceConsumedMutation();
+  const checkedResourceToast = useToast();
 
   return (
     <Flex
@@ -151,7 +153,15 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
               await setResourceConsumed({
                 variables: { resourceId: resource._id, consumed: !resource.consumed || !resource.consumed.consumedAt },
               });
-              onResourceConsumed(resource);
+              checkedResourceToast({
+                position: 'bottom-left',
+                title: 'Resource completed',
+                description: 'The resource was marked as completed',
+                status: 'info',
+                duration: 3000,
+                isClosable: true,
+              });
+              onResourceConsumed && onResourceConsumed(resource);
             }}
           />
         </Tooltip>

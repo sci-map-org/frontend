@@ -1,12 +1,22 @@
-import { Box, Button, Link, Text, Flex } from '@chakra-ui/core';
+import { Box, Button, Flex, Link, Text } from '@chakra-ui/core';
 import NextLink from 'next/link';
 import Router, { useRouter } from 'next/router';
 
 import { ConceptList } from '../../../components/concepts/ConceptList';
+import { PageLayout } from '../../../components/layout/PageLayout';
+import { DomainDataFragment } from '../../../graphql/domains/domains.fragments.generated';
 import { useGetDomainByKey } from '../../../graphql/domains/domains.hooks';
 import { UserRole } from '../../../graphql/types';
 import { useCurrentUser } from '../../../graphql/users/users.hooks';
-import { PageLayout } from '../../../components/layout/PageLayout';
+import { PageInfo } from '../../PageInfo';
+import { DomainPageInfo } from '../DomainPage';
+
+export const ConceptListPagePath = (domainKey: string) => `/domains/${domainKey}/concepts`;
+
+export const ConceptListPageInfo = (domain: DomainDataFragment): PageInfo => ({
+  name: 'Concepts',
+  path: ConceptListPagePath(domain.key),
+});
 
 export const ConceptListPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
   const { currentUser } = useCurrentUser();
@@ -15,19 +25,11 @@ export const ConceptListPage: React.FC<{ domainKey: string }> = ({ domainKey }) 
 
   if (!domain) return <Box>Domain not found !</Box>;
   return (
-    <PageLayout>
-      <Box>
-        <NextLink href={`/domains/${domain.key}`}>
-          <Link>
-            Go back to <em>{domain.name}</em>
-          </Link>
-        </NextLink>
-      </Box>
-      <Box>
-        <Text fontSize="3xl">{domain.name} - Concepts</Text>
-      </Box>
-
-      <Flex direction="column" py={5} alignItems="center">
+    <PageLayout
+      breadCrumbsLinks={[DomainPageInfo(domain), ConceptListPageInfo(domain)]}
+      title={domain.name + ' - Concepts'}
+    >
+      <Flex direction="column" alignItems="center">
         <Box width="80%">
           <ConceptList domainKey={domain.key} />
         </Box>

@@ -11,7 +11,6 @@ export const DomainRecommendedResources: React.FC<{
 }> = ({ domain, resourcePreviews }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showCheckedResources, setShowCheckedResources] = useState(false);
-  const checkedResourceToast = useToast();
 
   return (
     <Flex direction="column" mb={4}>
@@ -39,22 +38,7 @@ export const DomainRecommendedResources: React.FC<{
           {resourcePreviews
             .filter(r => !!showCheckedResources || !r.consumed || !r.consumed.consumedAt)
             .map(preview => (
-              <ResourcePreviewCard
-                key={preview._id}
-                domainKey={domain.key}
-                resource={preview}
-                onResourceConsumed={r => {
-                  checkedResourceToast({
-                    position: 'bottom-left',
-                    title: 'Resource completed',
-                    description: 'The resource was marked as completed',
-                    status: 'info',
-                    duration: 3000,
-                    isClosable: true,
-                  });
-                  //TODO: Undo button on the toast
-                }}
-              />
+              <ResourcePreviewCard key={preview._id} domainKey={domain.key} resource={preview} />
             ))}
         </Box>
       </Box>

@@ -10,6 +10,8 @@ import {
   useAddResourceToDomainMutation,
   useGetDomainByKeyWithConceptsQuery,
 } from './AddResourceToDomainPage.generated';
+import { DomainPageInfo } from '../DomainPage';
+import { DomainResourceListPageInfo } from './DomainResourceListPage';
 
 export const getDomainByKeyWithConcepts = gql`
   query getDomainByKeyWithConcepts($key: String!) {
@@ -34,8 +36,13 @@ export const AddResourceToDomainPage: React.FC<{ domainKey: string }> = ({ domai
 
   const [addResourceToDomain] = useAddResourceToDomainMutation();
   if (!data) return <Box>Domain not found</Box>;
+  const domain = data.getDomainByKey;
   return (
-    <PageLayout mode="form">
+    <PageLayout
+      mode="form"
+      breadCrumbsLinks={[DomainPageInfo(domain), DomainResourceListPageInfo(domain)]}
+      title={`Add resource  to ${domain.name}`}
+    >
       <NewResource
         domain={data.getDomainByKey}
         onCreate={async payload => {

@@ -22,7 +22,7 @@ export const NewResourcePage: React.FC<{}> = () => {
     },
   });
   return (
-    <PageLayout>
+    <PageLayout mode="form" title={`Create new Resource`}>
       <NewResource
         onCreate={payload =>
           createResource({

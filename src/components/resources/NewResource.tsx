@@ -28,9 +28,6 @@ export const NewResource: React.FC<NewResourceProps> = ({ domain, onCreate }) =>
 
   return (
     <Stack spacing={4}>
-      <Text fontSize="3xl" textAlign="center">
-        {domain ? 'Add' : 'Create'} resource{domain && ` to ${domain.name}`}
-      </Text>
       <Input placeholder="Title" size="md" value={name} onChange={(e: any) => setName(e.target.value)}></Input>
       <Input placeholder="Url" size="md" value={url} onChange={(e: any) => setUrl(e.target.value)}></Input>
       <Flex flexDirection="row" justifyContent="space-between">
@@ -51,7 +48,9 @@ export const NewResource: React.FC<NewResourceProps> = ({ domain, onCreate }) =>
             <Text fontSize="xl">Covered concepts</Text>
             <Box width="300px">
               <DomainConceptSelector
-                conceptList={domain.concepts.items.filter(c => !selectedCoveredConcepts.find(s => s._id === c._id))}
+                conceptList={domain.concepts.items
+                  .map(item => item.concept)
+                  .filter(c => !selectedCoveredConcepts.find(s => s._id === c._id))}
                 onSelect={c => setSelectedCoveredConcepts(selectedCoveredConcepts.concat([c]))}
               />
             </Box>

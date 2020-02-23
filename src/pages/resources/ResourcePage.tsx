@@ -13,7 +13,8 @@ import { ResourceTypeBadge } from '../../components/resources/ResourceType';
 import { ResourceMediaTypeBadge } from '../../components/resources/ResourceMediaType';
 import { SelectedTagsEditor } from '../../components/resources/ResourceTagsEditor';
 import { ConceptData } from '../../graphql/concepts/concepts.fragments';
-import { DomainData } from '../../graphql/domains/domains.fragments';
+import { DomainData, DomainWithConceptsData } from '../../graphql/domains/domains.fragments';
+import { ResourceCoveredConcepts } from '../../components/resources/ResourceCoveredConcepts';
 
 export const addTagsToResourceResourceEditor = gql`
   mutation addTagsToResourceResourceEditor($resourceId: String!, $tags: [String!]!) {
@@ -53,12 +54,12 @@ export const getResourceResourcePage = gql`
       }
       domains(options: {}) {
         items {
-          ...DomainData
+          ...DomainWithConceptsData
         }
       }
     }
   }
-  ${DomainData}
+  ${DomainWithConceptsData}
   ${ResourceData}
   ${ConceptData}
 `;
@@ -102,39 +103,9 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
           onSelect={t => addTagsToResource({ variables: { resourceId: resource._id, tags: [t.name] } })}
           onRemove={t => removeTagsFromResource({ variables: { resourceId: resource._id, tags: [t.name] } })}
         />
-        <Box>
-          <Text fontSize="2xl">Domains</Text>
-          <Stack spacing={2} pl={4}>
-            {resource.domains &&
-              resource.domains.items.map(domain => (
-                <Box key={domain._id}>
-                  <NextLink href={`/domains/${domain.key}`}>
-                    <Link fontSize="xl">{domain.name}</Link>
-                  </NextLink>
-                  <Stack spacing={1} pl={4}>
-                    {!!resource.coveredConcepts && domain.concepts && (
-                      <>
-                        <Text fontWeight={700}>Covered Concepts</Text>
-                        {domain.concepts.items
-                          .filter(
-                            concept =>
-                              resource.coveredConcepts &&
-                              resource.coveredConcepts.items.find(c => c._id === concept._id)
-                          )
-                          .map(concept => (
-                            <Box key={concept._id} ml={2}>
-                              <NextLink href={`/domains/${domain.key}/concepts/${concept.key}`}>
-                                <Link fontSize="md">{concept.name}</Link>
-                              </NextLink>
-                            </Box>
-                          ))}
-                      </>
-                    )}
-                  </Stack>
-                </Box>
-              ))}
-          </Stack>
-        </Box>
+        {resource.domains && resource.coveredConcepts && (
+          <ResourceCoveredConcepts domains={resource.domains.items} coveredConcepts={resource.coveredConcepts.items} />
+        )}
       </Stack>
     </PageLayout>
   );
