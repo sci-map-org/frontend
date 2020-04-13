@@ -32,11 +32,11 @@ import { DomainDataFragment } from '../../../graphql/domains/domains.fragments.g
 import { ConceptDataFragment } from '../../../graphql/concepts/concepts.fragments.generated';
 import { PageInfo } from '../../PageInfo';
 
-export const ConceptPagePath = (domainKey: string, conceptId: string) => `/domains/${domainKey}/concepts/${conceptId}`;
+export const ConceptPagePath = (domainKey: string, conceptKey: string) => `/domains/${domainKey}/concepts/${conceptKey}`;
 
 export const ConceptPageInfo = (domain: DomainDataFragment, concept: ConceptDataFragment): PageInfo => ({
   name: `${domain.name} - ${concept.name}`,
-  path: ConceptPagePath(domain.key, concept._id),
+  path: ConceptPagePath(domain.key, concept.key),
 });
 
 const ConceptPageRightIcons: React.FC<{ concept: ConceptDataFragment }> = ({ concept }) => {

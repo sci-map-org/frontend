@@ -5,10 +5,9 @@ import * as Operations from './ResourceList';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
 
-
 export type ListDomainResourcePreviewsQueryVariables = {
-  domainKey: Types.Scalars['String'],
-  options: Types.DomainResourcesOptions
+  domainKey: Types.Scalars['String'];
+  options: Types.DomainResourcesOptions;
 };
 
 
@@ -17,7 +16,7 @@ export type ListDomainResourcePreviewsQuery = (
   & { getDomainByKey: (
     { __typename?: 'Domain' }
     & Pick<Types.Domain, '_id' | 'name'>
-    & { resources: Types.Maybe<(
+    & { resources?: Types.Maybe<(
       { __typename?: 'DomainResourcesResults' }
       & { items: Array<(
         { __typename?: 'Resource' }
@@ -33,7 +32,7 @@ export type ListDomainResourcePreviewsQuery = (
  * __useListDomainResourcePreviewsQuery__
  *
  * To run a query within a React component, call `useListDomainResourcePreviewsQuery` and pass it any options that fit your needs.
- * When your component renders, `useListDomainResourcePreviewsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useListDomainResourcePreviewsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;

@@ -1,13 +1,12 @@
 import * as Types from '../types';
 
-import { ArticleViewerDataFragment,ArticlePreviewDataFragment } from './articles.fragments.generated';
+import { ArticleViewerDataFragment, ArticlePreviewDataFragment } from './articles.fragments.generated';
 import * as Operations from './articles.operations';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
 
-
 export type CreateArticleMutationVariables = {
-  payload: Types.CreateArticlePayload
+  payload: Types.CreateArticlePayload;
 };
 
 
@@ -20,7 +19,7 @@ export type CreateArticleMutation = (
 );
 
 export type GetArticleByKeyQueryVariables = {
-  key: Types.Scalars['String']
+  key: Types.Scalars['String'];
 };
 
 
@@ -33,8 +32,8 @@ export type GetArticleByKeyQuery = (
 );
 
 export type UpdateArticleMutationVariables = {
-  id: Types.Scalars['String'],
-  payload: Types.UpdateArticlePayload
+  id: Types.Scalars['String'];
+  payload: Types.UpdateArticlePayload;
 };
 
 
@@ -47,7 +46,7 @@ export type UpdateArticleMutation = (
 );
 
 export type DeleteArticleMutationVariables = {
-  id: Types.Scalars['String']
+  id: Types.Scalars['String'];
 };
 
 
@@ -60,8 +59,8 @@ export type DeleteArticleMutation = (
 );
 
 export type ListUserArticlePreviewsQueryVariables = {
-  userKey: Types.Scalars['String'],
-  options: Types.ListArticlesOptions
+  userKey: Types.Scalars['String'];
+  options: Types.ListArticlesOptions;
 };
 
 
@@ -70,7 +69,7 @@ export type ListUserArticlePreviewsQuery = (
   & { getUser: (
     { __typename?: 'User' }
     & Pick<Types.User, 'displayName'>
-    & { articles: Types.Maybe<(
+    & { articles?: Types.Maybe<(
       { __typename?: 'ListArticlesResult' }
       & { items: Array<(
         { __typename?: 'Article' }
@@ -111,7 +110,7 @@ export type CreateArticleMutationOptions = ApolloReactCommon.BaseMutationOptions
  * __useGetArticleByKeyQuery__
  *
  * To run a query within a React component, call `useGetArticleByKeyQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetArticleByKeyQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useGetArticleByKeyQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -188,7 +187,7 @@ export type DeleteArticleMutationOptions = ApolloReactCommon.BaseMutationOptions
  * __useListUserArticlePreviewsQuery__
  *
  * To run a query within a React component, call `useListUserArticlePreviewsQuery` and pass it any options that fit your needs.
- * When your component renders, `useListUserArticlePreviewsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useListUserArticlePreviewsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;

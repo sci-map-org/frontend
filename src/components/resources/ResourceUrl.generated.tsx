@@ -5,7 +5,7 @@ import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
 
 export type SetResourceOpenedMutationVariables = {
-  resourceId: Types.Scalars['String']
+  resourceId: Types.Scalars['String'];
 };
 
 
@@ -14,7 +14,7 @@ export type SetResourceOpenedMutation = (
   & { setResourcesConsumed: Array<(
     { __typename?: 'Resource' }
     & Pick<Types.Resource, '_id'>
-    & { consumed: Types.Maybe<(
+    & { consumed?: Types.Maybe<(
       { __typename?: 'ConsumedResource' }
       & Pick<Types.ConsumedResource, 'openedAt'>
     )> }

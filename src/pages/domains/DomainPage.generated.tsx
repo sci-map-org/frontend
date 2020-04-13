@@ -7,11 +7,8 @@ import * as Operations from './DomainPage';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
 
-
-
-
 export type GetDomainByKeyDomainPageQueryVariables = {
-  key: Types.Scalars['String']
+  key: Types.Scalars['String'];
 };
 
 
@@ -19,7 +16,7 @@ export type GetDomainByKeyDomainPageQuery = (
   { __typename?: 'Query' }
   & { getDomainByKey: (
     { __typename?: 'Domain' }
-    & { concepts: Types.Maybe<(
+    & { concepts?: Types.Maybe<(
       { __typename?: 'DomainConceptsResults' }
       & { items: Array<(
         { __typename?: 'DomainConceptsItem' }
@@ -31,7 +28,7 @@ export type GetDomainByKeyDomainPageQuery = (
           & Pick<Types.ConceptBelongsToDomain, 'index'>
         ) }
       )> }
-    )>, resources: Types.Maybe<(
+    )>, resources?: Types.Maybe<(
       { __typename?: 'DomainResourcesResults' }
       & { items: Array<(
         { __typename?: 'Resource' }
@@ -48,7 +45,7 @@ export type GetDomainByKeyDomainPageQuery = (
  * __useGetDomainByKeyDomainPageQuery__
  *
  * To run a query within a React component, call `useGetDomainByKeyDomainPageQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetDomainByKeyDomainPageQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useGetDomainByKeyDomainPageQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;

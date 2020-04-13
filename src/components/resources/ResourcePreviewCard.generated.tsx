@@ -5,10 +5,9 @@ import * as Operations from './ResourcePreviewCard';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
 
-
 export type SetResourceConsumedMutationVariables = {
-  resourceId: Types.Scalars['String'],
-  consumed: Types.Scalars['Boolean']
+  resourceId: Types.Scalars['String'];
+  consumed: Types.Scalars['Boolean'];
 };
 
 

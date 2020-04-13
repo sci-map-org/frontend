@@ -39,6 +39,7 @@ export const ResourcePreviewData = gql`
         ...ConceptData
       }
     }
+    upvotes
   }
   ${ConceptData}
 `;

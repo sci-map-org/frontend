@@ -6,11 +6,9 @@ import * as Operations from './concepts.operations';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
 
-
-
 export type AddConceptToDomainMutationVariables = {
-  domainId: Types.Scalars['String'],
-  payload: Types.AddConceptToDomainPayload
+  domainId: Types.Scalars['String'];
+  payload: Types.AddConceptToDomainPayload;
 };
 
 
@@ -23,8 +21,8 @@ export type AddConceptToDomainMutation = (
 );
 
 export type UpdateConceptMutationVariables = {
-  _id: Types.Scalars['String'],
-  payload: Types.UpdateConceptPayload
+  _id: Types.Scalars['String'];
+  payload: Types.UpdateConceptPayload;
 };
 
 
@@ -37,7 +35,7 @@ export type UpdateConceptMutation = (
 );
 
 export type DeleteConceptMutationVariables = {
-  _id: Types.Scalars['String']
+  _id: Types.Scalars['String'];
 };
 
 
@@ -50,7 +48,7 @@ export type DeleteConceptMutation = (
 );
 
 export type GetConceptQueryVariables = {
-  _id: Types.Scalars['String']
+  _id: Types.Scalars['String'];
 };
 
 
@@ -58,7 +56,7 @@ export type GetConceptQuery = (
   { __typename?: 'Query' }
   & { getConcept: (
     { __typename?: 'Concept' }
-    & { coveredByResources: Types.Maybe<(
+    & { coveredByResources?: Types.Maybe<(
       { __typename?: 'ConceptCoveredByResourcesResults' }
       & { items: Array<(
         { __typename?: 'Resource' }
@@ -70,7 +68,7 @@ export type GetConceptQuery = (
 );
 
 export type GetConceptByKeyQueryVariables = {
-  key: Types.Scalars['String']
+  key: Types.Scalars['String'];
 };
 
 
@@ -78,7 +76,7 @@ export type GetConceptByKeyQuery = (
   { __typename?: 'Query' }
   & { getConceptByKey: (
     { __typename?: 'Concept' }
-    & { coveredByResources: Types.Maybe<(
+    & { coveredByResources?: Types.Maybe<(
       { __typename?: 'ConceptCoveredByResourcesResults' }
       & { items: Array<(
         { __typename?: 'Resource' }
@@ -172,7 +170,7 @@ export type DeleteConceptMutationOptions = ApolloReactCommon.BaseMutationOptions
  * __useGetConceptQuery__
  *
  * To run a query within a React component, call `useGetConceptQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetConceptQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useGetConceptQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -198,7 +196,7 @@ export type GetConceptQueryResult = ApolloReactCommon.QueryResult<GetConceptQuer
  * __useGetConceptByKeyQuery__
  *
  * To run a query within a React component, call `useGetConceptByKeyQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetConceptByKeyQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useGetConceptByKeyQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;

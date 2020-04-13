@@ -5,9 +5,8 @@ import * as Operations from './NewResourcePage';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
 
-
 export type CreateResourceMutationVariables = {
-  payload: Types.CreateResourcePayload
+  payload: Types.CreateResourcePayload;
 };
 
 

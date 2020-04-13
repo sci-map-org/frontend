@@ -6,10 +6,8 @@ import * as Operations from './AddResourceToDomainPage';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
 
-
-
 export type GetDomainByKeyWithConceptsQueryVariables = {
-  key: Types.Scalars['String']
+  key: Types.Scalars['String'];
 };
 
 
@@ -22,8 +20,8 @@ export type GetDomainByKeyWithConceptsQuery = (
 );
 
 export type AddResourceToDomainMutationVariables = {
-  domainId: Types.Scalars['String'],
-  payload: Types.CreateResourcePayload
+  domainId: Types.Scalars['String'];
+  payload: Types.CreateResourcePayload;
 };
 
 
@@ -41,7 +39,7 @@ export type AddResourceToDomainMutation = (
  * __useGetDomainByKeyWithConceptsQuery__
  *
  * To run a query within a React component, call `useGetDomainByKeyWithConceptsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetDomainByKeyWithConceptsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useGetDomainByKeyWithConceptsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;

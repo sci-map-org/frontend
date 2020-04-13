@@ -6,11 +6,9 @@ import * as Operations from './EditResourcePage';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
 
-
-
 export type UpdateResourceResourcePageMutationVariables = {
-  id: Types.Scalars['String'],
-  payload: Types.UpdateResourcePayload
+  id: Types.Scalars['String'];
+  payload: Types.UpdateResourcePayload;
 };
 
 
@@ -23,7 +21,7 @@ export type UpdateResourceResourcePageMutation = (
 );
 
 export type GetResourceEditResourcePageQueryVariables = {
-  id: Types.Scalars['String']
+  id: Types.Scalars['String'];
 };
 
 
@@ -31,22 +29,22 @@ export type GetResourceEditResourcePageQuery = (
   { __typename?: 'Query' }
   & { getResourceById: (
     { __typename?: 'Resource' }
-    & { coveredConcepts: Types.Maybe<(
+    & { coveredConcepts?: Types.Maybe<(
       { __typename?: 'ResourceCoveredConceptsResults' }
       & { items: Array<(
         { __typename?: 'Concept' }
-        & { domain: Types.Maybe<(
+        & { domain?: Types.Maybe<(
           { __typename?: 'Domain' }
           & Pick<Types.Domain, '_id' | 'key' | 'name'>
         )> }
         & ConceptDataFragment
       )> }
-    )>, domains: Types.Maybe<(
+    )>, domains?: Types.Maybe<(
       { __typename?: 'ResourceDomainsResults' }
       & { items: Array<(
         { __typename?: 'Domain' }
         & Pick<Types.Domain, '_id' | 'key' | 'name'>
-        & { concepts: Types.Maybe<(
+        & { concepts?: Types.Maybe<(
           { __typename?: 'DomainConceptsResults' }
           & { items: Array<(
             { __typename?: 'DomainConceptsItem' }
@@ -94,7 +92,7 @@ export type UpdateResourceResourcePageMutationOptions = ApolloReactCommon.BaseMu
  * __useGetResourceEditResourcePageQuery__
  *
  * To run a query within a React component, call `useGetResourceEditResourcePageQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetResourceEditResourcePageQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useGetResourceEditResourcePageQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;

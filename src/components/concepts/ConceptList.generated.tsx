@@ -5,11 +5,10 @@ import * as Operations from './ConceptList';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
 
-
 export type UpdateConceptBelongsToDomainIndexMutationVariables = {
-  conceptId: Types.Scalars['String'],
-  domainId: Types.Scalars['String'],
-  index: Types.Scalars['Float']
+  conceptId: Types.Scalars['String'];
+  domainId: Types.Scalars['String'];
+  index: Types.Scalars['Float'];
 };
 
 
@@ -22,8 +21,8 @@ export type UpdateConceptBelongsToDomainIndexMutation = (
 );
 
 export type ListDomainConceptsQueryVariables = {
-  domainKey: Types.Scalars['String'],
-  options: Types.DomainConceptsOptions
+  domainKey: Types.Scalars['String'];
+  options: Types.DomainConceptsOptions;
 };
 
 
@@ -32,7 +31,7 @@ export type ListDomainConceptsQuery = (
   & { getDomainByKey: (
     { __typename?: 'Domain' }
     & Pick<Types.Domain, '_id' | 'name'>
-    & { concepts: Types.Maybe<(
+    & { concepts?: Types.Maybe<(
       { __typename?: 'DomainConceptsResults' }
       & { items: Array<(
         { __typename?: 'DomainConceptsItem' }
@@ -81,7 +80,7 @@ export type UpdateConceptBelongsToDomainIndexMutationOptions = ApolloReactCommon
  * __useListDomainConceptsQuery__
  *
  * To run a query within a React component, call `useListDomainConceptsQuery` and pass it any options that fit your needs.
- * When your component renders, `useListDomainConceptsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useListDomainConceptsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;

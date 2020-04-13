@@ -7,12 +7,9 @@ import * as Operations from './ResourcePage';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
 
-
-
-
 export type AddTagsToResourceResourceEditorMutationVariables = {
-  resourceId: Types.Scalars['String'],
-  tags: Array<Types.Scalars['String']>
+  resourceId: Types.Scalars['String'];
+  tags: Array<Types.Scalars['String']>;
 };
 
 
@@ -21,7 +18,7 @@ export type AddTagsToResourceResourceEditorMutation = (
   & { addTagsToResource: (
     { __typename?: 'Resource' }
     & Pick<Types.Resource, '_id'>
-    & { tags: Types.Maybe<Array<(
+    & { tags?: Types.Maybe<Array<(
       { __typename?: 'ResourceTag' }
       & Pick<Types.ResourceTag, 'name'>
     )>> }
@@ -29,8 +26,8 @@ export type AddTagsToResourceResourceEditorMutation = (
 );
 
 export type RemoveTagsFromResourceResourceEditorMutationVariables = {
-  resourceId: Types.Scalars['String'],
-  tags: Array<Types.Scalars['String']>
+  resourceId: Types.Scalars['String'];
+  tags: Array<Types.Scalars['String']>;
 };
 
 
@@ -39,7 +36,7 @@ export type RemoveTagsFromResourceResourceEditorMutation = (
   & { removeTagsFromResource: (
     { __typename?: 'Resource' }
     & Pick<Types.Resource, '_id'>
-    & { tags: Types.Maybe<Array<(
+    & { tags?: Types.Maybe<Array<(
       { __typename?: 'ResourceTag' }
       & Pick<Types.ResourceTag, 'name'>
     )>> }
@@ -47,7 +44,7 @@ export type RemoveTagsFromResourceResourceEditorMutation = (
 );
 
 export type GetResourceResourcePageQueryVariables = {
-  id: Types.Scalars['String']
+  id: Types.Scalars['String'];
 };
 
 
@@ -55,17 +52,17 @@ export type GetResourceResourcePageQuery = (
   { __typename?: 'Query' }
   & { getResourceById: (
     { __typename?: 'Resource' }
-    & { coveredConcepts: Types.Maybe<(
+    & { coveredConcepts?: Types.Maybe<(
       { __typename?: 'ResourceCoveredConceptsResults' }
       & { items: Array<(
         { __typename?: 'Concept' }
-        & { domain: Types.Maybe<(
+        & { domain?: Types.Maybe<(
           { __typename?: 'Domain' }
           & Pick<Types.Domain, '_id' | 'key' | 'name'>
         )> }
         & ConceptDataFragment
       )> }
-    )>, domains: Types.Maybe<(
+    )>, domains?: Types.Maybe<(
       { __typename?: 'ResourceDomainsResults' }
       & { items: Array<(
         { __typename?: 'Domain' }
@@ -134,7 +131,7 @@ export type RemoveTagsFromResourceResourceEditorMutationOptions = ApolloReactCom
  * __useGetResourceResourcePageQuery__
  *
  * To run a query within a React component, call `useGetResourceResourcePageQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetResourceResourcePageQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useGetResourceResourcePageQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;

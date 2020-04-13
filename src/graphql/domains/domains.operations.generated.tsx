@@ -5,9 +5,8 @@ import * as Operations from './domains.operations';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
 
-
 export type GetDomainByKeyQueryVariables = {
-  key: Types.Scalars['String']
+  key: Types.Scalars['String'];
 };
 
 
@@ -20,7 +19,7 @@ export type GetDomainByKeyQuery = (
 );
 
 export type SearchDomainsQueryVariables = {
-  options: Types.SearchDomainsOptions
+  options: Types.SearchDomainsOptions;
 };
 
 
@@ -36,7 +35,7 @@ export type SearchDomainsQuery = (
 );
 
 export type CreateDomainMutationVariables = {
-  payload: Types.CreateDomainPayload
+  payload: Types.CreateDomainPayload;
 };
 
 
@@ -54,7 +53,7 @@ export type CreateDomainMutation = (
  * __useGetDomainByKeyQuery__
  *
  * To run a query within a React component, call `useGetDomainByKeyQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetDomainByKeyQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useGetDomainByKeyQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -80,7 +79,7 @@ export type GetDomainByKeyQueryResult = ApolloReactCommon.QueryResult<GetDomainB
  * __useSearchDomainsQuery__
  *
  * To run a query within a React component, call `useSearchDomainsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSearchDomainsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useSearchDomainsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;

@@ -5,8 +5,8 @@ import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
 
 export type AttachResourceCoversConceptsMutationVariables = {
-  resourceId: Types.Scalars['String'],
-  conceptIds: Array<Types.Scalars['String']>
+  resourceId: Types.Scalars['String'];
+  conceptIds: Array<Types.Scalars['String']>;
 };
 
 
@@ -15,7 +15,7 @@ export type AttachResourceCoversConceptsMutation = (
   & { attachResourceCoversConcepts: (
     { __typename?: 'Resource' }
     & Pick<Types.Resource, '_id'>
-    & { coveredConcepts: Types.Maybe<(
+    & { coveredConcepts?: Types.Maybe<(
       { __typename?: 'ResourceCoveredConceptsResults' }
       & { items: Array<(
         { __typename?: 'Concept' }
@@ -26,8 +26,8 @@ export type AttachResourceCoversConceptsMutation = (
 );
 
 export type DetachResourceCoversConceptsMutationVariables = {
-  resourceId: Types.Scalars['String'],
-  conceptIds: Array<Types.Scalars['String']>
+  resourceId: Types.Scalars['String'];
+  conceptIds: Array<Types.Scalars['String']>;
 };
 
 
@@ -36,7 +36,7 @@ export type DetachResourceCoversConceptsMutation = (
   & { detachResourceCoversConcepts: (
     { __typename?: 'Resource' }
     & Pick<Types.Resource, '_id'>
-    & { coveredConcepts: Types.Maybe<(
+    & { coveredConcepts?: Types.Maybe<(
       { __typename?: 'ResourceCoveredConceptsResults' }
       & { items: Array<(
         { __typename?: 'Concept' }

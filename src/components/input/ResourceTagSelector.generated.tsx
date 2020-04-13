@@ -5,7 +5,7 @@ import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
 
 export type SearchResourceTagsQueryVariables = {
-  options: Types.SearchResourceTagsOptions
+  options: Types.SearchResourceTagsOptions;
 };
 
 
@@ -23,7 +23,7 @@ export type SearchResourceTagsQuery = (
  * __useSearchResourceTagsQuery__
  *
  * To run a query within a React component, call `useSearchResourceTagsQuery` and pass it any options that fit your needs.
- * When your component renders, `useSearchResourceTagsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useSearchResourceTagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;

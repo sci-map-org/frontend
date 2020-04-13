@@ -1,5 +1,7 @@
-schema: "http://localhost:8000/graphql"
-documents: 'src/**/*.{tsx|ts}'
+schema: 'http://localhost:8000/graphql'
+documents:
+  - './src/**/*.tsx'
+  - 'src/**/*.ts'
 generates:
   schema.graphql:
     plugins:

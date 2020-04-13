@@ -31,7 +31,7 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
     .map(domain => {
       return !!domain.concepts ? domain.concepts.items : [];
     })
-    .reduce((acc, c) => acc.concat(c), []);
+    .reduce((acc, items) => acc.concat(items), []).map(item => item.concept);
 
   return (
     <Stack spacing={4}>

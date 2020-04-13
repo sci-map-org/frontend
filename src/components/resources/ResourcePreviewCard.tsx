@@ -32,6 +32,8 @@ import { useMockedFeaturesEnabled } from '../../hooks/useMockedFeaturesEnabled';
 import { useSetResourceConsumedMutation } from './ResourcePreviewCard.generated';
 import { ResourceTypeBadge } from './ResourceType';
 import { ResourceUrlLink } from './ResourceUrl';
+import { useVoteResourceMutation } from '../../graphql/resources/resources.operations.generated';
+import { ResourceVoteValue } from '../../graphql/types';
 
 const shortenDescription = (description: string, maxLength = 200) => {
   return description.length > 200 ? description.slice(0, 200) + '...' : description;
@@ -58,6 +60,7 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
 }) => {
   const { mockedFeaturesEnabled } = useMockedFeaturesEnabled();
   const [setResourceConsumed] = useSetResourceConsumedMutation();
+  const [voteResource] = useVoteResourceMutation();
   const checkedResourceToast = useToast();
 
   return (
@@ -74,11 +77,25 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
       pb={0}
     >
       <Flex direction="row" alignItems="center" px={0}>
-        <IconButton size="sm" aria-label="upvote" icon="arrow-up" variant="ghost" my={0} />
-        <Text>32</Text>
+        <IconButton
+          size="sm"
+          aria-label="upvote"
+          icon="arrow-up"
+          variant="ghost"
+          my={0}
+          onClick={() => voteResource({ variables: { resourceId: resource._id, value: ResourceVoteValue.Up } })}
+        />
+        <Text>{resource.upvotes}</Text>
         {/*
  // @ts-ignore */}
-        <IconButton size="sm" aria-label="downvote" icon="arrow-down" variant="ghost" my={0} />
+        <IconButton
+          size="sm"
+          aria-label="downvote"
+          icon="arrow-down"
+          variant="ghost"
+          my={0}
+          onClick={() => voteResource({ variables: { resourceId: resource._id, value: ResourceVoteValue.Down } })}
+        />
       </Flex>
       <Flex direction="column" flexGrow={1} justifyContent="center">
         <Stack spacing={2} direction="row" alignItems="baseline">
@@ -127,7 +144,7 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
                 <PopoverCloseButton />
                 <PopoverBody>
                   <Stack direction="column">
-                    {resource.coveredConcepts.items.map(concept => (
+                    {resource.coveredConcepts.items.map((concept) => (
                       <Box key={concept._id}>
                         <NextLink href={`/domains/${domainKey}/concepts/${concept.key}`}>
                           <Link>{concept.name}</Link>
@@ -154,7 +171,7 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
             size="lg"
             m={4}
             isChecked={!!resource.consumed && !!resource.consumed.consumedAt}
-            onChange={async e => {
+            onChange={async (e) => {
               const setResourceConsumedValue = !resource.consumed || !resource.consumed.consumedAt;
               await setResourceConsumed({
                 variables: {

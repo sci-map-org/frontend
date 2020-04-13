@@ -5,9 +5,8 @@ import * as Operations from './DomainConceptList';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
 
-
 export type SetConceptsKnownMutationVariables = {
-  payload: Types.SetConceptKnownPayload
+  payload: Types.SetConceptKnownPayload;
 };
 
 
@@ -20,7 +19,7 @@ export type SetConceptsKnownMutation = (
 );
 
 export type SetConceptsUnknownMutationVariables = {
-  conceptIds: Array<Types.Scalars['String']>
+  conceptIds: Array<Types.Scalars['String']>;
 };
 
 
