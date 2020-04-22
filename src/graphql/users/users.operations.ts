@@ -23,9 +23,30 @@ export const login = gql`
   ${CurrentUserData}
 `;
 
+export const loginGoogle = gql`
+  mutation loginGoogle($idToken: String!) {
+    loginGoogle(idToken: $idToken) {
+      jwt
+      currentUser {
+        ...CurrentUserData
+      }
+    }
+  }
+  ${CurrentUserData}
+`;
+
 export const register = gql`
   mutation register($payload: RegisterPayload!) {
     register(payload: $payload) {
+      ...CurrentUserData
+    }
+  }
+  ${CurrentUserData}
+`;
+
+export const registerGoogle = gql`
+  mutation registerGoogle($payload: RegisterGooglePayload!) {
+    registerGoogle(payload: $payload) {
       ...CurrentUserData
     }
   }

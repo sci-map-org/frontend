@@ -331,7 +331,9 @@ export type ResourceTagSearchResult = {
 export type Mutation = {
    __typename?: 'Mutation';
   login: LoginResponse;
+  loginGoogle: LoginResponse;
   register: CurrentUser;
+  registerGoogle: CurrentUser;
   adminUpdateUser: User;
   createArticle: Article;
   updateArticle: Article;
@@ -364,8 +366,18 @@ export type MutationLoginArgs = {
 };
 
 
+export type MutationLoginGoogleArgs = {
+  idToken: Scalars['String'];
+};
+
+
 export type MutationRegisterArgs = {
   payload: RegisterPayload;
+};
+
+
+export type MutationRegisterGoogleArgs = {
+  payload: RegisterGooglePayload;
 };
 
 
@@ -505,10 +517,16 @@ export type LoginResponse = {
 };
 
 export type RegisterPayload = {
-  displayName: Scalars['String'];
   key: Scalars['String'];
+  displayName: Scalars['String'];
   email: Scalars['String'];
   password: Scalars['String'];
+};
+
+export type RegisterGooglePayload = {
+  key: Scalars['String'];
+  displayName: Scalars['String'];
+  idToken: Scalars['String'];
 };
 
 export type AdminUpdateUserPayload = {

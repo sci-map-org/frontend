@@ -2,7 +2,13 @@ import { useApolloClient } from '@apollo/react-hooks';
 import Cookies from 'js-cookie';
 
 import { getCurrentUser } from './users.operations';
-import { useGetCurrentUserQuery, useLoginMutation, useRegisterMutation } from './users.operations.generated';
+import {
+  useGetCurrentUserQuery,
+  useLoginMutation,
+  useRegisterMutation,
+  useRegisterGoogleMutation,
+  useLoginGoogleMutation,
+} from './users.operations.generated';
 
 export const useCurrentUser = () => {
   const { loading, error, data } = useGetCurrentUserQuery();
@@ -36,10 +42,42 @@ export const useLogin = () => {
   };
 };
 
+export const useLoginGoogle = () => {
+  const client = useApolloClient();
+  const [loginGoogle, { loading, error }] = useLoginGoogleMutation({
+    onCompleted({ loginGoogle }) {
+      Cookies.set('jwt_token', loginGoogle.jwt);
+      client.writeData({ data: { isLoggedIn: true } });
+    },
+    update(cache, { data }) {
+      if (!data) return;
+      cache.writeQuery({
+        query: getCurrentUser,
+        data: { currentUser: data.loginGoogle.currentUser },
+      });
+    },
+  });
+
+  return {
+    loading,
+    error,
+    loginGoogle,
+  };
+};
+
 export const useRegister = () => {
   const [register, { loading, error }] = useRegisterMutation();
   return {
     register,
+    loading,
+    error,
+  };
+};
+
+export const useRegisterGoogle = () => {
+  const [registerGoogle, { loading, error }] = useRegisterGoogleMutation();
+  return {
+    registerGoogle,
     loading,
     error,
   };
