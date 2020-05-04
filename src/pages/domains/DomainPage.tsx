@@ -15,6 +15,7 @@ import { useGetDomainByKeyDomainPageQuery } from './DomainPage.generated';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { BreadcrumbLink } from '../../components/layout/NavigationBreadcrumbs';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
+import { useUnauthentificatedModal } from '../../components/auth/UnauthentificatedModal';
 
 export const DomainPagePath = (domainKey: string) => `/domains/${domainKey}`;
 
@@ -55,18 +56,23 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
   const domain = data?.getDomainByKey;
   const { mockedFeaturesEnabled } = useMockedFeaturesEnabled();
   const { currentUser } = useCurrentUser();
+  const { onOpen } = useUnauthentificatedModal();
   if (!domain) return <Box>Domain not found !</Box>;
 
   return (
     <PageLayout>
       <Flex direction="row" alignItems="center">
         <Text fontSize="4xl">Learn {domain.name}</Text>
-        <Box flexGrow={1}></Box>
-        {currentUser && (
-          <NextLink href={router.asPath + '/resources/new'}>
-            <Button variant="outline">+ Add resource</Button>
-          </NextLink>
-        )}
+        <Box flexGrow={1} />
+        <Button
+          variant="outline"
+          onClick={() => {
+            if (!currentUser) return onOpen();
+            router.push(router.asPath + '/resources/new');
+          }}
+        >
+          + Add resource
+        </Button>
         {mockedFeaturesEnabled && (
           <Box ml={2}>
             <NextLink href={router.asPath + '/resources/indexing_queue'}>
@@ -113,7 +119,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
                   { _id: 2, name: 'Clojure' },
                   { _id: 3, name: 'Haskell' },
                   { _id: 4, name: 'JavaScript Functional Programming' },
-                ].map(domain => (
+                ].map((domain) => (
                   <Link key={domain._id}>{domain.name}</Link>
                 ))}
               </Stack>
@@ -124,7 +130,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
                 {[
                   { _id: 1, name: 'Category Theory' },
                   { _id: 2, name: 'Object Oriented Programming' },
-                ].map(domain => (
+                ].map((domain) => (
                   <Link key={domain._id}>{domain.name}</Link>
                 ))}
               </Stack>

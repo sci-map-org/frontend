@@ -11,10 +11,11 @@ import {
 import { ResourceData } from '../../graphql/resources/resources.fragments';
 import { ResourceTypeBadge } from '../../components/resources/ResourceType';
 import { ResourceMediaTypeBadge } from '../../components/resources/ResourceMediaType';
-import { SelectedTagsEditor } from '../../components/resources/ResourceTagsEditor';
+import { SelectedTagsEditor, SelectedTagsViewer } from '../../components/resources/ResourceTagsEditor';
 import { ConceptData } from '../../graphql/concepts/concepts.fragments';
-import { DomainData, DomainWithConceptsData } from '../../graphql/domains/domains.fragments';
+import { DomainWithConceptsData } from '../../graphql/domains/domains.fragments';
 import { ResourceCoveredConcepts } from '../../components/resources/ResourceCoveredConcepts';
+import { RoleAccess } from '../../components/auth/RoleAccess';
 
 export const addTagsToResourceResourceEditor = gql`
   mutation addTagsToResourceResourceEditor($resourceId: String!, $tags: [String!]!) {
@@ -67,21 +68,23 @@ export const getResourceResourcePage = gql`
 export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) => {
   const { data } = useGetResourceResourcePageQuery({ variables: { id: resourceId } });
   const router = useRouter();
-  if (!data) return <Box>Resource not found !</Box>;
-  const resource = data.getResourceById;
-  const selectedTags = resource.tags || [];
 
   const [addTagsToResource] = useAddTagsToResourceResourceEditorMutation();
   const [removeTagsFromResource] = useRemoveTagsFromResourceResourceEditorMutation();
+  if (!data) return <Box>Resource not found !</Box>;
+  const resource = data.getResourceById;
+  const selectedTags = resource.tags || [];
 
   return (
     <PageLayout>
       <Stack spacing={2}>
         <Flex direction="row" align="center" justify="space-between">
           <Text fontSize="3xl">{resource.name}</Text>
-          <NextLink href={`${router.asPath}/edit`}>
-            <Link>Edit</Link>
-          </NextLink>
+          <RoleAccess accessRule="loggedInUser">
+            <NextLink href={`${router.asPath}/edit`}>
+              <Link>Edit</Link>
+            </NextLink>
+          </RoleAccess>
         </Flex>
         <Stack direction="row" spacing={2} alignItems="baseline">
           <Link isExternal color="blue.700" href={resource.url}>
@@ -98,11 +101,16 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
         <Box>
           <ResourceTypeBadge type={resource.type} /> - <ResourceMediaTypeBadge mediaType={resource.mediaType} />
         </Box>
-        <SelectedTagsEditor
-          selectedTags={selectedTags}
-          onSelect={t => addTagsToResource({ variables: { resourceId: resource._id, tags: [t.name] } })}
-          onRemove={t => removeTagsFromResource({ variables: { resourceId: resource._id, tags: [t.name] } })}
-        />
+        <RoleAccess accessRule="loggedInUser">
+          <SelectedTagsEditor
+            selectedTags={selectedTags}
+            onSelect={(t) => addTagsToResource({ variables: { resourceId: resource._id, tags: [t.name] } })}
+            onRemove={(t) => removeTagsFromResource({ variables: { resourceId: resource._id, tags: [t.name] } })}
+          />
+        </RoleAccess>
+        <RoleAccess accessRule="notLoggedInUser">
+          <SelectedTagsViewer selectedTags={selectedTags} />
+        </RoleAccess>
         {resource.domains && resource.coveredConcepts && (
           <ResourceCoveredConcepts domains={resource.domains.items} coveredConcepts={resource.coveredConcepts.items} />
         )}

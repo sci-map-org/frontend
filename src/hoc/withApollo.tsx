@@ -134,6 +134,11 @@ function createApolloClient(config: CreateApolloClientConfig): ApolloClient<Norm
     link: authLink.concat(httpLink),
     cache: new InMemoryCache().restore(config.initialState),
     connectToDevTools: process.env.NODE_ENV !== 'production',
+    defaultOptions: {
+      query: {
+        errorPolicy: 'all',
+      },
+    },
   });
 }
 

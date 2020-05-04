@@ -6,5 +6,6 @@ export const CurrentUserData = gql`
     email
     key
     role
+    displayName
   }
 `;

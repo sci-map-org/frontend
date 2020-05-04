@@ -32,8 +32,8 @@ export const RegisterFormAuthInfo: React.FC<RegisterFormAuthInfoProps> = ({ onNe
 
   return (
     <Stack spacing={6} textAlign="center">
-      <Text fontSize="5xl">Register</Text>
-      <Stack spacing={2} textAlign="center">
+      <Text fontSize="xl">Using Third Parties</Text>
+      <Stack spacing={2} textAlign="center" onClick={(e) => e.stopPropagation()}>
         <GoogleLogin
           clientId="390325140829-njk2aup9efs7tprmpmqmke93886q602i.apps.googleusercontent.com"
           buttonText="Register with Google"
@@ -52,7 +52,7 @@ export const RegisterFormAuthInfo: React.FC<RegisterFormAuthInfoProps> = ({ onNe
           accessType="online"
         />
       </Stack>
-      <Text fontSize="3xl">Or with email and password</Text>
+      <Text fontSize="xl">Or with email and password</Text>
       <Divider />
       <FormControl isRequired isInvalid={!!email && !isEmailValid}>
         <FormLabel htmlFor="email">Email</FormLabel>

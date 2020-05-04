@@ -4,8 +4,8 @@ import { ConceptPage } from '../../../../../src/pages/domains/concepts/ConceptPa
 
 const Page: React.FC = () => {
   const router = useRouter();
-
   const { key, conceptKey } = router.query;
+
   if (!key || typeof key !== 'string') return null;
   if (!conceptKey || typeof conceptKey !== 'string') return null;
 

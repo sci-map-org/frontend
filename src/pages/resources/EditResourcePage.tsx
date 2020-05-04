@@ -56,20 +56,18 @@ export const getResourceEditResourcePage = gql`
 
 const EditResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) => {
   const { data } = useGetResourceEditResourcePageQuery({ variables: { id: resourceId } });
-
+  const [updateResource] = useUpdateResourceResourcePageMutation({});
   if (!data || !data.getResourceById) return <Box>Resource not found !</Box>;
   const { getResourceById: resource } = data;
-  const [updateResource] = useUpdateResourceResourcePageMutation({
-    onCompleted: () => {
-      Router.push(`/resources/${resource._id}`);
-    },
-  });
   return (
     <PageLayout mode="form">
       <ResourceEditor
         resource={resource}
-        onSave={editedResource => {
-          updateResource({ variables: { id: resource._id, payload: editedResource } });
+        onSave={async (editedResource) => {
+          await updateResource({
+            variables: { id: resource._id, payload: editedResource },
+          });
+          Router.push(`/resources/${resource._id}`);
         }}
       ></ResourceEditor>
     </PageLayout>

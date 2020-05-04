@@ -9,6 +9,7 @@ import { DomainDataFragment, DomainWithConceptsDataFragment } from '../../graphq
 import { UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { useSetConceptsKnownMutation, useSetConceptsUnknownMutation } from './DomainConceptList.generated';
+import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 
 export const setConceptsKnown = gql`
   mutation setConceptsKnown($payload: SetConceptKnownPayload!) {
@@ -34,7 +35,9 @@ export const DomainConceptList: React.FC<{ domain: DomainWithConceptsDataFragmen
   const [setConceptUnknown] = useSetConceptsUnknownMutation();
 
   const domainConceptItems = domain.concepts?.items;
+  const unauthentificatedModalDisclosure = useUnauthentificatedModal();
   const toggleConceptKnown = async (concept: ConceptDataFragment) => {
+    if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
     if (!concept.known) {
       await setConceptKnown({
         variables: {

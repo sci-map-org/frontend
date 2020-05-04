@@ -6,6 +6,7 @@ import { ApolloProvider } from '@apollo/react-hooks';
 
 import { Layout } from '../components/layout/Layout';
 import { theme } from '../theme/theme';
+import { UnauthentificatedModalProvider } from './auth/UnauthentificatedModal';
 
 interface WrapperProps {
   apolloClient: ApolloClient<NormalizedCacheObject>;
@@ -16,7 +17,9 @@ export const Wrapper: React.FC<WrapperProps> = ({ children, apolloClient }) => {
     <ApolloProvider client={apolloClient}>
       <ThemeProvider theme={theme}>
         <CSSReset />
-        <Layout>{children}</Layout>
+        <UnauthentificatedModalProvider>
+          <Layout>{children}</Layout>
+        </UnauthentificatedModalProvider>
         <style global jsx>
           {`
             html,

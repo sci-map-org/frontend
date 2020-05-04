@@ -19,7 +19,7 @@ import NextLink from 'next/link';
 import Router from 'next/router';
 
 import { PageLayout } from '../../../components/layout/PageLayout';
-import { ResourcePreviewCard } from '../../../components/resources/ResourcePreviewCard';
+import { ResourcePreviewCard, ResourcePreviewCardList } from '../../../components/resources/ResourcePreviewCard';
 import { useDeleteConcept } from '../../../graphql/concepts/concepts.hooks';
 import { useGetConceptByKeyQuery } from '../../../graphql/concepts/concepts.operations.generated';
 import { useGetDomainByKey } from '../../../graphql/domains/domains.hooks';
@@ -31,8 +31,10 @@ import { ConceptListPageInfo } from './ConceptListPage';
 import { DomainDataFragment } from '../../../graphql/domains/domains.fragments.generated';
 import { ConceptDataFragment } from '../../../graphql/concepts/concepts.fragments.generated';
 import { PageInfo } from '../../PageInfo';
+import { RoleAccess } from '../../../components/auth/RoleAccess';
 
-export const ConceptPagePath = (domainKey: string, conceptKey: string) => `/domains/${domainKey}/concepts/${conceptKey}`;
+export const ConceptPagePath = (domainKey: string, conceptKey: string) =>
+  `/domains/${domainKey}/concepts/${conceptKey}`;
 
 export const ConceptPageInfo = (domain: DomainDataFragment, concept: ConceptDataFragment): PageInfo => ({
   name: `${domain.name} - ${concept.name}`,
@@ -46,7 +48,7 @@ const ConceptPageRightIcons: React.FC<{ concept: ConceptDataFragment }> = ({ con
   return (
     <Flex direction="row" justify="space-between" align="center">
       <Box>
-        {currentUser && currentUser.role === UserRole.Admin && (
+        <RoleAccess accessRule="admin">
           <Stack spacing={2} direction="row">
             <Button size="sm" onClick={() => Router.push(Router.asPath + '/edit')}>
               Edit
@@ -72,7 +74,7 @@ const ConceptPageRightIcons: React.FC<{ concept: ConceptDataFragment }> = ({ con
               </ModalContent>
             </Modal>
           </Stack>
-        )}
+        </RoleAccess>
       </Box>
     </Flex>
   );
@@ -91,14 +93,12 @@ export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = 
         { ...ConceptPageInfo(domain, concept), currentPage: true },
       ]}
       title={domain.name + ' - ' + concept.name}
-      renderRight={ConceptPageRightIcons({ concept })}
+      renderRight={() => <ConceptPageRightIcons concept={concept} />}
     >
       <Box>
         <Text pb={5}>{concept.description}</Text>
         <Text fontSize="2xl">Covered by</Text>
-        {concept.coveredByResources?.items.map(resource => (
-          <ResourcePreviewCard key={resource._id} domainKey={domain.key} resource={resource} />
-        ))}
+        <ResourcePreviewCardList domainKey={domain.key} resourcePreviews={concept.coveredByResources?.items} />
         {/* <Text fontSize="2xl">Related concepts</Text>
         <Text fontSize="xl">Refers to</Text>
         <Text fontSize="xl">Referenced by</Text> */}

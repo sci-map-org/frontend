@@ -24,6 +24,7 @@ export const useLogin = () => {
   const [login, { loading, error }] = useLoginMutation({
     onCompleted({ login }) {
       Cookies.set('jwt_token', login.jwt);
+      client.resetStore();
       client.writeData({ data: { isLoggedIn: true } });
     },
     update(cache, { data }) {
@@ -42,11 +43,26 @@ export const useLogin = () => {
   };
 };
 
+export const useLogout = () => {
+  const client = useApolloClient();
+  const logout = () => {
+    Cookies.remove('jwt_token');
+    client.resetStore();
+    client.writeData({ data: { isLoggedIn: false } });
+    client.writeQuery({
+      query: getCurrentUser,
+      data: { currentUser: null },
+    });
+  };
+  return { logout };
+};
+
 export const useLoginGoogle = () => {
   const client = useApolloClient();
   const [loginGoogle, { loading, error }] = useLoginGoogleMutation({
     onCompleted({ loginGoogle }) {
       Cookies.set('jwt_token', loginGoogle.jwt);
+      client.resetStore();
       client.writeData({ data: { isLoggedIn: true } });
     },
     update(cache, { data }) {

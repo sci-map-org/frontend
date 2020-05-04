@@ -1,25 +1,12 @@
-import { useApolloClient } from '@apollo/react-hooks';
-import { Box, Link, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/core';
-import Cookies from 'js-cookie';
+import { Box, Link, Menu, MenuButton, MenuItem, MenuList, Avatar, AvatarBadge, Text } from '@chakra-ui/core';
 import NextLink from 'next/link';
-
-import { UserRole } from '../../graphql/types';
-import { useCurrentUser } from '../../graphql/users/users.hooks';
-import { getCurrentUser } from '../../graphql/users/users.operations';
+import { useCurrentUser, useLogout } from '../../graphql/users/users.hooks';
+import { RoleAccess } from '../auth/RoleAccess';
 import { HeaderLink } from './HeaderLink';
 
 export const Header: React.FC = () => {
-  const client = useApolloClient();
   const { currentUser } = useCurrentUser();
-
-  const logout = () => {
-    Cookies.remove('jwt_token');
-    client.writeData({ data: { isLoggedIn: false } });
-    client.writeQuery({
-      query: getCurrentUser,
-      data: { currentUser: null },
-    });
-  };
+  const { logout } = useLogout();
 
   return (
     <Box py={2} bg="gray.200" pl={2} fontSize="lg" display="flex" flexDirection="row">
@@ -32,7 +19,7 @@ export const Header: React.FC = () => {
           <Menu>
             <MenuButton>
               {currentUser.key}
-              {/* <Avatar size="xs">
+              {/* <Avatar size="xs" ml={2}>
                 <AvatarBadge bg="green.500" size="0.7rem" />
               </Avatar> */}
             </MenuButton>
@@ -42,23 +29,25 @@ export const Header: React.FC = () => {
                   <Link>Profile</Link>
                 </MenuItem>
               </NextLink>
-              <NextLink href={`/articles/new`}>
-                <MenuItem>
-                  <Link>New Article</Link>
-                </MenuItem>
-              </NextLink>
+              <RoleAccess accessRule="admin">
+                <NextLink href={`/articles/new`}>
+                  <MenuItem>
+                    <Link>New Article</Link>
+                  </MenuItem>
+                </NextLink>
+              </RoleAccess>
               <NextLink href={`/profile/${currentUser.key}/articles`}>
                 <MenuItem>
                   <Link>My articles</Link>
                 </MenuItem>
               </NextLink>
-              {currentUser && currentUser.role === UserRole.Admin && (
+              <RoleAccess accessRule="admin">
                 <NextLink href={`/domains/new`}>
                   <MenuItem>
                     <Link>New Domain</Link>
                   </MenuItem>
                 </NextLink>
-              )}
+              </RoleAccess>
               <NextLink href={`/resources/new`}>
                 <MenuItem>
                   <Link>New Resource</Link>

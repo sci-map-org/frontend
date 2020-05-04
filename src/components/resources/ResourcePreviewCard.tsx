@@ -34,6 +34,9 @@ import { ResourceTypeBadge } from './ResourceType';
 import { ResourceUrlLink } from './ResourceUrl';
 import { useVoteResourceMutation } from '../../graphql/resources/resources.operations.generated';
 import { ResourceVoteValue } from '../../graphql/types';
+import { useCurrentUser } from '../../graphql/users/users.hooks';
+import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
+import { SelectedTagsViewer } from './ResourceTagsEditor';
 
 const shortenDescription = (description: string, maxLength = 200) => {
   return description.length > 200 ? description.slice(0, 200) + '...' : description;
@@ -62,7 +65,8 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
   const [setResourceConsumed] = useSetResourceConsumedMutation();
   const [voteResource] = useVoteResourceMutation();
   const checkedResourceToast = useToast();
-
+  const { currentUser } = useCurrentUser();
+  const unauthentificatedModalDisclosure = useUnauthentificatedModal();
   return (
     <Flex
       direction="row"
@@ -83,7 +87,10 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
           icon="arrow-up"
           variant="ghost"
           my={0}
-          onClick={() => voteResource({ variables: { resourceId: resource._id, value: ResourceVoteValue.Up } })}
+          onClick={() => {
+            if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
+            voteResource({ variables: { resourceId: resource._id, value: ResourceVoteValue.Up } });
+          }}
         />
         <Text>{resource.upvotes}</Text>
         {/*
@@ -94,7 +101,10 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
           icon="arrow-down"
           variant="ghost"
           my={0}
-          onClick={() => voteResource({ variables: { resourceId: resource._id, value: ResourceVoteValue.Down } })}
+          onClick={() => {
+            if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
+            voteResource({ variables: { resourceId: resource._id, value: ResourceVoteValue.Down } });
+          }}
         />
       </Flex>
       <Flex direction="column" flexGrow={1} justifyContent="center">
@@ -115,15 +125,7 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
         {((resource.tags && resource.tags.length > 0) || resource.description) && (
           <Box pb={2}>
             <Text fontWeight={250}>
-              {resource.tags && resource.tags.length > 0 && (
-                <>
-                  {resource.tags.map((tag, idx) => (
-                    <Tag size="sm" variantColor="gray" key={idx} mr={2} as="span">
-                      <TagLabel>{tag.name}</TagLabel>
-                    </Tag>
-                  ))}
-                </>
-              )}
+              <SelectedTagsViewer selectedTags={resource.tags} />
               {resource.description && shortenDescription(resource.description)}
             </Text>
           </Box>
@@ -172,6 +174,7 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
             m={4}
             isChecked={!!resource.consumed && !!resource.consumed.consumedAt}
             onChange={async (e) => {
+              if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
               const setResourceConsumedValue = !resource.consumed || !resource.consumed.consumedAt;
               await setResourceConsumed({
                 variables: {
@@ -225,5 +228,19 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
         </Tooltip>
       </Flex>
     </Flex>
+  );
+};
+
+export const ResourcePreviewCardList: React.FC<{
+  domainKey: string;
+  resourcePreviews?: ResourcePreviewDataFragment[];
+}> = ({ resourcePreviews, domainKey }) => {
+  if (!resourcePreviews || !resourcePreviews.length) return null;
+  return (
+    <Box borderTop="1px solid" borderTopColor="gray.200" width="100%">
+      {resourcePreviews.map((preview) => (
+        <ResourcePreviewCard key={preview._id} domainKey={domainKey} resource={preview} />
+      ))}
+    </Box>
   );
 };

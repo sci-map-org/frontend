@@ -1,25 +1,10 @@
-import {
-  Text,
-  Stack,
-  Input,
-  Button,
-  InputGroup,
-  InputRightElement,
-  Divider,
-  Box,
-  AlertIcon,
-  Alert,
-  AlertTitle,
-  AlertDescription,
-  CloseButton,
-} from '@chakra-ui/core';
-import { useState } from 'react';
-import { useRegister, useLogin, useRegisterGoogle, useLoginGoogle } from '../../graphql/users/users.hooks';
+import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, CloseButton, Stack } from '@chakra-ui/core';
 import Router from 'next/router';
-import { RegisterFormAuthInfo, RegisterAuthInfo } from './RegisterFormAuthInfo';
-import { RegisterFormProfileInfo, RegisterProfileInfo } from './RegisterFormProfileInfo';
+import { useState } from 'react';
+import { useLogin, useLoginGoogle, useRegister, useRegisterGoogle } from '../../graphql/users/users.hooks';
 import { generateUrlKey } from '../../services/url.service';
-import { loginGoogle } from '../../graphql/users/users.operations';
+import { RegisterAuthInfo, RegisterFormAuthInfo } from './RegisterFormAuthInfo';
+import { RegisterFormProfileInfo, RegisterProfileInfo } from './RegisterFormProfileInfo';
 
 export const RegisterForm: React.FC<{}> = () => {
   const [authInfo, setAuthInfo] = useState<RegisterAuthInfo>();
