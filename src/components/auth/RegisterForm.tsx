@@ -6,7 +6,9 @@ import { generateUrlKey } from '../../services/url.service';
 import { RegisterAuthInfo, RegisterFormAuthInfo } from './RegisterFormAuthInfo';
 import { RegisterFormProfileInfo, RegisterProfileInfo } from './RegisterFormProfileInfo';
 
-export const RegisterForm: React.FC<{}> = () => {
+export const RegisterForm: React.FC<{
+  onSuccess: () => void;
+}> = ({ onSuccess }) => {
   const [authInfo, setAuthInfo] = useState<RegisterAuthInfo>();
   const [profileInfo, setProfileInfo] = useState<RegisterProfileInfo>();
   const { register, error } = useRegister();
@@ -44,12 +46,11 @@ export const RegisterForm: React.FC<{}> = () => {
         },
       });
     }
-
-    Router.push(`/`);
+    onSuccess();
   };
   return (
     <Stack spacing={2}>
-      {!authInfo && <RegisterFormAuthInfo onNext={setAuthInfo} />}
+      {!authInfo && <RegisterFormAuthInfo onNext={setAuthInfo} onSuccessfulLogin={onSuccess} />}
       {authInfo && (
         <RegisterFormProfileInfo
           defaultProfileInfo={

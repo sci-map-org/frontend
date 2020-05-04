@@ -3,6 +3,7 @@ import { useState } from 'react';
 import GoogleLogin, { GoogleLoginResponse } from 'react-google-login';
 import { useLogin, useLoginGoogle } from '../../graphql/users/users.hooks';
 import { PasswordInput } from '../input/PasswordInput';
+import { GoogleAuthButton } from './GoogleAuthButton';
 
 export const LoginForm: React.FC<{
   onSuccessfulLogin?: () => void;
@@ -16,20 +17,13 @@ export const LoginForm: React.FC<{
       <Stack spacing={6} textAlign="center" width="36rem">
         <Stack spacing={2} textAlign="center" onClick={(e) => e.stopPropagation()}>
           <Text fontSize="xl">Using Third Parties</Text>
-          <GoogleLogin
-            clientId="390325140829-njk2aup9efs7tprmpmqmke93886q602i.apps.googleusercontent.com"
+          <GoogleAuthButton
             buttonText="Login with Google"
-            onSuccess={async (googleUser) => {
-              googleUser = googleUser as GoogleLoginResponse;
-              await loginGoogle({
-                variables: { idToken: googleUser.getAuthResponse().id_token },
-              });
+            onSuccessfulLogin={() => {
               if (onSuccessfulLogin) onSuccessfulLogin();
             }}
-            onFailure={() => console.error('failure google log in')}
-            cookiePolicy={'single_host_origin'}
-            type="button"
-            accessType="online"
+            onFailedLogin={() => console.error('')}
+            onFailure={() => {}}
           />
         </Stack>
         <Stack spacing={2}>

@@ -71,7 +71,7 @@ export const UnauthentificatedModal: React.FC<{ onOpen: () => void; onClose: () 
             </>
           ) : (
             <>
-              <RegisterForm />
+              <RegisterForm onSuccess={onClose} />
               <Divider my={4}></Divider>
               <Box pb={4} textAlign="center">
                 <Text fontSize="l">

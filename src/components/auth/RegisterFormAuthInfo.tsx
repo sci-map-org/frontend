@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { GoogleLogin, GoogleLoginResponse } from 'react-google-login';
 import { validateEmail } from '../../util/email.util';
 import { PasswordInput } from '../input/PasswordInput';
+import { GoogleAuthButton } from './GoogleAuthButton';
 
 type GoogleAuthInfo = {
   type: 'google';
@@ -21,9 +22,10 @@ export type RegisterAuthInfo = GoogleAuthInfo | BasicAuthInfo;
 
 interface RegisterFormAuthInfoProps {
   onNext: (info: RegisterAuthInfo) => void;
+  onSuccessfulLogin: () => void;
 }
 
-export const RegisterFormAuthInfo: React.FC<RegisterFormAuthInfoProps> = ({ onNext }) => {
+export const RegisterFormAuthInfo: React.FC<RegisterFormAuthInfoProps> = ({ onNext, onSuccessfulLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -34,11 +36,10 @@ export const RegisterFormAuthInfo: React.FC<RegisterFormAuthInfoProps> = ({ onNe
     <Stack spacing={6} textAlign="center">
       <Text fontSize="xl">Using Third Parties</Text>
       <Stack spacing={2} textAlign="center" onClick={(e) => e.stopPropagation()}>
-        <GoogleLogin
-          clientId="390325140829-njk2aup9efs7tprmpmqmke93886q602i.apps.googleusercontent.com"
+        <GoogleAuthButton
           buttonText="Register with Google"
-          onSuccess={(googleUser) => {
-            googleUser = googleUser as GoogleLoginResponse;
+          onSuccessfulLogin={onSuccessfulLogin}
+          onFailedLogin={(googleUser) => {
             const profile = googleUser.getBasicProfile();
             onNext({
               type: 'google',
@@ -47,9 +48,7 @@ export const RegisterFormAuthInfo: React.FC<RegisterFormAuthInfoProps> = ({ onNe
               name: profile.getName(),
             });
           }}
-          onFailure={() => console.log('failure')}
-          cookiePolicy={'single_host_origin'}
-          accessType="online"
+          onFailure={() => {}}
         />
       </Stack>
       <Text fontSize="xl">Or with email and password</Text>
