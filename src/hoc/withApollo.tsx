@@ -9,6 +9,20 @@ import NextApp, { AppProps as NextAppProps, AppContext as NextAppContext } from 
 import Head from 'next/head';
 import React from 'react';
 
+const getInitialState = (req?: IncomingMessage): NormalizedCacheObject => {
+  // If no token on the request, we directly cache the currentUser query to null
+  // (avoid spamming server)
+  if (req) {
+    return {
+      ROOT_QUERY: {
+        ...(!getToken(req) && { currentUser: null }),
+      },
+    };
+  }
+  return {};
+};
+
+// const initializeCache = (req?: IncomingMessage) => (client: ApolloClient) => {};
 interface WithApolloInitialProps {
   apolloState?: NormalizedCacheObject;
 }
@@ -24,7 +38,12 @@ interface WithApolloProps extends WithApolloInitialProps, NextAppProps {
 export function withApollo(AppComponent: typeof NextApp) {
   const WithApollo = (props: WithApolloProps) => {
     const { apolloClient, apolloState } = props;
-    const client = apolloClient || initApolloClient({ initialState: apolloState || {}, getToken });
+    const client =
+      apolloClient ||
+      initApolloClient({
+        getInitialState: () => apolloState || getInitialState(),
+        getToken,
+      });
 
     return <AppComponent {...props} apolloClient={client} />;
   };
@@ -44,7 +63,7 @@ export function withApollo(AppComponent: typeof NextApp) {
     }
 
     const apolloClient = initApolloClient({
-      initialState: {},
+      getInitialState: () => getInitialState(ctx.req),
       getToken: () => getToken(ctx.req),
     });
 
@@ -101,6 +120,7 @@ function initApolloClient(config: CreateApolloClientConfig): ApolloClient<Normal
 
   // Reuse client on the client-side
   if (!apolloClient) {
+    console.log('creating a new client side one');
     apolloClient = createApolloClient(config);
   }
 
@@ -108,10 +128,11 @@ function initApolloClient(config: CreateApolloClientConfig): ApolloClient<Normal
 }
 
 interface CreateApolloClientConfig {
-  initialState: NormalizedCacheObject;
+  getInitialState: () => NormalizedCacheObject;
   getToken: () => string;
 }
 function createApolloClient(config: CreateApolloClientConfig): ApolloClient<NormalizedCacheObject> {
+  console.log('new client created');
   const httpLink = new HttpLink({
     uri: 'http://localhost:8000/graphql', // Server URL (must be absolute)
     credentials: 'same-origin',
@@ -119,7 +140,7 @@ function createApolloClient(config: CreateApolloClientConfig): ApolloClient<Norm
   });
 
   const authLink = setContext((_request, { headers }) => {
-    const token = config.getToken();
+    const token = config.getToken(); // Why async ?
     return {
       headers: {
         ...headers,
@@ -127,19 +148,21 @@ function createApolloClient(config: CreateApolloClientConfig): ApolloClient<Norm
       },
     };
   });
-
-  return new ApolloClient({
+  const cache = new InMemoryCache().restore(config.getInitialState());
+  const client = new ApolloClient({
     // Disables forceFetch on the server (so queries are only run once)
     ssrMode: typeof window === 'undefined',
     link: authLink.concat(httpLink),
-    cache: new InMemoryCache().restore(config.initialState),
+    cache,
     connectToDevTools: process.env.NODE_ENV !== 'production',
     defaultOptions: {
       query: {
-        errorPolicy: 'all',
+        errorPolicy: 'ignore', // ?
       },
     },
   });
+
+  return client;
 }
 
 /**
