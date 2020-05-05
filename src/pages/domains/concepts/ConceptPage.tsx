@@ -39,6 +39,7 @@ export const ConceptPagePath = (domainKey: string, conceptKey: string) =>
 export const ConceptPageInfo = (domain: DomainDataFragment, concept: ConceptDataFragment): PageInfo => ({
   name: `${domain.name} - ${concept.name}`,
   path: ConceptPagePath(domain.key, concept.key),
+  routePath: ConceptPagePath('[key]', '[conceptKey]'),
 });
 
 const ConceptPageRightIcons: React.FC<{ concept: ConceptDataFragment }> = ({ concept }) => {

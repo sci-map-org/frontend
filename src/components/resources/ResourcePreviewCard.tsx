@@ -37,6 +37,7 @@ import { ResourceVoteValue } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import { SelectedTagsViewer } from './ResourceTagsEditor';
+import { InternalLink } from '../navigation/InternalLink';
 
 const shortenDescription = (description: string, maxLength = 200) => {
   return description.length > 200 ? description.slice(0, 200) + '...' : description;
@@ -110,9 +111,9 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
       <Flex direction="column" flexGrow={1} justifyContent="center">
         <Stack spacing={2} direction="row" alignItems="baseline">
           <Text>
-            <NextLink href={`/resources/${resource._id}`}>
-              <Link fontSize="xl">{resource.name}</Link>
-            </NextLink>
+            <InternalLink routePath="/resources/[_id]" asHref={`/resources/${resource._id}`} fontSize="xl">
+              {resource.name}
+            </InternalLink>
           </Text>
           <ResourceUrlLink resource={resource} />
           <ResourceTypeBadge type={resource.type} />
@@ -148,9 +149,12 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
                   <Stack direction="column">
                     {resource.coveredConcepts.items.map((concept) => (
                       <Box key={concept._id}>
-                        <NextLink href={`/domains/${domainKey}/concepts/${concept.key}`}>
-                          <Link>{concept.name}</Link>
-                        </NextLink>
+                        <InternalLink
+                          routePath="/domains/[key]/concepts/[conceptKey]"
+                          asHref={`/domains/${domainKey}/concepts/${concept.key}`}
+                        >
+                          {concept.name}
+                        </InternalLink>
                       </Box>
                     ))}
                   </Stack>

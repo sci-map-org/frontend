@@ -5,6 +5,7 @@ import React from 'react';
 import { useListUserArticlePreviews } from '../../../graphql/articles/articles.hooks';
 import { ArticlePreview } from '../../../components/articles/ArticlePreview';
 import { PageLayout } from '../../../components/layout/PageLayout';
+import { InternalButtonLink } from '../../../components/navigation/InternalLink';
 
 export const UserArticleListPage: React.FC<{ userKey: string }> = ({ userKey }) => {
   const { articlePreviews } = useListUserArticlePreviews(userKey);
@@ -16,15 +17,13 @@ export const UserArticleListPage: React.FC<{ userKey: string }> = ({ userKey }) 
           <Text fontSize="4xl">Articles</Text>
           <Stack>
             {!!articlePreviews &&
-              articlePreviews.map(articlePreview => {
+              articlePreviews.map((articlePreview) => {
                 return <ArticlePreview key={articlePreview._id} articlePreview={articlePreview} />;
               })}
             <Box>
-              <Link href="/articles/new">
-                <Button variant="solid" m={2}>
-                  New Article
-                </Button>
-              </Link>
+              <InternalButtonLink routePath="/articles/new" asHref="/articles/new" variant="solid" m={2} loggedInOnly>
+                New Article
+              </InternalButtonLink>
             </Box>
           </Stack>
         </Stack>

@@ -17,6 +17,7 @@ import {
 import { ConceptData } from '../../graphql/concepts/concepts.fragments';
 import { useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
+import { InternalLink } from '../navigation/InternalLink';
 
 interface ConceptListProps {
   domainKey: string;
@@ -76,7 +77,7 @@ export const ConceptList: React.FC<ConceptListProps> = ({ domainKey }) => {
             concept={concept}
             relationship={relationship}
             domainKey={domainKey}
-            onIndexSubmit={async index => {
+            onIndexSubmit={async (index) => {
               await updateIndex({
                 variables: {
                   domainId: data.getDomainByKey._id,
@@ -107,11 +108,14 @@ const ConceptListItem: React.FC<ConceptListItemProps> = ({ concept, relationship
   return (
     <Flex direction="row" key={concept._id} p={2} borderBottomWidth={1}>
       <Box flexGrow={1}>
-        <NextLink href={`/domains/${domainKey}/concepts/${concept.key}`}>
-          <Link fontSize="l" fontWeight={500}>
-            {concept.name}
-          </Link>
-        </NextLink>
+        <InternalLink
+          fontSize="l"
+          fontWeight={500}
+          routePath="/domains/[key]/concepts/[conceptKey]"
+          asHref={`/domains/${domainKey}/concepts/${concept.key}`}
+        >
+          {concept.name}
+        </InternalLink>
         {concept.description && <Text>{concept.description}</Text>}
       </Box>
       {!!currentUser && currentUser.role === UserRole.Admin && (

@@ -16,6 +16,7 @@ export const ConceptListPagePath = (domainKey: string) => `/domains/${domainKey}
 export const ConceptListPageInfo = (domain: DomainDataFragment): PageInfo => ({
   name: 'Concepts',
   path: ConceptListPagePath(domain.key),
+  routePath: ConceptListPagePath('[key]'),
 });
 
 export const ConceptListPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {

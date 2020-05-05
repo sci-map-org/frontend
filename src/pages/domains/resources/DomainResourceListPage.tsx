@@ -12,6 +12,7 @@ export const DomainResourceListPagePath = (domainKey: string) => `/domains/${dom
 export const DomainResourceListPageInfo = (domain: DomainDataFragment): PageInfo => ({
   name: 'Resources',
   path: DomainResourceListPagePath(domain.key),
+  routePath: DomainResourceListPagePath('[key]'),
 });
 
 export const DomainResourceListPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {

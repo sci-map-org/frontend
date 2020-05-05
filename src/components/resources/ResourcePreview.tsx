@@ -2,6 +2,7 @@ import { Box, Link, Text } from '@chakra-ui/core';
 import NextLink from 'next/link';
 
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { InternalLink } from '../navigation/InternalLink';
 
 interface ResourcePreviewProps {
   resourcePreview: ResourcePreviewDataFragment;
@@ -10,9 +11,9 @@ export const ResourcePreview: React.FC<ResourcePreviewProps> = ({ resourcePrevie
   return (
     <Box p={2} display="flex">
       <Box>
-        <NextLink href={`/resources/${resourcePreview._id}`}>
-          <Link>{resourcePreview.name}</Link>
-        </NextLink>
+        <InternalLink routePath="/resources/[_id]" asHref={`/resources/${resourcePreview._id}`}>
+          {resourcePreview.name}
+        </InternalLink>
       </Box>
       <Box flexGrow={1}></Box>
       <Text fontWeight={600}>{resourcePreview.type}</Text>

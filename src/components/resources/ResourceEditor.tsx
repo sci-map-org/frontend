@@ -10,6 +10,7 @@ import { ResourceDescriptionInput } from './ResourceDescription';
 import { ResourceDurationMnSelector } from './ResourceDuration';
 import { ResourceMediaTypeSelector } from './ResourceMediaType';
 import { ResourceTypeSelector } from './ResourceType';
+import { InternalLink } from '../navigation/InternalLink';
 
 interface ResourceEditorProps {
   resource: GetResourceEditResourcePageQuery['getResourceById'];
@@ -28,10 +29,11 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
   if (!resource.domains) return null;
 
   const conceptList: ConceptDataFragment[] = resource.domains.items
-    .map(domain => {
+    .map((domain) => {
       return !!domain.concepts ? domain.concepts.items : [];
     })
-    .reduce((acc, items) => acc.concat(items), []).map(item => item.concept);
+    .reduce((acc, items) => acc.concat(items), [])
+    .map((item) => item.concept);
 
   return (
     <Stack spacing={4}>
@@ -59,14 +61,14 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
         ></Input>
       </FormControl>
       <Flex direction="row">
-        <ResourceTypeSelector value={type} onSelect={t => setType(t)} />
+        <ResourceTypeSelector value={type} onSelect={(t) => setType(t)} />
       </Flex>
       <Flex flexDirection="row">
-        <ResourceMediaTypeSelector value={mediaType} onSelect={t => setMediaType(t)} />
+        <ResourceMediaTypeSelector value={mediaType} onSelect={(t) => setMediaType(t)} />
         <Box flexGrow={1}></Box>
-        <ResourceDurationMnSelector value={durationMn} onChange={v => setDurationMn(v)} />
+        <ResourceDurationMnSelector value={durationMn} onChange={(v) => setDurationMn(v)} />
       </Flex>
-      <ResourceDescriptionInput value={description} onChange={d => setDescription(d)} />
+      <ResourceDescriptionInput value={description} onChange={(d) => setDescription(d)} />
       {resource.domains && resource.coveredConcepts && (
         <CoveredConceptsSelector
           resourceId={resource._id}
@@ -77,10 +79,10 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
       {resource.domains && (
         <Box>
           <Text fontSize="xl">Domains</Text>
-          {resource.domains.items.map(domain => (
-            <NextLink key={domain._id} href={`/domains/${domain.key}`}>
-              <Link>{domain.name}</Link>
-            </NextLink>
+          {resource.domains.items.map((domain) => (
+            <InternalLink key={domain._id} asHref={`/domains/${domain.key}`} routePath="/domains/[key]">
+              {domain.name}
+            </InternalLink>
           ))}
         </Box>
       )}

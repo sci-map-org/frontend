@@ -4,6 +4,7 @@ import NextLink from 'next/link';
 export interface BreadcrumbLink {
   name: string;
   path: string;
+  routePath: string;
   currentPage?: boolean;
 }
 export interface NavigationBreadcrumbsProps {
@@ -13,9 +14,9 @@ export interface NavigationBreadcrumbsProps {
 export const NavigationBreadcrumbs: React.FC<NavigationBreadcrumbsProps> = ({ links }) => {
   return (
     <Breadcrumb>
-      {links.map(link => (
+      {links.map((link) => (
         <BreadcrumbItem key={link.path}>
-          <NextLink href={link.path}>
+          <NextLink href={link.routePath} as={link.path} passHref>
             <BreadcrumbLink>{link.name}</BreadcrumbLink>
           </NextLink>
         </BreadcrumbItem>

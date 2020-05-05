@@ -1,9 +1,9 @@
-import { Box, Link } from '@chakra-ui/core';
-import NextLink from 'next/link';
+import { Box } from '@chakra-ui/core';
 import { useRouter } from 'next/router';
 import React from 'react';
 
 import { ArticleReader } from '../../src/components/articles/ArticleReader';
+import { InternalLink } from '../../src/components/navigation/InternalLink';
 
 interface ArticleMenuItem {
   menuTitle: string;
@@ -35,12 +35,12 @@ const About: React.FC = () => {
   return (
     <Box display="flex" flexDirection="row">
       <Box borderRightWidth={1} borderRightColor="gray.500" w="56" h="100%" pl={1}>
-        {articlesMenuItems.map(menu => {
+        {articlesMenuItems.map((menu) => {
           return (
             <Box key={menu.key}>
-              <NextLink href={`/about/${menu.key}`}>
-                <Link key={menu.key}>{menu.key}</Link>
-              </NextLink>
+              <InternalLink routePath="/about/[key]" asHref={`/about/${menu.key}`}>
+                {menu.key}
+              </InternalLink>
             </Box>
           );
         })}

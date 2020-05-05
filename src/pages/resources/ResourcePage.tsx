@@ -16,6 +16,8 @@ import { ConceptData } from '../../graphql/concepts/concepts.fragments';
 import { DomainWithConceptsData } from '../../graphql/domains/domains.fragments';
 import { ResourceCoveredConcepts } from '../../components/resources/ResourceCoveredConcepts';
 import { RoleAccess } from '../../components/auth/RoleAccess';
+import { InternalLink } from '../../components/navigation/InternalLink';
+import { ResourceUrlLink } from '../../components/resources/ResourceUrl';
 
 export const addTagsToResourceResourceEditor = gql`
   mutation addTagsToResourceResourceEditor($resourceId: String!, $tags: [String!]!) {
@@ -81,16 +83,13 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
         <Flex direction="row" align="center" justify="space-between">
           <Text fontSize="3xl">{resource.name}</Text>
           <RoleAccess accessRule="loggedInUser">
-            <NextLink href={`${router.asPath}/edit`}>
-              <Link>Edit</Link>
-            </NextLink>
+            <InternalLink routePath="/resources/[_id]/edit" asHref={`${router.asPath}/edit`}>
+              Edit
+            </InternalLink>
           </RoleAccess>
         </Flex>
         <Stack direction="row" spacing={2} alignItems="baseline">
-          <Link isExternal color="blue.700" href={resource.url}>
-            {resource.url}
-            <Icon name="external-link" mx="2px" />
-          </Link>
+          <ResourceUrlLink resource={resource} />
           {resource.durationMn && (
             <Text fontSize="sm" color="gray.400" mb={1}>
               {resource.durationMn}mn

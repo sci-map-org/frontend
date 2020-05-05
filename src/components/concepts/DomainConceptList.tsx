@@ -10,6 +10,7 @@ import { UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { useSetConceptsKnownMutation, useSetConceptsUnknownMutation } from './DomainConceptList.generated';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
+import { InternalLink } from '../navigation/InternalLink';
 
 export const setConceptsKnown = gql`
   mutation setConceptsKnown($payload: SetConceptKnownPayload!) {
@@ -59,9 +60,9 @@ export const DomainConceptList: React.FC<{ domain: DomainWithConceptsDataFragmen
     <Flex borderWidth={0} borderColor="gray.200" mr={8} direction="column">
       <Stack direction="row" spacing={2}>
         <Box>
-          <NextLink href={`/domains/${domain.key}/concepts`}>
-            <Link fontSize="2xl">Concepts</Link>
-          </NextLink>
+          <InternalLink fontSize="2xl" routePath="/domains/[key]/concepts" asHref={`/domains/${domain.key}/concepts`}>
+            Concepts
+          </InternalLink>
         </Box>
         {!!currentUser && currentUser.role === UserRole.Admin && (
           <IconButton
@@ -79,9 +80,12 @@ export const DomainConceptList: React.FC<{ domain: DomainWithConceptsDataFragmen
         {domainConceptItems.map(({ concept }) => (
           <Flex key={concept._id} direction="row" alignItems="center">
             <Checkbox mr={4} onChange={() => toggleConceptKnown(concept)} isChecked={!!concept.known} />
-            <NextLink href={`/domains/${domain.key}/concepts/${concept.key}`}>
-              <Link>{concept.name}</Link>
-            </NextLink>
+            <InternalLink
+              routePath="/domains/[key]/concepts/[conceptKey]"
+              asHref={`/domains/${domain.key}/concepts/${concept.key}`}
+            >
+              {concept.name}
+            </InternalLink>
           </Flex>
         ))}
       </Stack>

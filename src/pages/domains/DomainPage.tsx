@@ -16,12 +16,14 @@ import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { BreadcrumbLink } from '../../components/layout/NavigationBreadcrumbs';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { useUnauthentificatedModal } from '../../components/auth/UnauthentificatedModal';
+import { InternalButtonLink } from '../../components/navigation/InternalLink';
 
 export const DomainPagePath = (domainKey: string) => `/domains/${domainKey}`;
 
 export const DomainPageInfo = (domain: DomainDataFragment): BreadcrumbLink => ({
   name: domain.name,
   path: DomainPagePath(domain.key),
+  routePath: DomainPagePath('[key]'),
 });
 
 export const getDomainByKeyDomainPage = gql`
@@ -55,8 +57,6 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
   const { data } = useGetDomainByKeyDomainPageQuery({ variables: { key: domainKey } });
   const domain = data?.getDomainByKey;
   const { mockedFeaturesEnabled } = useMockedFeaturesEnabled();
-  const { currentUser } = useCurrentUser();
-  const { onOpen } = useUnauthentificatedModal();
   if (!domain) return <Box>Domain not found !</Box>;
 
   return (
@@ -64,22 +64,24 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
       <Flex direction="row" alignItems="center">
         <Text fontSize="4xl">Learn {domain.name}</Text>
         <Box flexGrow={1} />
-        <Button
+        <InternalButtonLink
           variant="outline"
-          onClick={() => {
-            if (!currentUser) return onOpen();
-            router.push(router.asPath + '/resources/new');
-          }}
+          routePath="/domains/[key]/resources/new"
+          asHref={router.asPath + '/resources/new'}
+          loggedInOnly
         >
           + Add resource
-        </Button>
+        </InternalButtonLink>
         {mockedFeaturesEnabled && (
           <Box ml={2}>
-            <NextLink href={router.asPath + '/resources/indexing_queue'}>
-              <Button variant="solid" fontStyle="italic">
-                32 Pending Resources
-              </Button>
-            </NextLink>
+            <InternalButtonLink
+              routePath="/domains/[key]/resources/indexing_queue"
+              asHref={router.asPath + '/resources/indexing_queue'}
+              variant="solid"
+              fontStyle="italic"
+            >
+              32 Pending Resources
+            </InternalButtonLink>
           </Box>
         )}
       </Flex>

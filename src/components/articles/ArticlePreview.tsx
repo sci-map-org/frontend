@@ -18,6 +18,7 @@ import NextLink from 'next/link';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { useDeleteArticle } from '../../graphql/articles/articles.hooks';
 import { ArticlePreviewDataFragment } from '../../graphql/articles/articles.fragments.generated';
+import { InternalLink } from '../navigation/InternalLink';
 
 interface ArticlePreviewProps {
   articlePreview: ArticlePreviewDataFragment;
@@ -28,9 +29,9 @@ export const ArticlePreview: React.FC<ArticlePreviewProps> = ({ articlePreview }
   const { deleteArticle, loading, error } = useDeleteArticle();
   return (
     <Box shadow="md" borderWidth="1px" rounded={1} p={4} display="flex" justifyContent="space-between">
-      <NextLink href={`/articles/${articlePreview.key}`}>
-        <Link fontWeight={500}>{articlePreview.title}</Link>
-      </NextLink>
+      <InternalLink fontWeight={500} routePath="/articles/[key]" asHref={`/articles/${articlePreview.key}`}>
+        {articlePreview.title}
+      </InternalLink>
       {!!currentUser && articlePreview.author && currentUser.key === articlePreview.author.key && (
         <IconButton aria-label="Delete article" icon="delete" size="sm" onClick={onOpen} />
       )}

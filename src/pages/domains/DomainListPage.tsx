@@ -20,6 +20,7 @@ import Router from 'next/router';
 import { useSearchDomains } from '../../graphql/domains/domains.hooks';
 import { UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
+import { InternalLink } from '../../components/navigation/InternalLink';
 
 export const DomainsListPage: React.FC = () => {
   const { currentUser } = useCurrentUser();
@@ -31,7 +32,7 @@ export const DomainsListPage: React.FC = () => {
         <Text fontSize="4xl">Domains</Text>
         <Flex direction="column">
           {!!domains &&
-            domains.map(domain => {
+            domains.map((domain) => {
               return (
                 <Box
                   key={domain._id}
@@ -42,9 +43,10 @@ export const DomainsListPage: React.FC = () => {
                   display="flex"
                   justifyContent="space-between"
                 >
-                  <NextLink href={`/domains/${domain.key}`}>
-                    <Link fontWeight={500}>{domain.name}</Link>
-                  </NextLink>
+                  <InternalLink routePath="/domains/[key]" asHref={`/domains/${domain.key}`} fontWeight={500}>
+                    {domain.name}
+                  </InternalLink>
+
                   {!!currentUser && currentUser.role === UserRole.Admin && (
                     <IconButton aria-label="Delete domain" icon="delete" size="sm" onClick={onOpen} />
                   )}
