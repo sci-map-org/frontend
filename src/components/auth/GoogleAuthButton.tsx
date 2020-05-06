@@ -22,7 +22,6 @@ export const GoogleAuthButton: React.FC<{
         } catch (err) {
           onFailedLogin(googleUser);
         }
-        if (onSuccessfulLogin) onSuccessfulLogin();
       }}
       onFailure={(err) => {
         console.error('failure google log in');

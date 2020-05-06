@@ -122,7 +122,6 @@ function initApolloClient(config: CreateApolloClientConfig): ApolloClient<Normal
 
   // Reuse client on the client-side
   if (!apolloClient) {
-    console.log('creating a new client side one');
     apolloClient = createApolloClient(config);
   }
 
@@ -134,7 +133,6 @@ interface CreateApolloClientConfig {
   getToken: () => string;
 }
 function createApolloClient(config: CreateApolloClientConfig): ApolloClient<NormalizedCacheObject> {
-  console.log('new client created');
   const httpLink = new HttpLink({
     uri: 'http://localhost:8000/graphql', // Server URL (must be absolute)
     credentials: 'same-origin',

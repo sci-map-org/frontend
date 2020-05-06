@@ -11,7 +11,6 @@ export const LoginForm: React.FC<{
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { login, error } = useLogin();
-  const { loginGoogle, error: errorGoogle } = useLoginGoogle();
   return (
     <Flex direction="row" justifyContent="center">
       <Stack spacing={6} textAlign="center" width="36rem">
@@ -47,12 +46,11 @@ export const LoginForm: React.FC<{
         >
           Login
         </Button>
-        {!!error ||
-          (!!errorGoogle && (
-            <Box color="red.500" fontSize="xl">
-              Invalid credentials
-            </Box>
-          ))}
+        {!!error && (
+          <Box color="red.500" fontSize="xl">
+            Invalid credentials
+          </Box>
+        )}
       </Stack>
     </Flex>
   );
