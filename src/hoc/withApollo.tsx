@@ -72,6 +72,8 @@ export function withApollo(AppComponent: typeof NextApp) {
 
     try {
       // Run all GraphQL queries
+      // https://github.com/apollographql/apollo-client/issues/3897
+      //(errors are rendered as loading)
       const { getDataFromTree } = await import('@apollo/react-ssr');
       await getDataFromTree(
         <AppTree
@@ -157,7 +159,7 @@ function createApolloClient(config: CreateApolloClientConfig): ApolloClient<Norm
     connectToDevTools: process.env.NODE_ENV !== 'production',
     defaultOptions: {
       query: {
-        errorPolicy: 'ignore', // ?
+        errorPolicy: 'all', // ?
       },
     },
   });

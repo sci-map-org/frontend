@@ -13,8 +13,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@apollo/react-hooks": "^3.1.5",
-    "@apollo/react-ssr": "^3.1.5",
+    "@apollo/client": "^3.0.0-beta.38",
+    "@apollo/react-common": "^4.0.0-beta.1",
+    "@apollo/react-hooks": "^4.0.0-beta.1",
+    "@apollo/react-ssr": "^4.0.0-beta.1",
     "@chakra-ui/core": "^0.7.0",
     "@emotion/core": "^10.0.27",
     "@emotion/styled": "^10.0.27",

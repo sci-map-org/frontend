@@ -5,7 +5,7 @@ import '../static/empty.css';
 
 import { Wrapper } from '../src/components/Wrapper';
 import { withApollo } from '../src/hoc/withApollo';
-import ApolloClient from 'apollo-client';
+import { ApolloClient } from '@apollo/client';
 import { NormalizedCacheObject } from 'apollo-cache-inmemory';
 
 interface AppProps {
