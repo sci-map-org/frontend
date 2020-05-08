@@ -1,9 +1,9 @@
-import { Box } from '@chakra-ui/core';
+import { Box, PseudoBox } from '@chakra-ui/core';
 import { useRouter } from 'next/router';
 import React from 'react';
-
-import { ArticleReader } from '../../src/components/articles/ArticleReader';
+import { ArticleReaderContainer } from '../../src/components/articles/ArticleReader';
 import { InternalLink } from '../../src/components/navigation/InternalLink';
+import { globalStyleVariables } from '../../src/theme/theme';
 
 interface ArticleMenuItem {
   menuTitle: string;
@@ -33,21 +33,48 @@ const About: React.FC = () => {
   if (typeof key !== 'string') return null;
 
   return (
-    <Box display="flex" flexDirection="row">
-      <Box borderRightWidth={1} borderRightColor="gray.500" w="56" h="100%" pl={1}>
+    <Box display="flex" flexDirection="row" alignItems="stretch" justifyContent="stretch" height="100%">
+      <Box
+        borderRightWidth={1}
+        borderRightColor="gray.300"
+        // pr={3}
+        flexBasis="180px"
+        flexShrink={0}
+        backgroundColor="backgroundColor.1"
+        pl={5}
+        pt={5}
+      >
         {articlesMenuItems.map((menu) => {
           return (
-            <Box key={menu.key}>
-              <InternalLink routePath="/about/[key]" asHref={`/about/${menu.key}`}>
-                {menu.key}
-              </InternalLink>
-            </Box>
+            <InternalLink
+              routePath="/about/[key]"
+              asHref={`/about/${menu.key}`}
+              key={menu.key}
+              _hover={{ textDecoration: 'none' }}
+              _focus={{}}
+            >
+              <PseudoBox
+                pt="2px"
+                pb="3px"
+                pl={globalStyleVariables.leftPadding}
+                fontWeight="normal"
+                color="grayFont.500"
+                fontSize="md"
+                _hover={{
+                  backgroundColor: 'gray.100',
+                  color: 'grayFont.800',
+                  cursor: 'pointer',
+                  textDecoration: 'none',
+                }}
+                {...(key === menu.key && { backgroundColor: 'gray.100', color: 'grayFont.800' })}
+              >
+                {menu.menuTitle}
+              </PseudoBox>
+            </InternalLink>
           );
         })}
       </Box>
-      <Box p="2" width="100%">
-        {key && <ArticleReader articleKey={key} />}
-      </Box>
+      <Box flexGrow={5}>{key && <ArticleReaderContainer articleKey={key} />}</Box>
     </Box>
   );
 };

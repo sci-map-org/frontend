@@ -1,35 +1,41 @@
-import { Box, Heading, HeadingProps } from '@chakra-ui/core';
-import ReactMarkdown from 'react-markdown';
-
-import { ArticleContentType } from '../../graphql/types';
+import { Button, Divider, Flex, Heading, Stack } from '@chakra-ui/core';
 import { ArticleViewerDataFragment } from '../../graphql/articles/articles.fragments.generated';
+import { ArticleContentType } from '../../graphql/types';
+import { useCurrentUser } from '../../graphql/users/users.hooks';
+import { fonts } from '../../theme/theme';
+import { ArticleLayout } from './ArticleLayout';
+import { ArticleMarkdownViewer } from './ArticleMarkdownViewer';
+import { ArticleReaderMode } from './ArticleReader';
 
 interface ArticleViewerProps {
   article: ArticleViewerDataFragment;
+  setReaderMode: (mode: ArticleReaderMode) => void;
 }
-const sizeHeadingMap: { [key in number]: HeadingProps['size'] } = {
-  1: '2xl',
-  2: 'xl',
-  3: 'lg',
-  4: 'md',
-  5: 'sm',
-  6: 'xs',
-};
 
-export const ArticleViewer: React.FC<ArticleViewerProps> = ({ article }) => {
+export const ArticleViewer: React.FC<ArticleViewerProps> = ({ article, setReaderMode }) => {
+  const { currentUser } = useCurrentUser();
+  const showEditLink = article && currentUser && article.author && currentUser.key === article.author.key;
+
   return (
-    <Box>
-      <Heading pb={2}>{article.title}</Heading>
-      {article.contentType === ArticleContentType.Markdown && (
-        <ReactMarkdown
-          source={article.content}
-          renderers={{
-            heading: ({ level, children }) => {
-              return <Heading size={sizeHeadingMap[level]}>{children}</Heading>;
-            },
-          }}
-        />
-      )}
-    </Box>
+    <ArticleLayout
+      renderLeft={null}
+      renderRight={
+        <Stack alignItems="stretch" spacing={3} pt={5} px={4}>
+          {showEditLink && (
+            <Button leftIcon="edit" variant="outline" onClick={() => setReaderMode(ArticleReaderMode.Editor)}>
+              Edit
+            </Button>
+          )}
+        </Stack>
+      }
+    >
+      <Flex direction="column" pt={5} px={3}>
+        <Heading fontFamily={fonts.article} size="2xl" pb={2} fontWeight="thin">
+          {article.title}
+        </Heading>
+        <Divider borderColor="grayDivider.600" mb={5} />
+        {article.contentType === ArticleContentType.Markdown && <ArticleMarkdownViewer content={article.content} />}
+      </Flex>
+    </ArticleLayout>
   );
 };

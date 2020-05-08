@@ -32,6 +32,8 @@ export const Wrapper: React.FC<WrapperProps> = ({ children, apolloClient }) => {
             ul {
               list-style-type: none;
             }
+            html {
+            }
           `}
         </style>
       </ThemeProvider>

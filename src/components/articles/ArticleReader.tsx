@@ -1,61 +1,43 @@
-import { Box, Link } from '@chakra-ui/core';
-import Router, { useRouter } from 'next/router';
-
+import { Flex } from '@chakra-ui/core';
+import { useState } from 'react';
+import { ArticleViewerDataFragment } from '../../graphql/articles/articles.fragments.generated';
 import { useGetArticleByKey } from '../../graphql/articles/articles.hooks';
-import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { ArticleEditor } from './ArticleEditor';
 import { ArticleViewer } from './ArticleViewer';
 
-enum ArticleReaderMode {
+export enum ArticleReaderMode {
   Viewer = 'viewer',
   Editor = 'edit',
 }
 
-export const ArticleReader: React.FC<{ articleKey: string }> = ({ articleKey }) => {
-  const { article, loading, error } = useGetArticleByKey(articleKey);
-  const router = useRouter();
+export interface ArticleReaderProps {
+  defaultMode?: ArticleReaderMode;
+  article: ArticleViewerDataFragment | false;
+  loading: boolean;
+}
 
-  const mode = router.query.mode || ArticleReaderMode.Viewer;
-
-  const { currentUser } = useCurrentUser();
-
-  const showEditLink =
-    article &&
-    currentUser &&
-    article.author &&
-    currentUser.key === article.author.key &&
-    mode !== ArticleReaderMode.Editor;
+export const ArticleReader: React.FC<ArticleReaderProps> = ({ defaultMode, article }) => {
+  const [mode, s] = useState(defaultMode || ArticleReaderMode.Viewer);
+  const setMode = (newMode: ArticleReaderMode) => {
+    s(newMode);
+  };
   return (
-    <Box
-      borderWidth={1}
-      borderColor="black.100"
-      borderRadius={4}
-      px={4}
-      pt={4}
-      pb={16}
-      display="flex"
-      justifyContent="space-between"
-    >
-      {loading && <div>Loading...</div>}
-      {error && <div>{JSON.stringify(error)}</div>}
+    <Flex width="100%">
       {article && (
         <>
-          {mode === ArticleReaderMode.Viewer && <ArticleViewer article={article}></ArticleViewer>}
-          {mode === ArticleReaderMode.Editor && <ArticleEditor article={article}></ArticleEditor>}
-          {showEditLink && (
-            <Link
-              onClick={() => {
-                const path = `${router.asPath}?mode=${ArticleReaderMode.Editor}`;
-                Router.push(path, path, {
-                  shallow: true,
-                });
-              }}
-            >
-              Edit
-            </Link>
+          {mode === ArticleReaderMode.Viewer && (
+            <ArticleViewer article={article} setReaderMode={(mode) => setMode(mode)}></ArticleViewer>
           )}
+          {mode === ArticleReaderMode.Editor && <ArticleEditor setMode={setMode} article={article}></ArticleEditor>}
         </>
       )}
-    </Box>
+    </Flex>
   );
+};
+
+export const ArticleReaderContainer: React.FC<
+  { articleKey: string } & Omit<ArticleReaderProps, 'article' | 'loading'>
+> = ({ articleKey, ...readerProps }) => {
+  const { article, loading } = useGetArticleByKey(articleKey);
+  return <ArticleReader article={article} loading={loading} {...readerProps} />;
 };

@@ -1,19 +1,14 @@
-import { Box } from '@chakra-ui/core';
 import { useRouter } from 'next/router';
 
-import { ArticleReader } from '../../src/components/articles/ArticleReader';
+import { ArticlePage } from '../../src/pages/articles/ArticlePage';
 
-const ArticlePage: React.FC = () => {
+const Page: React.FC = () => {
   const router = useRouter();
 
   const { key } = router.query;
   if (typeof key !== 'string') return null;
 
-  return (
-    <Box px="200px" py="50px">
-      <ArticleReader articleKey={key} />
-    </Box>
-  );
+  return <ArticlePage articleKey={key} />;
 };
 
-export default ArticlePage;
+export default Page;
