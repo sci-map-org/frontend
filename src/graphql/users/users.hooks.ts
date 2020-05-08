@@ -14,7 +14,7 @@ export const useCurrentUser = () => {
   return {
     loading,
     error,
-    currentUser: !!data && data.currentUser,
+    currentUser: !!data && (data.currentUser || false),
   };
 };
 

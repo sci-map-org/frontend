@@ -1,10 +1,10 @@
-import { Box, Button, Flex, Input, Text, Textarea, Stack } from '@chakra-ui/core';
+import { Box, Button, Input, Stack, Textarea } from '@chakra-ui/core';
 import Router from 'next/router';
 import { useState } from 'react';
+import { PageLayout } from '../../../components/layout/PageLayout';
 import { useAddConceptToDomain } from '../../../graphql/concepts/concepts.hooks';
 import { useGetDomainByKey } from '../../../graphql/domains/domains.hooks';
 import { generateUrlKey } from '../../../services/url.service';
-import { PageLayout } from '../../../components/layout/PageLayout';
 import { DomainPageInfo } from '../DomainPage';
 import { ConceptListPageInfo } from './ConceptListPage';
 
@@ -21,7 +21,7 @@ export const NewConceptPage: React.FC<{ domainKey: string }> = ({ domainKey }) =
       title={`Add concept to ${domain.name}`}
       breadCrumbsLinks={[DomainPageInfo(domain), ConceptListPageInfo(domain)]}
     >
-      <Stack spacing={4} direction="column" alignItems="center">
+      <Stack spacing={4} direction="column" alignItems="stretch">
         <Input
           placeholder="Concept Name"
           size="md"
@@ -49,7 +49,7 @@ export const NewConceptPage: React.FC<{ domainKey: string }> = ({ domainKey }) =
 
         <Button
           size="lg"
-          variant="solid"
+          variant="outline"
           onClick={() =>
             addConceptToDomain({ variables: { domainId: domain._id, payload: { name, description } } }).then(() => {
               Router.push(`/domains/${domain.key}/concepts`);

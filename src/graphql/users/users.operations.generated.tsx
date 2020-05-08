@@ -10,10 +10,10 @@ export type GetCurrentUserQueryVariables = {};
 
 export type GetCurrentUserQuery = (
   { __typename?: 'Query' }
-  & { currentUser: (
+  & { currentUser?: Types.Maybe<(
     { __typename?: 'CurrentUser' }
     & CurrentUserDataFragment
-  ) }
+  )> }
 );
 
 export type LoginMutationVariables = {

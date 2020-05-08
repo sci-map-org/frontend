@@ -1,23 +1,17 @@
-import { Box, Link, Text, Editable, EditablePreview, EditableInput, Flex } from '@chakra-ui/core';
-import NextLink from 'next/link';
-
-import { useCurrentUser } from '../../graphql/users/users.hooks';
-import {
-  UserRole,
-  DomainConceptSortingEntities,
-  SortingDirection,
-  DomainConceptSortingFields,
-} from '../../graphql/types';
+import { Box, Editable, EditableInput, EditablePreview, Flex, Stack, Text } from '@chakra-ui/core';
 import gql from 'graphql-tag';
-import {
-  useUpdateConceptBelongsToDomainIndexMutation,
-  useListDomainConceptsQuery,
-  ListDomainConceptsQuery,
-} from './ConceptList.generated';
-import { ConceptData } from '../../graphql/concepts/concepts.fragments';
 import { useState } from 'react';
+import { ConceptData } from '../../graphql/concepts/concepts.fragments';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
+import {
+  DomainConceptSortingEntities,
+  DomainConceptSortingFields,
+  SortingDirection,
+  UserRole,
+} from '../../graphql/types';
+import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { InternalLink } from '../navigation/InternalLink';
+import { useListDomainConceptsQuery, useUpdateConceptBelongsToDomainIndexMutation } from './ConceptList.generated';
 
 interface ConceptListProps {
   domainKey: string;
@@ -69,7 +63,7 @@ export const ConceptList: React.FC<ConceptListProps> = ({ domainKey }) => {
 
   const items = data?.getDomainByKey.concepts?.items;
   return (
-    <Box borderWidth={1} borderColor="gray.200" borderBottomWidth={0} p={0} width="100%">
+    <Box borderWidth={1} borderColor="gray.200" borderBottomWidth={0}>
       {data && items && items.length ? (
         items.map(({ concept, relationship }) => (
           <ConceptListItem
@@ -106,8 +100,8 @@ const ConceptListItem: React.FC<ConceptListItemProps> = ({ concept, relationship
   const [indexValue, setIndexValue] = useState(relationship.index);
   const { currentUser } = useCurrentUser();
   return (
-    <Flex direction="row" key={concept._id} p={2} borderBottomWidth={1}>
-      <Box flexGrow={1}>
+    <Flex direction="row" key={concept._id} p={2} borderBottomWidth={1} alignItems="center" py={2} px={4}>
+      <Box>
         <InternalLink
           fontSize="l"
           fontWeight={500}
@@ -118,9 +112,11 @@ const ConceptListItem: React.FC<ConceptListItemProps> = ({ concept, relationship
         </InternalLink>
         {concept.description && <Text>{concept.description}</Text>}
       </Box>
+      <Box flexGrow={1}></Box>
       {!!currentUser && currentUser.role === UserRole.Admin && (
-        <Box flexBasis="100px">
-          Idx
+        <Stack spacing={2} flexBasis="150px" flexShrink={0} direction="row">
+          <Box>Idx</Box>
+          <Box flexGrow={1}></Box>
           <Editable
             value={indexValue.toString()}
             onChange={(value: any) => {
@@ -134,7 +130,7 @@ const ConceptListItem: React.FC<ConceptListItemProps> = ({ concept, relationship
             <EditablePreview />
             <EditableInput />
           </Editable>
-        </Box>
+        </Stack>
       )}
     </Flex>
   );

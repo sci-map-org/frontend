@@ -14,33 +14,38 @@ import {
   ModalFooter,
   Button,
   Flex,
+  Heading,
 } from '@chakra-ui/core';
 import NextLink from 'next/link';
 import Router from 'next/router';
 import { useSearchDomains } from '../../graphql/domains/domains.hooks';
 import { UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
-import { InternalLink } from '../../components/navigation/InternalLink';
+import { InternalLink, InternalButtonLink } from '../../components/navigation/InternalLink';
+import { Layout } from '../../components/layout/Layout';
+import { PageLayout } from '../../components/layout/PageLayout';
+import { RoleAccess } from '../../components/auth/RoleAccess';
 
 export const DomainsListPage: React.FC = () => {
   const { currentUser } = useCurrentUser();
   const { domains } = useSearchDomains();
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" width="100%" pt="1rem">
-      <Stack spacing={8} textAlign="center" width="36rem">
-        <Text fontSize="4xl">Domains</Text>
-        <Flex direction="column">
+    <PageLayout title="Domains" centerChildren>
+      <Stack spacing={8} direction="column" width="36rem">
+        <Flex direction="column" borderBottomWidth="1px" borderColor="grayDivider.400">
           {!!domains &&
             domains.map((domain) => {
               return (
-                <Box
+                <Flex
                   key={domain._id}
-                  shadow="md"
                   borderWidth="1px"
-                  rounded={1}
-                  p={4}
-                  display="flex"
+                  borderBottomWidth={0}
+                  borderColor="grayDivider.400"
+                  py={2}
+                  px={4}
+                  direction="row"
+                  alignItems="center"
                   justifyContent="space-between"
                 >
                   <InternalLink routePath="/domains/[key]" asHref={`/domains/${domain.key}`} fontWeight={500}>
@@ -68,15 +73,16 @@ export const DomainsListPage: React.FC = () => {
                       </ModalFooter>
                     </ModalContent>
                   </Modal>
-                </Box>
+                </Flex>
               );
             })}
-          <Box></Box>
         </Flex>
-        {currentUser && currentUser.role === UserRole.Admin && (
-          <Button onClick={() => Router.push('/domains/new')}>+ New Domain</Button>
-        )}
+        <RoleAccess accessRule="admin">
+          <InternalButtonLink variant="outline" routePath="/domains/new" asHref="/domains/new">
+            + New Domain
+          </InternalButtonLink>
+        </RoleAccess>
       </Stack>
-    </Box>
+    </PageLayout>
   );
 };

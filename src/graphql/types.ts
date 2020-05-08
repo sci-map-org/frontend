@@ -12,7 +12,7 @@ export type Scalars = {
 
 export type Query = {
    __typename?: 'Query';
-  currentUser: CurrentUser;
+  currentUser?: Maybe<CurrentUser>;
   getUser: User;
   getArticleByKey: Article;
   listArticles: ListArticlesResult;

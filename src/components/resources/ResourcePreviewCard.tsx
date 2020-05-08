@@ -138,7 +138,8 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
             <Popover>
               <PopoverTrigger>
                 <Link color="gray.600" fontWeight={200}>
-                  {resource.coveredConcepts?.items.length} Concepts Covered
+                  {resource.coveredConcepts?.items.length} Concept
+                  {resource.coveredConcepts?.items.length === 1 ? '' : 's'} Covered
                 </Link>
               </PopoverTrigger>
               <PopoverContent zIndex={4} backgroundColor="white">
@@ -241,7 +242,7 @@ export const ResourcePreviewCardList: React.FC<{
 }> = ({ resourcePreviews, domainKey }) => {
   if (!resourcePreviews || !resourcePreviews.length) return null;
   return (
-    <Box borderTop="1px solid" borderTopColor="gray.200" width="100%">
+    <Box borderTop="1px solid" borderTopColor="gray.200" width="100%" backgroundColor="backgroundColor.0">
       {resourcePreviews.map((preview) => (
         <ResourcePreviewCard key={preview._id} domainKey={domainKey} resource={preview} />
       ))}

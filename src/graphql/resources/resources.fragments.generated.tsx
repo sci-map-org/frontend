@@ -8,7 +8,10 @@ export type ResourceDataFragment = (
   & { tags?: Types.Maybe<Array<(
     { __typename?: 'ResourceTag' }
     & Pick<Types.ResourceTag, 'name'>
-  )>> }
+  )>>, consumed?: Types.Maybe<(
+    { __typename?: 'ConsumedResource' }
+    & Pick<Types.ConsumedResource, 'openedAt' | 'consumedAt'>
+  )> }
 );
 
 export type ResourcePreviewDataFragment = (

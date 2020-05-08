@@ -1,14 +1,16 @@
-import { Box, Text } from '@chakra-ui/core';
+import { Box, Text, Heading } from '@chakra-ui/core';
 import React from 'react';
 
 export const LandingPage: React.FC = () => (
   <Box px="50px" py="20px">
     <Box p={5}>
-      <Text fontSize="3xl">Apollo Project</Text>
-      <Text fontSize="xl">The open platform for personalized learning</Text>
+      <Heading fontSize="5xl">Apollo Project</Heading>
+      <Heading fontWeight="medium" color="blackAlpha.800" fontSize="3xl">
+        The open and collaborative platform for personalized learning
+      </Heading>
     </Box>
     <Box p={5}>
-      <Text fontSize="2xl">The vision</Text>
+      <Heading fontSize="3xl">The vision</Heading>
       <Text>Learn anything based on what you know, how you learn best and your specific goals.</Text>
       <Text>
         Encourage creativity in terms of pedagogical approach: practical vs theoretical, visual, interactive,

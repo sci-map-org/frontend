@@ -1,22 +1,18 @@
-import { Box, Button, Flex, Link, Stack, Text } from '@chakra-ui/core';
+import { Box, Flex, Heading, Link, Stack, Text } from '@chakra-ui/core';
 import gql from 'graphql-tag';
-import NextLink from 'next/link';
 import { useRouter } from 'next/router';
-
 import { DomainConceptList } from '../../components/concepts/DomainConceptList';
+import { BreadcrumbLink } from '../../components/layout/NavigationBreadcrumbs';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { DomainLearningPaths } from '../../components/learning_paths/DomainLearningPaths';
+import { InternalButtonLink } from '../../components/navigation/InternalLink';
 import { DomainRecommendedResources } from '../../components/resources/DomainRecommendedResources';
 import { ConceptData } from '../../graphql/concepts/concepts.fragments';
 import { DomainData } from '../../graphql/domains/domains.fragments';
+import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
 import { useMockedFeaturesEnabled } from '../../hooks/useMockedFeaturesEnabled';
 import { useGetDomainByKeyDomainPageQuery } from './DomainPage.generated';
-import { useCurrentUser } from '../../graphql/users/users.hooks';
-import { BreadcrumbLink } from '../../components/layout/NavigationBreadcrumbs';
-import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
-import { useUnauthentificatedModal } from '../../components/auth/UnauthentificatedModal';
-import { InternalButtonLink } from '../../components/navigation/InternalLink';
 
 export const DomainPagePath = (domainKey: string) => `/domains/${domainKey}`;
 
@@ -61,11 +57,16 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
 
   return (
     <PageLayout>
-      <Flex direction="row" alignItems="center">
-        <Text fontSize="4xl">Learn {domain.name}</Text>
+      <Flex direction="row" alignItems="center" pb={5}>
+        <Heading fontSize="4xl" fontWeight="normal" color="blackAlpha.800">
+          Learn {domain.name}
+        </Heading>
         <Box flexGrow={1} />
         <InternalButtonLink
           variant="outline"
+          borderColor="blue.500"
+          color="blue.700"
+          borderWidth="1px"
           routePath="/domains/[key]/resources/new"
           asHref={router.asPath + '/resources/new'}
           loggedInOnly

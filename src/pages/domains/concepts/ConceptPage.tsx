@@ -3,7 +3,6 @@ import {
   Button,
   Flex,
   IconButton,
-  Link,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -15,23 +14,19 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/core';
-import NextLink from 'next/link';
 import Router from 'next/router';
-
+import { RoleAccess } from '../../../components/auth/RoleAccess';
 import { PageLayout } from '../../../components/layout/PageLayout';
-import { ResourcePreviewCard, ResourcePreviewCardList } from '../../../components/resources/ResourcePreviewCard';
+import { ResourcePreviewCardList } from '../../../components/resources/ResourcePreviewCard';
+import { ConceptDataFragment } from '../../../graphql/concepts/concepts.fragments.generated';
 import { useDeleteConcept } from '../../../graphql/concepts/concepts.hooks';
 import { useGetConceptByKeyQuery } from '../../../graphql/concepts/concepts.operations.generated';
+import { DomainDataFragment } from '../../../graphql/domains/domains.fragments.generated';
 import { useGetDomainByKey } from '../../../graphql/domains/domains.hooks';
-import { UserRole } from '../../../graphql/types';
-import { useCurrentUser } from '../../../graphql/users/users.hooks';
 import { NotFoundPage } from '../../NotFoundPage';
+import { PageInfo } from '../../PageInfo';
 import { DomainPageInfo } from '../DomainPage';
 import { ConceptListPageInfo } from './ConceptListPage';
-import { DomainDataFragment } from '../../../graphql/domains/domains.fragments.generated';
-import { ConceptDataFragment } from '../../../graphql/concepts/concepts.fragments.generated';
-import { PageInfo } from '../../PageInfo';
-import { RoleAccess } from '../../../components/auth/RoleAccess';
 
 export const ConceptPagePath = (domainKey: string, conceptKey: string) =>
   `/domains/${domainKey}/concepts/${conceptKey}`;
@@ -43,7 +38,6 @@ export const ConceptPageInfo = (domain: DomainDataFragment, concept: ConceptData
 });
 
 const ConceptPageRightIcons: React.FC<{ concept: ConceptDataFragment }> = ({ concept }) => {
-  const { currentUser } = useCurrentUser();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { deleteConcept } = useDeleteConcept();
   return (
@@ -94,15 +88,12 @@ export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = 
         { ...ConceptPageInfo(domain, concept), currentPage: true },
       ]}
       title={domain.name + ' - ' + concept.name}
-      renderRight={() => <ConceptPageRightIcons concept={concept} />}
+      renderRight={<ConceptPageRightIcons concept={concept} />}
     >
       <Box>
         <Text pb={5}>{concept.description}</Text>
         <Text fontSize="2xl">Covered by</Text>
         <ResourcePreviewCardList domainKey={domain.key} resourcePreviews={concept.coveredByResources?.items} />
-        {/* <Text fontSize="2xl">Related concepts</Text>
-        <Text fontSize="xl">Refers to</Text>
-        <Text fontSize="xl">Referenced by</Text> */}
       </Box>
     </PageLayout>
   );

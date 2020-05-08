@@ -1,33 +1,69 @@
-import { Box, Link, Menu, MenuButton, MenuItem, MenuList, Avatar, AvatarBadge, Text, Stack } from '@chakra-ui/core';
+import {
+  Box,
+  Link,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Avatar,
+  AvatarBadge,
+  Text,
+  Stack,
+  PseudoBox,
+} from '@chakra-ui/core';
 import NextLink from 'next/link';
 import { useCurrentUser, useLogout } from '../../graphql/users/users.hooks';
 import { RoleAccess } from '../auth/RoleAccess';
-import { InternalLink } from '../navigation/InternalLink';
+import { InternalLink, InternalLinkProps } from '../navigation/InternalLink';
+import { globalStyleVariables } from '../../theme/theme';
 
+const HeaderLink: React.FC<InternalLinkProps> = ({ children, ...props }) => (
+  <InternalLink {...props} fontWeight="light" color="blackAlpha.700" _hover={{ color: 'blackAlpha.900' }} _focus={{}}>
+    {children}
+  </InternalLink>
+);
 export const Header: React.FC = () => {
   const { currentUser } = useCurrentUser();
   const { logout } = useLogout();
 
   return (
-    <Box py={2} bg="gray.200" pl={2} fontSize="lg" display="flex" flexDirection="row">
-      <InternalLink routePath="/" asHref="/">
+    <PseudoBox
+      py={3}
+      bg="white"
+      pl={globalStyleVariables.leftPadding}
+      pr={globalStyleVariables.rightPadding}
+      fontSize="lg"
+      display="flex"
+      flexDirection="row"
+      borderBottomColor="grayDivider.300"
+      borderBottomWidth="1px"
+      as="header"
+    >
+      <InternalLink
+        routePath="/"
+        asHref="/"
+        color="blackAlpha.700"
+        fontWeight="medium"
+        _focus={{}}
+        _hover={{ color: 'blackAlpha.900' }}
+      >
         Apollo Project
       </InternalLink>
       <Box flexGrow={1} />
-      <Stack direction="row" spacing={2} pr={2}>
-        <InternalLink routePath="/domains" asHref="/domains">
+      <Stack direction="row" spacing={4}>
+        <HeaderLink routePath="/domains" asHref="/domains">
           Domains
-        </InternalLink>
-        <InternalLink routePath="/about/[key]" asHref="/about/intro">
+        </HeaderLink>
+        <HeaderLink routePath="/about/[key]" asHref="/about/intro">
           About
-        </InternalLink>
+        </HeaderLink>
+
         {!!currentUser ? (
           <Menu>
             <MenuButton>
-              {currentUser.key}
-              {/* <Avatar size="xs" ml={2}>
+              <Avatar mt="1px" size="xs" name={currentUser.displayName} backgroundColor="gray.400">
                 <AvatarBadge bg="green.500" size="0.7rem" />
-              </Avatar> */}
+              </Avatar>
             </MenuButton>
             <MenuList placement="bottom-end" bg="white">
               <NextLink href="/profile/[key]" as={`/profile/${currentUser.key}`} passHref>
@@ -63,16 +99,16 @@ export const Header: React.FC = () => {
             </MenuList>
           </Menu>
         ) : (
-          <Stack direction="row" spacing={2}>
-            <InternalLink routePath="/register" asHref="/register">
+          <Stack direction="row" spacing={4}>
+            <HeaderLink routePath="/register" asHref="/register">
               Register
-            </InternalLink>
-            <InternalLink routePath="/login" asHref="/register">
+            </HeaderLink>
+            <HeaderLink routePath="/login" asHref="/login">
               Login
-            </InternalLink>
+            </HeaderLink>
           </Stack>
         )}
       </Stack>
-    </Box>
+    </PseudoBox>
   );
 };

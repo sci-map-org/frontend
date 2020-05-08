@@ -15,6 +15,10 @@ export const ResourceData = gql`
     tags {
       name
     }
+    consumed {
+      openedAt
+      consumedAt
+    }
   }
 `;
 

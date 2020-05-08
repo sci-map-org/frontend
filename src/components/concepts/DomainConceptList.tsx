@@ -57,7 +57,7 @@ export const DomainConceptList: React.FC<{ domain: DomainWithConceptsDataFragmen
   };
   if (!domainConceptItems) return null;
   return (
-    <Flex borderWidth={0} borderColor="gray.200" mr={8} direction="column">
+    <Flex mr={8} direction="column" backgroundColor="backgroundColor.0">
       <Stack direction="row" spacing={2}>
         <Box>
           <InternalLink fontSize="2xl" routePath="/domains/[key]/concepts" asHref={`/domains/${domain.key}/concepts`}>
@@ -68,6 +68,7 @@ export const DomainConceptList: React.FC<{ domain: DomainWithConceptsDataFragmen
           <IconButton
             aria-label="add-concept"
             variant="ghost"
+            color="blue.700"
             icon="add"
             size="sm"
             alignSelf="center"
