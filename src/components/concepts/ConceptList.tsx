@@ -100,7 +100,16 @@ const ConceptListItem: React.FC<ConceptListItemProps> = ({ concept, relationship
   const [indexValue, setIndexValue] = useState(relationship.index);
   const { currentUser } = useCurrentUser();
   return (
-    <Flex direction="row" key={concept._id} p={2} borderBottomWidth={1} alignItems="center" py={2} px={4}>
+    <Flex
+      direction="row"
+      key={concept._id}
+      p={2}
+      borderBottomWidth={1}
+      alignItems="center"
+      py={2}
+      px={4}
+      backgroundColor="backgroundColor.0"
+    >
       <Box>
         <InternalLink
           fontSize="l"
@@ -110,7 +119,6 @@ const ConceptListItem: React.FC<ConceptListItemProps> = ({ concept, relationship
         >
           {concept.name}
         </InternalLink>
-        {concept.description && <Text>{concept.description}</Text>}
       </Box>
       <Box flexGrow={1}></Box>
       {!!currentUser && currentUser.role === UserRole.Admin && (

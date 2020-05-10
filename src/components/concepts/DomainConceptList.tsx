@@ -73,7 +73,7 @@ export const DomainConceptList: React.FC<{ domain: DomainWithConceptsDataFragmen
             size="sm"
             alignSelf="center"
             borderRadius={16}
-            onClick={() => Router.push(`/domains/${domain.key}/concepts/new`)}
+            onClick={() => Router.push('/domains/[key]/concepts/new', `/domains/${domain.key}/concepts/new`)}
           ></IconButton>
         )}
       </Stack>

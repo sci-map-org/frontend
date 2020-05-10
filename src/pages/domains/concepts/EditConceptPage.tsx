@@ -1,4 +1,4 @@
-import { Button, Input, Stack, Text, Textarea } from '@chakra-ui/core';
+import { Button, Input, Stack, Text, Textarea, Flex } from '@chakra-ui/core';
 import Router from 'next/router';
 import { useState } from 'react';
 
@@ -19,11 +19,8 @@ export const EditConceptPage: React.FC<{ domainKey: string; conceptKey: string }
   const [key, setKey] = useState(concept.key);
   const [description, setDescription] = useState(concept.description || '');
   return (
-    <PageLayout>
-      <Text fontSize="3xl">
-        Edit {domain.name} - {concept.name}
-      </Text>
-      <Stack>
+    <PageLayout mode="form" title={`Edit ${domain.name} - ${concept.name}`} centerChildren>
+      <Stack width="36rem" direction="column" spacing={3} alignItems="stretch">
         <Input
           placeholder="Concept Name"
           size="md"

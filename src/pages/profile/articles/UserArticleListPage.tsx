@@ -9,25 +9,19 @@ import { InternalButtonLink } from '../../../components/navigation/InternalLink'
 
 export const UserArticleListPage: React.FC<{ userKey: string }> = ({ userKey }) => {
   const { articlePreviews } = useListUserArticlePreviews(userKey);
-
   return (
-    <PageLayout>
-      <Flex direction="row" justifyContent="center">
-        <Stack spacing={8} textAlign="center" width="36rem">
-          <Text fontSize="4xl">Articles</Text>
-          <Stack>
-            {!!articlePreviews &&
-              articlePreviews.map((articlePreview) => {
-                return <ArticlePreview key={articlePreview._id} articlePreview={articlePreview} />;
-              })}
-            <Box>
-              <InternalButtonLink routePath="/articles/new" asHref="/articles/new" variant="solid" m={2} loggedInOnly>
-                New Article
-              </InternalButtonLink>
-            </Box>
-          </Stack>
-        </Stack>
-      </Flex>
+    <PageLayout title="Articles" centerChildren>
+      <Stack spacing={8} textAlign="center" width="36rem">
+        <Flex direction="column" borderBottomWidth="1px">
+          {!!articlePreviews &&
+            articlePreviews.map((articlePreview) => {
+              return <ArticlePreview key={articlePreview._id} articlePreview={articlePreview} />;
+            })}
+        </Flex>
+        <InternalButtonLink routePath="/articles/new" asHref="/articles/new" variant="outline" loggedInOnly>
+          New Article
+        </InternalButtonLink>
+      </Stack>
     </PageLayout>
   );
 };

@@ -28,7 +28,15 @@ export const ArticlePreview: React.FC<ArticlePreviewProps> = ({ articlePreview }
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { deleteArticle, loading, error } = useDeleteArticle();
   return (
-    <Box shadow="md" borderWidth="1px" rounded={1} p={4} display="flex" justifyContent="space-between">
+    <Box
+      borderWidth="1px"
+      py={2}
+      px={2}
+      display="flex"
+      justifyContent="space-between"
+      alignItems="center"
+      borderBottomWidth={0}
+    >
       <InternalLink fontWeight={500} routePath="/articles/[key]" asHref={`/articles/${articlePreview.key}`}>
         {articlePreview.title}
       </InternalLink>

@@ -13,6 +13,7 @@ import {
   Stack,
   Text,
   useDisclosure,
+  Heading,
 } from '@chakra-ui/core';
 import Router from 'next/router';
 import { RoleAccess } from '../../../components/auth/RoleAccess';
@@ -92,7 +93,9 @@ export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = 
     >
       <Box>
         <Text pb={5}>{concept.description}</Text>
-        <Text fontSize="2xl">Covered by</Text>
+        <Heading fontWeight="light" fontSize="2xl" mb={2}>
+          Covered by
+        </Heading>
         <ResourcePreviewCardList domainKey={domain.key} resourcePreviews={concept.coveredByResources?.items} />
       </Box>
     </PageLayout>

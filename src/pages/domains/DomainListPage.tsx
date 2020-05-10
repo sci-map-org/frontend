@@ -33,7 +33,12 @@ export const DomainsListPage: React.FC = () => {
   return (
     <PageLayout title="Domains" centerChildren>
       <Stack spacing={8} direction="column" width="36rem">
-        <Flex direction="column" borderBottomWidth="1px" borderColor="grayDivider.400">
+        <Flex
+          direction="column"
+          borderBottomWidth="1px"
+          borderColor="grayDivider.400"
+          backgroundColor="backgroundColor.0"
+        >
           {!!domains &&
             domains.map((domain) => {
               return (

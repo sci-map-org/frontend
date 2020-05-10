@@ -58,7 +58,7 @@ const About: React.FC = () => {
                 pb="3px"
                 pl={globalStyleVariables.leftPadding}
                 fontWeight="normal"
-                color="grayFont.500"
+                color="grayFont.600"
                 fontSize="md"
                 _hover={{
                   backgroundColor: 'gray.100',
