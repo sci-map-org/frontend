@@ -1,0 +1,4 @@
+node_modules
+.circle_ci
+.next
+.env.local

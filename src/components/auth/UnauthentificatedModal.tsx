@@ -1,21 +1,19 @@
-import { useContext, createContext, useState } from 'react';
 import {
-  useDisclosure,
-  Modal,
-  ModalOverlay,
-  ModalHeader,
-  ModalContent,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
-  Button,
   Box,
-  Text,
-  Link,
   Divider,
+  Link,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
+  Text,
+  useDisclosure,
 } from '@chakra-ui/core';
-import { RegisterForm } from './RegisterForm';
+import { createContext, useContext, useState } from 'react';
 import { LoginForm } from './LoginForm';
+import { RegisterForm } from './RegisterForm';
 
 const UnauthentificatedModalContext = createContext<{ onOpen: () => void; onClose: () => void; isOpen: boolean }>({
   onOpen: () => null,
@@ -41,7 +39,6 @@ export const useUnauthentificatedModal = () => {
 };
 
 export const UnauthentificatedModal: React.FC<{ onOpen: () => void; onClose: () => void; isOpen: boolean }> = ({
-  onOpen,
   isOpen,
   onClose,
 }) => {
@@ -50,7 +47,6 @@ export const UnauthentificatedModal: React.FC<{ onOpen: () => void; onClose: () 
     <Modal
       isOpen={isOpen}
       onClose={(e, reason) => {
-        console.log(reason);
         onClose();
       }}
     >

@@ -1,0 +1,16 @@
+{
+  "AWSEBDockerrunVersion": "1",
+  "Authentication": {
+    "Bucket": "<DEPLOYMENT_BUCKET>",
+    "Key": "<AUTHENTICATION_KEY>"
+  },
+  "Image": {
+    "Name": "MY_ORGANIZATION/<IMAGE_NAME>:<TAG>",
+    "Update": "true"
+  },
+  "Ports": [
+    {
+      "ContainerPort": "<EXPOSED_PORTS>"
+    }
+  ]
+}

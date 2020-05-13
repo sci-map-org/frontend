@@ -1,0 +1,11 @@
+branch-defaults:
+  master:
+    environment: SciMapFrontend-production
+global:
+  application_name: sci-map-frontend
+  default_ec2_keyname: XXXXXX
+  default_platform: Node.js 12 running on 64bit Amazon Linux 2
+  default_region: eu-central-1
+  sc: git
+deploy:
+  artifact: sci-map-frontend.zip
