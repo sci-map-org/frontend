@@ -5,7 +5,7 @@ import { ArticleViewerDataFragment } from '../../graphql/articles/articles.fragm
 import { useUpdateArticle } from '../../graphql/articles/articles.hooks';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { fonts } from '../../theme/theme';
-import { MarkdownInput } from '../input/MarkdownInput';
+import { MarkdownInput } from '../lib/inputs/MarkdownInput';
 import { ArticleLayout } from './ArticleLayout';
 import { ArticleMarkdownViewer } from './ArticleMarkdownViewer';
 import { ArticleReaderMode } from './ArticleReader';

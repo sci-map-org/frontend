@@ -1,8 +1,8 @@
 import { Box, Button, Input, Stack, Text } from '@chakra-ui/core';
 import { useState } from 'react';
 import { useLogin } from '../../graphql/users/users.hooks';
-import { PasswordInput } from '../input/PasswordInput';
 import { GoogleAuthButton } from './GoogleAuthButton';
+import { PasswordInput } from '@lib';
 
 export const LoginForm: React.FC<{
   onSuccessfulLogin?: () => void;

@@ -1,8 +1,7 @@
 import { Button, Divider, FormControl, FormErrorMessage, FormLabel, Input, Stack, Text } from '@chakra-ui/core';
 import { useState } from 'react';
-import { GoogleLogin, GoogleLoginResponse } from 'react-google-login';
 import { validateEmail } from '../../util/email.util';
-import { PasswordInput } from '../input/PasswordInput';
+import { PasswordInput } from '../lib/inputs/PasswordInput';
 import { GoogleAuthButton } from './GoogleAuthButton';
 
 type GoogleAuthInfo = {
