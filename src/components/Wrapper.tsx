@@ -1,8 +1,7 @@
 import { CSSReset, ThemeProvider } from '@chakra-ui/core';
 import React from 'react';
 import { NormalizedCacheObject } from 'apollo-cache-inmemory';
-import { ApolloClient } from '@apollo/client';
-import { ApolloProvider } from '@apollo/react-hooks';
+import { ApolloClient, ApolloProvider } from '@apollo/client';
 
 import { Layout } from '../components/layout/Layout';
 import { theme } from '../theme/theme';

@@ -1,4 +1,4 @@
-FROM node:12
+FROM node:13-alpine
 
 ENV PORT 3000
 
@@ -14,7 +14,7 @@ WORKDIR /usr/src/app
 
 # Installing dependencies
 COPY yarn.lock package.json /usr/src/app/
-RUN yarn install --ignore-optional
+RUN yarn install --frozen-lockfile
 
 # Copying source files
 COPY . /usr/src/app/
