@@ -26,3 +26,5 @@ yarn-error.log*
 .next
 schema.graphql
 .env.local
+
+sci-map-frontend.zip
