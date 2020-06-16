@@ -6,13 +6,7 @@ ENV PORT 3000
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-# # cache node_modules
-# COPY yarn.lock package.json
-# ./ RUN yarn install
-# # copy app code
-# COPY . .
-
-# Installing dependencies
+# Installing dependencies, cache node_modules
 COPY yarn.lock package.json /usr/src/app/
 RUN yarn install --frozen-lockfile
 
