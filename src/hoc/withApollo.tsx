@@ -8,7 +8,9 @@ import fetch from 'isomorphic-unfetch';
 import NextApp, { AppProps as NextAppProps, AppContext as NextAppContext } from 'next/app';
 import Head from 'next/head';
 import React from 'react';
+import getConfig from 'next/config';
 
+const { publicRuntimeConfig } = getConfig();
 const getInitialState = (req?: IncomingMessage): NormalizedCacheObject => {
   // If no token on the request, we directly cache the currentUser query to null
   // (avoid spamming server)
@@ -134,7 +136,7 @@ interface CreateApolloClientConfig {
 }
 function createApolloClient(config: CreateApolloClientConfig): ApolloClient<NormalizedCacheObject> {
   const httpLink = new HttpLink({
-    uri: 'http://localhost:8000/graphql', // Server URL (must be absolute)
+    uri: publicRuntimeConfig.apiUrl, // Server URL (must be absolute)
     credentials: 'same-origin',
     fetch,
   });
