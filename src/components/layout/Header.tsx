@@ -47,7 +47,7 @@ export const Header: React.FC = () => {
         _focus={{}}
         _hover={{ color: 'blackAlpha.900' }}
       >
-        Apollo Project
+        Sci-Map.org
       </InternalLink>
       <Box flexGrow={1} />
       <Stack direction="row" spacing={4}>
