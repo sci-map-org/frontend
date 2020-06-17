@@ -5,10 +5,14 @@ import { ResourceType } from '../../graphql/types';
 
 const colorMapping: { [key in ResourceType]: string } = {
   [ResourceType.Article]: 'green',
+  [ResourceType.ArticleSeries]: 'green',
   [ResourceType.Course]: 'red',
+  [ResourceType.Guide]: 'red',
   [ResourceType.Introduction]: 'blue',
   [ResourceType.Tutorial]: 'orange',
-  [ResourceType.ArticleSeries]: 'green',
+  [ResourceType.Podcast]: 'yellow',
+  [ResourceType.PodcastSeries]: 'yellow',
+  [ResourceType.Other]: 'gray',
 };
 
 export const ResourceTypeBadge: React.FC<BadgeProps & { type: ResourceType }> = ({ type, ...badgeProps }) => {
@@ -30,14 +34,11 @@ export const ResourceTypeSelector: React.FC<{ value: ResourceType; onSelect: (ty
         id="type"
         placeholder="Select Type"
         value={value}
-        onChange={e => onSelect(e.target.value as ResourceType)}
+        onChange={(e) => onSelect(e.target.value as ResourceType)}
       >
-        {values(ResourceType).map(type => (
+        {values(ResourceType).map((type) => (
           <option key={type} value={type}>
-            {type
-              .split('_')
-              .map(upperFirst)
-              .join(' ')}
+            {type.split('_').map(upperFirst).join(' ')}
           </option>
         ))}
       </Select>
