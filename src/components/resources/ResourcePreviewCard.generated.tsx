@@ -4,11 +4,12 @@ import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.f
 import * as Operations from './ResourcePreviewCard';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
+export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
 
-export type SetResourceConsumedMutationVariables = {
+export type SetResourceConsumedMutationVariables = Exact<{
   resourceId: Types.Scalars['String'];
   consumed: Types.Scalars['Boolean'];
-};
+}>;
 
 
 export type SetResourceConsumedMutation = (

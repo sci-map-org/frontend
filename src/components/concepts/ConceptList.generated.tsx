@@ -4,12 +4,13 @@ import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.g
 import * as Operations from './ConceptList';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
+export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
 
-export type UpdateConceptBelongsToDomainIndexMutationVariables = {
+export type UpdateConceptBelongsToDomainIndexMutationVariables = Exact<{
   conceptId: Types.Scalars['String'];
   domainId: Types.Scalars['String'];
   index: Types.Scalars['Float'];
-};
+}>;
 
 
 export type UpdateConceptBelongsToDomainIndexMutation = (
@@ -20,10 +21,10 @@ export type UpdateConceptBelongsToDomainIndexMutation = (
   ) }
 );
 
-export type ListDomainConceptsQueryVariables = {
+export type ListDomainConceptsQueryVariables = Exact<{
   domainKey: Types.Scalars['String'];
   options: Types.DomainConceptsOptions;
-};
+}>;
 
 
 export type ListDomainConceptsQuery = (

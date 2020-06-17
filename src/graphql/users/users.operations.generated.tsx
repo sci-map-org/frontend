@@ -4,8 +4,9 @@ import { CurrentUserDataFragment } from './users.fragments.generated';
 import * as Operations from './users.operations';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
+export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
 
-export type GetCurrentUserQueryVariables = {};
+export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetCurrentUserQuery = (
@@ -16,10 +17,10 @@ export type GetCurrentUserQuery = (
   )> }
 );
 
-export type LoginMutationVariables = {
+export type LoginMutationVariables = Exact<{
   email: Types.Scalars['String'];
   password: Types.Scalars['String'];
-};
+}>;
 
 
 export type LoginMutation = (
@@ -34,9 +35,9 @@ export type LoginMutation = (
   ) }
 );
 
-export type LoginGoogleMutationVariables = {
+export type LoginGoogleMutationVariables = Exact<{
   idToken: Types.Scalars['String'];
-};
+}>;
 
 
 export type LoginGoogleMutation = (
@@ -51,9 +52,9 @@ export type LoginGoogleMutation = (
   ) }
 );
 
-export type RegisterMutationVariables = {
+export type RegisterMutationVariables = Exact<{
   payload: Types.RegisterPayload;
-};
+}>;
 
 
 export type RegisterMutation = (
@@ -64,9 +65,9 @@ export type RegisterMutation = (
   ) }
 );
 
-export type RegisterGoogleMutationVariables = {
+export type RegisterGoogleMutationVariables = Exact<{
   payload: Types.RegisterGooglePayload;
-};
+}>;
 
 
 export type RegisterGoogleMutation = (

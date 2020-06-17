@@ -3,11 +3,12 @@ import * as Types from '../types';
 import * as Operations from './resources.operations';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
+export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
 
-export type VoteResourceMutationVariables = {
+export type VoteResourceMutationVariables = Exact<{
   resourceId: Types.Scalars['String'];
   value: Types.ResourceVoteValue;
-};
+}>;
 
 
 export type VoteResourceMutation = (

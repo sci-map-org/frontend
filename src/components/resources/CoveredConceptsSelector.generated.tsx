@@ -3,11 +3,12 @@ import * as Types from '../../graphql/types';
 import * as Operations from './CoveredConceptsSelector';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
+export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
 
-export type AttachResourceCoversConceptsMutationVariables = {
+export type AttachResourceCoversConceptsMutationVariables = Exact<{
   resourceId: Types.Scalars['String'];
   conceptIds: Array<Types.Scalars['String']>;
-};
+}>;
 
 
 export type AttachResourceCoversConceptsMutation = (
@@ -25,10 +26,10 @@ export type AttachResourceCoversConceptsMutation = (
   ) }
 );
 
-export type DetachResourceCoversConceptsMutationVariables = {
+export type DetachResourceCoversConceptsMutationVariables = Exact<{
   resourceId: Types.Scalars['String'];
   conceptIds: Array<Types.Scalars['String']>;
-};
+}>;
 
 
 export type DetachResourceCoversConceptsMutation = (

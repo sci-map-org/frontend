@@ -5,11 +5,12 @@ import { ResourcePreviewDataFragment } from '../resources/resources.fragments.ge
 import * as Operations from './concepts.operations';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
+export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
 
-export type AddConceptToDomainMutationVariables = {
+export type AddConceptToDomainMutationVariables = Exact<{
   domainId: Types.Scalars['String'];
   payload: Types.AddConceptToDomainPayload;
-};
+}>;
 
 
 export type AddConceptToDomainMutation = (
@@ -20,10 +21,10 @@ export type AddConceptToDomainMutation = (
   ) }
 );
 
-export type UpdateConceptMutationVariables = {
+export type UpdateConceptMutationVariables = Exact<{
   _id: Types.Scalars['String'];
   payload: Types.UpdateConceptPayload;
-};
+}>;
 
 
 export type UpdateConceptMutation = (
@@ -34,9 +35,9 @@ export type UpdateConceptMutation = (
   ) }
 );
 
-export type DeleteConceptMutationVariables = {
+export type DeleteConceptMutationVariables = Exact<{
   _id: Types.Scalars['String'];
-};
+}>;
 
 
 export type DeleteConceptMutation = (
@@ -47,9 +48,9 @@ export type DeleteConceptMutation = (
   ) }
 );
 
-export type GetConceptQueryVariables = {
+export type GetConceptQueryVariables = Exact<{
   _id: Types.Scalars['String'];
-};
+}>;
 
 
 export type GetConceptQuery = (
@@ -67,9 +68,9 @@ export type GetConceptQuery = (
   ) }
 );
 
-export type GetConceptByKeyQueryVariables = {
+export type GetConceptByKeyQueryVariables = Exact<{
   key: Types.Scalars['String'];
-};
+}>;
 
 
 export type GetConceptByKeyQuery = (

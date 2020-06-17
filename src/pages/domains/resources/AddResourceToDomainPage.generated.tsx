@@ -5,10 +5,11 @@ import { ResourceDataFragment } from '../../../graphql/resources/resources.fragm
 import * as Operations from './AddResourceToDomainPage';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
+export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
 
-export type GetDomainByKeyWithConceptsQueryVariables = {
+export type GetDomainByKeyWithConceptsQueryVariables = Exact<{
   key: Types.Scalars['String'];
-};
+}>;
 
 
 export type GetDomainByKeyWithConceptsQuery = (
@@ -19,10 +20,10 @@ export type GetDomainByKeyWithConceptsQuery = (
   ) }
 );
 
-export type AddResourceToDomainMutationVariables = {
+export type AddResourceToDomainMutationVariables = Exact<{
   domainId: Types.Scalars['String'];
   payload: Types.CreateResourcePayload;
-};
+}>;
 
 
 export type AddResourceToDomainMutation = (

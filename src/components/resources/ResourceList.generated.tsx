@@ -4,11 +4,12 @@ import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.f
 import * as Operations from './ResourceList';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
+export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
 
-export type ListDomainResourcePreviewsQueryVariables = {
+export type ListDomainResourcePreviewsQueryVariables = Exact<{
   domainKey: Types.Scalars['String'];
   options: Types.DomainResourcesOptions;
-};
+}>;
 
 
 export type ListDomainResourcePreviewsQuery = (

@@ -6,11 +6,12 @@ import { DomainWithConceptsDataFragment } from '../../graphql/domains/domains.fr
 import * as Operations from './ResourcePage';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
+export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
 
-export type AddTagsToResourceResourceEditorMutationVariables = {
+export type AddTagsToResourceResourceEditorMutationVariables = Exact<{
   resourceId: Types.Scalars['String'];
   tags: Array<Types.Scalars['String']>;
-};
+}>;
 
 
 export type AddTagsToResourceResourceEditorMutation = (
@@ -25,10 +26,10 @@ export type AddTagsToResourceResourceEditorMutation = (
   ) }
 );
 
-export type RemoveTagsFromResourceResourceEditorMutationVariables = {
+export type RemoveTagsFromResourceResourceEditorMutationVariables = Exact<{
   resourceId: Types.Scalars['String'];
   tags: Array<Types.Scalars['String']>;
-};
+}>;
 
 
 export type RemoveTagsFromResourceResourceEditorMutation = (
@@ -43,9 +44,9 @@ export type RemoveTagsFromResourceResourceEditorMutation = (
   ) }
 );
 
-export type GetResourceResourcePageQueryVariables = {
+export type GetResourceResourcePageQueryVariables = Exact<{
   id: Types.Scalars['String'];
-};
+}>;
 
 
 export type GetResourceResourcePageQuery = (

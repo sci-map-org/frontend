@@ -4,10 +4,11 @@ import { DomainDataFragment } from './domains.fragments.generated';
 import * as Operations from './domains.operations';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
+export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
 
-export type GetDomainByKeyQueryVariables = {
+export type GetDomainByKeyQueryVariables = Exact<{
   key: Types.Scalars['String'];
-};
+}>;
 
 
 export type GetDomainByKeyQuery = (
@@ -18,9 +19,9 @@ export type GetDomainByKeyQuery = (
   ) }
 );
 
-export type SearchDomainsQueryVariables = {
+export type SearchDomainsQueryVariables = Exact<{
   options: Types.SearchDomainsOptions;
-};
+}>;
 
 
 export type SearchDomainsQuery = (
@@ -34,9 +35,9 @@ export type SearchDomainsQuery = (
   ) }
 );
 
-export type CreateDomainMutationVariables = {
+export type CreateDomainMutationVariables = Exact<{
   payload: Types.CreateDomainPayload;
-};
+}>;
 
 
 export type CreateDomainMutation = (

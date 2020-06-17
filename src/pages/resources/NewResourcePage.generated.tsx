@@ -4,10 +4,11 @@ import { ResourceDataFragment } from '../../graphql/resources/resources.fragment
 import * as Operations from './NewResourcePage';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
+export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
 
-export type CreateResourceMutationVariables = {
+export type CreateResourceMutationVariables = Exact<{
   payload: Types.CreateResourcePayload;
-};
+}>;
 
 
 export type CreateResourceMutation = (

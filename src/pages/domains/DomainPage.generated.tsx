@@ -6,10 +6,11 @@ import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.f
 import * as Operations from './DomainPage';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
+export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
 
-export type GetDomainByKeyDomainPageQueryVariables = {
+export type GetDomainByKeyDomainPageQueryVariables = Exact<{
   key: Types.Scalars['String'];
-};
+}>;
 
 
 export type GetDomainByKeyDomainPageQuery = (

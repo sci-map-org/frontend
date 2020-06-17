@@ -4,10 +4,11 @@ import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.g
 import * as Operations from './DomainConceptList';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
+export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
 
-export type SetConceptsKnownMutationVariables = {
+export type SetConceptsKnownMutationVariables = Exact<{
   payload: Types.SetConceptKnownPayload;
-};
+}>;
 
 
 export type SetConceptsKnownMutation = (
@@ -18,9 +19,9 @@ export type SetConceptsKnownMutation = (
   )> }
 );
 
-export type SetConceptsUnknownMutationVariables = {
+export type SetConceptsUnknownMutationVariables = Exact<{
   conceptIds: Array<Types.Scalars['String']>;
-};
+}>;
 
 
 export type SetConceptsUnknownMutation = (

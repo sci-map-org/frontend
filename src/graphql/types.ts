@@ -11,7 +11,7 @@ export type Scalars = {
 };
 
 export type Query = {
-   __typename?: 'Query';
+  __typename?: 'Query';
   currentUser?: Maybe<CurrentUser>;
   getUser: User;
   getArticleByKey: Article;
@@ -70,7 +70,7 @@ export type QueryGetConceptByKeyArgs = {
 };
 
 export type CurrentUser = {
-   __typename?: 'CurrentUser';
+  __typename?: 'CurrentUser';
   _id: Scalars['String'];
   email: Scalars['String'];
   displayName: Scalars['String'];
@@ -108,12 +108,12 @@ export type PaginationOptions = {
 };
 
 export type ListArticlesResult = {
-   __typename?: 'ListArticlesResult';
+  __typename?: 'ListArticlesResult';
   items: Array<Article>;
 };
 
 export type Article = {
-   __typename?: 'Article';
+  __typename?: 'Article';
   _id: Scalars['String'];
   key: Scalars['String'];
   contentType: ArticleContentType;
@@ -123,7 +123,7 @@ export type Article = {
 };
 
 export type User = {
-   __typename?: 'User';
+  __typename?: 'User';
   _id: Scalars['String'];
   email: Scalars['String'];
   displayName: Scalars['String'];
@@ -142,12 +142,12 @@ export type SearchDomainsOptions = {
 };
 
 export type SearchDomainsResult = {
-   __typename?: 'SearchDomainsResult';
+  __typename?: 'SearchDomainsResult';
   items: Array<Domain>;
 };
 
 export type Domain = {
-   __typename?: 'Domain';
+  __typename?: 'Domain';
   _id: Scalars['String'];
   name: Scalars['String'];
   key: Scalars['String'];
@@ -193,18 +193,18 @@ export enum SortingDirection {
 }
 
 export type DomainConceptsResults = {
-   __typename?: 'DomainConceptsResults';
+  __typename?: 'DomainConceptsResults';
   items: Array<DomainConceptsItem>;
 };
 
 export type DomainConceptsItem = {
-   __typename?: 'DomainConceptsItem';
+  __typename?: 'DomainConceptsItem';
   concept: Concept;
   relationship: ConceptBelongsToDomain;
 };
 
 export type Concept = {
-   __typename?: 'Concept';
+  __typename?: 'Concept';
   _id: Scalars['String'];
   key: Scalars['String'];
   name: Scalars['String'];
@@ -224,12 +224,12 @@ export type ConceptCoveredByResourcesOptions = {
 };
 
 export type ConceptCoveredByResourcesResults = {
-   __typename?: 'ConceptCoveredByResourcesResults';
+  __typename?: 'ConceptCoveredByResourcesResults';
   items: Array<Resource>;
 };
 
 export type Resource = {
-   __typename?: 'Resource';
+  __typename?: 'Resource';
   _id: Scalars['String'];
   name: Scalars['String'];
   type: ResourceType;
@@ -273,12 +273,12 @@ export enum ResourceMediaType {
 }
 
 export type ResourceTag = {
-   __typename?: 'ResourceTag';
+  __typename?: 'ResourceTag';
   name: Scalars['String'];
 };
 
 export type ConsumedResource = {
-   __typename?: 'ConsumedResource';
+  __typename?: 'ConsumedResource';
   openedAt?: Maybe<Scalars['DateTime']>;
   consumedAt?: Maybe<Scalars['DateTime']>;
 };
@@ -289,7 +289,7 @@ export type ResourceCoveredConceptsOptions = {
 };
 
 export type ResourceCoveredConceptsResults = {
-   __typename?: 'ResourceCoveredConceptsResults';
+  __typename?: 'ResourceCoveredConceptsResults';
   items: Array<Concept>;
 };
 
@@ -298,17 +298,17 @@ export type ResourceDomainsOptions = {
 };
 
 export type ResourceDomainsResults = {
-   __typename?: 'ResourceDomainsResults';
+  __typename?: 'ResourceDomainsResults';
   items: Array<Domain>;
 };
 
 export type KnownConcept = {
-   __typename?: 'KnownConcept';
+  __typename?: 'KnownConcept';
   level: Scalars['Float'];
 };
 
 export type ConceptBelongsToDomain = {
-   __typename?: 'ConceptBelongsToDomain';
+  __typename?: 'ConceptBelongsToDomain';
   index: Scalars['Float'];
 };
 
@@ -317,7 +317,7 @@ export type DomainResourcesOptions = {
 };
 
 export type DomainResourcesResults = {
-   __typename?: 'DomainResourcesResults';
+  __typename?: 'DomainResourcesResults';
   items: Array<Resource>;
 };
 
@@ -327,13 +327,13 @@ export type SearchResourceTagsOptions = {
 };
 
 export type ResourceTagSearchResult = {
-   __typename?: 'ResourceTagSearchResult';
+  __typename?: 'ResourceTagSearchResult';
   name: Scalars['String'];
   usageCount?: Maybe<Scalars['Int']>;
 };
 
 export type Mutation = {
-   __typename?: 'Mutation';
+  __typename?: 'Mutation';
   login: LoginResponse;
   loginGoogle: LoginResponse;
   register: CurrentUser;
@@ -515,7 +515,7 @@ export type MutationUpdateConceptBelongsToDomainArgs = {
 };
 
 export type LoginResponse = {
-   __typename?: 'LoginResponse';
+  __typename?: 'LoginResponse';
   currentUser: CurrentUser;
   jwt: Scalars['String'];
 };
@@ -552,7 +552,7 @@ export type UpdateArticlePayload = {
 };
 
 export type DeleteArticleResponse = {
-   __typename?: 'DeleteArticleResponse';
+  __typename?: 'DeleteArticleResponse';
   _id: Scalars['String'];
   success: Scalars['Boolean'];
 };
@@ -570,7 +570,7 @@ export type UpdateDomainPayload = {
 };
 
 export type DeleteDomainResponse = {
-   __typename?: 'DeleteDomainResponse';
+  __typename?: 'DeleteDomainResponse';
   _id: Scalars['String'];
   success: Scalars['Boolean'];
 };
@@ -623,7 +623,7 @@ export type UpdateConceptPayload = {
 };
 
 export type DeleteConceptResult = {
-   __typename?: 'DeleteConceptResult';
+  __typename?: 'DeleteConceptResult';
   success: Scalars['Boolean'];
   _id: Scalars['String'];
 };

@@ -4,10 +4,11 @@ import { ArticleViewerDataFragment, ArticlePreviewDataFragment } from './article
 import * as Operations from './articles.operations';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
+export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
 
-export type CreateArticleMutationVariables = {
+export type CreateArticleMutationVariables = Exact<{
   payload: Types.CreateArticlePayload;
-};
+}>;
 
 
 export type CreateArticleMutation = (
@@ -18,9 +19,9 @@ export type CreateArticleMutation = (
   ) }
 );
 
-export type GetArticleByKeyQueryVariables = {
+export type GetArticleByKeyQueryVariables = Exact<{
   key: Types.Scalars['String'];
-};
+}>;
 
 
 export type GetArticleByKeyQuery = (
@@ -31,10 +32,10 @@ export type GetArticleByKeyQuery = (
   ) }
 );
 
-export type UpdateArticleMutationVariables = {
+export type UpdateArticleMutationVariables = Exact<{
   id: Types.Scalars['String'];
   payload: Types.UpdateArticlePayload;
-};
+}>;
 
 
 export type UpdateArticleMutation = (
@@ -45,9 +46,9 @@ export type UpdateArticleMutation = (
   ) }
 );
 
-export type DeleteArticleMutationVariables = {
+export type DeleteArticleMutationVariables = Exact<{
   id: Types.Scalars['String'];
-};
+}>;
 
 
 export type DeleteArticleMutation = (
@@ -58,10 +59,10 @@ export type DeleteArticleMutation = (
   ) }
 );
 
-export type ListUserArticlePreviewsQueryVariables = {
+export type ListUserArticlePreviewsQueryVariables = Exact<{
   userKey: Types.Scalars['String'];
   options: Types.ListArticlesOptions;
-};
+}>;
 
 
 export type ListUserArticlePreviewsQuery = (

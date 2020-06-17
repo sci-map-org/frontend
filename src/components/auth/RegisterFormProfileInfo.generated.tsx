@@ -3,10 +3,11 @@ import * as Types from '../../graphql/types';
 import * as Operations from './RegisterFormProfileInfo';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
+export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
 
-export type GetUserByKeyQueryVariables = {
+export type GetUserByKeyQueryVariables = Exact<{
   key: Types.Scalars['String'];
-};
+}>;
 
 
 export type GetUserByKeyQuery = (
