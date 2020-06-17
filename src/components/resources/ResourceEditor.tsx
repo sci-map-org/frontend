@@ -1,5 +1,4 @@
 import { Box, Button, Flex, FormControl, FormLabel, Input, Link, Stack, Text } from '@chakra-ui/core';
-import NextLink from 'next/link';
 import { useState } from 'react';
 
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';

@@ -55,7 +55,7 @@ export const getResourceEditResourcePage = gql`
 `;
 
 const EditResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) => {
-  const { data } = useGetResourceEditResourcePageQuery({ variables: { id: resourceId } });
+  const { data } = useGetResourceEditResourcePageQuery({ variables: { id: resourceId }, returnPartialData: true });
   const [updateResource] = useUpdateResourceResourcePageMutation({});
   if (!data || !data.getResourceById) return <Box>Resource not found !</Box>;
   const { getResourceById: resource } = data;

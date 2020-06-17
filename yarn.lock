@@ -60,10 +60,10 @@
     tslib "^1.10.0"
     zen-observable "^0.8.14"
 
-"@apollo/client@^3.0.0-beta.48":
-  version "3.0.0-beta.48"
-  resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.0.0-beta.48.tgz#87bf789f1342e22c55a8d06b10066ef851cb705e"
-  integrity sha512-QeVNxR0cTR8alqTI5tprvnMkw01td6mnBCdSASB9zhIAyB3kQrtTMh0XScBzfZ8b40msK19w1kidd111XP6ckg==
+"@apollo/client@^3.0.0-rc.5":
+  version "3.0.0-rc.5"
+  resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.0.0-rc.5.tgz#938d3614400e197e43cb5a848750de903e109a2c"
+  integrity sha512-XzmRxvd1TmM9YUUCtboDvyVSt9y28reCm91v1+fszuDo3aZZ+MZjWzg1QdMkT7tTOJoLS9Evp6/dyFks4s7F5Q==
   dependencies:
     "@types/zen-observable" "^0.8.0"
     "@wry/equality" "^0.1.9"

@@ -12,7 +12,8 @@
     "schema": "graphql-codegen --config genSchema.yml",
     "docker:build": "docker build -t layvier/sci-map-frontend .",
     "docker:run": "docker run -it -p 3000:3000 --env-file .env.local layvier/sci-map-frontend:latest",
-    "docker:push": "docker push layvier/sci-map-frontend:latest"
+    "docker:push": "docker push layvier/sci-map-frontend:latest",
+    "deploy": "yarn docker:build && yarn docker:push && yarn dist && echo 'done, just upload the zip file to beanstalk'"
   },
   "engines": {
     "node": ">=12.16.1"
@@ -24,7 +25,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@apollo/client": "^3.0.0-beta.48",
+    "@apollo/client": "^3.0.0-rc.5",
     "@apollo/react-common": "^4.0.0-beta.1",
     "@apollo/react-hooks": "^4.0.0-beta.1",
     "@apollo/react-ssr": "^4.0.0-beta.1",
