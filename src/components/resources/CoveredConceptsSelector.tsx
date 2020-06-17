@@ -1,39 +1,11 @@
 import { Box, Button, Stack, Text } from '@chakra-ui/core';
-import gql from 'graphql-tag';
 import { differenceBy } from 'lodash';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { DomainConceptSelector } from '../concepts/DomainConceptSelector';
 import {
   useAttachResourceCoversConceptsMutation,
   useDetachResourceCoversConceptsMutation,
-} from './CoveredConceptsSelector.generated';
-
-export const attachResourceCoversConcepts = gql`
-  mutation attachResourceCoversConcepts($resourceId: String!, $conceptIds: [String!]!) {
-    attachResourceCoversConcepts(resourceId: $resourceId, conceptIds: $conceptIds) {
-      _id
-      coveredConcepts(options: {}) {
-        items {
-          _id
-          name
-        }
-      }
-    }
-  }
-`;
-export const detachResourceCoversConcepts = gql`
-  mutation detachResourceCoversConcepts($resourceId: String!, $conceptIds: [String!]!) {
-    detachResourceCoversConcepts(resourceId: $resourceId, conceptIds: $conceptIds) {
-      _id
-      coveredConcepts(options: {}) {
-        items {
-          _id
-          name
-        }
-      }
-    }
-  }
-`;
+} from '../../graphql/resources/resources.operations.generated';
 
 export const CoveredConceptsSelector: React.FC<{
   resourceId: string;

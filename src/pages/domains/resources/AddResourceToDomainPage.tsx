@@ -12,6 +12,9 @@ import {
 } from './AddResourceToDomainPage.generated';
 import { DomainPageInfo } from '../DomainPage';
 import { DomainResourceListPageInfo } from './DomainResourceListPage';
+import { useAttachResourceCoversConceptsMutation } from '../../../graphql/resources/resources.operations.generated';
+import { ResourceDataFragment } from '../../../graphql/resources/resources.fragments.generated';
+import { CreateResourcePayload } from '../../../graphql/types';
 
 export const getDomainByKeyWithConcepts = gql`
   query getDomainByKeyWithConcepts($key: String!) {
@@ -31,10 +34,37 @@ export const addResourceToDomain = gql`
   ${ResourceData}
 `;
 
+const useAddResourceToDomainAndAddCoveredConcepts = (options: {
+  onCompleted: (resource: ResourceDataFragment) => {};
+}) => {
+  const [attachResourceCoveredConcepts] = useAttachResourceCoversConceptsMutation();
+  const [createResource] = useAddResourceToDomainMutation();
+
+  const addResourceToDomainAndAddCoveredConcepts = async (
+    domainId: string,
+    resourcePayload: CreateResourcePayload,
+    coveredConceptsIds: string[]
+  ) => {
+    const { data } = await createResource({ variables: { domainId, payload: resourcePayload } });
+    if (!data) throw new Error('Resource Creation failed');
+
+    const res = await attachResourceCoveredConcepts({
+      variables: { resourceId: data.addResourceToDomain._id, conceptIds: coveredConceptsIds },
+    });
+
+    if (!res.data) throw new Error('Attaching concepts failed');
+    options.onCompleted &&
+      options.onCompleted({ ...data.addResourceToDomain, ...res.data.attachResourceCoversConcepts });
+  };
+  return [addResourceToDomainAndAddCoveredConcepts];
+};
+
 export const AddResourceToDomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
   const { data } = useGetDomainByKeyWithConceptsQuery({ variables: { key: domainKey } });
+  const [addResourceToDomainAndAddCoveredConcepts] = useAddResourceToDomainAndAddCoveredConcepts({
+    onCompleted: (resource) => Router.push(`/resources/${resource._id}`),
+  });
 
-  const [addResourceToDomain] = useAddResourceToDomainMutation();
   if (!data) return <Box>Domain not found</Box>;
   const domain = data.getDomainByKey;
   return (
@@ -45,17 +75,9 @@ export const AddResourceToDomainPage: React.FC<{ domainKey: string }> = ({ domai
     >
       <NewResource
         domain={data.getDomainByKey}
-        onCreate={async payload => {
-          const { data: result } = await addResourceToDomain({
-            variables: {
-              domainId: data.getDomainByKey._id,
-              payload,
-            },
-          });
-          if (result) {
-            Router.push(`/resources/${result.addResourceToDomain._id}`);
-          }
-        }}
+        onCreate={(payload, conceptIds) =>
+          addResourceToDomainAndAddCoveredConcepts(data.getDomainByKey._id, payload, conceptIds)
+        }
       />
     </PageLayout>
   );
