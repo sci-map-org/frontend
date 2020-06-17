@@ -1,0 +1,39 @@
+version: 2.1
+orbs:
+  node: circleci/node@1.1
+jobs:
+  build-and-deploy:
+    executor:
+      name: node/default
+    steps:
+      - checkout
+      - node/with-cache:
+          steps:
+            - setup_remote_docker
+            - run: yarn docker:build
+            - run:
+                name: Publish Docker Image to Docker Hub
+                command: |
+                  echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+                  docker push layvier/sci-map-frontend:latest
+            - run: yarn dist
+            - run:
+                name: Installing deployment dependencies
+                command: |
+                  sudo apt-get -y -qq update
+                  sudo apt-get install python-pip python-dev build-essential
+                  sudo pip install --upgrade setuptools
+                  sudo pip install awsebcli --upgrade
+            - run:
+                name: Deploying
+                command: eb deploy SciMapApiProduction
+
+workflows:
+  build-and-test:
+    jobs:
+      - build-and-deploy:
+          context: global
+          filters:
+            branches:
+              only:
+                - master

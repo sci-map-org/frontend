@@ -256,10 +256,14 @@ export type ResourceDomainsArgs = {
 
 export enum ResourceType {
   Article = 'article',
+  ArticleSeries = 'article_series',
   Tutorial = 'tutorial',
   Introduction = 'introduction',
   Course = 'course',
-  ArticleSeries = 'article_series'
+  Guide = 'guide',
+  Podcast = 'podcast',
+  PodcastSeries = 'podcast_series',
+  Other = 'other'
 }
 
 export enum ResourceMediaType {
