@@ -30,7 +30,13 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
     >
       {(breadCrumbsLinks || renderRight) && (
         <Flex direction="row" justifyContent="space-between" pb="8px">
-          {breadCrumbsLinks && breadCrumbsLinks.length ? <NavigationBreadcrumbs links={breadCrumbsLinks} /> : <Box />}
+          {breadCrumbsLinks && breadCrumbsLinks.length ? (
+            <Skeleton isLoaded={!isLoading}>
+              <NavigationBreadcrumbs links={breadCrumbsLinks} />
+            </Skeleton>
+          ) : (
+            <Box />
+          )}
           <Box>{renderRight}</Box>
         </Flex>
       )}
