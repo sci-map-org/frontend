@@ -1,14 +1,15 @@
-import { ResourceTag, ResourceTagSearchResult } from '../../graphql/types';
+import { Box, Flex, Input, Text } from '@chakra-ui/core';
+import gql from 'graphql-tag';
+import { uniqBy } from 'lodash';
 import { useState } from 'react';
 import Autosuggest from 'react-autosuggest';
-import { Box, Text, Input, Stack, Flex } from '@chakra-ui/core';
-import gql from 'graphql-tag';
-import { useSearchResourceTagsQuery, useSearchResourceTagsLazyQuery } from './ResourceTagSelector.generated';
-import { uniqBy } from 'lodash';
+import { ResourceTagSearchResult } from '../../graphql/types';
+import { useSearchResourceTagsLazyQuery } from './ResourceTagSelector.generated';
 
 interface ResourceTagSelectorProps {
   onSelect: (tag: ResourceTagSearchResult | { name: string; new: true }) => any;
   width?: string;
+  isDisabled?: boolean;
 }
 
 export const searchResourceTags = gql`
@@ -19,7 +20,7 @@ export const searchResourceTags = gql`
     }
   }
 `;
-export const ResourceTagSelector: React.FC<ResourceTagSelectorProps> = ({ onSelect, width }) => {
+export const ResourceTagSelector: React.FC<ResourceTagSelectorProps> = ({ onSelect, width, isDisabled }) => {
   width = width || '200px';
   const [value, setValue] = useState('');
   const [refetch, { data }] = useSearchResourceTagsLazyQuery();
@@ -86,8 +87,8 @@ export const ResourceTagSelector: React.FC<ResourceTagSelectorProps> = ({ onSele
             {children}
           </Box>
         )}
-        getSuggestionValue={suggestion => suggestion.name}
-        renderInputComponent={(inputProps: any) => <Input variant="flushed" {...inputProps} />}
+        getSuggestionValue={(suggestion) => suggestion.name}
+        renderInputComponent={(inputProps: any) => <Input isDisabled={isDisabled} variant="flushed" {...inputProps} />}
       />
     </Box>
   );

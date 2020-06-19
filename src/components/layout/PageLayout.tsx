@@ -1,6 +1,6 @@
-import { Box, Flex, Text, Heading, Stack } from '@chakra-ui/core';
-import { NavigationBreadcrumbs, NavigationBreadcrumbsProps } from './NavigationBreadcrumbs';
+import { Box, Flex, Heading, Skeleton } from '@chakra-ui/core';
 import { ReactNode } from 'react';
+import { NavigationBreadcrumbs, NavigationBreadcrumbsProps } from './NavigationBreadcrumbs';
 
 interface PageLayoutProps {
   mode?: 'form';
@@ -8,6 +8,7 @@ interface PageLayoutProps {
   title?: string;
   renderRight?: ReactNode;
   centerChildren?: boolean;
+  isLoading?: boolean;
 }
 export const PageLayout: React.FC<PageLayoutProps> = ({
   children,
@@ -16,6 +17,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   title,
   renderRight,
   centerChildren,
+  isLoading,
 }) => {
   return (
     <Flex
@@ -26,15 +28,19 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
       backgroundColor="backgroundColor.1"
       height="100%"
     >
-      <Flex direction="row" justifyContent="space-between" pb="8px">
-        {breadCrumbsLinks && breadCrumbsLinks.length ? <NavigationBreadcrumbs links={breadCrumbsLinks} /> : null}
-        <Box>{renderRight}</Box>
-      </Flex>
+      {(breadCrumbsLinks || renderRight) && (
+        <Flex direction="row" justifyContent="space-between" pb="8px">
+          {breadCrumbsLinks && breadCrumbsLinks.length ? <NavigationBreadcrumbs links={breadCrumbsLinks} /> : <Box />}
+          <Box>{renderRight}</Box>
+        </Flex>
+      )}
       {title && (
         <Flex justifyContent="center" pb="20px">
-          <Heading fontSize="4xl" fontWeight="light">
-            {title}
-          </Heading>
+          <Skeleton isLoaded={!isLoading}>
+            <Heading fontSize="4xl" fontWeight="light">
+              {title}
+            </Heading>
+          </Skeleton>
         </Flex>
       )}
       <Box

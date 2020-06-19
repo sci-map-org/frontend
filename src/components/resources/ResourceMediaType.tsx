@@ -1,6 +1,5 @@
 import { Badge, BadgeProps, FormControl, FormLabel, Select } from '@chakra-ui/core';
 import { upperFirst, values } from 'lodash';
-
 import { ResourceMediaType } from '../../graphql/types';
 
 export const ResourceMediaTypeBadge: React.FC<BadgeProps & { mediaType: ResourceMediaType }> = ({
@@ -26,9 +25,9 @@ export const ResourceMediaTypeSelector: React.FC<{
       <Select
         placeholder="Select Media Type"
         value={value}
-        onChange={e => onSelect(e.target.value as ResourceMediaType)}
+        onChange={(e) => onSelect(e.target.value as ResourceMediaType)}
       >
-        {values(ResourceMediaType).map(mediaType => (
+        {values(ResourceMediaType).map((mediaType) => (
           <option key={mediaType} value={mediaType}>
             {upperFirst(mediaType)}
           </option>

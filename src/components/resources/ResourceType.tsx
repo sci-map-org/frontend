@@ -1,6 +1,5 @@
 import { Badge, BadgeProps, FormControl, FormLabel, Select } from '@chakra-ui/core';
 import { upperFirst, values } from 'lodash';
-
 import { ResourceType } from '../../graphql/types';
 
 const colorMapping: { [key in ResourceType]: string } = {

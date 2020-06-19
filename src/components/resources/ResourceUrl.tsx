@@ -1,4 +1,4 @@
-import { Icon, Link } from '@chakra-ui/core';
+import { Icon, Link, Skeleton } from '@chakra-ui/core';
 import gql from 'graphql-tag';
 
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
@@ -18,22 +18,25 @@ export const setResourceOpened = gql`
 
 export const ResourceUrlLink: React.FC<{
   resource: Pick<ResourcePreviewDataFragment, '_id' | 'consumed' | 'url'>;
-}> = ({ resource }) => {
+  isLoading?: boolean;
+}> = ({ resource, isLoading }) => {
   const [setResourceOpened] = useSetResourceOpenedMutation({ variables: { resourceId: resource._id } });
   return (
-    <Link
-      fontSize="sm"
-      color={resource.consumed && resource.consumed.openedAt ? 'blue.400' : 'blue.700'}
-      href={resource.url}
-      onClick={() => {
-        if (!resource.consumed || !resource.consumed.openedAt) {
-          setResourceOpened();
-        }
-      }}
-      isExternal
-    >
-      {toUrlPreview(resource.url)}
-      <Icon name="external-link" mx="2px" />
-    </Link>
+    <Skeleton isLoaded={!isLoading}>
+      <Link
+        fontSize="sm"
+        color={resource.consumed && resource.consumed.openedAt ? 'blue.400' : 'blue.700'}
+        href={resource.url}
+        onClick={() => {
+          if (!resource.consumed || !resource.consumed.openedAt) {
+            setResourceOpened();
+          }
+        }}
+        isExternal
+      >
+        {toUrlPreview(resource.url)}
+        <Icon name="external-link" mx="2px" />
+      </Link>
+    </Skeleton>
   );
 };
