@@ -8,9 +8,9 @@ import { ResourcePreviewCardList } from './ResourcePreviewCard';
 export const DomainRecommendedResources: React.FC<{
   domain: DomainDataFragment;
   resourcePreviews: ResourcePreviewDataFragment[];
-}> = ({ domain, resourcePreviews }) => {
+  isLoading?: boolean;
+}> = ({ domain, resourcePreviews, isLoading }) => {
   const [showCheckedResources, setShowCheckedResources] = useState(false);
-
   return (
     <Flex direction="column" mb={4}>
       <Stack direction="row" isInline alignItems="center" spacing={4} mb={3} pr={3}>
@@ -35,6 +35,7 @@ export const DomainRecommendedResources: React.FC<{
         resourcePreviews={resourcePreviews.filter(
           (r) => !!showCheckedResources || !r.consumed || !r.consumed.consumedAt
         )}
+        isLoading={isLoading}
       />
     </Flex>
   );

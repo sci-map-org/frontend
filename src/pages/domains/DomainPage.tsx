@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, Link, Stack, Text } from '@chakra-ui/core';
+import { Box, Flex, Heading, Link, Stack, Text, Skeleton } from '@chakra-ui/core';
 import gql from 'graphql-tag';
 import { useRouter } from 'next/router';
 import { DomainConceptList } from '../../components/concepts/DomainConceptList';
@@ -7,12 +7,12 @@ import { PageLayout } from '../../components/layout/PageLayout';
 import { DomainLearningPaths } from '../../components/learning_paths/DomainLearningPaths';
 import { InternalButtonLink } from '../../components/navigation/InternalLink';
 import { DomainRecommendedResources } from '../../components/resources/DomainRecommendedResources';
-import { ConceptData } from '../../graphql/concepts/concepts.fragments';
-import { DomainData } from '../../graphql/domains/domains.fragments';
+import { ConceptData, generateConceptData } from '../../graphql/concepts/concepts.fragments';
+import { DomainData, generateDomainData } from '../../graphql/domains/domains.fragments';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
-import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
+import { ResourcePreviewData, generateResourcePreviewData } from '../../graphql/resources/resources.fragments';
 import { useMockedFeaturesEnabled } from '../../hooks/useMockedFeaturesEnabled';
-import { useGetDomainByKeyDomainPageQuery } from './DomainPage.generated';
+import { useGetDomainByKeyDomainPageQuery, GetDomainByKeyDomainPageQuery } from './DomainPage.generated';
 
 export const DomainPagePath = (domainKey: string) => `/domains/${domainKey}`;
 
@@ -48,19 +48,44 @@ export const getDomainByKeyDomainPage = gql`
   ${ResourcePreviewData}
 `;
 
+const placeholderDomainData: GetDomainByKeyDomainPageQuery['getDomainByKey'] = {
+  ...generateDomainData(),
+  concepts: {
+    items: [
+      {
+        concept: generateConceptData(),
+        relationship: {
+          index: 0,
+        },
+      },
+      {
+        concept: generateConceptData(),
+        relationship: {
+          index: 0,
+        },
+      },
+    ],
+  },
+  resources: {
+    items: [generateResourcePreviewData(), generateResourcePreviewData(), generateResourcePreviewData()],
+  },
+};
+
 export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
   const router = useRouter();
-  const { data } = useGetDomainByKeyDomainPageQuery({ variables: { key: domainKey } });
-  const domain = data?.getDomainByKey;
+  const { data, error, loading } = useGetDomainByKeyDomainPageQuery({ variables: { key: domainKey } });
+  const domain = data?.getDomainByKey || placeholderDomainData;
   const { mockedFeaturesEnabled } = useMockedFeaturesEnabled();
-  if (!domain) return <Box>Domain not found !</Box>;
+  if (error) return <Box>Domain not found !</Box>;
 
   return (
     <PageLayout>
       <Flex direction="row" alignItems="center" pb={5}>
-        <Heading fontSize="4xl" fontWeight="normal" color="blackAlpha.800">
-          Learn {domain.name}
-        </Heading>
+        <Skeleton isLoaded={!loading}>
+          <Heading fontSize="4xl" fontWeight="normal" color="blackAlpha.800">
+            Learn {domain.name}
+          </Heading>
+        </Skeleton>
         <Box flexGrow={1} />
         <InternalButtonLink
           variant="outline"
@@ -70,6 +95,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
           routePath="/domains/[key]/resources/new"
           asHref={router.asPath + '/resources/new'}
           loggedInOnly
+          isDisabled={loading}
         >
           + Add resource
         </InternalButtonLink>
@@ -86,7 +112,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
           </Box>
         )}
       </Flex>
-      {domain.description && (
+      {domain && domain.description && (
         <Box mb={2} fontWeight={250}>
           {domain.description}
         </Box>
@@ -101,14 +127,12 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
         </NextLink> */}
       {/* </Box> */}
       <Flex direction="row">
-        {domain.concepts && (
-          <Flex direction="column" flexShrink={0}>
-            <DomainConceptList domain={domain} />
-          </Flex>
-        )}
+        <Flex direction="column" flexShrink={0}>
+          <DomainConceptList domain={domain} isLoading={loading} />
+        </Flex>
         {domain.resources && (
           <Flex direction="column" flexShrink={1} flexGrow={1}>
-            <DomainRecommendedResources domain={domain} resourcePreviews={domain.resources.items} />
+            <DomainRecommendedResources domain={domain} resourcePreviews={domain.resources.items} isLoading={loading} />
             {mockedFeaturesEnabled && <DomainLearningPaths domain={domain} />}
           </Flex>
         )}

@@ -1,5 +1,7 @@
 import gql from 'graphql-tag';
 import { ConceptData } from '../concepts/concepts.fragments';
+import { ResourceMediaType, ResourceType } from '../types';
+import { ResourcePreviewDataFragment } from './resources.fragments.generated';
 
 // Define fragment based on components use cases
 
@@ -47,3 +49,11 @@ export const ResourcePreviewData = gql`
   }
   ${ConceptData}
 `;
+
+export const generateResourcePreviewData = (): ResourcePreviewDataFragment => ({
+  _id: Math.random().toString(),
+  name: 'My resource name',
+  type: ResourceType.Article,
+  url: 'https://myresource.url',
+  mediaType: ResourceMediaType.Text,
+});
