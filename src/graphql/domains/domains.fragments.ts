@@ -1,5 +1,6 @@
 import gql from 'graphql-tag';
 import { ConceptData } from '../concepts/concepts.fragments';
+import { DomainDataFragment } from './domains.fragments.generated';
 
 export const DomainData = gql`
   fragment DomainData on Domain {
@@ -9,6 +10,12 @@ export const DomainData = gql`
     description
   }
 `;
+
+export const generateDomainData = (): DomainDataFragment => ({
+  _id: Math.random().toString(),
+  name: 'Placeholder Name',
+  key: Math.random().toString(),
+});
 
 export const DomainWithConceptsData = gql`
   fragment DomainWithConceptsData on Domain {

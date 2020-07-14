@@ -1,16 +1,14 @@
-import { Box, Checkbox, Flex, IconButton, Link, Stack } from '@chakra-ui/core';
+import { Box, Checkbox, Flex, IconButton, Skeleton, Stack } from '@chakra-ui/core';
 import gql from 'graphql-tag';
-import NextLink from 'next/link';
 import Router from 'next/router';
-
 import { ConceptData } from '../../graphql/concepts/concepts.fragments';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
-import { DomainDataFragment, DomainWithConceptsDataFragment } from '../../graphql/domains/domains.fragments.generated';
+import { DomainWithConceptsDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
-import { useSetConceptsKnownMutation, useSetConceptsUnknownMutation } from './DomainConceptList.generated';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import { InternalLink } from '../navigation/InternalLink';
+import { useSetConceptsKnownMutation, useSetConceptsUnknownMutation } from './DomainConceptList.generated';
 
 export const setConceptsKnown = gql`
   mutation setConceptsKnown($payload: SetConceptKnownPayload!) {
@@ -30,12 +28,15 @@ export const setConceptsUnknown = gql`
   ${ConceptData}
 `;
 
-export const DomainConceptList: React.FC<{ domain: DomainWithConceptsDataFragment }> = ({ domain }) => {
+export const DomainConceptList: React.FC<{ domain: DomainWithConceptsDataFragment; isLoading?: boolean }> = ({
+  domain,
+  isLoading,
+}) => {
   const { currentUser } = useCurrentUser();
   const [setConceptKnown] = useSetConceptsKnownMutation();
   const [setConceptUnknown] = useSetConceptsUnknownMutation();
 
-  const domainConceptItems = domain.concepts?.items;
+  const domainConceptItems = domain?.concepts?.items;
   const unauthentificatedModalDisclosure = useUnauthentificatedModal();
   const toggleConceptKnown = async (concept: ConceptDataFragment) => {
     if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
@@ -60,11 +61,17 @@ export const DomainConceptList: React.FC<{ domain: DomainWithConceptsDataFragmen
     <Flex mr={8} direction="column" backgroundColor="backgroundColor.0">
       <Stack direction="row" spacing={2}>
         <Box>
-          <InternalLink fontSize="2xl" routePath="/domains/[key]/concepts" asHref={`/domains/${domain.key}/concepts`}>
+          <InternalLink
+            fontSize="2xl"
+            routePath="/domains/[key]/concepts"
+            asHref={`/domains/${domain.key}/concepts`}
+            isDisabled={isLoading}
+          >
             Concepts
           </InternalLink>
         </Box>
-        {!!currentUser && currentUser.role === UserRole.Admin && (
+
+        {!!currentUser && currentUser.role === UserRole.Admin && !isLoading && (
           <IconButton
             aria-label="add-concept"
             variant="ghost"
@@ -80,13 +87,15 @@ export const DomainConceptList: React.FC<{ domain: DomainWithConceptsDataFragmen
       <Stack direction="column" spacing={1} alignItems="flex-start">
         {domainConceptItems.map(({ concept }) => (
           <Flex key={concept._id} direction="row" alignItems="center">
-            <Checkbox mr={4} onChange={() => toggleConceptKnown(concept)} isChecked={!!concept.known} />
-            <InternalLink
-              routePath="/domains/[key]/concepts/[conceptKey]"
-              asHref={`/domains/${domain.key}/concepts/${concept.key}`}
-            >
-              {concept.name}
-            </InternalLink>
+            <Skeleton isLoaded={!isLoading}>
+              <Checkbox mr={4} onChange={() => toggleConceptKnown(concept)} isChecked={!!concept.known} />
+              <InternalLink
+                routePath="/domains/[key]/concepts/[conceptKey]"
+                asHref={`/domains/${domain.key}/concepts/${concept.key}`}
+              >
+                {concept.name}
+              </InternalLink>
+            </Skeleton>
           </Flex>
         ))}
       </Stack>
