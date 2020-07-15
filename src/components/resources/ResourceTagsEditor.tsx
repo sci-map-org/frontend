@@ -38,6 +38,7 @@ export const SelectedTagsEditor: React.FC<{
           <Tag size="md" variantColor="gray" key={selectedTag.name}>
             <TagLabel>{selectedTag.name}</TagLabel>
             <TagCloseButton
+              // @ts-ignore
               isDisabled={isDisabled}
               onClick={() => {
                 setSelectedTags && setSelectedTags(selectedTags.filter((s) => s.name !== selectedTag.name));
