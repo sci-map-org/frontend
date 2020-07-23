@@ -1,16 +1,22 @@
 import GoogleLogin, { GoogleLoginResponse } from 'react-google-login';
 import { useLoginGoogle } from '../../graphql/users/users.hooks';
 import getConfig from 'next/config';
+import { LoginResponse, DiscourseSso } from '../../graphql/types';
 
 const { publicRuntimeConfig } = getConfig();
 
 export const GoogleAuthButton: React.FC<{
   buttonText: string;
-  onSuccessfulLogin: () => void;
+  onSuccessfulLogin: (loginResponse: LoginResponse) => void;
   onFailedLogin: (googleUser: GoogleLoginResponse) => void;
   onFailure: (err: any) => void;
-}> = ({ buttonText, onSuccessfulLogin, onFailedLogin, onFailure }) => {
-  const { loginGoogle } = useLoginGoogle();
+  discourseSSO?: DiscourseSso;
+}> = ({ buttonText, onSuccessfulLogin, onFailedLogin, onFailure, discourseSSO }) => {
+  const { loginGoogle, data } = useLoginGoogle({
+    onCompleted(data) {
+      onSuccessfulLogin(data.loginGoogle);
+    },
+  });
   return (
     <GoogleLogin
       clientId={publicRuntimeConfig.googleClientId || 'oups'}
@@ -19,9 +25,8 @@ export const GoogleAuthButton: React.FC<{
         googleUser = googleUser as GoogleLoginResponse;
         try {
           await loginGoogle({
-            variables: { idToken: googleUser.getAuthResponse().id_token },
+            variables: { idToken: googleUser.getAuthResponse().id_token, discourseSSO },
           });
-          onSuccessfulLogin();
         } catch (err) {
           onFailedLogin(googleUser);
         }
