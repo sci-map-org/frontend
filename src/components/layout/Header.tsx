@@ -1,27 +1,40 @@
 import {
+  Avatar,
+  AvatarBadge,
   Box,
   Link,
+  LinkProps,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
-  Avatar,
-  AvatarBadge,
-  Text,
-  Stack,
   PseudoBox,
+  Stack,
 } from '@chakra-ui/core';
+import getConfig from 'next/config';
 import NextLink from 'next/link';
 import { useCurrentUser, useLogout } from '../../graphql/users/users.hooks';
+import { globalStyleVariables } from '../../theme/theme';
 import { RoleAccess } from '../auth/RoleAccess';
 import { InternalLink, InternalLinkProps } from '../navigation/InternalLink';
-import { globalStyleVariables } from '../../theme/theme';
 
-const HeaderLink: React.FC<InternalLinkProps> = ({ children, ...props }) => (
-  <InternalLink {...props} fontWeight="light" color="blackAlpha.700" _hover={{ color: 'blackAlpha.900' }} _focus={{}}>
-    {children}
-  </InternalLink>
-);
+const { publicRuntimeConfig } = getConfig();
+
+const HeaderLink: React.FC<(InternalLinkProps & { external?: false }) | ({ external: true } & LinkProps)> = ({
+  children,
+  ...props
+}) =>
+  props.external ? (
+    <Box>
+      <Link {...props} fontWeight="light" color="blackAlpha.700" _hover={{ color: 'blackAlpha.900' }} _focus={{}}>
+        {children}
+      </Link>
+    </Box>
+  ) : (
+    <InternalLink {...props} fontWeight="light" color="blackAlpha.700" _hover={{ color: 'blackAlpha.900' }} _focus={{}}>
+      {children}
+    </InternalLink>
+  );
 export const Header: React.FC = () => {
   const { currentUser } = useCurrentUser();
   const { logout } = useLogout();
@@ -57,7 +70,9 @@ export const Header: React.FC = () => {
         <HeaderLink routePath="/about/[key]" asHref="/about/intro">
           About
         </HeaderLink>
-
+        <HeaderLink href={publicRuntimeConfig.discourseForumUrl} external>
+          Forum
+        </HeaderLink>
         {!!currentUser ? (
           <Menu>
             <MenuButton>
