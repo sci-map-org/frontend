@@ -3,21 +3,29 @@ import { useState } from 'react';
 import { useLogin } from '../../graphql/users/users.hooks';
 import { PasswordInput } from '../input/PasswordInput';
 import { GoogleAuthButton } from './GoogleAuthButton';
+import { DiscourseSso, LoginResponse } from '../../graphql/types';
 
 export const LoginForm: React.FC<{
-  onSuccessfulLogin?: () => void;
-}> = ({ onSuccessfulLogin }) => {
+  onSuccessfulLogin?: (loginResponse: LoginResponse) => void;
+  discourseSSO?: DiscourseSso;
+}> = ({ onSuccessfulLogin, discourseSSO }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login, error } = useLogin();
+
+  const { login, error, data } = useLogin({
+    onCompleted(data) {
+      onSuccessfulLogin && onSuccessfulLogin(data.login);
+    },
+  });
   return (
     <Stack spacing={6} textAlign="center">
       <Text fontSize="xl">Using Third Parties</Text>
       <Stack spacing={2} textAlign="center" onClick={(e) => e.stopPropagation()}>
         <GoogleAuthButton
           buttonText="Login with Google"
-          onSuccessfulLogin={() => {
-            if (onSuccessfulLogin) onSuccessfulLogin();
+          discourseSSO={discourseSSO}
+          onSuccessfulLogin={(loginResponse) => {
+            if (onSuccessfulLogin) onSuccessfulLogin(loginResponse);
           }}
           onFailedLogin={() => console.error('')}
           onFailure={() => {}}
@@ -38,8 +46,7 @@ export const LoginForm: React.FC<{
         size="lg"
         variant="solid"
         onClick={async () => {
-          await login({ variables: { email, password } });
-          if (onSuccessfulLogin) onSuccessfulLogin();
+          login({ variables: { email, password, discourseSSO } });
         }}
       >
         Login

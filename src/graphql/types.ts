@@ -367,11 +367,13 @@ export type Mutation = {
 export type MutationLoginArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
+  discourseSSO?: Maybe<DiscourseSso>;
 };
 
 
 export type MutationLoginGoogleArgs = {
   idToken: Scalars['String'];
+  discourseSSO?: Maybe<DiscourseSso>;
 };
 
 
@@ -514,10 +516,16 @@ export type MutationUpdateConceptBelongsToDomainArgs = {
   payload: UpdateConceptBelongsToDomainPayload;
 };
 
+export type DiscourseSso = {
+  sig: Scalars['String'];
+  sso: Scalars['String'];
+};
+
 export type LoginResponse = {
   __typename?: 'LoginResponse';
   currentUser: CurrentUser;
   jwt: Scalars['String'];
+  redirectUrl?: Maybe<Scalars['String']>;
 };
 
 export type RegisterPayload = {

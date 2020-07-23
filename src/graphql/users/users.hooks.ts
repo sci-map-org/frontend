@@ -18,46 +18,56 @@ export const useCurrentUser = () => {
   };
 };
 
-export const useLogin = () => {
+export const useLogin = (options?: Parameters<typeof useLoginMutation>[0]) => {
   const client = useApolloClient();
-  const [login, { loading, error }] = useLoginMutation({
-    onCompleted({ login }) {
-      Cookies.set('jwt_token', login.jwt);
+  const [login, { loading, error, data }] = useLoginMutation({
+    ...options,
+    onCompleted(data) {
+      Cookies.set('jwt_token', data.login.jwt);
       client.resetStore();
+      options?.onCompleted && options.onCompleted(data);
     },
-    update(cache, { data }) {
-      if (!data) return;
-      cache.writeQuery({
-        query: getCurrentUser,
-        data: { currentUser: data.login.currentUser },
-      });
+    update(cache, result) {
+      if (result.data) {
+        cache.writeQuery({
+          query: getCurrentUser,
+          data: { currentUser: result.data.login.currentUser },
+        });
+      }
+      options?.update && options.update(cache, result);
     },
   });
 
   return {
+    data: data?.login,
     loading,
     error,
     login,
   };
 };
 
-export const useLoginGoogle = () => {
+export const useLoginGoogle = (options?: Parameters<typeof useLoginGoogleMutation>[0]) => {
   const client = useApolloClient();
-  const [loginGoogle, { loading, error }] = useLoginGoogleMutation({
-    onCompleted({ loginGoogle }) {
-      Cookies.set('jwt_token', loginGoogle.jwt);
+  const [loginGoogle, { loading, error, data }] = useLoginGoogleMutation({
+    ...options,
+    onCompleted(data) {
+      Cookies.set('jwt_token', data.loginGoogle.jwt);
       client.resetStore();
+      options?.onCompleted && options.onCompleted(data);
     },
-    update(cache, { data }) {
-      if (!data) return;
-      cache.writeQuery({
-        query: getCurrentUser,
-        data: { currentUser: data.loginGoogle.currentUser },
-      });
+    update(cache, result) {
+      if (result.data) {
+        cache.writeQuery({
+          query: getCurrentUser,
+          data: { currentUser: result.data.loginGoogle.currentUser },
+        });
+      }
+      options?.update && options.update(cache, result);
     },
   });
 
   return {
+    data: data?.loginGoogle,
     loading,
     error,
     loginGoogle,

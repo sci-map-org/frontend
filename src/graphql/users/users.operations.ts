@@ -12,24 +12,26 @@ export const getCurrentUser = gql`
 `;
 
 export const login = gql`
-  mutation login($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
+  mutation login($email: String!, $password: String!, $discourseSSO: DiscourseSSO) {
+    login(email: $email, password: $password, discourseSSO: $discourseSSO) {
       jwt
       currentUser {
         ...CurrentUserData
       }
+      redirectUrl
     }
   }
   ${CurrentUserData}
 `;
 
 export const loginGoogle = gql`
-  mutation loginGoogle($idToken: String!) {
-    loginGoogle(idToken: $idToken) {
+  mutation loginGoogle($idToken: String!, $discourseSSO: DiscourseSSO) {
+    loginGoogle(idToken: $idToken, discourseSSO: $discourseSSO) {
       jwt
       currentUser {
         ...CurrentUserData
       }
+      redirectUrl
     }
   }
   ${CurrentUserData}

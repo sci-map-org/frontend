@@ -20,6 +20,7 @@ export type GetCurrentUserQuery = (
 export type LoginMutationVariables = Exact<{
   email: Types.Scalars['String'];
   password: Types.Scalars['String'];
+  discourseSSO?: Types.Maybe<Types.DiscourseSso>;
 }>;
 
 
@@ -27,7 +28,7 @@ export type LoginMutation = (
   { __typename?: 'Mutation' }
   & { login: (
     { __typename?: 'LoginResponse' }
-    & Pick<Types.LoginResponse, 'jwt'>
+    & Pick<Types.LoginResponse, 'jwt' | 'redirectUrl'>
     & { currentUser: (
       { __typename?: 'CurrentUser' }
       & CurrentUserDataFragment
@@ -37,6 +38,7 @@ export type LoginMutation = (
 
 export type LoginGoogleMutationVariables = Exact<{
   idToken: Types.Scalars['String'];
+  discourseSSO?: Types.Maybe<Types.DiscourseSso>;
 }>;
 
 
@@ -44,7 +46,7 @@ export type LoginGoogleMutation = (
   { __typename?: 'Mutation' }
   & { loginGoogle: (
     { __typename?: 'LoginResponse' }
-    & Pick<Types.LoginResponse, 'jwt'>
+    & Pick<Types.LoginResponse, 'jwt' | 'redirectUrl'>
     & { currentUser: (
       { __typename?: 'CurrentUser' }
       & CurrentUserDataFragment
@@ -121,6 +123,7 @@ export type LoginMutationFn = ApolloReactCommon.MutationFunction<LoginMutation, 
  *   variables: {
  *      email: // value for 'email'
  *      password: // value for 'password'
+ *      discourseSSO: // value for 'discourseSSO'
  *   },
  * });
  */
@@ -146,6 +149,7 @@ export type LoginGoogleMutationFn = ApolloReactCommon.MutationFunction<LoginGoog
  * const [loginGoogleMutation, { data, loading, error }] = useLoginGoogleMutation({
  *   variables: {
  *      idToken: // value for 'idToken'
+ *      discourseSSO: // value for 'discourseSSO'
  *   },
  * });
  */
