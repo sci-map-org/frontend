@@ -338,6 +338,7 @@ export type Mutation = {
   loginGoogle: LoginResponse;
   register: CurrentUser;
   registerGoogle: CurrentUser;
+  verifyEmailAddress: VerifyEmailResponse;
   adminUpdateUser: User;
   createArticle: Article;
   updateArticle: Article;
@@ -384,6 +385,11 @@ export type MutationRegisterArgs = {
 
 export type MutationRegisterGoogleArgs = {
   payload: RegisterGooglePayload;
+};
+
+
+export type MutationVerifyEmailAddressArgs = {
+  token: Scalars['String'];
 };
 
 
@@ -541,11 +547,17 @@ export type RegisterGooglePayload = {
   idToken: Scalars['String'];
 };
 
+export type VerifyEmailResponse = {
+  __typename?: 'VerifyEmailResponse';
+  email: Scalars['String'];
+};
+
 export type AdminUpdateUserPayload = {
   displayName?: Maybe<Scalars['String']>;
   key?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
   role?: Maybe<UserRole>;
+  active?: Maybe<Scalars['Boolean']>;
 };
 
 export type CreateArticlePayload = {
