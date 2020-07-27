@@ -17,6 +17,7 @@ import { useCurrentUser, useLogout } from '../../graphql/users/users.hooks';
 import { globalStyleVariables } from '../../theme/theme';
 import { RoleAccess } from '../auth/RoleAccess';
 import { InternalLink, InternalLinkProps } from '../navigation/InternalLink';
+import { useRouter } from 'next/router';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -37,6 +38,7 @@ const HeaderLink: React.FC<(InternalLinkProps & { external?: false }) | ({ exter
   );
 export const Header: React.FC = () => {
   const { currentUser } = useCurrentUser();
+  const router = useRouter();
   const { logout } = useLogout();
 
   return (
@@ -120,7 +122,10 @@ export const Header: React.FC = () => {
             <HeaderLink routePath="/register" asHref="/register">
               Register
             </HeaderLink>
-            <HeaderLink routePath="/login" asHref="/login">
+            <HeaderLink
+              routePath={`/login?redirectTo=${router.pathname}`}
+              asHref={`/login?redirectTo=${router.pathname}`}
+            >
               Login
             </HeaderLink>
           </Stack>

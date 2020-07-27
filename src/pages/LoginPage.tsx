@@ -4,12 +4,15 @@ import { LoginForm } from '../components/auth/LoginForm';
 import { RoleAccess } from '../components/auth/RoleAccess';
 import { PageLayout } from '../components/layout/PageLayout';
 import { DiscourseSso } from '../graphql/types';
+import { useEffect } from 'react';
+import { useCurrentUser } from '../graphql/users/users.hooks';
 
 export const LoginPagePath = '/login';
 
 export const LoginPage: React.FC = () => {
   const router = useRouter();
   const { redirectTo } = router.query;
+  const { currentUser } = useCurrentUser();
   let discourseSSO: DiscourseSso | undefined = undefined;
   if (
     router.query.sso &&
@@ -20,22 +23,27 @@ export const LoginPage: React.FC = () => {
     discourseSSO = { sso: router.query.sso, sig: router.query.sig };
   }
 
+  useEffect(() => {
+    if (currentUser) router.push('/');
+  }, []);
+  if (currentUser) return null;
+
   return (
-    <RoleAccess accessRule="notLoggedInUser" goBack>
-      <PageLayout mode="form" title="Login" centerChildren>
-        <Box width="36rem">
-          <LoginForm
-            onSuccessfulLogin={({ redirectUrl }) =>
-              redirectUrl
-                ? (window.location.href = redirectUrl)
-                : redirectTo && typeof redirectTo === 'string'
-                ? router.push(redirectTo)
-                : Router.back()
+    <PageLayout mode="form" title="Login" centerChildren>
+      <Box width="36rem">
+        <LoginForm
+          onSuccessfulLogin={({ redirectUrl }) => {
+            if (redirectUrl) {
+              window.location.href = redirectUrl;
+              return;
             }
-            discourseSSO={discourseSSO}
-          />
-        </Box>
-      </PageLayout>
-    </RoleAccess>
+            if (redirectTo && typeof redirectTo === 'string') {
+              return router.push(redirectTo);
+            }
+          }}
+          discourseSSO={discourseSSO}
+        />
+      </Box>
+    </PageLayout>
   );
 };

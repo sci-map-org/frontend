@@ -12,7 +12,7 @@ export const LoginForm: React.FC<{
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const { login, error, data } = useLogin({
+  const { login, error } = useLogin({
     onCompleted(data) {
       onSuccessfulLogin && onSuccessfulLogin(data.login);
     },
