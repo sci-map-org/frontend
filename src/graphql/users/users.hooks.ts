@@ -1,16 +1,15 @@
 import { useApolloClient } from '@apollo/react-hooks';
 import Cookies from 'js-cookie';
 import { getCurrentUser } from './users.operations';
-import {
-  useGetCurrentUserQuery,
-  useLoginGoogleMutation,
-  useLoginMutation,
-  useRegisterGoogleMutation,
-  useRegisterMutation,
-} from './users.operations.generated';
+import { useGetCurrentUserQuery, useLoginGoogleMutation, useLoginMutation } from './users.operations.generated';
 
 export const useCurrentUser = () => {
-  const { loading, error, data } = useGetCurrentUserQuery();
+  const { loading, error, data } = useGetCurrentUserQuery({
+    onError() {
+      console.log('Invalid token, removing it from cookies');
+      Cookies.remove('jwt_token');
+    },
+  });
   return {
     loading,
     error,
@@ -85,22 +84,4 @@ export const useLogout = () => {
     });
   };
   return { logout };
-};
-
-export const useRegister = () => {
-  const [register, { loading, error }] = useRegisterMutation();
-  return {
-    register,
-    loading,
-    error,
-  };
-};
-
-export const useRegisterGoogle = () => {
-  const [registerGoogle, { loading, error }] = useRegisterGoogleMutation();
-  return {
-    registerGoogle,
-    loading,
-    error,
-  };
 };

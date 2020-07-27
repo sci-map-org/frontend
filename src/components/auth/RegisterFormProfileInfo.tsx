@@ -13,9 +13,9 @@ import {
   Tooltip,
 } from '@chakra-ui/core';
 import gql from 'graphql-tag';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { generateUrlKey } from '../../services/url.service';
-import { useGetUserByKeyLazyQuery, useGetUserByKeyQuery } from './RegisterFormProfileInfo.generated';
+import { useGetUserByKeyQuery } from './RegisterFormProfileInfo.generated';
 
 export interface RegisterProfileInfo {
   displayName: string;
@@ -39,14 +39,12 @@ export const RegisterFormProfileInfo: React.FC<{
   const [displayName, setDisplayName] = useState(defaultProfileInfo.displayName || '');
   const [key, setKey] = useState(defaultProfileInfo.key || '');
 
-  const { loading, error, refetch: refetchGetUserByKey } = useGetUserByKeyQuery({ variables: { key } });
+  const { loading, refetch, data } = useGetUserByKeyQuery({
+    variables: { key },
+    errorPolicy: 'ignore',
+  });
 
-  //   useEffect(() => {
-  //     if (!!key && key.length >= 3) {
-  //       getUserByKey({ variables: { key: defaultProfileInfo.key } });
-  //     }
-  //   });
-  const isKeyAvailable = !loading && !!error;
+  const isKeyAvailable = !loading && !data;
   const isKeyValid = key === generateUrlKey(key) && key.length >= MIN_USER_KEY_LENGTH;
   return (
     <Stack spacing={6}>
@@ -75,8 +73,7 @@ export const RegisterFormProfileInfo: React.FC<{
               const newKey: string = e.target.value;
               setKey(newKey);
               if (newKey.length >= MIN_USER_KEY_LENGTH) {
-                refetchGetUserByKey();
-                // getUserByKey({ variables: { key: newKey } });
+                refetch();
               }
             }}
           />
@@ -85,7 +82,7 @@ export const RegisterFormProfileInfo: React.FC<{
               children={
                 !!loading ? (
                   <Spinner size="sm" />
-                ) : !!error ? (
+                ) : isKeyValid && isKeyAvailable ? (
                   <Icon name="check" color="green.500" />
                 ) : (
                   <Tooltip

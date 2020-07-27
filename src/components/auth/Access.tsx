@@ -1,7 +1,7 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
-interface AccessProps {
+export interface AccessProps {
   condition: boolean;
   renderAccessDenied?: () => ReactNode;
   redirectTo?: string;
@@ -10,13 +10,19 @@ interface AccessProps {
 
 export const Access: React.FC<AccessProps> = ({ condition, renderAccessDenied, redirectTo, goBack, children }) => {
   const router = useRouter();
+
+  useEffect(() => {
+    if (!condition) {
+      if (redirectTo) {
+        router.push(redirectTo);
+      } else if (goBack) {
+        router.back();
+      }
+    }
+  }, [condition]);
   if (!condition) {
     if (renderAccessDenied) {
       return <>{renderAccessDenied()}</>;
-    } else if (redirectTo) {
-      router.push(redirectTo);
-    } else if (goBack) {
-      router.back();
     } else {
       return null;
     }
