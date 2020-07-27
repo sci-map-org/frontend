@@ -40,6 +40,7 @@ export const LoginPage: React.FC = () => {
             if (redirectTo && typeof redirectTo === 'string') {
               return router.push(redirectTo);
             }
+            router.push('/');
           }}
           discourseSSO={discourseSSO}
         />
