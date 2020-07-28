@@ -24,9 +24,9 @@ export const LoginPage: React.FC = () => {
   }
 
   useEffect(() => {
-    if (currentUser) router.push('/');
+    if (currentUser && !discourseSSO) router.push('/');
   }, []);
-  if (currentUser) return null;
+  if (currentUser && !discourseSSO) return null;
 
   return (
     <PageLayout mode="form" title="Login" centerChildren>

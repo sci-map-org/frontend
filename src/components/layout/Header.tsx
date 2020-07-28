@@ -122,10 +122,7 @@ export const Header: React.FC = () => {
             <HeaderLink routePath="/register" asHref="/register">
               Register
             </HeaderLink>
-            <HeaderLink
-              routePath={`/login?redirectTo=${router.pathname}`}
-              asHref={`/login?redirectTo=${router.pathname}`}
-            >
+            <HeaderLink routePath={`/login?redirectTo=${router.asPath}`} asHref={`/login?redirectTo=${router.asPath}`}>
               Login
             </HeaderLink>
           </Stack>
