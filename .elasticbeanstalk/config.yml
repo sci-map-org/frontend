@@ -1,6 +1,6 @@
 branch-defaults:
   master:
-    environment: SciMapFrontend-production
+    environment: SciMapFrontendProduction
 global:
   application_name: sci-map-frontend
   default_ec2_keyname: XXXXXX

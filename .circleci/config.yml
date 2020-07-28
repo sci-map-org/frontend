@@ -26,7 +26,7 @@ jobs:
                   sudo pip install awsebcli --upgrade
             - run:
                 name: Deploying
-                command: eb deploy SciMapFrontend-production
+                command: eb deploy SciMapFrontendProduction
 
 workflows:
   build-and-test:
