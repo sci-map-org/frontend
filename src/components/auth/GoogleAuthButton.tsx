@@ -33,6 +33,7 @@ export const GoogleAuthButton: React.FC<{
       }}
       onFailure={(err) => {
         console.error('failure google log in');
+        console.error(err);
         onFailure(err);
       }}
       cookiePolicy={'single_host_origin'}
