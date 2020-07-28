@@ -27,7 +27,14 @@ const HeaderLink: React.FC<(InternalLinkProps & { external?: false }) | ({ exter
 }) =>
   props.external ? (
     <Box>
-      <Link {...props} fontWeight="light" color="blackAlpha.700" _hover={{ color: 'blackAlpha.900' }} _focus={{}}>
+      <Link
+        {...props}
+        fontWeight="light"
+        color="blackAlpha.700"
+        _hover={{ color: 'blackAlpha.900' }}
+        _focus={{}}
+        isExternal
+      >
         {children}
       </Link>
     </Box>
