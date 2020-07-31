@@ -7,6 +7,7 @@ import { ResourceDescriptionInput } from './ResourceDescription';
 import { ResourceDurationMnSelector } from './ResourceDuration';
 import { ResourceMediaTypeSelector } from './ResourceMediaType';
 import { ResourceTypeSelector } from './ResourceType';
+import { ResourceUrlInput } from './ResourceUrl';
 
 interface ResourceEditorProps {
   resource: GetResourceEditResourcePageQuery['getResourceById'];
@@ -39,16 +40,7 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
           onChange={(e: any) => setName(e.target.value)}
         ></Input>
       </FormControl>
-      <FormControl isRequired>
-        <FormLabel htmlFor="url">Url</FormLabel>
-        <Input
-          id="url"
-          placeholder="https://example.com"
-          size="md"
-          value={url}
-          onChange={(e: any) => setUrl(e.target.value)}
-        ></Input>
-      </FormControl>
+      <ResourceUrlInput value={url} onChange={setUrl} />
       <Flex direction="row">
         <ResourceTypeSelector value={type} onSelect={(t) => setType(t)} />
       </Flex>

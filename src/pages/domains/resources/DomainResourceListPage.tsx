@@ -7,7 +7,7 @@ import { useGetDomainByKey } from '../../../graphql/domains/domains.hooks';
 import { PageInfo } from '../../PageInfo';
 import { DomainPageInfo } from '../DomainPage';
 
-export const DomainResourceListPagePath = (domainKey: string) => `/domains/${domainKey}/concepts`;
+export const DomainResourceListPagePath = (domainKey: string) => `/domains/${domainKey}/resources`;
 
 export const DomainResourceListPageInfo = (domain: DomainDataFragment): PageInfo => ({
   name: 'Resources',
