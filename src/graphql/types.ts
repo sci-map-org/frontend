@@ -212,6 +212,8 @@ export type Concept = {
   domain?: Maybe<Domain>;
   coveredByResources?: Maybe<ConceptCoveredByResourcesResults>;
   known?: Maybe<KnownConcept>;
+  referencingConcepts?: Maybe<Array<ConceptReferencesConceptItem>>;
+  referencedByConcepts?: Maybe<Array<ConceptReferencesConceptItem>>;
 };
 
 
@@ -307,6 +309,17 @@ export type KnownConcept = {
   level: Scalars['Float'];
 };
 
+export type ConceptReferencesConceptItem = {
+  __typename?: 'ConceptReferencesConceptItem';
+  concept: Concept;
+  relationship: ConceptReferencesConcept;
+};
+
+export type ConceptReferencesConcept = {
+  __typename?: 'ConceptReferencesConcept';
+  strength: Scalars['Float'];
+};
+
 export type ConceptBelongsToDomain = {
   __typename?: 'ConceptBelongsToDomain';
   index: Scalars['Float'];
@@ -361,6 +374,8 @@ export type Mutation = {
   deleteConcept: DeleteConceptResult;
   setConceptsKnown: Array<Concept>;
   setConceptsUnknown: Array<Concept>;
+  addConceptReferencesConcept: Concept;
+  removeConceptReferencesConcept: Concept;
   updateConceptBelongsToDomain: ConceptBelongsToDomain;
 };
 
@@ -513,6 +528,18 @@ export type MutationSetConceptsKnownArgs = {
 
 export type MutationSetConceptsUnknownArgs = {
   conceptIds: Array<Scalars['String']>;
+};
+
+
+export type MutationAddConceptReferencesConceptArgs = {
+  conceptId: Scalars['String'];
+  referencedConceptId: Scalars['String'];
+};
+
+
+export type MutationRemoveConceptReferencesConceptArgs = {
+  conceptId: Scalars['String'];
+  referencedConceptId: Scalars['String'];
 };
 
 

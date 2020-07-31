@@ -16,8 +16,10 @@ import {
   useDisclosure,
 } from '@chakra-ui/core';
 import gql from 'graphql-tag';
+import { differenceBy } from 'lodash';
 import Router from 'next/router';
 import { RoleAccess } from '../../../components/auth/RoleAccess';
+import { ConceptsPicker } from '../../../components/concepts/ConceptsPicker';
 import { PageLayout } from '../../../components/layout/PageLayout';
 import { ResourcePreviewCardList } from '../../../components/resources/ResourcePreviewCard';
 import { ConceptData, generateConceptData } from '../../../graphql/concepts/concepts.fragments';
@@ -30,7 +32,12 @@ import { NotFoundPage } from '../../NotFoundPage';
 import { PageInfo } from '../../PageInfo';
 import { DomainPageInfo } from '../DomainPage';
 import { ConceptListPageInfo } from './ConceptListPage';
-import { GetConceptConceptPageQuery, useGetConceptConceptPageQuery } from './ConceptPage.generated';
+import {
+  GetConceptConceptPageQuery,
+  useAddConceptReferencesConceptMutation,
+  useGetConceptConceptPageQuery,
+  useRemoveConceptReferencesConceptMutation,
+} from './ConceptPage.generated';
 
 export const ConceptPagePath = (domainKey: string, conceptKey: string) =>
   `/domains/${domainKey}/concepts/${conceptKey}`;
@@ -86,6 +93,11 @@ export const getConceptConceptPage = gql`
   query getConceptConceptPage($key: String!) {
     getConceptByKey(key: $key) {
       ...ConceptData
+      referencingConcepts {
+        concept {
+          ...ConceptData
+        }
+      }
       coveredByResources(options: {}) {
         items {
           ...ResourcePreviewData
@@ -93,6 +105,13 @@ export const getConceptConceptPage = gql`
       }
       domain {
         ...DomainData
+        concepts(options: { sorting: { entity: relationship, field: index, direction: ASC } }) {
+          items {
+            concept {
+              ...ConceptData
+            }
+          }
+        }
       }
     }
   }
@@ -101,14 +120,37 @@ export const getConceptConceptPage = gql`
   ${DomainData}
 `;
 
+export const addConceptReferencesConcept = gql`
+  mutation addConceptReferencesConcept($conceptId: String!, $referencedConceptId: String!) {
+    addConceptReferencesConcept(conceptId: $conceptId, referencedConceptId: $referencedConceptId) {
+      _id
+    }
+  }
+`;
+
+export const removeConceptReferencesConcept = gql`
+  mutation removeConceptReferencesConcept($conceptId: String!, $referencedConceptId: String!) {
+    removeConceptReferencesConcept(conceptId: $conceptId, referencedConceptId: $referencedConceptId) {
+      _id
+    }
+  }
+`;
+
 const conceptPlaceholder: GetConceptConceptPageQuery['getConceptByKey'] = {
   ...generateConceptData(),
   coveredByResources: { items: [0, 0].map(generateResourceData) },
   domain: generateDomainData(),
 };
+
 export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = ({ conceptKey }) => {
-  const { data, loading, error } = useGetConceptConceptPageQuery({ variables: { key: conceptKey } });
+  const { data, loading, error } = useGetConceptConceptPageQuery({
+    variables: { key: conceptKey },
+  });
   const concept = data?.getConceptByKey || conceptPlaceholder;
+  const domainConcepts = concept.domain?.concepts?.items.map((item) => item.concept) || [];
+  const referencingConcepts = concept.referencingConcepts?.map((item) => item.concept) || [];
+  const [addConceptReferencesConceptMutation] = useAddConceptReferencesConceptMutation();
+  const [removeConceptReferencesConcept] = useRemoveConceptReferencesConceptMutation();
   if (error) return <NotFoundPage />;
   if (!concept.domain) throw new Error('Concept has no domain');
   return (
@@ -132,6 +174,28 @@ export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = 
           resourcePreviews={concept.coveredByResources?.items}
           isLoading={loading}
         />
+
+        <RoleAccess accessRule="admin">
+          <Box mt={5}>
+            <ConceptsPicker
+              title="Referenced Concepts"
+              pickableConceptList={differenceBy(domainConcepts, referencingConcepts, [concept], (concept) => {
+                return concept._id;
+              })}
+              pickedConceptList={referencingConcepts}
+              onSelect={(conceptToAdd) =>
+                addConceptReferencesConceptMutation({
+                  variables: { conceptId: concept._id, referencedConceptId: conceptToAdd._id },
+                })
+              }
+              onRemove={(conceptToRemove) =>
+                removeConceptReferencesConcept({
+                  variables: { conceptId: concept._id, referencedConceptId: conceptToRemove._id },
+                })
+              }
+            />
+          </Box>
+        </RoleAccess>
       </Box>
     </PageLayout>
   );

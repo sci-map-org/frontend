@@ -1,11 +1,10 @@
-import { Box, Button, Stack, Text } from '@chakra-ui/core';
 import { differenceBy } from 'lodash';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
-import { DomainConceptSelector } from '../concepts/DomainConceptSelector';
 import {
   useAttachResourceCoversConceptsMutation,
   useDetachResourceCoversConceptsMutation,
 } from '../../graphql/resources/resources.operations.generated';
+import { ConceptsPicker } from '../concepts/ConceptsPicker';
 
 export const CoveredConceptsSelector: React.FC<{
   resourceId: string;
@@ -23,21 +22,12 @@ export const CoveredConceptsSelector: React.FC<{
     await detachResourceCoversConcepts({ variables: { resourceId, conceptIds: [conceptId] } });
   };
   return (
-    <Box>
-      <Text fontSize="xl">Covered concepts</Text>
-      <Stack spacing={10} direction="row">
-        <DomainConceptSelector conceptList={possibleConceptSuggestions} onSelect={(c) => selectConcept(c._id)} />
-        <Box>
-          {coveredConcepts.map((concept) => {
-            return (
-              <Box key={concept._id} my={2}>
-                <Button onClick={() => removeConcept(concept._id)}>Remove</Button>
-                {concept.name}
-              </Box>
-            );
-          })}
-        </Box>
-      </Stack>
-    </Box>
+    <ConceptsPicker
+      pickableConceptList={possibleConceptSuggestions}
+      pickedConceptList={coveredConcepts}
+      onSelect={(c) => selectConcept(c._id)}
+      onRemove={(c) => removeConcept(c._id)}
+      title="Covered Concepts"
+    />
   );
 };

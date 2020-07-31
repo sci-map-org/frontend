@@ -10,7 +10,7 @@ const getConceptSuggestions = (concepts: ConceptDataFragment[], value: string): 
 
   return inputLength === 0
     ? []
-    : concepts.filter(concept => concept.name.toLowerCase().indexOf(inputValue) >= 0).slice(0, 10);
+    : concepts.filter((concept) => concept.name.toLowerCase().indexOf(inputValue) >= 0).slice(0, 10);
 };
 
 export const DomainConceptSelector: React.FC<{
@@ -39,7 +39,7 @@ export const DomainConceptSelector: React.FC<{
           onSelect(suggestion);
           setValue('');
         }}
-        renderSuggestion={suggestion => (
+        renderSuggestion={(suggestion) => (
           <Box px={5} py={1} borderBottomWidth={1}>
             <Text fontWeight={500}>{suggestion.name}</Text>
           </Box>
@@ -49,7 +49,7 @@ export const DomainConceptSelector: React.FC<{
             {children}
           </Box>
         )}
-        getSuggestionValue={suggestion => suggestion.name}
+        getSuggestionValue={(suggestion) => suggestion.name}
         renderInputComponent={(inputProps: any) => <Input variant="flushed" {...inputProps} />}
       />
     </Box>

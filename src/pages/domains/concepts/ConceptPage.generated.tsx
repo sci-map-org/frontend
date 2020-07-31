@@ -17,7 +17,13 @@ export type GetConceptConceptPageQuery = (
   { __typename?: 'Query' }
   & { getConceptByKey: (
     { __typename?: 'Concept' }
-    & { coveredByResources?: Types.Maybe<(
+    & { referencingConcepts?: Types.Maybe<Array<(
+      { __typename?: 'ConceptReferencesConceptItem' }
+      & { concept: (
+        { __typename?: 'Concept' }
+        & ConceptDataFragment
+      ) }
+    )>>, coveredByResources?: Types.Maybe<(
       { __typename?: 'ConceptCoveredByResourcesResults' }
       & { items: Array<(
         { __typename?: 'Resource' }
@@ -25,9 +31,47 @@ export type GetConceptConceptPageQuery = (
       )> }
     )>, domain?: Types.Maybe<(
       { __typename?: 'Domain' }
+      & { concepts?: Types.Maybe<(
+        { __typename?: 'DomainConceptsResults' }
+        & { items: Array<(
+          { __typename?: 'DomainConceptsItem' }
+          & { concept: (
+            { __typename?: 'Concept' }
+            & ConceptDataFragment
+          ) }
+        )> }
+      )> }
       & DomainDataFragment
     )> }
     & ConceptDataFragment
+  ) }
+);
+
+export type AddConceptReferencesConceptMutationVariables = Exact<{
+  conceptId: Types.Scalars['String'];
+  referencedConceptId: Types.Scalars['String'];
+}>;
+
+
+export type AddConceptReferencesConceptMutation = (
+  { __typename?: 'Mutation' }
+  & { addConceptReferencesConcept: (
+    { __typename?: 'Concept' }
+    & Pick<Types.Concept, '_id'>
+  ) }
+);
+
+export type RemoveConceptReferencesConceptMutationVariables = Exact<{
+  conceptId: Types.Scalars['String'];
+  referencedConceptId: Types.Scalars['String'];
+}>;
+
+
+export type RemoveConceptReferencesConceptMutation = (
+  { __typename?: 'Mutation' }
+  & { removeConceptReferencesConcept: (
+    { __typename?: 'Concept' }
+    & Pick<Types.Concept, '_id'>
   ) }
 );
 
@@ -58,3 +102,55 @@ export function useGetConceptConceptPageLazyQuery(baseOptions?: ApolloReactHooks
 export type GetConceptConceptPageQueryHookResult = ReturnType<typeof useGetConceptConceptPageQuery>;
 export type GetConceptConceptPageLazyQueryHookResult = ReturnType<typeof useGetConceptConceptPageLazyQuery>;
 export type GetConceptConceptPageQueryResult = ApolloReactCommon.QueryResult<GetConceptConceptPageQuery, GetConceptConceptPageQueryVariables>;
+export type AddConceptReferencesConceptMutationFn = ApolloReactCommon.MutationFunction<AddConceptReferencesConceptMutation, AddConceptReferencesConceptMutationVariables>;
+
+/**
+ * __useAddConceptReferencesConceptMutation__
+ *
+ * To run a mutation, you first call `useAddConceptReferencesConceptMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddConceptReferencesConceptMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addConceptReferencesConceptMutation, { data, loading, error }] = useAddConceptReferencesConceptMutation({
+ *   variables: {
+ *      conceptId: // value for 'conceptId'
+ *      referencedConceptId: // value for 'referencedConceptId'
+ *   },
+ * });
+ */
+export function useAddConceptReferencesConceptMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<AddConceptReferencesConceptMutation, AddConceptReferencesConceptMutationVariables>) {
+        return ApolloReactHooks.useMutation<AddConceptReferencesConceptMutation, AddConceptReferencesConceptMutationVariables>(Operations.addConceptReferencesConcept, baseOptions);
+      }
+export type AddConceptReferencesConceptMutationHookResult = ReturnType<typeof useAddConceptReferencesConceptMutation>;
+export type AddConceptReferencesConceptMutationResult = ApolloReactCommon.MutationResult<AddConceptReferencesConceptMutation>;
+export type AddConceptReferencesConceptMutationOptions = ApolloReactCommon.BaseMutationOptions<AddConceptReferencesConceptMutation, AddConceptReferencesConceptMutationVariables>;
+export type RemoveConceptReferencesConceptMutationFn = ApolloReactCommon.MutationFunction<RemoveConceptReferencesConceptMutation, RemoveConceptReferencesConceptMutationVariables>;
+
+/**
+ * __useRemoveConceptReferencesConceptMutation__
+ *
+ * To run a mutation, you first call `useRemoveConceptReferencesConceptMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveConceptReferencesConceptMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeConceptReferencesConceptMutation, { data, loading, error }] = useRemoveConceptReferencesConceptMutation({
+ *   variables: {
+ *      conceptId: // value for 'conceptId'
+ *      referencedConceptId: // value for 'referencedConceptId'
+ *   },
+ * });
+ */
+export function useRemoveConceptReferencesConceptMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<RemoveConceptReferencesConceptMutation, RemoveConceptReferencesConceptMutationVariables>) {
+        return ApolloReactHooks.useMutation<RemoveConceptReferencesConceptMutation, RemoveConceptReferencesConceptMutationVariables>(Operations.removeConceptReferencesConcept, baseOptions);
+      }
+export type RemoveConceptReferencesConceptMutationHookResult = ReturnType<typeof useRemoveConceptReferencesConceptMutation>;
+export type RemoveConceptReferencesConceptMutationResult = ApolloReactCommon.MutationResult<RemoveConceptReferencesConceptMutation>;
+export type RemoveConceptReferencesConceptMutationOptions = ApolloReactCommon.BaseMutationOptions<RemoveConceptReferencesConceptMutation, RemoveConceptReferencesConceptMutationVariables>;
