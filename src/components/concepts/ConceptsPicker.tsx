@@ -1,6 +1,6 @@
 import { Box, Stack, Text, Button } from '@chakra-ui/core';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
-import { DomainConceptSelector } from './DomainConceptSelector';
+import { ConceptSelector } from './ConceptSelector';
 
 interface ConceptsPickerProps {
   title: string;
@@ -19,7 +19,7 @@ export const ConceptsPicker: React.FC<ConceptsPickerProps> = ({
 }) => {
   return (
     <Stack direction="row" width="26rem" borderWidth="1px" borderRadius={5} p={3} spacing={5}>
-      <DomainConceptSelector conceptList={pickableConceptList} onSelect={onSelect} />
+      <ConceptSelector conceptList={pickableConceptList} onSelect={onSelect} />
       <Stack>
         <Text fontWeight={700}>{title}</Text>
         <Box>

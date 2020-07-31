@@ -9,11 +9,11 @@ const getConceptSuggestions = (concepts: ConceptDataFragment[], value: string): 
   const inputLength = inputValue.length;
 
   return inputLength === 0
-    ? []
+    ? concepts
     : concepts.filter((concept) => concept.name.toLowerCase().indexOf(inputValue) >= 0).slice(0, 10);
 };
 
-export const DomainConceptSelector: React.FC<{
+export const ConceptSelector: React.FC<{
   conceptList: ConceptDataFragment[];
   onSelect: (concept: ConceptDataFragment) => any;
 }> = ({ conceptList, onSelect }) => {
@@ -31,6 +31,9 @@ export const DomainConceptSelector: React.FC<{
   return (
     <Box marginBottom="16px">
       <Autosuggest
+        shouldRenderSuggestions={() => {
+          return true;
+        }}
         suggestions={conceptSuggestions}
         inputProps={inputProps}
         onSuggestionsFetchRequested={({ value: v }) => setConceptSuggestions(getConceptSuggestions(conceptList, v))}
@@ -45,7 +48,7 @@ export const DomainConceptSelector: React.FC<{
           </Box>
         )}
         renderSuggestionsContainer={({ containerProps, children }) => (
-          <Box {...containerProps} borderLeftWidth={1} borderRightWidth={1}>
+          <Box {...containerProps} borderLeftWidth={1} borderRightWidth={1} position="sticky">
             {children}
           </Box>
         )}

@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { DomainWithConceptsDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { CreateResourcePayload, ResourceMediaType, ResourceTag, ResourceType } from '../../graphql/types';
-import { DomainConceptSelector } from '../concepts/DomainConceptSelector';
+import { ConceptSelector } from '../concepts/ConceptSelector';
 import { ResourceDescriptionInput } from './ResourceDescription';
 import { ResourceDurationMnSelector } from './ResourceDuration';
 import { ResourceMediaTypeSelector } from './ResourceMediaType';
@@ -48,7 +48,7 @@ export const NewResource: React.FC<NewResourceProps> = ({ domain, onCreate }) =>
           <Box>
             <Text fontSize="xl">Covered concepts</Text>
             <Box width="300px">
-              <DomainConceptSelector
+              <ConceptSelector
                 conceptList={domain.concepts.items
                   .map((item) => item.concept)
                   .filter((c) => !selectedCoveredConcepts.find((s) => s._id === c._id))}
