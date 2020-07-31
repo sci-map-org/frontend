@@ -1,15 +1,12 @@
-import { Box, Button, Flex, FormControl, FormLabel, Input, Link, Stack, Text } from '@chakra-ui/core';
+import { Box, Button, Flex, FormControl, FormLabel, Input, Stack, Text } from '@chakra-ui/core';
 import { useState } from 'react';
-
-import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { UpdateResourcePayload } from '../../graphql/types';
 import { GetResourceEditResourcePageQuery } from '../../pages/resources/EditResourcePage.generated';
-import { CoveredConceptsSelector } from './CoveredConceptsSelector';
+import { InternalLink } from '../navigation/InternalLink';
 import { ResourceDescriptionInput } from './ResourceDescription';
 import { ResourceDurationMnSelector } from './ResourceDuration';
 import { ResourceMediaTypeSelector } from './ResourceMediaType';
 import { ResourceTypeSelector } from './ResourceType';
-import { InternalLink } from '../navigation/InternalLink';
 
 interface ResourceEditorProps {
   resource: GetResourceEditResourcePageQuery['getResourceById'];
@@ -26,13 +23,6 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
   const [description, setDescription] = useState(resource.description || undefined);
 
   if (!resource.domains) return null;
-
-  const conceptList: ConceptDataFragment[] = resource.domains.items
-    .map((domain) => {
-      return !!domain.concepts ? domain.concepts.items : [];
-    })
-    .reduce((acc, items) => acc.concat(items), [])
-    .map((item) => item.concept);
 
   return (
     <Stack spacing={4}>
@@ -68,13 +58,6 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
         <ResourceDurationMnSelector value={durationMn} onChange={(v) => setDurationMn(v)} />
       </Flex>
       <ResourceDescriptionInput value={description} onChange={(d) => setDescription(d)} />
-      {resource.domains && resource.coveredConcepts && (
-        <CoveredConceptsSelector
-          resourceId={resource._id}
-          coveredConcepts={resource.coveredConcepts.items}
-          conceptList={conceptList}
-        />
-      )}
       {resource.domains && (
         <Box>
           <Text fontSize="xl">Domains</Text>

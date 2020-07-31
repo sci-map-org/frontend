@@ -4,12 +4,14 @@ import { useRouter } from 'next/router';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { InternalLink } from '../../components/navigation/InternalLink';
+import { CoveredConceptsSelector } from '../../components/resources/CoveredConceptsSelector';
 import { ResourceCoveredConcepts } from '../../components/resources/ResourceCoveredConcepts';
 import { ResourceMediaTypeBadge } from '../../components/resources/ResourceMediaType';
 import { SelectedTagsEditor, SelectedTagsViewer } from '../../components/resources/ResourceTagsEditor';
 import { ResourceTypeBadge } from '../../components/resources/ResourceType';
 import { ResourceUrlLink } from '../../components/resources/ResourceUrl';
 import { ConceptData, generateConceptData } from '../../graphql/concepts/concepts.fragments';
+import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { DomainWithConceptsData, generateDomainData } from '../../graphql/domains/domains.fragments';
 import { generateResourceData, ResourceData } from '../../graphql/resources/resources.fragments';
 import {
@@ -93,6 +95,13 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
   const resource = data?.getResourceById || resourceDataPlaceholder;
   const selectedTags = resource.tags || [];
 
+  const conceptList: ConceptDataFragment[] = (resource.domains?.items || [])
+    .map((domain) => {
+      return !!domain.concepts ? domain.concepts.items : [];
+    })
+    .reduce((acc, items) => acc.concat(items), [])
+    .map((item) => item.concept);
+
   return (
     <PageLayout
       title={resource.name}
@@ -140,6 +149,15 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
             coveredConcepts={resource.coveredConcepts.items}
             isLoading={loading}
           />
+        )}
+        {resource.coveredConcepts && (
+          <RoleAccess accessRule="admin">
+            <CoveredConceptsSelector
+              resourceId={resource._id}
+              coveredConcepts={resource.coveredConcepts.items}
+              conceptList={conceptList}
+            />
+          </RoleAccess>
         )}
       </Stack>
     </PageLayout>
