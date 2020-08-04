@@ -48,13 +48,16 @@ const useAddResourceToDomainAndAddCoveredConcepts = (options: {
     const { data } = await createResource({ variables: { domainId, payload: resourcePayload } });
     if (!data) throw new Error('Resource Creation failed');
 
-    const res = await attachResourceCoveredConcepts({
-      variables: { resourceId: data.addResourceToDomain._id, conceptIds: coveredConceptsIds },
-    });
+    let res = undefined;
+    if (coveredConceptsIds.length) {
+      res = await attachResourceCoveredConcepts({
+        variables: { resourceId: data.addResourceToDomain._id, conceptIds: coveredConceptsIds },
+      });
 
-    if (!res.data) throw new Error('Attaching concepts failed');
+      if (!res.data) throw new Error('Attaching concepts failed');
+    }
     options.onCompleted &&
-      options.onCompleted({ ...data.addResourceToDomain, ...res.data.attachResourceCoversConcepts });
+      options.onCompleted({ ...data.addResourceToDomain, ...(res?.data?.attachResourceCoversConcepts || {}) });
   };
   return [addResourceToDomainAndAddCoveredConcepts];
 };
