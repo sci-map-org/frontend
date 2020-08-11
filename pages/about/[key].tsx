@@ -12,16 +12,24 @@ interface ArticleMenuItem {
 
 const articlesMenuItems: ArticleMenuItem[] = [
   {
-    menuTitle: 'About',
-    key: 'intro',
+    menuTitle: 'Introduction',
+    key: 'introduction',
   },
   {
-    menuTitle: 'Hello',
-    key: 'hello',
+    menuTitle: 'Why ?',
+    key: 'why',
   },
   {
-    menuTitle: 'World',
-    key: 'world',
+    menuTitle: 'Vision',
+    key: 'vision',
+  },
+  {
+    menuTitle: 'Approach',
+    key: 'approach',
+  },
+  {
+    menuTitle: 'Team',
+    key: 'team',
   },
 ];
 
