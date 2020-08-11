@@ -1,6 +1,7 @@
-import { Heading, List, ListItem, Text, Link } from '@chakra-ui/core';
+import { Heading, Link, List, ListItem, Text } from '@chakra-ui/core';
 import { ReactNode } from 'react';
 import ReactMarkdown from 'react-markdown';
+import breaks from 'remark-breaks';
 import { fonts } from '../../theme/theme';
 
 type HeadingConfig = {
@@ -57,9 +58,11 @@ const headingConfigMap: { [key in number]: HeadingConfig } = {
 };
 
 export const ArticleMarkdownViewer: React.FC<{ content: string }> = ({ content }) => {
+  const source = content.replace(/\n/gi, '&nbsp;\n');
   return (
     <ReactMarkdown
-      source={content}
+      source={source}
+      plugins={[breaks]}
       renderers={{
         paragraph: ({ children }) => {
           return (
