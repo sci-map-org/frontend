@@ -11,7 +11,7 @@ export const ArticleLayout: React.FC<{ renderLeft: ReactNode; renderRight: React
       <Box flexBasis="100px" flex="8 0 20px">
         {renderLeft}
       </Box>
-      <Box flex="0 1 720px">{children}</Box>
+      <Box flex="0 1 750px">{children}</Box>
       <Box flexBasis="100px" flex="10 0 30px">
         {renderRight}
       </Box>

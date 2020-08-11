@@ -67,7 +67,7 @@ export const ArticleMarkdownViewer: React.FC<{ content: string }> = ({ content }
       renderers={{
         paragraph: ({ children }) => {
           return (
-            <Text fontFamily={fonts.article} fontSize="20px">
+            <Text fontFamily={fonts.article} fontSize="19px">
               {children}
             </Text>
           );
