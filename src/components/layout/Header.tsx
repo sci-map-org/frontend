@@ -76,7 +76,7 @@ export const Header: React.FC = () => {
         <HeaderLink routePath="/domains" asHref="/domains">
           Domains
         </HeaderLink>
-        <HeaderLink routePath="/about/[key]" asHref="/about/intro">
+        <HeaderLink routePath="/about/[key]" asHref="/about/introduction">
           About
         </HeaderLink>
         <HeaderLink href={publicRuntimeConfig.discourseForumUrl} external>
