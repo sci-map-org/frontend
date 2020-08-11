@@ -1,4 +1,4 @@
-import { Heading, List, ListItem, Text } from '@chakra-ui/core';
+import { Heading, List, ListItem, Text, Link } from '@chakra-ui/core';
 import { ReactNode } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { fonts } from '../../theme/theme';
@@ -89,6 +89,13 @@ export const ArticleMarkdownViewer: React.FC<{ content: string }> = ({ content }
             <ListItem fontFamily={fonts.article} fontSize="20px">
               {a.children}
             </ListItem>
+          );
+        },
+        link: (a) => {
+          return (
+            <Link href={a.href} isExternal color="blue.500">
+              {a.children}
+            </Link>
           );
         },
       }}
