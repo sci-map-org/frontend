@@ -28,6 +28,10 @@ const articlesMenuItems: ArticleMenuItem[] = [
     key: 'approach',
   },
   {
+    menuTitle: 'How to contribute',
+    key: 'contributing',
+  },
+  {
     menuTitle: 'Team',
     key: 'team',
   },

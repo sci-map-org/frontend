@@ -3,6 +3,7 @@ import { ReactNode } from 'react';
 import ReactMarkdown from 'react-markdown';
 import breaks from 'remark-breaks';
 import { fonts } from '../../theme/theme';
+import { validateUrl } from '../../services/url.service';
 
 type HeadingConfig = {
   fontSize: string;
@@ -96,7 +97,7 @@ export const ArticleMarkdownViewer: React.FC<{ content: string }> = ({ content }
         },
         link: (a) => {
           return (
-            <Link href={a.href} isExternal color="blue.500">
+            <Link href={a.href} isExternal={validateUrl(a.href)} color="blue.500">
               {a.children}
             </Link>
           );
