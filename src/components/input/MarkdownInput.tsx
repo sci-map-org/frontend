@@ -1,7 +1,8 @@
 import dynamic from 'next/dynamic';
 
-import SimpleMDE, { SimpleMDEEditorProps } from 'react-simplemde-editor';
-// const SimpleMDE = dynamic(import('react-simplemde-editor'), { ssr: false });
+import { SimpleMDEEditorProps } from 'react-simplemde-editor';
+
+const SimpleMDE = dynamic(import('react-simplemde-editor'), { ssr: false });
 
 export const MarkdownInput: React.FC<
   {
