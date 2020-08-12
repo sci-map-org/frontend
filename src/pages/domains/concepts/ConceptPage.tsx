@@ -1,26 +1,11 @@
-import {
-  Box,
-  Button,
-  Flex,
-  Heading,
-  IconButton,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Stack,
-  Text,
-  useDisclosure,
-} from '@chakra-ui/core';
+import { Box, Button, Heading, Stack, Text } from '@chakra-ui/core';
 import gql from 'graphql-tag';
 import { differenceBy } from 'lodash';
 import Router from 'next/router';
 import { RoleAccess } from '../../../components/auth/RoleAccess';
 import { ConceptsPicker } from '../../../components/concepts/ConceptsPicker';
 import { PageLayout } from '../../../components/layout/PageLayout';
+import { DeleteButtonWithConfirmation } from '../../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { ResourcePreviewCardList } from '../../../components/resources/ResourcePreviewCard';
 import { ConceptData, generateConceptData } from '../../../graphql/concepts/concepts.fragments';
 import { ConceptDataFragment } from '../../../graphql/concepts/concepts.fragments.generated';
@@ -52,40 +37,23 @@ const ConceptPageRightIcons: React.FC<{ concept: ConceptDataFragment; isDisabled
   concept,
   isDisabled,
 }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const { deleteConcept } = useDeleteConcept();
   return (
-    <Flex direction="row" justify="space-between" align="center">
-      <Box>
-        <RoleAccess accessRule="admin">
-          <Stack spacing={2} direction="row">
-            <Button size="sm" onClick={() => Router.push(Router.asPath + '/edit')} isDisabled={isDisabled}>
-              Edit
-            </Button>
-            <IconButton aria-label="Delete article" icon="delete" size="sm" onClick={onOpen} isDisabled={isDisabled} />
-            <Modal isOpen={isOpen} onClose={onClose}>
-              <ModalOverlay />
-              <ModalContent bg="white">
-                <ModalHeader>Delete Concept</ModalHeader>
-                <ModalCloseButton />
-                <ModalBody>
-                  <Text>Confirm deleting this concept ?</Text>
-                </ModalBody>
-
-                <ModalFooter>
-                  <Button mr={3} onClick={onClose}>
-                    Cancel
-                  </Button>
-                  <Button onClick={() => deleteConcept({ variables: { _id: concept._id } }).then(() => Router.back())}>
-                    Delete
-                  </Button>
-                </ModalFooter>
-              </ModalContent>
-            </Modal>
-          </Stack>
-        </RoleAccess>
-      </Box>
-    </Flex>
+    <Stack spacing={2} direction="row" shouldWrapChildren={true}>
+      <RoleAccess accessRule="admin">
+        <Button size="sm" onClick={() => Router.push(Router.asPath + '/edit')} isDisabled={isDisabled}>
+          Edit
+        </Button>
+      </RoleAccess>
+      <RoleAccess accessRule="admin">
+        <DeleteButtonWithConfirmation
+          modalHeaderText="Delete Concept"
+          modalBodyText="Confirm deleting this concept ?"
+          isDisabled={isDisabled}
+          onConfirmation={() => deleteConcept({ variables: { _id: concept._id } }).then(() => Router.back())}
+        />
+      </RoleAccess>
+    </Stack>
   );
 };
 

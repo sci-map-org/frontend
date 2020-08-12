@@ -1,23 +1,8 @@
-import {
-  Box,
-  Link,
-  IconButton,
-  Modal,
-  useDisclosure,
-  ModalContent,
-  ModalOverlay,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  Text,
-  ModalFooter,
-  Button,
-} from '@chakra-ui/core';
-import NextLink from 'next/link';
-
-import { useCurrentUser } from '../../graphql/users/users.hooks';
-import { useDeleteArticle } from '../../graphql/articles/articles.hooks';
+import { Box } from '@chakra-ui/core';
 import { ArticlePreviewDataFragment } from '../../graphql/articles/articles.fragments.generated';
+import { useDeleteArticle } from '../../graphql/articles/articles.hooks';
+import { useCurrentUser } from '../../graphql/users/users.hooks';
+import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
 import { InternalLink } from '../navigation/InternalLink';
 
 interface ArticlePreviewProps {
@@ -25,8 +10,7 @@ interface ArticlePreviewProps {
 }
 export const ArticlePreview: React.FC<ArticlePreviewProps> = ({ articlePreview }) => {
   const { currentUser } = useCurrentUser();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const { deleteArticle, loading, error } = useDeleteArticle();
+  const { deleteArticle } = useDeleteArticle();
   return (
     <Box
       borderWidth="1px"
@@ -41,27 +25,12 @@ export const ArticlePreview: React.FC<ArticlePreviewProps> = ({ articlePreview }
         {articlePreview.title}
       </InternalLink>
       {!!currentUser && articlePreview.author && currentUser.key === articlePreview.author.key && (
-        <IconButton aria-label="Delete article" icon="delete" size="sm" onClick={onOpen} />
+        <DeleteButtonWithConfirmation
+          modalHeaderText="Delete Article"
+          modalBodyText="Confirm deleting this article ?"
+          onConfirmation={() => deleteArticle({ variables: { id: articlePreview._id } })}
+        />
       )}
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent bg="white">
-          <ModalHeader>Delete Article</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Text>Confirm deleting this article ?</Text>
-          </ModalBody>
-
-          <ModalFooter>
-            <Button variantColor="blue" mr={3} onClick={onClose}>
-              Cancel
-            </Button>
-            <Button variant="ghost" onClick={() => deleteArticle({ variables: { id: articlePreview._id } })}>
-              Delete
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
     </Box>
   );
 };
