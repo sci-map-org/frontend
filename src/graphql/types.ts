@@ -242,6 +242,7 @@ export type Resource = {
   description?: Maybe<Scalars['String']>;
   durationMn?: Maybe<Scalars['Int']>;
   consumed?: Maybe<ConsumedResource>;
+  creator?: Maybe<User>;
   coveredConcepts?: Maybe<ResourceCoveredConceptsResults>;
   domains?: Maybe<ResourceDomainsResults>;
 };
@@ -363,6 +364,7 @@ export type Mutation = {
   removeTagsFromResource: Resource;
   createResource: Resource;
   updateResource: Resource;
+  deleteResource: DeleteResourceResponse;
   addResourceToDomain: Resource;
   attachResourceToDomain: Resource;
   attachResourceCoversConcepts: Resource;
@@ -466,6 +468,11 @@ export type MutationCreateResourceArgs = {
 export type MutationUpdateResourceArgs = {
   _id: Scalars['String'];
   payload: UpdateResourcePayload;
+};
+
+
+export type MutationDeleteResourceArgs = {
+  _id: Scalars['String'];
 };
 
 
@@ -639,6 +646,12 @@ export type UpdateResourcePayload = {
   url?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   durationMn?: Maybe<Scalars['Int']>;
+};
+
+export type DeleteResourceResponse = {
+  __typename?: 'DeleteResourceResponse';
+  _id: Scalars['String'];
+  success: Scalars['Boolean'];
 };
 
 export type SetResourcesConsumedPayload = {

@@ -90,7 +90,7 @@ export const ArticleMarkdownViewer: React.FC<{ content: string }> = ({ content }
         },
         listItem: (a) => {
           return (
-            <ListItem fontFamily={fonts.article} fontSize="20px">
+            <ListItem fontFamily={fonts.article} fontSize="19px">
               {a.children}
             </ListItem>
           );
