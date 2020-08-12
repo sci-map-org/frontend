@@ -61,6 +61,19 @@ export type DetachResourceCoversConceptsMutation = (
   ) }
 );
 
+export type DeleteResourceMutationVariables = Exact<{
+  _id: Types.Scalars['String'];
+}>;
+
+
+export type DeleteResourceMutation = (
+  { __typename?: 'Mutation' }
+  & { deleteResource: (
+    { __typename?: 'DeleteResourceResponse' }
+    & Pick<Types.DeleteResourceResponse, '_id' | 'success'>
+  ) }
+);
+
 
 export type VoteResourceMutationFn = ApolloReactCommon.MutationFunction<VoteResourceMutation, VoteResourceMutationVariables>;
 
@@ -140,3 +153,28 @@ export function useDetachResourceCoversConceptsMutation(baseOptions?: ApolloReac
 export type DetachResourceCoversConceptsMutationHookResult = ReturnType<typeof useDetachResourceCoversConceptsMutation>;
 export type DetachResourceCoversConceptsMutationResult = ApolloReactCommon.MutationResult<DetachResourceCoversConceptsMutation>;
 export type DetachResourceCoversConceptsMutationOptions = ApolloReactCommon.BaseMutationOptions<DetachResourceCoversConceptsMutation, DetachResourceCoversConceptsMutationVariables>;
+export type DeleteResourceMutationFn = ApolloReactCommon.MutationFunction<DeleteResourceMutation, DeleteResourceMutationVariables>;
+
+/**
+ * __useDeleteResourceMutation__
+ *
+ * To run a mutation, you first call `useDeleteResourceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteResourceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteResourceMutation, { data, loading, error }] = useDeleteResourceMutation({
+ *   variables: {
+ *      _id: // value for '_id'
+ *   },
+ * });
+ */
+export function useDeleteResourceMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<DeleteResourceMutation, DeleteResourceMutationVariables>) {
+        return ApolloReactHooks.useMutation<DeleteResourceMutation, DeleteResourceMutationVariables>(Operations.deleteResource, baseOptions);
+      }
+export type DeleteResourceMutationHookResult = ReturnType<typeof useDeleteResourceMutation>;
+export type DeleteResourceMutationResult = ApolloReactCommon.MutationResult<DeleteResourceMutation>;
+export type DeleteResourceMutationOptions = ApolloReactCommon.BaseMutationOptions<DeleteResourceMutation, DeleteResourceMutationVariables>;

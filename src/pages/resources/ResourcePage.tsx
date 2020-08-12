@@ -1,9 +1,10 @@
-import { Box, Skeleton, Stack, Text } from '@chakra-ui/core';
+import { Box, Button, Skeleton, Stack, Text } from '@chakra-ui/core';
 import gql from 'graphql-tag';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
+import { Access } from '../../components/auth/Access';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
-import { InternalLink } from '../../components/navigation/InternalLink';
+import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { CoveredConceptsSelector } from '../../components/resources/CoveredConceptsSelector';
 import { ResourceCoveredConcepts } from '../../components/resources/ResourceCoveredConcepts';
 import { ResourceMediaTypeBadge } from '../../components/resources/ResourceMediaType';
@@ -14,6 +15,9 @@ import { ConceptData, generateConceptData } from '../../graphql/concepts/concept
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { DomainWithConceptsData, generateDomainData } from '../../graphql/domains/domains.fragments';
 import { generateResourceData, ResourceData } from '../../graphql/resources/resources.fragments';
+import { useDeleteResourceMutation } from '../../graphql/resources/resources.operations.generated';
+import { UserRole } from '../../graphql/types';
+import { useCurrentUser } from '../../graphql/users/users.hooks';
 import {
   GetResourceResourcePageQuery,
   useAddTagsToResourceResourceEditorMutation,
@@ -47,6 +51,9 @@ export const getResourceResourcePage = gql`
   query getResourceResourcePage($id: String!) {
     getResourceById(id: $id) {
       ...ResourceData
+      creator {
+        _id
+      }
       coveredConcepts(options: {}) {
         items {
           ...ConceptData
@@ -86,10 +93,11 @@ const resourceDataPlaceholder: GetResourceResourcePageQuery['getResourceById'] =
 export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) => {
   const { data, loading, error } = useGetResourceResourcePageQuery({ variables: { id: resourceId } });
   const router = useRouter();
+  const { currentUser } = useCurrentUser();
 
   const [addTagsToResource] = useAddTagsToResourceResourceEditorMutation();
   const [removeTagsFromResource] = useRemoveTagsFromResourceResourceEditorMutation();
-
+  const [deleteResource] = useDeleteResourceMutation();
   if (error) return <Box>Resource not found !</Box>;
 
   const resource = data?.getResourceById || resourceDataPlaceholder;
@@ -107,11 +115,31 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
       title={resource.name}
       isLoading={loading}
       renderRight={
-        <RoleAccess accessRule="loggedInUser">
-          <InternalLink routePath="/resources/[_id]/edit" asHref={`${router.asPath}/edit`} isDisabled={loading}>
-            Edit
-          </InternalLink>
-        </RoleAccess>
+        <Stack direction="row" spacing={2} shouldWrapChildren={true}>
+          <RoleAccess accessRule="loggedInUser">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => Router.push(`${router.asPath}/edit`)}
+              isDisabled={loading}
+            >
+              Edit
+            </Button>
+          </RoleAccess>
+          <Access
+            condition={
+              currentUser && (currentUser.role === UserRole.Admin || currentUser._id === resource.creator?._id)
+            }
+          >
+            <DeleteButtonWithConfirmation
+              variant="outline"
+              modalHeaderText="Delete Concept"
+              modalBodyText="Confirm deleting this concept ?"
+              isDisabled={loading}
+              onConfirmation={() => deleteResource({ variables: { _id: resourceId } }).then(() => Router.back())}
+            />
+          </Access>
+        </Stack>
       }
     >
       <Stack spacing={2} alignItems="start">

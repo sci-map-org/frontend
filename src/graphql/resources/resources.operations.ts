@@ -36,3 +36,12 @@ export const detachResourceCoversConcepts = gql`
     }
   }
 `;
+
+export const deleteResource = gql`
+  mutation deleteResource($_id: String!) {
+    deleteResource(_id: $_id) {
+      _id
+      success
+    }
+  }
+`;
