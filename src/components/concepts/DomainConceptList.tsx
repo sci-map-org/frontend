@@ -28,10 +28,11 @@ export const setConceptsUnknown = gql`
   ${ConceptData}
 `;
 
-export const DomainConceptList: React.FC<{ domain: DomainWithConceptsDataFragment; isLoading?: boolean }> = ({
-  domain,
-  isLoading,
-}) => {
+export const DomainConceptList: React.FC<{
+  domain: DomainWithConceptsDataFragment;
+  isLoading?: boolean;
+  onConceptToggled: (conceptId: string) => void;
+}> = ({ domain, isLoading, onConceptToggled }) => {
   const { currentUser } = useCurrentUser();
   const [setConceptKnown] = useSetConceptsKnownMutation();
   const [setConceptUnknown] = useSetConceptsUnknownMutation();
@@ -55,6 +56,7 @@ export const DomainConceptList: React.FC<{ domain: DomainWithConceptsDataFragmen
     } else {
       await setConceptUnknown({ variables: { conceptIds: [concept._id] } });
     }
+    onConceptToggled(concept._id);
   };
   if (!domainConceptItems) return null;
   return (

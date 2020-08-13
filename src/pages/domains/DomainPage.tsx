@@ -1,6 +1,7 @@
-import { Box, Flex, Heading, Link, Stack, Text, Skeleton } from '@chakra-ui/core';
+import { Box, Flex, Heading, Link, Skeleton, Stack, Text } from '@chakra-ui/core';
 import gql from 'graphql-tag';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 import { DomainConceptList } from '../../components/concepts/DomainConceptList';
 import { BreadcrumbLink } from '../../components/layout/NavigationBreadcrumbs';
 import { PageLayout } from '../../components/layout/PageLayout';
@@ -10,9 +11,9 @@ import { DomainRecommendedResources } from '../../components/resources/DomainRec
 import { ConceptData, generateConceptData } from '../../graphql/concepts/concepts.fragments';
 import { DomainData, generateDomainData } from '../../graphql/domains/domains.fragments';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
-import { ResourcePreviewData, generateResourcePreviewData } from '../../graphql/resources/resources.fragments';
+import { generateResourcePreviewData, ResourcePreviewData } from '../../graphql/resources/resources.fragments';
 import { useMockedFeaturesEnabled } from '../../hooks/useMockedFeaturesEnabled';
-import { useGetDomainByKeyDomainPageQuery, GetDomainByKeyDomainPageQuery } from './DomainPage.generated';
+import { GetDomainByKeyDomainPageQuery, useGetDomainByKeyDomainPageQuery } from './DomainPage.generated';
 
 export const DomainPagePath = (domainKey: string) => `/domains/${domainKey}`;
 
@@ -73,7 +74,8 @@ const placeholderDomainData: GetDomainByKeyDomainPageQuery['getDomainByKey'] = {
 
 export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
   const router = useRouter();
-  const { data, error, loading } = useGetDomainByKeyDomainPageQuery({ variables: { key: domainKey } });
+  const { data, error, loading, refetch } = useGetDomainByKeyDomainPageQuery({ variables: { key: domainKey } });
+  const [reloading, setReloading] = useState(false);
   const domain = data?.getDomainByKey || placeholderDomainData;
   const { mockedFeaturesEnabled } = useMockedFeaturesEnabled();
   if (error) return <Box>Domain not found !</Box>;
@@ -117,22 +119,27 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
           {domain.description}
         </Box>
       )}
-      {/* <Box mb={4}>
-        <NextLink href={`${router.asPath}/resources`}>
-          <Link>All Resources </Link>
-        </NextLink> */}
-      {/* |
-        <NextLink href={`${router.asPath}/concepts`}>
-          <Link> Detailed Concept List</Link>
-        </NextLink> */}
-      {/* </Box> */}
       <Flex direction="row">
         <Flex direction="column" flexShrink={0}>
-          <DomainConceptList domain={domain} isLoading={loading} />
+          <DomainConceptList
+            domain={domain}
+            isLoading={loading}
+            onConceptToggled={async () => {
+              setReloading(true);
+              await refetch();
+              setReloading(false);
+            }}
+          />
         </Flex>
         {domain.resources && (
           <Flex direction="column" flexShrink={1} flexGrow={1}>
-            <DomainRecommendedResources domain={domain} resourcePreviews={domain.resources.items} isLoading={loading} />
+            <DomainRecommendedResources
+              domain={domain}
+              resourcePreviews={domain.resources.items}
+              isLoading={loading}
+              isReloading={reloading}
+            />
+
             {mockedFeaturesEnabled && <DomainLearningPaths domain={domain} />}
           </Flex>
         )}
@@ -169,20 +176,6 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
           </Stack>
         )}
       </Flex>
-      {/* <Box>
-        <Box mb={4}>
-          <Text fontSize="2xl">Resources</Text>
-          <Box mt={2}>
-            <ResourceList domainKey={domain.key} />
-          </Box>
-        </Box>
-        <Box mb={4}>
-          <Text fontSize="2xl">Concepts</Text>
-          <Box mt={2}>
-            <ConceptList domainKey={domain.key} />
-          </Box>
-        </Box>
-      </Box> */}
     </PageLayout>
   );
 };
