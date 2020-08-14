@@ -23,6 +23,7 @@ import {
   useToast,
 } from '@chakra-ui/core';
 import gql from 'graphql-tag';
+import { useSetConceptsKnownMutation } from '../../graphql/concepts/concepts.operations.generated';
 import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { useVoteResourceMutation } from '../../graphql/resources/resources.operations.generated';
@@ -37,7 +38,7 @@ import { ResourceTypeBadge } from './ResourceType';
 import { ResourceUrlLink } from './ResourceUrl';
 
 const shortenDescription = (description: string, maxLength = 200) => {
-  return description.length > 200 ? description.slice(0, 200) + '...' : description;
+  return description.length > maxLength ? description.slice(0, maxLength) + '...' : description;
 };
 
 export const setResourceConsumed = gql`
@@ -62,7 +63,15 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
   isLoading,
 }) => {
   const { mockedFeaturesEnabled } = useMockedFeaturesEnabled();
-  const [setResourceConsumed] = useSetResourceConsumedMutation();
+  const [setConceptKnown] = useSetConceptsKnownMutation();
+  const [setResourceConsumed] = useSetResourceConsumedMutation({
+    async onCompleted() {
+      if (!resource.coveredConcepts) return;
+      await setConceptKnown({
+        variables: { payload: { concepts: resource.coveredConcepts.items.map(({ _id }) => ({ conceptId: _id })) } },
+      });
+    },
+  });
   const [voteResource] = useVoteResourceMutation();
   const checkedResourceToast = useToast();
   const { currentUser } = useCurrentUser();

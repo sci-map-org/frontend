@@ -327,8 +327,19 @@ export type ConceptBelongsToDomain = {
 };
 
 export type DomainResourcesOptions = {
+  sorting?: Maybe<DomainResourcesSortingOptions>;
   pagination: PaginationOptions;
 };
+
+export type DomainResourcesSortingOptions = {
+  type: DomainResourcesSortingType;
+  direction: SortingDirection;
+};
+
+export enum DomainResourcesSortingType {
+  Relevance = 'relevance',
+  CreationDate = 'creation_date'
+}
 
 export type DomainResourcesResults = {
   __typename?: 'DomainResourcesResults';

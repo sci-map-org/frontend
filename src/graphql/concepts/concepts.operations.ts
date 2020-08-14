@@ -58,3 +58,21 @@ export const getConceptByKey = gql`
   ${ConceptData}
   ${ResourcePreviewData}
 `;
+
+export const setConceptsKnown = gql`
+  mutation setConceptsKnown($payload: SetConceptKnownPayload!) {
+    setConceptsKnown(payload: $payload) {
+      ...ConceptData
+    }
+  }
+  ${ConceptData}
+`;
+
+export const setConceptsUnknown = gql`
+  mutation setConceptsUnknown($conceptIds: [String!]!) {
+    setConceptsUnknown(conceptIds: $conceptIds) {
+      ...ConceptData
+    }
+  }
+  ${ConceptData}
+`;

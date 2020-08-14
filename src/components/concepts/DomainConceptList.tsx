@@ -1,32 +1,15 @@
 import { Box, Checkbox, Flex, IconButton, Skeleton, Stack } from '@chakra-ui/core';
-import gql from 'graphql-tag';
 import Router from 'next/router';
-import { ConceptData } from '../../graphql/concepts/concepts.fragments';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
+import {
+  useSetConceptsKnownMutation,
+  useSetConceptsUnknownMutation,
+} from '../../graphql/concepts/concepts.operations.generated';
 import { DomainWithConceptsDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import { InternalLink } from '../navigation/InternalLink';
-import { useSetConceptsKnownMutation, useSetConceptsUnknownMutation } from './DomainConceptList.generated';
-
-export const setConceptsKnown = gql`
-  mutation setConceptsKnown($payload: SetConceptKnownPayload!) {
-    setConceptsKnown(payload: $payload) {
-      ...ConceptData
-    }
-  }
-  ${ConceptData}
-`;
-
-export const setConceptsUnknown = gql`
-  mutation setConceptsUnknown($conceptIds: [String!]!) {
-    setConceptsUnknown(conceptIds: $conceptIds) {
-      ...ConceptData
-    }
-  }
-  ${ConceptData}
-`;
 
 export const DomainConceptList: React.FC<{
   domain: DomainWithConceptsDataFragment;
