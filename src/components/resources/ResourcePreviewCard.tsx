@@ -64,14 +64,19 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
 }) => {
   const { mockedFeaturesEnabled } = useMockedFeaturesEnabled();
   const [setConceptKnown] = useSetConceptsKnownMutation();
-  const [setResourceConsumed] = useSetResourceConsumedMutation({
-    async onCompleted() {
-      if (!resource.coveredConcepts) return;
-      await setConceptKnown({
-        variables: { payload: { concepts: resource.coveredConcepts.items.map(({ _id }) => ({ conceptId: _id })) } },
-      });
-    },
-  });
+  const [setResourceConsumedMutation] = useSetResourceConsumedMutation();
+  const setResourceConsumed = async (consumed: boolean) => {
+    await setResourceConsumedMutation({
+      variables: {
+        resourceId: resource._id,
+        consumed,
+      },
+    });
+    if (!resource.coveredConcepts || !consumed) return;
+    await setConceptKnown({
+      variables: { payload: { concepts: resource.coveredConcepts.items.map(({ _id }) => ({ conceptId: _id })) } },
+    });
+  };
   const [voteResource] = useVoteResourceMutation();
   const checkedResourceToast = useToast();
   const { currentUser } = useCurrentUser();
@@ -198,12 +203,7 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
             onChange={async (e) => {
               if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
               const setResourceConsumedValue = !resource.consumed || !resource.consumed.consumedAt;
-              await setResourceConsumed({
-                variables: {
-                  resourceId: resource._id,
-                  consumed: setResourceConsumedValue,
-                },
-              });
+              await setResourceConsumed(setResourceConsumedValue);
               checkedResourceToast({
                 render: ({ onClose, id }) => (
                   <Alert
@@ -225,14 +225,7 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
                           ml={6}
                           size="sm"
                           variant="outline"
-                          onClick={() =>
-                            setResourceConsumed({
-                              variables: {
-                                resourceId: resource._id,
-                                consumed: !setResourceConsumedValue,
-                              },
-                            }).then(() => onClose())
-                          }
+                          onClick={() => setResourceConsumed(!setResourceConsumedValue).then(() => onClose())}
                         >
                           Undo
                         </Button>
