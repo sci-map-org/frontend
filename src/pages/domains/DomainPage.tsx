@@ -78,6 +78,11 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
   const [reloading, setReloading] = useState(false);
   const domain = data?.getDomainByKey || placeholderDomainData;
   const { mockedFeaturesEnabled } = useMockedFeaturesEnabled();
+  const reloadRecommendedResources = async () => {
+    setReloading(true);
+    await refetch();
+    setReloading(false);
+  };
   if (error) return <Box>Domain not found !</Box>;
 
   return (
@@ -121,15 +126,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
       )}
       <Flex direction="row">
         <Flex direction="column" flexShrink={0}>
-          <DomainConceptList
-            domain={domain}
-            isLoading={loading}
-            onConceptToggled={async () => {
-              setReloading(true);
-              await refetch();
-              setReloading(false);
-            }}
-          />
+          <DomainConceptList domain={domain} isLoading={loading} onConceptToggled={reloadRecommendedResources} />
         </Flex>
         {domain.resources && (
           <Flex direction="column" flexShrink={1} flexGrow={1}>
@@ -138,6 +135,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
               resourcePreviews={domain.resources.items}
               isLoading={loading}
               isReloading={reloading}
+              reloadRecommendedResources={reloadRecommendedResources}
             />
 
             {mockedFeaturesEnabled && <DomainLearningPaths domain={domain} />}

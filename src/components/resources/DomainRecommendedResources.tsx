@@ -10,7 +10,8 @@ export const DomainRecommendedResources: React.FC<{
   resourcePreviews: ResourcePreviewDataFragment[];
   isLoading: boolean;
   isReloading: boolean;
-}> = ({ domain, resourcePreviews, isLoading, isReloading }) => {
+  reloadRecommendedResources: () => void;
+}> = ({ domain, resourcePreviews, isLoading, isReloading, reloadRecommendedResources }) => {
   const [showCheckedResources, setShowCheckedResources] = useState(false);
   return (
     <Flex direction="column" mb={4}>
@@ -37,6 +38,7 @@ export const DomainRecommendedResources: React.FC<{
           (r) => !!showCheckedResources || !r.consumed || !r.consumed.consumedAt
         )}
         isLoading={isLoading}
+        onResourceConsumed={() => reloadRecommendedResources()}
       />
     </Flex>
   );

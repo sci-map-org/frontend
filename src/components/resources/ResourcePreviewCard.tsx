@@ -53,7 +53,7 @@ export const setResourceConsumed = gql`
 interface ResourcePreviewCardProps {
   domainKey: string;
   resource: ResourcePreviewDataFragment;
-  onResourceConsumed?: (resource: ResourcePreviewDataFragment) => void;
+  onResourceConsumed: (resource: ResourcePreviewDataFragment, consumed: boolean) => void;
   isLoading?: boolean;
 }
 export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
@@ -237,7 +237,7 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
                 position: 'bottom-left',
                 duration: 3000,
               });
-              onResourceConsumed && onResourceConsumed(resource);
+              onResourceConsumed && onResourceConsumed(resource, setResourceConsumedValue);
             }}
           />
         </Tooltip>
@@ -250,12 +250,19 @@ export const ResourcePreviewCardList: React.FC<{
   domainKey: string;
   resourcePreviews?: ResourcePreviewDataFragment[];
   isLoading?: boolean;
-}> = ({ resourcePreviews, domainKey, isLoading }) => {
+  onResourceConsumed: (resource: ResourcePreviewDataFragment, consumed: boolean) => void;
+}> = ({ resourcePreviews, domainKey, isLoading, onResourceConsumed }) => {
   if (!resourcePreviews || !resourcePreviews.length) return null;
   return (
     <Box borderTop="1px solid" borderTopColor="gray.200" width="100%" backgroundColor="backgroundColor.0">
       {resourcePreviews.map((preview) => (
-        <ResourcePreviewCard key={preview._id} domainKey={domainKey} resource={preview} isLoading={isLoading} />
+        <ResourcePreviewCard
+          key={preview._id}
+          domainKey={domainKey}
+          resource={preview}
+          isLoading={isLoading}
+          onResourceConsumed={onResourceConsumed}
+        />
       ))}
     </Box>
   );
