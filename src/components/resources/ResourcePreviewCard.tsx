@@ -53,7 +53,7 @@ export const setResourceConsumed = gql`
 interface ResourcePreviewCardProps {
   domainKey: string;
   resource: ResourcePreviewDataFragment;
-  onResourceConsumed: (resource: ResourcePreviewDataFragment, consumed: boolean) => void;
+  onResourceConsumed?: (resource: ResourcePreviewDataFragment, consumed: boolean) => void;
   isLoading?: boolean;
 }
 export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
