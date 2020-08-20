@@ -99,7 +99,7 @@ export const LandingPage: React.FC = () => (
           Functional Programming
         </InternalLink>
         . The first version of the product consists of a recommendation feed of external learning resources, based on a
-        mapping of the dependencies between concepts and the prior knowledge of the learner. Our first goal is to
+        mapping of the dependencies between concepts and the current knowledge of the learner. Our first goal is to
         support learners by indexing free external learning resources and serving it in a valuable way (recommendations,
         learning paths, etc.). We then plan to integrate feedback, develop social features, and drive contributions
         towards user-generated content.
