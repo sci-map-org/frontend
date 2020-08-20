@@ -250,7 +250,7 @@ export const ResourcePreviewCardList: React.FC<{
   domainKey: string;
   resourcePreviews?: ResourcePreviewDataFragment[];
   isLoading?: boolean;
-  onResourceConsumed: (resource: ResourcePreviewDataFragment, consumed: boolean) => void;
+  onResourceConsumed?: (resource: ResourcePreviewDataFragment, consumed: boolean) => void;
 }> = ({ resourcePreviews, domainKey, isLoading, onResourceConsumed }) => {
   if (!resourcePreviews || !resourcePreviews.length) return null;
   return (
