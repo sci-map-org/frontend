@@ -15,12 +15,22 @@ export const LandingPage: React.FC = () => (
       <Text>
         <b>Sci-map.org</b> is a community-based, nonprofit project aiming to reshape online learning by providing a
         free, personalized learning experience for any topic and allowing learners to explore knowledge intuitively. As
-        of August 2020, it is in a state of semi-private release. You can preview the product by checking out the first
+        of August 2020, it is in a state of semi-private release.
+        {/* You can preview the product by checking out the first
         supported knowledge domain (namely{' '}
         <InternalLink color="blue.500" routePath="/domains/[key]" asHref="/domains/functional_programming">
           Functional Programming
         </InternalLink>
         ) or learn more about the project in the{' '}
+        <InternalLink color="blue.500" routePath="/about" asHref="/about">
+          About section
+        </InternalLink> */}
+        <br />
+        <br />⇒ <b>Preview</b> our first supported domain:{' '}
+        <InternalLink color="blue.500" routePath="/domains/[key]" asHref="/domains/functional_programming">
+          Functional Programming
+        </InternalLink>
+        <br />⇒ <b>Learn more</b> about the project in the{' '}
         <InternalLink color="blue.500" routePath="/about" asHref="/about">
           About section
         </InternalLink>
