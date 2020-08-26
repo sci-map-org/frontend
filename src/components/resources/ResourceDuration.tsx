@@ -10,12 +10,22 @@ import {
   PopoverContent,
   PopoverTrigger,
   Stack,
+  Text,
 } from '@chakra-ui/core';
+import humanizeDuration from 'humanize-duration';
 import React, { useCallback, useEffect, useState } from 'react';
 
-export const ResourceDurationMnSelector: React.FC<{
+export const ResourceDuration: React.FC<{ value?: number | null }> = ({ value }) => {
+  return value ? (
+    <Text fontSize="sm" color="gray.400" mb={1}>
+      {humanizeDuration(value, { largest: 2 })}
+    </Text>
+  ) : null;
+};
+
+export const ResourceDurationSelector: React.FC<{
   value?: number | null;
-  onChange: (durationMn: number | null) => void;
+  onChange: (durationMs: number | null) => void;
 }> = ({ value, onChange }) => {
   const [duration, setDuration] = useState(convertFromValue(value, 'ms'));
   const [isValid, setIsValid] = useState(true);

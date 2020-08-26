@@ -7,6 +7,7 @@ import { PageLayout } from '../../components/layout/PageLayout';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { CoveredConceptsSelector } from '../../components/resources/CoveredConceptsSelector';
 import { ResourceCoveredConcepts } from '../../components/resources/ResourceCoveredConcepts';
+import { ResourceDuration } from '../../components/resources/ResourceDuration';
 import { ResourceMediaTypeBadge } from '../../components/resources/ResourceMediaType';
 import { SelectedTagsEditor, SelectedTagsViewer } from '../../components/resources/ResourceTagsEditor';
 import { ResourceTypeBadge } from '../../components/resources/ResourceType';
@@ -145,11 +146,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
       <Stack spacing={2} alignItems="start">
         <Stack direction="row" spacing={2} alignItems="baseline">
           <ResourceUrlLink resource={resource} isLoading={loading} />
-          {resource.durationMn && (
-            <Text fontSize="sm" color="gray.400" mb={1}>
-              {resource.durationMn}mn
-            </Text>
-          )}
+          <ResourceDuration value={resource.durationMs} />
         </Stack>
 
         <Text>{resource.description}</Text>

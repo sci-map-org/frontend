@@ -240,7 +240,7 @@ export type Resource = {
   url: Scalars['String'];
   upvotes?: Maybe<Scalars['Int']>;
   description?: Maybe<Scalars['String']>;
-  durationMn?: Maybe<Scalars['Int']>;
+  durationMs?: Maybe<Scalars['Int']>;
   consumed?: Maybe<ConsumedResource>;
   creator?: Maybe<User>;
   coveredConcepts?: Maybe<ResourceCoveredConceptsResults>;
@@ -646,7 +646,7 @@ export type CreateResourcePayload = {
   mediaType: ResourceMediaType;
   url: Scalars['String'];
   description?: Maybe<Scalars['String']>;
-  durationMn?: Maybe<Scalars['Int']>;
+  durationMs?: Maybe<Scalars['Int']>;
   tags?: Maybe<Array<Scalars['String']>>;
 };
 
@@ -656,7 +656,7 @@ export type UpdateResourcePayload = {
   mediaType?: Maybe<ResourceMediaType>;
   url?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  durationMn?: Maybe<Scalars['Int']>;
+  durationMs?: Maybe<Scalars['Int']>;
 };
 
 export type DeleteResourceResponse = {

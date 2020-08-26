@@ -32,6 +32,7 @@ import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { useMockedFeaturesEnabled } from '../../hooks/useMockedFeaturesEnabled';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import { InternalLink } from '../navigation/InternalLink';
+import { ResourceDuration } from './ResourceDuration';
 import { useSetResourceConsumedMutation } from './ResourcePreviewCard.generated';
 import { SelectedTagsViewer } from './ResourceTagsEditor';
 import { ResourceTypeBadge } from './ResourceType';
@@ -135,11 +136,7 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
             </Text>
             <ResourceUrlLink resource={resource} />
             <ResourceTypeBadge type={resource.type} />
-            {resource.durationMn && (
-              <Text fontSize="sm" color="gray.400" mb={1}>
-                {resource.durationMn}mn
-              </Text>
-            )}
+            <ResourceDuration value={resource.durationMs} />
           </Stack>
         </Skeleton>
         {((resource.tags && resource.tags.length > 0) || resource.description) && (

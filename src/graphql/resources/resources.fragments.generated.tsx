@@ -4,7 +4,7 @@ import { ConceptDataFragment } from '../concepts/concepts.fragments.generated';
 
 export type ResourceDataFragment = (
   { __typename?: 'Resource' }
-  & Pick<Types.Resource, '_id' | 'name' | 'type' | 'mediaType' | 'url' | 'description' | 'durationMn'>
+  & Pick<Types.Resource, '_id' | 'name' | 'type' | 'mediaType' | 'url' | 'description' | 'durationMs'>
   & { tags?: Types.Maybe<Array<(
     { __typename?: 'ResourceTag' }
     & Pick<Types.ResourceTag, 'name'>
@@ -16,7 +16,7 @@ export type ResourceDataFragment = (
 
 export type ResourcePreviewDataFragment = (
   { __typename?: 'Resource' }
-  & Pick<Types.Resource, '_id' | 'name' | 'type' | 'mediaType' | 'url' | 'description' | 'durationMn' | 'upvotes'>
+  & Pick<Types.Resource, '_id' | 'name' | 'type' | 'mediaType' | 'url' | 'description' | 'durationMs' | 'upvotes'>
   & { tags?: Types.Maybe<Array<(
     { __typename?: 'ResourceTag' }
     & Pick<Types.ResourceTag, 'name'>

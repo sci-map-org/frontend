@@ -13,7 +13,7 @@ export const ResourceData = gql`
     mediaType
     url
     description
-    durationMn
+    durationMs
     tags {
       name
     }
@@ -40,7 +40,7 @@ export const ResourcePreviewData = gql`
     mediaType
     url
     description
-    durationMn
+    durationMs
     tags {
       name
     }

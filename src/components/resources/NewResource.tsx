@@ -6,7 +6,7 @@ import { DomainWithConceptsDataFragment } from '../../graphql/domains/domains.fr
 import { CreateResourcePayload, ResourceMediaType, ResourceTag, ResourceType } from '../../graphql/types';
 import { ConceptSelector } from '../concepts/ConceptSelector';
 import { ResourceDescriptionInput } from './ResourceDescription';
-import { ResourceDurationMnSelector } from './ResourceDuration';
+import { ResourceDurationSelector } from './ResourceDuration';
 import { ResourceMediaTypeSelector } from './ResourceMediaType';
 import { SelectedTagsEditor } from './ResourceTagsEditor';
 import { ResourceTypeSelector } from './ResourceType';
@@ -23,7 +23,7 @@ export const NewResource: React.FC<NewResourceProps> = ({ domain, onCreate }) =>
   const [type, setType] = useState<ResourceType>(ResourceType.Article);
   const [url, setUrl] = useState('');
   const [description, setDescription] = useState<string | undefined>(undefined);
-  const [durationMn, setDurationMn] = useState<number | null>();
+  const [durationMs, setDurationMs] = useState<number | null>();
   const [selectedCoveredConcepts, setSelectedCoveredConcepts] = useState<ConceptDataFragment[]>([]);
 
   const [selectedTags, setSelectedTags] = useState<ResourceTag[]>([]);
@@ -38,7 +38,7 @@ export const NewResource: React.FC<NewResourceProps> = ({ domain, onCreate }) =>
       <SelectedTagsEditor selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
       <Flex direction="row" alignItems="center" justifyContent="space-between">
         <ResourceMediaTypeSelector value={mediaType} onSelect={(t) => setMediaType(t)} />
-        <ResourceDurationMnSelector value={durationMn} onChange={setDurationMn} />
+        <ResourceDurationSelector value={durationMs} onChange={setDurationMs} />
       </Flex>
       <ResourceDescriptionInput value={description} onChange={(d) => setDescription(d)} />
       {domain && domain.concepts && (
@@ -83,7 +83,7 @@ export const NewResource: React.FC<NewResourceProps> = ({ domain, onCreate }) =>
                 type,
                 mediaType,
                 url,
-                durationMn,
+                durationMs,
                 tags: selectedTags.map((t) => t.name),
               },
               selectedCoveredConcepts.map((c) => c._id)

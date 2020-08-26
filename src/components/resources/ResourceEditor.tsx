@@ -4,7 +4,7 @@ import { UpdateResourcePayload } from '../../graphql/types';
 import { GetResourceEditResourcePageQuery } from '../../pages/resources/EditResourcePage.generated';
 import { InternalLink } from '../navigation/InternalLink';
 import { ResourceDescriptionInput } from './ResourceDescription';
-import { ResourceDurationMnSelector } from './ResourceDuration';
+import { ResourceDurationSelector } from './ResourceDuration';
 import { ResourceMediaTypeSelector } from './ResourceMediaType';
 import { ResourceTypeSelector } from './ResourceType';
 import { ResourceUrlInput } from './ResourceUrl';
@@ -20,7 +20,7 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
   const [type, setType] = useState(resource.type);
 
   const [url, setUrl] = useState(resource.url);
-  const [durationMn, setDurationMn] = useState(resource.durationMn);
+  const [durationMs, setDurationMs] = useState(resource.durationMs);
   const [description, setDescription] = useState(resource.description || undefined);
 
   if (!resource.domains) return null;
@@ -47,7 +47,7 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
       <Flex flexDirection="row">
         <ResourceMediaTypeSelector value={mediaType} onSelect={(t) => setMediaType(t)} />
         <Box flexGrow={1}></Box>
-        <ResourceDurationMnSelector value={durationMn} onChange={setDurationMn} />
+        <ResourceDurationSelector value={durationMs} onChange={setDurationMs} />
       </Flex>
       <ResourceDescriptionInput value={description} onChange={(d) => setDescription(d)} />
       {resource.domains && (
@@ -72,7 +72,7 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
             type,
             url,
             description,
-            durationMn,
+            durationMs,
           })
         }
       >
