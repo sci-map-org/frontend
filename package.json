@@ -39,6 +39,7 @@
     "@zeit/next-css": "^1.0.1",
     "apollo-boost": "^0.4.9",
     "apollo-link-context": "^1.0.19",
+    "cloudwatch-front-logger": "^0.0.10",
     "cookie": "^0.4.1",
     "cross-fetch": "^3.0.5",
     "emotion-theming": "^10.0.27",
