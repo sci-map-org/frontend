@@ -47,7 +47,7 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
       <Flex flexDirection="row">
         <ResourceMediaTypeSelector value={mediaType} onSelect={(t) => setMediaType(t)} />
         <Box flexGrow={1}></Box>
-        <ResourceDurationMnSelector value={durationMn} onChange={(v) => setDurationMn(v)} />
+        <ResourceDurationMnSelector value={durationMn} onChange={setDurationMn} />
       </Flex>
       <ResourceDescriptionInput value={description} onChange={(d) => setDescription(d)} />
       {resource.domains && (

@@ -19,10 +19,11 @@ export const ResourceMediaTypeSelector: React.FC<{
 }> = ({ onSelect, value }) => {
   return (
     <FormControl display="flex" flexDirection="row" alignItems="baseline" isRequired isInvalid={!value}>
-      <FormLabel htmlFor="type" whiteSpace="nowrap">
+      <FormLabel htmlFor="media_type" whiteSpace="nowrap">
         Media Type
       </FormLabel>
       <Select
+        id="media_type"
         placeholder="Select Media Type"
         value={value}
         onChange={(e) => onSelect(e.target.value as ResourceMediaType)}

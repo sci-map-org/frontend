@@ -38,10 +38,7 @@ export const NewResource: React.FC<NewResourceProps> = ({ domain, onCreate }) =>
       <SelectedTagsEditor selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
       <Flex direction="row" alignItems="center" justifyContent="space-between">
         <ResourceMediaTypeSelector value={mediaType} onSelect={(t) => setMediaType(t)} />
-        <ResourceDurationMnSelector
-          value={durationMn}
-          onChange={(duration?: number | null) => setDurationMn(duration)}
-        />
+        <ResourceDurationMnSelector value={durationMn} onChange={setDurationMn} />
       </Flex>
       <ResourceDescriptionInput value={description} onChange={(d) => setDescription(d)} />
       {domain && domain.concepts && (
