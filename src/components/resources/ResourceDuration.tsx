@@ -5,12 +5,9 @@ import {
   Input,
   InputGroup,
   InputRightElement,
-  Popover,
-  PopoverBody,
-  PopoverContent,
-  PopoverTrigger,
   Stack,
   Text,
+  Tooltip,
 } from '@chakra-ui/core';
 import humanizeDuration from 'humanize-duration';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -29,6 +26,11 @@ export const ResourceDurationSelector: React.FC<{
 }> = ({ value, onChange }) => {
   const [duration, setDuration] = useState(convertFromValue(value, 'ms'));
   const [isValid, setIsValid] = useState(true);
+  const [showTooltip, setShowTooltip] = useState(false);
+
+  useEffect(() => {
+    setShowTooltip(!isValid);
+  }, [isValid]);
 
   useEffect(() => {
     if (value) {
@@ -51,10 +53,10 @@ export const ResourceDurationSelector: React.FC<{
       if (newValue === null || !isNaN(newValue)) {
         onChange(newValue);
       } else {
-        setDuration(value ? convertFromValue(value, 'ms') : convertFromValue(10, 'm'));
+        setDuration(convertFromValue(value, 'ms'));
       }
     },
-    [onChange]
+    [onChange, value]
   );
 
   return (
@@ -71,21 +73,21 @@ export const ResourceDurationSelector: React.FC<{
             onChange={onInputChange}
             onBlur={onBlur}
           />
-          {!isValid && (
-            <InputRightElement>
-              <Popover trigger="hover">
-                <PopoverTrigger>
-                  <Icon name="question" color="red.500" />
-                </PopoverTrigger>
-                <PopoverContent width="300px" zIndex={4}>
-                  <PopoverBody color="red.500">
-                    <Icon name="warning" color="red.500" size="18px" mr={1} />
-                    Please enter a duration following this format: <b>#w #d #h #m #ms</b>
-                  </PopoverBody>
-                </PopoverContent>
-              </Popover>
-            </InputRightElement>
-          )}
+
+          <InputRightElement>
+            <Tooltip
+              isOpen={showTooltip}
+              hasArrow
+              aria-label="format: #w #d #h #m #s"
+              label="Please use the following format: #w #d #h #m #s"
+              placement="top"
+              {...(!isValid && { bg: 'red.500' })}
+              onOpen={() => setShowTooltip(true)}
+              onClose={() => setShowTooltip(false)}
+            >
+              <Icon name="question" color={isValid ? 'grey.700' : 'red.500'} />
+            </Tooltip>
+          </InputRightElement>
         </InputGroup>
       </Stack>
     </FormControl>
