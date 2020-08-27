@@ -14,6 +14,7 @@ export const ResourceData = gql`
     url
     description
     durationMs
+    rating
     tags {
       name
     }
@@ -54,6 +55,7 @@ export const ResourcePreviewData = gql`
       }
     }
     upvotes
+    rating
   }
   ${ConceptData}
 `;

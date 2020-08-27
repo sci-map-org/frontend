@@ -25,6 +25,7 @@ import {
   useGetResourceResourcePageQuery,
   useRemoveTagsFromResourceResourceEditorMutation,
 } from './ResourcePage.generated';
+import { ResourceStarsRatingSelector, ResourceStarsRating } from '../../components/resources/ResourceStarsRating';
 
 export const addTagsToResourceResourceEditor = gql`
   mutation addTagsToResourceResourceEditor($resourceId: String!, $tags: [String!]!) {
@@ -147,7 +148,11 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
         <Stack direction="row" spacing={2} alignItems="baseline">
           <ResourceUrlLink resource={resource} isLoading={loading} />
           <ResourceDuration value={resource.durationMs} />
+          <ResourceStarsRating value={resource.rating} />
         </Stack>
+        <RoleAccess accessRule="admin">
+          <ResourceStarsRatingSelector resourceId={resource._id} />
+        </RoleAccess>
 
         <Text>{resource.description}</Text>
 
