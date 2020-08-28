@@ -17,7 +17,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 export const ResourceDuration: React.FC<{ value?: number | null }> = ({ value }) => {
   return value ? (
-    <Text fontSize="sm" color="gray.400" mb={1}>
+    <Text fontSize="sm" color="gray.400" mb={1} pr={1}>
       {humanizeDuration(value, { largest: 2 })}
     </Text>
   ) : null;

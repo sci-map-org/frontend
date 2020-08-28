@@ -9,6 +9,7 @@ import { CoveredConceptsSelector } from '../../components/resources/CoveredConce
 import { ResourceCoveredConcepts } from '../../components/resources/ResourceCoveredConcepts';
 import { ResourceDuration } from '../../components/resources/ResourceDuration';
 import { ResourceMediaTypeBadge } from '../../components/resources/ResourceMediaType';
+import { ResourceStarsRater, ResourceStarsRating } from '../../components/resources/ResourceStarsRating';
 import { SelectedTagsEditor, SelectedTagsViewer } from '../../components/resources/ResourceTagsEditor';
 import { ResourceTypeBadge } from '../../components/resources/ResourceType';
 import { ResourceUrlLink } from '../../components/resources/ResourceUrl';
@@ -25,7 +26,6 @@ import {
   useGetResourceResourcePageQuery,
   useRemoveTagsFromResourceResourceEditorMutation,
 } from './ResourcePage.generated';
-import { ResourceStarsRatingSelector, ResourceStarsRating } from '../../components/resources/ResourceStarsRating';
 
 export const addTagsToResourceResourceEditor = gql`
   mutation addTagsToResourceResourceEditor($resourceId: String!, $tags: [String!]!) {
@@ -150,9 +150,11 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
           <ResourceDuration value={resource.durationMs} />
           <ResourceStarsRating value={resource.rating} />
         </Stack>
-        <RoleAccess accessRule="admin">
-          <ResourceStarsRatingSelector resourceId={resource._id} />
-        </RoleAccess>
+        <Stack direction="row" spacing={2} shouldWrapChildren alignItems="flex-end">
+          <RoleAccess accessRule="admin">
+            <ResourceStarsRater resourceId={resource._id} />
+          </RoleAccess>
+        </Stack>
 
         <Text>{resource.description}</Text>
 
