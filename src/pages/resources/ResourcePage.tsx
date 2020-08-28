@@ -9,6 +9,7 @@ import { CoveredConceptsSelector } from '../../components/resources/CoveredConce
 import { ResourceCoveredConcepts } from '../../components/resources/ResourceCoveredConcepts';
 import { ResourceDuration } from '../../components/resources/ResourceDuration';
 import { ResourceMediaTypeBadge } from '../../components/resources/ResourceMediaType';
+import { ResourceStarsRater, ResourceStarsRating } from '../../components/resources/ResourceStarsRating';
 import { SelectedTagsEditor, SelectedTagsViewer } from '../../components/resources/ResourceTagsEditor';
 import { ResourceTypeBadge } from '../../components/resources/ResourceType';
 import { ResourceUrlLink } from '../../components/resources/ResourceUrl';
@@ -147,6 +148,12 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
         <Stack direction="row" spacing={2} alignItems="baseline">
           <ResourceUrlLink resource={resource} isLoading={loading} />
           <ResourceDuration value={resource.durationMs} />
+          <ResourceStarsRating value={resource.rating} />
+        </Stack>
+        <Stack direction="row" spacing={2} shouldWrapChildren alignItems="flex-end">
+          <RoleAccess accessRule="admin">
+            <ResourceStarsRater resourceId={resource._id} />
+          </RoleAccess>
         </Stack>
 
         <Text>{resource.description}</Text>

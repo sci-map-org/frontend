@@ -34,6 +34,7 @@ import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import { InternalLink } from '../navigation/InternalLink';
 import { ResourceDuration } from './ResourceDuration';
 import { useSetResourceConsumedMutation } from './ResourcePreviewCard.generated';
+import { ResourceStarsRating } from './ResourceStarsRating';
 import { SelectedTagsViewer } from './ResourceTagsEditor';
 import { ResourceTypeBadge } from './ResourceType';
 import { ResourceUrlLink } from './ResourceUrl';
@@ -137,6 +138,7 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
             <ResourceUrlLink resource={resource} />
             <ResourceTypeBadge type={resource.type} />
             <ResourceDuration value={resource.durationMs} />
+            <ResourceStarsRating value={resource.rating} pxSize={15} />
           </Stack>
         </Skeleton>
         {((resource.tags && resource.tags.length > 0) || resource.description) && (

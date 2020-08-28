@@ -239,6 +239,7 @@ export type Resource = {
   tags?: Maybe<Array<ResourceTag>>;
   url: Scalars['String'];
   upvotes?: Maybe<Scalars['Int']>;
+  rating?: Maybe<Scalars['Float']>;
   description?: Maybe<Scalars['String']>;
   durationMs?: Maybe<Scalars['Int']>;
   consumed?: Maybe<ConsumedResource>;
@@ -382,6 +383,7 @@ export type Mutation = {
   detachResourceCoversConcepts: Resource;
   setResourcesConsumed: Array<Resource>;
   voteResource: Resource;
+  rateResource: Resource;
   addConceptToDomain: Concept;
   updateConcept: Concept;
   deleteConcept: DeleteConceptResult;
@@ -519,6 +521,12 @@ export type MutationSetResourcesConsumedArgs = {
 export type MutationVoteResourceArgs = {
   resourceId: Scalars['String'];
   value: ResourceVoteValue;
+};
+
+
+export type MutationRateResourceArgs = {
+  resourceId: Scalars['String'];
+  value: Scalars['Float'];
 };
 
 
