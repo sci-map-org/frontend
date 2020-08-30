@@ -1,6 +1,5 @@
 import * as Types from '../../graphql/types';
 
-import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import * as Operations from './ConceptList';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
@@ -18,33 +17,6 @@ export type UpdateConceptBelongsToDomainIndexMutation = (
   & { updateConceptBelongsToDomain: (
     { __typename?: 'ConceptBelongsToDomain' }
     & Pick<Types.ConceptBelongsToDomain, 'index'>
-  ) }
-);
-
-export type ListDomainConceptsQueryVariables = Exact<{
-  domainKey: Types.Scalars['String'];
-  options: Types.DomainConceptsOptions;
-}>;
-
-
-export type ListDomainConceptsQuery = (
-  { __typename?: 'Query' }
-  & { getDomainByKey: (
-    { __typename?: 'Domain' }
-    & Pick<Types.Domain, '_id' | 'name'>
-    & { concepts?: Types.Maybe<(
-      { __typename?: 'DomainConceptsResults' }
-      & { items: Array<(
-        { __typename?: 'DomainConceptsItem' }
-        & { concept: (
-          { __typename?: 'Concept' }
-          & ConceptDataFragment
-        ), relationship: (
-          { __typename?: 'ConceptBelongsToDomain' }
-          & Pick<Types.ConceptBelongsToDomain, 'index'>
-        ) }
-      )> }
-    )> }
   ) }
 );
 
@@ -76,30 +48,3 @@ export function useUpdateConceptBelongsToDomainIndexMutation(baseOptions?: Apoll
 export type UpdateConceptBelongsToDomainIndexMutationHookResult = ReturnType<typeof useUpdateConceptBelongsToDomainIndexMutation>;
 export type UpdateConceptBelongsToDomainIndexMutationResult = ApolloReactCommon.MutationResult<UpdateConceptBelongsToDomainIndexMutation>;
 export type UpdateConceptBelongsToDomainIndexMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateConceptBelongsToDomainIndexMutation, UpdateConceptBelongsToDomainIndexMutationVariables>;
-
-/**
- * __useListDomainConceptsQuery__
- *
- * To run a query within a React component, call `useListDomainConceptsQuery` and pass it any options that fit your needs.
- * When your component renders, `useListDomainConceptsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useListDomainConceptsQuery({
- *   variables: {
- *      domainKey: // value for 'domainKey'
- *      options: // value for 'options'
- *   },
- * });
- */
-export function useListDomainConceptsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ListDomainConceptsQuery, ListDomainConceptsQueryVariables>) {
-        return ApolloReactHooks.useQuery<ListDomainConceptsQuery, ListDomainConceptsQueryVariables>(Operations.listDomainConcepts, baseOptions);
-      }
-export function useListDomainConceptsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ListDomainConceptsQuery, ListDomainConceptsQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<ListDomainConceptsQuery, ListDomainConceptsQueryVariables>(Operations.listDomainConcepts, baseOptions);
-        }
-export type ListDomainConceptsQueryHookResult = ReturnType<typeof useListDomainConceptsQuery>;
-export type ListDomainConceptsLazyQueryHookResult = ReturnType<typeof useListDomainConceptsLazyQuery>;
-export type ListDomainConceptsQueryResult = ApolloReactCommon.QueryResult<ListDomainConceptsQuery, ListDomainConceptsQueryVariables>;

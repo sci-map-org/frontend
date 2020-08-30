@@ -1,20 +1,20 @@
-import { Box, Editable, EditableInput, EditablePreview, Flex, Stack, Text } from '@chakra-ui/core';
+import { Box, Editable, EditableInput, EditablePreview, Flex, Stack } from '@chakra-ui/core';
 import gql from 'graphql-tag';
 import { useState } from 'react';
-import { ConceptData } from '../../graphql/concepts/concepts.fragments';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
-import {
-  DomainConceptSortingEntities,
-  DomainConceptSortingFields,
-  SortingDirection,
-  UserRole,
-} from '../../graphql/types';
+import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
+import { ConceptBelongsToDomain, UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { InternalLink } from '../navigation/InternalLink';
-import { useListDomainConceptsQuery, useUpdateConceptBelongsToDomainIndexMutation } from './ConceptList.generated';
+import { useUpdateConceptBelongsToDomainIndexMutation } from './ConceptList.generated';
 
 interface ConceptListProps {
-  domainKey: string;
+  domain: DomainDataFragment;
+  domainConceptItems: {
+    concept: ConceptDataFragment;
+    relationship: ConceptBelongsToDomain;
+  }[];
+  onUpdateConceptIndex?: (concept: ConceptDataFragment) => void;
 }
 
 export const updateConceptBelongsToDomainIndex = gql`
@@ -25,61 +25,28 @@ export const updateConceptBelongsToDomainIndex = gql`
   }
 `;
 
-export const listDomainConcepts = gql`
-  query listDomainConcepts($domainKey: String!, $options: DomainConceptsOptions!) {
-    getDomainByKey(key: $domainKey) {
-      _id
-      name
-      concepts(options: $options) {
-        items {
-          concept {
-            ...ConceptData
-          }
-          relationship {
-            index
-          }
-        }
-      }
-    }
-  }
-  ${ConceptData}
-`;
-
-export const ConceptList: React.FC<ConceptListProps> = ({ domainKey }) => {
-  const { data, refetch } = useListDomainConceptsQuery({
-    variables: {
-      domainKey,
-      options: {
-        sorting: {
-          field: DomainConceptSortingFields.Index,
-          entity: DomainConceptSortingEntities.Relationship,
-          direction: SortingDirection.Asc,
-        },
-      },
-    },
-  });
-
+export const ConceptList: React.FC<ConceptListProps> = ({ domain, domainConceptItems, onUpdateConceptIndex }) => {
   const [updateIndex] = useUpdateConceptBelongsToDomainIndexMutation();
 
-  const items = data?.getDomainByKey.concepts?.items;
+  const items = domainConceptItems;
   return (
     <Box borderWidth={1} borderColor="gray.200" borderBottomWidth={0}>
-      {data && items && items.length ? (
+      {items && items.length ? (
         items.map(({ concept, relationship }) => (
           <ConceptListItem
             key={concept._id}
             concept={concept}
             relationship={relationship}
-            domainKey={domainKey}
+            domainKey={domain.key}
             onIndexSubmit={async (index) => {
               await updateIndex({
                 variables: {
-                  domainId: data.getDomainByKey._id,
+                  domainId: domain._id,
                   conceptId: concept._id,
                   index: index,
                 },
               });
-              refetch();
+              onUpdateConceptIndex && onUpdateConceptIndex(concept);
             }}
           />
         ))

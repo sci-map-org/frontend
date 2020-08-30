@@ -2,6 +2,7 @@ import { Box, Flex, Heading, Link, Skeleton, Stack, Text } from '@chakra-ui/core
 import gql from 'graphql-tag';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { HorizontalConceptMappingVisualisation } from '../../components/concepts/ConceptMappingVisualisation';
 import { DomainConceptList } from '../../components/concepts/DomainConceptList';
 import { BreadcrumbLink } from '../../components/layout/NavigationBreadcrumbs';
 import { PageLayout } from '../../components/layout/PageLayout';
@@ -31,6 +32,11 @@ export const getDomainByKeyDomainPage = gql`
         items {
           concept {
             ...ConceptData
+            referencedByConcepts {
+              concept {
+                _id
+              }
+            }
           }
           relationship {
             index
@@ -124,7 +130,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
           {domain.description}
         </Box>
       )}
-      <Flex direction="row">
+      <Flex direction="row" mb="100px">
         <Flex direction="column" flexShrink={0}>
           <DomainConceptList domain={domain} isLoading={loading} onConceptToggled={reloadRecommendedResources} />
         </Flex>
@@ -137,7 +143,9 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
               isReloading={reloading}
               reloadRecommendedResources={reloadRecommendedResources}
             />
-
+            <Flex justifyContent="center">
+              <HorizontalConceptMappingVisualisation concepts={domain.concepts?.items.map((i) => i.concept) || []} />
+            </Flex>
             {mockedFeaturesEnabled && <DomainLearningPaths domain={domain} />}
           </Flex>
         )}

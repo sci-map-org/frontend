@@ -23,6 +23,13 @@ export type GetDomainByKeyDomainPageQuery = (
         { __typename?: 'DomainConceptsItem' }
         & { concept: (
           { __typename?: 'Concept' }
+          & { referencedByConcepts?: Types.Maybe<Array<(
+            { __typename?: 'ConceptReferencesConceptItem' }
+            & { concept: (
+              { __typename?: 'Concept' }
+              & Pick<Types.Concept, '_id'>
+            ) }
+          )>> }
           & ConceptDataFragment
         ), relationship: (
           { __typename?: 'ConceptBelongsToDomain' }

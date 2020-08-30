@@ -13,6 +13,22 @@ export const ConceptData = gql`
   }
 `;
 
+export const ConceptWithDependenciesData = gql`
+  fragment ConceptWithDependenciesData on Concept {
+    _id
+    key
+    name
+    known {
+      level
+    }
+    referencedByConcepts {
+      concept {
+        _id
+      }
+    }
+  }
+`;
+
 export const generateConceptData = (): ConceptDataFragment => ({
   _id: Math.random().toString(),
   key: Math.random().toString(),
