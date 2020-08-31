@@ -16,6 +16,7 @@ export const ConceptMappingVisualisation: React.FC<{
   layoutRankSep?: number;
   layoutNodeSep?: number;
   layoutNodeDimensionsIncludeLabels?: boolean;
+  isLoading?: boolean;
 }> = ({
   concepts,
   direction,
@@ -25,6 +26,7 @@ export const ConceptMappingVisualisation: React.FC<{
   layoutRankSep,
   layoutNodeSep,
   layoutNodeDimensionsIncludeLabels,
+  isLoading,
 }) => {
   const elements = concepts
     .map((concept) => {
@@ -51,42 +53,45 @@ export const ConceptMappingVisualisation: React.FC<{
     nodeSep: layoutNodeSep || 10,
     nodeDimensionsIncludeLabels: layoutNodeDimensionsIncludeLabels || false,
   };
+
   return (
     <Box width={width}>
-      <CytoscapeComponent
-        elements={elements}
-        layout={layout}
-        stylesheet={[
-          {
-            selector: 'node',
-            style: {
-              backgroundColor: (ele) => (ele.data('known') ? 'green' : 'gray'),
-              label: 'data(label)',
-              //   padding: '0px',
+      {!isLoading && (
+        <CytoscapeComponent
+          elements={elements}
+          layout={layout}
+          stylesheet={[
+            {
+              selector: 'node',
+              style: {
+                backgroundColor: (ele) => (ele.data('known') ? 'green' : 'gray'),
+                label: 'data(label)',
+              },
             },
-          },
-          {
-            selector: 'edge',
-            style: {
-              width: 3,
-              'curve-style': 'straight',
-              'line-color': '#ccc',
-              'target-arrow-color': '#ccc',
-              'target-arrow-shape': 'triangle',
+            {
+              selector: 'edge',
+              style: {
+                width: 3,
+                'curve-style': 'straight',
+                'line-color': '#ccc',
+                'target-arrow-color': '#ccc',
+                'target-arrow-shape': 'triangle',
+              },
             },
-          },
-        ]}
-        style={{ width, height }}
-        minZoom={0.4}
-        maxZoom={2}
-      />
+          ]}
+          style={{ width, height }}
+          minZoom={0.4}
+          maxZoom={2}
+        />
+      )}
     </Box>
   );
 };
 
 export const HorizontalConceptMappingVisualisation: React.FC<{
   concepts: ConceptWithDependenciesDataFragment[];
-}> = ({ concepts }) => {
+  isLoading?: boolean;
+}> = ({ concepts, isLoading }) => {
   return (
     <ConceptMappingVisualisation
       direction="LR"
@@ -95,6 +100,7 @@ export const HorizontalConceptMappingVisualisation: React.FC<{
       concepts={concepts}
       layoutNodeSep={40}
       layoutPadding={20}
+      isLoading={isLoading}
     />
   );
 };
@@ -102,7 +108,8 @@ export const HorizontalConceptMappingVisualisation: React.FC<{
 export const VerticalConceptMappingVisualisation: React.FC<{
   concepts: ConceptWithDependenciesDataFragment[];
   width?: string;
-}> = ({ concepts, width }) => {
+  isLoading?: boolean;
+}> = ({ concepts, width, isLoading }) => {
   return (
     <ConceptMappingVisualisation
       direction="TB"
@@ -112,6 +119,7 @@ export const VerticalConceptMappingVisualisation: React.FC<{
       layoutPadding={2}
       layoutNodeSep={6}
       layoutNodeDimensionsIncludeLabels
+      isLoading={isLoading}
     />
   );
 };

@@ -147,7 +147,10 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
               <Text fontSize="3xl" mb={3}>
                 Concept Dependencies
               </Text>
-              <HorizontalConceptMappingVisualisation concepts={domain.concepts?.items.map((i) => i.concept) || []} />
+              <HorizontalConceptMappingVisualisation
+                concepts={domain.concepts?.items.map((i) => i.concept) || []}
+                isLoading={loading}
+              />
             </Flex>
             {mockedFeaturesEnabled && <DomainLearningPaths domain={domain} />}
           </Flex>
