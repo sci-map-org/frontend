@@ -76,7 +76,7 @@ export const ConceptMappingVisualisation: React.FC<{
             },
           },
         ]}
-        style={{ width, height, backgroundColor: 'rgb(250,250,250)' }}
+        style={{ width, height }}
         minZoom={0.4}
         maxZoom={2}
       />

@@ -143,7 +143,10 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
               isReloading={reloading}
               reloadRecommendedResources={reloadRecommendedResources}
             />
-            <Flex justifyContent="center">
+            <Flex justifyContent="center" direction="column" alignItems="center" mt={2}>
+              <Text fontSize="3xl" mb={3}>
+                Concept Dependencies
+              </Text>
               <HorizontalConceptMappingVisualisation concepts={domain.concepts?.items.map((i) => i.concept) || []} />
             </Flex>
             {mockedFeaturesEnabled && <DomainLearningPaths domain={domain} />}

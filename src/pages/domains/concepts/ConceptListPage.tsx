@@ -63,7 +63,7 @@ export const ConceptListPage: React.FC<{ domainKey: string }> = ({ domainKey }) 
       title={domain.name + ' - Concepts'}
       centerChildren
     >
-      <Flex direction="row">
+      <Flex direction="row" mt={4}>
         <Stack spacing={4} width="36rem">
           <Box>
             <ConceptList
