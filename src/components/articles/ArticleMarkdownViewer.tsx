@@ -1,9 +1,9 @@
-import { Heading, Link, List, ListItem, Text } from '@chakra-ui/core';
+import { Flex, Heading, Image, Link, List, ListItem, Stack, Text } from '@chakra-ui/core';
 import { ReactNode } from 'react';
 import ReactMarkdown from 'react-markdown';
 import breaks from 'remark-breaks';
-import { fonts } from '../../theme/theme';
 import { validateUrl } from '../../services/url.service';
+import { fonts } from '../../theme/theme';
 
 type HeadingConfig = {
   fontSize: string;
@@ -65,6 +65,9 @@ export const ArticleMarkdownViewer: React.FC<{ content: string }> = ({ content }
       source={source}
       plugins={[breaks]}
       renderers={{
+        root: ({ children }) => {
+          return <Stack>{children}</Stack>;
+        },
         paragraph: ({ children }) => {
           return (
             <Text fontFamily={fonts.article} fontSize="19px">
@@ -100,6 +103,13 @@ export const ArticleMarkdownViewer: React.FC<{ content: string }> = ({ content }
             <Link href={a.href} isExternal={validateUrl(a.href)} color="blue.500">
               {a.children}
             </Link>
+          );
+        },
+        image: (img: { src: string; alt: string }) => {
+          return (
+            <Flex width="100%" direction="column" alignItems="center">
+              <Image src={img.src} alt={img.alt} />
+            </Flex>
           );
         },
       }}
