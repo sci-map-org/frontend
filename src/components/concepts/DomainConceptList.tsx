@@ -124,7 +124,6 @@ export const DomainConceptListMenuLevel: React.FC<{
   isLoading?: boolean;
   level: number;
 }> = ({ nestedConceptItems, domainKey, onToggle, isLoading, level }) => {
-  console.log(nestedConceptItems);
   return (
     <Stack direction="column" spacing={1} alignItems="flex-start">
       {nestedConceptItems.map((conceptItem) => {
