@@ -214,6 +214,8 @@ export type Concept = {
   known?: Maybe<KnownConcept>;
   referencingConcepts?: Maybe<Array<ConceptReferencesConceptItem>>;
   referencedByConcepts?: Maybe<Array<ConceptReferencesConceptItem>>;
+  subConcepts?: Maybe<Array<ConceptBelongsToConceptItem>>;
+  parentConcepts?: Maybe<Array<ConceptBelongsToConceptItem>>;
 };
 
 
@@ -322,6 +324,17 @@ export type ConceptReferencesConcept = {
   strength: Scalars['Float'];
 };
 
+export type ConceptBelongsToConceptItem = {
+  __typename?: 'ConceptBelongsToConceptItem';
+  concept: Concept;
+  relationship: ConceptBelongsToConcept;
+};
+
+export type ConceptBelongsToConcept = {
+  __typename?: 'ConceptBelongsToConcept';
+  index: Scalars['Float'];
+};
+
 export type ConceptBelongsToDomain = {
   __typename?: 'ConceptBelongsToDomain';
   index: Scalars['Float'];
@@ -392,6 +405,9 @@ export type Mutation = {
   addConceptReferencesConcept: Concept;
   removeConceptReferencesConcept: Concept;
   updateConceptBelongsToDomain: ConceptBelongsToDomain;
+  addConceptBelongsToConcept: Concept;
+  removeConceptBelongsToConcept: Concept;
+  updateConceptBelongsToConcept: Concept;
 };
 
 
@@ -575,6 +591,25 @@ export type MutationUpdateConceptBelongsToDomainArgs = {
   payload: UpdateConceptBelongsToDomainPayload;
 };
 
+
+export type MutationAddConceptBelongsToConceptArgs = {
+  parentConceptId: Scalars['String'];
+  subConceptId: Scalars['String'];
+};
+
+
+export type MutationRemoveConceptBelongsToConceptArgs = {
+  parentConceptId: Scalars['String'];
+  subConceptId: Scalars['String'];
+};
+
+
+export type MutationUpdateConceptBelongsToConceptArgs = {
+  parentConceptId: Scalars['String'];
+  subConceptId: Scalars['String'];
+  payload: UpdateConceptBelongsToConceptPayload;
+};
+
 export type DiscourseSso = {
   sig: Scalars['String'];
   sso: Scalars['String'];
@@ -717,5 +752,9 @@ export type SetConceptKnownPayloadConceptsField = {
 };
 
 export type UpdateConceptBelongsToDomainPayload = {
+  index?: Maybe<Scalars['Float']>;
+};
+
+export type UpdateConceptBelongsToConceptPayload = {
   index?: Maybe<Scalars['Float']>;
 };
