@@ -19,8 +19,10 @@ import { DomainPageInfo } from '../DomainPage';
 import { ConceptListPageInfo } from './ConceptListPage';
 import {
   GetConceptConceptPageQuery,
+  useAddConceptBelongsToConceptMutation,
   useAddConceptReferencesConceptMutation,
   useGetConceptConceptPageQuery,
+  useRemoveConceptBelongsToConceptMutation,
   useRemoveConceptReferencesConceptMutation,
 } from './ConceptPage.generated';
 
@@ -66,6 +68,11 @@ export const getConceptConceptPage = gql`
           ...ConceptData
         }
       }
+      subConcepts {
+        concept {
+          ...ConceptData
+        }
+      }
       coveredByResources(options: {}) {
         items {
           ...ResourcePreviewData
@@ -92,6 +99,11 @@ export const addConceptReferencesConcept = gql`
   mutation addConceptReferencesConcept($conceptId: String!, $referencedConceptId: String!) {
     addConceptReferencesConcept(conceptId: $conceptId, referencedConceptId: $referencedConceptId) {
       _id
+      referencingConcepts {
+        concept {
+          _id
+        }
+      }
     }
   }
 `;
@@ -100,6 +112,37 @@ export const removeConceptReferencesConcept = gql`
   mutation removeConceptReferencesConcept($conceptId: String!, $referencedConceptId: String!) {
     removeConceptReferencesConcept(conceptId: $conceptId, referencedConceptId: $referencedConceptId) {
       _id
+      referencingConcepts {
+        concept {
+          _id
+        }
+      }
+    }
+  }
+`;
+
+export const addConceptBelongsToConcept = gql`
+  mutation addConceptBelongsToConcept($parentConceptId: String!, $subConceptId: String!) {
+    addConceptBelongsToConcept(parentConceptId: $parentConceptId, subConceptId: $subConceptId) {
+      _id
+      subConcepts {
+        concept {
+          _id
+        }
+      }
+    }
+  }
+`;
+
+export const removeConceptBelongsToConcept = gql`
+  mutation removeConceptBelongsToConcept($parentConceptId: String!, $subConceptId: String!) {
+    removeConceptBelongsToConcept(parentConceptId: $parentConceptId, subConceptId: $subConceptId) {
+      _id
+      subConcepts {
+        concept {
+          _id
+        }
+      }
     }
   }
 `;
@@ -117,8 +160,11 @@ export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = 
   const concept = data?.getConceptByKey || conceptPlaceholder;
   const domainConcepts = concept.domain?.concepts?.items.map((item) => item.concept) || [];
   const referencingConcepts = concept.referencingConcepts?.map((item) => item.concept) || [];
+  const subConcepts = concept.subConcepts?.map((item) => item.concept) || [];
   const [addConceptReferencesConceptMutation] = useAddConceptReferencesConceptMutation();
   const [removeConceptReferencesConcept] = useRemoveConceptReferencesConceptMutation();
+  const [addConceptBelongsToConceptMutation] = useAddConceptBelongsToConceptMutation();
+  const [removeConceptBelongsToConceptMutation] = useRemoveConceptBelongsToConceptMutation();
   if (error) return <NotFoundPage />;
   if (!concept.domain) throw new Error('Concept has no domain');
   return (
@@ -159,6 +205,25 @@ export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = 
               onRemove={(conceptToRemove) =>
                 removeConceptReferencesConcept({
                   variables: { conceptId: concept._id, referencedConceptId: conceptToRemove._id },
+                })
+              }
+            />
+          </Box>
+          <Box mt={5}>
+            <ConceptsPicker
+              title="Sub Concepts"
+              pickableConceptList={differenceBy(domainConcepts, subConcepts, [concept], (concept) => {
+                return concept._id;
+              })}
+              pickedConceptList={subConcepts}
+              onSelect={(conceptToAdd) =>
+                addConceptBelongsToConceptMutation({
+                  variables: { parentConceptId: concept._id, subConceptId: conceptToAdd._id },
+                })
+              }
+              onRemove={(conceptToRemove) =>
+                removeConceptBelongsToConceptMutation({
+                  variables: { parentConceptId: concept._id, subConceptId: conceptToRemove._id },
                 })
               }
             />
