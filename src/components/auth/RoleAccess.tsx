@@ -2,7 +2,7 @@ import { Access, AccessProps } from './Access';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { UserRole, CurrentUser } from '../../graphql/types';
 
-type RoleAccessAllowedRule = 'all' | 'loggedInUser' | 'admin' | 'notLoggedInUser';
+type RoleAccessAllowedRule = 'all' | 'loggedInUser' | 'admin' | 'notLoggedInUser' | 'contributorOrAdmin';
 
 const accessRuleMapping: {
   [key in RoleAccessAllowedRule]: (currentUser: CurrentUser | false) => boolean;
@@ -11,6 +11,8 @@ const accessRuleMapping: {
   loggedInUser: (currentUser) => !!currentUser,
   notLoggedInUser: (currentUser) => !currentUser,
   admin: (currentUser) => !!currentUser && currentUser.role === UserRole.Admin,
+  contributorOrAdmin: (currentUser) =>
+    !!currentUser && (currentUser.role === UserRole.Contributor || currentUser.role === UserRole.Admin),
 };
 
 interface RoleAccessProps extends Omit<AccessProps, 'condition'> {
