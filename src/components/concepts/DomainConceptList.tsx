@@ -7,9 +7,9 @@ import {
   useSetConceptsKnownMutation,
   useSetConceptsUnknownMutation,
 } from '../../graphql/concepts/concepts.operations.generated';
-import { UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { GetDomainByKeyDomainPageQuery } from '../../pages/domains/DomainPage.generated';
+import { RoleAccess } from '../auth/RoleAccess';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import { InternalLink } from '../navigation/InternalLink';
 
@@ -93,18 +93,20 @@ export const DomainConceptList: React.FC<{
           </InternalLink>
         </Box>
 
-        {!!currentUser && currentUser.role === UserRole.Admin && !isLoading && (
-          <IconButton
-            aria-label="add-concept"
-            variant="ghost"
-            color="blue.700"
-            icon="add"
-            size="sm"
-            alignSelf="center"
-            borderRadius={16}
-            onClick={() => Router.push('/domains/[key]/concepts/new', `/domains/${domain.key}/concepts/new`)}
-          ></IconButton>
-        )}
+        <RoleAccess accessRule="contributorOrAdmin">
+          {!isLoading && (
+            <IconButton
+              aria-label="add-concept"
+              variant="ghost"
+              color="blue.700"
+              icon="add"
+              size="sm"
+              alignSelf="center"
+              borderRadius={16}
+              onClick={() => Router.push('/domains/[key]/concepts/new', `/domains/${domain.key}/concepts/new`)}
+            ></IconButton>
+          )}
+        </RoleAccess>
       </Stack>
       <DomainConceptListMenuLevel
         nestedConceptItems={conceptNestedList}

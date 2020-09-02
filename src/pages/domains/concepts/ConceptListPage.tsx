@@ -72,7 +72,7 @@ export const ConceptListPage: React.FC<{ domainKey: string }> = ({ domainKey }) 
               onUpdateConceptIndex={() => refetch()}
             />
           </Box>
-          <RoleAccess accessRule="admin">
+          <RoleAccess accessRule="contributorOrAdmin">
             <InternalButtonLink
               variant="outline"
               routePath="/domains/[key]/concepts/new"

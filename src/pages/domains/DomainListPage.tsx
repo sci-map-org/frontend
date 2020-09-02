@@ -36,21 +36,18 @@ export const DomainsListPage: React.FC = () => {
                   <InternalLink routePath="/domains/[key]" asHref={`/domains/${domain.key}`} fontWeight={500}>
                     {domain.name}
                   </InternalLink>
-
-                  {!!currentUser && currentUser.role === UserRole.Admin && (
-                    <RoleAccess accessRule="admin">
-                      <DeleteButtonWithConfirmation
-                        modalBodyText="Confirm deleting this domain ?"
-                        modalHeaderText="Delete Domain"
-                        onConfirmation={() => {}}
-                      />
-                    </RoleAccess>
-                  )}
+                  <RoleAccess accessRule="admin">
+                    <DeleteButtonWithConfirmation
+                      modalBodyText="Confirm deleting this domain ?"
+                      modalHeaderText="Delete Domain"
+                      onConfirmation={() => {}}
+                    />
+                  </RoleAccess>
                 </Flex>
               );
             })}
         </Flex>
-        <RoleAccess accessRule="admin">
+        <RoleAccess accessRule="contributorOrAdmin">
           <InternalButtonLink variant="outline" routePath="/domains/new" asHref="/domains/new">
             + New Domain
           </InternalButtonLink>

@@ -130,7 +130,10 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
           </RoleAccess>
           <Access
             condition={
-              currentUser && (currentUser.role === UserRole.Admin || currentUser._id === resource.creator?._id)
+              currentUser &&
+              (currentUser.role === UserRole.Admin ||
+                currentUser.role === UserRole.Contributor ||
+                currentUser._id === resource.creator?._id)
             }
           >
             <DeleteButtonWithConfirmation
@@ -183,7 +186,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
           />
         )}
         {resource.coveredConcepts && (
-          <RoleAccess accessRule="admin">
+          <RoleAccess accessRule="contributorOrAdmin">
             <CoveredConceptsSelector
               resourceId={resource._id}
               coveredConcepts={resource.coveredConcepts.items}
