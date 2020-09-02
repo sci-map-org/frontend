@@ -6,3 +6,8 @@ export type CurrentUserDataFragment = (
   & Pick<Types.CurrentUser, '_id' | 'email' | 'key' | 'role' | 'displayName'>
 );
 
+export type PublicUserDataFragment = (
+  { __typename?: 'User' }
+  & Pick<Types.User, '_id' | 'key' | 'role' | 'displayName'>
+);
+

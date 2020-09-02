@@ -86,6 +86,7 @@ export type CurrentUserArticlesArgs = {
 
 export enum UserRole {
   Admin = 'ADMIN',
+  Contributor = 'CONTRIBUTOR',
   User = 'USER'
 }
 
@@ -127,6 +128,7 @@ export type User = {
   _id: Scalars['String'];
   email: Scalars['String'];
   displayName: Scalars['String'];
+  role: UserRole;
   key: Scalars['String'];
   articles?: Maybe<ListArticlesResult>;
 };
