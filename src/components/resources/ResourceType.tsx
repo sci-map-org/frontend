@@ -6,18 +6,23 @@ const colorMapping: { [key in ResourceType]: string } = {
   [ResourceType.Article]: 'green',
   [ResourceType.ArticleSeries]: 'green',
   [ResourceType.Course]: 'red',
-  [ResourceType.Guide]: 'red',
-  [ResourceType.Introduction]: 'blue',
-  [ResourceType.Tutorial]: 'orange',
   [ResourceType.Podcast]: 'yellow',
   [ResourceType.PodcastSeries]: 'yellow',
   [ResourceType.Other]: 'gray',
+  [ResourceType.Book]: 'red',
+  [ResourceType.Documentary]: 'blue',
+  [ResourceType.Tweet]: 'blue',
+  [ResourceType.Talk]: 'orange',
+  [ResourceType.Infographic]: 'yellow',
+  [ResourceType.Website]: 'blue',
+  [ResourceType.YoutubeVideo]: 'red',
+  [ResourceType.VideoGame]: 'yellow',
 };
 
 export const ResourceTypeBadge: React.FC<BadgeProps & { type: ResourceType }> = ({ type, ...badgeProps }) => {
   return (
     <Badge variantColor={colorMapping[type]} fontSize="0.8em" {...badgeProps}>
-      {type}
+      {type.split('_').join(' ')}
     </Badge>
   );
 };

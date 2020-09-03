@@ -8,7 +8,7 @@ export const ResourceMediaTypeBadge: React.FC<BadgeProps & { mediaType: Resource
 }) => {
   return (
     <Badge variant="outline" color="green.800" fontSize="0.8em" {...badgeProps}>
-      {mediaType}
+      {mediaType.split('_').join(' ')}
     </Badge>
   );
 };
@@ -30,7 +30,7 @@ export const ResourceMediaTypeSelector: React.FC<{
       >
         {values(ResourceMediaType).map((mediaType) => (
           <option key={mediaType} value={mediaType}>
-            {upperFirst(mediaType)}
+            {mediaType.split('_').map(upperFirst).join(' ')}
           </option>
         ))}
       </Select>

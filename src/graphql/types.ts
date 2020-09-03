@@ -265,19 +265,25 @@ export type ResourceDomainsArgs = {
 export enum ResourceType {
   Article = 'article',
   ArticleSeries = 'article_series',
-  Tutorial = 'tutorial',
-  Introduction = 'introduction',
   Course = 'course',
-  Guide = 'guide',
   Podcast = 'podcast',
   PodcastSeries = 'podcast_series',
+  YoutubeVideo = 'youtube_video',
+  Book = 'book',
+  Talk = 'talk',
+  Documentary = 'documentary',
+  Website = 'website',
+  VideoGame = 'video_game',
+  Infographic = 'infographic',
+  Tweet = 'tweet',
   Other = 'other'
 }
 
 export enum ResourceMediaType {
   Video = 'video',
   Text = 'text',
-  Audio = 'audio'
+  Audio = 'audio',
+  InteractiveContent = 'interactive_content'
 }
 
 export type ResourceTag = {
