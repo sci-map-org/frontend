@@ -1,11 +1,10 @@
-import { Button, Input, Stack, Text, Textarea, Flex } from '@chakra-ui/core';
+import { Button, Input, Stack, Textarea } from '@chakra-ui/core';
 import Router from 'next/router';
 import { useState } from 'react';
-
-import { useGetConcept, useUpdateConcept } from '../../../graphql/concepts/concepts.hooks';
-import { useGetDomainByKey } from '../../../graphql/domains/domains.hooks';
 import { PageLayout } from '../../../components/layout/PageLayout';
+import { useUpdateConcept } from '../../../graphql/concepts/concepts.hooks';
 import { useGetConceptByKeyQuery } from '../../../graphql/concepts/concepts.operations.generated';
+import { useGetDomainByKey } from '../../../graphql/domains/domains.hooks';
 import { NotFoundPage } from '../../NotFoundPage';
 
 export const EditConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = ({ conceptKey, domainKey }) => {
@@ -19,7 +18,12 @@ export const EditConceptPage: React.FC<{ domainKey: string; conceptKey: string }
   const [key, setKey] = useState(concept.key);
   const [description, setDescription] = useState(concept.description || '');
   return (
-    <PageLayout mode="form" title={`Edit ${domain.name} - ${concept.name}`} centerChildren>
+    <PageLayout
+      mode="form"
+      title={`Edit ${domain.name} - ${concept.name}`}
+      accessRule="contributorOrAdmin"
+      centerChildren
+    >
       <Stack width="36rem" direction="column" spacing={3} alignItems="stretch">
         <Input
           placeholder="Concept Name"

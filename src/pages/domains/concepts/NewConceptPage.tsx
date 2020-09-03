@@ -20,6 +20,7 @@ export const NewConceptPage: React.FC<{ domainKey: string }> = ({ domainKey }) =
       mode="form"
       title={`Add concept to ${domain.name}`}
       breadCrumbsLinks={[DomainPageInfo(domain), ConceptListPageInfo(domain)]}
+      accessRule="contributorOrAdmin"
     >
       <Stack spacing={4} direction="column" alignItems="stretch">
         <Input

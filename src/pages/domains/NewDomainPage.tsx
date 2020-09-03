@@ -1,8 +1,8 @@
-import { Box, Button, Input, Stack, Text, Textarea } from '@chakra-ui/core';
+import { Box, Button, Input, Stack, Textarea } from '@chakra-ui/core';
 import { NextPage } from 'next';
 import Router from 'next/router';
 import React from 'react';
-
+import { PageLayout } from '../../components/layout/PageLayout';
 import { useCreateDomain } from '../../graphql/domains/domains.hooks';
 import { generateUrlKey } from '../../services/url.service';
 
@@ -13,11 +13,8 @@ export const NewDomainPage: NextPage = () => {
   const [description, setDescription] = React.useState<string>();
   const { createDomain } = useCreateDomain();
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" width="100%" pt="2rem">
+    <PageLayout title="New Domain" mode="form" accessRule="contributorOrAdmin" centerChildren>
       <Box width="46rem">
-        <Text fontSize="4xl" textAlign="center">
-          New Domain
-        </Text>
         <Stack spacing={4}>
           <Input
             placeholder="Name"
@@ -61,6 +58,6 @@ export const NewDomainPage: NextPage = () => {
           </Button>
         </Box>
       </Box>
-    </Box>
+    </PageLayout>
   );
 };
