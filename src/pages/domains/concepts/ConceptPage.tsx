@@ -172,7 +172,7 @@ export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = 
       breadCrumbsLinks={[
         DomainPageInfo(concept.domain),
         ConceptListPageInfo(concept.domain),
-        { ...ConceptPageInfo(concept.domain, concept), currentPage: true },
+        ConceptPageInfo(concept.domain, concept),
       ]}
       title={concept.domain.name + ' - ' + concept.name}
       renderRight={<ConceptPageRightIcons concept={concept} isDisabled={loading} />}
