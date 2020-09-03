@@ -1,8 +1,8 @@
-import { Access, AccessProps } from './Access';
+import { CurrentUser, UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
-import { UserRole, CurrentUser } from '../../graphql/types';
+import { Access, AccessProps } from './Access';
 
-type RoleAccessAllowedRule = 'all' | 'loggedInUser' | 'admin' | 'notLoggedInUser' | 'contributorOrAdmin';
+export type RoleAccessAllowedRule = 'all' | 'loggedInUser' | 'admin' | 'notLoggedInUser' | 'contributorOrAdmin';
 
 const accessRuleMapping: {
   [key in RoleAccessAllowedRule]: (currentUser: CurrentUser | false) => boolean;
@@ -15,6 +15,9 @@ const accessRuleMapping: {
     !!currentUser && (currentUser.role === UserRole.Contributor || currentUser.role === UserRole.Admin),
 };
 
+export const userHasAccess = (accessRule: RoleAccessAllowedRule, user: CurrentUser | false) =>
+  accessRuleMapping[accessRule](user);
+
 interface RoleAccessProps extends Omit<AccessProps, 'condition'> {
   accessRule: RoleAccessAllowedRule;
 }
@@ -22,7 +25,7 @@ interface RoleAccessProps extends Omit<AccessProps, 'condition'> {
 export const RoleAccess: React.FC<RoleAccessProps> = ({ children, accessRule, ...props }) => {
   const { currentUser } = useCurrentUser();
   return (
-    <Access condition={accessRuleMapping[accessRule](currentUser)} {...props}>
+    <Access condition={userHasAccess(accessRule, currentUser)} {...props}>
       {children}
     </Access>
   );

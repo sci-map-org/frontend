@@ -1,5 +1,7 @@
-import { Box, Flex, Heading, Skeleton } from '@chakra-ui/core';
+import { Box, Flex, Heading, Skeleton, Text } from '@chakra-ui/core';
 import { ReactNode } from 'react';
+import { useCurrentUser } from '../../graphql/users/users.hooks';
+import { RoleAccessAllowedRule, userHasAccess } from '../auth/RoleAccess';
 import { NavigationBreadcrumbs, NavigationBreadcrumbsProps } from './NavigationBreadcrumbs';
 
 interface PageLayoutProps {
@@ -9,6 +11,7 @@ interface PageLayoutProps {
   renderRight?: ReactNode;
   centerChildren?: boolean;
   isLoading?: boolean;
+  accessRule?: RoleAccessAllowedRule | boolean;
 }
 export const PageLayout: React.FC<PageLayoutProps> = ({
   children,
@@ -18,7 +21,17 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   renderRight,
   centerChildren,
   isLoading,
+  accessRule,
 }) => {
+  const { currentUser } = useCurrentUser();
+  if ((typeof accessRule === 'string' && !userHasAccess(accessRule, currentUser)) || accessRule === false)
+    return (
+      <Flex width="100%" alignItems="center" justifyContent="center">
+        <Text fontSize="3xl" textAlign="center" mt="200px">
+          Forbidden
+        </Text>
+      </Flex>
+    );
   return (
     <Flex
       direction="column"
