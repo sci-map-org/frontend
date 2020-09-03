@@ -138,8 +138,8 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
           >
             <DeleteButtonWithConfirmation
               variant="outline"
-              modalHeaderText="Delete Concept"
-              modalBodyText="Confirm deleting this concept ?"
+              modalHeaderText="Delete Resource"
+              modalBodyText="Confirm deleting this resource ?"
               isDisabled={loading}
               onConfirmation={() => deleteResource({ variables: { _id: resourceId } }).then(() => Router.back())}
             />
@@ -186,7 +186,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
           />
         )}
         {resource.coveredConcepts && (
-          <RoleAccess accessRule="contributorOrAdmin">
+          <RoleAccess accessRule="loggedInUser">
             <CoveredConceptsSelector
               resourceId={resource._id}
               coveredConcepts={resource.coveredConcepts.items}

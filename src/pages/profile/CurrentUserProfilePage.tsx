@@ -11,7 +11,6 @@ export const CurrentUserProfilePage: React.FC<{ currentUser: CurrentUserDataFrag
     <PageLayout title={`My Profile (@${currentUser.key})`} centerChildren>
       <Stack spacing={10} alignItems="center">
         <Stack alignItems="center">
-          <Text fontSize="2xl">Info</Text>
           <Stack alignItems="center">
             <Text>
               <b>Display Name:</b> {currentUser.displayName}
@@ -26,10 +25,10 @@ export const CurrentUserProfilePage: React.FC<{ currentUser: CurrentUserDataFrag
             )}
           </Stack>
         </Stack>
-        <Stack alignItems="center">
-          <Text fontSize="2xl">Settings</Text>
-          <Stack direction="column">
-            {currentUser.role === UserRole.Admin && (
+        {currentUser.role === UserRole.Admin && (
+          <Stack alignItems="center">
+            <Text fontSize="2xl">Settings</Text>
+            <Stack direction="column">
               <NoSSR>
                 <Checkbox
                   id="mockedFeaturesEnabled"
@@ -39,9 +38,9 @@ export const CurrentUserProfilePage: React.FC<{ currentUser: CurrentUserDataFrag
                   Mocked Features Enabled
                 </Checkbox>
               </NoSSR>
-            )}
+            </Stack>
           </Stack>
-        </Stack>
+        )}
       </Stack>
     </PageLayout>
   );
