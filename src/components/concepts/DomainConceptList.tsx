@@ -175,8 +175,8 @@ export const CollapsableMenuLink: React.FC<{
         concept={concept}
         onToggle={onToggle}
         isLoading={isLoading}
-        expandable={level > 0}
-        expanded={show || level === 0}
+        expandable={true}
+        expanded={show}
         onExpand={handleExpand}
       />
       <Collapse isOpen={show} display="flex" flexDir="row">
