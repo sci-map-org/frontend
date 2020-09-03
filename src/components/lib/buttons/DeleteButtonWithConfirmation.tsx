@@ -16,7 +16,7 @@ import {
 interface DeleteButtonWithConfirmationProps extends Omit<IconButtonProps, 'aria-label'> {
   modalBodyText: string;
   modalHeaderText: string;
-  onConfirmation: () => void;
+  onConfirmation: () => void | Promise<any>;
   isDisabled?: boolean;
 }
 export const DeleteButtonWithConfirmation: React.FC<DeleteButtonWithConfirmationProps> = ({
@@ -50,7 +50,14 @@ export const DeleteButtonWithConfirmation: React.FC<DeleteButtonWithConfirmation
             <Button mr={3} onClick={onClose}>
               Cancel
             </Button>
-            <Button onClick={() => onConfirmation()}>Delete</Button>
+            <Button
+              onClick={async () => {
+                await onConfirmation();
+                onClose();
+              }}
+            >
+              Delete
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

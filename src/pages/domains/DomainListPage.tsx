@@ -1,15 +1,16 @@
-import { Flex, Stack } from '@chakra-ui/core';
+import { Box, Flex, IconButton, Stack } from '@chakra-ui/core';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { InternalButtonLink, InternalLink } from '../../components/navigation/InternalLink';
 import { useSearchDomains } from '../../graphql/domains/domains.hooks';
-import { UserRole } from '../../graphql/types';
-import { useCurrentUser } from '../../graphql/users/users.hooks';
+import { routerPushToPage } from '../PageInfo';
+import { ManageDomainPageInfo } from './ManageDomainPage';
+import { useDeleteDomainMutation } from '../../graphql/domains/domains.operations.generated';
 
 export const DomainsListPage: React.FC = () => {
-  const { currentUser } = useCurrentUser();
-  const { domains } = useSearchDomains();
+  const { domains, refetch } = useSearchDomains();
+  const [deleteDomainMutation] = useDeleteDomainMutation();
   return (
     <PageLayout title="Domains" centerChildren>
       <Stack spacing={8} direction="column" width="36rem">
@@ -31,16 +32,27 @@ export const DomainsListPage: React.FC = () => {
                   px={4}
                   direction="row"
                   alignItems="center"
-                  justifyContent="space-between"
                 >
                   <InternalLink routePath="/domains/[key]" asHref={`/domains/${domain.key}`} fontWeight={500}>
                     {domain.name}
                   </InternalLink>
+                  <Box flexGrow={1} />
+                  <RoleAccess accessRule="contributorOrAdmin">
+                    <IconButton
+                      aria-label="manage domain"
+                      size="sm"
+                      icon="settings"
+                      onClick={() => routerPushToPage(ManageDomainPageInfo(domain))}
+                    />
+                  </RoleAccess>
                   <RoleAccess accessRule="admin">
+                    <Box width={4} />
                     <DeleteButtonWithConfirmation
                       modalBodyText="Confirm deleting this domain ?"
                       modalHeaderText="Delete Domain"
-                      onConfirmation={() => {}}
+                      onConfirmation={() =>
+                        deleteDomainMutation({ variables: { id: domain._id } }).then(() => refetch())
+                      }
                     />
                   </RoleAccess>
                 </Flex>

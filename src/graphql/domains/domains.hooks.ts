@@ -10,13 +10,16 @@ export const useGetDomainByKey = (key: string) => {
 };
 
 export const useSearchDomains = () => {
-  const { loading, error, data, fetchMore } = useSearchDomainsQuery({ variables: { options: { pagination: {} } } });
+  const { loading, error, data, fetchMore, refetch } = useSearchDomainsQuery({
+    variables: { options: { pagination: {} } },
+  });
 
   return {
     domains: !!data && !!data.searchDomains && data.searchDomains.items,
     loading,
     error,
     fetchMore,
+    refetch,
   };
 };
 
