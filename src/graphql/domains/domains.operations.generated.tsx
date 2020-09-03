@@ -48,6 +48,33 @@ export type CreateDomainMutation = (
   ) }
 );
 
+export type UpdateDomainMutationVariables = Exact<{
+  id: Types.Scalars['String'];
+  payload: Types.UpdateDomainPayload;
+}>;
+
+
+export type UpdateDomainMutation = (
+  { __typename?: 'Mutation' }
+  & { updateDomain: (
+    { __typename?: 'Domain' }
+    & DomainDataFragment
+  ) }
+);
+
+export type DeleteDomainMutationVariables = Exact<{
+  id: Types.Scalars['String'];
+}>;
+
+
+export type DeleteDomainMutation = (
+  { __typename?: 'Mutation' }
+  & { deleteDomain: (
+    { __typename?: 'DeleteDomainResponse' }
+    & Pick<Types.DeleteDomainResponse, '_id' | 'success'>
+  ) }
+);
+
 
 
 /**
@@ -126,3 +153,54 @@ export function useCreateDomainMutation(baseOptions?: ApolloReactHooks.MutationH
 export type CreateDomainMutationHookResult = ReturnType<typeof useCreateDomainMutation>;
 export type CreateDomainMutationResult = ApolloReactCommon.MutationResult<CreateDomainMutation>;
 export type CreateDomainMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateDomainMutation, CreateDomainMutationVariables>;
+export type UpdateDomainMutationFn = ApolloReactCommon.MutationFunction<UpdateDomainMutation, UpdateDomainMutationVariables>;
+
+/**
+ * __useUpdateDomainMutation__
+ *
+ * To run a mutation, you first call `useUpdateDomainMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateDomainMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateDomainMutation, { data, loading, error }] = useUpdateDomainMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      payload: // value for 'payload'
+ *   },
+ * });
+ */
+export function useUpdateDomainMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<UpdateDomainMutation, UpdateDomainMutationVariables>) {
+        return ApolloReactHooks.useMutation<UpdateDomainMutation, UpdateDomainMutationVariables>(Operations.updateDomain, baseOptions);
+      }
+export type UpdateDomainMutationHookResult = ReturnType<typeof useUpdateDomainMutation>;
+export type UpdateDomainMutationResult = ApolloReactCommon.MutationResult<UpdateDomainMutation>;
+export type UpdateDomainMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateDomainMutation, UpdateDomainMutationVariables>;
+export type DeleteDomainMutationFn = ApolloReactCommon.MutationFunction<DeleteDomainMutation, DeleteDomainMutationVariables>;
+
+/**
+ * __useDeleteDomainMutation__
+ *
+ * To run a mutation, you first call `useDeleteDomainMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteDomainMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteDomainMutation, { data, loading, error }] = useDeleteDomainMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteDomainMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<DeleteDomainMutation, DeleteDomainMutationVariables>) {
+        return ApolloReactHooks.useMutation<DeleteDomainMutation, DeleteDomainMutationVariables>(Operations.deleteDomain, baseOptions);
+      }
+export type DeleteDomainMutationHookResult = ReturnType<typeof useDeleteDomainMutation>;
+export type DeleteDomainMutationResult = ApolloReactCommon.MutationResult<DeleteDomainMutation>;
+export type DeleteDomainMutationOptions = ApolloReactCommon.BaseMutationOptions<DeleteDomainMutation, DeleteDomainMutationVariables>;

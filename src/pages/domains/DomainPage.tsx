@@ -1,10 +1,10 @@
-import { Box, Flex, Heading, Link, Skeleton, Stack, Text } from '@chakra-ui/core';
+import { Box, Flex, Heading, IconButton, Link, Skeleton, Stack, Text } from '@chakra-ui/core';
 import gql from 'graphql-tag';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { RoleAccess } from '../../components/auth/RoleAccess';
 import { HorizontalConceptMappingVisualisation } from '../../components/concepts/ConceptMappingVisualisation';
 import { DomainConceptList } from '../../components/concepts/DomainConceptList';
-import { BreadcrumbLink } from '../../components/layout/NavigationBreadcrumbs';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { DomainLearningPaths } from '../../components/learning_paths/DomainLearningPaths';
 import { InternalButtonLink } from '../../components/navigation/InternalLink';
@@ -14,11 +14,13 @@ import { DomainData, generateDomainData } from '../../graphql/domains/domains.fr
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { generateResourcePreviewData, ResourcePreviewData } from '../../graphql/resources/resources.fragments';
 import { useMockedFeaturesEnabled } from '../../hooks/useMockedFeaturesEnabled';
+import { PageInfo, routerPushToPage } from '../PageInfo';
 import { GetDomainByKeyDomainPageQuery, useGetDomainByKeyDomainPageQuery } from './DomainPage.generated';
+import { ManageDomainPageInfo } from './ManageDomainPage';
 
 export const DomainPagePath = (domainKey: string) => `/domains/${domainKey}`;
 
-export const DomainPageInfo = (domain: DomainDataFragment): BreadcrumbLink => ({
+export const DomainPageInfo = (domain: DomainDataFragment): PageInfo => ({
   name: domain.name,
   path: DomainPagePath(domain.key),
   routePath: DomainPagePath('[key]'),
@@ -117,6 +119,15 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
         >
           + Add resource
         </InternalButtonLink>
+        <RoleAccess accessRule="contributorOrAdmin">
+          <IconButton
+            ml={2}
+            variant="outline"
+            aria-label="manage_domain"
+            icon="settings"
+            onClick={() => routerPushToPage(ManageDomainPageInfo(domain))}
+          />
+        </RoleAccess>
         {mockedFeaturesEnabled && (
           <Box ml={2}>
             <InternalButtonLink

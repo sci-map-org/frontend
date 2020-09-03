@@ -28,3 +28,21 @@ export const createDomain = gql`
   }
   ${DomainData}
 `;
+
+export const updateDomain = gql`
+  mutation updateDomain($id: String!, $payload: UpdateDomainPayload!) {
+    updateDomain(id: $id, payload: $payload) {
+      ...DomainData
+    }
+  }
+  ${DomainData}
+`;
+
+export const deleteDomain = gql`
+  mutation deleteDomain($id: String!) {
+    deleteDomain(id: $id) {
+      _id
+      success
+    }
+  }
+`;
