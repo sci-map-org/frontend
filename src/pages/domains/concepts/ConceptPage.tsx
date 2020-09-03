@@ -42,12 +42,12 @@ const ConceptPageRightIcons: React.FC<{ concept: ConceptDataFragment; isDisabled
   const { deleteConcept } = useDeleteConcept();
   return (
     <Stack spacing={2} direction="row" shouldWrapChildren={true}>
-      <RoleAccess accessRule="admin">
+      <RoleAccess accessRule="contributorOrAdmin">
         <Button size="sm" onClick={() => Router.push(Router.asPath + '/edit')} isDisabled={isDisabled}>
           Edit
         </Button>
       </RoleAccess>
-      <RoleAccess accessRule="admin">
+      <RoleAccess accessRule="contributorOrAdmin">
         <DeleteButtonWithConfirmation
           modalHeaderText="Delete Concept"
           modalBodyText="Confirm deleting this concept ?"
@@ -189,7 +189,7 @@ export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = 
           isLoading={loading}
         />
 
-        <RoleAccess accessRule="admin">
+        <RoleAccess accessRule="contributorOrAdmin">
           <Box mt={5}>
             <ConceptsPicker
               title="Referenced Concepts"

@@ -130,13 +130,16 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
           </RoleAccess>
           <Access
             condition={
-              currentUser && (currentUser.role === UserRole.Admin || currentUser._id === resource.creator?._id)
+              currentUser &&
+              (currentUser.role === UserRole.Admin ||
+                currentUser.role === UserRole.Contributor ||
+                currentUser._id === resource.creator?._id)
             }
           >
             <DeleteButtonWithConfirmation
               variant="outline"
-              modalHeaderText="Delete Concept"
-              modalBodyText="Confirm deleting this concept ?"
+              modalHeaderText="Delete Resource"
+              modalBodyText="Confirm deleting this resource ?"
               isDisabled={loading}
               onConfirmation={() => deleteResource({ variables: { _id: resourceId } }).then(() => Router.back())}
             />
@@ -151,7 +154,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
           <ResourceStarsRating value={resource.rating} />
         </Stack>
         <Stack direction="row" spacing={2} shouldWrapChildren alignItems="flex-end">
-          <RoleAccess accessRule="admin">
+          <RoleAccess accessRule="contributorOrAdmin">
             <ResourceStarsRater resourceId={resource._id} />
           </RoleAccess>
         </Stack>
@@ -183,7 +186,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
           />
         )}
         {resource.coveredConcepts && (
-          <RoleAccess accessRule="admin">
+          <RoleAccess accessRule="loggedInUser">
             <CoveredConceptsSelector
               resourceId={resource._id}
               coveredConcepts={resource.coveredConcepts.items}

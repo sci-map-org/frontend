@@ -109,7 +109,7 @@ export const Header: React.FC = () => {
                   </MenuItem>
                 </NextLink>
               </RoleAccess>
-              <RoleAccess accessRule="admin">
+              <RoleAccess accessRule="contributorOrAdmin">
                 <NextLink href={`/domains/new`} as="/domains/new" passHref>
                   <MenuItem>
                     <Link>New Domain</Link>

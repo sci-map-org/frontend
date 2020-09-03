@@ -3,8 +3,8 @@ import gql from 'graphql-tag';
 import { useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
-import { ConceptBelongsToDomain, UserRole } from '../../graphql/types';
-import { useCurrentUser } from '../../graphql/users/users.hooks';
+import { ConceptBelongsToDomain } from '../../graphql/types';
+import { RoleAccess } from '../auth/RoleAccess';
 import { InternalLink } from '../navigation/InternalLink';
 import { useUpdateConceptBelongsToDomainIndexMutation } from './ConceptList.generated';
 
@@ -65,7 +65,6 @@ interface ConceptListItemProps {
 }
 const ConceptListItem: React.FC<ConceptListItemProps> = ({ concept, relationship, domainKey, onIndexSubmit }) => {
   const [indexValue, setIndexValue] = useState(relationship.index);
-  const { currentUser } = useCurrentUser();
   return (
     <Flex
       direction="row"
@@ -88,7 +87,7 @@ const ConceptListItem: React.FC<ConceptListItemProps> = ({ concept, relationship
         </InternalLink>
       </Box>
       <Box flexGrow={1}></Box>
-      {!!currentUser && currentUser.role === UserRole.Admin && (
+      <RoleAccess accessRule="contributorOrAdmin">
         <Stack spacing={2} flexBasis="150px" flexShrink={0} direction="row">
           <Box>Idx</Box>
           <Box flexGrow={1}></Box>
@@ -106,7 +105,7 @@ const ConceptListItem: React.FC<ConceptListItemProps> = ({ concept, relationship
             <EditableInput />
           </Editable>
         </Stack>
-      )}
+      </RoleAccess>
     </Flex>
   );
 };

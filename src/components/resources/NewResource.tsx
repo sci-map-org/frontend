@@ -1,6 +1,5 @@
 import { Box, Button, Flex, Input, Stack, Text } from '@chakra-ui/core';
 import React, { useState } from 'react';
-
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { DomainWithConceptsDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { CreateResourcePayload, ResourceMediaType, ResourceTag, ResourceType } from '../../graphql/types';
