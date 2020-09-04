@@ -1,27 +1,28 @@
 import { Box, Input, Text } from '@chakra-ui/core';
-import { useState } from 'react';
+import { useState, PropsWithChildren } from 'react';
 import Autosuggest from 'react-autosuggest';
 
-import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
-
-const getConceptSuggestions = (concepts: ConceptDataFragment[], value: string): ConceptDataFragment[] => {
-  const inputValue = value.trim().toLowerCase();
-  const inputLength = inputValue.length;
-
-  return inputLength === 0
-    ? concepts
-    : concepts.filter((concept) => concept.name.toLowerCase().indexOf(inputValue) >= 0).slice(0, 10);
+type EntityType = {
+  name: string;
 };
 
-export const ConceptSelector: React.FC<{
-  conceptList: ConceptDataFragment[];
-  onSelect: (concept: ConceptDataFragment) => any;
-}> = ({ conceptList, onSelect }) => {
-  const [conceptSuggestions, setConceptSuggestions] = useState<ConceptDataFragment[]>([]);
-  const [value, setValue] = useState('');
+type EntitySelectorProps<T extends EntityType> = {
+  entitySuggestions: T[];
+  onSelect: (entity: T) => any;
+  placeholder: string;
+  showSuggestionsOnClear?: boolean;
+  fetchEntitySuggestions: (value: string) => any;
+};
 
+export const EntitySelector = <T extends EntityType>({
+  entitySuggestions,
+  onSelect,
+  placeholder,
+  fetchEntitySuggestions,
+}: PropsWithChildren<EntitySelectorProps<T>>) => {
+  const [value, setValue] = useState('');
   const inputProps = {
-    placeholder: 'Search concepts',
+    placeholder,
     value,
     onChange: (_event: any, { newValue }: { newValue: string }) => {
       setValue(newValue);
@@ -34,10 +35,10 @@ export const ConceptSelector: React.FC<{
         shouldRenderSuggestions={() => {
           return true;
         }}
-        suggestions={conceptSuggestions}
+        suggestions={entitySuggestions}
         inputProps={inputProps}
-        onSuggestionsFetchRequested={({ value: v }) => setConceptSuggestions(getConceptSuggestions(conceptList, v))}
-        onSuggestionsClearRequested={() => setConceptSuggestions(getConceptSuggestions(conceptList, value))}
+        onSuggestionsFetchRequested={({ value: v }) => fetchEntitySuggestions(v)}
+        onSuggestionsClearRequested={() => fetchEntitySuggestions(value)}
         onSuggestionSelected={(e, { suggestion }) => {
           onSelect(suggestion);
           setValue('');

@@ -156,6 +156,8 @@ export type Domain = {
   description?: Maybe<Scalars['String']>;
   concepts?: Maybe<DomainConceptsResults>;
   resources?: Maybe<DomainResourcesResults>;
+  subDomains?: Maybe<Array<DomainBelongsToDomainItem>>;
+  parentDomains?: Maybe<Array<DomainBelongsToDomainItem>>;
 };
 
 
@@ -368,6 +370,17 @@ export type DomainResourcesResults = {
   items: Array<Resource>;
 };
 
+export type DomainBelongsToDomainItem = {
+  __typename?: 'DomainBelongsToDomainItem';
+  domain: Domain;
+  relationship: DomainBelongsToDomain;
+};
+
+export type DomainBelongsToDomain = {
+  __typename?: 'DomainBelongsToDomain';
+  index: Scalars['Float'];
+};
+
 export type SearchResourceTagsOptions = {
   query: Scalars['String'];
   pagination: PaginationOptions;
@@ -416,6 +429,8 @@ export type Mutation = {
   addConceptBelongsToConcept: Concept;
   removeConceptBelongsToConcept: Concept;
   updateConceptBelongsToConcept: Concept;
+  addDomainBelongsToDomain: Domain;
+  removeDomainBelongsToDomain: Domain;
 };
 
 
@@ -616,6 +631,18 @@ export type MutationUpdateConceptBelongsToConceptArgs = {
   parentConceptId: Scalars['String'];
   subConceptId: Scalars['String'];
   payload: UpdateConceptBelongsToConceptPayload;
+};
+
+
+export type MutationAddDomainBelongsToDomainArgs = {
+  parentDomainId: Scalars['String'];
+  subDomainId: Scalars['String'];
+};
+
+
+export type MutationRemoveDomainBelongsToDomainArgs = {
+  parentDomainId: Scalars['String'];
+  subDomainId: Scalars['String'];
 };
 
 export type DiscourseSso = {
