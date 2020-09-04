@@ -1,9 +1,9 @@
-import { Box, Button, Flex, Input, Stack, Text } from '@chakra-ui/core';
+import { Box, Button, Flex, Input, Stack } from '@chakra-ui/core';
 import React, { useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { DomainWithConceptsDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { CreateResourcePayload, ResourceMediaType, ResourceTag, ResourceType } from '../../graphql/types';
-import { ConceptSelector } from '../concepts/ConceptSelector';
+import { ConceptsPicker } from '../concepts/ConceptsPicker';
 import { ResourceDescriptionInput } from './ResourceDescription';
 import { ResourceDurationSelector } from './ResourceDuration';
 import { ResourceMediaTypeSelector } from './ResourceMediaType';
@@ -43,31 +43,16 @@ export const NewResource: React.FC<NewResourceProps> = ({ domain, onCreate }) =>
       {domain && domain.concepts && (
         <Stack spacing={10} direction="row">
           <Box>
-            <Text fontSize="xl">Covered concepts</Text>
-            <Box width="300px">
-              <ConceptSelector
-                conceptList={domain.concepts.items
-                  .map((item) => item.concept)
-                  .filter((c) => !selectedCoveredConcepts.find((s) => s._id === c._id))}
-                onSelect={(c) => setSelectedCoveredConcepts(selectedCoveredConcepts.concat([c]))}
-              />
-            </Box>
+            <ConceptsPicker
+              title="Covered Concepts"
+              pickableConceptList={domain.concepts.items
+                .map((item) => item.concept)
+                .filter((c) => !selectedCoveredConcepts.find((s) => s._id === c._id))}
+              pickedConceptList={selectedCoveredConcepts}
+              onSelect={(c) => setSelectedCoveredConcepts(selectedCoveredConcepts.concat([c]))}
+              onRemove={(c) => setSelectedCoveredConcepts(selectedCoveredConcepts.filter((s) => s._id !== c._id))}
+            />
           </Box>
-          <Stack>
-            {selectedCoveredConcepts.map((concept) => (
-              <Stack direction="row" alignItems="center" key={concept._id}>
-                <Button
-                  size="sm"
-                  onClick={() =>
-                    setSelectedCoveredConcepts(selectedCoveredConcepts.filter((s) => s._id !== concept._id))
-                  }
-                >
-                  Remove
-                </Button>
-                <Text fontWeight={400}>{concept.name}</Text>
-              </Stack>
-            ))}
-          </Stack>
         </Stack>
       )}
       <Box>

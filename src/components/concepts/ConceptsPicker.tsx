@@ -33,7 +33,7 @@ export const ConceptsPicker: React.FC<ConceptsPickerProps> = ({
       <EntitySelector
         placeholder="Search Concepts"
         entitySuggestions={conceptSuggestions}
-        getEntitySuggestions={(v: string) => setConceptSuggestions(getConceptSuggestions(pickableConceptList, v))}
+        fetchEntitySuggestions={(v: string) => setConceptSuggestions(getConceptSuggestions(pickableConceptList, v))}
         onSelect={onSelect}
       />
       <Stack>
