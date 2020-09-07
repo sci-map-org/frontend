@@ -15,7 +15,7 @@ export const articlesMenuItems: ArticleMenuItem[] = [
     key: 'introduction',
   },
   {
-    menuTitle: 'Why ?',
+    menuTitle: 'Why',
     key: 'why',
   },
   {
