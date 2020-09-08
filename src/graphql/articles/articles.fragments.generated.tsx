@@ -1,6 +1,5 @@
 import * as Types from '../types';
 
-
 export type ArticleViewerDataFragment = (
   { __typename?: 'Article' }
   & Pick<Types.Article, '_id' | 'key' | 'title' | 'content' | 'contentType'>
@@ -18,4 +17,3 @@ export type ArticlePreviewDataFragment = (
     & Pick<Types.User, 'key'>
   )> }
 );
-

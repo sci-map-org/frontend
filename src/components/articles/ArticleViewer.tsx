@@ -1,4 +1,5 @@
 import { Button, Divider, Flex, Heading, Stack } from '@chakra-ui/core';
+import { EditIcon } from '@chakra-ui/icons';
 import { ArticleViewerDataFragment } from '../../graphql/articles/articles.fragments.generated';
 import { ArticleContentType } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
@@ -22,7 +23,7 @@ export const ArticleViewer: React.FC<ArticleViewerProps> = ({ article, setReader
       renderRight={
         <Stack alignItems="stretch" spacing={3} pt={5} px={4}>
           {showEditLink && (
-            <Button leftIcon="edit" variant="outline" onClick={() => setReaderMode(ArticleReaderMode.Editor)}>
+            <Button leftIcon={<EditIcon />} variant="outline" onClick={() => setReaderMode(ArticleReaderMode.Editor)}>
               Edit
             </Button>
           )}

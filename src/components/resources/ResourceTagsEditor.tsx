@@ -9,7 +9,7 @@ export const SelectedTagsViewer: React.FC<{ selectedTags?: ResourceTag[] | null 
   return (
     <Text fontWeight={250} pb={2} as="span">
       {selectedTags.map((tag, idx) => (
-        <Tag size="sm" variantColor="gray" key={idx} mr={2} as="span">
+        <Tag size="sm" colorScheme="gray" key={idx} mr={2} as="span">
           <TagLabel>{tag.name}</TagLabel>
         </Tag>
       ))}
@@ -35,7 +35,7 @@ export const SelectedTagsEditor: React.FC<{
       />
       <Stack spacing={2} direction="row" flexGrow={1} alignItems="flex-start">
         {selectedTags.map((selectedTag) => (
-          <Tag size="md" variantColor="gray" key={selectedTag.name}>
+          <Tag size="md" colorScheme="gray" key={selectedTag.name}>
             <TagLabel>{selectedTag.name}</TagLabel>
             <TagCloseButton
               // @ts-ignore

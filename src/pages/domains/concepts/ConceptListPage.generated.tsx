@@ -2,11 +2,8 @@ import * as Types from '../../../graphql/types';
 
 import { ConceptWithDependenciesDataFragment } from '../../../graphql/concepts/concepts.fragments.generated';
 import * as Operations from './ConceptListPage';
-import * as ApolloReactCommon from '@apollo/react-common';
-import * as ApolloReactHooks from '@apollo/react-hooks';
-export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
-
-export type ListConceptsConceptListPageQueryVariables = Exact<{
+import * as Apollo from '@apollo/client';
+export type ListConceptsConceptListPageQueryVariables = Types.Exact<{
   domainKey: Types.Scalars['String'];
   options: Types.DomainConceptsOptions;
 }>;
@@ -52,12 +49,12 @@ export type ListConceptsConceptListPageQuery = (
  *   },
  * });
  */
-export function useListConceptsConceptListPageQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ListConceptsConceptListPageQuery, ListConceptsConceptListPageQueryVariables>) {
-        return ApolloReactHooks.useQuery<ListConceptsConceptListPageQuery, ListConceptsConceptListPageQueryVariables>(Operations.listConceptsConceptListPage, baseOptions);
+export function useListConceptsConceptListPageQuery(baseOptions?: Apollo.QueryHookOptions<ListConceptsConceptListPageQuery, ListConceptsConceptListPageQueryVariables>) {
+        return Apollo.useQuery<ListConceptsConceptListPageQuery, ListConceptsConceptListPageQueryVariables>(Operations.listConceptsConceptListPage, baseOptions);
       }
-export function useListConceptsConceptListPageLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ListConceptsConceptListPageQuery, ListConceptsConceptListPageQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<ListConceptsConceptListPageQuery, ListConceptsConceptListPageQueryVariables>(Operations.listConceptsConceptListPage, baseOptions);
+export function useListConceptsConceptListPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ListConceptsConceptListPageQuery, ListConceptsConceptListPageQueryVariables>) {
+          return Apollo.useLazyQuery<ListConceptsConceptListPageQuery, ListConceptsConceptListPageQueryVariables>(Operations.listConceptsConceptListPage, baseOptions);
         }
 export type ListConceptsConceptListPageQueryHookResult = ReturnType<typeof useListConceptsConceptListPageQuery>;
 export type ListConceptsConceptListPageLazyQueryHookResult = ReturnType<typeof useListConceptsConceptListPageLazyQuery>;
-export type ListConceptsConceptListPageQueryResult = ApolloReactCommon.QueryResult<ListConceptsConceptListPageQuery, ListConceptsConceptListPageQueryVariables>;
+export type ListConceptsConceptListPageQueryResult = Apollo.QueryResult<ListConceptsConceptListPageQuery, ListConceptsConceptListPageQueryVariables>;

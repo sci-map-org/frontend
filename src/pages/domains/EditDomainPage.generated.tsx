@@ -2,11 +2,8 @@ import * as Types from '../../graphql/types';
 
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import * as Operations from './EditDomainPage';
-import * as ApolloReactCommon from '@apollo/react-common';
-import * as ApolloReactHooks from '@apollo/react-hooks';
-export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
-
-export type GetDomainByKeyEditDomainPageQueryVariables = Exact<{
+import * as Apollo from '@apollo/client';
+export type GetDomainByKeyEditDomainPageQueryVariables = Types.Exact<{
   key: Types.Scalars['String'];
 }>;
 
@@ -37,12 +34,12 @@ export type GetDomainByKeyEditDomainPageQuery = (
  *   },
  * });
  */
-export function useGetDomainByKeyEditDomainPageQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetDomainByKeyEditDomainPageQuery, GetDomainByKeyEditDomainPageQueryVariables>) {
-        return ApolloReactHooks.useQuery<GetDomainByKeyEditDomainPageQuery, GetDomainByKeyEditDomainPageQueryVariables>(Operations.getDomainByKeyEditDomainPage, baseOptions);
+export function useGetDomainByKeyEditDomainPageQuery(baseOptions?: Apollo.QueryHookOptions<GetDomainByKeyEditDomainPageQuery, GetDomainByKeyEditDomainPageQueryVariables>) {
+        return Apollo.useQuery<GetDomainByKeyEditDomainPageQuery, GetDomainByKeyEditDomainPageQueryVariables>(Operations.getDomainByKeyEditDomainPage, baseOptions);
       }
-export function useGetDomainByKeyEditDomainPageLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetDomainByKeyEditDomainPageQuery, GetDomainByKeyEditDomainPageQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<GetDomainByKeyEditDomainPageQuery, GetDomainByKeyEditDomainPageQueryVariables>(Operations.getDomainByKeyEditDomainPage, baseOptions);
+export function useGetDomainByKeyEditDomainPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDomainByKeyEditDomainPageQuery, GetDomainByKeyEditDomainPageQueryVariables>) {
+          return Apollo.useLazyQuery<GetDomainByKeyEditDomainPageQuery, GetDomainByKeyEditDomainPageQueryVariables>(Operations.getDomainByKeyEditDomainPage, baseOptions);
         }
 export type GetDomainByKeyEditDomainPageQueryHookResult = ReturnType<typeof useGetDomainByKeyEditDomainPageQuery>;
 export type GetDomainByKeyEditDomainPageLazyQueryHookResult = ReturnType<typeof useGetDomainByKeyEditDomainPageLazyQuery>;
-export type GetDomainByKeyEditDomainPageQueryResult = ApolloReactCommon.QueryResult<GetDomainByKeyEditDomainPageQuery, GetDomainByKeyEditDomainPageQueryVariables>;
+export type GetDomainByKeyEditDomainPageQueryResult = Apollo.QueryResult<GetDomainByKeyEditDomainPageQuery, GetDomainByKeyEditDomainPageQueryVariables>;

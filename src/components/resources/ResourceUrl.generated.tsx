@@ -1,11 +1,8 @@
 import * as Types from '../../graphql/types';
 
 import * as Operations from './ResourceUrl';
-import * as ApolloReactCommon from '@apollo/react-common';
-import * as ApolloReactHooks from '@apollo/react-hooks';
-export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
-
-export type SetResourceOpenedMutationVariables = Exact<{
+import * as Apollo from '@apollo/client';
+export type SetResourceOpenedMutationVariables = Types.Exact<{
   resourceId: Types.Scalars['String'];
 }>;
 
@@ -23,7 +20,7 @@ export type SetResourceOpenedMutation = (
 );
 
 
-export type SetResourceOpenedMutationFn = ApolloReactCommon.MutationFunction<SetResourceOpenedMutation, SetResourceOpenedMutationVariables>;
+export type SetResourceOpenedMutationFn = Apollo.MutationFunction<SetResourceOpenedMutation, SetResourceOpenedMutationVariables>;
 
 /**
  * __useSetResourceOpenedMutation__
@@ -42,9 +39,9 @@ export type SetResourceOpenedMutationFn = ApolloReactCommon.MutationFunction<Set
  *   },
  * });
  */
-export function useSetResourceOpenedMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SetResourceOpenedMutation, SetResourceOpenedMutationVariables>) {
-        return ApolloReactHooks.useMutation<SetResourceOpenedMutation, SetResourceOpenedMutationVariables>(Operations.setResourceOpened, baseOptions);
+export function useSetResourceOpenedMutation(baseOptions?: Apollo.MutationHookOptions<SetResourceOpenedMutation, SetResourceOpenedMutationVariables>) {
+        return Apollo.useMutation<SetResourceOpenedMutation, SetResourceOpenedMutationVariables>(Operations.setResourceOpened, baseOptions);
       }
 export type SetResourceOpenedMutationHookResult = ReturnType<typeof useSetResourceOpenedMutation>;
-export type SetResourceOpenedMutationResult = ApolloReactCommon.MutationResult<SetResourceOpenedMutation>;
-export type SetResourceOpenedMutationOptions = ApolloReactCommon.BaseMutationOptions<SetResourceOpenedMutation, SetResourceOpenedMutationVariables>;
+export type SetResourceOpenedMutationResult = Apollo.MutationResult<SetResourceOpenedMutation>;
+export type SetResourceOpenedMutationOptions = Apollo.BaseMutationOptions<SetResourceOpenedMutation, SetResourceOpenedMutationVariables>;

@@ -38,9 +38,9 @@ export const LoginForm: React.FC<{
           size="md"
           variant="flushed"
           value={email}
-          onChange={(e: any) => setEmail(e.target.value)} // TODO Why event type not inferred ?
+          onChange={(e) => setEmail(e.target.value)}
         />
-        <PasswordInput value={password} onChange={(e: any) => setPassword(e.target.value)} />
+        <PasswordInput value={password} onChange={(e) => setPassword(e.target.value)} />
       </Stack>
       <Button
         size="lg"

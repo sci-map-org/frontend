@@ -13,8 +13,9 @@ export const NewConceptPage: React.FC<{ domainKey: string }> = ({ domainKey }) =
   const [name, setName] = useState('');
   const [key, setKey] = useState('');
   const [description, setDescription] = useState('');
-  if (!domain) return <Box>Domain not found !</Box>;
   const { addConceptToDomain, loading, error } = useAddConceptToDomain();
+
+  if (!domain) return <Box>Domain not found !</Box>;
   return (
     <PageLayout
       mode="form"
@@ -28,7 +29,7 @@ export const NewConceptPage: React.FC<{ domainKey: string }> = ({ domainKey }) =
           size="md"
           variant="flushed"
           value={name}
-          onChange={(e: any) => {
+          onChange={(e) => {
             if (key === generateUrlKey(name)) setKey(generateUrlKey(e.target.value));
             setName(e.target.value);
           }}
@@ -38,14 +39,14 @@ export const NewConceptPage: React.FC<{ domainKey: string }> = ({ domainKey }) =
           size="md"
           variant="flushed"
           value={key}
-          onChange={(e: any) => setKey(e.target.value)}
+          onChange={(e) => setKey(e.target.value)}
         ></Input>
         <Textarea
           placeholder="Description"
           size="md"
           variant="flushed"
           value={description}
-          onChange={(e: any) => setDescription(e.target.value)}
+          onChange={(e) => setDescription(e.target.value)}
         ></Textarea>
 
         <Button

@@ -93,7 +93,7 @@ const ConceptListItem: React.FC<ConceptListItemProps> = ({ concept, relationship
           <Box flexGrow={1}></Box>
           <Editable
             value={indexValue.toString()}
-            onChange={(value: any) => {
+            onChange={(value) => {
               const idxNumber = Number(value);
               !isNaN(idxNumber) && setIndexValue(idxNumber);
             }}

@@ -2,11 +2,8 @@ import * as Types from '../../graphql/types';
 
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import * as Operations from './ResourcePreviewCard';
-import * as ApolloReactCommon from '@apollo/react-common';
-import * as ApolloReactHooks from '@apollo/react-hooks';
-export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
-
-export type SetResourceConsumedMutationVariables = Exact<{
+import * as Apollo from '@apollo/client';
+export type SetResourceConsumedMutationVariables = Types.Exact<{
   resourceId: Types.Scalars['String'];
   consumed: Types.Scalars['Boolean'];
 }>;
@@ -21,7 +18,7 @@ export type SetResourceConsumedMutation = (
 );
 
 
-export type SetResourceConsumedMutationFn = ApolloReactCommon.MutationFunction<SetResourceConsumedMutation, SetResourceConsumedMutationVariables>;
+export type SetResourceConsumedMutationFn = Apollo.MutationFunction<SetResourceConsumedMutation, SetResourceConsumedMutationVariables>;
 
 /**
  * __useSetResourceConsumedMutation__
@@ -41,9 +38,9 @@ export type SetResourceConsumedMutationFn = ApolloReactCommon.MutationFunction<S
  *   },
  * });
  */
-export function useSetResourceConsumedMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SetResourceConsumedMutation, SetResourceConsumedMutationVariables>) {
-        return ApolloReactHooks.useMutation<SetResourceConsumedMutation, SetResourceConsumedMutationVariables>(Operations.setResourceConsumed, baseOptions);
+export function useSetResourceConsumedMutation(baseOptions?: Apollo.MutationHookOptions<SetResourceConsumedMutation, SetResourceConsumedMutationVariables>) {
+        return Apollo.useMutation<SetResourceConsumedMutation, SetResourceConsumedMutationVariables>(Operations.setResourceConsumed, baseOptions);
       }
 export type SetResourceConsumedMutationHookResult = ReturnType<typeof useSetResourceConsumedMutation>;
-export type SetResourceConsumedMutationResult = ApolloReactCommon.MutationResult<SetResourceConsumedMutation>;
-export type SetResourceConsumedMutationOptions = ApolloReactCommon.BaseMutationOptions<SetResourceConsumedMutation, SetResourceConsumedMutationVariables>;
+export type SetResourceConsumedMutationResult = Apollo.MutationResult<SetResourceConsumedMutation>;
+export type SetResourceConsumedMutationOptions = Apollo.BaseMutationOptions<SetResourceConsumedMutation, SetResourceConsumedMutationVariables>;

@@ -22,7 +22,7 @@ const UnauthentificatedModalContext = createContext<{ onOpen: () => void; onClos
 });
 
 export const UnauthentificatedModalProvider: React.FC<{}> = ({ children }) => {
-  const modalDisclosure = useDisclosure(false);
+  const modalDisclosure = useDisclosure({ defaultIsOpen: false });
   const { isOpen, onOpen, onClose } = modalDisclosure;
   return (
     <>
@@ -46,38 +46,39 @@ export const UnauthentificatedModal: React.FC<{ onOpen: () => void; onClose: () 
   return (
     <Modal
       isOpen={isOpen}
-      onClose={(e, reason) => {
+      onClose={() => {
         onClose();
       }}
     >
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>{showLogin ? 'Login' : 'Register'}</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          {showLogin ? (
-            <>
-              <LoginForm onSuccessfulLogin={onClose} />
-              <Divider my={4}></Divider>
-              <Box pb={4} textAlign="center">
-                <Text fontSize="l">
-                  No account yet ? <Link onClick={() => setShowLogin(false)}>Register</Link>
-                </Text>
-              </Box>
-            </>
-          ) : (
-            <>
-              <RegisterForm onSuccess={onClose} />
-              <Divider my={4}></Divider>
-              <Box pb={4} textAlign="center">
-                <Text fontSize="l">
-                  Already have an account ? <Link onClick={() => setShowLogin(true)}>Login</Link>
-                </Text>
-              </Box>
-            </>
-          )}
-        </ModalBody>
-      </ModalContent>
+      <ModalOverlay>
+        <ModalContent>
+          <ModalHeader>{showLogin ? 'Login' : 'Register'}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {showLogin ? (
+              <>
+                <LoginForm onSuccessfulLogin={onClose} />
+                <Divider my={4}></Divider>
+                <Box pb={4} textAlign="center">
+                  <Text fontSize="l">
+                    No account yet ? <Link onClick={() => setShowLogin(false)}>Register</Link>
+                  </Text>
+                </Box>
+              </>
+            ) : (
+              <>
+                <RegisterForm onSuccess={onClose} />
+                <Divider my={4}></Divider>
+                <Box pb={4} textAlign="center">
+                  <Text fontSize="l">
+                    Already have an account ? <Link onClick={() => setShowLogin(true)}>Login</Link>
+                  </Text>
+                </Box>
+              </>
+            )}
+          </ModalBody>
+        </ModalContent>
+      </ModalOverlay>
     </Modal>
   );
 };

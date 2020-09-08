@@ -8,27 +8,27 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  PseudoBox,
   Stack,
 } from '@chakra-ui/core';
+import { omit } from 'lodash';
 import getConfig from 'next/config';
 import NextLink from 'next/link';
+import { useRouter } from 'next/router';
 import { useCurrentUser, useLogout } from '../../graphql/users/users.hooks';
 import { globalStyleVariables } from '../../theme/theme';
 import { RoleAccess } from '../auth/RoleAccess';
 import { InternalLink, InternalLinkProps } from '../navigation/InternalLink';
-import { useRouter } from 'next/router';
 
 const { publicRuntimeConfig } = getConfig();
 
 const HeaderLink: React.FC<(InternalLinkProps & { external?: false }) | ({ external: true } & LinkProps)> = ({
   children,
-  ...props
+  ...props // no taking out 'external' prop as it would mess with the ts trick
 }) =>
   props.external ? (
     <Box>
       <Link
-        {...props}
+        {...omit(props, 'external')}
         fontWeight="light"
         color="blackAlpha.700"
         _hover={{ color: 'blackAlpha.900' }}
@@ -39,7 +39,13 @@ const HeaderLink: React.FC<(InternalLinkProps & { external?: false }) | ({ exter
       </Link>
     </Box>
   ) : (
-    <InternalLink {...props} fontWeight="light" color="blackAlpha.700" _hover={{ color: 'blackAlpha.900' }} _focus={{}}>
+    <InternalLink
+      {...omit(props, 'external')}
+      fontWeight="light"
+      color="blackAlpha.700"
+      _hover={{ color: 'blackAlpha.900' }}
+      _focus={{}}
+    >
       {children}
     </InternalLink>
   );
@@ -49,7 +55,7 @@ export const Header: React.FC = () => {
   const { logout } = useLogout();
 
   return (
-    <PseudoBox
+    <Box
       py={3}
       bg="white"
       pl={globalStyleVariables.leftPadding}
@@ -83,13 +89,13 @@ export const Header: React.FC = () => {
           Forum
         </HeaderLink>
         {!!currentUser ? (
-          <Menu>
+          <Menu placement="bottom-end">
             <MenuButton>
               <Avatar mt="1px" size="xs" name={currentUser.displayName} backgroundColor="gray.400">
-                <AvatarBadge bg="green.500" size="0.7rem" />
+                <AvatarBadge bg="green.500" boxSize="0.7rem" />
               </Avatar>
             </MenuButton>
-            <MenuList placement="bottom-end" bg="white">
+            <MenuList bg="white">
               <NextLink href="/profile/[key]" as={`/profile/${currentUser.key}`} passHref>
                 <MenuItem>
                   <Link>Profile</Link>
@@ -135,6 +141,6 @@ export const Header: React.FC = () => {
           </Stack>
         )}
       </Stack>
-    </PseudoBox>
+    </Box>
   );
 };

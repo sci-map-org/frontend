@@ -9,6 +9,7 @@ import {
   FormLabel,
   FormControl,
 } from '@chakra-ui/core';
+import { ExternalLinkIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
@@ -45,7 +46,7 @@ export const ResourceUrlLink: React.FC<{
         isExternal
       >
         {toUrlPreview(resource.url)}
-        <Icon name="external-link" mx="2px" />
+        <ExternalLinkIcon mx="2px" />
       </Link>
     </Skeleton>
   );
@@ -66,17 +67,24 @@ export const ResourceUrlInput: React.FC<{ value: string; onChange: (value: strin
           placeholder="https://example.com"
           size="md"
           value={value}
-          onChange={(e: any) => onChange(e.target.value)}
+          onChange={(e) => onChange(e.target.value)}
         ></Input>
         <InputRightElement
           children={
             value && (
-              <Link href={value} isExternal isDisabled={!isValidUrl}>
+              <Link
+                href={value}
+                isExternal
+                onClick={(e) => {
+                  if (!isValidUrl) e.preventDefault(); // Not good for accessibility. Refactor to entirely remove link
+                }}
+              >
                 <IconButton
+                  isDisabled={!isValidUrl}
                   size="xs"
                   aria-label="Open link"
                   color={isValidUrl ? 'green.400' : 'red.400'}
-                  icon="external-link"
+                  icon={<ExternalLinkIcon />}
                 />
               </Link>
             )

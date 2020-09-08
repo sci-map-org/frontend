@@ -117,7 +117,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
       title={resource.name}
       isLoading={loading}
       renderRight={
-        <Stack direction="row" spacing={2} shouldWrapChildren={true}>
+        <Stack direction="row" spacing={2}>
           <RoleAccess accessRule="loggedInUser">
             <Button
               size="sm"
@@ -153,7 +153,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
           <ResourceDuration value={resource.durationMs} />
           <ResourceStarsRating value={resource.rating} />
         </Stack>
-        <Stack direction="row" spacing={2} shouldWrapChildren alignItems="flex-end">
+        <Stack direction="row" spacing={2} alignItems="flex-end">
           <RoleAccess accessRule="contributorOrAdmin">
             <ResourceStarsRater resourceId={resource._id} />
           </RoleAccess>

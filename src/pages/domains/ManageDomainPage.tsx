@@ -1,6 +1,6 @@
-import { Box, Icon, IconButton, Stack, Text } from '@chakra-ui/core';
+import { Box, IconButton, Stack, Text } from '@chakra-ui/core';
+import { EditIcon, ExternalLinkIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
-import { differenceBy } from 'lodash';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { DomainsPicker } from '../../components/domains/DomainsPicker';
 import { PageLayout } from '../../components/layout/PageLayout';
@@ -84,7 +84,7 @@ export const ManageDomainPage: React.FC<{ domainKey: string }> = ({ domainKey })
             aria-label="edit domain"
             size="sm"
             variant="outline"
-            icon="edit"
+            icon={<EditIcon />}
             onClick={() => routerPushToPage(EditDomainPageInfo(domain))}
           />
         </RoleAccess>
@@ -96,7 +96,7 @@ export const ManageDomainPage: React.FC<{ domainKey: string }> = ({ domainKey })
           <InternalLink routePath="/domains/[key]/resources" asHref={`/domains/${domainKey}/resources`}>
             <Text fontSize="lg">
               Full Resource List
-              <Icon name="external-link" />
+              <ExternalLinkIcon />
             </Text>
           </InternalLink>
         </Box>

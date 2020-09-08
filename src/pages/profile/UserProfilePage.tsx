@@ -1,4 +1,5 @@
 import { IconButton, Stack, Text } from '@chakra-ui/core';
+import { EditIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
@@ -27,7 +28,7 @@ export const UserProfilePage: React.FC<{ userKey: string }> = ({ userKey }) => {
       centerChildren
       renderRight={
         <RoleAccess accessRule="admin">
-          <IconButton size="sm" aria-label="edit_user" icon="edit" />
+          <IconButton size="sm" aria-label="edit_user" icon={<EditIcon />} />
         </RoleAccess>
       }
     >

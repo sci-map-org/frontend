@@ -1,11 +1,8 @@
 import * as Types from '../graphql/types';
 
 import * as Operations from './VerifyEmailPage';
-import * as ApolloReactCommon from '@apollo/react-common';
-import * as ApolloReactHooks from '@apollo/react-hooks';
-export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
-
-export type VerifyEmailAddressMutationVariables = Exact<{
+import * as Apollo from '@apollo/client';
+export type VerifyEmailAddressMutationVariables = Types.Exact<{
   token: Types.Scalars['String'];
 }>;
 
@@ -19,7 +16,7 @@ export type VerifyEmailAddressMutation = (
 );
 
 
-export type VerifyEmailAddressMutationFn = ApolloReactCommon.MutationFunction<VerifyEmailAddressMutation, VerifyEmailAddressMutationVariables>;
+export type VerifyEmailAddressMutationFn = Apollo.MutationFunction<VerifyEmailAddressMutation, VerifyEmailAddressMutationVariables>;
 
 /**
  * __useVerifyEmailAddressMutation__
@@ -38,9 +35,9 @@ export type VerifyEmailAddressMutationFn = ApolloReactCommon.MutationFunction<Ve
  *   },
  * });
  */
-export function useVerifyEmailAddressMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<VerifyEmailAddressMutation, VerifyEmailAddressMutationVariables>) {
-        return ApolloReactHooks.useMutation<VerifyEmailAddressMutation, VerifyEmailAddressMutationVariables>(Operations.verifyEmailAddress, baseOptions);
+export function useVerifyEmailAddressMutation(baseOptions?: Apollo.MutationHookOptions<VerifyEmailAddressMutation, VerifyEmailAddressMutationVariables>) {
+        return Apollo.useMutation<VerifyEmailAddressMutation, VerifyEmailAddressMutationVariables>(Operations.verifyEmailAddress, baseOptions);
       }
 export type VerifyEmailAddressMutationHookResult = ReturnType<typeof useVerifyEmailAddressMutation>;
-export type VerifyEmailAddressMutationResult = ApolloReactCommon.MutationResult<VerifyEmailAddressMutation>;
-export type VerifyEmailAddressMutationOptions = ApolloReactCommon.BaseMutationOptions<VerifyEmailAddressMutation, VerifyEmailAddressMutationVariables>;
+export type VerifyEmailAddressMutationResult = Apollo.MutationResult<VerifyEmailAddressMutation>;
+export type VerifyEmailAddressMutationOptions = Apollo.BaseMutationOptions<VerifyEmailAddressMutation, VerifyEmailAddressMutationVariables>;

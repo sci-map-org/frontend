@@ -1,4 +1,5 @@
 import { Box, Flex, Heading, IconButton, Link, Skeleton, Stack, Text } from '@chakra-ui/core';
+import { SettingsIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -124,7 +125,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
             ml={2}
             variant="outline"
             aria-label="manage_domain"
-            icon="settings"
+            icon={<SettingsIcon />}
             onClick={() => routerPushToPage(ManageDomainPageInfo(domain))}
           />
         </RoleAccess>

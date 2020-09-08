@@ -41,7 +41,7 @@ const ConceptPageRightIcons: React.FC<{ concept: ConceptDataFragment; isDisabled
 }) => {
   const { deleteConcept } = useDeleteConcept();
   return (
-    <Stack spacing={2} direction="row" shouldWrapChildren={true}>
+    <Stack spacing={2} direction="row">
       <RoleAccess accessRule="contributorOrAdmin">
         <Button size="sm" onClick={() => Router.push(Router.asPath + '/edit')} isDisabled={isDisabled}>
           Edit

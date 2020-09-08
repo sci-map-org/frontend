@@ -22,6 +22,7 @@ import {
   Tooltip,
   useToast,
 } from '@chakra-ui/core';
+import { ArrowUpIcon, ArrowDownIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import { useSetConceptsKnownMutation } from '../../graphql/concepts/concepts.operations.generated';
 import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
@@ -100,7 +101,7 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
         <IconButton
           size="sm"
           aria-label="upvote"
-          icon="arrow-up"
+          icon={<ArrowUpIcon />}
           variant="ghost"
           my={0}
           isDisabled={isLoading}
@@ -117,7 +118,7 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
         <IconButton
           size="sm"
           aria-label="downvote"
-          icon="arrow-down"
+          icon={<ArrowDownIcon />}
           variant="ghost"
           my={0}
           isDisabled={isLoading}
@@ -208,7 +209,7 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
                   <Alert
                     status="success"
                     variant="solid"
-                    id={id}
+                    id={id.toString()}
                     textAlign="left"
                     boxShadow="lg"
                     rounded="md"

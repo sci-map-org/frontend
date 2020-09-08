@@ -3,11 +3,8 @@ import * as Types from '../../graphql/types';
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import * as Operations from './EditResourcePage';
-import * as ApolloReactCommon from '@apollo/react-common';
-import * as ApolloReactHooks from '@apollo/react-hooks';
-export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
-
-export type UpdateResourceResourcePageMutationVariables = Exact<{
+import * as Apollo from '@apollo/client';
+export type UpdateResourceResourcePageMutationVariables = Types.Exact<{
   id: Types.Scalars['String'];
   payload: Types.UpdateResourcePayload;
 }>;
@@ -21,7 +18,7 @@ export type UpdateResourceResourcePageMutation = (
   ) }
 );
 
-export type GetResourceEditResourcePageQueryVariables = Exact<{
+export type GetResourceEditResourcePageQueryVariables = Types.Exact<{
   id: Types.Scalars['String'];
 }>;
 
@@ -62,7 +59,7 @@ export type GetResourceEditResourcePageQuery = (
 );
 
 
-export type UpdateResourceResourcePageMutationFn = ApolloReactCommon.MutationFunction<UpdateResourceResourcePageMutation, UpdateResourceResourcePageMutationVariables>;
+export type UpdateResourceResourcePageMutationFn = Apollo.MutationFunction<UpdateResourceResourcePageMutation, UpdateResourceResourcePageMutationVariables>;
 
 /**
  * __useUpdateResourceResourcePageMutation__
@@ -82,12 +79,12 @@ export type UpdateResourceResourcePageMutationFn = ApolloReactCommon.MutationFun
  *   },
  * });
  */
-export function useUpdateResourceResourcePageMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<UpdateResourceResourcePageMutation, UpdateResourceResourcePageMutationVariables>) {
-        return ApolloReactHooks.useMutation<UpdateResourceResourcePageMutation, UpdateResourceResourcePageMutationVariables>(Operations.updateResourceResourcePage, baseOptions);
+export function useUpdateResourceResourcePageMutation(baseOptions?: Apollo.MutationHookOptions<UpdateResourceResourcePageMutation, UpdateResourceResourcePageMutationVariables>) {
+        return Apollo.useMutation<UpdateResourceResourcePageMutation, UpdateResourceResourcePageMutationVariables>(Operations.updateResourceResourcePage, baseOptions);
       }
 export type UpdateResourceResourcePageMutationHookResult = ReturnType<typeof useUpdateResourceResourcePageMutation>;
-export type UpdateResourceResourcePageMutationResult = ApolloReactCommon.MutationResult<UpdateResourceResourcePageMutation>;
-export type UpdateResourceResourcePageMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateResourceResourcePageMutation, UpdateResourceResourcePageMutationVariables>;
+export type UpdateResourceResourcePageMutationResult = Apollo.MutationResult<UpdateResourceResourcePageMutation>;
+export type UpdateResourceResourcePageMutationOptions = Apollo.BaseMutationOptions<UpdateResourceResourcePageMutation, UpdateResourceResourcePageMutationVariables>;
 
 /**
  * __useGetResourceEditResourcePageQuery__
@@ -105,12 +102,12 @@ export type UpdateResourceResourcePageMutationOptions = ApolloReactCommon.BaseMu
  *   },
  * });
  */
-export function useGetResourceEditResourcePageQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetResourceEditResourcePageQuery, GetResourceEditResourcePageQueryVariables>) {
-        return ApolloReactHooks.useQuery<GetResourceEditResourcePageQuery, GetResourceEditResourcePageQueryVariables>(Operations.getResourceEditResourcePage, baseOptions);
+export function useGetResourceEditResourcePageQuery(baseOptions?: Apollo.QueryHookOptions<GetResourceEditResourcePageQuery, GetResourceEditResourcePageQueryVariables>) {
+        return Apollo.useQuery<GetResourceEditResourcePageQuery, GetResourceEditResourcePageQueryVariables>(Operations.getResourceEditResourcePage, baseOptions);
       }
-export function useGetResourceEditResourcePageLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetResourceEditResourcePageQuery, GetResourceEditResourcePageQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<GetResourceEditResourcePageQuery, GetResourceEditResourcePageQueryVariables>(Operations.getResourceEditResourcePage, baseOptions);
+export function useGetResourceEditResourcePageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetResourceEditResourcePageQuery, GetResourceEditResourcePageQueryVariables>) {
+          return Apollo.useLazyQuery<GetResourceEditResourcePageQuery, GetResourceEditResourcePageQueryVariables>(Operations.getResourceEditResourcePage, baseOptions);
         }
 export type GetResourceEditResourcePageQueryHookResult = ReturnType<typeof useGetResourceEditResourcePageQuery>;
 export type GetResourceEditResourcePageLazyQueryHookResult = ReturnType<typeof useGetResourceEditResourcePageLazyQuery>;
-export type GetResourceEditResourcePageQueryResult = ApolloReactCommon.QueryResult<GetResourceEditResourcePageQuery, GetResourceEditResourcePageQueryVariables>;
+export type GetResourceEditResourcePageQueryResult = Apollo.QueryResult<GetResourceEditResourcePageQuery, GetResourceEditResourcePageQueryVariables>;

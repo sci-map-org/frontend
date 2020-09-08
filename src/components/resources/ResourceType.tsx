@@ -21,7 +21,7 @@ const colorMapping: { [key in ResourceType]: string } = {
 
 export const ResourceTypeBadge: React.FC<BadgeProps & { type: ResourceType }> = ({ type, ...badgeProps }) => {
   return (
-    <Badge variantColor={colorMapping[type]} fontSize="0.8em" {...badgeProps}>
+    <Badge colorScheme={colorMapping[type]} fontSize="0.8em" {...badgeProps}>
       {type.split('_').join(' ')}
     </Badge>
   );
@@ -38,6 +38,7 @@ export const ResourceTypeSelector: React.FC<{ value: ResourceType; onSelect: (ty
         id="type"
         placeholder="Select Type"
         value={value}
+        flexBasis="200px"
         onChange={(e) => onSelect(e.target.value as ResourceType)}
       >
         {values(ResourceType).map((type) => (

@@ -11,7 +11,7 @@ export const ResourceDescriptionInput: React.FC<{ value?: string; onChange: (val
         placeholder="Description (optional)"
         size="md"
         value={value}
-        onChange={(e: any) => onChange(e.target.value || undefined)}
+        onChange={(e) => onChange(e.target.value || undefined)}
       ></Textarea>
       <FormHelperText textAlign="right" id="description-helper-text">
         {value ? value.length : 0}/200

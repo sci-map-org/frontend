@@ -3,7 +3,6 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
-  Icon,
   Input,
   InputGroup,
   InputRightElement,
@@ -12,6 +11,7 @@ import {
   Text,
   Tooltip,
 } from '@chakra-ui/core';
+import { CheckIcon, NotAllowedIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import { useState } from 'react';
 import { generateUrlKey } from '../../services/url.service';
@@ -57,7 +57,7 @@ export const RegisterFormProfileInfo: React.FC<{
           size="md"
           variant="flushed"
           value={displayName}
-          onChange={(e: any) => setDisplayName(e.target.value)}
+          onChange={(e) => setDisplayName(e.target.value)}
         />
       </FormControl>
       <FormControl isRequired isInvalid={!!key && !isKeyValid}>
@@ -69,7 +69,7 @@ export const RegisterFormProfileInfo: React.FC<{
             size="sm"
             variant="flushed"
             value={key}
-            onChange={(e: any) => {
+            onChange={(e) => {
               const newKey: string = e.target.value;
               setKey(newKey);
               if (newKey.length >= MIN_USER_KEY_LENGTH) {
@@ -83,7 +83,7 @@ export const RegisterFormProfileInfo: React.FC<{
                 !!loading ? (
                   <Spinner size="sm" />
                 ) : isKeyValid && isKeyAvailable ? (
-                  <Icon name="check" color="green.500" />
+                  <CheckIcon color="green.500" />
                 ) : (
                   <Tooltip
                     hasArrow
@@ -92,7 +92,7 @@ export const RegisterFormProfileInfo: React.FC<{
                     placement="top"
                     bg="red.600"
                   >
-                    <Icon name="not-allowed" color="red.500" />
+                    <NotAllowedIcon color="red.500" />
                   </Tooltip>
                 )
               }
