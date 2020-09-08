@@ -1,4 +1,5 @@
 import { Box, IconButton, Stack, Text } from '@chakra-ui/core';
+import { DeleteIcon } from '@chakra-ui/icons';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { useSearchDomainsLazyQuery } from '../../graphql/domains/domains.operations.generated';
 import { EntitySelector } from '../lib/selectors/EntitySelector';
@@ -30,7 +31,7 @@ export const DomainsPicker: React.FC<DomainsPickerProps> = ({ title, pickedDomai
               <Stack direction="row" spacing={2} key={pickedDomain._id} my={2}>
                 <IconButton
                   aria-label="remove domain"
-                  icon="delete"
+                  icon={<DeleteIcon />}
                   variant="outline"
                   onClick={() => onRemove(pickedDomain)}
                   size="xs"

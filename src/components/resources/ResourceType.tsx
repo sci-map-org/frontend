@@ -21,7 +21,7 @@ const colorMapping: { [key in ResourceType]: string } = {
 
 export const ResourceTypeBadge: React.FC<BadgeProps & { type: ResourceType }> = ({ type, ...badgeProps }) => {
   return (
-    <Badge variantColor={colorMapping[type]} fontSize="0.8em" {...badgeProps}>
+    <Badge colorScheme={colorMapping[type]} fontSize="0.8em" {...badgeProps}>
       {type.split('_').join(' ')}
     </Badge>
   );

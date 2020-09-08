@@ -1,12 +1,13 @@
 import { Box, Flex, IconButton, Stack } from '@chakra-ui/core';
+import { SettingsIcon } from '@chakra-ui/icons';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { InternalButtonLink, InternalLink } from '../../components/navigation/InternalLink';
 import { useSearchDomains } from '../../graphql/domains/domains.hooks';
+import { useDeleteDomainMutation } from '../../graphql/domains/domains.operations.generated';
 import { routerPushToPage } from '../PageInfo';
 import { ManageDomainPageInfo } from './ManageDomainPage';
-import { useDeleteDomainMutation } from '../../graphql/domains/domains.operations.generated';
 
 export const DomainsListPage: React.FC = () => {
   const { domains, refetch } = useSearchDomains();
@@ -41,7 +42,7 @@ export const DomainsListPage: React.FC = () => {
                     <IconButton
                       aria-label="manage domain"
                       size="sm"
-                      icon="settings"
+                      icon={<SettingsIcon />}
                       onClick={() => routerPushToPage(ManageDomainPageInfo(domain))}
                     />
                   </RoleAccess>

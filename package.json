@@ -30,6 +30,7 @@
     "@apollo/react-hooks": "^4.0.0",
     "@apollo/react-ssr": "^4.0.0",
     "@chakra-ui/core": "^1.0.0-rc.3",
+    "@chakra-ui/icons": "^1.0.0-rc.3",
     "@freighthub/typed-env": "^1.3.4",
     "@types/cookie": "^0.4.0",
     "@zeit/next-css": "^1.0.1",

@@ -1,5 +1,5 @@
 import { ApolloClient, ApolloProvider } from '@apollo/client';
-import { CSSReset, ThemeProvider } from '@chakra-ui/core';
+import { ChakraProvider } from '@chakra-ui/core';
 import { NormalizedCacheObject } from 'apollo-cache-inmemory';
 import { DefaultSeo } from 'next-seo';
 import React from 'react';
@@ -15,8 +15,8 @@ interface WrapperProps {
 export const Wrapper: React.FC<WrapperProps> = ({ children, apolloClient }) => {
   return (
     <ApolloProvider client={apolloClient}>
-      <ThemeProvider theme={theme}>
-        <CSSReset />
+      <ChakraProvider resetCSS theme={theme}>
+        {/* <CSSReset /> */}
         <DefaultSeo title="Sci-Map.org" />
         <UnauthentificatedModalProvider>
           <Layout>{children}</Layout>
@@ -37,7 +37,7 @@ export const Wrapper: React.FC<WrapperProps> = ({ children, apolloClient }) => {
             }
           `}
         </style>
-      </ThemeProvider>
+      </ChakraProvider>
     </ApolloProvider>
   );
 };

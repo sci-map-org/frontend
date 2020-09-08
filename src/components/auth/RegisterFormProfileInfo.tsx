@@ -16,6 +16,7 @@ import gql from 'graphql-tag';
 import { useState } from 'react';
 import { generateUrlKey } from '../../services/url.service';
 import { useGetUserByKeyQuery } from './RegisterFormProfileInfo.generated';
+import { NotAllowedIcon } from '@chakra-ui/icons';
 
 export interface RegisterProfileInfo {
   displayName: string;
@@ -83,7 +84,7 @@ export const RegisterFormProfileInfo: React.FC<{
                 !!loading ? (
                   <Spinner size="sm" />
                 ) : isKeyValid && isKeyAvailable ? (
-                  <Icon name="check" color="green.500" />
+                  <CheckIcon color="green.500" />
                 ) : (
                   <Tooltip
                     hasArrow
@@ -92,7 +93,7 @@ export const RegisterFormProfileInfo: React.FC<{
                     placement="top"
                     bg="red.600"
                   >
-                    <Icon name="not-allowed" color="red.500" />
+                    <NotAllowedIcon color="red.500" />
                   </Tooltip>
                 )
               }

@@ -13,11 +13,12 @@ import gql from 'graphql-tag';
 import { useState } from 'react';
 import ReactStars from 'react-rating-stars-component';
 import { useRateResourceMutation } from './ResourceStarsRating.generated';
+import { StarIcon } from '@chakra-ui/icons';
 
 export const ResourceStarsRating: React.FC<{ value?: number | null; pxSize?: number }> = ({ value, pxSize = 18 }) => {
   return value ? (
     <Stack direction="row" spacing="2px" alignItems="baseline" px="2px">
-      <Icon name="star" size={`${pxSize + 1}px`} color="rgb(255, 215, 0)" />
+      <StarIcon boxSize={`${pxSize + 1}px`} color="rgb(255, 215, 0)" />
       <Text fontSize={pxSize + 'px'} fontWeight={400}>
         {value}
         <Text as="span" fontSize={pxSize - 5 + 'px'} fontWeight={300}>
@@ -45,13 +46,13 @@ export const ResourceStarsRater: React.FC<{ resourceId: string }> = ({ resourceI
   const open = () => setIsOpen(!isOpen);
   const close = () => setIsOpen(false);
   return (
-    <Popover isOpen={isOpen} onClose={close} returnFocusOnClose={false}>
+    <Popover isOpen={isOpen} onClose={close} returnFocus={false} placement="right">
       <PopoverTrigger>
-        <Button variant="outline" aria-label="rate-this" size="sm" leftIcon="star" onClick={open}>
+        <Button variant="outline" aria-label="rate-this" size="sm" leftIcon={<StarIcon />} onClick={open}>
           Rate this
         </Button>
       </PopoverTrigger>
-      <PopoverContent zIndex={4} placement="right">
+      <PopoverContent zIndex={4}>
         <PopoverArrow />
         <PopoverBody>
           <ResourceStarsRatingSelector resourceId={resourceId} onSelected={() => close()} />

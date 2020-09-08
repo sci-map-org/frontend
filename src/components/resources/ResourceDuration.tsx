@@ -1,14 +1,5 @@
-import {
-  FormControl,
-  FormLabel,
-  Icon,
-  Input,
-  InputGroup,
-  InputRightElement,
-  Stack,
-  Text,
-  Tooltip,
-} from '@chakra-ui/core';
+import { FormControl, FormLabel, Input, InputGroup, InputRightElement, Stack, Text, Tooltip } from '@chakra-ui/core';
+import { QuestionIcon } from '@chakra-ui/icons';
 import humanizeDuration from 'humanize-duration';
 import React, { useCallback, useEffect, useState } from 'react';
 
@@ -85,7 +76,7 @@ export const ResourceDurationSelector: React.FC<{
               onOpen={() => setShowTooltip(true)}
               onClose={() => setShowTooltip(false)}
             >
-              <Icon name="question" color={isValid ? 'grey.700' : 'red.500'} />
+              <QuestionIcon color={isValid ? 'grey.700' : 'red.500'} />
             </Tooltip>
           </InputRightElement>
         </InputGroup>

@@ -8,7 +8,6 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  PseudoBox,
   Stack,
 } from '@chakra-ui/core';
 import getConfig from 'next/config';
@@ -49,7 +48,7 @@ export const Header: React.FC = () => {
   const { logout } = useLogout();
 
   return (
-    <PseudoBox
+    <Box
       py={3}
       bg="white"
       pl={globalStyleVariables.leftPadding}
@@ -83,13 +82,13 @@ export const Header: React.FC = () => {
           Forum
         </HeaderLink>
         {!!currentUser ? (
-          <Menu>
+          <Menu placement="bottom-end">
             <MenuButton>
               <Avatar mt="1px" size="xs" name={currentUser.displayName} backgroundColor="gray.400">
-                <AvatarBadge bg="green.500" size="0.7rem" />
+                <AvatarBadge bg="green.500" boxSize="0.7rem" />
               </Avatar>
             </MenuButton>
-            <MenuList placement="bottom-end" bg="white">
+            <MenuList bg="white">
               <NextLink href="/profile/[key]" as={`/profile/${currentUser.key}`} passHref>
                 <MenuItem>
                   <Link>Profile</Link>
@@ -135,6 +134,6 @@ export const Header: React.FC = () => {
           </Stack>
         )}
       </Stack>
-    </PseudoBox>
+    </Box>
   );
 };

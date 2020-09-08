@@ -1,4 +1,5 @@
 import { Box, Checkbox, Collapse, Divider, Flex, IconButton, Skeleton, Stack } from '@chakra-ui/core';
+import { AddIcon, MinusIcon } from '@chakra-ui/icons';
 import { remove } from 'lodash';
 import Router from 'next/router';
 import { useMemo, useState } from 'react';
@@ -99,7 +100,7 @@ export const DomainConceptList: React.FC<{
               aria-label="add-concept"
               variant="ghost"
               color="blue.700"
-              icon="add"
+              icon={<AddIcon />}
               size="sm"
               alignSelf="center"
               borderRadius={16}
@@ -226,7 +227,7 @@ export const DomainConceptListMenuLink: React.FC<{
             size="xs"
             variant="ghost"
             color="gray.400"
-            icon={expanded ? 'minus' : 'add'}
+            icon={expanded ? <MinusIcon /> : <AddIcon />}
             onClick={() => onExpand && onExpand()}
           />
         )}
