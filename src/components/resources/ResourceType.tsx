@@ -38,6 +38,7 @@ export const ResourceTypeSelector: React.FC<{ value: ResourceType; onSelect: (ty
         id="type"
         placeholder="Select Type"
         value={value}
+        flexBasis="200px"
         onChange={(e) => onSelect(e.target.value as ResourceType)}
       >
         {values(ResourceType).map((type) => (

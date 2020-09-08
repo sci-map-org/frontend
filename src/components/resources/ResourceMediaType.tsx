@@ -26,6 +26,8 @@ export const ResourceMediaTypeSelector: React.FC<{
         id="media_type"
         placeholder="Select Media Type"
         value={value}
+        flexBasis="200px"
+        flexGrow={0}
         onChange={(e) => onSelect(e.target.value as ResourceMediaType)}
       >
         {values(ResourceMediaType).map((mediaType) => (
