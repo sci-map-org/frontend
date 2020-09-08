@@ -1,11 +1,8 @@
 import * as Types from '../../graphql/types';
 
 import * as Operations from './ResourceStarsRating';
-import * as ApolloReactCommon from '@apollo/react-common';
-import * as ApolloReactHooks from '@apollo/react-hooks';
-export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
-
-export type RateResourceMutationVariables = Exact<{
+import * as Apollo from '@apollo/client';
+export type RateResourceMutationVariables = Types.Exact<{
   resourceId: Types.Scalars['String'];
   value: Types.Scalars['Float'];
 }>;
@@ -20,7 +17,7 @@ export type RateResourceMutation = (
 );
 
 
-export type RateResourceMutationFn = ApolloReactCommon.MutationFunction<RateResourceMutation, RateResourceMutationVariables>;
+export type RateResourceMutationFn = Apollo.MutationFunction<RateResourceMutation, RateResourceMutationVariables>;
 
 /**
  * __useRateResourceMutation__
@@ -40,9 +37,9 @@ export type RateResourceMutationFn = ApolloReactCommon.MutationFunction<RateReso
  *   },
  * });
  */
-export function useRateResourceMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<RateResourceMutation, RateResourceMutationVariables>) {
-        return ApolloReactHooks.useMutation<RateResourceMutation, RateResourceMutationVariables>(Operations.rateResource, baseOptions);
+export function useRateResourceMutation(baseOptions?: Apollo.MutationHookOptions<RateResourceMutation, RateResourceMutationVariables>) {
+        return Apollo.useMutation<RateResourceMutation, RateResourceMutationVariables>(Operations.rateResource, baseOptions);
       }
 export type RateResourceMutationHookResult = ReturnType<typeof useRateResourceMutation>;
-export type RateResourceMutationResult = ApolloReactCommon.MutationResult<RateResourceMutation>;
-export type RateResourceMutationOptions = ApolloReactCommon.BaseMutationOptions<RateResourceMutation, RateResourceMutationVariables>;
+export type RateResourceMutationResult = Apollo.MutationResult<RateResourceMutation>;
+export type RateResourceMutationOptions = Apollo.BaseMutationOptions<RateResourceMutation, RateResourceMutationVariables>;

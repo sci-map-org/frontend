@@ -4,11 +4,8 @@ import { ConceptDataFragment } from '../../../graphql/concepts/concepts.fragment
 import { ResourcePreviewDataFragment } from '../../../graphql/resources/resources.fragments.generated';
 import { DomainDataFragment } from '../../../graphql/domains/domains.fragments.generated';
 import * as Operations from './ConceptPage';
-import * as ApolloReactCommon from '@apollo/react-common';
-import * as ApolloReactHooks from '@apollo/react-hooks';
-export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
-
-export type GetConceptConceptPageQueryVariables = Exact<{
+import * as Apollo from '@apollo/client';
+export type GetConceptConceptPageQueryVariables = Types.Exact<{
   key: Types.Scalars['String'];
 }>;
 
@@ -53,7 +50,7 @@ export type GetConceptConceptPageQuery = (
   ) }
 );
 
-export type AddConceptReferencesConceptMutationVariables = Exact<{
+export type AddConceptReferencesConceptMutationVariables = Types.Exact<{
   conceptId: Types.Scalars['String'];
   referencedConceptId: Types.Scalars['String'];
 }>;
@@ -74,7 +71,7 @@ export type AddConceptReferencesConceptMutation = (
   ) }
 );
 
-export type RemoveConceptReferencesConceptMutationVariables = Exact<{
+export type RemoveConceptReferencesConceptMutationVariables = Types.Exact<{
   conceptId: Types.Scalars['String'];
   referencedConceptId: Types.Scalars['String'];
 }>;
@@ -95,7 +92,7 @@ export type RemoveConceptReferencesConceptMutation = (
   ) }
 );
 
-export type AddConceptBelongsToConceptMutationVariables = Exact<{
+export type AddConceptBelongsToConceptMutationVariables = Types.Exact<{
   parentConceptId: Types.Scalars['String'];
   subConceptId: Types.Scalars['String'];
 }>;
@@ -116,7 +113,7 @@ export type AddConceptBelongsToConceptMutation = (
   ) }
 );
 
-export type RemoveConceptBelongsToConceptMutationVariables = Exact<{
+export type RemoveConceptBelongsToConceptMutationVariables = Types.Exact<{
   parentConceptId: Types.Scalars['String'];
   subConceptId: Types.Scalars['String'];
 }>;
@@ -155,16 +152,16 @@ export type RemoveConceptBelongsToConceptMutation = (
  *   },
  * });
  */
-export function useGetConceptConceptPageQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetConceptConceptPageQuery, GetConceptConceptPageQueryVariables>) {
-        return ApolloReactHooks.useQuery<GetConceptConceptPageQuery, GetConceptConceptPageQueryVariables>(Operations.getConceptConceptPage, baseOptions);
+export function useGetConceptConceptPageQuery(baseOptions?: Apollo.QueryHookOptions<GetConceptConceptPageQuery, GetConceptConceptPageQueryVariables>) {
+        return Apollo.useQuery<GetConceptConceptPageQuery, GetConceptConceptPageQueryVariables>(Operations.getConceptConceptPage, baseOptions);
       }
-export function useGetConceptConceptPageLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetConceptConceptPageQuery, GetConceptConceptPageQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<GetConceptConceptPageQuery, GetConceptConceptPageQueryVariables>(Operations.getConceptConceptPage, baseOptions);
+export function useGetConceptConceptPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetConceptConceptPageQuery, GetConceptConceptPageQueryVariables>) {
+          return Apollo.useLazyQuery<GetConceptConceptPageQuery, GetConceptConceptPageQueryVariables>(Operations.getConceptConceptPage, baseOptions);
         }
 export type GetConceptConceptPageQueryHookResult = ReturnType<typeof useGetConceptConceptPageQuery>;
 export type GetConceptConceptPageLazyQueryHookResult = ReturnType<typeof useGetConceptConceptPageLazyQuery>;
-export type GetConceptConceptPageQueryResult = ApolloReactCommon.QueryResult<GetConceptConceptPageQuery, GetConceptConceptPageQueryVariables>;
-export type AddConceptReferencesConceptMutationFn = ApolloReactCommon.MutationFunction<AddConceptReferencesConceptMutation, AddConceptReferencesConceptMutationVariables>;
+export type GetConceptConceptPageQueryResult = Apollo.QueryResult<GetConceptConceptPageQuery, GetConceptConceptPageQueryVariables>;
+export type AddConceptReferencesConceptMutationFn = Apollo.MutationFunction<AddConceptReferencesConceptMutation, AddConceptReferencesConceptMutationVariables>;
 
 /**
  * __useAddConceptReferencesConceptMutation__
@@ -184,13 +181,13 @@ export type AddConceptReferencesConceptMutationFn = ApolloReactCommon.MutationFu
  *   },
  * });
  */
-export function useAddConceptReferencesConceptMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<AddConceptReferencesConceptMutation, AddConceptReferencesConceptMutationVariables>) {
-        return ApolloReactHooks.useMutation<AddConceptReferencesConceptMutation, AddConceptReferencesConceptMutationVariables>(Operations.addConceptReferencesConcept, baseOptions);
+export function useAddConceptReferencesConceptMutation(baseOptions?: Apollo.MutationHookOptions<AddConceptReferencesConceptMutation, AddConceptReferencesConceptMutationVariables>) {
+        return Apollo.useMutation<AddConceptReferencesConceptMutation, AddConceptReferencesConceptMutationVariables>(Operations.addConceptReferencesConcept, baseOptions);
       }
 export type AddConceptReferencesConceptMutationHookResult = ReturnType<typeof useAddConceptReferencesConceptMutation>;
-export type AddConceptReferencesConceptMutationResult = ApolloReactCommon.MutationResult<AddConceptReferencesConceptMutation>;
-export type AddConceptReferencesConceptMutationOptions = ApolloReactCommon.BaseMutationOptions<AddConceptReferencesConceptMutation, AddConceptReferencesConceptMutationVariables>;
-export type RemoveConceptReferencesConceptMutationFn = ApolloReactCommon.MutationFunction<RemoveConceptReferencesConceptMutation, RemoveConceptReferencesConceptMutationVariables>;
+export type AddConceptReferencesConceptMutationResult = Apollo.MutationResult<AddConceptReferencesConceptMutation>;
+export type AddConceptReferencesConceptMutationOptions = Apollo.BaseMutationOptions<AddConceptReferencesConceptMutation, AddConceptReferencesConceptMutationVariables>;
+export type RemoveConceptReferencesConceptMutationFn = Apollo.MutationFunction<RemoveConceptReferencesConceptMutation, RemoveConceptReferencesConceptMutationVariables>;
 
 /**
  * __useRemoveConceptReferencesConceptMutation__
@@ -210,13 +207,13 @@ export type RemoveConceptReferencesConceptMutationFn = ApolloReactCommon.Mutatio
  *   },
  * });
  */
-export function useRemoveConceptReferencesConceptMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<RemoveConceptReferencesConceptMutation, RemoveConceptReferencesConceptMutationVariables>) {
-        return ApolloReactHooks.useMutation<RemoveConceptReferencesConceptMutation, RemoveConceptReferencesConceptMutationVariables>(Operations.removeConceptReferencesConcept, baseOptions);
+export function useRemoveConceptReferencesConceptMutation(baseOptions?: Apollo.MutationHookOptions<RemoveConceptReferencesConceptMutation, RemoveConceptReferencesConceptMutationVariables>) {
+        return Apollo.useMutation<RemoveConceptReferencesConceptMutation, RemoveConceptReferencesConceptMutationVariables>(Operations.removeConceptReferencesConcept, baseOptions);
       }
 export type RemoveConceptReferencesConceptMutationHookResult = ReturnType<typeof useRemoveConceptReferencesConceptMutation>;
-export type RemoveConceptReferencesConceptMutationResult = ApolloReactCommon.MutationResult<RemoveConceptReferencesConceptMutation>;
-export type RemoveConceptReferencesConceptMutationOptions = ApolloReactCommon.BaseMutationOptions<RemoveConceptReferencesConceptMutation, RemoveConceptReferencesConceptMutationVariables>;
-export type AddConceptBelongsToConceptMutationFn = ApolloReactCommon.MutationFunction<AddConceptBelongsToConceptMutation, AddConceptBelongsToConceptMutationVariables>;
+export type RemoveConceptReferencesConceptMutationResult = Apollo.MutationResult<RemoveConceptReferencesConceptMutation>;
+export type RemoveConceptReferencesConceptMutationOptions = Apollo.BaseMutationOptions<RemoveConceptReferencesConceptMutation, RemoveConceptReferencesConceptMutationVariables>;
+export type AddConceptBelongsToConceptMutationFn = Apollo.MutationFunction<AddConceptBelongsToConceptMutation, AddConceptBelongsToConceptMutationVariables>;
 
 /**
  * __useAddConceptBelongsToConceptMutation__
@@ -236,13 +233,13 @@ export type AddConceptBelongsToConceptMutationFn = ApolloReactCommon.MutationFun
  *   },
  * });
  */
-export function useAddConceptBelongsToConceptMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<AddConceptBelongsToConceptMutation, AddConceptBelongsToConceptMutationVariables>) {
-        return ApolloReactHooks.useMutation<AddConceptBelongsToConceptMutation, AddConceptBelongsToConceptMutationVariables>(Operations.addConceptBelongsToConcept, baseOptions);
+export function useAddConceptBelongsToConceptMutation(baseOptions?: Apollo.MutationHookOptions<AddConceptBelongsToConceptMutation, AddConceptBelongsToConceptMutationVariables>) {
+        return Apollo.useMutation<AddConceptBelongsToConceptMutation, AddConceptBelongsToConceptMutationVariables>(Operations.addConceptBelongsToConcept, baseOptions);
       }
 export type AddConceptBelongsToConceptMutationHookResult = ReturnType<typeof useAddConceptBelongsToConceptMutation>;
-export type AddConceptBelongsToConceptMutationResult = ApolloReactCommon.MutationResult<AddConceptBelongsToConceptMutation>;
-export type AddConceptBelongsToConceptMutationOptions = ApolloReactCommon.BaseMutationOptions<AddConceptBelongsToConceptMutation, AddConceptBelongsToConceptMutationVariables>;
-export type RemoveConceptBelongsToConceptMutationFn = ApolloReactCommon.MutationFunction<RemoveConceptBelongsToConceptMutation, RemoveConceptBelongsToConceptMutationVariables>;
+export type AddConceptBelongsToConceptMutationResult = Apollo.MutationResult<AddConceptBelongsToConceptMutation>;
+export type AddConceptBelongsToConceptMutationOptions = Apollo.BaseMutationOptions<AddConceptBelongsToConceptMutation, AddConceptBelongsToConceptMutationVariables>;
+export type RemoveConceptBelongsToConceptMutationFn = Apollo.MutationFunction<RemoveConceptBelongsToConceptMutation, RemoveConceptBelongsToConceptMutationVariables>;
 
 /**
  * __useRemoveConceptBelongsToConceptMutation__
@@ -262,9 +259,9 @@ export type RemoveConceptBelongsToConceptMutationFn = ApolloReactCommon.Mutation
  *   },
  * });
  */
-export function useRemoveConceptBelongsToConceptMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<RemoveConceptBelongsToConceptMutation, RemoveConceptBelongsToConceptMutationVariables>) {
-        return ApolloReactHooks.useMutation<RemoveConceptBelongsToConceptMutation, RemoveConceptBelongsToConceptMutationVariables>(Operations.removeConceptBelongsToConcept, baseOptions);
+export function useRemoveConceptBelongsToConceptMutation(baseOptions?: Apollo.MutationHookOptions<RemoveConceptBelongsToConceptMutation, RemoveConceptBelongsToConceptMutationVariables>) {
+        return Apollo.useMutation<RemoveConceptBelongsToConceptMutation, RemoveConceptBelongsToConceptMutationVariables>(Operations.removeConceptBelongsToConcept, baseOptions);
       }
 export type RemoveConceptBelongsToConceptMutationHookResult = ReturnType<typeof useRemoveConceptBelongsToConceptMutation>;
-export type RemoveConceptBelongsToConceptMutationResult = ApolloReactCommon.MutationResult<RemoveConceptBelongsToConceptMutation>;
-export type RemoveConceptBelongsToConceptMutationOptions = ApolloReactCommon.BaseMutationOptions<RemoveConceptBelongsToConceptMutation, RemoveConceptBelongsToConceptMutationVariables>;
+export type RemoveConceptBelongsToConceptMutationResult = Apollo.MutationResult<RemoveConceptBelongsToConceptMutation>;
+export type RemoveConceptBelongsToConceptMutationOptions = Apollo.BaseMutationOptions<RemoveConceptBelongsToConceptMutation, RemoveConceptBelongsToConceptMutationVariables>;

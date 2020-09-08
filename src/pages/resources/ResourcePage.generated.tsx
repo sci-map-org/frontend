@@ -4,11 +4,8 @@ import { ResourceDataFragment } from '../../graphql/resources/resources.fragment
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { DomainWithConceptsDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import * as Operations from './ResourcePage';
-import * as ApolloReactCommon from '@apollo/react-common';
-import * as ApolloReactHooks from '@apollo/react-hooks';
-export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
-
-export type AddTagsToResourceResourceEditorMutationVariables = Exact<{
+import * as Apollo from '@apollo/client';
+export type AddTagsToResourceResourceEditorMutationVariables = Types.Exact<{
   resourceId: Types.Scalars['String'];
   tags: Array<Types.Scalars['String']>;
 }>;
@@ -26,7 +23,7 @@ export type AddTagsToResourceResourceEditorMutation = (
   ) }
 );
 
-export type RemoveTagsFromResourceResourceEditorMutationVariables = Exact<{
+export type RemoveTagsFromResourceResourceEditorMutationVariables = Types.Exact<{
   resourceId: Types.Scalars['String'];
   tags: Array<Types.Scalars['String']>;
 }>;
@@ -44,7 +41,7 @@ export type RemoveTagsFromResourceResourceEditorMutation = (
   ) }
 );
 
-export type GetResourceResourcePageQueryVariables = Exact<{
+export type GetResourceResourcePageQueryVariables = Types.Exact<{
   id: Types.Scalars['String'];
 }>;
 
@@ -78,7 +75,7 @@ export type GetResourceResourcePageQuery = (
 );
 
 
-export type AddTagsToResourceResourceEditorMutationFn = ApolloReactCommon.MutationFunction<AddTagsToResourceResourceEditorMutation, AddTagsToResourceResourceEditorMutationVariables>;
+export type AddTagsToResourceResourceEditorMutationFn = Apollo.MutationFunction<AddTagsToResourceResourceEditorMutation, AddTagsToResourceResourceEditorMutationVariables>;
 
 /**
  * __useAddTagsToResourceResourceEditorMutation__
@@ -98,13 +95,13 @@ export type AddTagsToResourceResourceEditorMutationFn = ApolloReactCommon.Mutati
  *   },
  * });
  */
-export function useAddTagsToResourceResourceEditorMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<AddTagsToResourceResourceEditorMutation, AddTagsToResourceResourceEditorMutationVariables>) {
-        return ApolloReactHooks.useMutation<AddTagsToResourceResourceEditorMutation, AddTagsToResourceResourceEditorMutationVariables>(Operations.addTagsToResourceResourceEditor, baseOptions);
+export function useAddTagsToResourceResourceEditorMutation(baseOptions?: Apollo.MutationHookOptions<AddTagsToResourceResourceEditorMutation, AddTagsToResourceResourceEditorMutationVariables>) {
+        return Apollo.useMutation<AddTagsToResourceResourceEditorMutation, AddTagsToResourceResourceEditorMutationVariables>(Operations.addTagsToResourceResourceEditor, baseOptions);
       }
 export type AddTagsToResourceResourceEditorMutationHookResult = ReturnType<typeof useAddTagsToResourceResourceEditorMutation>;
-export type AddTagsToResourceResourceEditorMutationResult = ApolloReactCommon.MutationResult<AddTagsToResourceResourceEditorMutation>;
-export type AddTagsToResourceResourceEditorMutationOptions = ApolloReactCommon.BaseMutationOptions<AddTagsToResourceResourceEditorMutation, AddTagsToResourceResourceEditorMutationVariables>;
-export type RemoveTagsFromResourceResourceEditorMutationFn = ApolloReactCommon.MutationFunction<RemoveTagsFromResourceResourceEditorMutation, RemoveTagsFromResourceResourceEditorMutationVariables>;
+export type AddTagsToResourceResourceEditorMutationResult = Apollo.MutationResult<AddTagsToResourceResourceEditorMutation>;
+export type AddTagsToResourceResourceEditorMutationOptions = Apollo.BaseMutationOptions<AddTagsToResourceResourceEditorMutation, AddTagsToResourceResourceEditorMutationVariables>;
+export type RemoveTagsFromResourceResourceEditorMutationFn = Apollo.MutationFunction<RemoveTagsFromResourceResourceEditorMutation, RemoveTagsFromResourceResourceEditorMutationVariables>;
 
 /**
  * __useRemoveTagsFromResourceResourceEditorMutation__
@@ -124,12 +121,12 @@ export type RemoveTagsFromResourceResourceEditorMutationFn = ApolloReactCommon.M
  *   },
  * });
  */
-export function useRemoveTagsFromResourceResourceEditorMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<RemoveTagsFromResourceResourceEditorMutation, RemoveTagsFromResourceResourceEditorMutationVariables>) {
-        return ApolloReactHooks.useMutation<RemoveTagsFromResourceResourceEditorMutation, RemoveTagsFromResourceResourceEditorMutationVariables>(Operations.removeTagsFromResourceResourceEditor, baseOptions);
+export function useRemoveTagsFromResourceResourceEditorMutation(baseOptions?: Apollo.MutationHookOptions<RemoveTagsFromResourceResourceEditorMutation, RemoveTagsFromResourceResourceEditorMutationVariables>) {
+        return Apollo.useMutation<RemoveTagsFromResourceResourceEditorMutation, RemoveTagsFromResourceResourceEditorMutationVariables>(Operations.removeTagsFromResourceResourceEditor, baseOptions);
       }
 export type RemoveTagsFromResourceResourceEditorMutationHookResult = ReturnType<typeof useRemoveTagsFromResourceResourceEditorMutation>;
-export type RemoveTagsFromResourceResourceEditorMutationResult = ApolloReactCommon.MutationResult<RemoveTagsFromResourceResourceEditorMutation>;
-export type RemoveTagsFromResourceResourceEditorMutationOptions = ApolloReactCommon.BaseMutationOptions<RemoveTagsFromResourceResourceEditorMutation, RemoveTagsFromResourceResourceEditorMutationVariables>;
+export type RemoveTagsFromResourceResourceEditorMutationResult = Apollo.MutationResult<RemoveTagsFromResourceResourceEditorMutation>;
+export type RemoveTagsFromResourceResourceEditorMutationOptions = Apollo.BaseMutationOptions<RemoveTagsFromResourceResourceEditorMutation, RemoveTagsFromResourceResourceEditorMutationVariables>;
 
 /**
  * __useGetResourceResourcePageQuery__
@@ -147,12 +144,12 @@ export type RemoveTagsFromResourceResourceEditorMutationOptions = ApolloReactCom
  *   },
  * });
  */
-export function useGetResourceResourcePageQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetResourceResourcePageQuery, GetResourceResourcePageQueryVariables>) {
-        return ApolloReactHooks.useQuery<GetResourceResourcePageQuery, GetResourceResourcePageQueryVariables>(Operations.getResourceResourcePage, baseOptions);
+export function useGetResourceResourcePageQuery(baseOptions?: Apollo.QueryHookOptions<GetResourceResourcePageQuery, GetResourceResourcePageQueryVariables>) {
+        return Apollo.useQuery<GetResourceResourcePageQuery, GetResourceResourcePageQueryVariables>(Operations.getResourceResourcePage, baseOptions);
       }
-export function useGetResourceResourcePageLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetResourceResourcePageQuery, GetResourceResourcePageQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<GetResourceResourcePageQuery, GetResourceResourcePageQueryVariables>(Operations.getResourceResourcePage, baseOptions);
+export function useGetResourceResourcePageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetResourceResourcePageQuery, GetResourceResourcePageQueryVariables>) {
+          return Apollo.useLazyQuery<GetResourceResourcePageQuery, GetResourceResourcePageQueryVariables>(Operations.getResourceResourcePage, baseOptions);
         }
 export type GetResourceResourcePageQueryHookResult = ReturnType<typeof useGetResourceResourcePageQuery>;
 export type GetResourceResourcePageLazyQueryHookResult = ReturnType<typeof useGetResourceResourcePageLazyQuery>;
-export type GetResourceResourcePageQueryResult = ApolloReactCommon.QueryResult<GetResourceResourcePageQuery, GetResourceResourcePageQueryVariables>;
+export type GetResourceResourcePageQueryResult = Apollo.QueryResult<GetResourceResourcePageQuery, GetResourceResourcePageQueryVariables>;

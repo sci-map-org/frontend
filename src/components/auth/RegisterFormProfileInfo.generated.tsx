@@ -1,11 +1,8 @@
 import * as Types from '../../graphql/types';
 
 import * as Operations from './RegisterFormProfileInfo';
-import * as ApolloReactCommon from '@apollo/react-common';
-import * as ApolloReactHooks from '@apollo/react-hooks';
-export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
-
-export type GetUserByKeyQueryVariables = Exact<{
+import * as Apollo from '@apollo/client';
+export type GetUserByKeyQueryVariables = Types.Exact<{
   key: Types.Scalars['String'];
 }>;
 
@@ -36,12 +33,12 @@ export type GetUserByKeyQuery = (
  *   },
  * });
  */
-export function useGetUserByKeyQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetUserByKeyQuery, GetUserByKeyQueryVariables>) {
-        return ApolloReactHooks.useQuery<GetUserByKeyQuery, GetUserByKeyQueryVariables>(Operations.getUserByKey, baseOptions);
+export function useGetUserByKeyQuery(baseOptions?: Apollo.QueryHookOptions<GetUserByKeyQuery, GetUserByKeyQueryVariables>) {
+        return Apollo.useQuery<GetUserByKeyQuery, GetUserByKeyQueryVariables>(Operations.getUserByKey, baseOptions);
       }
-export function useGetUserByKeyLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetUserByKeyQuery, GetUserByKeyQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<GetUserByKeyQuery, GetUserByKeyQueryVariables>(Operations.getUserByKey, baseOptions);
+export function useGetUserByKeyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserByKeyQuery, GetUserByKeyQueryVariables>) {
+          return Apollo.useLazyQuery<GetUserByKeyQuery, GetUserByKeyQueryVariables>(Operations.getUserByKey, baseOptions);
         }
 export type GetUserByKeyQueryHookResult = ReturnType<typeof useGetUserByKeyQuery>;
 export type GetUserByKeyLazyQueryHookResult = ReturnType<typeof useGetUserByKeyLazyQuery>;
-export type GetUserByKeyQueryResult = ApolloReactCommon.QueryResult<GetUserByKeyQuery, GetUserByKeyQueryVariables>;
+export type GetUserByKeyQueryResult = Apollo.QueryResult<GetUserByKeyQuery, GetUserByKeyQueryVariables>;

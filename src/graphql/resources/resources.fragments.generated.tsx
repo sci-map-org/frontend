@@ -1,7 +1,6 @@
 import * as Types from '../types';
 
 import { ConceptDataFragment } from '../concepts/concepts.fragments.generated';
-
 export type ResourceDataFragment = (
   { __typename?: 'Resource' }
   & Pick<Types.Resource, '_id' | 'name' | 'type' | 'mediaType' | 'url' | 'description' | 'durationMs' | 'rating'>
@@ -31,4 +30,3 @@ export type ResourcePreviewDataFragment = (
     )> }
   )> }
 );
-

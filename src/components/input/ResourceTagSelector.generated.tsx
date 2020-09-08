@@ -1,11 +1,8 @@
 import * as Types from '../../graphql/types';
 
 import * as Operations from './ResourceTagSelector';
-import * as ApolloReactCommon from '@apollo/react-common';
-import * as ApolloReactHooks from '@apollo/react-hooks';
-export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
-
-export type SearchResourceTagsQueryVariables = Exact<{
+import * as Apollo from '@apollo/client';
+export type SearchResourceTagsQueryVariables = Types.Exact<{
   options: Types.SearchResourceTagsOptions;
 }>;
 
@@ -36,12 +33,12 @@ export type SearchResourceTagsQuery = (
  *   },
  * });
  */
-export function useSearchResourceTagsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<SearchResourceTagsQuery, SearchResourceTagsQueryVariables>) {
-        return ApolloReactHooks.useQuery<SearchResourceTagsQuery, SearchResourceTagsQueryVariables>(Operations.searchResourceTags, baseOptions);
+export function useSearchResourceTagsQuery(baseOptions?: Apollo.QueryHookOptions<SearchResourceTagsQuery, SearchResourceTagsQueryVariables>) {
+        return Apollo.useQuery<SearchResourceTagsQuery, SearchResourceTagsQueryVariables>(Operations.searchResourceTags, baseOptions);
       }
-export function useSearchResourceTagsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<SearchResourceTagsQuery, SearchResourceTagsQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<SearchResourceTagsQuery, SearchResourceTagsQueryVariables>(Operations.searchResourceTags, baseOptions);
+export function useSearchResourceTagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchResourceTagsQuery, SearchResourceTagsQueryVariables>) {
+          return Apollo.useLazyQuery<SearchResourceTagsQuery, SearchResourceTagsQueryVariables>(Operations.searchResourceTags, baseOptions);
         }
 export type SearchResourceTagsQueryHookResult = ReturnType<typeof useSearchResourceTagsQuery>;
 export type SearchResourceTagsLazyQueryHookResult = ReturnType<typeof useSearchResourceTagsLazyQuery>;
-export type SearchResourceTagsQueryResult = ApolloReactCommon.QueryResult<SearchResourceTagsQuery, SearchResourceTagsQueryVariables>;
+export type SearchResourceTagsQueryResult = Apollo.QueryResult<SearchResourceTagsQuery, SearchResourceTagsQueryVariables>;

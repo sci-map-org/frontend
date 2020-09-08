@@ -2,11 +2,8 @@ import * as Types from '../types';
 
 import { DomainDataFragment } from './domains.fragments.generated';
 import * as Operations from './domains.operations';
-import * as ApolloReactCommon from '@apollo/react-common';
-import * as ApolloReactHooks from '@apollo/react-hooks';
-export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
-
-export type GetDomainByKeyQueryVariables = Exact<{
+import * as Apollo from '@apollo/client';
+export type GetDomainByKeyQueryVariables = Types.Exact<{
   key: Types.Scalars['String'];
 }>;
 
@@ -19,7 +16,7 @@ export type GetDomainByKeyQuery = (
   ) }
 );
 
-export type SearchDomainsQueryVariables = Exact<{
+export type SearchDomainsQueryVariables = Types.Exact<{
   options: Types.SearchDomainsOptions;
 }>;
 
@@ -35,7 +32,7 @@ export type SearchDomainsQuery = (
   ) }
 );
 
-export type CreateDomainMutationVariables = Exact<{
+export type CreateDomainMutationVariables = Types.Exact<{
   payload: Types.CreateDomainPayload;
 }>;
 
@@ -48,7 +45,7 @@ export type CreateDomainMutation = (
   ) }
 );
 
-export type UpdateDomainMutationVariables = Exact<{
+export type UpdateDomainMutationVariables = Types.Exact<{
   id: Types.Scalars['String'];
   payload: Types.UpdateDomainPayload;
 }>;
@@ -62,7 +59,7 @@ export type UpdateDomainMutation = (
   ) }
 );
 
-export type DeleteDomainMutationVariables = Exact<{
+export type DeleteDomainMutationVariables = Types.Exact<{
   id: Types.Scalars['String'];
 }>;
 
@@ -93,15 +90,15 @@ export type DeleteDomainMutation = (
  *   },
  * });
  */
-export function useGetDomainByKeyQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetDomainByKeyQuery, GetDomainByKeyQueryVariables>) {
-        return ApolloReactHooks.useQuery<GetDomainByKeyQuery, GetDomainByKeyQueryVariables>(Operations.getDomainByKey, baseOptions);
+export function useGetDomainByKeyQuery(baseOptions?: Apollo.QueryHookOptions<GetDomainByKeyQuery, GetDomainByKeyQueryVariables>) {
+        return Apollo.useQuery<GetDomainByKeyQuery, GetDomainByKeyQueryVariables>(Operations.getDomainByKey, baseOptions);
       }
-export function useGetDomainByKeyLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetDomainByKeyQuery, GetDomainByKeyQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<GetDomainByKeyQuery, GetDomainByKeyQueryVariables>(Operations.getDomainByKey, baseOptions);
+export function useGetDomainByKeyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDomainByKeyQuery, GetDomainByKeyQueryVariables>) {
+          return Apollo.useLazyQuery<GetDomainByKeyQuery, GetDomainByKeyQueryVariables>(Operations.getDomainByKey, baseOptions);
         }
 export type GetDomainByKeyQueryHookResult = ReturnType<typeof useGetDomainByKeyQuery>;
 export type GetDomainByKeyLazyQueryHookResult = ReturnType<typeof useGetDomainByKeyLazyQuery>;
-export type GetDomainByKeyQueryResult = ApolloReactCommon.QueryResult<GetDomainByKeyQuery, GetDomainByKeyQueryVariables>;
+export type GetDomainByKeyQueryResult = Apollo.QueryResult<GetDomainByKeyQuery, GetDomainByKeyQueryVariables>;
 
 /**
  * __useSearchDomainsQuery__
@@ -119,16 +116,16 @@ export type GetDomainByKeyQueryResult = ApolloReactCommon.QueryResult<GetDomainB
  *   },
  * });
  */
-export function useSearchDomainsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<SearchDomainsQuery, SearchDomainsQueryVariables>) {
-        return ApolloReactHooks.useQuery<SearchDomainsQuery, SearchDomainsQueryVariables>(Operations.searchDomains, baseOptions);
+export function useSearchDomainsQuery(baseOptions?: Apollo.QueryHookOptions<SearchDomainsQuery, SearchDomainsQueryVariables>) {
+        return Apollo.useQuery<SearchDomainsQuery, SearchDomainsQueryVariables>(Operations.searchDomains, baseOptions);
       }
-export function useSearchDomainsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<SearchDomainsQuery, SearchDomainsQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<SearchDomainsQuery, SearchDomainsQueryVariables>(Operations.searchDomains, baseOptions);
+export function useSearchDomainsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchDomainsQuery, SearchDomainsQueryVariables>) {
+          return Apollo.useLazyQuery<SearchDomainsQuery, SearchDomainsQueryVariables>(Operations.searchDomains, baseOptions);
         }
 export type SearchDomainsQueryHookResult = ReturnType<typeof useSearchDomainsQuery>;
 export type SearchDomainsLazyQueryHookResult = ReturnType<typeof useSearchDomainsLazyQuery>;
-export type SearchDomainsQueryResult = ApolloReactCommon.QueryResult<SearchDomainsQuery, SearchDomainsQueryVariables>;
-export type CreateDomainMutationFn = ApolloReactCommon.MutationFunction<CreateDomainMutation, CreateDomainMutationVariables>;
+export type SearchDomainsQueryResult = Apollo.QueryResult<SearchDomainsQuery, SearchDomainsQueryVariables>;
+export type CreateDomainMutationFn = Apollo.MutationFunction<CreateDomainMutation, CreateDomainMutationVariables>;
 
 /**
  * __useCreateDomainMutation__
@@ -147,13 +144,13 @@ export type CreateDomainMutationFn = ApolloReactCommon.MutationFunction<CreateDo
  *   },
  * });
  */
-export function useCreateDomainMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateDomainMutation, CreateDomainMutationVariables>) {
-        return ApolloReactHooks.useMutation<CreateDomainMutation, CreateDomainMutationVariables>(Operations.createDomain, baseOptions);
+export function useCreateDomainMutation(baseOptions?: Apollo.MutationHookOptions<CreateDomainMutation, CreateDomainMutationVariables>) {
+        return Apollo.useMutation<CreateDomainMutation, CreateDomainMutationVariables>(Operations.createDomain, baseOptions);
       }
 export type CreateDomainMutationHookResult = ReturnType<typeof useCreateDomainMutation>;
-export type CreateDomainMutationResult = ApolloReactCommon.MutationResult<CreateDomainMutation>;
-export type CreateDomainMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateDomainMutation, CreateDomainMutationVariables>;
-export type UpdateDomainMutationFn = ApolloReactCommon.MutationFunction<UpdateDomainMutation, UpdateDomainMutationVariables>;
+export type CreateDomainMutationResult = Apollo.MutationResult<CreateDomainMutation>;
+export type CreateDomainMutationOptions = Apollo.BaseMutationOptions<CreateDomainMutation, CreateDomainMutationVariables>;
+export type UpdateDomainMutationFn = Apollo.MutationFunction<UpdateDomainMutation, UpdateDomainMutationVariables>;
 
 /**
  * __useUpdateDomainMutation__
@@ -173,13 +170,13 @@ export type UpdateDomainMutationFn = ApolloReactCommon.MutationFunction<UpdateDo
  *   },
  * });
  */
-export function useUpdateDomainMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<UpdateDomainMutation, UpdateDomainMutationVariables>) {
-        return ApolloReactHooks.useMutation<UpdateDomainMutation, UpdateDomainMutationVariables>(Operations.updateDomain, baseOptions);
+export function useUpdateDomainMutation(baseOptions?: Apollo.MutationHookOptions<UpdateDomainMutation, UpdateDomainMutationVariables>) {
+        return Apollo.useMutation<UpdateDomainMutation, UpdateDomainMutationVariables>(Operations.updateDomain, baseOptions);
       }
 export type UpdateDomainMutationHookResult = ReturnType<typeof useUpdateDomainMutation>;
-export type UpdateDomainMutationResult = ApolloReactCommon.MutationResult<UpdateDomainMutation>;
-export type UpdateDomainMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateDomainMutation, UpdateDomainMutationVariables>;
-export type DeleteDomainMutationFn = ApolloReactCommon.MutationFunction<DeleteDomainMutation, DeleteDomainMutationVariables>;
+export type UpdateDomainMutationResult = Apollo.MutationResult<UpdateDomainMutation>;
+export type UpdateDomainMutationOptions = Apollo.BaseMutationOptions<UpdateDomainMutation, UpdateDomainMutationVariables>;
+export type DeleteDomainMutationFn = Apollo.MutationFunction<DeleteDomainMutation, DeleteDomainMutationVariables>;
 
 /**
  * __useDeleteDomainMutation__
@@ -198,9 +195,9 @@ export type DeleteDomainMutationFn = ApolloReactCommon.MutationFunction<DeleteDo
  *   },
  * });
  */
-export function useDeleteDomainMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<DeleteDomainMutation, DeleteDomainMutationVariables>) {
-        return ApolloReactHooks.useMutation<DeleteDomainMutation, DeleteDomainMutationVariables>(Operations.deleteDomain, baseOptions);
+export function useDeleteDomainMutation(baseOptions?: Apollo.MutationHookOptions<DeleteDomainMutation, DeleteDomainMutationVariables>) {
+        return Apollo.useMutation<DeleteDomainMutation, DeleteDomainMutationVariables>(Operations.deleteDomain, baseOptions);
       }
 export type DeleteDomainMutationHookResult = ReturnType<typeof useDeleteDomainMutation>;
-export type DeleteDomainMutationResult = ApolloReactCommon.MutationResult<DeleteDomainMutation>;
-export type DeleteDomainMutationOptions = ApolloReactCommon.BaseMutationOptions<DeleteDomainMutation, DeleteDomainMutationVariables>;
+export type DeleteDomainMutationResult = Apollo.MutationResult<DeleteDomainMutation>;
+export type DeleteDomainMutationOptions = Apollo.BaseMutationOptions<DeleteDomainMutation, DeleteDomainMutationVariables>;

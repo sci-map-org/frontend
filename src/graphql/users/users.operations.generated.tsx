@@ -2,11 +2,8 @@ import * as Types from '../types';
 
 import { CurrentUserDataFragment } from './users.fragments.generated';
 import * as Operations from './users.operations';
-import * as ApolloReactCommon from '@apollo/react-common';
-import * as ApolloReactHooks from '@apollo/react-hooks';
-export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
-
-export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
+import * as Apollo from '@apollo/client';
+export type GetCurrentUserQueryVariables = Types.Exact<{ [key: string]: never; }>;
 
 
 export type GetCurrentUserQuery = (
@@ -17,7 +14,7 @@ export type GetCurrentUserQuery = (
   )> }
 );
 
-export type LoginMutationVariables = Exact<{
+export type LoginMutationVariables = Types.Exact<{
   email: Types.Scalars['String'];
   password: Types.Scalars['String'];
   discourseSSO?: Types.Maybe<Types.DiscourseSso>;
@@ -36,7 +33,7 @@ export type LoginMutation = (
   ) }
 );
 
-export type LoginGoogleMutationVariables = Exact<{
+export type LoginGoogleMutationVariables = Types.Exact<{
   idToken: Types.Scalars['String'];
   discourseSSO?: Types.Maybe<Types.DiscourseSso>;
 }>;
@@ -54,7 +51,7 @@ export type LoginGoogleMutation = (
   ) }
 );
 
-export type RegisterMutationVariables = Exact<{
+export type RegisterMutationVariables = Types.Exact<{
   payload: Types.RegisterPayload;
 }>;
 
@@ -67,7 +64,7 @@ export type RegisterMutation = (
   ) }
 );
 
-export type RegisterGoogleMutationVariables = Exact<{
+export type RegisterGoogleMutationVariables = Types.Exact<{
   payload: Types.RegisterGooglePayload;
 }>;
 
@@ -97,16 +94,16 @@ export type RegisterGoogleMutation = (
  *   },
  * });
  */
-export function useGetCurrentUserQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetCurrentUserQuery, GetCurrentUserQueryVariables>) {
-        return ApolloReactHooks.useQuery<GetCurrentUserQuery, GetCurrentUserQueryVariables>(Operations.getCurrentUser, baseOptions);
+export function useGetCurrentUserQuery(baseOptions?: Apollo.QueryHookOptions<GetCurrentUserQuery, GetCurrentUserQueryVariables>) {
+        return Apollo.useQuery<GetCurrentUserQuery, GetCurrentUserQueryVariables>(Operations.getCurrentUser, baseOptions);
       }
-export function useGetCurrentUserLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetCurrentUserQuery, GetCurrentUserQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<GetCurrentUserQuery, GetCurrentUserQueryVariables>(Operations.getCurrentUser, baseOptions);
+export function useGetCurrentUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCurrentUserQuery, GetCurrentUserQueryVariables>) {
+          return Apollo.useLazyQuery<GetCurrentUserQuery, GetCurrentUserQueryVariables>(Operations.getCurrentUser, baseOptions);
         }
 export type GetCurrentUserQueryHookResult = ReturnType<typeof useGetCurrentUserQuery>;
 export type GetCurrentUserLazyQueryHookResult = ReturnType<typeof useGetCurrentUserLazyQuery>;
-export type GetCurrentUserQueryResult = ApolloReactCommon.QueryResult<GetCurrentUserQuery, GetCurrentUserQueryVariables>;
-export type LoginMutationFn = ApolloReactCommon.MutationFunction<LoginMutation, LoginMutationVariables>;
+export type GetCurrentUserQueryResult = Apollo.QueryResult<GetCurrentUserQuery, GetCurrentUserQueryVariables>;
+export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutationVariables>;
 
 /**
  * __useLoginMutation__
@@ -127,13 +124,13 @@ export type LoginMutationFn = ApolloReactCommon.MutationFunction<LoginMutation, 
  *   },
  * });
  */
-export function useLoginMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<LoginMutation, LoginMutationVariables>) {
-        return ApolloReactHooks.useMutation<LoginMutation, LoginMutationVariables>(Operations.login, baseOptions);
+export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginMutation, LoginMutationVariables>) {
+        return Apollo.useMutation<LoginMutation, LoginMutationVariables>(Operations.login, baseOptions);
       }
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
-export type LoginMutationResult = ApolloReactCommon.MutationResult<LoginMutation>;
-export type LoginMutationOptions = ApolloReactCommon.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
-export type LoginGoogleMutationFn = ApolloReactCommon.MutationFunction<LoginGoogleMutation, LoginGoogleMutationVariables>;
+export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
+export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
+export type LoginGoogleMutationFn = Apollo.MutationFunction<LoginGoogleMutation, LoginGoogleMutationVariables>;
 
 /**
  * __useLoginGoogleMutation__
@@ -153,13 +150,13 @@ export type LoginGoogleMutationFn = ApolloReactCommon.MutationFunction<LoginGoog
  *   },
  * });
  */
-export function useLoginGoogleMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<LoginGoogleMutation, LoginGoogleMutationVariables>) {
-        return ApolloReactHooks.useMutation<LoginGoogleMutation, LoginGoogleMutationVariables>(Operations.loginGoogle, baseOptions);
+export function useLoginGoogleMutation(baseOptions?: Apollo.MutationHookOptions<LoginGoogleMutation, LoginGoogleMutationVariables>) {
+        return Apollo.useMutation<LoginGoogleMutation, LoginGoogleMutationVariables>(Operations.loginGoogle, baseOptions);
       }
 export type LoginGoogleMutationHookResult = ReturnType<typeof useLoginGoogleMutation>;
-export type LoginGoogleMutationResult = ApolloReactCommon.MutationResult<LoginGoogleMutation>;
-export type LoginGoogleMutationOptions = ApolloReactCommon.BaseMutationOptions<LoginGoogleMutation, LoginGoogleMutationVariables>;
-export type RegisterMutationFn = ApolloReactCommon.MutationFunction<RegisterMutation, RegisterMutationVariables>;
+export type LoginGoogleMutationResult = Apollo.MutationResult<LoginGoogleMutation>;
+export type LoginGoogleMutationOptions = Apollo.BaseMutationOptions<LoginGoogleMutation, LoginGoogleMutationVariables>;
+export type RegisterMutationFn = Apollo.MutationFunction<RegisterMutation, RegisterMutationVariables>;
 
 /**
  * __useRegisterMutation__
@@ -178,13 +175,13 @@ export type RegisterMutationFn = ApolloReactCommon.MutationFunction<RegisterMuta
  *   },
  * });
  */
-export function useRegisterMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<RegisterMutation, RegisterMutationVariables>) {
-        return ApolloReactHooks.useMutation<RegisterMutation, RegisterMutationVariables>(Operations.register, baseOptions);
+export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<RegisterMutation, RegisterMutationVariables>) {
+        return Apollo.useMutation<RegisterMutation, RegisterMutationVariables>(Operations.register, baseOptions);
       }
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
-export type RegisterMutationResult = ApolloReactCommon.MutationResult<RegisterMutation>;
-export type RegisterMutationOptions = ApolloReactCommon.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
-export type RegisterGoogleMutationFn = ApolloReactCommon.MutationFunction<RegisterGoogleMutation, RegisterGoogleMutationVariables>;
+export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
+export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export type RegisterGoogleMutationFn = Apollo.MutationFunction<RegisterGoogleMutation, RegisterGoogleMutationVariables>;
 
 /**
  * __useRegisterGoogleMutation__
@@ -203,9 +200,9 @@ export type RegisterGoogleMutationFn = ApolloReactCommon.MutationFunction<Regist
  *   },
  * });
  */
-export function useRegisterGoogleMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<RegisterGoogleMutation, RegisterGoogleMutationVariables>) {
-        return ApolloReactHooks.useMutation<RegisterGoogleMutation, RegisterGoogleMutationVariables>(Operations.registerGoogle, baseOptions);
+export function useRegisterGoogleMutation(baseOptions?: Apollo.MutationHookOptions<RegisterGoogleMutation, RegisterGoogleMutationVariables>) {
+        return Apollo.useMutation<RegisterGoogleMutation, RegisterGoogleMutationVariables>(Operations.registerGoogle, baseOptions);
       }
 export type RegisterGoogleMutationHookResult = ReturnType<typeof useRegisterGoogleMutation>;
-export type RegisterGoogleMutationResult = ApolloReactCommon.MutationResult<RegisterGoogleMutation>;
-export type RegisterGoogleMutationOptions = ApolloReactCommon.BaseMutationOptions<RegisterGoogleMutation, RegisterGoogleMutationVariables>;
+export type RegisterGoogleMutationResult = Apollo.MutationResult<RegisterGoogleMutation>;
+export type RegisterGoogleMutationOptions = Apollo.BaseMutationOptions<RegisterGoogleMutation, RegisterGoogleMutationVariables>;

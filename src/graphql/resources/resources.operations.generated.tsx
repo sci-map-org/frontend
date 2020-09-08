@@ -1,11 +1,8 @@
 import * as Types from '../types';
 
 import * as Operations from './resources.operations';
-import * as ApolloReactCommon from '@apollo/react-common';
-import * as ApolloReactHooks from '@apollo/react-hooks';
-export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
-
-export type VoteResourceMutationVariables = Exact<{
+import * as Apollo from '@apollo/client';
+export type VoteResourceMutationVariables = Types.Exact<{
   resourceId: Types.Scalars['String'];
   value: Types.ResourceVoteValue;
 }>;
@@ -19,7 +16,7 @@ export type VoteResourceMutation = (
   ) }
 );
 
-export type AttachResourceCoversConceptsMutationVariables = Exact<{
+export type AttachResourceCoversConceptsMutationVariables = Types.Exact<{
   resourceId: Types.Scalars['String'];
   conceptIds: Array<Types.Scalars['String']>;
 }>;
@@ -40,7 +37,7 @@ export type AttachResourceCoversConceptsMutation = (
   ) }
 );
 
-export type DetachResourceCoversConceptsMutationVariables = Exact<{
+export type DetachResourceCoversConceptsMutationVariables = Types.Exact<{
   resourceId: Types.Scalars['String'];
   conceptIds: Array<Types.Scalars['String']>;
 }>;
@@ -61,7 +58,7 @@ export type DetachResourceCoversConceptsMutation = (
   ) }
 );
 
-export type DeleteResourceMutationVariables = Exact<{
+export type DeleteResourceMutationVariables = Types.Exact<{
   _id: Types.Scalars['String'];
 }>;
 
@@ -75,7 +72,7 @@ export type DeleteResourceMutation = (
 );
 
 
-export type VoteResourceMutationFn = ApolloReactCommon.MutationFunction<VoteResourceMutation, VoteResourceMutationVariables>;
+export type VoteResourceMutationFn = Apollo.MutationFunction<VoteResourceMutation, VoteResourceMutationVariables>;
 
 /**
  * __useVoteResourceMutation__
@@ -95,13 +92,13 @@ export type VoteResourceMutationFn = ApolloReactCommon.MutationFunction<VoteReso
  *   },
  * });
  */
-export function useVoteResourceMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<VoteResourceMutation, VoteResourceMutationVariables>) {
-        return ApolloReactHooks.useMutation<VoteResourceMutation, VoteResourceMutationVariables>(Operations.voteResource, baseOptions);
+export function useVoteResourceMutation(baseOptions?: Apollo.MutationHookOptions<VoteResourceMutation, VoteResourceMutationVariables>) {
+        return Apollo.useMutation<VoteResourceMutation, VoteResourceMutationVariables>(Operations.voteResource, baseOptions);
       }
 export type VoteResourceMutationHookResult = ReturnType<typeof useVoteResourceMutation>;
-export type VoteResourceMutationResult = ApolloReactCommon.MutationResult<VoteResourceMutation>;
-export type VoteResourceMutationOptions = ApolloReactCommon.BaseMutationOptions<VoteResourceMutation, VoteResourceMutationVariables>;
-export type AttachResourceCoversConceptsMutationFn = ApolloReactCommon.MutationFunction<AttachResourceCoversConceptsMutation, AttachResourceCoversConceptsMutationVariables>;
+export type VoteResourceMutationResult = Apollo.MutationResult<VoteResourceMutation>;
+export type VoteResourceMutationOptions = Apollo.BaseMutationOptions<VoteResourceMutation, VoteResourceMutationVariables>;
+export type AttachResourceCoversConceptsMutationFn = Apollo.MutationFunction<AttachResourceCoversConceptsMutation, AttachResourceCoversConceptsMutationVariables>;
 
 /**
  * __useAttachResourceCoversConceptsMutation__
@@ -121,13 +118,13 @@ export type AttachResourceCoversConceptsMutationFn = ApolloReactCommon.MutationF
  *   },
  * });
  */
-export function useAttachResourceCoversConceptsMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<AttachResourceCoversConceptsMutation, AttachResourceCoversConceptsMutationVariables>) {
-        return ApolloReactHooks.useMutation<AttachResourceCoversConceptsMutation, AttachResourceCoversConceptsMutationVariables>(Operations.attachResourceCoversConcepts, baseOptions);
+export function useAttachResourceCoversConceptsMutation(baseOptions?: Apollo.MutationHookOptions<AttachResourceCoversConceptsMutation, AttachResourceCoversConceptsMutationVariables>) {
+        return Apollo.useMutation<AttachResourceCoversConceptsMutation, AttachResourceCoversConceptsMutationVariables>(Operations.attachResourceCoversConcepts, baseOptions);
       }
 export type AttachResourceCoversConceptsMutationHookResult = ReturnType<typeof useAttachResourceCoversConceptsMutation>;
-export type AttachResourceCoversConceptsMutationResult = ApolloReactCommon.MutationResult<AttachResourceCoversConceptsMutation>;
-export type AttachResourceCoversConceptsMutationOptions = ApolloReactCommon.BaseMutationOptions<AttachResourceCoversConceptsMutation, AttachResourceCoversConceptsMutationVariables>;
-export type DetachResourceCoversConceptsMutationFn = ApolloReactCommon.MutationFunction<DetachResourceCoversConceptsMutation, DetachResourceCoversConceptsMutationVariables>;
+export type AttachResourceCoversConceptsMutationResult = Apollo.MutationResult<AttachResourceCoversConceptsMutation>;
+export type AttachResourceCoversConceptsMutationOptions = Apollo.BaseMutationOptions<AttachResourceCoversConceptsMutation, AttachResourceCoversConceptsMutationVariables>;
+export type DetachResourceCoversConceptsMutationFn = Apollo.MutationFunction<DetachResourceCoversConceptsMutation, DetachResourceCoversConceptsMutationVariables>;
 
 /**
  * __useDetachResourceCoversConceptsMutation__
@@ -147,13 +144,13 @@ export type DetachResourceCoversConceptsMutationFn = ApolloReactCommon.MutationF
  *   },
  * });
  */
-export function useDetachResourceCoversConceptsMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<DetachResourceCoversConceptsMutation, DetachResourceCoversConceptsMutationVariables>) {
-        return ApolloReactHooks.useMutation<DetachResourceCoversConceptsMutation, DetachResourceCoversConceptsMutationVariables>(Operations.detachResourceCoversConcepts, baseOptions);
+export function useDetachResourceCoversConceptsMutation(baseOptions?: Apollo.MutationHookOptions<DetachResourceCoversConceptsMutation, DetachResourceCoversConceptsMutationVariables>) {
+        return Apollo.useMutation<DetachResourceCoversConceptsMutation, DetachResourceCoversConceptsMutationVariables>(Operations.detachResourceCoversConcepts, baseOptions);
       }
 export type DetachResourceCoversConceptsMutationHookResult = ReturnType<typeof useDetachResourceCoversConceptsMutation>;
-export type DetachResourceCoversConceptsMutationResult = ApolloReactCommon.MutationResult<DetachResourceCoversConceptsMutation>;
-export type DetachResourceCoversConceptsMutationOptions = ApolloReactCommon.BaseMutationOptions<DetachResourceCoversConceptsMutation, DetachResourceCoversConceptsMutationVariables>;
-export type DeleteResourceMutationFn = ApolloReactCommon.MutationFunction<DeleteResourceMutation, DeleteResourceMutationVariables>;
+export type DetachResourceCoversConceptsMutationResult = Apollo.MutationResult<DetachResourceCoversConceptsMutation>;
+export type DetachResourceCoversConceptsMutationOptions = Apollo.BaseMutationOptions<DetachResourceCoversConceptsMutation, DetachResourceCoversConceptsMutationVariables>;
+export type DeleteResourceMutationFn = Apollo.MutationFunction<DeleteResourceMutation, DeleteResourceMutationVariables>;
 
 /**
  * __useDeleteResourceMutation__
@@ -172,9 +169,9 @@ export type DeleteResourceMutationFn = ApolloReactCommon.MutationFunction<Delete
  *   },
  * });
  */
-export function useDeleteResourceMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<DeleteResourceMutation, DeleteResourceMutationVariables>) {
-        return ApolloReactHooks.useMutation<DeleteResourceMutation, DeleteResourceMutationVariables>(Operations.deleteResource, baseOptions);
+export function useDeleteResourceMutation(baseOptions?: Apollo.MutationHookOptions<DeleteResourceMutation, DeleteResourceMutationVariables>) {
+        return Apollo.useMutation<DeleteResourceMutation, DeleteResourceMutationVariables>(Operations.deleteResource, baseOptions);
       }
 export type DeleteResourceMutationHookResult = ReturnType<typeof useDeleteResourceMutation>;
-export type DeleteResourceMutationResult = ApolloReactCommon.MutationResult<DeleteResourceMutation>;
-export type DeleteResourceMutationOptions = ApolloReactCommon.BaseMutationOptions<DeleteResourceMutation, DeleteResourceMutationVariables>;
+export type DeleteResourceMutationResult = Apollo.MutationResult<DeleteResourceMutation>;
+export type DeleteResourceMutationOptions = Apollo.BaseMutationOptions<DeleteResourceMutation, DeleteResourceMutationVariables>;

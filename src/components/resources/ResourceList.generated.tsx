@@ -2,11 +2,8 @@ import * as Types from '../../graphql/types';
 
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import * as Operations from './ResourceList';
-import * as ApolloReactCommon from '@apollo/react-common';
-import * as ApolloReactHooks from '@apollo/react-hooks';
-export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
-
-export type ListDomainResourcePreviewsQueryVariables = Exact<{
+import * as Apollo from '@apollo/client';
+export type ListDomainResourcePreviewsQueryVariables = Types.Exact<{
   domainKey: Types.Scalars['String'];
   options: Types.DomainResourcesOptions;
 }>;
@@ -46,12 +43,12 @@ export type ListDomainResourcePreviewsQuery = (
  *   },
  * });
  */
-export function useListDomainResourcePreviewsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ListDomainResourcePreviewsQuery, ListDomainResourcePreviewsQueryVariables>) {
-        return ApolloReactHooks.useQuery<ListDomainResourcePreviewsQuery, ListDomainResourcePreviewsQueryVariables>(Operations.listDomainResourcePreviews, baseOptions);
+export function useListDomainResourcePreviewsQuery(baseOptions?: Apollo.QueryHookOptions<ListDomainResourcePreviewsQuery, ListDomainResourcePreviewsQueryVariables>) {
+        return Apollo.useQuery<ListDomainResourcePreviewsQuery, ListDomainResourcePreviewsQueryVariables>(Operations.listDomainResourcePreviews, baseOptions);
       }
-export function useListDomainResourcePreviewsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ListDomainResourcePreviewsQuery, ListDomainResourcePreviewsQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<ListDomainResourcePreviewsQuery, ListDomainResourcePreviewsQueryVariables>(Operations.listDomainResourcePreviews, baseOptions);
+export function useListDomainResourcePreviewsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ListDomainResourcePreviewsQuery, ListDomainResourcePreviewsQueryVariables>) {
+          return Apollo.useLazyQuery<ListDomainResourcePreviewsQuery, ListDomainResourcePreviewsQueryVariables>(Operations.listDomainResourcePreviews, baseOptions);
         }
 export type ListDomainResourcePreviewsQueryHookResult = ReturnType<typeof useListDomainResourcePreviewsQuery>;
 export type ListDomainResourcePreviewsLazyQueryHookResult = ReturnType<typeof useListDomainResourcePreviewsLazyQuery>;
-export type ListDomainResourcePreviewsQueryResult = ApolloReactCommon.QueryResult<ListDomainResourcePreviewsQuery, ListDomainResourcePreviewsQueryVariables>;
+export type ListDomainResourcePreviewsQueryResult = Apollo.QueryResult<ListDomainResourcePreviewsQuery, ListDomainResourcePreviewsQueryVariables>;

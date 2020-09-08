@@ -2,11 +2,8 @@ import * as Types from '../../graphql/types';
 
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import * as Operations from './NewResourcePage';
-import * as ApolloReactCommon from '@apollo/react-common';
-import * as ApolloReactHooks from '@apollo/react-hooks';
-export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
-
-export type CreateResourceMutationVariables = Exact<{
+import * as Apollo from '@apollo/client';
+export type CreateResourceMutationVariables = Types.Exact<{
   payload: Types.CreateResourcePayload;
 }>;
 
@@ -20,7 +17,7 @@ export type CreateResourceMutation = (
 );
 
 
-export type CreateResourceMutationFn = ApolloReactCommon.MutationFunction<CreateResourceMutation, CreateResourceMutationVariables>;
+export type CreateResourceMutationFn = Apollo.MutationFunction<CreateResourceMutation, CreateResourceMutationVariables>;
 
 /**
  * __useCreateResourceMutation__
@@ -39,9 +36,9 @@ export type CreateResourceMutationFn = ApolloReactCommon.MutationFunction<Create
  *   },
  * });
  */
-export function useCreateResourceMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateResourceMutation, CreateResourceMutationVariables>) {
-        return ApolloReactHooks.useMutation<CreateResourceMutation, CreateResourceMutationVariables>(Operations.createResource, baseOptions);
+export function useCreateResourceMutation(baseOptions?: Apollo.MutationHookOptions<CreateResourceMutation, CreateResourceMutationVariables>) {
+        return Apollo.useMutation<CreateResourceMutation, CreateResourceMutationVariables>(Operations.createResource, baseOptions);
       }
 export type CreateResourceMutationHookResult = ReturnType<typeof useCreateResourceMutation>;
-export type CreateResourceMutationResult = ApolloReactCommon.MutationResult<CreateResourceMutation>;
-export type CreateResourceMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateResourceMutation, CreateResourceMutationVariables>;
+export type CreateResourceMutationResult = Apollo.MutationResult<CreateResourceMutation>;
+export type CreateResourceMutationOptions = Apollo.BaseMutationOptions<CreateResourceMutation, CreateResourceMutationVariables>;

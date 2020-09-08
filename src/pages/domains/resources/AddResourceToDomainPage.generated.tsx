@@ -3,11 +3,8 @@ import * as Types from '../../../graphql/types';
 import { DomainWithConceptsDataFragment } from '../../../graphql/domains/domains.fragments.generated';
 import { ResourceDataFragment } from '../../../graphql/resources/resources.fragments.generated';
 import * as Operations from './AddResourceToDomainPage';
-import * as ApolloReactCommon from '@apollo/react-common';
-import * as ApolloReactHooks from '@apollo/react-hooks';
-export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
-
-export type GetDomainByKeyWithConceptsQueryVariables = Exact<{
+import * as Apollo from '@apollo/client';
+export type GetDomainByKeyWithConceptsQueryVariables = Types.Exact<{
   key: Types.Scalars['String'];
 }>;
 
@@ -20,7 +17,7 @@ export type GetDomainByKeyWithConceptsQuery = (
   ) }
 );
 
-export type AddResourceToDomainMutationVariables = Exact<{
+export type AddResourceToDomainMutationVariables = Types.Exact<{
   domainId: Types.Scalars['String'];
   payload: Types.CreateResourcePayload;
 }>;
@@ -52,16 +49,16 @@ export type AddResourceToDomainMutation = (
  *   },
  * });
  */
-export function useGetDomainByKeyWithConceptsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetDomainByKeyWithConceptsQuery, GetDomainByKeyWithConceptsQueryVariables>) {
-        return ApolloReactHooks.useQuery<GetDomainByKeyWithConceptsQuery, GetDomainByKeyWithConceptsQueryVariables>(Operations.getDomainByKeyWithConcepts, baseOptions);
+export function useGetDomainByKeyWithConceptsQuery(baseOptions?: Apollo.QueryHookOptions<GetDomainByKeyWithConceptsQuery, GetDomainByKeyWithConceptsQueryVariables>) {
+        return Apollo.useQuery<GetDomainByKeyWithConceptsQuery, GetDomainByKeyWithConceptsQueryVariables>(Operations.getDomainByKeyWithConcepts, baseOptions);
       }
-export function useGetDomainByKeyWithConceptsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetDomainByKeyWithConceptsQuery, GetDomainByKeyWithConceptsQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<GetDomainByKeyWithConceptsQuery, GetDomainByKeyWithConceptsQueryVariables>(Operations.getDomainByKeyWithConcepts, baseOptions);
+export function useGetDomainByKeyWithConceptsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDomainByKeyWithConceptsQuery, GetDomainByKeyWithConceptsQueryVariables>) {
+          return Apollo.useLazyQuery<GetDomainByKeyWithConceptsQuery, GetDomainByKeyWithConceptsQueryVariables>(Operations.getDomainByKeyWithConcepts, baseOptions);
         }
 export type GetDomainByKeyWithConceptsQueryHookResult = ReturnType<typeof useGetDomainByKeyWithConceptsQuery>;
 export type GetDomainByKeyWithConceptsLazyQueryHookResult = ReturnType<typeof useGetDomainByKeyWithConceptsLazyQuery>;
-export type GetDomainByKeyWithConceptsQueryResult = ApolloReactCommon.QueryResult<GetDomainByKeyWithConceptsQuery, GetDomainByKeyWithConceptsQueryVariables>;
-export type AddResourceToDomainMutationFn = ApolloReactCommon.MutationFunction<AddResourceToDomainMutation, AddResourceToDomainMutationVariables>;
+export type GetDomainByKeyWithConceptsQueryResult = Apollo.QueryResult<GetDomainByKeyWithConceptsQuery, GetDomainByKeyWithConceptsQueryVariables>;
+export type AddResourceToDomainMutationFn = Apollo.MutationFunction<AddResourceToDomainMutation, AddResourceToDomainMutationVariables>;
 
 /**
  * __useAddResourceToDomainMutation__
@@ -81,9 +78,9 @@ export type AddResourceToDomainMutationFn = ApolloReactCommon.MutationFunction<A
  *   },
  * });
  */
-export function useAddResourceToDomainMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<AddResourceToDomainMutation, AddResourceToDomainMutationVariables>) {
-        return ApolloReactHooks.useMutation<AddResourceToDomainMutation, AddResourceToDomainMutationVariables>(Operations.addResourceToDomain, baseOptions);
+export function useAddResourceToDomainMutation(baseOptions?: Apollo.MutationHookOptions<AddResourceToDomainMutation, AddResourceToDomainMutationVariables>) {
+        return Apollo.useMutation<AddResourceToDomainMutation, AddResourceToDomainMutationVariables>(Operations.addResourceToDomain, baseOptions);
       }
 export type AddResourceToDomainMutationHookResult = ReturnType<typeof useAddResourceToDomainMutation>;
-export type AddResourceToDomainMutationResult = ApolloReactCommon.MutationResult<AddResourceToDomainMutation>;
-export type AddResourceToDomainMutationOptions = ApolloReactCommon.BaseMutationOptions<AddResourceToDomainMutation, AddResourceToDomainMutationVariables>;
+export type AddResourceToDomainMutationResult = Apollo.MutationResult<AddResourceToDomainMutation>;
+export type AddResourceToDomainMutationOptions = Apollo.BaseMutationOptions<AddResourceToDomainMutation, AddResourceToDomainMutationVariables>;

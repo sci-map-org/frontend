@@ -1,11 +1,8 @@
 import * as Types from '../../graphql/types';
 
 import * as Operations from './ConceptList';
-import * as ApolloReactCommon from '@apollo/react-common';
-import * as ApolloReactHooks from '@apollo/react-hooks';
-export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
-
-export type UpdateConceptBelongsToDomainIndexMutationVariables = Exact<{
+import * as Apollo from '@apollo/client';
+export type UpdateConceptBelongsToDomainIndexMutationVariables = Types.Exact<{
   conceptId: Types.Scalars['String'];
   domainId: Types.Scalars['String'];
   index: Types.Scalars['Float'];
@@ -21,7 +18,7 @@ export type UpdateConceptBelongsToDomainIndexMutation = (
 );
 
 
-export type UpdateConceptBelongsToDomainIndexMutationFn = ApolloReactCommon.MutationFunction<UpdateConceptBelongsToDomainIndexMutation, UpdateConceptBelongsToDomainIndexMutationVariables>;
+export type UpdateConceptBelongsToDomainIndexMutationFn = Apollo.MutationFunction<UpdateConceptBelongsToDomainIndexMutation, UpdateConceptBelongsToDomainIndexMutationVariables>;
 
 /**
  * __useUpdateConceptBelongsToDomainIndexMutation__
@@ -42,9 +39,9 @@ export type UpdateConceptBelongsToDomainIndexMutationFn = ApolloReactCommon.Muta
  *   },
  * });
  */
-export function useUpdateConceptBelongsToDomainIndexMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<UpdateConceptBelongsToDomainIndexMutation, UpdateConceptBelongsToDomainIndexMutationVariables>) {
-        return ApolloReactHooks.useMutation<UpdateConceptBelongsToDomainIndexMutation, UpdateConceptBelongsToDomainIndexMutationVariables>(Operations.updateConceptBelongsToDomainIndex, baseOptions);
+export function useUpdateConceptBelongsToDomainIndexMutation(baseOptions?: Apollo.MutationHookOptions<UpdateConceptBelongsToDomainIndexMutation, UpdateConceptBelongsToDomainIndexMutationVariables>) {
+        return Apollo.useMutation<UpdateConceptBelongsToDomainIndexMutation, UpdateConceptBelongsToDomainIndexMutationVariables>(Operations.updateConceptBelongsToDomainIndex, baseOptions);
       }
 export type UpdateConceptBelongsToDomainIndexMutationHookResult = ReturnType<typeof useUpdateConceptBelongsToDomainIndexMutation>;
-export type UpdateConceptBelongsToDomainIndexMutationResult = ApolloReactCommon.MutationResult<UpdateConceptBelongsToDomainIndexMutation>;
-export type UpdateConceptBelongsToDomainIndexMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateConceptBelongsToDomainIndexMutation, UpdateConceptBelongsToDomainIndexMutationVariables>;
+export type UpdateConceptBelongsToDomainIndexMutationResult = Apollo.MutationResult<UpdateConceptBelongsToDomainIndexMutation>;
+export type UpdateConceptBelongsToDomainIndexMutationOptions = Apollo.BaseMutationOptions<UpdateConceptBelongsToDomainIndexMutation, UpdateConceptBelongsToDomainIndexMutationVariables>;
