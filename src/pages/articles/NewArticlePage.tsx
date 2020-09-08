@@ -27,7 +27,7 @@ export const NewArticlePage: NextPage = () => {
           size="md"
           variant="flushed"
           value={title}
-          onChange={(e: any) => setTitle(e.target.value)}
+          onChange={(e) => setTitle(e.target.value)}
         ></Input>
         <Box py={8} width="100%">
           <NoSSR>

@@ -32,13 +32,7 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
       </Text>
       <FormControl isRequired isInvalid={!name}>
         <FormLabel htmlFor="name">Title</FormLabel>
-        <Input
-          id="name"
-          placeholder="name"
-          size="md"
-          value={name}
-          onChange={(e: any) => setName(e.target.value)}
-        ></Input>
+        <Input id="name" placeholder="name" size="md" value={name} onChange={(e) => setName(e.target.value)}></Input>
       </FormControl>
       <ResourceUrlInput value={url} onChange={setUrl} />
       <Flex direction="row">

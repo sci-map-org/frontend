@@ -3,7 +3,6 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
-  Icon,
   Input,
   InputGroup,
   InputRightElement,
@@ -12,11 +11,11 @@ import {
   Text,
   Tooltip,
 } from '@chakra-ui/core';
+import { CheckIcon, NotAllowedIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import { useState } from 'react';
 import { generateUrlKey } from '../../services/url.service';
 import { useGetUserByKeyQuery } from './RegisterFormProfileInfo.generated';
-import { NotAllowedIcon } from '@chakra-ui/icons';
 
 export interface RegisterProfileInfo {
   displayName: string;
@@ -58,7 +57,7 @@ export const RegisterFormProfileInfo: React.FC<{
           size="md"
           variant="flushed"
           value={displayName}
-          onChange={(e: any) => setDisplayName(e.target.value)}
+          onChange={(e) => setDisplayName(e.target.value)}
         />
       </FormControl>
       <FormControl isRequired isInvalid={!!key && !isKeyValid}>
@@ -70,7 +69,7 @@ export const RegisterFormProfileInfo: React.FC<{
             size="sm"
             variant="flushed"
             value={key}
-            onChange={(e: any) => {
+            onChange={(e) => {
               const newKey: string = e.target.value;
               setKey(newKey);
               if (newKey.length >= MIN_USER_KEY_LENGTH) {

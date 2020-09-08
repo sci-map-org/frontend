@@ -35,10 +35,10 @@ export const ResourceDurationSelector: React.FC<{
     setIsValid(newValue === null || !isNaN(newValue));
   }, [duration]);
 
-  const onInputChange = (e: any) => setDuration(e.target.value);
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => setDuration(e.target.value);
 
   const onBlur = useCallback(
-    (e: any) => {
+    (e: React.FocusEvent<HTMLInputElement>) => {
       const newValue = convertDurationToValue(e.target.value);
 
       if (newValue === null || !isNaN(newValue)) {

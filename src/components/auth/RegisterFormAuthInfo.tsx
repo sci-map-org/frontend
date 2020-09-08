@@ -61,12 +61,12 @@ export const RegisterFormAuthInfo: React.FC<RegisterFormAuthInfoProps> = ({ onNe
           size="md"
           variant="flushed"
           value={email}
-          onChange={(e: any) => setEmail(e.target.value)} // TODO Why event type not inferred ?
+          onChange={(e) => setEmail(e.target.value)}
         />
       </FormControl>
       <FormControl isRequired isInvalid={!!password && !isPasswordValid}>
         <FormLabel htmlFor="password">Password</FormLabel>
-        <PasswordInput value={password} onChange={(e: any) => setPassword(e.target.value)} />
+        <PasswordInput value={password} onChange={(e) => setPassword(e.target.value)} />
         <FormErrorMessage>The password must be at least 6 characters long</FormErrorMessage>
       </FormControl>
       <Button

@@ -52,21 +52,21 @@ export const EditDomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) =
           size="md"
           variant="flushed"
           value={name}
-          onChange={(e: any) => setName(e.target.value)}
+          onChange={(e) => setName(e.target.value)}
         ></Input>
         <Input
           placeholder="Concept Key"
           size="md"
           variant="flushed"
           value={key}
-          onChange={(e: any) => setKey(e.target.value)}
+          onChange={(e) => setKey(e.target.value)}
         ></Input>
         <Textarea
           placeholder="Description"
           size="md"
           variant="flushed"
           value={description}
-          onChange={(e: any) => setDescription(e.target.value)}
+          onChange={(e) => setDescription(e.target.value)}
         ></Textarea>
 
         <Button

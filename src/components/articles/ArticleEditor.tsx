@@ -81,7 +81,7 @@ export const ArticleEditor: React.FC<{
             variant="flushed"
             value={title}
             borderBottomWidth="1px"
-            onChange={(e: any) => setTitle(e.target.value)}
+            onChange={(e) => setTitle(e.target.value)}
           ></Input>
         </Heading>
         <Box py={8} width="100%">

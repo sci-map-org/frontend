@@ -29,7 +29,7 @@ export const NewResource: React.FC<NewResourceProps> = ({ domain, onCreate }) =>
 
   return (
     <Stack spacing={4}>
-      <Input placeholder="Title" size="md" value={name} onChange={(e: any) => setName(e.target.value)}></Input>
+      <Input placeholder="Title" size="md" value={name} onChange={(e) => setName(e.target.value)}></Input>
       <ResourceUrlInput value={url} onChange={setUrl} />
       <Flex flexDirection="row" justifyContent="space-between">
         <ResourceTypeSelector value={type} onSelect={(t) => setType(t)} />

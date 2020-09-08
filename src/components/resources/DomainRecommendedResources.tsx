@@ -26,7 +26,7 @@ export const DomainRecommendedResources: React.FC<{
               size="lg"
               px={1}
               isChecked={showCheckedResources}
-              onChange={(e: any) => setShowCheckedResources(e.target.checked)}
+              onChange={(e) => setShowCheckedResources(e.target.checked)}
             />
           </Stack>
         </RoleAccess>

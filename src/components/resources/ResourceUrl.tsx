@@ -67,7 +67,7 @@ export const ResourceUrlInput: React.FC<{ value: string; onChange: (value: strin
           placeholder="https://example.com"
           size="md"
           value={value}
-          onChange={(e: any) => onChange(e.target.value)}
+          onChange={(e) => onChange(e.target.value)}
         ></Input>
         <InputRightElement
           children={

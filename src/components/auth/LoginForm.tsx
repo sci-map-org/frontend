@@ -40,7 +40,7 @@ export const LoginForm: React.FC<{
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <PasswordInput value={password} onChange={(e: any) => setPassword(e.target.value)} />
+        <PasswordInput value={password} onChange={(e) => setPassword(e.target.value)} />
       </Stack>
       <Button
         size="lg"
