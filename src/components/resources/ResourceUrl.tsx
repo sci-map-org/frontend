@@ -72,8 +72,15 @@ export const ResourceUrlInput: React.FC<{ value: string; onChange: (value: strin
         <InputRightElement
           children={
             value && (
-              <Link href={value} isExternal isDisabled={!isValidUrl}>
+              <Link
+                href={value}
+                isExternal
+                onClick={(e) => {
+                  if (!isValidUrl) e.preventDefault(); // Not good for accessibility. Refactor to entirely remove link
+                }}
+              >
                 <IconButton
+                  isDisabled={!isValidUrl}
                   size="xs"
                   aria-label="Open link"
                   color={isValidUrl ? 'green.400' : 'red.400'}

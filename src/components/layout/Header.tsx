@@ -10,24 +10,25 @@ import {
   MenuList,
   Stack,
 } from '@chakra-ui/core';
+import { omit } from 'lodash';
 import getConfig from 'next/config';
 import NextLink from 'next/link';
+import { useRouter } from 'next/router';
 import { useCurrentUser, useLogout } from '../../graphql/users/users.hooks';
 import { globalStyleVariables } from '../../theme/theme';
 import { RoleAccess } from '../auth/RoleAccess';
 import { InternalLink, InternalLinkProps } from '../navigation/InternalLink';
-import { useRouter } from 'next/router';
 
 const { publicRuntimeConfig } = getConfig();
 
 const HeaderLink: React.FC<(InternalLinkProps & { external?: false }) | ({ external: true } & LinkProps)> = ({
   children,
-  ...props
+  ...props // no taking out 'external' prop as it would mess with the ts trick
 }) =>
   props.external ? (
     <Box>
       <Link
-        {...props}
+        {...omit(props, 'external')}
         fontWeight="light"
         color="blackAlpha.700"
         _hover={{ color: 'blackAlpha.900' }}
@@ -38,7 +39,13 @@ const HeaderLink: React.FC<(InternalLinkProps & { external?: false }) | ({ exter
       </Link>
     </Box>
   ) : (
-    <InternalLink {...props} fontWeight="light" color="blackAlpha.700" _hover={{ color: 'blackAlpha.900' }} _focus={{}}>
+    <InternalLink
+      {...omit(props, 'external')}
+      fontWeight="light"
+      color="blackAlpha.700"
+      _hover={{ color: 'blackAlpha.900' }}
+      _focus={{}}
+    >
       {children}
     </InternalLink>
   );

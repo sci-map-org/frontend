@@ -13,8 +13,9 @@ export const NewConceptPage: React.FC<{ domainKey: string }> = ({ domainKey }) =
   const [name, setName] = useState('');
   const [key, setKey] = useState('');
   const [description, setDescription] = useState('');
-  if (!domain) return <Box>Domain not found !</Box>;
   const { addConceptToDomain, loading, error } = useAddConceptToDomain();
+
+  if (!domain) return <Box>Domain not found !</Box>;
   return (
     <PageLayout
       mode="form"

@@ -1,4 +1,4 @@
-import { Box, PseudoBox } from '@chakra-ui/core';
+import { Box } from '@chakra-ui/core';
 import React from 'react';
 import { ArticleReaderContainer } from '../components/articles/ArticleReader';
 import { InternalLink } from '../components/navigation/InternalLink';
@@ -57,7 +57,7 @@ export const AboutPage: React.FC<{ pageKey: string }> = ({ pageKey: key }) => {
               _hover={{ textDecoration: 'none' }}
               _focus={{}}
             >
-              <PseudoBox
+              <Box
                 pt="2px"
                 pb="3px"
                 pl={globalStyleVariables.leftPadding}
@@ -73,7 +73,7 @@ export const AboutPage: React.FC<{ pageKey: string }> = ({ pageKey: key }) => {
                 {...(key === menu.key && { backgroundColor: 'gray.100', color: 'grayFont.800' })}
               >
                 {menu.menuTitle}
-              </PseudoBox>
+              </Box>
             </InternalLink>
           );
         })}
