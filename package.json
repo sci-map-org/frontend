@@ -16,7 +16,7 @@
     "deploy": "yarn docker:build && yarn docker:push && yarn dist && echo 'done, just upload the zip file to beanstalk'"
   },
   "engines": {
-    "node": ">=14.9.0"
+    "node": ">=13.11.0"
   },
   "repository": {
     "type": "git",
