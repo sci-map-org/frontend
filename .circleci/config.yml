@@ -24,7 +24,6 @@ jobs:
                   sudo apt-get install python-pip python-dev build-essential
                   sudo pip install --upgrade setuptools
                   sudo pip install pyrsistent==0.16.0
-# because a later version of persistent, which awsebcli depends on, is yanked. Check https://pypi.org/project/pyrsistent/#history, and remove if fine
                   sudo pip install awsebcli --upgrade
             - run:
                 name: Deploying
