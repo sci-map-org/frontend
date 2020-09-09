@@ -100,12 +100,15 @@ const LandingHeader: React.FC<{ layoutProps: FlexProps }> = ({ layoutProps }) =>
               { name: 'UX Design', key: 'ux_design' },
               { name: 'Graph Theory', key: 'graph_theory' },
             ].map((domain) => (
-              <Box key={domain.key} borderWidth="0px" borderBottomWidth={0} borderColor="grayDivider.400" py={1} px={2}>
+              <Box key={domain.key} py={1} px={2}>
                 <InternalLink asHref={`/domains/${domain.key}`} routePath={`/domains/[key]`}>
                   {domain.name}
                 </InternalLink>
               </Box>
             ))}
+            <Text py={1} px={2} fontStyle="italic">
+              ...and much more coming soon !
+            </Text>
           </Stack>
         </Flex>
       </Flex>
@@ -291,7 +294,7 @@ export const LandingPage: React.FC = () => {
         }
       />
       <Flex justifyContent="center" my={10}>
-        <InternalButtonLink routePath="/about" asHref="/about" colorScheme="blue" variant="outline">
+        <InternalButtonLink size="lg" routePath="/about" asHref="/about" colorScheme="blue" variant="outline">
           Learn more
         </InternalButtonLink>
       </Flex>
