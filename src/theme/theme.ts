@@ -14,6 +14,7 @@ export const theme = extendTheme({
     white: '#fff',
     main: '#4FD1C5', // teal 300
     mainDarker: '#38B2AC', // teal 400
+    mainDarkerr: '#319795', // teal 500
     brand: {
       // (charka default teal)
       50: '#E6FFFA',
