@@ -23,7 +23,7 @@ const { publicRuntimeConfig } = getConfig();
 
 const HeaderLink: React.FC<(InternalLinkProps & { external?: false }) | ({ external: true } & LinkProps)> = ({
   children,
-  ...props // no taking out 'external' prop as it would mess with the ts trick
+  ...props // not taking out 'external' prop as it would mess with the ts trick
 }) =>
   props.external ? (
     <Box>
@@ -70,10 +70,10 @@ export const Header: React.FC = () => {
       <InternalLink
         routePath="/"
         asHref="/"
-        color="blackAlpha.700"
+        color="mainDarkerr"
         fontWeight="medium"
         _focus={{}}
-        _hover={{ color: 'blackAlpha.900' }}
+        _hover={{ color: 'brand.800' }}
       >
         Sci-Map.org
       </InternalLink>
