@@ -37,15 +37,16 @@ const LandingHeader: React.FC<{ layoutProps: FlexProps }> = ({ layoutProps }) =>
           knowledge seamlessly.
         </Heading>
       </Flex>
-      <Flex mb="35px" alignItems={{ base: 'center', md: 'start' }} direction={{ base: 'column', md: 'row' }}>
+      <Flex mb="40px" alignItems={{ base: 'center', md: 'start' }} direction={{ base: 'column', md: 'row' }}>
         <Flex direction="column" flexBasis={{ md: '800px' }} flexShrink={1} pr="10px">
           <Text mb={6}>
             <Text as="span" fontWeight={800}>
               Sci-map.org
             </Text>{' '}
             is a community-based, nonprofit project aiming to reshape online learning by providing a free and
-            personalized learning experience for every topic. It allows learners to explore knowledge intuitively,
-            wether having a specific goal in mind or simply following their curiosity. <br />
+            personalized learning experience for every topic. It allows you to explore knowledge intuitively, whether
+            you have a specific goal in mind or you simply are following your curiosity. <br />
+            <br />
             As of September 2020, it is in a state of closed audience release.
           </Text>
           <Stack direction="column" spacing={2} mb="15px">
@@ -144,9 +145,7 @@ const LandingContentItem: React.FC<{
         <Heading size="xl" fontWeight={400} mb={5}>
           {title}
         </Heading>
-        <Box color="gray.700" fontSize="17px">
-          {renderTextContent}
-        </Box>
+        <Box color="gray.700">{renderTextContent}</Box>
       </Flex>
       {imagePosition === 'right' && (
         <>
@@ -237,7 +236,7 @@ export const LandingPage: React.FC = () => {
         imagePosition="left"
         layoutProps={outerLayoutProps}
         darkBackground
-        renderImage={<MapIcon w="200px" h="200px" color="teal.600" />}
+        renderImage={<MapIcon w="200px" h="200px" color="mainDarkerr" />}
         title="An open, graph-based learning map"
         renderTextContent={
           <Text>
@@ -253,7 +252,7 @@ export const LandingPage: React.FC = () => {
       <LandingContentItem
         imagePosition="right"
         layoutProps={outerLayoutProps}
-        renderImage={<UserCentricIcon w="200px" h="200px" color="teal.600" />}
+        renderImage={<UserCentricIcon w="200px" h="200px" color="mainDarkerr" />}
         title="An experience tailored to each learner"
         renderTextContent={
           <Text>
@@ -278,7 +277,7 @@ export const LandingPage: React.FC = () => {
         imagePosition="left"
         layoutProps={outerLayoutProps}
         darkBackground
-        renderImage={<SocialNetworkIcon w="200px" h="200px" color="teal.600" />}
+        renderImage={<SocialNetworkIcon w="200px" h="200px" color="mainDarkerr" />}
         title="Collaborative and community based"
         renderTextContent={
           <Text>
