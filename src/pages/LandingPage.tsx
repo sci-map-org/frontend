@@ -108,7 +108,9 @@ const LandingHeader: React.FC<{ layoutProps: FlexProps }> = ({ layoutProps }) =>
               </Box>
             ))}
             <Text py={1} px={2} fontStyle="italic">
-              ...and much more coming soon !
+              <InternalLink asHref="/domains" routePath="/domains">
+                ...and much more coming soon !
+              </InternalLink>
             </Text>
           </Stack>
         </Flex>
