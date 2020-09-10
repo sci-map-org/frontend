@@ -17,14 +17,15 @@ import {
   PopoverHeader,
   PopoverTrigger,
   Skeleton,
+  Spinner,
   Stack,
   Text,
   Tooltip,
   useToast,
-  Spinner,
 } from '@chakra-ui/core';
-import { ArrowUpIcon, ArrowDownIcon } from '@chakra-ui/icons';
+import { ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
+import { useEffect, useRef, useState } from 'react';
 import { useSetConceptsKnownMutation } from '../../graphql/concepts/concepts.operations.generated';
 import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
@@ -254,25 +255,32 @@ export const ResourcePreviewCardList: React.FC<{
   isReloading?: boolean;
   onResourceConsumed?: (resource: ResourcePreviewDataFragment, consumed: boolean) => void;
 }> = ({ resourcePreviews, domainKey, isReloading, isLoading, onResourceConsumed }) => {
+  const [height, setHeight] = useState(0);
+  const elementRef = useRef(null);
+  useEffect(() => {
+    elementRef && elementRef.current && isReloading && setHeight((elementRef as any).current.clientHeight);
+  }, [isReloading]);
   if (!resourcePreviews || !resourcePreviews.length) return null;
   return (
     <Box
+      ref={elementRef}
       borderTop="1px solid"
-      {...(isReloading && { h: '1000px' })}
       borderTopColor="gray.200"
       width="100%"
       backgroundColor="backgroundColor.0"
     >
-      {isReloading ? (
+      {isReloading && height > 300 ? (
         <Flex
-          justifyContent="center"
-          h="800px"
+          direction="column"
+          alignItems="center"
+          h={height}
           pt="200px"
           borderWidth="1px"
           borderTopWidth="0px"
           borderColor="gray.200"
         >
-          <Spinner size="xl" />
+          <Spinner size="xl" m={4} />
+          <Text fontStyle="italic">Finding the most adapted learning resources...</Text>
         </Flex>
       ) : (
         resourcePreviews.map((preview) => (

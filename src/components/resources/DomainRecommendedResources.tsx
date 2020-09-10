@@ -13,11 +13,12 @@ export const DomainRecommendedResources: React.FC<{
   reloadRecommendedResources: () => void;
 }> = ({ domain, resourcePreviews, isLoading, isReloading, reloadRecommendedResources }) => {
   const [showCheckedResources, setShowCheckedResources] = useState(false);
+
   return (
     <Flex direction="column" mb={4}>
       <Stack direction="row" isInline alignItems="center" spacing={4} mb={3} pr={3}>
         <Text fontSize="2xl">Resources</Text>
-        {isReloading && <Spinner />}
+        {/* {isReloading && <Spinner />} */}
         <Box flexGrow={1} />
         <RoleAccess accessRule="loggedInUser">
           <Stack spacing={2} direction="row">
