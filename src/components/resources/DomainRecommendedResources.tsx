@@ -38,6 +38,7 @@ export const DomainRecommendedResources: React.FC<{
           (r) => !!showCheckedResources || !r.consumed || !r.consumed.consumedAt
         )}
         isLoading={isLoading}
+        isReloading={isReloading}
         onResourceConsumed={() => reloadRecommendedResources()}
       />
     </Flex>
