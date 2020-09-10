@@ -21,6 +21,7 @@ import {
   Text,
   Tooltip,
   useToast,
+  Spinner,
 } from '@chakra-ui/core';
 import { ArrowUpIcon, ArrowDownIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
@@ -250,20 +251,40 @@ export const ResourcePreviewCardList: React.FC<{
   domainKey: string;
   resourcePreviews?: ResourcePreviewDataFragment[];
   isLoading?: boolean;
+  isReloading?: boolean;
   onResourceConsumed?: (resource: ResourcePreviewDataFragment, consumed: boolean) => void;
-}> = ({ resourcePreviews, domainKey, isLoading, onResourceConsumed }) => {
+}> = ({ resourcePreviews, domainKey, isReloading, isLoading, onResourceConsumed }) => {
   if (!resourcePreviews || !resourcePreviews.length) return null;
   return (
-    <Box borderTop="1px solid" borderTopColor="gray.200" width="100%" backgroundColor="backgroundColor.0">
-      {resourcePreviews.map((preview) => (
-        <ResourcePreviewCard
-          key={preview._id}
-          domainKey={domainKey}
-          resource={preview}
-          isLoading={isLoading}
-          onResourceConsumed={onResourceConsumed}
-        />
-      ))}
+    <Box
+      borderTop="1px solid"
+      {...(isReloading && { h: '1000px' })}
+      borderTopColor="gray.200"
+      width="100%"
+      backgroundColor="backgroundColor.0"
+    >
+      {isReloading ? (
+        <Flex
+          justifyContent="center"
+          h="800px"
+          pt="200px"
+          borderWidth="1px"
+          borderTopWidth="0px"
+          borderColor="gray.200"
+        >
+          <Spinner size="xl" />
+        </Flex>
+      ) : (
+        resourcePreviews.map((preview) => (
+          <ResourcePreviewCard
+            key={preview._id}
+            domainKey={domainKey}
+            resource={preview}
+            isLoading={isLoading}
+            onResourceConsumed={onResourceConsumed}
+          />
+        ))
+      )}
     </Box>
   );
 };
