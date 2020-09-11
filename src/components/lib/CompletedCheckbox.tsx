@@ -52,10 +52,10 @@ export const CompletedCheckbox: React.FC<CompletedCheckboxProps> = ({
         minW={sizeMapping[size]}
         variant="ghost"
         onClick={() => onChange(!isChecked)}
-        color={isChecked ? 'teal.400' : 'white'}
+        color={isChecked ? 'main' : 'white'}
         backgroundColor={isChecked ? 'white' : 'gray.300'}
         _hover={{
-          backgroundColor: isChecked ? 'white' : 'teal.400',
+          backgroundColor: isChecked ? 'white' : 'main',
           color: isChecked ? 'gray.300' : 'white',
         }}
         _selected={{}}

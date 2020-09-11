@@ -18,14 +18,14 @@ export const DomainRecommendedResources: React.FC<{
     <Flex direction="column" mb={4}>
       <Stack direction="row" isInline alignItems="center" spacing={4} mb={3} pr={3}>
         <Text fontSize="2xl">Resources</Text>
-        {/* {isReloading && <Spinner />} */}
         <Box flexGrow={1} />
         <RoleAccess accessRule="loggedInUser">
-          <Stack spacing={2} direction="row">
+          <Stack spacing={2} direction="row" ml="16px">
             <Text fontWeight={300}>Show completed</Text>
             <Checkbox
               size="lg"
               px={1}
+              colorScheme="brand"
               isChecked={showCheckedResources}
               onChange={(e) => setShowCheckedResources(e.target.checked)}
             />

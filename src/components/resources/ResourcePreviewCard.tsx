@@ -4,7 +4,6 @@ import {
   AlertIcon,
   Box,
   Button,
-  Checkbox,
   CloseButton,
   Flex,
   IconButton,
@@ -20,7 +19,6 @@ import {
   Spinner,
   Stack,
   Text,
-  Tooltip,
   useToast,
 } from '@chakra-ui/core';
 import { ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
@@ -34,6 +32,7 @@ import { ResourceVoteValue } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { useMockedFeaturesEnabled } from '../../hooks/useMockedFeaturesEnabled';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
+import { CompletedCheckbox } from '../lib/CompletedCheckbox';
 import { InternalLink } from '../navigation/InternalLink';
 import { ResourceDuration } from './ResourceDuration';
 import { useSetResourceConsumedMutation } from './ResourcePreviewCard.generated';
@@ -196,53 +195,53 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
         )}
       </Flex>
       <Flex>
-        <Tooltip aria-label="Welcome home" label="Mark as read/watched" placement="top">
-          <Checkbox
-            size="lg"
-            m={4}
-            isDisabled={isLoading}
-            isChecked={!!resource.consumed && !!resource.consumed.consumedAt}
-            onChange={async (e) => {
-              if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
-              const setResourceConsumedValue = !resource.consumed || !resource.consumed.consumedAt;
-              await setResourceConsumed(setResourceConsumedValue);
-              checkedResourceToast({
-                render: ({ onClose, id }) => (
-                  <Alert
-                    status="success"
-                    variant="solid"
-                    id={id.toString()}
-                    textAlign="left"
-                    boxShadow="lg"
-                    rounded="md"
-                    alignItems="start"
-                    m={2}
-                    pr={8}
-                  >
-                    <AlertIcon />
-                    <Box flexDirection="row" alignItems="baseline" flex="1">
-                      <AlertDescription>
-                        The resource was marked as {setResourceConsumedValue ? `consumed` : 'not consumed'}
-                        <Button
-                          ml={6}
-                          size="sm"
-                          variant="outline"
-                          onClick={() => setResourceConsumed(!setResourceConsumedValue).then(() => onClose())}
-                        >
-                          Undo
-                        </Button>
-                      </AlertDescription>
-                    </Box>
-                    <CloseButton size="sm" onClick={onClose} position="absolute" right="4px" top="4px" />
-                  </Alert>
-                ),
-                position: 'bottom-left',
-                duration: 3000,
-              });
-              onResourceConsumed && onResourceConsumed(resource, setResourceConsumedValue);
-            }}
-          />
-        </Tooltip>
+        <CompletedCheckbox
+          size="lg"
+          m={4}
+          popoverLabel="Mark as completed"
+          popoverDelay={500}
+          isDisabled={isLoading}
+          isChecked={!!resource.consumed && !!resource.consumed.consumedAt}
+          onChange={async (e) => {
+            if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
+            const setResourceConsumedValue = !resource.consumed || !resource.consumed.consumedAt;
+            await setResourceConsumed(setResourceConsumedValue);
+            checkedResourceToast({
+              render: ({ onClose, id }) => (
+                <Alert
+                  status="success"
+                  variant="solid"
+                  id={id.toString()}
+                  textAlign="left"
+                  boxShadow="lg"
+                  rounded="md"
+                  alignItems="start"
+                  m={2}
+                  pr={8}
+                >
+                  <AlertIcon />
+                  <Box flexDirection="row" alignItems="baseline" flex="1">
+                    <AlertDescription>
+                      The resource was marked as {setResourceConsumedValue ? `consumed` : 'not consumed'}
+                      <Button
+                        ml={6}
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setResourceConsumed(!setResourceConsumedValue).then(() => onClose())}
+                      >
+                        Undo
+                      </Button>
+                    </AlertDescription>
+                  </Box>
+                  <CloseButton size="sm" onClick={onClose} position="absolute" right="4px" top="4px" />
+                </Alert>
+              ),
+              position: 'bottom-left',
+              duration: 3000,
+            });
+            onResourceConsumed && onResourceConsumed(resource, setResourceConsumedValue);
+          }}
+        />
       </Flex>
     </Flex>
   );
@@ -256,9 +255,13 @@ export const ResourcePreviewCardList: React.FC<{
   onResourceConsumed?: (resource: ResourcePreviewDataFragment, consumed: boolean) => void;
 }> = ({ resourcePreviews, domainKey, isReloading, isLoading, onResourceConsumed }) => {
   const [height, setHeight] = useState(0);
+  const [width, setWidth] = useState(0);
   const elementRef = useRef(null);
   useEffect(() => {
-    elementRef && elementRef.current && isReloading && setHeight((elementRef as any).current.clientHeight);
+    if (elementRef && elementRef.current) {
+      setHeight((elementRef as any).current.clientHeight);
+      setWidth((elementRef as any).current.clientWidth);
+    }
   }, [isReloading]);
   if (!resourcePreviews || !resourcePreviews.length) return null;
   return (
@@ -269,30 +272,33 @@ export const ResourcePreviewCardList: React.FC<{
       width="100%"
       backgroundColor="backgroundColor.0"
     >
-      {isReloading && height > 300 ? (
+      {isReloading && height > 300 && (
         <Flex
+          position="absolute"
+          backgroundColor="backgroundColor.0"
           direction="column"
           alignItems="center"
+          width={width}
           h={height}
           pt="200px"
           borderWidth="1px"
           borderTopWidth="0px"
           borderColor="gray.200"
+          zIndex={1000}
         >
           <Spinner size="xl" m={4} />
           <Text fontStyle="italic">Finding the most adapted learning resources...</Text>
         </Flex>
-      ) : (
-        resourcePreviews.map((preview) => (
-          <ResourcePreviewCard
-            key={preview._id}
-            domainKey={domainKey}
-            resource={preview}
-            isLoading={isLoading}
-            onResourceConsumed={onResourceConsumed}
-          />
-        ))
       )}
+      {resourcePreviews.map((preview) => (
+        <ResourcePreviewCard
+          key={preview._id}
+          domainKey={domainKey}
+          resource={preview}
+          isLoading={isLoading}
+          onResourceConsumed={onResourceConsumed}
+        />
+      ))}
     </Box>
   );
 };
