@@ -59,6 +59,8 @@ export const CompletedCheckbox: React.FC<CompletedCheckboxProps> = ({
           color: isChecked ? 'gray.300' : 'white',
         }}
         _selected={{}}
+        _active={{}}
+        _focus={{}}
         isRound
         icon={<CheckCircleIcon boxSize={isChecked ? sizeMapping[size] : sizeMapping[size] - 1} />}
       />

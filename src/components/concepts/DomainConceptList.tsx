@@ -74,9 +74,32 @@ export const DomainConceptList: React.FC<{
             ],
           },
         },
+        optimisticResponse: {
+          __typename: 'Mutation',
+          setConceptsKnown: [
+            {
+              ...concept,
+              known: {
+                __typename: 'KnownConcept',
+                level: 100,
+              },
+            },
+          ],
+        },
       });
     } else {
-      await setConceptUnknown({ variables: { conceptIds: [concept._id] } });
+      await setConceptUnknown({
+        variables: { conceptIds: [concept._id] },
+        optimisticResponse: {
+          __typename: 'Mutation',
+          setConceptsUnknown: [
+            {
+              ...concept,
+              known: null,
+            },
+          ],
+        },
+      });
     }
     onConceptToggled(concept._id);
   };
