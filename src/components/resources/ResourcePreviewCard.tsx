@@ -57,7 +57,7 @@ export const setResourceConsumed = gql`
 interface ResourcePreviewCardProps {
   domainKey: string;
   resource: ResourcePreviewDataFragment;
-  onResourceConsumed?: (resource: ResourcePreviewDataFragment, consumed: boolean) => void;
+  onResourceConsumed: (resource: ResourcePreviewDataFragment, consumed: boolean) => void;
   isLoading?: boolean;
 }
 export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
@@ -67,22 +67,7 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
   isLoading,
 }) => {
   const { mockedFeaturesEnabled } = useMockedFeaturesEnabled();
-  const [setConceptKnown] = useSetConceptsKnownMutation();
-  const [setResourceConsumedMutation] = useSetResourceConsumedMutation();
-  const setResourceConsumed = async (consumed: boolean) => {
-    await setResourceConsumedMutation({
-      variables: {
-        resourceId: resource._id,
-        consumed,
-      },
-    });
-    if (!resource.coveredConcepts || !consumed) return;
-    await setConceptKnown({
-      variables: { payload: { concepts: resource.coveredConcepts.items.map(({ _id }) => ({ conceptId: _id })) } },
-    });
-  };
   const [voteResource] = useVoteResourceMutation();
-  const checkedResourceToast = useToast();
   const { currentUser } = useCurrentUser();
   const unauthentificatedModalDisclosure = useUnauthentificatedModal();
   return (
@@ -200,44 +185,9 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
           popoverDelay={500}
           isDisabled={isLoading}
           isChecked={!!resource.consumed && !!resource.consumed.consumedAt}
-          onChange={async (e) => {
+          onChange={async () => {
             if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
-            const setResourceConsumedValue = !resource.consumed || !resource.consumed.consumedAt;
-            await setResourceConsumed(setResourceConsumedValue);
-            checkedResourceToast({
-              render: ({ onClose, id }) => (
-                <Alert
-                  status="success"
-                  variant="solid"
-                  id={id.toString()}
-                  textAlign="left"
-                  boxShadow="lg"
-                  rounded="md"
-                  alignItems="start"
-                  m={2}
-                  pr={8}
-                >
-                  <AlertIcon />
-                  <Box flexDirection="row" alignItems="baseline" flex="1">
-                    <AlertDescription>
-                      The resource was marked as {setResourceConsumedValue ? `consumed` : 'not consumed'}
-                      <Button
-                        ml={6}
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setResourceConsumed(!setResourceConsumedValue).then(() => onClose())}
-                      >
-                        Undo
-                      </Button>
-                    </AlertDescription>
-                  </Box>
-                  <CloseButton size="sm" onClick={onClose} position="absolute" right="4px" top="4px" />
-                </Alert>
-              ),
-              position: 'bottom-left',
-              duration: 3000,
-            });
-            onResourceConsumed && onResourceConsumed(resource, setResourceConsumedValue);
+            onResourceConsumed(resource, !resource.consumed || !resource.consumed.consumedAt);
           }}
         />
       </Flex>
@@ -252,6 +202,63 @@ export const ResourcePreviewCardList: React.FC<{
   isReloading?: boolean;
   onResourceConsumed?: (resource: ResourcePreviewDataFragment, consumed: boolean) => void;
 }> = ({ resourcePreviews, domainKey, isReloading, isLoading, onResourceConsumed }) => {
+  const checkedResourceToast = useToast();
+  const [setConceptKnown] = useSetConceptsKnownMutation();
+  const [setResourceConsumedMutation] = useSetResourceConsumedMutation();
+  const setResourceConsumed = async (resource: ResourcePreviewDataFragment, consumed: boolean) => {
+    await Promise.all([
+      setResourceConsumedMutation({
+        variables: {
+          resourceId: resource._id,
+          consumed,
+        },
+      }),
+      resource.coveredConcepts && consumed
+        ? setConceptKnown({
+            variables: { payload: { concepts: resource.coveredConcepts.items.map(({ _id }) => ({ conceptId: _id })) } },
+          }).then(() => {
+            // Later, reload everytime we mark a resource as consumed / not consumed, and filter from the backed: will fix all issues
+            onResourceConsumed && onResourceConsumed(resource, consumed);
+          })
+        : undefined,
+    ]);
+  };
+  const handleResourceConsumed = async (resource: ResourcePreviewDataFragment, setResourceConsumedValue: boolean) => {
+    await setResourceConsumed(resource, setResourceConsumedValue);
+    checkedResourceToast({
+      render: ({ onClose, id }) => (
+        <Alert
+          status="success"
+          variant="solid"
+          id={id.toString()}
+          textAlign="left"
+          boxShadow="lg"
+          rounded="md"
+          alignItems="start"
+          m={2}
+          pr={8}
+        >
+          <AlertIcon />
+          <Box flexDirection="row" alignItems="baseline" flex="1">
+            <AlertDescription>
+              The resource was marked as {setResourceConsumedValue ? `consumed` : 'not consumed'}
+              <Button
+                ml={6}
+                size="sm"
+                variant="outline"
+                onClick={() => setResourceConsumed(resource, !setResourceConsumedValue).then(() => onClose())}
+              >
+                Undo
+              </Button>
+            </AlertDescription>
+          </Box>
+          <CloseButton size="sm" onClick={onClose} position="absolute" right="4px" top="4px" />
+        </Alert>
+      ),
+      position: 'bottom-left',
+      duration: 3000,
+    });
+  };
   const [height, setHeight] = useState(0);
   const [width, setWidth] = useState(0);
   const elementRef = useRef(null);
@@ -294,7 +301,7 @@ export const ResourcePreviewCardList: React.FC<{
           domainKey={domainKey}
           resource={preview}
           isLoading={isLoading}
-          onResourceConsumed={onResourceConsumed}
+          onResourceConsumed={handleResourceConsumed}
         />
       ))}
     </Box>
