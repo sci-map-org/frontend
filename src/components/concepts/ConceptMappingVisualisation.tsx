@@ -2,12 +2,15 @@ import { Box } from '@chakra-ui/core';
 import Cytoscape from 'cytoscape';
 import dagre from 'cytoscape-dagre';
 import dynamic from 'next/dynamic';
+import Router from 'next/router';
 import { ConceptWithDependenciesDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
+import { theme } from '../../theme/theme';
 
 const CytoscapeComponent = dynamic(import('react-cytoscapejs'), { ssr: false });
 Cytoscape.use(dagre);
 
 export const ConceptMappingVisualisation: React.FC<{
+  domainKey: string;
   concepts: ConceptWithDependenciesDataFragment[];
   direction: 'LR' | 'TB' | 'RL' | 'BT';
   width: string;
@@ -18,6 +21,7 @@ export const ConceptMappingVisualisation: React.FC<{
   layoutNodeDimensionsIncludeLabels?: boolean;
   isLoading?: boolean;
 }> = ({
+  domainKey,
   concepts,
   direction,
   width,
@@ -31,7 +35,7 @@ export const ConceptMappingVisualisation: React.FC<{
   const elements = concepts
     .map((concept) => {
       return [
-        { data: { id: concept._id, label: concept.name, known: !!concept.known } },
+        { data: { id: concept._id, label: concept.name, conceptKey: concept.key, known: !!concept.known } },
         ...(concept.referencedByConcepts || []).map(({ concept: referencedByConcept }) => ({
           data: {
             id: `${concept._id}_${referencedByConcept._id}`,
@@ -43,6 +47,7 @@ export const ConceptMappingVisualisation: React.FC<{
       ];
     })
     .flat();
+
   const layout = {
     name: 'dagre',
     rankSep: layoutRankSep || 200,
@@ -55,16 +60,25 @@ export const ConceptMappingVisualisation: React.FC<{
   };
 
   return (
-    <Box width={width}>
+    <Box width={width} cursor="pointer">
       {!isLoading && (
         <CytoscapeComponent
           elements={elements}
           layout={layout}
+          cy={(cy) =>
+            cy.nodes().on('click', (e, data) => {
+              const [node] = e.target;
+              Router.push(
+                '/domains/[key]/concepts/[conceptKey]',
+                `/domains/${domainKey}/concepts/${node._private.data.conceptKey}`
+              );
+            })
+          }
           stylesheet={[
             {
               selector: 'node',
               style: {
-                backgroundColor: (ele) => (ele.data('known') ? 'green' : 'gray'),
+                backgroundColor: (ele) => (ele.data('known') ? theme.colors.main : 'gray'),
                 label: 'data(label)',
               },
             },
@@ -82,6 +96,11 @@ export const ConceptMappingVisualisation: React.FC<{
           style={{ width, height }}
           minZoom={0.4}
           maxZoom={2}
+          userZoomingEnabled={false}
+          // @ts-ignore
+          userPanningEnabled={false}
+          boxSelectionEnabled={false}
+          autoungrabify
         />
       )}
     </Box>
@@ -91,9 +110,11 @@ export const ConceptMappingVisualisation: React.FC<{
 export const HorizontalConceptMappingVisualisation: React.FC<{
   concepts: ConceptWithDependenciesDataFragment[];
   isLoading?: boolean;
-}> = ({ concepts, isLoading }) => {
+  domainKey: string;
+}> = ({ concepts, isLoading, domainKey }) => {
   return (
     <ConceptMappingVisualisation
+      domainKey={domainKey}
       direction="LR"
       width="1000px"
       height="400px"
@@ -109,9 +130,11 @@ export const VerticalConceptMappingVisualisation: React.FC<{
   concepts: ConceptWithDependenciesDataFragment[];
   width?: string;
   isLoading?: boolean;
-}> = ({ concepts, width, isLoading }) => {
+  domainKey: string;
+}> = ({ concepts, width, isLoading, domainKey }) => {
   return (
     <ConceptMappingVisualisation
+      domainKey={domainKey}
       direction="TB"
       width={width || '500px'}
       height="800px"

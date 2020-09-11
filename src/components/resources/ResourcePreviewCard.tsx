@@ -114,8 +114,6 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
         <Skeleton isLoaded={!isLoading}>
           <Text>{resource.upvotes}</Text>
         </Skeleton>
-        {/*
- // @ts-ignore */}
         <IconButton
           size="sm"
           aria-label="downvote"
@@ -152,7 +150,7 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
           </Box>
         )}
       </Flex>
-      <Flex flexBasis="160px" flexShrink={0} direction="column" justifyContent="center" py={2}>
+      <Flex flexBasis="100px" flexShrink={0} direction="column" justifyContent="center" py={2}>
         {resource.coveredConcepts && (
           <Skeleton isLoaded={!isLoading}>
             <Box>
@@ -160,7 +158,7 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
                 <PopoverTrigger>
                   <Link color="gray.600" fontWeight={200}>
                     {resource.coveredConcepts?.items.length} Concept
-                    {resource.coveredConcepts?.items.length === 1 ? '' : 's'} Covered
+                    {resource.coveredConcepts?.items.length === 1 ? '' : 's'}
                   </Link>
                 </PopoverTrigger>
                 <PopoverContent zIndex={4} backgroundColor="white">

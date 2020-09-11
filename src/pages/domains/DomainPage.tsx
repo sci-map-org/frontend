@@ -4,7 +4,7 @@ import gql from 'graphql-tag';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { RoleAccess } from '../../components/auth/RoleAccess';
-import { HorizontalConceptMappingVisualisation } from '../../components/concepts/ConceptMappingVisualisation';
+import { DomainConceptGraph } from '../../components/concepts/DomainConceptGraph';
 import { DomainConceptList } from '../../components/concepts/DomainConceptList';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { DomainLearningPaths } from '../../components/learning_paths/DomainLearningPaths';
@@ -160,15 +160,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
               isReloading={reloading}
               reloadRecommendedResources={reloadRecommendedResources}
             />
-            <Flex justifyContent="center" direction="column" alignItems="center" mt={2}>
-              <Text fontSize="3xl" mb={3}>
-                Concept Dependencies
-              </Text>
-              <HorizontalConceptMappingVisualisation
-                concepts={domain.concepts?.items.map((i) => i.concept) || []}
-                isLoading={loading}
-              />
-            </Flex>
+            <DomainConceptGraph domain={domain} isLoading={loading} minNbRelationships={5} />
             {mockedFeaturesEnabled && <DomainLearningPaths domain={domain} />}
           </Flex>
         )}

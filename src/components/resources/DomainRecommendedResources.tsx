@@ -1,4 +1,4 @@
-import { Box, Checkbox, Flex, Spinner, Stack, Text } from '@chakra-ui/core';
+import { Box, Checkbox, Flex, FormControl, FormLabel, Stack, Text } from '@chakra-ui/core';
 import { useState } from 'react';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
@@ -21,14 +21,17 @@ export const DomainRecommendedResources: React.FC<{
         <Box flexGrow={1} />
         <RoleAccess accessRule="loggedInUser">
           <Stack spacing={2} direction="row" ml="16px">
-            <Text fontWeight={300}>Show completed</Text>
-            <Checkbox
-              size="lg"
-              px={1}
-              colorScheme="brand"
-              isChecked={showCheckedResources}
-              onChange={(e) => setShowCheckedResources(e.target.checked)}
-            />
+            <FormControl id="show_completed" display="flex" flexDir="row" alignItems="baseline" as="span">
+              <FormLabel fontWeight={300}>Show completed</FormLabel>
+              <Checkbox
+                size="lg"
+                px={1}
+                id="show_completed"
+                colorScheme="brand"
+                isChecked={showCheckedResources}
+                onChange={(e) => setShowCheckedResources(e.target.checked)}
+              ></Checkbox>
+            </FormControl>
           </Stack>
         </RoleAccess>
       </Stack>
