@@ -60,7 +60,7 @@ export const ConceptMappingVisualisation: React.FC<{
   };
 
   return (
-    <Box width={width} cursor="pointer">
+    <Box width={width}>
       {!isLoading && (
         <CytoscapeComponent
           elements={elements}
