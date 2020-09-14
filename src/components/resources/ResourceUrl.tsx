@@ -33,9 +33,12 @@ export const ResourceUrlLink: React.FC<{
 }> = ({ resource, isLoading }) => {
   const [setResourceOpened] = useSetResourceOpenedMutation({ variables: { resourceId: resource._id } });
   return (
-    <Skeleton isLoaded={!isLoading}>
+    <Skeleton as="span" isLoaded={!isLoading}>
       <Link
         fontSize="sm"
+        whiteSpace="nowrap"
+        // ml={1}
+        // overflow="hidden"
         color={resource.consumed && resource.consumed.openedAt ? 'blue.400' : 'blue.700'}
         href={resource.url}
         onClick={() => {

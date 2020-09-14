@@ -19,3 +19,7 @@ export const ResourceDescriptionInput: React.FC<{ value?: string; onChange: (val
     </FormControl>
   );
 };
+
+export const shortenDescription = (description: string, maxLength = 200) => {
+  return description.length > maxLength ? description.slice(0, maxLength) + '...' : description;
+};

@@ -34,16 +34,14 @@ import { useMockedFeaturesEnabled } from '../../hooks/useMockedFeaturesEnabled';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import { CompletedCheckbox } from '../lib/CompletedCheckbox';
 import { InternalLink } from '../navigation/InternalLink';
+import { shortenDescription } from './ResourceDescription';
 import { ResourceDuration } from './ResourceDuration';
 import { useSetResourceConsumedMutation } from './ResourcePreviewCard.generated';
 import { ResourceStarsRating } from './ResourceStarsRating';
 import { SelectedTagsViewer } from './ResourceTagsEditor';
 import { ResourceTypeBadge } from './ResourceType';
 import { ResourceUrlLink } from './ResourceUrl';
-
-const shortenDescription = (description: string, maxLength = 200) => {
-  return description.length > maxLength ? description.slice(0, maxLength) + '...' : description;
-};
+import { WideResourcePreviewCard } from './WideResourcePreviewCard';
 
 export const setResourceConsumed = gql`
   mutation setResourceConsumed($resourceId: String!, $consumed: Boolean!) {
@@ -200,8 +198,9 @@ export const ResourcePreviewCardList: React.FC<{
   resourcePreviews?: ResourcePreviewDataFragment[];
   isLoading?: boolean;
   isReloading?: boolean;
+  displayMode?: 'wide' | 'dense';
   onResourceConsumed?: (resource: ResourcePreviewDataFragment, consumed: boolean) => void;
-}> = ({ resourcePreviews, domainKey, isReloading, isLoading, onResourceConsumed }) => {
+}> = ({ resourcePreviews, domainKey, isReloading, isLoading, onResourceConsumed, displayMode = 'wide' }) => {
   const checkedResourceToast = useToast();
   const [setConceptKnown] = useSetConceptsKnownMutation();
   const [setResourceConsumedMutation] = useSetResourceConsumedMutation();
@@ -269,6 +268,44 @@ export const ResourcePreviewCardList: React.FC<{
     }
   }, [isReloading]);
   if (!resourcePreviews || !resourcePreviews.length) return null;
+  if (displayMode === 'dense')
+    return (
+      <Box
+        ref={elementRef}
+        borderTop="1px solid"
+        borderTopColor="gray.200"
+        width="100%"
+        backgroundColor="backgroundColor.0"
+      >
+        {isReloading && height > 300 && (
+          <Flex
+            position="absolute"
+            backgroundColor="backgroundColor.0"
+            direction="column"
+            alignItems="center"
+            width={width}
+            h={height}
+            pt="200px"
+            borderWidth="1px"
+            borderTopWidth="0px"
+            borderColor="gray.200"
+            zIndex={1000}
+          >
+            <Spinner size="xl" m={4} />
+            <Text fontStyle="italic">Finding the most adapted learning resources...</Text>
+          </Flex>
+        )}
+        {resourcePreviews.map((preview) => (
+          <ResourcePreviewCard
+            key={preview._id}
+            domainKey={domainKey}
+            resource={preview}
+            isLoading={isLoading}
+            onResourceConsumed={handleResourceConsumed}
+          />
+        ))}
+      </Box>
+    );
   return (
     <Box
       ref={elementRef}
@@ -296,7 +333,7 @@ export const ResourcePreviewCardList: React.FC<{
         </Flex>
       )}
       {resourcePreviews.map((preview) => (
-        <ResourcePreviewCard
+        <WideResourcePreviewCard
           key={preview._id}
           domainKey={domainKey}
           resource={preview}

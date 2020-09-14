@@ -10,7 +10,7 @@ import { ResourceCoveredConcepts } from '../../components/resources/ResourceCove
 import { ResourceDuration } from '../../components/resources/ResourceDuration';
 import { ResourceMediaTypeBadge } from '../../components/resources/ResourceMediaType';
 import { ResourceStarsRater, ResourceStarsRating } from '../../components/resources/ResourceStarsRating';
-import { SelectedTagsEditor, SelectedTagsViewer } from '../../components/resources/ResourceTagsEditor';
+import { ResourceTagsEditor, SelectedTagsViewer } from '../../components/resources/ResourceTagsEditor';
 import { ResourceTypeBadge } from '../../components/resources/ResourceType';
 import { ResourceUrlLink } from '../../components/resources/ResourceUrl';
 import { ConceptData, generateConceptData } from '../../graphql/concepts/concepts.fragments';
@@ -20,34 +20,7 @@ import { generateResourceData, ResourceData } from '../../graphql/resources/reso
 import { useDeleteResourceMutation } from '../../graphql/resources/resources.operations.generated';
 import { UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
-import {
-  GetResourceResourcePageQuery,
-  useAddTagsToResourceResourceEditorMutation,
-  useGetResourceResourcePageQuery,
-  useRemoveTagsFromResourceResourceEditorMutation,
-} from './ResourcePage.generated';
-
-export const addTagsToResourceResourceEditor = gql`
-  mutation addTagsToResourceResourceEditor($resourceId: String!, $tags: [String!]!) {
-    addTagsToResource(resourceId: $resourceId, tags: $tags) {
-      _id
-      tags {
-        name
-      }
-    }
-  }
-`;
-
-export const removeTagsFromResourceResourceEditor = gql`
-  mutation removeTagsFromResourceResourceEditor($resourceId: String!, $tags: [String!]!) {
-    removeTagsFromResource(resourceId: $resourceId, tags: $tags) {
-      _id
-      tags {
-        name
-      }
-    }
-  }
-`;
+import { GetResourceResourcePageQuery, useGetResourceResourcePageQuery } from './ResourcePage.generated';
 
 export const getResourceResourcePage = gql`
   query getResourceResourcePage($id: String!) {
@@ -97,8 +70,6 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
   const router = useRouter();
   const { currentUser } = useCurrentUser();
 
-  const [addTagsToResource] = useAddTagsToResourceResourceEditorMutation();
-  const [removeTagsFromResource] = useRemoveTagsFromResourceResourceEditorMutation();
   const [deleteResource] = useDeleteResourceMutation();
   if (error) return <Box>Resource not found !</Box>;
 
@@ -168,12 +139,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
         </Box>
 
         <RoleAccess accessRule="loggedInUser">
-          <SelectedTagsEditor
-            isDisabled={loading}
-            selectedTags={selectedTags}
-            onSelect={(t) => addTagsToResource({ variables: { resourceId: resource._id, tags: [t.name] } })}
-            onRemove={(t) => removeTagsFromResource({ variables: { resourceId: resource._id, tags: [t.name] } })}
-          />
+          <ResourceTagsEditor resource={resource} isDisabled={loading} />
         </RoleAccess>
         <RoleAccess accessRule="notLoggedInUser">
           <SelectedTagsViewer selectedTags={selectedTags} />
