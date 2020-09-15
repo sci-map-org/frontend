@@ -10,16 +10,19 @@ import {
   useRemoveTagsFromResourceResourceEditorMutation,
 } from './ResourceTagsEditor.generated';
 
-export const SelectedTagsViewer: React.FC<{ selectedTags?: ResourceTag[] | null }> = ({ selectedTags }) => {
+export const SelectedTagsViewer: React.FC<{ selectedTags?: ResourceTag[] | null; pb?: number | string }> = ({
+  selectedTags,
+  pb = 2,
+}) => {
   if (!selectedTags || !selectedTags.length) return null;
   return (
-    <Text fontWeight={250} pb={2} as="span">
+    <Stack direction="row" fontWeight={250} pb={pb} as="span">
       {selectedTags.map((tag, idx) => (
-        <Tag size="sm" colorScheme="gray" key={idx} mr={2} as="span">
+        <Tag size="sm" colorScheme="gray" key={idx} as="span">
           <TagLabel>{tag.name}</TagLabel>
         </Tag>
       ))}
-    </Text>
+    </Stack>
   );
 };
 
@@ -30,12 +33,14 @@ export const ResourceTagsStatelessEditor: React.FC<{
   onRemove?: (tag: ResourceTag) => void;
   isDisabled?: boolean;
   size?: 'sm' | 'md';
-}> = ({ selectedTags, setSelectedTags, onSelect, onRemove, isDisabled, size = 'md' }) => {
+  inputWidth?: string;
+}> = ({ selectedTags, setSelectedTags, onSelect, onRemove, isDisabled, size = 'md', inputWidth }) => {
   return (
     <Flex direction="row" alignItems="baseline">
       <ResourceTagSelector
         isDisabled={isDisabled}
         size={size}
+        width={inputWidth}
         onSelect={(r) => {
           setSelectedTags && setSelectedTags(uniqBy(selectedTags.concat({ name: r.name }), 'name'));
           onSelect && onSelect({ name: r.name });
@@ -86,7 +91,7 @@ export const ResourceTagsEditor: React.FC<{
   isDisabled?: boolean;
   size?: 'sm' | 'md';
   inputWidth?: string;
-}> = ({ resource, isDisabled, size = 'md' }) => {
+}> = ({ resource, isDisabled, size = 'md', inputWidth }) => {
   const [addTagsToResource] = useAddTagsToResourceResourceEditorMutation();
   const [removeTagsFromResource] = useRemoveTagsFromResourceResourceEditorMutation();
   const selectedTags = resource.tags || [];
@@ -95,6 +100,7 @@ export const ResourceTagsEditor: React.FC<{
       size={size}
       isDisabled={isDisabled}
       selectedTags={selectedTags}
+      inputWidth={inputWidth}
       onSelect={(t) => addTagsToResource({ variables: { resourceId: resource._id, tags: [t.name] } })}
       onRemove={(t) => removeTagsFromResource({ variables: { resourceId: resource._id, tags: [t.name] } })}
     />
