@@ -1,15 +1,24 @@
 import { Box } from '@chakra-ui/core';
 import gql from 'graphql-tag';
 import Router from 'next/router';
-
 import { PageLayout } from '../../components/layout/PageLayout';
 import { ResourceEditor } from '../../components/resources/ResourceEditor';
 import { ConceptData } from '../../graphql/concepts/concepts.fragments';
 import { ResourceData } from '../../graphql/resources/resources.fragments';
+import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { PageInfo } from '../PageInfo';
 import {
   useGetResourceEditResourcePageQuery,
   useUpdateResourceResourcePageMutation,
 } from './EditResourcePage.generated';
+
+export const EditResourcePagePath = (resourceId: string) => `/resources/${resourceId}`;
+
+export const EditResourcePageInfo = (resource: ResourceDataFragment): PageInfo => ({
+  name: `${resource.name}`,
+  path: EditResourcePagePath(resource._id),
+  routePath: EditResourcePagePath('[_id]'),
+});
 
 export const updateResourceResourcePage = gql`
   mutation updateResourceResourcePage($id: String!, $payload: UpdateResourcePayload!) {
