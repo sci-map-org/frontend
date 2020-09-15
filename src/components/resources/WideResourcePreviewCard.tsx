@@ -3,6 +3,10 @@ import {
   Flex,
   IconButton,
   Link,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Popover,
   PopoverArrow,
   PopoverBody,
@@ -13,15 +17,20 @@ import {
   Skeleton,
   Stack,
   Text,
+  Tooltip,
 } from '@chakra-ui/core';
-import { ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
+import { ArrowDownIcon, ArrowUpIcon, EditIcon, HamburgerIcon } from '@chakra-ui/icons';
+import { useEffect, useRef, useState } from 'react';
+import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
+import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import {
-  ResourceDataFragment,
-  ResourcePreviewDataFragment,
-} from '../../graphql/resources/resources.fragments.generated';
-import { useVoteResourceMutation } from '../../graphql/resources/resources.operations.generated';
+  useDeleteResourceMutation,
+  useVoteResourceMutation,
+} from '../../graphql/resources/resources.operations.generated';
 import { ResourceVoteValue } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
+import { routerPushToPage } from '../../pages/PageInfo';
+import { EditResourcePageInfo } from '../../pages/resources/EditResourcePage';
 import { RoleAccess } from '../auth/RoleAccess';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import { CompletedCheckbox } from '../lib/CompletedCheckbox';
@@ -72,7 +81,10 @@ const LeftBlock: React.FC<{ resource: ResourcePreviewDataFragment; isLoading?: b
     </Flex>
   );
 };
-const TitleLink: React.FC<{ resource: ResourcePreviewDataFragment }> = ({ resource }) => {
+const TitleLink: React.FC<{ resource: ResourcePreviewDataFragment; isLoading?: boolean }> = ({
+  resource,
+  isLoading,
+}) => {
   return (
     <Box>
       <Link
@@ -83,33 +95,114 @@ const TitleLink: React.FC<{ resource: ResourcePreviewDataFragment }> = ({ resour
         href={resource.url}
         isExternal
       >
-        <Text
-          mr={1}
-          as="span"
-          fontSize="xl"
-          // flexBasis="400px"
-          // flexGrow={2}
-          // flex
-          // textOverflow="ellipsis"
-          // whiteSpace="nowrap"
-          // overflow="hidden"
-        >
-          {resource.name} <ResourceUrlLink resource={resource} />
+        <Text mr={1} as="span" fontSize="xl">
+          {/* @ts-ignore */}
+          {resource.name} <ResourceUrlLink resource={resource} isLoading={isLoading} as="span" />
         </Text>
-        {/* <Box>
-        <ResourceUrlLink resource={resource} />
-      </Box> */}
       </Link>
     </Box>
   );
 };
 
-const BottomBlock: React.FC<{ resource: ResourceDataFragment }> = ({ resource }) => {
+const shortenCoveredConceptsList = (coveredConcepts: Pick<ConceptDataFragment, 'name'>[], maxLength: number = 40) => {
+  const { s, count } = coveredConcepts
+    .sort((c1, c2) => c1.name.length - c2.name.length)
+    .reduce(
+      (o, concept, index) => {
+        if (o.s.length > maxLength) {
+          o.count = o.count + 1;
+        } else {
+          o.s = index > 0 ? o.s + ', ' + concept.name : concept.name;
+        }
+        return o;
+      },
+      { s: '', count: 0 }
+    );
+  return count ? `${s},...(+ ${count})` : s;
+};
+
+const BottomBlock: React.FC<{ domainKey: string; resource: ResourcePreviewDataFragment; isLoading?: boolean }> = ({
+  domainKey,
+  resource,
+  isLoading,
+}) => {
+  const [editorMode, setEditorMode] = useState(false);
+  const wrapperRef = useRef(null);
+  const useOutsideAlerter = (ref: React.MutableRefObject<any>) => {
+    useEffect(() => {
+      function handleClickOutside(event: any) {
+        if (ref.current && !ref.current.contains(event.target)) {
+          setEditorMode(false);
+        }
+      }
+
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, [ref]);
+  };
+  useOutsideAlerter(wrapperRef);
   return (
-    <Flex>
-      <RoleAccess accessRule="loggedInUser">
-        <ResourceTagsEditor size="sm" resource={resource} />
+    <Flex height="32px">
+      <RoleAccess
+        accessRule="loggedInUser"
+        renderAccessDenied={() => <SelectedTagsViewer selectedTags={resource.tags} />}
+      >
+        {editorMode ? (
+          <Box ref={wrapperRef}>
+            <ResourceTagsEditor size="sm" resource={resource} inputWidth="100px" />
+          </Box>
+        ) : (
+          <Stack direction="row" alignItems="center">
+            <SelectedTagsViewer pb={0} selectedTags={resource.tags} />
+            <Tooltip hasArrow label="Add or remove tags">
+              <IconButton
+                size="xs"
+                variant="ghost"
+                aria-label="add tag"
+                onClick={() => setEditorMode(true)}
+                icon={<EditIcon />}
+              />
+            </Tooltip>
+          </Stack>
+        )}
       </RoleAccess>
+      <Box flexGrow={1} />
+      <Flex flexShrink={0} direction="column" justifyContent="center" py={2}>
+        {resource.coveredConcepts && (
+          <Skeleton isLoaded={!isLoading}>
+            <Box>
+              <Popover>
+                <PopoverTrigger>
+                  <Link color="teal.500" fontWeight={500}>
+                    {shortenCoveredConceptsList(resource.coveredConcepts?.items)}
+                  </Link>
+                </PopoverTrigger>
+                <PopoverContent zIndex={4} backgroundColor="white">
+                  <PopoverArrow />
+                  <PopoverHeader>Concepts</PopoverHeader>
+                  <PopoverCloseButton />
+                  <PopoverBody>
+                    <Stack direction="column">
+                      {resource.coveredConcepts.items.map((concept) => (
+                        <Box key={concept._id}>
+                          <InternalLink
+                            routePath="/domains/[key]/concepts/[conceptKey]"
+                            asHref={`/domains/${domainKey}/concepts/${concept.key}`}
+                          >
+                            {concept.name}
+                          </InternalLink>
+                        </Box>
+                      ))}
+                    </Stack>
+                  </PopoverBody>
+                </PopoverContent>
+              </Popover>
+            </Box>
+          </Skeleton>
+        )}
+      </Flex>
     </Flex>
   );
 };
@@ -125,9 +218,8 @@ export const WideResourcePreviewCard: React.FC<WideResourcePreviewCardProps> = (
   onResourceConsumed,
   isLoading,
 }) => {
-  // const { mockedFeaturesEnabled } = useMockedFeaturesEnabled();
-
   const { currentUser } = useCurrentUser();
+  const [deleteResourceMutation] = useDeleteResourceMutation();
   const unauthentificatedModalDisclosure = useUnauthentificatedModal();
   return (
     <Flex
@@ -143,20 +235,12 @@ export const WideResourcePreviewCard: React.FC<WideResourcePreviewCardProps> = (
       pb={0}
     >
       <LeftBlock resource={resource} isLoading={isLoading} />
-      <Flex direction="column">
+      <Flex direction="column" flexGrow={1}>
         <Flex direction="row" flexGrow={1}>
           <Flex direction="column" flexGrow={1} justifyContent="center">
             <Skeleton isLoaded={!isLoading}>
               <Stack spacing={2} direction="row" alignItems="baseline" mr="10px">
-                <TitleLink resource={resource} />
-                {/* <Text>
-              <InternalLink routePath="/resources/[_id]" asHref={`/resources/${resource._id}`} fontSize="xl">
-                {resource.name}
-              </InternalLink>
-            </Text>
-            <ResourceUrlLink resource={resource} /> */}
-
-                {/* <Box flexGrow={1} /> */}
+                <TitleLink resource={resource} isLoading={isLoading} />
               </Stack>
             </Skeleton>
             <Skeleton isLoaded={!isLoading}>
@@ -167,58 +251,38 @@ export const WideResourcePreviewCard: React.FC<WideResourcePreviewCardProps> = (
               </Stack>
             </Skeleton>
             {((resource.tags && resource.tags.length > 0) || resource.description) && (
-              <Box pb={2}>
+              <Box>
                 <Text fontWeight={250}>{resource.description && shortenDescription(resource.description)}</Text>
-                <SelectedTagsViewer selectedTags={resource.tags} />
               </Box>
             )}
           </Flex>
-          <Flex flexBasis="100px" flexShrink={0} direction="column" justifyContent="center" py={2}>
-            {resource.coveredConcepts && (
-              <Skeleton isLoaded={!isLoading}>
-                <Box>
-                  <Popover>
-                    <PopoverTrigger>
-                      <Link color="gray.600" fontWeight={200}>
-                        {resource.coveredConcepts?.items.length} Concept
-                        {resource.coveredConcepts?.items.length === 1 ? '' : 's'}
-                      </Link>
-                    </PopoverTrigger>
-                    <PopoverContent zIndex={4} backgroundColor="white">
-                      <PopoverArrow />
-                      <PopoverHeader>Concepts</PopoverHeader>
-                      <PopoverCloseButton />
-                      <PopoverBody>
-                        <Stack direction="column">
-                          {resource.coveredConcepts.items.map((concept) => (
-                            <Box key={concept._id}>
-                              <InternalLink
-                                routePath="/domains/[key]/concepts/[conceptKey]"
-                                asHref={`/domains/${domainKey}/concepts/${concept.key}`}
-                              >
-                                {concept.name}
-                              </InternalLink>
-                            </Box>
-                          ))}
-                        </Stack>
-                      </PopoverBody>
-                    </PopoverContent>
-                  </Popover>
-                </Box>
-              </Skeleton>
-            )}
-            {/* {mockedFeaturesEnabled && (
-          <Box>
-            <Link color="gray.600" fontWeight={200}>
-              3 comments
-            </Link>
-          </Box>
-        )} */}
-          </Flex>
-          <Flex alignItems="center">
+          <Flex direction="column">
+            <Menu>
+              <MenuButton
+                m={1}
+                alignSelf="flex-end"
+                size="xs"
+                as={IconButton}
+                variant="ghost"
+                icon={<HamburgerIcon />}
+              ></MenuButton>
+              <MenuList>
+                <MenuItem onClick={() => routerPushToPage(EditResourcePageInfo(resource))}>Edit</MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    if (window.confirm('Are you sure to delete this resource?')) {
+                      deleteResourceMutation({ variables: { _id: resource._id } });
+                    }
+                  }}
+                >
+                  Delete
+                </MenuItem>
+              </MenuList>
+            </Menu>
             <CompletedCheckbox
               size="lg"
-              m={4}
+              alignSelf="center"
+              mx="32px"
               popoverLabel="Mark as completed"
               popoverDelay={500}
               isDisabled={isLoading}
@@ -230,7 +294,7 @@ export const WideResourcePreviewCard: React.FC<WideResourcePreviewCardProps> = (
             />
           </Flex>
         </Flex>
-        <BottomBlock resource={resource} />
+        <BottomBlock resource={resource} domainKey={domainKey} />
       </Flex>
     </Flex>
   );
