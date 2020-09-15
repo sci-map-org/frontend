@@ -1,17 +1,16 @@
 import {
-  Icon,
-  Link,
-  Skeleton,
+  FormControl,
+  FormLabel,
+  IconButton,
   Input,
   InputGroup,
   InputRightElement,
-  IconButton,
-  FormLabel,
-  FormControl,
+  Link,
+  LinkProps,
+  Skeleton,
 } from '@chakra-ui/core';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
-
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { toUrlPreview, validateUrl } from '../../services/url.service';
 import { useSetResourceOpenedMutation } from './ResourceUrl.generated';
@@ -27,19 +26,20 @@ export const setResourceOpened = gql`
   }
 `;
 
-export const ResourceUrlLink: React.FC<{
-  resource: Pick<ResourcePreviewDataFragment, '_id' | 'consumed' | 'url'>;
-  isLoading?: boolean;
-}> = ({ resource, isLoading }) => {
+export const ResourceUrlLink: React.FC<
+  {
+    resource: Pick<ResourcePreviewDataFragment, '_id' | 'consumed' | 'url'>;
+    isLoading?: boolean;
+  } & Omit<LinkProps, 'href' | 'onClick' | 'isExternal' | 'resource'>
+> = ({ resource, isLoading, ...linkProps }) => {
   const [setResourceOpened] = useSetResourceOpenedMutation({ variables: { resourceId: resource._id } });
   return (
     <Skeleton as="span" isLoaded={!isLoading}>
       <Link
         fontSize="sm"
         whiteSpace="nowrap"
-        // ml={1}
-        // overflow="hidden"
         color={resource.consumed && resource.consumed.openedAt ? 'blue.400' : 'blue.700'}
+        {...linkProps}
         href={resource.url}
         onClick={() => {
           if (!resource.consumed || !resource.consumed.openedAt) {
