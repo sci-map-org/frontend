@@ -1,5 +1,6 @@
 import {
   Button,
+  ButtonProps,
   IconButton,
   IconButtonProps,
   Modal,
@@ -14,30 +15,40 @@ import {
 } from '@chakra-ui/core';
 import { DeleteIcon } from '@chakra-ui/icons';
 
-interface DeleteButtonWithConfirmationProps extends Omit<IconButtonProps, 'aria-label'> {
+type DeleteButtonWithConfirmationProps = (
+  | ({ mode?: 'iconButton' } & Omit<IconButtonProps, 'aria-label'>)
+  | ({ mode: 'button' } & Omit<ButtonProps, 'aria-label'>)
+) & {
   modalBodyText: string;
   modalHeaderText: string;
   onConfirmation: () => void | Promise<any>;
   isDisabled?: boolean;
-}
+};
 export const DeleteButtonWithConfirmation: React.FC<DeleteButtonWithConfirmationProps> = ({
   modalBodyText,
   modalHeaderText,
   onConfirmation,
   isDisabled,
+  children,
   ...props
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
-      <IconButton
-        aria-label={modalHeaderText}
-        icon={<DeleteIcon />}
-        size="sm"
-        onClick={onOpen}
-        isDisabled={isDisabled}
-        {...props}
-      />
+      {props.mode === 'button' ? (
+        <Button aria-label={modalHeaderText} size="sm" onClick={onOpen} isDisabled={isDisabled} {...props}>
+          {children}
+        </Button>
+      ) : (
+        <IconButton
+          aria-label={modalHeaderText}
+          icon={<DeleteIcon />}
+          size="sm"
+          onClick={onOpen}
+          isDisabled={isDisabled}
+          {...props}
+        />
+      )}
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay>
           <ModalContent bg="white">
