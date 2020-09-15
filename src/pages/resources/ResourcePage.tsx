@@ -157,6 +157,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
               resourceId={resource._id}
               coveredConcepts={resource.coveredConcepts.items}
               conceptList={conceptList}
+              title="Covered Concepts"
             />
           </RoleAccess>
         )}

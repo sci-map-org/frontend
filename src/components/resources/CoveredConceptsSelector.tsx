@@ -1,5 +1,7 @@
 import { differenceBy } from 'lodash';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
+import { useGetDomainConceptListQuery } from '../../graphql/concepts/concepts.operations.generated';
+import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import {
   useAttachResourceCoversConceptsMutation,
   useDetachResourceCoversConceptsMutation,
@@ -10,7 +12,8 @@ export const CoveredConceptsSelector: React.FC<{
   resourceId: string;
   coveredConcepts: ConceptDataFragment[];
   conceptList: ConceptDataFragment[];
-}> = ({ coveredConcepts, conceptList, resourceId }) => {
+  title?: string;
+}> = ({ coveredConcepts, conceptList, resourceId, title }) => {
   const possibleConceptSuggestions = differenceBy(conceptList, coveredConcepts, (c) => c._id);
 
   const [attachResourceCoversConcepts] = useAttachResourceCoversConceptsMutation();
@@ -27,7 +30,22 @@ export const CoveredConceptsSelector: React.FC<{
       pickedConceptList={coveredConcepts}
       onSelect={(c) => selectConcept(c._id)}
       onRemove={(c) => removeConcept(c._id)}
-      title="Covered Concepts"
+      title={title}
+    />
+  );
+};
+
+export const DomainCoveredConceptSelector: React.FC<{ domainKey: string; resource: ResourcePreviewDataFragment }> = ({
+  domainKey,
+  resource,
+}) => {
+  const { data } = useGetDomainConceptListQuery({ variables: { domainKey: domainKey } });
+  const domainConceptList = (data?.getDomainByKey.concepts?.items || []).map((item) => item.concept);
+  return (
+    <CoveredConceptsSelector
+      resourceId={resource._id}
+      coveredConcepts={resource.coveredConcepts?.items || []}
+      conceptList={domainConceptList}
     />
   );
 };

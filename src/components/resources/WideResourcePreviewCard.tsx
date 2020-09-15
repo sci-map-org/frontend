@@ -34,7 +34,7 @@ import { EditResourcePageInfo } from '../../pages/resources/EditResourcePage';
 import { RoleAccess } from '../auth/RoleAccess';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import { CompletedCheckbox } from '../lib/CompletedCheckbox';
-import { InternalLink } from '../navigation/InternalLink';
+import { DomainCoveredConceptSelector } from './CoveredConceptsSelector';
 import { shortenDescription } from './ResourceDescription';
 import { ResourceDuration } from './ResourceDuration';
 import { ResourceStarsRating } from './ResourceStarsRating';
@@ -121,13 +121,14 @@ const shortenCoveredConceptsList = (coveredConcepts: Pick<ConceptDataFragment, '
   return count ? `${s},...(+ ${count})` : s;
 };
 
-const BottomBlock: React.FC<{ domainKey: string; resource: ResourcePreviewDataFragment; isLoading?: boolean }> = ({
-  domainKey,
-  resource,
-  isLoading,
-}) => {
+const BottomBlock: React.FC<{
+  domainKey: string;
+  resource: ResourcePreviewDataFragment;
+  isLoading?: boolean;
+}> = ({ domainKey, resource, isLoading }) => {
   const [editorMode, setEditorMode] = useState(false);
   const wrapperRef = useRef(null);
+
   const useOutsideAlerter = (ref: React.MutableRefObject<any>) => {
     useEffect(() => {
       function handleClickOutside(event: any) {
@@ -175,16 +176,22 @@ const BottomBlock: React.FC<{ domainKey: string; resource: ResourcePreviewDataFr
             <Box>
               <Popover>
                 <PopoverTrigger>
-                  <Link color="teal.500" fontWeight={500}>
+                  <Link color="teal.500" fontWeight={500} mr={1}>
                     {shortenCoveredConceptsList(resource.coveredConcepts?.items)}
                   </Link>
                 </PopoverTrigger>
                 <PopoverContent zIndex={4} backgroundColor="white">
                   <PopoverArrow />
-                  <PopoverHeader>Concepts</PopoverHeader>
+                  <PopoverHeader>Covered Concepts</PopoverHeader>
                   <PopoverCloseButton />
                   <PopoverBody>
-                    <Stack direction="column">
+                    <DomainCoveredConceptSelector domainKey={domainKey} resource={resource} />
+                    {/* <CoveredConceptsSelector
+                      resourceId={resource._id}
+                      coveredConcepts={resource.coveredConcepts.items}
+                      conceptList={domainConceptList}
+                    /> */}
+                    {/* <Stack direction="column">
                       {resource.coveredConcepts.items.map((concept) => (
                         <Box key={concept._id}>
                           <InternalLink
@@ -195,7 +202,7 @@ const BottomBlock: React.FC<{ domainKey: string; resource: ResourcePreviewDataFr
                           </InternalLink>
                         </Box>
                       ))}
-                    </Stack>
+                    </Stack> */}
                   </PopoverBody>
                 </PopoverContent>
               </Popover>

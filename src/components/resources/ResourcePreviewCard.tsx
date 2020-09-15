@@ -24,6 +24,7 @@ import {
 import { ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import { useEffect, useRef, useState } from 'react';
+import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { useSetConceptsKnownMutation } from '../../graphql/concepts/concepts.operations.generated';
 import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
