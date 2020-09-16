@@ -11,11 +11,12 @@ import {
   useGetResourceEditResourcePageQuery,
   useUpdateResourceResourcePageMutation,
 } from './EditResourcePage.generated';
+import { ResourcePageInfo } from './ResourcePage';
 
-export const EditResourcePagePath = (resourceId: string) => `/resources/${resourceId}`;
+export const EditResourcePagePath = (resourceId: string) => `/resources/${resourceId}/edit`;
 
 export const EditResourcePageInfo = (resource: ResourceDataFragment): PageInfo => ({
-  name: `${resource.name}`,
+  name: `Edit - ${resource.name}`,
   path: EditResourcePagePath(resource._id),
   routePath: EditResourcePagePath('[_id]'),
 });
@@ -33,6 +34,9 @@ export const getResourceEditResourcePage = gql`
   query getResourceEditResourcePage($id: String!) {
     getResourceById(id: $id) {
       ...ResourceData
+      creator {
+        _id
+      }
       coveredConcepts(options: {}) {
         items {
           ...ConceptData
@@ -69,7 +73,11 @@ const EditResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) => {
   if (!data || !data.getResourceById) return <Box>Resource not found !</Box>;
   const { getResourceById: resource } = data;
   return (
-    <PageLayout mode="form">
+    <PageLayout
+      mode="form"
+      breadCrumbsLinks={[ResourcePageInfo(resource), EditResourcePageInfo(resource)]}
+      accessRule="loggedInUser"
+    >
       <ResourceEditor
         resource={resource}
         onSave={async (editedResource) => {

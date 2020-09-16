@@ -3,10 +3,6 @@ import {
   Flex,
   IconButton,
   Link,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
   Popover,
   PopoverArrow,
   PopoverBody,
@@ -19,19 +15,15 @@ import {
   Text,
   Tooltip,
 } from '@chakra-ui/core';
-import { ArrowDownIcon, ArrowUpIcon, EditIcon, HamburgerIcon } from '@chakra-ui/icons';
+import { ArrowDownIcon, ArrowUpIcon, EditIcon, SettingsIcon } from '@chakra-ui/icons';
 import { useEffect, useRef, useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
-import {
-  useDeleteResourceMutation,
-  useVoteResourceMutation,
-} from '../../graphql/resources/resources.operations.generated';
+import { useVoteResourceMutation } from '../../graphql/resources/resources.operations.generated';
 import { ResourceVoteValue } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { EditResourcePageInfo } from '../../pages/resources/EditResourcePage';
-import { RoleAccess } from '../auth/RoleAccess';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import { CompletedCheckbox } from '../lib/CompletedCheckbox';
 import { InternalLink } from '../navigation/InternalLink';
@@ -91,7 +83,6 @@ const TitleLink: React.FC<{ resource: ResourcePreviewDataFragment; isLoading?: b
       <Link
         display="flex"
         alignItems="baseline"
-        // flexGrow={1}
         flexDirection={{ base: 'column', md: 'row' }}
         href={resource.url}
         isExternal
@@ -130,7 +121,8 @@ const BottomBlock: React.FC<{
   const [tagEditorMode, setTagEditorMode] = useState(false);
   const [coveredConceptsEditorMode, setCoveredConceptsEditorMode] = useState(false);
   const wrapperRef = useRef(null);
-
+  const { currentUser } = useCurrentUser();
+  const unauthentificatedModalDisclosure = useUnauthentificatedModal();
   const useOutsideAlerter = (ref: React.MutableRefObject<any>) => {
     useEffect(() => {
       function handleClickOutside(event: any) {
@@ -148,29 +140,35 @@ const BottomBlock: React.FC<{
   useOutsideAlerter(wrapperRef);
   return (
     <Flex pb={2} pt={2} flexWrap="wrap">
-      <RoleAccess
-        accessRule="loggedInUser"
-        renderAccessDenied={() => <SelectedTagsViewer selectedTags={resource.tags} />}
-      >
-        {tagEditorMode ? (
-          <Box ref={wrapperRef}>
+      {tagEditorMode ? (
+        <Box ref={wrapperRef}>
+          <Skeleton isLoaded={!isLoading}>
             <ResourceTagsEditor size="sm" resource={resource} inputWidth="100px" />
-          </Box>
-        ) : (
-          <Stack direction="row" alignItems="center">
+          </Skeleton>
+        </Box>
+      ) : (
+        <Stack direction="row" alignItems="center">
+          <Skeleton isLoaded={!isLoading}>
             <SelectedTagsViewer pb={0} selectedTags={resource.tags} />
-            <Tooltip hasArrow label="Add or remove tags">
-              <IconButton
-                size="xs"
-                variant="ghost"
-                aria-label="add tag"
-                onClick={() => setTagEditorMode(true)}
-                icon={<EditIcon />}
-              />
-            </Tooltip>
-          </Stack>
-        )}
-      </RoleAccess>
+          </Skeleton>
+          <Tooltip hasArrow label="Add or remove tags">
+            <IconButton
+              size="xs"
+              variant="ghost"
+              aria-label="add tag"
+              onClick={(e) => {
+                if (!currentUser) {
+                  unauthentificatedModalDisclosure.onOpen();
+                  e.preventDefault();
+                  return;
+                }
+                setTagEditorMode(true);
+              }}
+              icon={<EditIcon />}
+            />
+          </Tooltip>
+        </Stack>
+      )}
       <Box flexGrow={1} flexBasis={0} />
       <Flex flexShrink={0} direction="column" justifyContent="center">
         {resource.coveredConcepts && (
@@ -183,14 +181,23 @@ const BottomBlock: React.FC<{
                       About:{'  '}
                     </Text>
                     <Link color="gray.800" fontWeight={300} onClick={() => setCoveredConceptsEditorMode(false)}>
-                      {shortenCoveredConceptsList(resource.coveredConcepts?.items)}
+                      {shortenCoveredConceptsList(resource.coveredConcepts?.items, 32)}
                     </Link>
+                    {/* <RoleAccess accessRule="contributorOrAdmin"> */}
                     <IconButton
-                      onClick={() => setCoveredConceptsEditorMode(true)}
+                      onClick={(e) => {
+                        if (!currentUser) {
+                          unauthentificatedModalDisclosure.onOpen();
+                          e.preventDefault();
+                          return;
+                        }
+                        setCoveredConceptsEditorMode(true);
+                      }}
                       aria-label="Add or remove covered concepts"
                       variant="ghost"
                       size="xs"
-                      icon={<EditIcon />}
+                      color="gray.600"
+                      icon={<SettingsIcon />}
                     />
                   </Stack>
                 </PopoverTrigger>
@@ -238,7 +245,6 @@ export const WideResourcePreviewCard: React.FC<WideResourcePreviewCardProps> = (
   isLoading,
 }) => {
   const { currentUser } = useCurrentUser();
-  const [deleteResourceMutation] = useDeleteResourceMutation();
   const unauthentificatedModalDisclosure = useUnauthentificatedModal();
   return (
     <Flex
@@ -293,28 +299,18 @@ export const WideResourcePreviewCard: React.FC<WideResourcePreviewCardProps> = (
             onResourceConsumed(resource, !resource.consumed || !resource.consumed.consumedAt);
           }}
         />
-        <Menu>
-          <MenuButton
-            m={1}
-            color="gray.600"
-            size="xs"
-            as={IconButton}
-            variant="ghost"
-            icon={<HamburgerIcon />}
-          ></MenuButton>
-          <MenuList>
-            <MenuItem onClick={() => routerPushToPage(EditResourcePageInfo(resource))}>Edit</MenuItem>
-            <MenuItem
-              onClick={() => {
-                if (window.confirm('Are you sure to delete this resource?')) {
-                  deleteResourceMutation({ variables: { _id: resource._id } });
-                }
-              }}
-            >
-              Delete
-            </MenuItem>
-          </MenuList>
-        </Menu>
+        <IconButton
+          m={1}
+          aria-label="edit resource"
+          color="gray.600"
+          size="xs"
+          icon={<EditIcon />}
+          variant="ghost"
+          onClick={() => {
+            if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
+            routerPushToPage(EditResourcePageInfo(resource));
+          }}
+        />
       </Flex>
     </Flex>
   );

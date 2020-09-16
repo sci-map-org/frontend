@@ -1,14 +1,18 @@
 import { Box, Button, Flex, FormControl, FormLabel, Input, Stack, Text } from '@chakra-ui/core';
+import Router from 'next/router';
 import { useState } from 'react';
-import { UpdateResourcePayload } from '../../graphql/types';
+import { useDeleteResourceMutation } from '../../graphql/resources/resources.operations.generated';
+import { UpdateResourcePayload, UserRole } from '../../graphql/types';
+import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { GetResourceEditResourcePageQuery } from '../../pages/resources/EditResourcePage.generated';
+import { Access } from '../auth/Access';
+import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
 import { InternalLink } from '../navigation/InternalLink';
 import { ResourceDescriptionInput } from './ResourceDescription';
 import { ResourceDurationSelector } from './ResourceDuration';
 import { ResourceMediaTypeSelector } from './ResourceMediaType';
 import { ResourceTypeSelector } from './ResourceType';
 import { ResourceUrlInput } from './ResourceUrl';
-
 interface ResourceEditorProps {
   resource: GetResourceEditResourcePageQuery['getResourceById'];
   onSave: (editedResource: UpdateResourcePayload) => void;
@@ -22,7 +26,8 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
   const [url, setUrl] = useState(resource.url);
   const [durationMs, setDurationMs] = useState(resource.durationMs);
   const [description, setDescription] = useState(resource.description || undefined);
-
+  const { currentUser } = useCurrentUser();
+  const [deleteResource] = useDeleteResourceMutation();
   if (!resource.domains) return null;
 
   return (
@@ -54,24 +59,47 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
           ))}
         </Box>
       )}
-      <Button
-        size="lg"
-        variant="solid"
-        width="20rem"
-        alignSelf="flex-end"
-        onClick={() =>
-          onSave({
-            name,
-            mediaType,
-            type,
-            url,
-            description,
-            durationMs,
-          })
-        }
-      >
-        Save
-      </Button>
+      <Stack direction="row" justifyContent="space-between">
+        <Access
+          condition={
+            currentUser &&
+            (currentUser.role === UserRole.Admin ||
+              currentUser.role === UserRole.Contributor ||
+              currentUser._id === resource.creator?._id)
+          }
+        >
+          <DeleteButtonWithConfirmation
+            modalBodyText="Confirm deleting resource ?"
+            modalHeaderText="Delete Resource"
+            justifySelf="start"
+            onConfirmation={() => deleteResource({ variables: { _id: resource._id } }).then(() => Router.back())}
+            size="lg"
+            variant="outline"
+            width="20rem"
+            colorScheme="red"
+            mode="button"
+          >
+            Delete Resource
+          </DeleteButtonWithConfirmation>
+        </Access>
+        <Button
+          size="lg"
+          variant="solid"
+          width="20rem"
+          onClick={() =>
+            onSave({
+              name,
+              mediaType,
+              type,
+              url,
+              description,
+              durationMs,
+            })
+          }
+        >
+          Save
+        </Button>
+      </Stack>
     </Stack>
   );
 };

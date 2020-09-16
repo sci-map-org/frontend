@@ -84,6 +84,7 @@ export const ConceptListPage: React.FC<{ domainKey: string }> = ({ domainKey }) 
         </Stack>
         <Box width="20px"></Box>
         <VerticalConceptMappingVisualisation
+          domainKey={domainKey}
           isLoading={loading}
           concepts={domain.concepts?.items.map((i) => i.concept) || []}
           width="36rem"

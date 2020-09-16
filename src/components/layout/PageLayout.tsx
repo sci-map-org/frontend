@@ -36,10 +36,10 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
     <Flex
       direction="column"
       px="50px"
-      py="16px"
+      pt="16px"
+      pb="100px"
       justifyContent="flex-start"
       backgroundColor="backgroundColor.1"
-      height="100%"
     >
       {(breadCrumbsLinks || renderRight) && (
         <Flex direction="row" justifyContent="space-between" pb="8px">

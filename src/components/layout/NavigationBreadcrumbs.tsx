@@ -1,6 +1,7 @@
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@chakra-ui/core';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
+import { shortenString } from '../../util/utils';
 
 export interface BreadcrumbLink {
   name: string;
@@ -18,12 +19,12 @@ export const NavigationBreadcrumbs: React.FC<NavigationBreadcrumbsProps> = ({ li
       {links.map((link) =>
         router.route === link.routePath ? (
           <BreadcrumbItem key={link.path} isCurrentPage>
-            <BreadcrumbLink>{link.name}</BreadcrumbLink>
+            <BreadcrumbLink>{shortenString(link.name, 35)}</BreadcrumbLink>
           </BreadcrumbItem>
         ) : (
           <BreadcrumbItem key={link.path}>
             <NextLink href={link.routePath} as={link.path} passHref>
-              <BreadcrumbLink>{link.name}</BreadcrumbLink>
+              <BreadcrumbLink>{shortenString(link.name, 35)}</BreadcrumbLink>
             </NextLink>
           </BreadcrumbItem>
         )

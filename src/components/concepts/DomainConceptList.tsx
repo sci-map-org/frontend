@@ -228,7 +228,7 @@ export const DomainConceptListMenuLink: React.FC<{
   onExpand?: () => void;
 }> = ({ domainKey, concept, onToggle, isLoading, expandable, onExpand, expanded }) => {
   return (
-    <Skeleton isLoaded={true}>
+    <Skeleton isLoaded={!isLoading}>
       <Stack direction="row" spacing={2} alignItems="center">
         <CompletedCheckbox
           size="md"
