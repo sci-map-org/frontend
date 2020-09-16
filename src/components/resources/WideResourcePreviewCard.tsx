@@ -147,7 +147,7 @@ const BottomBlock: React.FC<{
   };
   useOutsideAlerter(wrapperRef);
   return (
-    <Flex height="32px">
+    <Flex pb={2} pt={2} flexWrap="wrap">
       <RoleAccess
         accessRule="loggedInUser"
         renderAccessDenied={() => <SelectedTagsViewer selectedTags={resource.tags} />}
@@ -171,8 +171,8 @@ const BottomBlock: React.FC<{
           </Stack>
         )}
       </RoleAccess>
-      <Box flexGrow={1} />
-      <Flex flexShrink={0} direction="column" justifyContent="center" py={2}>
+      <Box flexGrow={1} flexBasis={0} />
+      <Flex flexShrink={0} direction="column" justifyContent="center">
         {resource.coveredConcepts && (
           <Skeleton isLoaded={!isLoading}>
             <Box>

@@ -147,7 +147,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
           {domain.description}
         </Box>
       )}
-      <Flex direction="row" mb="100px">
+      <Flex direction={{ base: 'column-reverse', md: 'row' }} mb="100px">
         <Flex direction="column" flexShrink={0}>
           <DomainConceptList domain={domain} isLoading={loading} onConceptToggled={reloadRecommendedResources} />
         </Flex>
@@ -161,10 +161,10 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
               reloadRecommendedResources={reloadRecommendedResources}
             />
             <DomainConceptGraph domain={domain} isLoading={loading} minNbRelationships={5} />
-            {mockedFeaturesEnabled && <DomainLearningPaths domain={domain} />}
+            {/* {mockedFeaturesEnabled && <DomainLearningPaths domain={domain} />} */}
           </Flex>
         )}
-        {mockedFeaturesEnabled && (
+        {/* {mockedFeaturesEnabled && (
           <Stack spacing={4} direction="column" ml={6} flexShrink={1}>
             <Box>
               <Text fontSize="2xl">Sub domains</Text>
@@ -195,7 +195,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
               <Stack direction="column"></Stack>
             </Box>
           </Stack>
-        )}
+        )} */}
       </Flex>
     </PageLayout>
   );
