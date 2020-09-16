@@ -1,4 +1,4 @@
-import { Box, Input, Text } from '@chakra-ui/core';
+import { Box, Input, InputProps, Text } from '@chakra-ui/core';
 import { useState, PropsWithChildren } from 'react';
 import Autosuggest from 'react-autosuggest';
 
@@ -12,6 +12,8 @@ type EntitySelectorProps<T extends EntityType> = {
   placeholder: string;
   showSuggestionsOnClear?: boolean;
   fetchEntitySuggestions: (value: string) => any;
+  width?: number | string;
+  inputSize?: InputProps['size'];
 };
 
 export const EntitySelector = <T extends EntityType>({
@@ -19,6 +21,8 @@ export const EntitySelector = <T extends EntityType>({
   onSelect,
   placeholder,
   fetchEntitySuggestions,
+  width = '180px',
+  inputSize = 'md',
 }: PropsWithChildren<EntitySelectorProps<T>>) => {
   const [value, setValue] = useState('');
   const inputProps = {
@@ -49,12 +53,21 @@ export const EntitySelector = <T extends EntityType>({
           </Box>
         )}
         renderSuggestionsContainer={({ containerProps, children }) => (
-          <Box {...containerProps} borderLeftWidth={1} borderRightWidth={1} position="sticky">
+          <Box
+            {...containerProps}
+            borderLeftWidth={1}
+            borderRightWidth={1}
+            position="absolute"
+            backgroundColor="white"
+            w={width}
+          >
             {children}
           </Box>
         )}
         getSuggestionValue={(suggestion) => suggestion.name}
-        renderInputComponent={(inputProps: any) => <Input variant="flushed" {...inputProps} />}
+        renderInputComponent={(inputProps: any) => (
+          <Input size={inputSize} variant="flushed" {...inputProps} w={width} />
+        )}
       />
     </Box>
   );

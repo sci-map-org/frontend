@@ -34,6 +34,7 @@ import { EditResourcePageInfo } from '../../pages/resources/EditResourcePage';
 import { RoleAccess } from '../auth/RoleAccess';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import { CompletedCheckbox } from '../lib/CompletedCheckbox';
+import { InternalLink } from '../navigation/InternalLink';
 import { DomainCoveredConceptSelector } from './CoveredConceptsSelector';
 import { shortenDescription } from './ResourceDescription';
 import { ResourceDuration } from './ResourceDuration';
@@ -105,7 +106,7 @@ const TitleLink: React.FC<{ resource: ResourcePreviewDataFragment; isLoading?: b
 };
 
 const shortenCoveredConceptsList = (coveredConcepts: Pick<ConceptDataFragment, 'name'>[], maxLength: number = 40) => {
-  const { s, count } = coveredConcepts
+  const { s, count } = [...coveredConcepts]
     .sort((c1, c2) => c1.name.length - c2.name.length)
     .reduce(
       (o, concept, index) => {
@@ -118,7 +119,7 @@ const shortenCoveredConceptsList = (coveredConcepts: Pick<ConceptDataFragment, '
       },
       { s: '', count: 0 }
     );
-  return count ? `${s},...(+ ${count})` : s;
+  return count ? `${s}, and more...` : s;
 };
 
 const BottomBlock: React.FC<{
@@ -126,14 +127,15 @@ const BottomBlock: React.FC<{
   resource: ResourcePreviewDataFragment;
   isLoading?: boolean;
 }> = ({ domainKey, resource, isLoading }) => {
-  const [editorMode, setEditorMode] = useState(false);
+  const [tagEditorMode, setTagEditorMode] = useState(false);
+  const [coveredConceptsEditorMode, setCoveredConceptsEditorMode] = useState(false);
   const wrapperRef = useRef(null);
 
   const useOutsideAlerter = (ref: React.MutableRefObject<any>) => {
     useEffect(() => {
       function handleClickOutside(event: any) {
         if (ref.current && !ref.current.contains(event.target)) {
-          setEditorMode(false);
+          setTagEditorMode(false);
         }
       }
 
@@ -150,7 +152,7 @@ const BottomBlock: React.FC<{
         accessRule="loggedInUser"
         renderAccessDenied={() => <SelectedTagsViewer selectedTags={resource.tags} />}
       >
-        {editorMode ? (
+        {tagEditorMode ? (
           <Box ref={wrapperRef}>
             <ResourceTagsEditor size="sm" resource={resource} inputWidth="100px" />
           </Box>
@@ -162,7 +164,7 @@ const BottomBlock: React.FC<{
                 size="xs"
                 variant="ghost"
                 aria-label="add tag"
-                onClick={() => setEditorMode(true)}
+                onClick={() => setTagEditorMode(true)}
                 icon={<EditIcon />}
               />
             </Tooltip>
@@ -174,35 +176,45 @@ const BottomBlock: React.FC<{
         {resource.coveredConcepts && (
           <Skeleton isLoaded={!isLoading}>
             <Box>
-              <Popover>
+              <Popover placement="bottom-end">
                 <PopoverTrigger>
-                  <Link color="teal.500" fontWeight={500} mr={1}>
-                    {shortenCoveredConceptsList(resource.coveredConcepts?.items)}
-                  </Link>
+                  <Stack direction="row" spacing="1px" _hover={{ color: 'gray.800' }} fontSize="15px">
+                    <Text color="gray.800" fontWeight={300} as="span">
+                      About:{'  '}
+                    </Text>
+                    <Link color="gray.800" fontWeight={300} onClick={() => setCoveredConceptsEditorMode(false)}>
+                      {shortenCoveredConceptsList(resource.coveredConcepts?.items)}
+                    </Link>
+                    <IconButton
+                      onClick={() => setCoveredConceptsEditorMode(true)}
+                      aria-label="Add or remove covered concepts"
+                      variant="ghost"
+                      size="xs"
+                      icon={<EditIcon />}
+                    />
+                  </Stack>
                 </PopoverTrigger>
                 <PopoverContent zIndex={4} backgroundColor="white">
                   <PopoverArrow />
                   <PopoverHeader>Covered Concepts</PopoverHeader>
                   <PopoverCloseButton />
                   <PopoverBody>
-                    <DomainCoveredConceptSelector domainKey={domainKey} resource={resource} />
-                    {/* <CoveredConceptsSelector
-                      resourceId={resource._id}
-                      coveredConcepts={resource.coveredConcepts.items}
-                      conceptList={domainConceptList}
-                    /> */}
-                    {/* <Stack direction="column">
-                      {resource.coveredConcepts.items.map((concept) => (
-                        <Box key={concept._id}>
-                          <InternalLink
-                            routePath="/domains/[key]/concepts/[conceptKey]"
-                            asHref={`/domains/${domainKey}/concepts/${concept.key}`}
-                          >
-                            {concept.name}
-                          </InternalLink>
-                        </Box>
-                      ))}
-                    </Stack> */}
+                    {coveredConceptsEditorMode ? (
+                      <DomainCoveredConceptSelector domainKey={domainKey} resource={resource} />
+                    ) : (
+                      <Stack direction="column">
+                        {resource.coveredConcepts.items.map((concept) => (
+                          <Box key={concept._id}>
+                            <InternalLink
+                              routePath="/domains/[key]/concepts/[conceptKey]"
+                              asHref={`/domains/${domainKey}/concepts/${concept.key}`}
+                            >
+                              {concept.name}
+                            </InternalLink>
+                          </Box>
+                        ))}
+                      </Stack>
+                    )}
                   </PopoverBody>
                 </PopoverContent>
               </Popover>
@@ -239,10 +251,9 @@ export const WideResourcePreviewCard: React.FC<WideResourcePreviewCardProps> = (
       borderBottomColor="gray.200"
       borderBottomWidth={1}
       key={resource._id}
-      pb={0}
     >
       <LeftBlock resource={resource} isLoading={isLoading} />
-      <Flex direction="column" flexGrow={1}>
+      <Flex direction="column" flexGrow={1} pt="4px">
         <Flex direction="row" flexGrow={1}>
           <Flex direction="column" flexGrow={1} justifyContent="center">
             <Skeleton isLoaded={!isLoading}>
@@ -263,45 +274,47 @@ export const WideResourcePreviewCard: React.FC<WideResourcePreviewCardProps> = (
               </Box>
             )}
           </Flex>
-          <Flex direction="column">
-            <Menu>
-              <MenuButton
-                m={1}
-                alignSelf="flex-end"
-                size="xs"
-                as={IconButton}
-                variant="ghost"
-                icon={<HamburgerIcon />}
-              ></MenuButton>
-              <MenuList>
-                <MenuItem onClick={() => routerPushToPage(EditResourcePageInfo(resource))}>Edit</MenuItem>
-                <MenuItem
-                  onClick={() => {
-                    if (window.confirm('Are you sure to delete this resource?')) {
-                      deleteResourceMutation({ variables: { _id: resource._id } });
-                    }
-                  }}
-                >
-                  Delete
-                </MenuItem>
-              </MenuList>
-            </Menu>
-            <CompletedCheckbox
-              size="lg"
-              alignSelf="center"
-              mx="32px"
-              popoverLabel="Mark as completed"
-              popoverDelay={500}
-              isDisabled={isLoading}
-              isChecked={!!resource.consumed && !!resource.consumed.consumedAt}
-              onChange={async () => {
-                if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
-                onResourceConsumed(resource, !resource.consumed || !resource.consumed.consumedAt);
-              }}
-            />
-          </Flex>
         </Flex>
         <BottomBlock resource={resource} domainKey={domainKey} />
+      </Flex>
+      <Flex direction="row" borderLeftWidth="0px" borderLeftColor="gray.100">
+        <CompletedCheckbox
+          size="lg"
+          alignSelf="center"
+          justifySelf="center"
+          ml="32px"
+          mr="4px"
+          popoverLabel="Mark as completed"
+          popoverDelay={500}
+          isDisabled={isLoading}
+          isChecked={!!resource.consumed && !!resource.consumed.consumedAt}
+          onChange={async () => {
+            if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
+            onResourceConsumed(resource, !resource.consumed || !resource.consumed.consumedAt);
+          }}
+        />
+        <Menu>
+          <MenuButton
+            m={1}
+            color="gray.600"
+            size="xs"
+            as={IconButton}
+            variant="ghost"
+            icon={<HamburgerIcon />}
+          ></MenuButton>
+          <MenuList>
+            <MenuItem onClick={() => routerPushToPage(EditResourcePageInfo(resource))}>Edit</MenuItem>
+            <MenuItem
+              onClick={() => {
+                if (window.confirm('Are you sure to delete this resource?')) {
+                  deleteResourceMutation({ variables: { _id: resource._id } });
+                }
+              }}
+            >
+              Delete
+            </MenuItem>
+          </MenuList>
+        </Menu>
       </Flex>
     </Flex>
   );

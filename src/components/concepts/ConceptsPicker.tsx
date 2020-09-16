@@ -36,24 +36,14 @@ export const ConceptsPicker: React.FC<ConceptsPickerProps> = ({
   const [showAll, setShowAll] = useState(false);
   return (
     <Stack direction="row" borderWidth="0px" borderRadius={5} p={3} spacing={5}>
-      {/* <EntitySelector
-        placeholder="Search Concepts"
-        entitySuggestions={conceptSuggestions}
-        fetchEntitySuggestions={(v: string) => setConceptSuggestions(getConceptSuggestions(pickableConceptList, v))}
-        onSelect={onSelect}
-      /> */}
-      <Stack>
+      <Stack direction="column" alignItems="start">
         {title && <Text fontWeight={700}>{title}</Text>}
         <Box>
           {(showAll ? pickedConceptList : take(pickedConceptList, maxNbConceptsShown)).map((pickedConcept) => {
             return (
-              <Stack spacing={1} direction="row" alignItems="center" key={pickedConcept._id} my={1}>
-                {/* <Button onClick={() => onRemove(pickedConcept)} size="xs">
-                  Remove
-                </Button> */}
+              <Stack spacing={2} direction="row" alignItems="center" key={pickedConcept._id} my={1}>
                 <IconButton
                   aria-label="remove concept"
-                  // variant="outline"
                   onClick={() => onRemove(pickedConcept)}
                   size="xs"
                   icon={<MinusIcon />}
@@ -64,11 +54,9 @@ export const ConceptsPicker: React.FC<ConceptsPickerProps> = ({
           })}
         </Box>
         {pickedConceptList.length > maxNbConceptsShown && !showAll && (
-          // <Box>
           <Button onClick={() => setShowAll(true)} size="xs">
             Show all (+{pickedConceptList.length - maxNbConceptsShown})
           </Button>
-          // </Box>
         )}
         {showAll && (
           <Button onClick={() => setShowAll(false)} size="xs">
@@ -76,6 +64,7 @@ export const ConceptsPicker: React.FC<ConceptsPickerProps> = ({
           </Button>
         )}
         <EntitySelector
+          inputSize="sm"
           placeholder="Search Concepts"
           entitySuggestions={conceptSuggestions}
           fetchEntitySuggestions={(v: string) => setConceptSuggestions(getConceptSuggestions(pickableConceptList, v))}

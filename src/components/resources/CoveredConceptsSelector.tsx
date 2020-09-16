@@ -1,4 +1,7 @@
+import { Box, IconButton, Stack } from '@chakra-ui/core';
+import { EditIcon } from '@chakra-ui/icons';
 import { differenceBy } from 'lodash';
+import { ReactElement, useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { useGetDomainConceptListQuery } from '../../graphql/concepts/concepts.operations.generated';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
@@ -7,6 +10,7 @@ import {
   useDetachResourceCoversConceptsMutation,
 } from '../../graphql/resources/resources.operations.generated';
 import { ConceptsPicker } from '../concepts/ConceptsPicker';
+import { InternalLink } from '../navigation/InternalLink';
 
 export const CoveredConceptsSelector: React.FC<{
   resourceId: string;
@@ -35,10 +39,10 @@ export const CoveredConceptsSelector: React.FC<{
   );
 };
 
-export const DomainCoveredConceptSelector: React.FC<{ domainKey: string; resource: ResourcePreviewDataFragment }> = ({
-  domainKey,
-  resource,
-}) => {
+export const DomainCoveredConceptSelector: React.FC<{
+  domainKey: string;
+  resource: ResourcePreviewDataFragment;
+}> = ({ domainKey, resource }) => {
   const { data } = useGetDomainConceptListQuery({ variables: { domainKey: domainKey } });
   const domainConceptList = (data?.getDomainByKey.concepts?.items || []).map((item) => item.concept);
   return (
