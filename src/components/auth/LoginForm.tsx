@@ -40,7 +40,13 @@ export const LoginForm: React.FC<{
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <PasswordInput value={password} onChange={(e) => setPassword(e.target.value)} />
+        <PasswordInput
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') login({ variables: { email, password, discourseSSO } });
+          }}
+        />
       </Stack>
       <Button
         size="lg"
