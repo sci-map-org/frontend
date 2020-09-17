@@ -1,18 +1,21 @@
-import { Box, Button, Flex, FormControl, FormLabel, Input, Stack, Text } from '@chakra-ui/core';
+import { Box, Button, ButtonGroup, Flex, FormControl, FormLabel, Input, Stack, Text } from '@chakra-ui/core';
 import Router from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDeleteResourceMutation } from '../../graphql/resources/resources.operations.generated';
 import { UpdateResourcePayload, UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { GetResourceEditResourcePageQuery } from '../../pages/resources/EditResourcePage.generated';
+import { validateUrl } from '../../services/url.service';
 import { Access } from '../auth/Access';
 import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
 import { InternalLink } from '../navigation/InternalLink';
+import { DomainCoveredConceptSelector } from './CoveredConceptsSelector';
 import { ResourceDescriptionInput } from './ResourceDescription';
 import { ResourceDurationSelector } from './ResourceDuration';
 import { ResourceMediaTypeSelector } from './ResourceMediaType';
 import { ResourceTypeSelector } from './ResourceType';
 import { ResourceUrlInput } from './ResourceUrl';
+
 interface ResourceEditorProps {
   resource: GetResourceEditResourcePageQuery['getResourceById'];
   onSave: (editedResource: UpdateResourcePayload) => void;
@@ -28,6 +31,10 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
   const [description, setDescription] = useState(resource.description || undefined);
   const { currentUser } = useCurrentUser();
   const [deleteResource] = useDeleteResourceMutation();
+  const [isValid, setIsValid] = useState(true);
+  useEffect(() => {
+    setIsValid(!!name && !!url && validateUrl(url));
+  }, [name, url]);
   if (!resource.domains) return null;
 
   return (
@@ -53,9 +60,12 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
         <Box>
           <Text fontSize="xl">Domains</Text>
           {resource.domains.items.map((domain) => (
-            <InternalLink key={domain._id} asHref={`/domains/${domain.key}`} routePath="/domains/[key]">
-              {domain.name}
-            </InternalLink>
+            <Box key={domain._id}>
+              <InternalLink asHref={`/domains/${domain.key}`} routePath="/domains/[key]">
+                {domain.name}
+              </InternalLink>
+              <DomainCoveredConceptSelector resource={resource} domainKey={domain.key} />
+            </Box>
           ))}
         </Box>
       )}
@@ -83,24 +93,29 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
             Delete Resource
           </DeleteButtonWithConfirmation>
         </Access>
-        <Button
-          size="lg"
-          variant="solid"
-          width="20rem"
-          colorScheme="brand"
-          onClick={() =>
-            onSave({
-              name,
-              mediaType,
-              type,
-              url,
-              description,
-              durationMs,
-            })
-          }
-        >
-          Save
-        </Button>
+        <ButtonGroup size="lg" spacing={8}>
+          <Button variant="outline" width="16rem" onClick={() => Router.back()}>
+            Cancel
+          </Button>
+          <Button
+            variant="solid"
+            width="20rem"
+            colorScheme="brand"
+            isDisabled={!isValid}
+            onClick={() =>
+              onSave({
+                name,
+                mediaType,
+                type,
+                url,
+                description,
+                durationMs,
+              })
+            }
+          >
+            Save
+          </Button>
+        </ButtonGroup>
       </Stack>
     </Stack>
   );

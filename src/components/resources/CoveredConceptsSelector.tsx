@@ -1,7 +1,4 @@
-import { Box, IconButton, Stack } from '@chakra-ui/core';
-import { EditIcon } from '@chakra-ui/icons';
 import { differenceBy } from 'lodash';
-import { ReactElement, useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { useGetDomainConceptListQuery } from '../../graphql/concepts/concepts.operations.generated';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
@@ -10,7 +7,6 @@ import {
   useDetachResourceCoversConceptsMutation,
 } from '../../graphql/resources/resources.operations.generated';
 import { ConceptsPicker } from '../concepts/ConceptsPicker';
-import { InternalLink } from '../navigation/InternalLink';
 
 export const CoveredConceptsSelector: React.FC<{
   resourceId: string;

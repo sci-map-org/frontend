@@ -1,4 +1,4 @@
-import { Button, Input, Stack, Textarea } from '@chakra-ui/core';
+import { Button, ButtonGroup, Flex, Input, Stack, Textarea } from '@chakra-ui/core';
 import gql from 'graphql-tag';
 import Router from 'next/router';
 import { useState } from 'react';
@@ -46,7 +46,7 @@ export const EditDomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) =
       breadCrumbsLinks={[DomainPageInfo(domain), ManageDomainPageInfo(domain), EditDomainPageInfo(domain)]}
       accessRule="contributorOrAdmin"
     >
-      <Stack direction="column" spacing={4} alignItems="stretch">
+      <Stack direction="column" spacing={6} alignItems="stretch">
         <Input
           placeholder="Domain Name"
           size="md"
@@ -68,18 +68,26 @@ export const EditDomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) =
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         ></Textarea>
-
-        <Button
-          size="lg"
-          variant="solid"
-          onClick={() =>
-            updateDomainMutation({ variables: { id: domain._id, payload: { name, description } } }).then(() =>
-              Router.back()
-            )
-          }
-        >
-          Update
-        </Button>
+        <Flex justifyContent="flex-end">
+          <ButtonGroup spacing={8}>
+            <Button size="lg" w="18rem" variant="outline" onClick={() => Router.back()}>
+              Cancel
+            </Button>
+            <Button
+              size="lg"
+              w="18rem"
+              variant="solid"
+              colorScheme="brand"
+              onClick={() =>
+                updateDomainMutation({ variables: { id: domain._id, payload: { name, description } } }).then(() =>
+                  Router.back()
+                )
+              }
+            >
+              Update
+            </Button>
+          </ButtonGroup>
+        </Flex>
       </Stack>
     </PageLayout>
   );

@@ -1,8 +1,10 @@
-import { Box, Button, Flex, Input, Stack } from '@chakra-ui/core';
-import React, { useState } from 'react';
+import { Box, Button, ButtonGroup, Flex, FormControl, FormLabel, Input, Stack } from '@chakra-ui/core';
+import Router from 'next/router';
+import React, { useEffect, useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { DomainWithConceptsDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { CreateResourcePayload, ResourceMediaType, ResourceTag, ResourceType } from '../../graphql/types';
+import { validateUrl } from '../../services/url.service';
 import { ConceptsPicker } from '../concepts/ConceptsPicker';
 import { ResourceDescriptionInput } from './ResourceDescription';
 import { ResourceDurationSelector } from './ResourceDuration';
@@ -26,10 +28,16 @@ export const NewResource: React.FC<NewResourceProps> = ({ domain, onCreate }) =>
   const [selectedCoveredConcepts, setSelectedCoveredConcepts] = useState<ConceptDataFragment[]>([]);
 
   const [selectedTags, setSelectedTags] = useState<ResourceTag[]>([]);
-
+  const [isValid, setIsValid] = useState(false);
+  useEffect(() => {
+    setIsValid(!!name && !!url && validateUrl(url));
+  }, [name, url]);
   return (
     <Stack spacing={4}>
-      <Input placeholder="Title" size="md" value={name} onChange={(e) => setName(e.target.value)}></Input>
+      <FormControl isRequired>
+        <FormLabel htmlFor="title">Title</FormLabel>
+        <Input placeholder="Title" size="md" id="title" value={name} onChange={(e) => setName(e.target.value)}></Input>
+      </FormControl>
       <ResourceUrlInput value={url} onChange={setUrl} />
       <Flex flexDirection="row" justifyContent="space-between">
         <ResourceTypeSelector value={type} onSelect={(t) => setType(t)} />
@@ -55,28 +63,36 @@ export const NewResource: React.FC<NewResourceProps> = ({ domain, onCreate }) =>
           </Box>
         </Stack>
       )}
-      <Box>
-        <Button
-          size="lg"
-          variant="solid"
-          onClick={() =>
-            onCreate(
-              {
-                name,
-                description,
-                type,
-                mediaType,
-                url,
-                durationMs,
-                tags: selectedTags.map((t) => t.name),
-              },
-              selectedCoveredConcepts.map((c) => c._id)
-            )
-          }
-        >
-          Create
-        </Button>
-      </Box>
+      <Flex justifyContent="flex-end">
+        <ButtonGroup spacing={8}>
+          <Button size="lg" variant="outline" w="18rem" onClick={() => Router.back()}>
+            Cancel
+          </Button>
+          <Button
+            w="18rem"
+            size="lg"
+            colorScheme="brand"
+            variant="solid"
+            isDisabled={!isValid}
+            onClick={() =>
+              onCreate(
+                {
+                  name,
+                  description,
+                  type,
+                  mediaType,
+                  url,
+                  durationMs,
+                  tags: selectedTags.map((t) => t.name),
+                },
+                selectedCoveredConcepts.map((c) => c._id)
+              )
+            }
+          >
+            Create
+          </Button>
+        </ButtonGroup>
+      </Flex>
     </Stack>
   );
 };

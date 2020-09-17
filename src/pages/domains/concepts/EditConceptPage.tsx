@@ -1,4 +1,4 @@
-import { Button, Input, Stack, Textarea } from '@chakra-ui/core';
+import { Button, ButtonGroup, Flex, Input, Stack, Textarea } from '@chakra-ui/core';
 import Router from 'next/router';
 import { useState } from 'react';
 import { PageLayout } from '../../../components/layout/PageLayout';
@@ -24,7 +24,7 @@ export const EditConceptPage: React.FC<{ domainKey: string; conceptKey: string }
       accessRule="contributorOrAdmin"
       centerChildren
     >
-      <Stack width="36rem" direction="column" spacing={3} alignItems="stretch">
+      <Stack direction="column" spacing={4} alignItems="stretch" w="100%">
         <Input
           placeholder="Concept Name"
           size="md"
@@ -46,16 +46,26 @@ export const EditConceptPage: React.FC<{ domainKey: string; conceptKey: string }
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         ></Textarea>
-
-        <Button
-          size="lg"
-          variant="solid"
-          onClick={() =>
-            updateConcept({ variables: { _id: concept._id, payload: { name, description } } }).then(() => Router.back())
-          }
-        >
-          Update
-        </Button>
+        <Flex direction="row" justifyContent="flex-end">
+          <ButtonGroup spacing={8}>
+            <Button w="16rem" size="lg" variant="outline" onClick={() => Router.back()}>
+              Cancel
+            </Button>
+            <Button
+              w="16rem"
+              size="lg"
+              colorScheme="brand"
+              variant="solid"
+              onClick={() =>
+                updateConcept({ variables: { _id: concept._id, payload: { name, description } } }).then(() =>
+                  Router.back()
+                )
+              }
+            >
+              Update
+            </Button>
+          </ButtonGroup>
+        </Flex>
       </Stack>
     </PageLayout>
   );
