@@ -1,16 +1,49 @@
 import { Button, ButtonGroup, Flex, Input, Stack, Textarea } from '@chakra-ui/core';
+import gql from 'graphql-tag';
 import Router from 'next/router';
 import { useState } from 'react';
 import { PageLayout } from '../../../components/layout/PageLayout';
+import { ConceptData } from '../../../graphql/concepts/concepts.fragments';
+import { ConceptDataFragment } from '../../../graphql/concepts/concepts.fragments.generated';
 import { useUpdateConcept } from '../../../graphql/concepts/concepts.hooks';
-import { useGetConceptByKeyQuery } from '../../../graphql/concepts/concepts.operations.generated';
-import { useGetDomainByKey } from '../../../graphql/domains/domains.hooks';
+import { DomainData } from '../../../graphql/domains/domains.fragments';
+import { DomainDataFragment } from '../../../graphql/domains/domains.fragments.generated';
 import { NotFoundPage } from '../../NotFoundPage';
+import { PageInfo } from '../../PageInfo';
+import { DomainPageInfo } from '../DomainPage';
+import { ConceptListPageInfo } from './ConceptListPage';
+import { ConceptPageInfo } from './ConceptPage';
+import { useGetConceptEditConceptPageQuery } from './EditConceptPage.generated';
+
+export const EditConceptPagePath = (domainKey: string, conceptKey: string) =>
+  `/domains/${domainKey}/concepts/${conceptKey}/edit`;
+
+export const EditConceptPageInfo = (
+  domain: Pick<DomainDataFragment, 'name' | 'key'>,
+  concept: Pick<ConceptDataFragment, 'name' | 'key'>
+): PageInfo => ({
+  name: `Edit: ${domain.name} - ${concept.name}`,
+  path: EditConceptPagePath(domain.key, concept.key),
+  routePath: EditConceptPagePath('[key]', '[conceptKey]'),
+});
+
+export const getConceptEditConceptPage = gql`
+  query getConceptEditConceptPage($key: String!) {
+    getConceptByKey(key: $key) {
+      ...ConceptData
+      domain {
+        ...DomainData
+      }
+    }
+  }
+  ${ConceptData}
+  ${DomainData}
+`;
 
 export const EditConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = ({ conceptKey, domainKey }) => {
-  const { data } = useGetConceptByKeyQuery({ variables: { key: conceptKey } });
+  const { data } = useGetConceptEditConceptPageQuery({ variables: { key: conceptKey } });
   const concept = data?.getConceptByKey;
-  const { domain } = useGetDomainByKey(domainKey);
+  const domain = concept?.domain;
   if (!concept || !domain) return <NotFoundPage />;
 
   const { updateConcept } = useUpdateConcept();
@@ -20,6 +53,12 @@ export const EditConceptPage: React.FC<{ domainKey: string; conceptKey: string }
   return (
     <PageLayout
       mode="form"
+      breadCrumbsLinks={[
+        DomainPageInfo(domain),
+        ConceptListPageInfo(domain),
+        ConceptPageInfo(domain, concept),
+        EditConceptPageInfo(domain, concept),
+      ]}
       title={`Edit ${domain.name} - ${concept.name}`}
       accessRule="contributorOrAdmin"
       centerChildren
