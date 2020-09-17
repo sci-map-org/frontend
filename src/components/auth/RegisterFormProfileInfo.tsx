@@ -76,6 +76,13 @@ export const RegisterFormProfileInfo: React.FC<{
                 refetch();
               }
             }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter')
+                onRegister({
+                  displayName,
+                  key,
+                });
+            }}
           />
           {isKeyValid && (
             <InputRightElement

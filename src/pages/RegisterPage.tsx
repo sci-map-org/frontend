@@ -6,7 +6,7 @@ import { PageLayout } from '../components/layout/PageLayout';
 
 export const RegisterPage: React.FC = () => {
   return (
-    <RoleAccess accessRule="notLoggedInUser" goBack>
+    <RoleAccess accessRule="notLoggedInUser" redirectTo="/">
       <PageLayout mode="form" title="Register" centerChildren>
         <Box width="36rem">
           <RegisterForm onSuccess={() => Router.push(`/`)} />

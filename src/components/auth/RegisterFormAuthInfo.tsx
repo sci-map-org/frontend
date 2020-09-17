@@ -91,7 +91,18 @@ export const RegisterFormAuthInfo: React.FC<RegisterFormAuthInfoProps> = ({ onNe
       </FormControl>
       <FormControl isRequired isInvalid={!!password && !isPasswordValid}>
         <FormLabel htmlFor="password">Password</FormLabel>
-        <PasswordInput value={password} onChange={(e) => setPassword(e.target.value)} />
+        <PasswordInput
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter')
+              onNext({
+                type: 'basic',
+                email,
+                password,
+              });
+          }}
+        />
         <FormErrorMessage>The password must be at least 6 characters long</FormErrorMessage>
       </FormControl>
       <Button

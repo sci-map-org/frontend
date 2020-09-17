@@ -188,7 +188,6 @@ const BottomBlock: React.FC<{
                     <Link color="gray.800" fontWeight={300} onClick={() => setCoveredConceptsEditorMode(false)}>
                       {shortenCoveredConceptsList(resource.coveredConcepts?.items, 32)}
                     </Link>
-                    {/* <RoleAccess accessRule="contributorOrAdmin"> */}
                     <IconButton
                       onClick={(e) => {
                         if (!currentUser) {
