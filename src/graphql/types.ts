@@ -272,6 +272,7 @@ export enum ResourceType {
   Podcast = 'podcast',
   PodcastSeries = 'podcast_series',
   YoutubeVideo = 'youtube_video',
+  YoutubeVideoSeries = 'youtube_video_series',
   Book = 'book',
   Talk = 'talk',
   Documentary = 'documentary',

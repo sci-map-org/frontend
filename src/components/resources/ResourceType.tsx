@@ -16,6 +16,7 @@ const colorMapping: { [key in ResourceType]: string } = {
   [ResourceType.Infographic]: 'yellow',
   [ResourceType.Website]: 'blue',
   [ResourceType.YoutubeVideo]: 'red',
+  [ResourceType.YoutubeVideoSeries]: 'red',
   [ResourceType.VideoGame]: 'yellow',
 };
 
