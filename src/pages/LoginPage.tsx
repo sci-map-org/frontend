@@ -1,10 +1,9 @@
-import { Box } from '@chakra-ui/core';
+import { Box, Divider, Link, Stack, Text } from '@chakra-ui/core';
 import Router, { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import { LoginForm } from '../components/auth/LoginForm';
-import { RoleAccess } from '../components/auth/RoleAccess';
 import { PageLayout } from '../components/layout/PageLayout';
 import { DiscourseSso } from '../graphql/types';
-import { useEffect } from 'react';
 import { useCurrentUser } from '../graphql/users/users.hooks';
 
 export const LoginPagePath = '/login';
@@ -30,7 +29,7 @@ export const LoginPage: React.FC = () => {
 
   return (
     <PageLayout mode="form" title="Login" centerChildren>
-      <Box width="36rem">
+      <Stack width="36rem">
         <LoginForm
           onSuccessfulLogin={({ redirectUrl }) => {
             if (redirectUrl) {
@@ -44,7 +43,16 @@ export const LoginPage: React.FC = () => {
           }}
           discourseSSO={discourseSSO}
         />
-      </Box>
+        <Divider my={4}></Divider>
+        <Box textAlign="center">
+          <Text fontSize="l">
+            No account yet ?{' '}
+            <Link color="blue.400" onClick={() => Router.push('/register')}>
+              Register
+            </Link>
+          </Text>
+        </Box>
+      </Stack>
     </PageLayout>
   );
 };
