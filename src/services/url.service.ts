@@ -16,14 +16,15 @@ const toSnakeCase = (s?: string) => {
 export const generateUrlKey = (s: string): string => toSnakeCase(s);
 
 export const validateUrl = (stringToValidate: string): boolean => {
-  var pattern = new RegExp(
-    '^(https?:\\/\\/)' + // protocol. NB: there was a '?' at the end of this line, external links require a protocol
-    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
-    '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-    '(\\:\\d+)?(\\/[-a-z\\d%_.~+@]*)*' + // port and path
-    '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-      '(\\#[-a-z\\d_]*)?$',
-    'i'
-  ); // fragment locator
+  // var pattern = new RegExp(
+  //   '^(https?:\\/\\/)' + // protocol. NB: there was a '?' at the end of this line, external links require a protocol
+  //   '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+  //   '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+  //   '(\\:\\d+)?(\\/[-a-z\\d%_.~+@]*)*' + // port and path
+  //   '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+  //     '(\\#[-a-z\\d_]*)?$',
+  //   'i'
+  // ); // fragment locator
+  const pattern = /^(https?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm;
   return !!pattern.test(stringToValidate);
 };
