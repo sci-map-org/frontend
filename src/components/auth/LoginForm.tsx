@@ -19,7 +19,9 @@ export const LoginForm: React.FC<{
   });
   return (
     <Stack spacing={6} textAlign="center">
-      <Text fontSize="xl">With your Google account</Text>
+      <Text fontSize="xl" fontWeight={300}>
+        Using your Google account
+      </Text>
       <Stack spacing={2} textAlign="center" onClick={(e) => e.stopPropagation()}>
         <GoogleAuthButton
           buttonText="Login with Google"
@@ -33,7 +35,9 @@ export const LoginForm: React.FC<{
       </Stack>
       <Divider />
       <Stack spacing={2}>
-        <Text fontSize="xl">Or with your email and password</Text>
+        <Text fontSize="xl" fontWeight={300}>
+          Or with your email address
+        </Text>
         <Input
           placeholder="Email"
           size="md"

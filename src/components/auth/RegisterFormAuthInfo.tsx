@@ -1,6 +1,16 @@
-import { Button, Divider, FormControl, FormErrorMessage, FormLabel, Input, Stack, Text } from '@chakra-ui/core';
+import {
+  Button,
+  Divider,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Input,
+  List,
+  ListItem,
+  Stack,
+  Text,
+} from '@chakra-ui/core';
 import { useState } from 'react';
-import { GoogleLogin, GoogleLoginResponse } from 'react-google-login';
 import { validateEmail } from '../../util/email.util';
 import { PasswordInput } from '../input/PasswordInput';
 import { GoogleAuthButton } from './GoogleAuthButton';
@@ -34,10 +44,20 @@ export const RegisterFormAuthInfo: React.FC<RegisterFormAuthInfoProps> = ({ onNe
 
   return (
     <Stack spacing={6} textAlign="center">
-      <Text fontSize="md" textColor="main" fontWeight={500}>
-        Create an account to enjoy personalized recommendations, keep track of your learnings, contribute and much more!
+      <Text fontSize="md" mb={3} px={3} textAlign="left" textColor="mainDarker" fontWeight={500}>
+        Create an account and
+        <List styleType="disc" ml={10} mt={2}>
+          <ListItem>Enjoy personalized recommendations</ListItem>
+          <ListItem>Keep track of what you learned</ListItem>
+          <ListItem>Contribute to building an open learning map</ListItem>
+          <Text textAlign="right" fontStyle="italic" mt={2}>
+            ...and much more!
+          </Text>
+        </List>
       </Text>
-      <Text fontSize="xl">Register using your Google account</Text>
+      <Text fontSize="xl" fontWeight={300}>
+        Register using your Google account
+      </Text>
       <Stack spacing={2} textAlign="center" onClick={(e) => e.stopPropagation()}>
         <GoogleAuthButton
           buttonText="Register with Google"
@@ -55,7 +75,9 @@ export const RegisterFormAuthInfo: React.FC<RegisterFormAuthInfoProps> = ({ onNe
         />
       </Stack>
       <Divider />
-      <Text fontSize="xl">Or with an email and password</Text>
+      <Text fontSize="xl" fontWeight={300}>
+        Or with your email address
+      </Text>
       <FormControl isRequired isInvalid={!!email && !isEmailValid}>
         <FormLabel htmlFor="email">Email</FormLabel>
         <Input
