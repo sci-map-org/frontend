@@ -67,6 +67,7 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
               currentUser.role === UserRole.Contributor ||
               currentUser._id === resource.creator?._id)
           }
+          renderAccessDenied={() => <Box />}
         >
           <DeleteButtonWithConfirmation
             modalBodyText="Confirm deleting resource ?"
@@ -86,6 +87,7 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
           size="lg"
           variant="solid"
           width="20rem"
+          colorScheme="brand"
           onClick={() =>
             onSave({
               name,

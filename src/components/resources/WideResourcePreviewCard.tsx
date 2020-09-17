@@ -15,7 +15,15 @@ import {
   Text,
   Tooltip,
 } from '@chakra-ui/core';
-import { ArrowDownIcon, ArrowUpIcon, EditIcon, SettingsIcon } from '@chakra-ui/icons';
+import {
+  AddIcon,
+  ArrowDownIcon,
+  ArrowUpIcon,
+  EditIcon,
+  PlusSquareIcon,
+  SettingsIcon,
+  SmallAddIcon,
+} from '@chakra-ui/icons';
 import { useEffect, useRef, useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
@@ -25,6 +33,7 @@ import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { EditResourcePageInfo } from '../../pages/resources/EditResourcePage';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
+import { DomainLearningPaths } from '../learning_paths/DomainLearningPaths';
 import { CompletedCheckbox } from '../lib/CompletedCheckbox';
 import { InternalLink } from '../navigation/InternalLink';
 import { DomainCoveredConceptSelector } from './CoveredConceptsSelector';
@@ -148,11 +157,14 @@ const BottomBlock: React.FC<{
         </Box>
       ) : (
         <Stack direction="row" alignItems="center">
-          <Skeleton isLoaded={!isLoading}>
-            <SelectedTagsViewer pb={0} selectedTags={resource.tags} />
-          </Skeleton>
-          <Tooltip hasArrow label="Add or remove tags">
+          {resource.tags?.length && (
+            <Skeleton isLoaded={!isLoading}>
+              <SelectedTagsViewer pb={0} selectedTags={resource.tags} />
+            </Skeleton>
+          )}
+          <Tooltip hasArrow label={resource.tags?.length ? 'Add or remove tags' : 'Add tags'}>
             <IconButton
+              isDisabled={isLoading}
               size="xs"
               variant="ghost"
               aria-label="add tag"
@@ -167,6 +179,7 @@ const BottomBlock: React.FC<{
               icon={<EditIcon />}
             />
           </Tooltip>
+          )
         </Stack>
       )}
       <Box flexGrow={1} flexBasis={0} />
@@ -281,7 +294,7 @@ export const WideResourcePreviewCard: React.FC<WideResourcePreviewCardProps> = (
             )}
           </Flex>
         </Flex>
-        <BottomBlock resource={resource} domainKey={domainKey} />
+        <BottomBlock resource={resource} domainKey={domainKey} isLoading={isLoading} />
       </Flex>
       <Flex direction="row" borderLeftWidth="0px" borderLeftColor="gray.100">
         <CompletedCheckbox
