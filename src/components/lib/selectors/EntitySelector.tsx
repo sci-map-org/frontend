@@ -56,6 +56,7 @@ export const EntitySelector = <T extends EntityType>({
           <Box
             {...containerProps}
             borderLeftWidth={1}
+            zIndex={4000}
             borderRightWidth={1}
             position="absolute"
             backgroundColor="white"

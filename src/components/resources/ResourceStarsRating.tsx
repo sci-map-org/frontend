@@ -1,5 +1,6 @@
 import {
   Button,
+  ButtonProps,
   Icon,
   Popover,
   PopoverArrow,
@@ -22,7 +23,7 @@ export const ResourceStarsRating: React.FC<{ value?: number | null; pxSize?: num
       <Text fontSize={pxSize + 'px'} fontWeight={400}>
         {value}
         <Text as="span" fontSize={pxSize - 5 + 'px'} fontWeight={300}>
-          /10
+          /5
         </Text>
       </Text>
     </Stack>
@@ -41,18 +42,21 @@ export const rateResource = gql`
 /**
  * TODO: show user's own rating on button, show star as yellow then
  */
-export const ResourceStarsRater: React.FC<{ resourceId: string }> = ({ resourceId }) => {
+export const ResourceStarsRater: React.FC<{ resourceId: string } & Omit<ButtonProps, 'onClick'>> = ({
+  resourceId,
+  ...props
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const open = () => setIsOpen(!isOpen);
   const close = () => setIsOpen(false);
   return (
     <Popover isOpen={isOpen} onClose={close} returnFocus={false} placement="right">
       <PopoverTrigger>
-        <Button variant="outline" aria-label="rate-this" size="sm" leftIcon={<StarIcon />} onClick={open}>
+        <Button variant="outline" aria-label="rate-this" size="sm" leftIcon={<StarIcon />} onClick={open} {...props}>
           Rate this
         </Button>
       </PopoverTrigger>
-      <PopoverContent zIndex={4}>
+      <PopoverContent w="146px" zIndex={4}>
         <PopoverArrow />
         <PopoverBody>
           <ResourceStarsRatingSelector resourceId={resourceId} onSelected={() => close()} />
@@ -69,7 +73,7 @@ export const ResourceStarsRatingSelector: React.FC<{
   const [rateResourceMutation] = useRateResourceMutation();
   return (
     <ReactStars
-      count={10}
+      count={5}
       onChange={async (rating: number) => {
         await rateResourceMutation({ variables: { resourceId, value: rating } });
         onSelected && onSelected(rating);

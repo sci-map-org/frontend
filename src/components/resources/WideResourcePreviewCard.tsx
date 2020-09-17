@@ -15,15 +15,7 @@ import {
   Text,
   Tooltip,
 } from '@chakra-ui/core';
-import {
-  AddIcon,
-  ArrowDownIcon,
-  ArrowUpIcon,
-  EditIcon,
-  PlusSquareIcon,
-  SettingsIcon,
-  SmallAddIcon,
-} from '@chakra-ui/icons';
+import { ArrowDownIcon, ArrowUpIcon, EditIcon, SettingsIcon } from '@chakra-ui/icons';
 import { useEffect, useRef, useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
@@ -32,14 +24,14 @@ import { ResourceVoteValue } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { EditResourcePageInfo } from '../../pages/resources/EditResourcePage';
+import { RoleAccess } from '../auth/RoleAccess';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
-import { DomainLearningPaths } from '../learning_paths/DomainLearningPaths';
 import { CompletedCheckbox } from '../lib/CompletedCheckbox';
 import { InternalLink } from '../navigation/InternalLink';
 import { DomainCoveredConceptSelector } from './CoveredConceptsSelector';
 import { shortenDescription } from './ResourceDescription';
 import { ResourceDuration } from './ResourceDuration';
-import { ResourceStarsRating } from './ResourceStarsRating';
+import { ResourceStarsRater, ResourceStarsRating } from './ResourceStarsRating';
 import { ResourceTagsEditor, SelectedTagsViewer } from './ResourceTagsEditor';
 import { ResourceTypeBadge } from './ResourceType';
 import { ResourceUrlLink } from './ResourceUrl';
@@ -282,9 +274,18 @@ export const WideResourcePreviewCard: React.FC<WideResourcePreviewCardProps> = (
             </Skeleton>
             <Skeleton isLoaded={!isLoading}>
               <Stack spacing={1} direction="row" alignItems="baseline" mr="10px">
+                <ResourceStarsRating value={resource.rating} pxSize={13} />
                 <ResourceTypeBadge type={resource.type} />
                 <ResourceDuration value={resource.durationMs} />
-                <ResourceStarsRating value={resource.rating} pxSize={13} />
+
+                <RoleAccess accessRule="contributorOrAdmin">
+                  <ResourceStarsRater
+                    resourceId={resource._id}
+                    size="xs"
+                    color="gray.500"
+                    _hover={{ color: 'gray.900' }}
+                  />
+                </RoleAccess>
               </Stack>
             </Skeleton>
             {((resource.tags && resource.tags.length > 0) || resource.description) && (

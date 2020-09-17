@@ -34,7 +34,10 @@ export const RegisterFormAuthInfo: React.FC<RegisterFormAuthInfoProps> = ({ onNe
 
   return (
     <Stack spacing={6} textAlign="center">
-      <Text fontSize="xl">Using Third Parties</Text>
+      <Text fontSize="md" textColor="main" fontWeight={500}>
+        Create an account to enjoy personalized recommendations, keep track of your learnings, contribute and much more!
+      </Text>
+      <Text fontSize="xl">Register using your Google account</Text>
       <Stack spacing={2} textAlign="center" onClick={(e) => e.stopPropagation()}>
         <GoogleAuthButton
           buttonText="Register with Google"
@@ -51,8 +54,8 @@ export const RegisterFormAuthInfo: React.FC<RegisterFormAuthInfoProps> = ({ onNe
           onFailure={() => {}}
         />
       </Stack>
-      <Text fontSize="xl">Or with email and password</Text>
       <Divider />
+      <Text fontSize="xl">Or with an email and password</Text>
       <FormControl isRequired isInvalid={!!email && !isEmailValid}>
         <FormLabel htmlFor="email">Email</FormLabel>
         <Input

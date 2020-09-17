@@ -1,4 +1,4 @@
-import { Box, Button, Input, Stack, Text } from '@chakra-ui/core';
+import { Box, Button, Divider, Input, Stack, Text } from '@chakra-ui/core';
 import { useState } from 'react';
 import { useLogin } from '../../graphql/users/users.hooks';
 import { PasswordInput } from '../input/PasswordInput';
@@ -19,7 +19,7 @@ export const LoginForm: React.FC<{
   });
   return (
     <Stack spacing={6} textAlign="center">
-      <Text fontSize="xl">Using Third Parties</Text>
+      <Text fontSize="xl">With your Google account</Text>
       <Stack spacing={2} textAlign="center" onClick={(e) => e.stopPropagation()}>
         <GoogleAuthButton
           buttonText="Login with Google"
@@ -31,8 +31,9 @@ export const LoginForm: React.FC<{
           onFailure={() => {}}
         />
       </Stack>
+      <Divider />
       <Stack spacing={2}>
-        <Text fontSize="xl">With Email and Password</Text>
+        <Text fontSize="xl">Or with your email and password</Text>
         <Input
           placeholder="Email"
           size="md"
@@ -40,7 +41,13 @@ export const LoginForm: React.FC<{
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <PasswordInput value={password} onChange={(e) => setPassword(e.target.value)} />
+        <PasswordInput
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') login({ variables: { email, password, discourseSSO } });
+          }}
+        />
       </Stack>
       <Button
         size="lg"

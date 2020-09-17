@@ -1,4 +1,4 @@
-import { Box, Button, Input, Stack, Textarea } from '@chakra-ui/core';
+import { Box, Button, ButtonGroup, Flex, Input, Stack, Textarea } from '@chakra-ui/core';
 import Router from 'next/router';
 import { useState } from 'react';
 import { PageLayout } from '../../../components/layout/PageLayout';
@@ -13,7 +13,7 @@ export const NewConceptPage: React.FC<{ domainKey: string }> = ({ domainKey }) =
   const [name, setName] = useState('');
   const [key, setKey] = useState('');
   const [description, setDescription] = useState('');
-  const { addConceptToDomain, loading, error } = useAddConceptToDomain();
+  const { addConceptToDomain } = useAddConceptToDomain();
 
   if (!domain) return <Box>Domain not found !</Box>;
   return (
@@ -48,18 +48,26 @@ export const NewConceptPage: React.FC<{ domainKey: string }> = ({ domainKey }) =
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         ></Textarea>
-
-        <Button
-          size="lg"
-          variant="outline"
-          onClick={() =>
-            addConceptToDomain({ variables: { domainId: domain._id, payload: { name, description } } }).then(() => {
-              Router.push(`/domains/${domain.key}/concepts`);
-            })
-          }
-        >
-          Add
-        </Button>
+        <Flex justifyContent="flex-end">
+          <ButtonGroup spacing={8}>
+            <Button size="lg" w="18rem" variant="outline" onClick={() => Router.back()}>
+              Cancel
+            </Button>
+            <Button
+              size="lg"
+              w="18rem"
+              variant="solid"
+              colorScheme="brand"
+              onClick={() =>
+                addConceptToDomain({ variables: { domainId: domain._id, payload: { name, description } } }).then(() => {
+                  Router.push(`/domains/${domain.key}/concepts`);
+                })
+              }
+            >
+              Add
+            </Button>
+          </ButtonGroup>
+        </Flex>
       </Stack>
     </PageLayout>
   );

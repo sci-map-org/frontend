@@ -61,7 +61,10 @@ export const UnauthentificatedModal: React.FC<{ onOpen: () => void; onClose: () 
                 <Divider my={4}></Divider>
                 <Box pb={4} textAlign="center">
                   <Text fontSize="l">
-                    No account yet ? <Link onClick={() => setShowLogin(false)}>Register</Link>
+                    No account yet ?{' '}
+                    <Link color="blue.400" onClick={() => setShowLogin(false)}>
+                      Register
+                    </Link>
                   </Text>
                 </Box>
               </>
@@ -71,7 +74,10 @@ export const UnauthentificatedModal: React.FC<{ onOpen: () => void; onClose: () 
                 <Divider my={4}></Divider>
                 <Box pb={4} textAlign="center">
                   <Text fontSize="l">
-                    Already have an account ? <Link onClick={() => setShowLogin(true)}>Login</Link>
+                    Already have an account ?{' '}
+                    <Link color="blue.400" onClick={() => setShowLogin(true)}>
+                      Login
+                    </Link>
                   </Text>
                 </Box>
               </>
