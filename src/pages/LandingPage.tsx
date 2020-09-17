@@ -8,7 +8,7 @@ import { InternalButtonLink, InternalLink } from '../components/navigation/Inter
 const Title: React.FC<{}> = () => {
   return (
     <Flex direction={{ base: 'column', lg: 'row' }} alignItems={{ base: 'center', lg: 'baseline' }}>
-      <Heading fontSize="5xl" color="brand.400" pr={3}>
+      <Heading fontSize="5xl" color="main" pr={3}>
         Sci-Map.org
       </Heading>
       <Heading fontSize="4xl" color="blackAlpha.500">
@@ -52,7 +52,7 @@ const LandingHeader: React.FC<{ layoutProps: FlexProps }> = ({ layoutProps }) =>
           <Stack direction="column" spacing={2} mb="15px">
             <Text>
               ⇒{' '}
-              <Text as="span" fontWeight={800} color="mainDarker">
+              <Text as="span" fontWeight={800} color="main">
                 Preview
               </Text>{' '}
               our first supported domain:{' '}
@@ -67,7 +67,7 @@ const LandingHeader: React.FC<{ layoutProps: FlexProps }> = ({ layoutProps }) =>
             </Text>
             <Text>
               ⇒{' '}
-              <Text as="span" fontWeight={800} color="mainDarker">
+              <Text as="span" fontWeight={800} color="main">
                 Learn more
               </Text>{' '}
               about the project in the{' '}
@@ -90,7 +90,7 @@ const LandingHeader: React.FC<{ layoutProps: FlexProps }> = ({ layoutProps }) =>
           borderColor="grayDivider.400"
         >
           <Flex pl={2} pb={1}>
-            <Text fontWeight={600} color="mainDarker" fontSize="lg">
+            <Text fontWeight={600} color="main" fontSize="lg">
               Find the best resources to learn...
             </Text>
           </Flex>
@@ -238,7 +238,7 @@ export const LandingPage: React.FC = () => {
         imagePosition="left"
         layoutProps={outerLayoutProps}
         darkBackground
-        renderImage={<MapIcon w="200px" h="200px" color="mainDarkerr" />}
+        renderImage={<MapIcon w="200px" h="200px" color="mainDarker" />}
         title="An open, graph-based learning map"
         renderTextContent={
           <Text>
@@ -254,7 +254,7 @@ export const LandingPage: React.FC = () => {
       <LandingContentItem
         imagePosition="right"
         layoutProps={outerLayoutProps}
-        renderImage={<UserCentricIcon w="200px" h="200px" color="mainDarkerr" />}
+        renderImage={<UserCentricIcon w="200px" h="200px" color="mainDarker" />}
         title="An experience tailored to each learner"
         renderTextContent={
           <Text>
@@ -268,7 +268,7 @@ export const LandingPage: React.FC = () => {
             <br />
             By providing personal learning management features, and building an increasingly precise leaning profile for
             each user,{' '}
-            <Text as="span" fontWeight={600} color="mainDarker">
+            <Text as="span" fontWeight={600} color="main">
               Sci-map.org
             </Text>{' '}
             aims to be the perfect tool for continuous learning across a wide range of domains.
@@ -279,7 +279,7 @@ export const LandingPage: React.FC = () => {
         imagePosition="left"
         layoutProps={outerLayoutProps}
         darkBackground
-        renderImage={<SocialNetworkIcon w="200px" h="200px" color="mainDarkerr" />}
+        renderImage={<SocialNetworkIcon w="200px" h="200px" color="mainDarker" />}
         title="Collaborative and community based"
         renderTextContent={
           <Text>

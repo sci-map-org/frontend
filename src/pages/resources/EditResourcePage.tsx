@@ -1,15 +1,25 @@
 import { Box } from '@chakra-ui/core';
 import gql from 'graphql-tag';
 import Router from 'next/router';
-
 import { PageLayout } from '../../components/layout/PageLayout';
 import { ResourceEditor } from '../../components/resources/ResourceEditor';
 import { ConceptData } from '../../graphql/concepts/concepts.fragments';
 import { ResourceData } from '../../graphql/resources/resources.fragments';
+import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { PageInfo } from '../PageInfo';
 import {
   useGetResourceEditResourcePageQuery,
   useUpdateResourceResourcePageMutation,
 } from './EditResourcePage.generated';
+import { ResourcePageInfo } from './ResourcePage';
+
+export const EditResourcePagePath = (resourceId: string) => `/resources/${resourceId}/edit`;
+
+export const EditResourcePageInfo = (resource: ResourceDataFragment): PageInfo => ({
+  name: `Edit - ${resource.name}`,
+  path: EditResourcePagePath(resource._id),
+  routePath: EditResourcePagePath('[_id]'),
+});
 
 export const updateResourceResourcePage = gql`
   mutation updateResourceResourcePage($id: String!, $payload: UpdateResourcePayload!) {
@@ -24,6 +34,9 @@ export const getResourceEditResourcePage = gql`
   query getResourceEditResourcePage($id: String!) {
     getResourceById(id: $id) {
       ...ResourceData
+      creator {
+        _id
+      }
       coveredConcepts(options: {}) {
         items {
           ...ConceptData
@@ -60,7 +73,11 @@ const EditResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) => {
   if (!data || !data.getResourceById) return <Box>Resource not found !</Box>;
   const { getResourceById: resource } = data;
   return (
-    <PageLayout mode="form">
+    <PageLayout
+      mode="form"
+      breadCrumbsLinks={[ResourcePageInfo(resource), EditResourcePageInfo(resource)]}
+      accessRule="loggedInUser"
+    >
       <ResourceEditor
         resource={resource}
         onSave={async (editedResource) => {

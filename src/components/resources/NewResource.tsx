@@ -7,7 +7,7 @@ import { ConceptsPicker } from '../concepts/ConceptsPicker';
 import { ResourceDescriptionInput } from './ResourceDescription';
 import { ResourceDurationSelector } from './ResourceDuration';
 import { ResourceMediaTypeSelector } from './ResourceMediaType';
-import { SelectedTagsEditor } from './ResourceTagsEditor';
+import { ResourceTagsStatelessEditor } from './ResourceTagsEditor';
 import { ResourceTypeSelector } from './ResourceType';
 import { ResourceUrlInput } from './ResourceUrl';
 
@@ -34,7 +34,7 @@ export const NewResource: React.FC<NewResourceProps> = ({ domain, onCreate }) =>
       <Flex flexDirection="row" justifyContent="space-between">
         <ResourceTypeSelector value={type} onSelect={(t) => setType(t)} />
       </Flex>
-      <SelectedTagsEditor selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
+      <ResourceTagsStatelessEditor selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
       <Flex direction="row" alignItems="center" justifyContent="space-between">
         <ResourceMediaTypeSelector value={mediaType} onSelect={(t) => setMediaType(t)} />
         <ResourceDurationSelector value={durationMs} onChange={setDurationMs} />

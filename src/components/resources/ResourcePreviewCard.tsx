@@ -4,7 +4,6 @@ import {
   AlertIcon,
   Box,
   Button,
-  Checkbox,
   CloseButton,
   Flex,
   IconButton,
@@ -17,13 +16,15 @@ import {
   PopoverHeader,
   PopoverTrigger,
   Skeleton,
+  Spinner,
   Stack,
   Text,
-  Tooltip,
   useToast,
 } from '@chakra-ui/core';
-import { ArrowUpIcon, ArrowDownIcon } from '@chakra-ui/icons';
+import { ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
+import { useEffect, useRef, useState } from 'react';
+import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { useSetConceptsKnownMutation } from '../../graphql/concepts/concepts.operations.generated';
 import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
@@ -32,17 +33,16 @@ import { ResourceVoteValue } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { useMockedFeaturesEnabled } from '../../hooks/useMockedFeaturesEnabled';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
+import { CompletedCheckbox } from '../lib/CompletedCheckbox';
 import { InternalLink } from '../navigation/InternalLink';
+import { shortenDescription } from './ResourceDescription';
 import { ResourceDuration } from './ResourceDuration';
 import { useSetResourceConsumedMutation } from './ResourcePreviewCard.generated';
 import { ResourceStarsRating } from './ResourceStarsRating';
 import { SelectedTagsViewer } from './ResourceTagsEditor';
 import { ResourceTypeBadge } from './ResourceType';
 import { ResourceUrlLink } from './ResourceUrl';
-
-const shortenDescription = (description: string, maxLength = 200) => {
-  return description.length > maxLength ? description.slice(0, maxLength) + '...' : description;
-};
+import { WideResourcePreviewCard } from './WideResourcePreviewCard';
 
 export const setResourceConsumed = gql`
   mutation setResourceConsumed($resourceId: String!, $consumed: Boolean!) {
@@ -56,7 +56,7 @@ export const setResourceConsumed = gql`
 interface ResourcePreviewCardProps {
   domainKey: string;
   resource: ResourcePreviewDataFragment;
-  onResourceConsumed?: (resource: ResourcePreviewDataFragment, consumed: boolean) => void;
+  onResourceConsumed: (resource: ResourcePreviewDataFragment, consumed: boolean) => void;
   isLoading?: boolean;
 }
 export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
@@ -66,22 +66,7 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
   isLoading,
 }) => {
   const { mockedFeaturesEnabled } = useMockedFeaturesEnabled();
-  const [setConceptKnown] = useSetConceptsKnownMutation();
-  const [setResourceConsumedMutation] = useSetResourceConsumedMutation();
-  const setResourceConsumed = async (consumed: boolean) => {
-    await setResourceConsumedMutation({
-      variables: {
-        resourceId: resource._id,
-        consumed,
-      },
-    });
-    if (!resource.coveredConcepts || !consumed) return;
-    await setConceptKnown({
-      variables: { payload: { concepts: resource.coveredConcepts.items.map(({ _id }) => ({ conceptId: _id })) } },
-    });
-  };
   const [voteResource] = useVoteResourceMutation();
-  const checkedResourceToast = useToast();
   const { currentUser } = useCurrentUser();
   const unauthentificatedModalDisclosure = useUnauthentificatedModal();
   return (
@@ -113,8 +98,6 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
         <Skeleton isLoaded={!isLoading}>
           <Text>{resource.upvotes}</Text>
         </Skeleton>
-        {/*
- // @ts-ignore */}
         <IconButton
           size="sm"
           aria-label="downvote"
@@ -151,7 +134,7 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
           </Box>
         )}
       </Flex>
-      <Flex flexBasis="160px" flexShrink={0} direction="column" justifyContent="center" py={2}>
+      <Flex flexBasis="100px" flexShrink={0} direction="column" justifyContent="center" py={2}>
         {resource.coveredConcepts && (
           <Skeleton isLoaded={!isLoading}>
             <Box>
@@ -159,7 +142,7 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
                 <PopoverTrigger>
                   <Link color="gray.600" fontWeight={200}>
                     {resource.coveredConcepts?.items.length} Concept
-                    {resource.coveredConcepts?.items.length === 1 ? '' : 's'} Covered
+                    {resource.coveredConcepts?.items.length === 1 ? '' : 's'}
                   </Link>
                 </PopoverTrigger>
                 <PopoverContent zIndex={4} backgroundColor="white">
@@ -194,53 +177,18 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
         )}
       </Flex>
       <Flex>
-        <Tooltip aria-label="Welcome home" label="Mark as read/watched" placement="top">
-          <Checkbox
-            size="lg"
-            m={4}
-            isDisabled={isLoading}
-            isChecked={!!resource.consumed && !!resource.consumed.consumedAt}
-            onChange={async (e) => {
-              if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
-              const setResourceConsumedValue = !resource.consumed || !resource.consumed.consumedAt;
-              await setResourceConsumed(setResourceConsumedValue);
-              checkedResourceToast({
-                render: ({ onClose, id }) => (
-                  <Alert
-                    status="success"
-                    variant="solid"
-                    id={id.toString()}
-                    textAlign="left"
-                    boxShadow="lg"
-                    rounded="md"
-                    alignItems="start"
-                    m={2}
-                    pr={8}
-                  >
-                    <AlertIcon />
-                    <Box flexDirection="row" alignItems="baseline" flex="1">
-                      <AlertDescription>
-                        The resource was marked as {setResourceConsumedValue ? `consumed` : 'not consumed'}
-                        <Button
-                          ml={6}
-                          size="sm"
-                          variant="outline"
-                          onClick={() => setResourceConsumed(!setResourceConsumedValue).then(() => onClose())}
-                        >
-                          Undo
-                        </Button>
-                      </AlertDescription>
-                    </Box>
-                    <CloseButton size="sm" onClick={onClose} position="absolute" right="4px" top="4px" />
-                  </Alert>
-                ),
-                position: 'bottom-left',
-                duration: 3000,
-              });
-              onResourceConsumed && onResourceConsumed(resource, setResourceConsumedValue);
-            }}
-          />
-        </Tooltip>
+        <CompletedCheckbox
+          size="lg"
+          m={4}
+          popoverLabel="Mark as completed"
+          popoverDelay={500}
+          isDisabled={isLoading}
+          isChecked={!!resource.consumed && !!resource.consumed.consumedAt}
+          onChange={async () => {
+            if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
+            onResourceConsumed(resource, !resource.consumed || !resource.consumed.consumedAt);
+          }}
+        />
       </Flex>
     </Flex>
   );
@@ -250,18 +198,148 @@ export const ResourcePreviewCardList: React.FC<{
   domainKey: string;
   resourcePreviews?: ResourcePreviewDataFragment[];
   isLoading?: boolean;
+  isReloading?: boolean;
+  displayMode?: 'wide' | 'dense';
   onResourceConsumed?: (resource: ResourcePreviewDataFragment, consumed: boolean) => void;
-}> = ({ resourcePreviews, domainKey, isLoading, onResourceConsumed }) => {
+}> = ({ resourcePreviews, domainKey, isReloading, isLoading, onResourceConsumed, displayMode = 'wide' }) => {
+  const checkedResourceToast = useToast();
+  const [setConceptKnown] = useSetConceptsKnownMutation();
+  const [setResourceConsumedMutation] = useSetResourceConsumedMutation();
+  const setResourceConsumed = async (resource: ResourcePreviewDataFragment, consumed: boolean) => {
+    await Promise.all([
+      setResourceConsumedMutation({
+        variables: {
+          resourceId: resource._id,
+          consumed,
+        },
+      }),
+      resource.coveredConcepts && consumed
+        ? setConceptKnown({
+            variables: { payload: { concepts: resource.coveredConcepts.items.map(({ _id }) => ({ conceptId: _id })) } },
+          }).then(() => {
+            // Later, reload everytime we mark a resource as consumed / not consumed, and filter from the backed: will fix all issues
+            onResourceConsumed && onResourceConsumed(resource, consumed);
+          })
+        : undefined,
+    ]);
+  };
+  const handleResourceConsumed = async (resource: ResourcePreviewDataFragment, setResourceConsumedValue: boolean) => {
+    await setResourceConsumed(resource, setResourceConsumedValue);
+    checkedResourceToast({
+      render: ({ onClose, id }) => (
+        <Alert
+          status="success"
+          variant="solid"
+          id={id.toString()}
+          textAlign="left"
+          boxShadow="lg"
+          rounded="md"
+          alignItems="start"
+          m={2}
+          pr={8}
+        >
+          <AlertIcon />
+          <Box flexDirection="row" alignItems="baseline" flex="1">
+            <AlertDescription>
+              The resource was marked as {setResourceConsumedValue ? `consumed` : 'not consumed'}
+              <Button
+                ml={6}
+                size="sm"
+                variant="outline"
+                onClick={() => setResourceConsumed(resource, !setResourceConsumedValue).then(() => onClose())}
+              >
+                Undo
+              </Button>
+            </AlertDescription>
+          </Box>
+          <CloseButton size="sm" onClick={onClose} position="absolute" right="4px" top="4px" />
+        </Alert>
+      ),
+      position: 'bottom-left',
+      duration: 3000,
+    });
+  };
+  const [height, setHeight] = useState(0);
+  const [width, setWidth] = useState(0);
+  const elementRef = useRef(null);
+  useEffect(() => {
+    if (elementRef && elementRef.current) {
+      setHeight((elementRef as any).current.clientHeight);
+      setWidth((elementRef as any).current.clientWidth);
+    }
+  }, [isReloading]);
   if (!resourcePreviews || !resourcePreviews.length) return null;
+  if (displayMode === 'dense')
+    return (
+      <Box
+        ref={elementRef}
+        borderTop="1px solid"
+        borderTopColor="gray.200"
+        width="100%"
+        backgroundColor="backgroundColor.0"
+      >
+        {isReloading && height > 300 && (
+          <Flex
+            position="absolute"
+            backgroundColor="backgroundColor.0"
+            direction="column"
+            alignItems="center"
+            width={width}
+            h={height}
+            pt="200px"
+            borderWidth="1px"
+            borderTopWidth="0px"
+            borderColor="gray.200"
+            zIndex={1000}
+          >
+            <Spinner size="xl" m={4} />
+            <Text fontStyle="italic">Finding the most adapted learning resources...</Text>
+          </Flex>
+        )}
+        {resourcePreviews.map((preview) => (
+          <ResourcePreviewCard
+            key={preview._id}
+            domainKey={domainKey}
+            resource={preview}
+            isLoading={isLoading}
+            onResourceConsumed={handleResourceConsumed}
+          />
+        ))}
+      </Box>
+    );
   return (
-    <Box borderTop="1px solid" borderTopColor="gray.200" width="100%" backgroundColor="backgroundColor.0">
+    <Box
+      ref={elementRef}
+      borderTop="1px solid"
+      borderTopColor="gray.200"
+      width="100%"
+      backgroundColor="backgroundColor.0"
+    >
+      {isReloading && height > 300 && (
+        <Flex
+          position="absolute"
+          backgroundColor="backgroundColor.0"
+          direction="column"
+          alignItems="center"
+          width={width}
+          h={height}
+          pt="200px"
+          borderWidth="1px"
+          borderTopWidth="0px"
+          borderColor="gray.200"
+          zIndex={1000}
+        >
+          <Spinner size="xl" m={4} />
+          <Text fontStyle="italic">Finding the most adapted learning resources...</Text>
+        </Flex>
+      )}
       {resourcePreviews.map((preview) => (
-        <ResourcePreviewCard
+        <WideResourcePreviewCard
           key={preview._id}
           domainKey={domainKey}
           resource={preview}
           isLoading={isLoading}
-          onResourceConsumed={onResourceConsumed}
+          onResourceConsumed={handleResourceConsumed}
         />
       ))}
     </Box>

@@ -76,3 +76,20 @@ export const setConceptsUnknown = gql`
   }
   ${ConceptData}
 `;
+
+export const getDomainConceptList = gql`
+  query getDomainConceptList($domainKey: String!) {
+    getDomainByKey(key: $domainKey) {
+      _id
+      key
+      concepts(options: { sorting: { entity: relationship, field: index, direction: ASC } }) {
+        items {
+          concept {
+            ...ConceptData
+          }
+        }
+      }
+    }
+  }
+  ${ConceptData}
+`;

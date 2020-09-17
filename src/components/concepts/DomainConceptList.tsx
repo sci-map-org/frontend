@@ -13,6 +13,7 @@ import { GetDomainByKeyDomainPageQuery } from '../../pages/domains/DomainPage.ge
 import { RoleAccess } from '../auth/RoleAccess';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import { InternalLink } from '../navigation/InternalLink';
+import { CompletedCheckbox } from '../lib/CompletedCheckbox';
 
 type NestedConceptItem = {
   concept: ConceptDataFragment & { subConcepts?: { concept: { _id: string } }[] | null };
@@ -73,9 +74,32 @@ export const DomainConceptList: React.FC<{
             ],
           },
         },
+        optimisticResponse: {
+          __typename: 'Mutation',
+          setConceptsKnown: [
+            {
+              ...concept,
+              known: {
+                __typename: 'KnownConcept',
+                level: 100,
+              },
+            },
+          ],
+        },
       });
     } else {
-      await setConceptUnknown({ variables: { conceptIds: [concept._id] } });
+      await setConceptUnknown({
+        variables: { conceptIds: [concept._id] },
+        optimisticResponse: {
+          __typename: 'Mutation',
+          setConceptsUnknown: [
+            {
+              ...concept,
+              known: null,
+            },
+          ],
+        },
+      });
     }
     onConceptToggled(concept._id);
   };
@@ -204,10 +228,12 @@ export const DomainConceptListMenuLink: React.FC<{
   onExpand?: () => void;
 }> = ({ domainKey, concept, onToggle, isLoading, expandable, onExpand, expanded }) => {
   return (
-    <Stack direction="row" alignItems="center">
-      <Skeleton isLoaded={!isLoading}>
-        <Checkbox
-          mr={2}
+    <Skeleton isLoaded={!isLoading}>
+      <Stack direction="row" spacing={2} alignItems="center">
+        <CompletedCheckbox
+          size="md"
+          popoverLabel="Mark this concept as known"
+          popoverDelay={500}
           onChange={() => {
             onToggle(concept);
           }}
@@ -221,7 +247,6 @@ export const DomainConceptListMenuLink: React.FC<{
         </InternalLink>
         {expandable && (
           <IconButton
-            ml={2}
             isRound
             aria-label="expand-menu"
             size="xs"
@@ -231,7 +256,7 @@ export const DomainConceptListMenuLink: React.FC<{
             onClick={() => onExpand && onExpand()}
           />
         )}
-      </Skeleton>
-    </Stack>
+      </Stack>
+    </Skeleton>
   );
 };

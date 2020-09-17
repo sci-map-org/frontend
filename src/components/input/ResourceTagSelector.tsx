@@ -10,6 +10,7 @@ interface ResourceTagSelectorProps {
   onSelect: (tag: ResourceTagSearchResult | { name: string; new: true }) => any;
   width?: string;
   isDisabled?: boolean;
+  size?: 'sm' | 'md';
 }
 
 export const searchResourceTags = gql`
@@ -20,7 +21,12 @@ export const searchResourceTags = gql`
     }
   }
 `;
-export const ResourceTagSelector: React.FC<ResourceTagSelectorProps> = ({ onSelect, width, isDisabled }) => {
+export const ResourceTagSelector: React.FC<ResourceTagSelectorProps> = ({
+  onSelect,
+  width,
+  isDisabled,
+  size = 'md',
+}) => {
   width = width || '200px';
   const [value, setValue] = useState('');
   const [refetch, { data }] = useSearchResourceTagsLazyQuery();
@@ -47,7 +53,7 @@ export const ResourceTagSelector: React.FC<ResourceTagSelectorProps> = ({ onSele
     },
   };
   return (
-    <Box marginBottom="16px" flexBasis={width} flexShrink={0}>
+    <Box marginBottom={size} flexBasis={width} flexShrink={0}>
       <Autosuggest
         suggestions={suggestions}
         inputProps={inputProps}
@@ -88,7 +94,9 @@ export const ResourceTagSelector: React.FC<ResourceTagSelectorProps> = ({ onSele
           </Box>
         )}
         getSuggestionValue={(suggestion) => suggestion.name}
-        renderInputComponent={(inputProps: any) => <Input isDisabled={isDisabled} variant="flushed" {...inputProps} />}
+        renderInputComponent={(inputProps: any) => (
+          <Input size={size} isDisabled={isDisabled} variant="flushed" {...inputProps} />
+        )}
       />
     </Box>
   );

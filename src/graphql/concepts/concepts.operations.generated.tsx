@@ -111,6 +111,29 @@ export type SetConceptsUnknownMutation = (
   )> }
 );
 
+export type GetDomainConceptListQueryVariables = Types.Exact<{
+  domainKey: Types.Scalars['String'];
+}>;
+
+
+export type GetDomainConceptListQuery = (
+  { __typename?: 'Query' }
+  & { getDomainByKey: (
+    { __typename?: 'Domain' }
+    & Pick<Types.Domain, '_id' | 'key'>
+    & { concepts?: Types.Maybe<(
+      { __typename?: 'DomainConceptsResults' }
+      & { items: Array<(
+        { __typename?: 'DomainConceptsItem' }
+        & { concept: (
+          { __typename?: 'Concept' }
+          & ConceptDataFragment
+        ) }
+      )> }
+    )> }
+  ) }
+);
+
 
 export type AddConceptToDomainMutationFn = Apollo.MutationFunction<AddConceptToDomainMutation, AddConceptToDomainMutationVariables>;
 
@@ -291,3 +314,29 @@ export function useSetConceptsUnknownMutation(baseOptions?: Apollo.MutationHookO
 export type SetConceptsUnknownMutationHookResult = ReturnType<typeof useSetConceptsUnknownMutation>;
 export type SetConceptsUnknownMutationResult = Apollo.MutationResult<SetConceptsUnknownMutation>;
 export type SetConceptsUnknownMutationOptions = Apollo.BaseMutationOptions<SetConceptsUnknownMutation, SetConceptsUnknownMutationVariables>;
+
+/**
+ * __useGetDomainConceptListQuery__
+ *
+ * To run a query within a React component, call `useGetDomainConceptListQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDomainConceptListQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDomainConceptListQuery({
+ *   variables: {
+ *      domainKey: // value for 'domainKey'
+ *   },
+ * });
+ */
+export function useGetDomainConceptListQuery(baseOptions?: Apollo.QueryHookOptions<GetDomainConceptListQuery, GetDomainConceptListQueryVariables>) {
+        return Apollo.useQuery<GetDomainConceptListQuery, GetDomainConceptListQueryVariables>(Operations.getDomainConceptList, baseOptions);
+      }
+export function useGetDomainConceptListLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDomainConceptListQuery, GetDomainConceptListQueryVariables>) {
+          return Apollo.useLazyQuery<GetDomainConceptListQuery, GetDomainConceptListQueryVariables>(Operations.getDomainConceptList, baseOptions);
+        }
+export type GetDomainConceptListQueryHookResult = ReturnType<typeof useGetDomainConceptListQuery>;
+export type GetDomainConceptListLazyQueryHookResult = ReturnType<typeof useGetDomainConceptListLazyQuery>;
+export type GetDomainConceptListQueryResult = Apollo.QueryResult<GetDomainConceptListQuery, GetDomainConceptListQueryVariables>;

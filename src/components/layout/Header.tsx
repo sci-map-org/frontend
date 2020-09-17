@@ -70,7 +70,7 @@ export const Header: React.FC = () => {
       <InternalLink
         routePath="/"
         asHref="/"
-        color="mainDarkerr"
+        color="mainDarker"
         fontWeight="medium"
         _focus={{}}
         _hover={{ color: 'brand.800' }}

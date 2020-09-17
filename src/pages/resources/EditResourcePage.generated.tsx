@@ -27,7 +27,10 @@ export type GetResourceEditResourcePageQuery = (
   { __typename?: 'Query' }
   & { getResourceById: (
     { __typename?: 'Resource' }
-    & { coveredConcepts?: Types.Maybe<(
+    & { creator?: Types.Maybe<(
+      { __typename?: 'User' }
+      & Pick<Types.User, '_id'>
+    )>, coveredConcepts?: Types.Maybe<(
       { __typename?: 'ResourceCoveredConceptsResults' }
       & { items: Array<(
         { __typename?: 'Concept' }
