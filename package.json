@@ -58,7 +58,9 @@
     "react-no-ssr": "^1.1.0",
     "react-rating-stars-component": "^2.2.0",
     "react-simplemde-editor": "^4.1.3",
-    "remark-breaks": "^2.0.0"
+    "recoil": "^0.0.13",
+    "remark-breaks": "^2.0.0",
+    "use-debounce": "^4.0.0"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "1.17.8",

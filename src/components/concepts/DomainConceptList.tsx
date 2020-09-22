@@ -14,6 +14,7 @@ import { RoleAccess } from '../auth/RoleAccess';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import { InternalLink } from '../navigation/InternalLink';
 import { CompletedCheckbox } from '../lib/CompletedCheckbox';
+import { useDomainRecommendedResources } from '../resources/DomainRecommendedResources';
 
 type NestedConceptItem = {
   concept: ConceptDataFragment & { subConcepts?: { concept: { _id: string } }[] | null };
@@ -25,7 +26,7 @@ export const DomainConceptList: React.FC<{
   domain: GetDomainByKeyDomainPageQuery['getDomainByKey'];
   isLoading?: boolean;
   onConceptToggled: (conceptId: string) => void;
-}> = ({ domain, isLoading, onConceptToggled }) => {
+}> = ({ domain, isLoading }) => {
   // Transform data into suitable one, as little as possible
   const { currentUser } = useCurrentUser();
   const [setConceptKnown] = useSetConceptsKnownMutation();
@@ -58,7 +59,10 @@ export const DomainConceptList: React.FC<{
 
     return nestedConceptItemList;
   }, [domain.concepts?.items]);
-
+  const { reload } = useDomainRecommendedResources(domain.key);
+  const onConceptToggled = (conceptId: string) => {
+    reload();
+  };
   const domainConceptItems = domain?.concepts?.items;
   const unauthentificatedModalDisclosure = useUnauthentificatedModal();
   const toggleConceptKnown = async (concept: ConceptDataFragment) => {

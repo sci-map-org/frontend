@@ -1,19 +1,16 @@
-import { Box, Flex, Heading, IconButton, Link, Skeleton, Stack, Text } from '@chakra-ui/core';
+import { Box, Flex, Heading, IconButton, Skeleton } from '@chakra-ui/core';
 import { SettingsIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { DomainConceptGraph } from '../../components/concepts/DomainConceptGraph';
 import { DomainConceptList } from '../../components/concepts/DomainConceptList';
 import { PageLayout } from '../../components/layout/PageLayout';
-import { DomainLearningPaths } from '../../components/learning_paths/DomainLearningPaths';
 import { InternalButtonLink } from '../../components/navigation/InternalLink';
 import { DomainRecommendedResources } from '../../components/resources/DomainRecommendedResources';
 import { ConceptData, generateConceptData } from '../../graphql/concepts/concepts.fragments';
 import { DomainData, generateDomainData } from '../../graphql/domains/domains.fragments';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
-import { generateResourcePreviewData, ResourcePreviewData } from '../../graphql/resources/resources.fragments';
 import { useMockedFeaturesEnabled } from '../../hooks/useMockedFeaturesEnabled';
 import { PageInfo, routerPushToPage } from '../PageInfo';
 import { GetDomainByKeyDomainPageQuery, useGetDomainByKeyDomainPageQuery } from './DomainPage.generated';
@@ -51,17 +48,83 @@ export const getDomainByKeyDomainPage = gql`
           }
         }
       }
-      resources(options: { pagination: { limit: 30 } }) {
-        items {
-          ...ResourcePreviewData
-        }
-      }
+      # resources(options: $resourcesOptions) {
+      #   items {
+      #     ...ResourcePreviewData
+      #   }
+      # }
     }
   }
   ${DomainData}
   ${ConceptData}
-  ${ResourcePreviewData}
 `;
+
+// const DomainPageResourceFeedOptionsState = memoize((domainKey: string) =>
+//   atom({
+//     key: `DomainPageResourceFeedOptions_${domainKey}`,
+//     default: {
+//       sortingType: DomainResourcesSortingType.Recommended,
+//     },
+//   })
+// );
+
+// console.log('yo');
+// const DomainPageResourceFeedOptionsState = atom({
+//   key: `DomainPageResourceFeedOptions`,
+//   default: {
+//     sortingType: DomainResourcesSortingType.Recommended,
+//   },
+// });
+
+// const resourcePreviews = selector({
+//   key: 'CurrentUserName',
+//   get: async ({get}) => {
+//     const response = await myDBQuery({
+//       userID: get(DomainPageResourceFeedOptionsState),
+//     });
+//     return response.name;
+//   },
+// });
+
+// const useDomainPageState = (domainKey: string, initialResourcesOptions: DomainResourcesOptions) => {
+//   const [domainData, setDomainData] = useState(placeholderDomainData);
+//   const [resources, setResources] = useState(placeholderDomainData.resources);
+//   const [concepts, setConcepts] = useState(placeholderDomainData.concepts);
+//   useEffect(() => {
+//     const { data, error, loading, refetch } = useGetDomainByKeyDomainPageQuery({
+//       variables: { key: domainKey, resourcesOptions: initialResourcesOptions },
+//       onCompleted(data) {
+//         setDomainData(data.getDomainByKey);
+//         setResources(data.getDomainByKey.resources);
+//         setConcepts(data.getDomainByKey.concepts);
+//       },
+//       // partialRefetch: true,
+//       // fetchPolicy: 'cache-and-network',
+//       // notifyOnNetworkStatusChange: true,
+//     });
+//   }, []);
+//   const [
+//     getDomainRecommendedResourcesLazyQuery,
+//     { loading: resourcesReloading },
+//   ] = useGetDomainRecommendedResourcesLazyQuery({
+//     onCompleted(data) {
+//       setResources(data.getDomainByKey.resources);
+//     },
+//   });
+//   const client = useApolloClient();
+//   client.query<GetDomainRecommendedResourcesQuery, GetDomainRecommendedResourcesQueryVariables>({
+//     query: getDomainRecommendedResources,
+//     variables: { key },
+//   });
+//   const refetchResources = (options: DomainResourcesOptions) =>
+//     getDomainRecommendedResourcesLazyQuery({
+//       variables: {
+//         resourcesOptions: options,
+//         key: domainKey,
+//       },
+//     });
+//   return { domainData, resources, concepts, refetchResources };
+// };
 
 const placeholderDomainData: GetDomainByKeyDomainPageQuery['getDomainByKey'] = {
   ...generateDomainData(),
@@ -81,23 +144,52 @@ const placeholderDomainData: GetDomainByKeyDomainPageQuery['getDomainByKey'] = {
       },
     ],
   },
-  resources: {
-    items: [generateResourcePreviewData(), generateResourcePreviewData(), generateResourcePreviewData()],
-  },
 };
 
 export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
   const router = useRouter();
-  const { data, error, loading, refetch } = useGetDomainByKeyDomainPageQuery({ variables: { key: domainKey } });
-  const [reloading, setReloading] = useState(false);
+  // const resourcesOptions = useRecoilValue(DomainPageResourceFeedOptionsState);
+  // const setResourcesOptions = useSetRecoilState(DomainPageResourceFeedOptionsState);
+  // const [resourcesOptions, setResourcesOptions] = useState<DomainResourcesOptions>({
+  //   sortingType: DomainResourcesSortingType.Recommended,
+  // });
+
+  const { data, loading } = useGetDomainByKeyDomainPageQuery({
+    variables: { key: domainKey },
+    // partialRefetch: true,
+    // fetchPolicy: 'cache-and-network',
+    // notifyOnNetworkStatusChange: true,
+  });
+  // console.log(networkStatus);
+
+  // useEffect(() => {
+  //   (async () => {
+  //     setReloading(true);
+  //     await refetch({ resourcesOptions });
+  //     setReloading(false);
+  //   })();
+  // }, [resourcesOptions]);
+
+  // const [reloading, setReloading] = useState(false);
   const domain = data?.getDomainByKey || placeholderDomainData;
+  // const {
+  //   domain,
+  //   resources,
+  //   concepts,
+  //   setResourcesOptions,
+  //   resourcesOptions,
+  //   refetchResources,
+  //   resourcesReloading,
+  //   loading,
+  // } = useDomainPageState(domainKey);
+  // console.log(domain, resources, concepts, resourcesOptions, loading);
   const { mockedFeaturesEnabled } = useMockedFeaturesEnabled();
-  const reloadRecommendedResources = async () => {
-    setReloading(true);
-    await refetch();
-    setReloading(false);
-  };
-  if (error) return <Box>Domain not found !</Box>;
+  // const reloadRecommendedResources = async () => {
+  //   // setReloading(true);
+  //   await refetchResources();
+  //   // setReloading(false);
+  // };
+  // if (error) return <Box>Domain not found !</Box>;
 
   return (
     <PageLayout>
@@ -149,21 +241,27 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
       )}
       <Flex direction={{ base: 'column-reverse', md: 'row' }} mb="100px">
         <Flex direction="column" flexShrink={0}>
-          <DomainConceptList domain={domain} isLoading={loading} onConceptToggled={reloadRecommendedResources} />
+          <DomainConceptList
+            domain={domain}
+            isLoading={loading}
+            onConceptToggled={() => {}} // reloadRecommendedResources()
+          />
         </Flex>
-        {domain.resources && (
-          <Flex direction="column" flexShrink={1} flexGrow={1}>
-            <DomainRecommendedResources
-              domain={domain}
-              resourcePreviews={domain.resources.items}
-              isLoading={loading}
-              isReloading={reloading}
-              reloadRecommendedResources={reloadRecommendedResources}
-            />
-            <DomainConceptGraph domain={domain} isLoading={loading} minNbRelationships={5} />
-            {/* {mockedFeaturesEnabled && <DomainLearningPaths domain={domain} />} */}
-          </Flex>
-        )}
+        {/* {domain.resources && ( */}
+        <Flex direction="column" flexShrink={1} flexGrow={1}>
+          <DomainRecommendedResources
+            domainKey={domainKey}
+            // resourcePreviews={resources?.items || []}
+            // isLoading={loading}
+            // isReloading={resourcesReloading}
+            // reloadRecommendedResources={(ro) => refetchResources(ro)} //
+            // initialResourcesOptions={resourcesOptions}
+            // setResourcesOptions={setResourcesOptions}
+          />
+          <DomainConceptGraph domain={domain} isLoading={loading} minNbRelationships={5} />
+          {/* {mockedFeaturesEnabled && <DomainLearningPaths domain={domain} />} */}
+        </Flex>
+        {/* )} */}
         {/* {mockedFeaturesEnabled && (
           <Stack spacing={4} direction="column" ml={6} flexShrink={1}>
             <Box>

@@ -196,13 +196,14 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
 
 export const ResourcePreviewCardList: React.FC<{
   domainKey: string;
-  resourcePreviews?: ResourcePreviewDataFragment[];
+  resourcePreviews: ResourcePreviewDataFragment[];
   isLoading?: boolean;
   isReloading?: boolean;
   displayMode?: 'wide' | 'dense';
   onResourceConsumed?: (resource: ResourcePreviewDataFragment, consumed: boolean) => void;
 }> = ({ resourcePreviews, domainKey, isReloading, isLoading, onResourceConsumed, displayMode = 'wide' }) => {
   const checkedResourceToast = useToast();
+  console.log('rerendering resource list');
   const [setConceptKnown] = useSetConceptsKnownMutation();
   const [setResourceConsumedMutation] = useSetResourceConsumedMutation();
   const setResourceConsumed = async (resource: ResourcePreviewDataFragment, consumed: boolean) => {
@@ -259,33 +260,33 @@ export const ResourcePreviewCardList: React.FC<{
       duration: 3000,
     });
   };
-  const [height, setHeight] = useState(0);
-  const [width, setWidth] = useState(0);
-  const elementRef = useRef(null);
-  useEffect(() => {
-    if (elementRef && elementRef.current) {
-      setHeight((elementRef as any).current.clientHeight);
-      setWidth((elementRef as any).current.clientWidth);
-    }
-  }, [isReloading]);
-  if (!resourcePreviews || !resourcePreviews.length) return null;
+  // const [height, setHeight] = useState(0);
+  // const [width, setWidth] = useState(0);
+  // const elementRef = useRef(null);
+  // useEffect(() => {
+  //   if (elementRef && elementRef.current) {
+  //     setHeight((elementRef as any).current.clientHeight);
+  //     setWidth((elementRef as any).current.clientWidth);
+  //   }
+  // }, [isReloading]);
+  // if (!is!resourcePreviews || !resourcePreviews.length) return null;
   if (displayMode === 'dense')
     return (
       <Box
-        ref={elementRef}
+        // ref={elementRef}
         borderTop="1px solid"
         borderTopColor="gray.200"
         width="100%"
         backgroundColor="backgroundColor.0"
       >
-        {isReloading && height > 300 && (
+        {isReloading && (
           <Flex
             position="absolute"
             backgroundColor="backgroundColor.0"
             direction="column"
             alignItems="center"
-            width={width}
-            h={height}
+            width="100%"
+            h="1000px"
             pt="200px"
             borderWidth="1px"
             borderTopWidth="0px"
@@ -309,20 +310,20 @@ export const ResourcePreviewCardList: React.FC<{
     );
   return (
     <Box
-      ref={elementRef}
+      // ref={elementRef}
       borderTop="1px solid"
       borderTopColor="gray.200"
       width="100%"
       backgroundColor="backgroundColor.0"
     >
-      {isReloading && height > 300 && (
+      {isReloading ? (
         <Flex
           position="absolute"
           backgroundColor="backgroundColor.0"
           direction="column"
           alignItems="center"
-          width={width}
-          h={height}
+          width="100%"
+          h="1000px"
           pt="200px"
           borderWidth="1px"
           borderTopWidth="0px"
@@ -332,16 +333,17 @@ export const ResourcePreviewCardList: React.FC<{
           <Spinner size="xl" m={4} />
           <Text fontStyle="italic">Finding the most adapted learning resources...</Text>
         </Flex>
+      ) : (
+        resourcePreviews.map((preview) => (
+          <WideResourcePreviewCard
+            key={preview._id}
+            domainKey={domainKey}
+            resource={preview}
+            isLoading={isLoading}
+            onResourceConsumed={handleResourceConsumed}
+          />
+        ))
       )}
-      {resourcePreviews.map((preview) => (
-        <WideResourcePreviewCard
-          key={preview._id}
-          domainKey={domainKey}
-          resource={preview}
-          isLoading={isLoading}
-          onResourceConsumed={handleResourceConsumed}
-        />
-      ))}
     </Box>
   );
 };

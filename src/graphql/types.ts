@@ -353,19 +353,20 @@ export type ConceptBelongsToDomain = {
 };
 
 export type DomainResourcesOptions = {
-  sorting?: Maybe<DomainResourcesSortingOptions>;
-  pagination: PaginationOptions;
-};
-
-export type DomainResourcesSortingOptions = {
-  type: DomainResourcesSortingType;
-  direction: SortingDirection;
+  sortingType: DomainResourcesSortingType;
+  query?: Maybe<Scalars['String']>;
+  filter?: Maybe<DomainResourcesFilterOptions>;
 };
 
 export enum DomainResourcesSortingType {
-  Relevance = 'relevance',
-  CreationDate = 'creation_date'
+  Recommended = 'recommended',
+  Newest = 'newest'
 }
+
+export type DomainResourcesFilterOptions = {
+  resourceTypeIn?: Maybe<Array<ResourceType>>;
+  consumedByUser?: Maybe<Scalars['Boolean']>;
+};
 
 export type DomainResourcesResults = {
   __typename?: 'DomainResourcesResults';

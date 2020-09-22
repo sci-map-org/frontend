@@ -8532,6 +8532,11 @@ readdirp@~3.4.0:
   dependencies:
     picomatch "^2.2.1"
 
+recoil@^0.0.13:
+  version "0.0.13"
+  resolved "https://registry.yarnpkg.com/recoil/-/recoil-0.0.13.tgz#23e6d63135c07d8defbd91aaa35dca94ec5c15a6"
+  integrity sha512-2OToaQ8GR//KsdKdaEhMi04QKStLGRpk3qjC58iBpZpUtsByZ4dUy2UJtRcYuhnVlltGZ8HNwcEQRdFOS864SQ==
+
 regenerate-unicode-properties@^8.2.0:
   version "8.2.0"
   resolved "https://registry.yarnpkg.com/regenerate-unicode-properties/-/regenerate-unicode-properties-8.2.0.tgz#e5de7111d655e7ba60c057dbe9ff37c87e65cdec"
@@ -9931,6 +9936,11 @@ use-callback-ref@^1.2.3:
   version "1.2.4"
   resolved "https://registry.yarnpkg.com/use-callback-ref/-/use-callback-ref-1.2.4.tgz#d86d1577bfd0b955b6e04aaf5971025f406bea3c"
   integrity sha512-rXpsyvOnqdScyied4Uglsp14qzag1JIemLeTWGKbwpotWht57hbP78aNT+Q4wdFKQfQibbUX4fb6Qb4y11aVOQ==
+
+use-debounce@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/use-debounce/-/use-debounce-4.0.0.tgz#8e8303494c1b4ced9a10427f3b8191f097ab2647"
+  integrity sha512-ZdOEjLNwdCn99dx1D+umZe1Dolki7m7QYmkprugKfpOjXGHQsI6AUkFdolHfp+rm3QX8cQSiA5r0eDrXClv5wA==
 
 use-sidecar@^1.0.1:
   version "1.0.2"

@@ -2,7 +2,6 @@ import * as Types from '../../graphql/types';
 
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
-import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import * as Operations from './DomainPage';
 import * as Apollo from '@apollo/client';
 export type GetDomainByKeyDomainPageQueryVariables = Types.Exact<{
@@ -38,12 +37,6 @@ export type GetDomainByKeyDomainPageQuery = (
           { __typename?: 'ConceptBelongsToDomain' }
           & Pick<Types.ConceptBelongsToDomain, 'index'>
         ) }
-      )> }
-    )>, resources?: Types.Maybe<(
-      { __typename?: 'DomainResourcesResults' }
-      & { items: Array<(
-        { __typename?: 'Resource' }
-        & ResourcePreviewDataFragment
       )> }
     )> }
     & DomainDataFragment
