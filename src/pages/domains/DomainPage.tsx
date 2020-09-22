@@ -94,6 +94,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
 
   const [resourcesOptions, setResourcesOptions] = useState<DomainResourcesOptions>({
     sortingType: DomainResourcesSortingType.Recommended,
+    filter: { consumedByUser: false },
   });
   const [resourcesPreviews, setResourcePreviews] = useState<ResourcePreviewDataFragment[]>([]);
   const [resourcesLoading, setResourcesLoading] = useState(true);

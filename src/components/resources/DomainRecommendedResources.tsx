@@ -37,7 +37,7 @@ export const DomainRecommendedResources: React.FC<{
   resourcesOptions,
   setResourcesOptions,
 }) => {
-  const [showCheckedResources, setShowCheckedResources] = useState(false);
+  // const [showCheckedResources, setShowCheckedResources] = useState(false);
 
   return (
     <Flex direction="column" mb={4}>
@@ -53,8 +53,13 @@ export const DomainRecommendedResources: React.FC<{
                 px={1}
                 id="show_completed"
                 colorScheme="brand"
-                isChecked={showCheckedResources}
-                onChange={(e) => setShowCheckedResources(e.target.checked)}
+                isChecked={resourcesOptions.filter?.consumedByUser || false}
+                onChange={(e) =>
+                  setResourcesOptions({
+                    ...resourcesOptions,
+                    filter: { ...resourcesOptions.filter, consumedByUser: e.target.checked },
+                  })
+                }
               ></Checkbox>
             </FormControl>
           </Stack>
@@ -67,9 +72,7 @@ export const DomainRecommendedResources: React.FC<{
       </Stack>
       <ResourcePreviewCardList
         domainKey={domainKey}
-        resourcePreviews={resourcePreviews.filter(
-          (r) => !!showCheckedResources || !r.consumed || !r.consumed.consumedAt
-        )}
+        resourcePreviews={resourcePreviews}
         isLoading={isLoading}
         isReloading={isLoading}
         onResourceConsumed={() => reloadRecommendedResources()}
