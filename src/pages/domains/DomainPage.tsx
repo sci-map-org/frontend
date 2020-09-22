@@ -1,16 +1,27 @@
+import { useApolloClient } from '@apollo/client';
 import { Box, Flex, Heading, IconButton, Skeleton } from '@chakra-ui/core';
 import { SettingsIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { DomainConceptGraph } from '../../components/concepts/DomainConceptGraph';
 import { DomainConceptList } from '../../components/concepts/DomainConceptList';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { InternalButtonLink } from '../../components/navigation/InternalLink';
-import { DomainRecommendedResources } from '../../components/resources/DomainRecommendedResources';
+import {
+  DomainRecommendedResources,
+  getDomainRecommendedResources,
+} from '../../components/resources/DomainRecommendedResources';
+import {
+  GetDomainRecommendedResourcesQuery,
+  GetDomainRecommendedResourcesQueryVariables,
+} from '../../components/resources/DomainRecommendedResources.generated';
 import { ConceptData, generateConceptData } from '../../graphql/concepts/concepts.fragments';
 import { DomainData, generateDomainData } from '../../graphql/domains/domains.fragments';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
+import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { DomainResourcesOptions, DomainResourcesSortingType } from '../../graphql/types';
 import { useMockedFeaturesEnabled } from '../../hooks/useMockedFeaturesEnabled';
 import { PageInfo, routerPushToPage } from '../PageInfo';
 import { GetDomainByKeyDomainPageQuery, useGetDomainByKeyDomainPageQuery } from './DomainPage.generated';
@@ -48,83 +59,11 @@ export const getDomainByKeyDomainPage = gql`
           }
         }
       }
-      # resources(options: $resourcesOptions) {
-      #   items {
-      #     ...ResourcePreviewData
-      #   }
-      # }
     }
   }
   ${DomainData}
   ${ConceptData}
 `;
-
-// const DomainPageResourceFeedOptionsState = memoize((domainKey: string) =>
-//   atom({
-//     key: `DomainPageResourceFeedOptions_${domainKey}`,
-//     default: {
-//       sortingType: DomainResourcesSortingType.Recommended,
-//     },
-//   })
-// );
-
-// console.log('yo');
-// const DomainPageResourceFeedOptionsState = atom({
-//   key: `DomainPageResourceFeedOptions`,
-//   default: {
-//     sortingType: DomainResourcesSortingType.Recommended,
-//   },
-// });
-
-// const resourcePreviews = selector({
-//   key: 'CurrentUserName',
-//   get: async ({get}) => {
-//     const response = await myDBQuery({
-//       userID: get(DomainPageResourceFeedOptionsState),
-//     });
-//     return response.name;
-//   },
-// });
-
-// const useDomainPageState = (domainKey: string, initialResourcesOptions: DomainResourcesOptions) => {
-//   const [domainData, setDomainData] = useState(placeholderDomainData);
-//   const [resources, setResources] = useState(placeholderDomainData.resources);
-//   const [concepts, setConcepts] = useState(placeholderDomainData.concepts);
-//   useEffect(() => {
-//     const { data, error, loading, refetch } = useGetDomainByKeyDomainPageQuery({
-//       variables: { key: domainKey, resourcesOptions: initialResourcesOptions },
-//       onCompleted(data) {
-//         setDomainData(data.getDomainByKey);
-//         setResources(data.getDomainByKey.resources);
-//         setConcepts(data.getDomainByKey.concepts);
-//       },
-//       // partialRefetch: true,
-//       // fetchPolicy: 'cache-and-network',
-//       // notifyOnNetworkStatusChange: true,
-//     });
-//   }, []);
-//   const [
-//     getDomainRecommendedResourcesLazyQuery,
-//     { loading: resourcesReloading },
-//   ] = useGetDomainRecommendedResourcesLazyQuery({
-//     onCompleted(data) {
-//       setResources(data.getDomainByKey.resources);
-//     },
-//   });
-//   const client = useApolloClient();
-//   client.query<GetDomainRecommendedResourcesQuery, GetDomainRecommendedResourcesQueryVariables>({
-//     query: getDomainRecommendedResources,
-//     variables: { key },
-//   });
-//   const refetchResources = (options: DomainResourcesOptions) =>
-//     getDomainRecommendedResourcesLazyQuery({
-//       variables: {
-//         resourcesOptions: options,
-//         key: domainKey,
-//       },
-//     });
-//   return { domainData, resources, concepts, refetchResources };
-// };
 
 const placeholderDomainData: GetDomainByKeyDomainPageQuery['getDomainByKey'] = {
   ...generateDomainData(),
@@ -148,48 +87,42 @@ const placeholderDomainData: GetDomainByKeyDomainPageQuery['getDomainByKey'] = {
 
 export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
   const router = useRouter();
-  // const resourcesOptions = useRecoilValue(DomainPageResourceFeedOptionsState);
-  // const setResourcesOptions = useSetRecoilState(DomainPageResourceFeedOptionsState);
-  // const [resourcesOptions, setResourcesOptions] = useState<DomainResourcesOptions>({
-  //   sortingType: DomainResourcesSortingType.Recommended,
-  // });
 
   const { data, loading } = useGetDomainByKeyDomainPageQuery({
     variables: { key: domainKey },
-    // partialRefetch: true,
-    // fetchPolicy: 'cache-and-network',
-    // notifyOnNetworkStatusChange: true,
   });
-  // console.log(networkStatus);
 
-  // useEffect(() => {
-  //   (async () => {
-  //     setReloading(true);
-  //     await refetch({ resourcesOptions });
-  //     setReloading(false);
-  //   })();
-  // }, [resourcesOptions]);
+  const [resourcesOptions, setResourcesOptions] = useState<DomainResourcesOptions>({
+    sortingType: DomainResourcesSortingType.Recommended,
+  });
+  const [resourcesPreviews, setResourcePreviews] = useState<ResourcePreviewDataFragment[]>([]);
+  const [resourcesLoading, setResourcesLoading] = useState(true);
 
-  // const [reloading, setReloading] = useState(false);
+  const apolloClient = useApolloClient();
+
+  useEffect(() => {
+    reloadResourcePreviews();
+  }, [resourcesOptions]);
+
+  const reloadResourcePreviews = async () => {
+    setResourcesLoading(true);
+    const { data } = await apolloClient.query<
+      GetDomainRecommendedResourcesQuery,
+      GetDomainRecommendedResourcesQueryVariables
+    >({
+      query: getDomainRecommendedResources,
+      variables: { key: domainKey, resourcesOptions: resourcesOptions },
+      fetchPolicy: 'network-only',
+    });
+    if (data?.getDomainByKey.resources?.items) {
+      setResourcePreviews(data?.getDomainByKey.resources?.items);
+      setResourcesLoading(false);
+    }
+  };
+
   const domain = data?.getDomainByKey || placeholderDomainData;
-  // const {
-  //   domain,
-  //   resources,
-  //   concepts,
-  //   setResourcesOptions,
-  //   resourcesOptions,
-  //   refetchResources,
-  //   resourcesReloading,
-  //   loading,
-  // } = useDomainPageState(domainKey);
-  // console.log(domain, resources, concepts, resourcesOptions, loading);
+
   const { mockedFeaturesEnabled } = useMockedFeaturesEnabled();
-  // const reloadRecommendedResources = async () => {
-  //   // setReloading(true);
-  //   await refetchResources();
-  //   // setReloading(false);
-  // };
-  // if (error) return <Box>Domain not found !</Box>;
 
   return (
     <PageLayout>
@@ -241,22 +174,17 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
       )}
       <Flex direction={{ base: 'column-reverse', md: 'row' }} mb="100px">
         <Flex direction="column" flexShrink={0}>
-          <DomainConceptList
-            domain={domain}
-            isLoading={loading}
-            onConceptToggled={() => {}} // reloadRecommendedResources()
-          />
+          <DomainConceptList domain={domain} isLoading={loading} onConceptToggled={() => reloadResourcePreviews()} />
         </Flex>
-        {/* {domain.resources && ( */}
+
         <Flex direction="column" flexShrink={1} flexGrow={1}>
           <DomainRecommendedResources
             domainKey={domainKey}
-            // resourcePreviews={resources?.items || []}
-            // isLoading={loading}
-            // isReloading={resourcesReloading}
-            // reloadRecommendedResources={(ro) => refetchResources(ro)} //
-            // initialResourcesOptions={resourcesOptions}
-            // setResourcesOptions={setResourcesOptions}
+            resourcePreviews={resourcesPreviews}
+            isLoading={resourcesLoading}
+            reloadRecommendedResources={() => reloadResourcePreviews()}
+            resourcesOptions={resourcesOptions}
+            setResourcesOptions={setResourcesOptions}
           />
           <DomainConceptGraph domain={domain} isLoading={loading} minNbRelationships={5} />
           {/* {mockedFeaturesEnabled && <DomainLearningPaths domain={domain} />} */}

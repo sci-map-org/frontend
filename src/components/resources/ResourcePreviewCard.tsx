@@ -23,8 +23,6 @@ import {
 } from '@chakra-ui/core';
 import { ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
-import { useEffect, useRef, useState } from 'react';
-import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { useSetConceptsKnownMutation } from '../../graphql/concepts/concepts.operations.generated';
 import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
@@ -203,7 +201,7 @@ export const ResourcePreviewCardList: React.FC<{
   onResourceConsumed?: (resource: ResourcePreviewDataFragment, consumed: boolean) => void;
 }> = ({ resourcePreviews, domainKey, isReloading, isLoading, onResourceConsumed, displayMode = 'wide' }) => {
   const checkedResourceToast = useToast();
-  console.log('rerendering resource list');
+
   const [setConceptKnown] = useSetConceptsKnownMutation();
   const [setResourceConsumedMutation] = useSetResourceConsumedMutation();
   const setResourceConsumed = async (resource: ResourcePreviewDataFragment, consumed: boolean) => {
@@ -260,32 +258,36 @@ export const ResourcePreviewCardList: React.FC<{
       duration: 3000,
     });
   };
-  // const [height, setHeight] = useState(0);
-  // const [width, setWidth] = useState(0);
-  // const elementRef = useRef(null);
-  // useEffect(() => {
-  //   if (elementRef && elementRef.current) {
-  //     setHeight((elementRef as any).current.clientHeight);
-  //     setWidth((elementRef as any).current.clientWidth);
-  //   }
-  // }, [isReloading]);
-  // if (!is!resourcePreviews || !resourcePreviews.length) return null;
+
+  if (!isLoading && (!resourcePreviews || !resourcePreviews.length))
+    return (
+      <Flex
+        alignItems="center"
+        justifyContent="center"
+        py="50px"
+        backgroundColor="backgroundColor.0"
+        borderColor="gray.200"
+        borderWidth="1px"
+      >
+        <Text fontSize="xl" fontStyle="italic">
+          No results found
+        </Text>
+      </Flex>
+    );
   if (displayMode === 'dense')
     return (
-      <Box
-        // ref={elementRef}
+      <Flex
         borderTop="1px solid"
         borderTopColor="gray.200"
-        width="100%"
+        direction="column"
+        alignItems="stretch"
         backgroundColor="backgroundColor.0"
       >
         {isReloading && (
           <Flex
-            position="absolute"
             backgroundColor="backgroundColor.0"
             direction="column"
             alignItems="center"
-            width="100%"
             h="1000px"
             pt="200px"
             borderWidth="1px"
@@ -306,29 +308,26 @@ export const ResourcePreviewCardList: React.FC<{
             onResourceConsumed={handleResourceConsumed}
           />
         ))}
-      </Box>
+      </Flex>
     );
   return (
-    <Box
-      // ref={elementRef}
+    <Flex
       borderTop="1px solid"
       borderTopColor="gray.200"
-      width="100%"
+      direction="column"
+      alignItems="stretch"
       backgroundColor="backgroundColor.0"
     >
       {isReloading ? (
         <Flex
-          position="absolute"
           backgroundColor="backgroundColor.0"
           direction="column"
           alignItems="center"
-          width="100%"
           h="1000px"
           pt="200px"
           borderWidth="1px"
           borderTopWidth="0px"
           borderColor="gray.200"
-          zIndex={1000}
         >
           <Spinner size="xl" m={4} />
           <Text fontStyle="italic">Finding the most adapted learning resources...</Text>
@@ -344,6 +343,6 @@ export const ResourcePreviewCardList: React.FC<{
           />
         ))
       )}
-    </Box>
+    </Flex>
   );
 };
