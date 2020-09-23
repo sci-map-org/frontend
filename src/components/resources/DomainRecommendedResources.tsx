@@ -1,12 +1,30 @@
-import { Box, Checkbox, Flex, FormControl, FormLabel, Input, Stack, Text } from '@chakra-ui/core';
+import {
+  Box,
+  Button,
+  Checkbox,
+  Flex,
+  FormControl,
+  FormLabel,
+  Input,
+  Stack,
+  Tag,
+  TagCloseButton,
+  TagLabel,
+  Text,
+} from '@chakra-ui/core';
+import { AddIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
+import { values, without } from 'lodash';
 import { DependencyList, useEffect, useRef, useState } from 'react';
+import MultiSelect from 'react-multi-select-component';
+import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 import { useDebounce } from 'use-debounce/lib';
 import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
-import { DomainResourcesOptions } from '../../graphql/types';
+import { DomainResourcesOptions, ResourceType } from '../../graphql/types';
 import { RoleAccess } from '../auth/RoleAccess';
 import { ResourcePreviewCardList } from './ResourcePreviewCard';
+import { ResourceTypeBadge, resourceTypeColorMapping, resourceTypeToLabel } from './ResourceType';
 
 export const getDomainRecommendedResources = gql`
   query getDomainRecommendedResources($key: String!, $resourcesOptions: DomainResourcesOptions!) {
@@ -37,8 +55,6 @@ export const DomainRecommendedResources: React.FC<{
   resourcesOptions,
   setResourcesOptions,
 }) => {
-  // const [showCheckedResources, setShowCheckedResources] = useState(false);
-
   return (
     <Flex direction="column" mb={4}>
       <Stack direction="row" isInline alignItems="center" spacing={4} mb={3} pr={3}>
@@ -65,9 +81,18 @@ export const DomainRecommendedResources: React.FC<{
           </Stack>
         </RoleAccess>
       </Stack>
-      <Stack direction="row" spacing={1} alignItems="center">
+      <Stack direction="row" spacing={8} alignItems="center">
         <SearchResourcesInput
           onChange={(value) => setResourcesOptions({ ...resourcesOptions, query: value || undefined })}
+        />
+        <ResourceTypeFilter
+          selectedTypes={resourcesOptions.filter?.resourceTypeIn || []}
+          onChange={(selectedTypes) =>
+            setResourcesOptions({
+              ...resourcesOptions,
+              filter: { ...resourcesOptions.filter, resourceTypeIn: selectedTypes.length ? selectedTypes : null },
+            })
+          }
         />
       </Stack>
       <ResourcePreviewCardList
@@ -100,4 +125,94 @@ export const SearchResourcesInput: React.FC<{ onChange: (value: string) => void;
     onChange(value);
   }, [value]);
   return <Input w="16rem" placeholder="Search..." value={query} onChange={(e) => setQuery(e.target.value)} />;
+};
+
+const resourceTypetoOption = (type: ResourceType) => ({
+  value: type,
+  label: resourceTypeToLabel(type),
+});
+
+const options = values(ResourceType).map(resourceTypetoOption);
+
+const ResourceTypeFilter: React.FC<{
+  selectedTypes?: ResourceType[];
+  onChange: (selectedTypes: ResourceType[]) => void;
+}> = ({ selectedTypes, onChange }) => {
+  return (
+    <Stack direction="row" alignItems="baseline">
+      <Box w="18rem">
+        <MultiSelect
+          options={options}
+          value={(selectedTypes || []).map(resourceTypetoOption)}
+          onChange={(selectedOptions: { value: ResourceType }[]) => onChange(selectedOptions.map((o) => o.value))}
+          labelledBy={'Filter by type'}
+          valueRenderer={(selectedOptions) => (<ValueRenderer selected={selectedOptions} onChange={onChange} />) as any}
+          ItemRenderer={ItemRenderer}
+          hasSelectAll={false}
+        />
+      </Box>
+      {[ResourceType.Podcast, ResourceType.Course, ResourceType.Book]
+        .filter((defaultTypeFilter) => !selectedTypes || selectedTypes.indexOf(defaultTypeFilter) === -1)
+        .map((defaultTypeFilter) => (
+          <Button
+            key={defaultTypeFilter}
+            size="xs"
+            variant="outline"
+            colorScheme={resourceTypeColorMapping[defaultTypeFilter]}
+            leftIcon={<AddIcon />}
+            onClick={() => onChange([...(selectedTypes || []), defaultTypeFilter])}
+          >
+            {resourceTypeToLabel(defaultTypeFilter)}
+          </Button>
+        ))}
+    </Stack>
+  );
+};
+
+const ValueRenderer: React.FC<{
+  selected: Option[];
+  onChange: (selectedTypes: ResourceType[]) => void;
+}> = ({ selected, onChange }) => {
+  return selected.length ? (
+    <Stack spacing={2} direction="row">
+      {selected.map(({ value, label }) => (
+        <Tag size="md" variant="subtle" colorScheme={resourceTypeColorMapping[value as ResourceType]}>
+          <TagLabel>{label}</TagLabel>
+          <TagCloseButton
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onChange(
+                without(
+                  selected.map((s) => s.value),
+                  value
+                )
+              );
+            }}
+          />
+        </Tag>
+      ))}
+    </Stack>
+  ) : (
+    <Text as="span">Filter by type...</Text>
+  );
+};
+
+const ItemRenderer = ({
+  checked,
+  option,
+  onClick,
+  disabled,
+}: {
+  checked: boolean;
+  option: Option;
+  disabled?: boolean;
+  onClick: any;
+}) => {
+  return (
+    <Stack spacing={4} direction="row" alignItems="center">
+      <Checkbox onChange={onClick} isChecked={checked} isDisabled={disabled} />
+      <ResourceTypeBadge type={option.value as ResourceType} />
+    </Stack>
+  );
 };

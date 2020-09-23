@@ -2,7 +2,7 @@ import { Badge, BadgeProps, FormControl, FormLabel, Select } from '@chakra-ui/co
 import { upperFirst, values } from 'lodash';
 import { ResourceType } from '../../graphql/types';
 
-const colorMapping: { [key in ResourceType]: string } = {
+export const resourceTypeColorMapping: { [key in ResourceType]: string } = {
   [ResourceType.Article]: 'green',
   [ResourceType.ArticleSeries]: 'green',
   [ResourceType.Course]: 'red',
@@ -20,10 +20,12 @@ const colorMapping: { [key in ResourceType]: string } = {
   [ResourceType.VideoGame]: 'yellow',
 };
 
+export const resourceTypeToLabel = (type: ResourceType) => type.split('_').map(upperFirst).join(' ');
+
 export const ResourceTypeBadge: React.FC<BadgeProps & { type: ResourceType }> = ({ type, ...badgeProps }) => {
   return (
-    <Badge colorScheme={colorMapping[type]} fontSize="0.8em" {...badgeProps}>
-      {type.split('_').join(' ')}
+    <Badge colorScheme={resourceTypeColorMapping[type]} fontSize="0.8em" {...badgeProps}>
+      {resourceTypeToLabel(type)}
     </Badge>
   );
 };
@@ -44,7 +46,7 @@ export const ResourceTypeSelector: React.FC<{ value: ResourceType; onSelect: (ty
       >
         {values(ResourceType).map((type) => (
           <option key={type} value={type}>
-            {type.split('_').map(upperFirst).join(' ')}
+            {resourceTypeToLabel(type)}
           </option>
         ))}
       </Select>
