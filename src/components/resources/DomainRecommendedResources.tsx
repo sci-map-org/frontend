@@ -7,6 +7,7 @@ import {
   FormLabel,
   Input,
   Stack,
+  Switch,
   Tag,
   TagCloseButton,
   TagLabel,
@@ -57,44 +58,52 @@ export const DomainRecommendedResources: React.FC<{
 }) => {
   return (
     <Flex direction="column" mb={4}>
-      <Stack direction="row" isInline alignItems="center" spacing={4} mb={3} pr={3}>
+      <Stack direction="row" isInline alignItems="center" spacing={4} mb={2}>
         <Text fontSize="2xl">Resources</Text>
-        <Box flexGrow={1} />
+      </Stack>
+      <Flex
+        direction={{ base: 'column', md: 'row' }}
+        mb={3}
+        justifyContent={{ base: 'flex-start', md: 'space-between' }}
+        alignItems={{ base: 'flex-start', md: 'center' }}
+      >
+        <Stack
+          direction={{ base: 'column', md: 'row' }}
+          spacing={{ base: 2, md: 8 }}
+          alignItems={{ base: 'flex-start', md: 'center' }}
+        >
+          <SearchResourcesInput
+            onChange={(value) => setResourcesOptions({ ...resourcesOptions, query: value || undefined })}
+          />
+          <ResourceTypeFilter
+            selectedTypes={resourcesOptions.filter?.resourceTypeIn || []}
+            onChange={(selectedTypes) =>
+              setResourcesOptions({
+                ...resourcesOptions,
+                filter: { ...resourcesOptions.filter, resourceTypeIn: selectedTypes.length ? selectedTypes : null },
+              })
+            }
+          />
+        </Stack>
         <RoleAccess accessRule="loggedInUser">
-          <Stack spacing={2} direction="row" ml="16px">
-            <FormControl id="show_completed" display="flex" flexDir="row" alignItems="baseline" as="span">
-              <FormLabel fontWeight={300}>Show completed</FormLabel>
-              <Checkbox
-                size="lg"
-                px={1}
-                id="show_completed"
+          <Box mr={{ base: '0px', md: '30px' }} mt={{ base: 2, md: 0 }}>
+            <FormControl id="show_completed" display="flex" flexDir="row" alignItems="center">
+              <FormLabel mb={0} fontWeight={300}>
+                Show completed
+              </FormLabel>
+              <Switch
                 colorScheme="brand"
-                isChecked={resourcesOptions.filter?.consumedByUser || false}
                 onChange={(e) =>
                   setResourcesOptions({
                     ...resourcesOptions,
                     filter: { ...resourcesOptions.filter, consumedByUser: e.target.checked },
                   })
                 }
-              ></Checkbox>
+              />
             </FormControl>
-          </Stack>
+          </Box>
         </RoleAccess>
-      </Stack>
-      <Stack direction="row" spacing={8} alignItems="center">
-        <SearchResourcesInput
-          onChange={(value) => setResourcesOptions({ ...resourcesOptions, query: value || undefined })}
-        />
-        <ResourceTypeFilter
-          selectedTypes={resourcesOptions.filter?.resourceTypeIn || []}
-          onChange={(selectedTypes) =>
-            setResourcesOptions({
-              ...resourcesOptions,
-              filter: { ...resourcesOptions.filter, resourceTypeIn: selectedTypes.length ? selectedTypes : null },
-            })
-          }
-        />
-      </Stack>
+      </Flex>
       <ResourcePreviewCardList
         domainKey={domainKey}
         resourcePreviews={resourcePreviews}
@@ -124,7 +133,15 @@ export const SearchResourcesInput: React.FC<{ onChange: (value: string) => void;
   useDidUpdateEffect(() => {
     onChange(value);
   }, [value]);
-  return <Input w="16rem" placeholder="Search..." value={query} onChange={(e) => setQuery(e.target.value)} />;
+  return (
+    <Input
+      w="16rem"
+      variant="outline"
+      placeholder="Search..."
+      value={query}
+      onChange={(e) => setQuery(e.target.value)}
+    />
+  );
 };
 
 const resourceTypetoOption = (type: ResourceType) => ({
@@ -140,7 +157,7 @@ const ResourceTypeFilter: React.FC<{
 }> = ({ selectedTypes, onChange }) => {
   return (
     <Stack direction="row" alignItems="baseline">
-      <Box w="18rem">
+      <Box w="16rem">
         <MultiSelect
           options={options}
           value={(selectedTypes || []).map(resourceTypetoOption)}
@@ -176,7 +193,7 @@ const ValueRenderer: React.FC<{
   return selected.length ? (
     <Stack spacing={2} direction="row">
       {selected.map(({ value, label }) => (
-        <Tag size="md" variant="subtle" colorScheme={resourceTypeColorMapping[value as ResourceType]}>
+        <Tag size="md" key={value} variant="subtle" colorScheme={resourceTypeColorMapping[value as ResourceType]}>
           <TagLabel>{label}</TagLabel>
           <TagCloseButton
             onClick={(e) => {
@@ -194,7 +211,7 @@ const ValueRenderer: React.FC<{
       ))}
     </Stack>
   ) : (
-    <Text as="span">Filter by type...</Text>
+    <Text textColor="gray.400">Filter by type...</Text>
   );
 };
 

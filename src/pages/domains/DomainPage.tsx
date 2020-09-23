@@ -1,4 +1,4 @@
-import { useApolloClient } from '@apollo/client';
+import { NetworkStatus } from '@apollo/react-hooks';
 import { Box, Flex, Heading, IconButton, Skeleton } from '@chakra-ui/core';
 import { SettingsIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
@@ -9,14 +9,8 @@ import { DomainConceptGraph } from '../../components/concepts/DomainConceptGraph
 import { DomainConceptList } from '../../components/concepts/DomainConceptList';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { InternalButtonLink } from '../../components/navigation/InternalLink';
-import {
-  DomainRecommendedResources,
-  getDomainRecommendedResources,
-} from '../../components/resources/DomainRecommendedResources';
-import {
-  GetDomainRecommendedResourcesQuery,
-  GetDomainRecommendedResourcesQueryVariables,
-} from '../../components/resources/DomainRecommendedResources.generated';
+import { DomainRecommendedResources } from '../../components/resources/DomainRecommendedResources';
+import { useGetDomainRecommendedResourcesQuery } from '../../components/resources/DomainRecommendedResources.generated';
 import { ConceptData, generateConceptData } from '../../graphql/concepts/concepts.fragments';
 import { DomainData, generateDomainData } from '../../graphql/domains/domains.fragments';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
@@ -97,29 +91,27 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
     filter: { consumedByUser: false },
   });
   const [resourcesPreviews, setResourcePreviews] = useState<ResourcePreviewDataFragment[]>([]);
-  const [resourcesLoading, setResourcesLoading] = useState(true);
 
-  const apolloClient = useApolloClient();
+  const { data: resourceData, networkStatus, refetch: refetchResources } = useGetDomainRecommendedResourcesQuery({
+    variables: { key: domainKey, resourcesOptions: resourcesOptions },
+    fetchPolicy: 'cache-first',
+    notifyOnNetworkStatusChange: true,
+    onCompleted(data) {
+      if (data?.getDomainByKey.resources?.items) {
+        setResourcePreviews(data?.getDomainByKey.resources?.items);
+      }
+    },
+  });
+  const [resourcesLoading, setResourcesLoading] = useState(networkStatus === NetworkStatus.loading);
 
   useEffect(() => {
-    reloadResourcePreviews();
-  }, [resourcesOptions]);
+    setResourcesLoading(
+      [NetworkStatus.refetch, NetworkStatus.setVariables, NetworkStatus.loading, NetworkStatus].indexOf(networkStatus) >
+        -1
+    );
+  }, [networkStatus]);
 
-  const reloadResourcePreviews = async () => {
-    setResourcesLoading(true);
-    const { data } = await apolloClient.query<
-      GetDomainRecommendedResourcesQuery,
-      GetDomainRecommendedResourcesQueryVariables
-    >({
-      query: getDomainRecommendedResources,
-      variables: { key: domainKey, resourcesOptions: resourcesOptions },
-      fetchPolicy: 'network-only',
-    });
-    if (data?.getDomainByKey.resources?.items) {
-      setResourcePreviews(data?.getDomainByKey.resources?.items);
-      setResourcesLoading(false);
-    }
-  };
+  const resources = resourceData?.getDomainByKey.resources?.items || resourcesPreviews;
 
   const domain = data?.getDomainByKey || placeholderDomainData;
 
@@ -175,15 +167,15 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
       )}
       <Flex direction={{ base: 'column-reverse', md: 'row' }} mb="100px">
         <Flex direction="column" flexShrink={0}>
-          <DomainConceptList domain={domain} isLoading={loading} onConceptToggled={() => reloadResourcePreviews()} />
+          <DomainConceptList domain={domain} isLoading={loading} onConceptToggled={() => refetchResources()} />
         </Flex>
 
         <Flex direction="column" flexShrink={1} flexGrow={1}>
           <DomainRecommendedResources
             domainKey={domainKey}
-            resourcePreviews={resourcesPreviews}
+            resourcePreviews={resources}
             isLoading={resourcesLoading}
-            reloadRecommendedResources={() => reloadResourcePreviews()}
+            reloadRecommendedResources={() => refetchResources()}
             resourcesOptions={resourcesOptions}
             setResourcesOptions={setResourcesOptions}
           />
