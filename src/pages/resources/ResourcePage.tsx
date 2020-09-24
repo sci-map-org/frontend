@@ -42,11 +42,6 @@ export const getResourceResourcePage = gql`
       coveredConcepts(options: {}) {
         items {
           ...ConceptData
-          domain {
-            _id
-            key
-            name
-          }
         }
       }
       domains(options: {}) {

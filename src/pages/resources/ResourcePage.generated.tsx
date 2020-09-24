@@ -21,10 +21,6 @@ export type GetResourceResourcePageQuery = (
       { __typename?: 'ResourceCoveredConceptsResults' }
       & { items: Array<(
         { __typename?: 'Concept' }
-        & { domain?: Types.Maybe<(
-          { __typename?: 'Domain' }
-          & Pick<Types.Domain, '_id' | 'key' | 'name'>
-        )> }
         & ConceptDataFragment
       )> }
     )>, domains?: Types.Maybe<(
