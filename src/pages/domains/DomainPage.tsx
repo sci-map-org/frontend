@@ -167,7 +167,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
         </Box>
       )}
       <Flex direction={{ base: 'column-reverse', md: 'row' }} mb="100px">
-        <Flex direction="column" flexShrink={0}>
+        <Flex direction="column" flexShrink={0} minWidth="250px">
           <DomainConceptList domain={domain} isLoading={loading} onConceptToggled={() => refetchResources()} />
         </Flex>
 
