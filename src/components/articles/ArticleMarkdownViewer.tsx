@@ -89,7 +89,11 @@ export const ArticleMarkdownViewer: React.FC<{ content: string }> = ({ content }
           );
         },
         list: ({ children, ...p }) => {
-          return <List styleType="disc">{children}</List>;
+          return (
+            <List stylePosition="inside" styleType="disc">
+              {children}
+            </List>
+          );
         },
         listItem: (a) => {
           return (
