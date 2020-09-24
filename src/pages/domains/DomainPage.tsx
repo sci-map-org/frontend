@@ -94,7 +94,8 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
 
   const { data: resourceData, networkStatus, refetch: refetchResources } = useGetDomainRecommendedResourcesQuery({
     variables: { key: domainKey, resourcesOptions: resourcesOptions },
-    fetchPolicy: 'cache-first',
+    fetchPolicy: 'no-cache',
+    ssr: false,
     notifyOnNetworkStatusChange: true,
     onCompleted(data) {
       if (data?.getDomainByKey.resources?.items) {
