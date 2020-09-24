@@ -196,10 +196,9 @@ export const ResourcePreviewCardList: React.FC<{
   domainKey: string;
   resourcePreviews: ResourcePreviewDataFragment[];
   isLoading?: boolean;
-  isReloading?: boolean;
   displayMode?: 'wide' | 'dense';
   onResourceConsumed?: (resource: ResourcePreviewDataFragment, consumed: boolean) => void;
-}> = ({ resourcePreviews, domainKey, isReloading, isLoading, onResourceConsumed, displayMode = 'wide' }) => {
+}> = ({ resourcePreviews, domainKey, isLoading, onResourceConsumed, displayMode = 'wide' }) => {
   const checkedResourceToast = useToast();
 
   const [setConceptKnown] = useSetConceptsKnownMutation();
@@ -259,7 +258,7 @@ export const ResourcePreviewCardList: React.FC<{
     });
   };
 
-  if (!isLoading && (!resourcePreviews || !resourcePreviews.length))
+  if (!isLoading && !resourcePreviews.length)
     return (
       <Flex
         alignItems="center"
@@ -283,7 +282,7 @@ export const ResourcePreviewCardList: React.FC<{
         alignItems="stretch"
         backgroundColor="backgroundColor.0"
       >
-        {isReloading && (
+        {isLoading && (
           <Flex
             backgroundColor="backgroundColor.0"
             direction="column"
@@ -304,7 +303,6 @@ export const ResourcePreviewCardList: React.FC<{
             key={preview._id}
             domainKey={domainKey}
             resource={preview}
-            isLoading={isLoading}
             onResourceConsumed={handleResourceConsumed}
           />
         ))}
@@ -318,7 +316,7 @@ export const ResourcePreviewCardList: React.FC<{
       alignItems="stretch"
       backgroundColor="backgroundColor.0"
     >
-      {isReloading ? (
+      {isLoading ? (
         <Flex
           backgroundColor="backgroundColor.0"
           direction="column"
@@ -338,7 +336,6 @@ export const ResourcePreviewCardList: React.FC<{
             key={preview._id}
             domainKey={domainKey}
             resource={preview}
-            isLoading={isLoading}
             onResourceConsumed={handleResourceConsumed}
           />
         ))

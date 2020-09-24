@@ -132,7 +132,6 @@ export const DomainRecommendedResources: React.FC<{
         domainKey={domainKey}
         resourcePreviews={resourcePreviews}
         isLoading={isLoading}
-        isReloading={isLoading}
         onResourceConsumed={() => reloadRecommendedResources()}
       />
     </Flex>
