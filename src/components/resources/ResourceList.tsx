@@ -30,8 +30,7 @@ export const ResourceList: React.FC<ResourceListProps> = ({ domainKey }) => {
     variables: {
       domainKey,
       options: {
-        pagination: {},
-        sorting: { type: DomainResourcesSortingType.CreationDate, direction: SortingDirection.Desc },
+        sortingType: DomainResourcesSortingType.Newest,
       },
     },
   });
