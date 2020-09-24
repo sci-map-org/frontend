@@ -185,7 +185,7 @@ export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = 
         </Heading>
         <ResourcePreviewCardList
           domainKey={concept.domain.key}
-          resourcePreviews={concept.coveredByResources?.items}
+          resourcePreviews={concept.coveredByResources?.items || []}
           isLoading={loading}
         />
 
