@@ -1,4 +1,4 @@
-import { Box, Checkbox, Collapse, Divider, Flex, IconButton, Skeleton, Stack } from '@chakra-ui/core';
+import { Box, Collapse, Divider, Flex, IconButton, Skeleton, Stack } from '@chakra-ui/core';
 import { AddIcon, MinusIcon } from '@chakra-ui/icons';
 import { remove } from 'lodash';
 import Router from 'next/router';
@@ -12,8 +12,8 @@ import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { GetDomainByKeyDomainPageQuery } from '../../pages/domains/DomainPage.generated';
 import { RoleAccess } from '../auth/RoleAccess';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
-import { InternalLink } from '../navigation/InternalLink';
 import { CompletedCheckbox } from '../lib/CompletedCheckbox';
+import { InternalLink } from '../navigation/InternalLink';
 
 type NestedConceptItem = {
   concept: ConceptDataFragment & { subConcepts?: { concept: { _id: string } }[] | null };

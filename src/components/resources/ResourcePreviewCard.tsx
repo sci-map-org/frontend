@@ -23,8 +23,6 @@ import {
 } from '@chakra-ui/core';
 import { ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
-import { useEffect, useRef, useState } from 'react';
-import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { useSetConceptsKnownMutation } from '../../graphql/concepts/concepts.operations.generated';
 import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
@@ -196,13 +194,13 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
 
 export const ResourcePreviewCardList: React.FC<{
   domainKey: string;
-  resourcePreviews?: ResourcePreviewDataFragment[];
+  resourcePreviews: ResourcePreviewDataFragment[];
   isLoading?: boolean;
-  isReloading?: boolean;
   displayMode?: 'wide' | 'dense';
   onResourceConsumed?: (resource: ResourcePreviewDataFragment, consumed: boolean) => void;
-}> = ({ resourcePreviews, domainKey, isReloading, isLoading, onResourceConsumed, displayMode = 'wide' }) => {
+}> = ({ resourcePreviews, domainKey, isLoading, onResourceConsumed, displayMode = 'wide' }) => {
   const checkedResourceToast = useToast();
+
   const [setConceptKnown] = useSetConceptsKnownMutation();
   const [setResourceConsumedMutation] = useSetResourceConsumedMutation();
   const setResourceConsumed = async (resource: ResourcePreviewDataFragment, consumed: boolean) => {
@@ -259,33 +257,37 @@ export const ResourcePreviewCardList: React.FC<{
       duration: 3000,
     });
   };
-  const [height, setHeight] = useState(0);
-  const [width, setWidth] = useState(0);
-  const elementRef = useRef(null);
-  useEffect(() => {
-    if (elementRef && elementRef.current) {
-      setHeight((elementRef as any).current.clientHeight);
-      setWidth((elementRef as any).current.clientWidth);
-    }
-  }, [isReloading]);
-  if (!resourcePreviews || !resourcePreviews.length) return null;
+
+  if (!isLoading && !resourcePreviews.length)
+    return (
+      <Flex
+        alignItems="center"
+        justifyContent="center"
+        py="50px"
+        backgroundColor="backgroundColor.0"
+        borderColor="gray.200"
+        borderWidth="1px"
+      >
+        <Text fontSize="xl" fontStyle="italic">
+          No results found
+        </Text>
+      </Flex>
+    );
   if (displayMode === 'dense')
     return (
-      <Box
-        ref={elementRef}
+      <Flex
         borderTop="1px solid"
         borderTopColor="gray.200"
-        width="100%"
+        direction="column"
+        alignItems="stretch"
         backgroundColor="backgroundColor.0"
       >
-        {isReloading && height > 300 && (
+        {isLoading && (
           <Flex
-            position="absolute"
             backgroundColor="backgroundColor.0"
             direction="column"
             alignItems="center"
-            width={width}
-            h={height}
+            h="1000px"
             pt="200px"
             borderWidth="1px"
             borderTopWidth="0px"
@@ -301,47 +303,43 @@ export const ResourcePreviewCardList: React.FC<{
             key={preview._id}
             domainKey={domainKey}
             resource={preview}
-            isLoading={isLoading}
             onResourceConsumed={handleResourceConsumed}
           />
         ))}
-      </Box>
+      </Flex>
     );
   return (
-    <Box
-      ref={elementRef}
+    <Flex
       borderTop="1px solid"
       borderTopColor="gray.200"
-      width="100%"
+      direction="column"
+      alignItems="stretch"
       backgroundColor="backgroundColor.0"
     >
-      {isReloading && height > 300 && (
+      {isLoading ? (
         <Flex
-          position="absolute"
           backgroundColor="backgroundColor.0"
           direction="column"
           alignItems="center"
-          width={width}
-          h={height}
+          h="1000px"
           pt="200px"
           borderWidth="1px"
           borderTopWidth="0px"
           borderColor="gray.200"
-          zIndex={1000}
         >
           <Spinner size="xl" m={4} />
           <Text fontStyle="italic">Finding the most adapted learning resources...</Text>
         </Flex>
+      ) : (
+        resourcePreviews.map((preview) => (
+          <WideResourcePreviewCard
+            key={preview._id}
+            domainKey={domainKey}
+            resource={preview}
+            onResourceConsumed={handleResourceConsumed}
+          />
+        ))
       )}
-      {resourcePreviews.map((preview) => (
-        <WideResourcePreviewCard
-          key={preview._id}
-          domainKey={domainKey}
-          resource={preview}
-          isLoading={isLoading}
-          onResourceConsumed={handleResourceConsumed}
-        />
-      ))}
-    </Box>
+    </Flex>
   );
 };

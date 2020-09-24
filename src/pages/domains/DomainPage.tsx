@@ -1,19 +1,21 @@
-import { Box, Flex, Heading, IconButton, Link, Skeleton, Stack, Text } from '@chakra-ui/core';
+import { NetworkStatus } from '@apollo/react-hooks';
+import { Box, Flex, Heading, IconButton, Skeleton } from '@chakra-ui/core';
 import { SettingsIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { DomainConceptGraph } from '../../components/concepts/DomainConceptGraph';
 import { DomainConceptList } from '../../components/concepts/DomainConceptList';
 import { PageLayout } from '../../components/layout/PageLayout';
-import { DomainLearningPaths } from '../../components/learning_paths/DomainLearningPaths';
 import { InternalButtonLink } from '../../components/navigation/InternalLink';
 import { DomainRecommendedResources } from '../../components/resources/DomainRecommendedResources';
+import { useGetDomainRecommendedResourcesQuery } from '../../components/resources/DomainRecommendedResources.generated';
 import { ConceptData, generateConceptData } from '../../graphql/concepts/concepts.fragments';
 import { DomainData, generateDomainData } from '../../graphql/domains/domains.fragments';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
-import { generateResourcePreviewData, ResourcePreviewData } from '../../graphql/resources/resources.fragments';
+import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { DomainResourcesOptions, DomainResourcesSortingType } from '../../graphql/types';
 import { useMockedFeaturesEnabled } from '../../hooks/useMockedFeaturesEnabled';
 import { PageInfo, routerPushToPage } from '../PageInfo';
 import { GetDomainByKeyDomainPageQuery, useGetDomainByKeyDomainPageQuery } from './DomainPage.generated';
@@ -51,16 +53,10 @@ export const getDomainByKeyDomainPage = gql`
           }
         }
       }
-      resources(options: { pagination: { limit: 30 } }) {
-        items {
-          ...ResourcePreviewData
-        }
-      }
     }
   }
   ${DomainData}
   ${ConceptData}
-  ${ResourcePreviewData}
 `;
 
 const placeholderDomainData: GetDomainByKeyDomainPageQuery['getDomainByKey'] = {
@@ -81,23 +77,46 @@ const placeholderDomainData: GetDomainByKeyDomainPageQuery['getDomainByKey'] = {
       },
     ],
   },
-  resources: {
-    items: [generateResourcePreviewData(), generateResourcePreviewData(), generateResourcePreviewData()],
-  },
 };
 
 export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
   const router = useRouter();
-  const { data, error, loading, refetch } = useGetDomainByKeyDomainPageQuery({ variables: { key: domainKey } });
-  const [reloading, setReloading] = useState(false);
+
+  const { data, loading } = useGetDomainByKeyDomainPageQuery({
+    variables: { key: domainKey },
+  });
+
+  const [resourcesOptions, setResourcesOptions] = useState<DomainResourcesOptions>({
+    sortingType: DomainResourcesSortingType.Recommended,
+    filter: { consumedByUser: false },
+  });
+  const [resourcesPreviews, setResourcePreviews] = useState<ResourcePreviewDataFragment[]>([]);
+
+  const { data: resourceData, networkStatus, refetch: refetchResources } = useGetDomainRecommendedResourcesQuery({
+    variables: { key: domainKey, resourcesOptions: resourcesOptions },
+    fetchPolicy: 'network-only',
+    ssr: false,
+    notifyOnNetworkStatusChange: true,
+    onCompleted(data) {
+      if (data?.getDomainByKey.resources?.items) {
+        setResourcePreviews(data?.getDomainByKey.resources?.items);
+      }
+    },
+  });
+  const [resourcesLoading, setResourcesLoading] = useState(networkStatus === NetworkStatus.loading);
+
+  useEffect(() => {
+    setResourcesLoading(
+      [NetworkStatus.refetch, NetworkStatus.setVariables, NetworkStatus.loading, NetworkStatus].indexOf(networkStatus) >
+        -1
+    );
+  }, [networkStatus]);
+
+  const resources = resourceData?.getDomainByKey.resources?.items || resourcesPreviews;
+
   const domain = data?.getDomainByKey || placeholderDomainData;
+
   const { mockedFeaturesEnabled } = useMockedFeaturesEnabled();
-  const reloadRecommendedResources = async () => {
-    setReloading(true);
-    await refetch();
-    setReloading(false);
-  };
-  if (error) return <Box>Domain not found !</Box>;
 
   return (
     <PageLayout>
@@ -149,21 +168,22 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
       )}
       <Flex direction={{ base: 'column-reverse', md: 'row' }} mb="100px">
         <Flex direction="column" flexShrink={0}>
-          <DomainConceptList domain={domain} isLoading={loading} onConceptToggled={reloadRecommendedResources} />
+          <DomainConceptList domain={domain} isLoading={loading} onConceptToggled={() => refetchResources()} />
         </Flex>
-        {domain.resources && (
-          <Flex direction="column" flexShrink={1} flexGrow={1}>
-            <DomainRecommendedResources
-              domain={domain}
-              resourcePreviews={domain.resources.items}
-              isLoading={loading}
-              isReloading={reloading}
-              reloadRecommendedResources={reloadRecommendedResources}
-            />
-            <DomainConceptGraph domain={domain} isLoading={loading} minNbRelationships={5} />
-            {/* {mockedFeaturesEnabled && <DomainLearningPaths domain={domain} />} */}
-          </Flex>
-        )}
+
+        <Flex direction="column" flexShrink={1} flexGrow={1}>
+          <DomainRecommendedResources
+            domainKey={domainKey}
+            resourcePreviews={resources}
+            isLoading={resourcesLoading}
+            reloadRecommendedResources={() => refetchResources()}
+            resourcesOptions={resourcesOptions}
+            setResourcesOptions={setResourcesOptions}
+          />
+          <DomainConceptGraph domain={domain} isLoading={loading} minNbRelationships={5} />
+          {/* {mockedFeaturesEnabled && <DomainLearningPaths domain={domain} />} */}
+        </Flex>
+        {/* )} */}
         {/* {mockedFeaturesEnabled && (
           <Stack spacing={4} direction="column" ml={6} flexShrink={1}>
             <Box>

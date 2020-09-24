@@ -16,7 +16,6 @@ export const Wrapper: React.FC<WrapperProps> = ({ children, apolloClient }) => {
   return (
     <ApolloProvider client={apolloClient}>
       <ChakraProvider resetCSS theme={theme}>
-        {/* <CSSReset /> */}
         <DefaultSeo title="Sci-Map.org" />
         <UnauthentificatedModalProvider>
           <Layout>{children}</Layout>
