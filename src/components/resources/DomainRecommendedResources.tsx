@@ -6,6 +6,7 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Select,
   Stack,
   Switch,
   Tag,
@@ -22,7 +23,7 @@ import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 import { useDebounce } from 'use-debounce/lib';
 import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
-import { DomainResourcesOptions, ResourceType } from '../../graphql/types';
+import { DomainResourcesOptions, DomainResourcesSortingType, ResourceType } from '../../graphql/types';
 import { RoleAccess } from '../auth/RoleAccess';
 import { ResourcePreviewCardList } from './ResourcePreviewCard';
 import { ResourceTypeBadge, resourceTypeColorMapping, resourceTypeToLabel } from './ResourceType';
@@ -58,9 +59,28 @@ export const DomainRecommendedResources: React.FC<{
 }) => {
   return (
     <Flex direction="column" mb={4}>
-      <Stack direction="row" isInline alignItems="center" spacing={4} mb={2}>
+      <Flex direction="row" justifyContent="space-between" alignItems="center" mb={2}>
         <Text fontSize="2xl">Resources</Text>
-      </Stack>
+        <Box pr={3}>
+          <FormControl id="sort_by" display="flex" flexDir="row" alignItems="center">
+            <FormLabel mb={0} fontWeight={300}>
+              Sort by:
+            </FormLabel>
+            <Select
+              w="8rem"
+              size="sm"
+              variant="flushed"
+              onChange={(e) =>
+                setResourcesOptions({ ...resourcesOptions, sortingType: e.target.value as DomainResourcesSortingType })
+              }
+              value={resourcesOptions.sortingType}
+            >
+              <option value={DomainResourcesSortingType.Recommended}>Most Relevant</option>
+              <option value={DomainResourcesSortingType.Newest}>Newest First</option>
+            </Select>
+          </FormControl>
+        </Box>
+      </Flex>
       <Flex
         direction={{ base: 'column', md: 'row' }}
         mb={3}
