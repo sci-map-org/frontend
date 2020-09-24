@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/core';
 import { CheckIcon, NotAllowedIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { generateUrlKey } from '../../services/url.service';
 import { useGetUserByKeyQuery } from './RegisterFormProfileInfo.generated';
 
@@ -45,7 +45,14 @@ export const RegisterFormProfileInfo: React.FC<{
   });
 
   const isKeyAvailable = !loading && !data;
-  const isKeyValid = key === generateUrlKey(key) && key.length >= MIN_USER_KEY_LENGTH;
+
+  const [isKeyValid, setIsKeyValid] = useState(false);
+  useEffect(() => {
+    try {
+      setIsKeyValid(key === generateUrlKey(key) && key.length >= MIN_USER_KEY_LENGTH);
+    } catch (err) {}
+  }, [key]);
+
   return (
     <Stack spacing={6}>
       <Text fontSize="4xl">Your Profile Information</Text>

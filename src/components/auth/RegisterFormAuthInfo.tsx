@@ -1,5 +1,6 @@
 import {
   Button,
+  Box,
   Divider,
   FormControl,
   FormErrorMessage,
@@ -44,8 +45,8 @@ export const RegisterFormAuthInfo: React.FC<RegisterFormAuthInfoProps> = ({ onNe
 
   return (
     <Stack spacing={6} textAlign="center">
-      <Text fontSize="md" mb={3} px={3} textAlign="left" textColor="mainDarker" fontWeight={500}>
-        Create an account and
+      <Box fontSize="md" mb={3} px={3} textAlign="left" textColor="mainDarker" as="div" fontWeight={500}>
+        <Text>Create an account and</Text>
         <List styleType="disc" ml={10} mt={2}>
           <ListItem>Enjoy personalized recommendations</ListItem>
           <ListItem>Keep track of what you learned</ListItem>
@@ -54,7 +55,7 @@ export const RegisterFormAuthInfo: React.FC<RegisterFormAuthInfoProps> = ({ onNe
             ...and much more!
           </Text>
         </List>
-      </Text>
+      </Box>
       <Text fontSize="xl" fontWeight={300}>
         Register using your Google account
       </Text>
