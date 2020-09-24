@@ -3,7 +3,6 @@ import { ChakraProvider } from '@chakra-ui/core';
 import { NormalizedCacheObject } from 'apollo-cache-inmemory';
 import { DefaultSeo } from 'next-seo';
 import React from 'react';
-import { RecoilRoot } from 'recoil';
 import '../../src/services/cloudwatch_error_logger.service';
 import { Layout } from '../components/layout/Layout';
 import { theme } from '../theme/theme';
@@ -16,31 +15,28 @@ interface WrapperProps {
 export const Wrapper: React.FC<WrapperProps> = ({ children, apolloClient }) => {
   return (
     <ApolloProvider client={apolloClient}>
-      <RecoilRoot>
-        <ChakraProvider resetCSS theme={theme}>
-          {/* <CSSReset /> */}
-          <DefaultSeo title="Sci-Map.org" />
-          <UnauthentificatedModalProvider>
-            <Layout>{children}</Layout>
-          </UnauthentificatedModalProvider>
-          <style global jsx>
-            {`
-              html,
-              body,
-              body > div:first-child,
-              div#__next,
-              div#__next > div {
-                height: 100%;
-              }
-              ul {
-                list-style-type: none;
-              }
-              html {
-              }
-            `}
-          </style>
-        </ChakraProvider>
-      </RecoilRoot>
+      <ChakraProvider resetCSS theme={theme}>
+        <DefaultSeo title="Sci-Map.org" />
+        <UnauthentificatedModalProvider>
+          <Layout>{children}</Layout>
+        </UnauthentificatedModalProvider>
+        <style global jsx>
+          {`
+            html,
+            body,
+            body > div:first-child,
+            div#__next,
+            div#__next > div {
+              height: 100%;
+            }
+            ul {
+              list-style-type: none;
+            }
+            html {
+            }
+          `}
+        </style>
+      </ChakraProvider>
     </ApolloProvider>
   );
 };
