@@ -6,6 +6,8 @@ import {
   FormControl,
   FormLabel,
   Input,
+  InputGroup,
+  InputRightElement,
   Select,
   Stack,
   Switch,
@@ -20,10 +22,12 @@ import { values, without } from 'lodash';
 import { DependencyList, useEffect, useRef, useState } from 'react';
 import MultiSelect from 'react-multi-select-component';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
+import BeatLoader from 'react-spinners/BeatLoader';
 import { useDebounce } from 'use-debounce/lib';
 import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { DomainResourcesOptions, DomainResourcesSortingType, ResourceType } from '../../graphql/types';
+import { theme } from '../../theme/theme';
 import { RoleAccess } from '../auth/RoleAccess';
 import { ResourcePreviewCardList } from './ResourcePreviewCard';
 import { ResourceTypeBadge, resourceTypeColorMapping, resourceTypeToLabel } from './ResourceType';
@@ -146,7 +150,7 @@ function useDidUpdateEffect(fn: () => void, inputs: DependencyList) {
 
 export const SearchResourcesInput: React.FC<{ onChange: (value: string) => void; debounceDuration?: number }> = ({
   onChange,
-  debounceDuration = 150,
+  debounceDuration = 250,
 }) => {
   const [query, setQuery] = useState('');
   const [value] = useDebounce(query, debounceDuration);
@@ -154,13 +158,20 @@ export const SearchResourcesInput: React.FC<{ onChange: (value: string) => void;
     onChange(value);
   }, [value]);
   return (
-    <Input
-      w="16rem"
-      variant="outline"
-      placeholder="Search..."
-      value={query}
-      onChange={(e) => setQuery(e.target.value)}
-    />
+    <InputGroup>
+      <Input
+        w="16rem"
+        variant="outline"
+        placeholder="Search..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+      />
+      {value !== query && (
+        <InputRightElement w="68px" display="flex" alignItems="center" justifyContent="center">
+          <BeatLoader size={8} margin={2} color={theme.colors.main} />
+        </InputRightElement>
+      )}
+    </InputGroup>
   );
 };
 
