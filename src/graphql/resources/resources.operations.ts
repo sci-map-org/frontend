@@ -45,3 +45,17 @@ export const deleteResource = gql`
     }
   }
 `;
+
+export const attachResourceToDomain = gql`
+  mutation attachResourceToDomain($domainId: String!, $resourceId: String!) {
+    attachResourceToDomain(domainId: $domainId, resourceId: $resourceId) {
+      _id
+      domains(options: {}) {
+        items {
+          _id
+          key
+        }
+      }
+    }
+  }
+`;

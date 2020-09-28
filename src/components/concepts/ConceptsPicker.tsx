@@ -17,6 +17,7 @@ const getConceptSuggestions = (entities: ConceptDataFragment[], value: string): 
 
 interface ConceptsPickerProps {
   title?: string;
+  placeholder?: string;
   pickableConceptList: ConceptDataFragment[];
   pickedConceptList: ConceptDataFragment[];
   onSelect: (concept: ConceptDataFragment) => void;
@@ -26,6 +27,7 @@ interface ConceptsPickerProps {
 
 export const ConceptsPicker: React.FC<ConceptsPickerProps> = ({
   title,
+  placeholder,
   pickableConceptList,
   pickedConceptList,
   maxNbConceptsShown = 5,
@@ -35,7 +37,7 @@ export const ConceptsPicker: React.FC<ConceptsPickerProps> = ({
   const [conceptSuggestions, setConceptSuggestions] = useState<ConceptDataFragment[]>([]);
   const [showAll, setShowAll] = useState(false);
   return (
-    <Stack direction="row" borderWidth="0px" borderRadius={5} p={3} spacing={5}>
+    <Stack direction="row" spacing={5}>
       <Stack direction="column" alignItems="start">
         {title && <Text fontWeight={700}>{title}</Text>}
         <Box>
@@ -65,7 +67,7 @@ export const ConceptsPicker: React.FC<ConceptsPickerProps> = ({
         )}
         <EntitySelector
           inputSize="sm"
-          placeholder="Search Concepts"
+          placeholder={placeholder || 'Search Concepts'}
           entitySuggestions={conceptSuggestions}
           fetchEntitySuggestions={(v: string) => setConceptSuggestions(getConceptSuggestions(pickableConceptList, v))}
           onSelect={onSelect}
