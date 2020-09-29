@@ -3,7 +3,7 @@ import gql from 'graphql-tag';
 import Router, { useRouter } from 'next/router';
 import { Access } from '../../components/auth/Access';
 import { RoleAccess } from '../../components/auth/RoleAccess';
-import { ResourceDomainAndConceptsSelector } from '../../components/concepts/DomainAndConceptsSelector';
+import { ResourceDomainAndCoveredConceptsSelector } from '../../components/resources/ResourceDomainAndCoveredConceptsSelector';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { ResourceCoveredConceptsByDomainViewer } from '../../components/resources/ResourceCoveredConceptsByDomainViewer';
@@ -152,7 +152,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
             accessRule="loggedInUser"
             renderAccessDenied={() => <ResourceCoveredConceptsByDomainViewer resource={resource} isLoading={loading} />}
           >
-            <ResourceDomainAndConceptsSelector resource={resource} />
+            <ResourceDomainAndCoveredConceptsSelector resource={resource} />
           </RoleAccess>
         )}
       </Stack>

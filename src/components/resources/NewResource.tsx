@@ -26,7 +26,7 @@ import {
 } from '../../graphql/resources/resources.operations.generated';
 import { CreateResourcePayload, ResourceMediaType, ResourceTag, ResourceType } from '../../graphql/types';
 import { validateUrl } from '../../services/url.service';
-import { DomainAndSelectedConcepts, StatelessDomainAndConceptsSelector } from '../concepts/DomainAndConceptsSelector';
+import { DomainAndConceptsSelector, DomainAndSelectedConcepts } from '../concepts/DomainAndConceptsSelector';
 import { useCreateResourceMutation } from './NewResource.generated';
 import { ResourceDescriptionInput } from './ResourceDescription';
 import { ResourceDurationSelector } from './ResourceDuration';
@@ -83,7 +83,7 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
         <ResourceDurationSelector value={durationMs} onChange={setDurationMs} />
       </Flex>
       <ResourceDescriptionInput value={description} onChange={(d) => setDescription(d)} />
-      <StatelessDomainAndConceptsSelector
+      <DomainAndConceptsSelector
         defaultDomains={defaultAttachedDomains || []}
         onChange={(domainsAndCoveredConceptsSelected) =>
           setSelectedDomainsAndCoveredConcepts(domainsAndCoveredConceptsSelected)
