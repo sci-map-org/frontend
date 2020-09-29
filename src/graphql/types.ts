@@ -253,6 +253,11 @@ export type Resource = {
   creator?: Maybe<User>;
   coveredConcepts?: Maybe<ResourceCoveredConceptsResults>;
   domains?: Maybe<ResourceDomainsResults>;
+  subResources?: Maybe<Array<Resource>>;
+  subResourceSeries?: Maybe<Array<Resource>>;
+  parentResource?: Maybe<Resource>;
+  nextResource?: Maybe<Resource>;
+  previousResource?: Maybe<Resource>;
 };
 
 
@@ -421,6 +426,9 @@ export type Mutation = {
   setResourcesConsumed: Array<Resource>;
   voteResource: Resource;
   rateResource: Resource;
+  addSubResource: SubResourceCreatedResult;
+  createSubResourceSeries: SubResourceCreatedResult;
+  addSubResourceToSeries: SubResourceCreatedResult;
   addConceptToDomain: Concept;
   updateConcept: Concept;
   deleteConcept: DeleteConceptResult;
@@ -569,6 +577,25 @@ export type MutationVoteResourceArgs = {
 export type MutationRateResourceArgs = {
   resourceId: Scalars['String'];
   value: Scalars['Float'];
+};
+
+
+export type MutationAddSubResourceArgs = {
+  parentResourceId: Scalars['String'];
+  subResourceId: Scalars['String'];
+};
+
+
+export type MutationCreateSubResourceSeriesArgs = {
+  parentResourceId: Scalars['String'];
+  subResourceId: Scalars['String'];
+};
+
+
+export type MutationAddSubResourceToSeriesArgs = {
+  parentResourceId: Scalars['String'];
+  previousResourceId: Scalars['String'];
+  subResourceId: Scalars['String'];
 };
 
 
@@ -760,6 +787,12 @@ export enum ResourceVoteValue {
   Up = 'up',
   Down = 'down'
 }
+
+export type SubResourceCreatedResult = {
+  __typename?: 'SubResourceCreatedResult';
+  parentResource: Resource;
+  subResource: Resource;
+};
 
 export type AddConceptToDomainPayload = {
   key?: Maybe<Scalars['String']>;

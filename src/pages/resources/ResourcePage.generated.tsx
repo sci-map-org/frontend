@@ -1,6 +1,6 @@
 import * as Types from '../../graphql/types';
 
-import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { ResourceDataFragment, ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { DomainWithConceptsDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import * as Operations from './ResourcePage';
@@ -29,7 +29,10 @@ export type GetResourceResourcePageQuery = (
         { __typename?: 'Domain' }
         & DomainWithConceptsDataFragment
       )> }
-    )> }
+    )>, subResources?: Types.Maybe<Array<(
+      { __typename?: 'Resource' }
+      & ResourcePreviewDataFragment
+    )>> }
     & ResourceDataFragment
   ) }
 );

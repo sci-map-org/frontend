@@ -13,10 +13,11 @@ import { ResourceStarsRater, ResourceStarsRating } from '../../components/resour
 import { ResourceTagsEditor, SelectedTagsViewer } from '../../components/resources/ResourceTagsEditor';
 import { ResourceTypeBadge } from '../../components/resources/ResourceType';
 import { ResourceUrlLink } from '../../components/resources/ResourceUrl';
+import { SubResourcesManager } from '../../components/resources/SubResourcesManager';
 import { ConceptData, generateConceptData } from '../../graphql/concepts/concepts.fragments';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { DomainWithConceptsData, generateDomainData } from '../../graphql/domains/domains.fragments';
-import { generateResourceData, ResourceData } from '../../graphql/resources/resources.fragments';
+import { generateResourceData, ResourceData, ResourcePreviewData } from '../../graphql/resources/resources.fragments';
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { useDeleteResourceMutation } from '../../graphql/resources/resources.operations.generated';
 import { UserRole } from '../../graphql/types';
@@ -49,11 +50,15 @@ export const getResourceResourcePage = gql`
           ...DomainWithConceptsData
         }
       }
+      subResources {
+        ...ResourcePreviewData
+      }
     }
   }
   ${DomainWithConceptsData}
   ${ResourceData}
   ${ConceptData}
+  ${ResourcePreviewData}
 `;
 
 const domainDataPlaceholder = generateDomainData();
@@ -142,7 +147,11 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
             <ResourceTypeBadge type={resource.type} /> - <ResourceMediaTypeBadge mediaType={resource.mediaType} />{' '}
           </Skeleton>
         </Box>
-
+        <SubResourcesManager
+          resourceId={resourceId}
+          subResources={resource.subResources || []}
+          domains={resource.domains?.items || []}
+        />
         <RoleAccess accessRule="loggedInUser">
           <ResourceTagsEditor resource={resource} isDisabled={loading} />
         </RoleAccess>

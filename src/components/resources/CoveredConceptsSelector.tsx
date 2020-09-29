@@ -49,3 +49,52 @@ export const DomainCoveredConceptSelector: React.FC<{
     />
   );
 };
+
+// Base one: get domain covered concepts list
+export const StatelessDomainConceptsSelector: React.FC<{
+  domainKey: string;
+  onSelect: (concept: ConceptDataFragment) => void;
+  onRemove: (concept: ConceptDataFragment) => void;
+  selectedConcepts: ConceptDataFragment[];
+  title?: string;
+  placeholder?: string;
+}> = ({ domainKey, selectedConcepts, title, placeholder, onSelect, onRemove }) => {
+  const { data } = useGetDomainConceptListQuery({ variables: { domainKey: domainKey } });
+  const domainConceptList = (data?.getDomainByKey.concepts?.items || []).map((item) => item.concept);
+  const possibleConceptSuggestions = differenceBy(domainConceptList, selectedConcepts, (c) => c._id);
+  return (
+    <ConceptsPicker
+      pickableConceptList={possibleConceptSuggestions}
+      pickedConceptList={selectedConcepts}
+      onSelect={onSelect}
+      onRemove={onRemove}
+      title={title}
+      placeholder={placeholder}
+    />
+  );
+};
+
+// Synced: pass resource Id
+export const ResourceDomainCoveredConceptsSelector: React.FC<{
+  resourceId: string;
+  domainKey: string;
+  coveredConcepts: ConceptDataFragment[];
+}> = ({ resourceId, domainKey, coveredConcepts }) => {
+  const [attachResourceCoversConcepts] = useAttachResourceCoversConceptsMutation();
+  const [detachResourceCoversConcepts] = useDetachResourceCoversConceptsMutation();
+  const selectConcept = async (conceptId: string): Promise<void> => {
+    await attachResourceCoversConcepts({ variables: { resourceId, conceptIds: [conceptId] } });
+  };
+  const removeConcept = async (conceptId: string) => {
+    await detachResourceCoversConcepts({ variables: { resourceId, conceptIds: [conceptId] } });
+  };
+  return (
+    <StatelessDomainConceptsSelector
+      domainKey={domainKey}
+      selectedConcepts={coveredConcepts}
+      onSelect={(c) => selectConcept(c._id)}
+      onRemove={(c) => removeConcept(c._id)}
+      title="Covered Concepts"
+    />
+  );
+};
