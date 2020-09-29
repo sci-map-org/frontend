@@ -8,8 +8,6 @@ import { GetResourceEditResourcePageQuery } from '../../pages/resources/EditReso
 import { validateUrl } from '../../services/url.service';
 import { Access } from '../auth/Access';
 import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
-import { InternalLink } from '../navigation/InternalLink';
-import { DomainCoveredConceptSelector } from './CoveredConceptsSelector';
 import { ResourceDescriptionInput } from './ResourceDescription';
 import { ResourceDurationSelector } from './ResourceDuration';
 import { ResourceMediaTypeSelector } from './ResourceMediaType';
@@ -56,19 +54,6 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
         <ResourceDurationSelector value={durationMs} onChange={setDurationMs} />
       </Flex>
       <ResourceDescriptionInput value={description} onChange={(d) => setDescription(d)} />
-      {resource.domains && (
-        <Box>
-          <Text fontSize="xl">Domains</Text>
-          {resource.domains.items.map((domain) => (
-            <Box key={domain._id}>
-              <InternalLink asHref={`/domains/${domain.key}`} routePath="/domains/[key]">
-                {domain.name}
-              </InternalLink>
-              <DomainCoveredConceptSelector resource={resource} domainKey={domain.key} />
-            </Box>
-          ))}
-        </Box>
-      )}
       <Stack direction="row" justifyContent="space-between">
         <Access
           condition={

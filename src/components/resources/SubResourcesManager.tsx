@@ -20,6 +20,7 @@ export const SubResourcesManager: React.FC<SubResourcesManagerProps> = ({ resour
       <Flex>
         <Wrap>
           {subResources.map((subResource) => (
+            // Create SquareResourcePreviewCard + Frame HOC
             <Flex
               key={subResource._id}
               backgroundColor="whiteAlpha.500"

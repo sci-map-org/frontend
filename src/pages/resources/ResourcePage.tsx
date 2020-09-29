@@ -3,10 +3,10 @@ import gql from 'graphql-tag';
 import Router, { useRouter } from 'next/router';
 import { Access } from '../../components/auth/Access';
 import { RoleAccess } from '../../components/auth/RoleAccess';
+import { ResourceDomainAndConceptsSelector } from '../../components/concepts/DomainAndConceptsSelector';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
-import { CoveredConceptsSelector } from '../../components/resources/CoveredConceptsSelector';
-import { ResourceCoveredConcepts } from '../../components/resources/ResourceCoveredConcepts';
+import { ResourceCoveredConceptsByDomainViewer } from '../../components/resources/ResourceCoveredConceptsByDomainViewer';
 import { ResourceDuration } from '../../components/resources/ResourceDuration';
 import { ResourceMediaTypeBadge } from '../../components/resources/ResourceMediaType';
 import { ResourceStarsRater, ResourceStarsRating } from '../../components/resources/ResourceStarsRating';
@@ -15,8 +15,7 @@ import { ResourceTypeBadge } from '../../components/resources/ResourceType';
 import { ResourceUrlLink } from '../../components/resources/ResourceUrl';
 import { SubResourcesManager } from '../../components/resources/SubResourcesManager';
 import { ConceptData, generateConceptData } from '../../graphql/concepts/concepts.fragments';
-import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
-import { DomainWithConceptsData, generateDomainData } from '../../graphql/domains/domains.fragments';
+import { DomainData, generateDomainData } from '../../graphql/domains/domains.fragments';
 import { generateResourceData, ResourceData, ResourcePreviewData } from '../../graphql/resources/resources.fragments';
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { useDeleteResourceMutation } from '../../graphql/resources/resources.operations.generated';
@@ -40,14 +39,12 @@ export const getResourceResourcePage = gql`
       creator {
         _id
       }
-      coveredConcepts(options: {}) {
-        items {
-          ...ConceptData
+      coveredConceptsByDomain {
+        domain {
+          ...DomainData
         }
-      }
-      domains(options: {}) {
-        items {
-          ...DomainWithConceptsData
+        coveredConcepts {
+          ...ConceptData
         }
       }
       subResources {
@@ -55,7 +52,7 @@ export const getResourceResourcePage = gql`
       }
     }
   }
-  ${DomainWithConceptsData}
+  ${DomainData}
   ${ResourceData}
   ${ConceptData}
   ${ResourcePreviewData}
@@ -64,15 +61,14 @@ export const getResourceResourcePage = gql`
 const domainDataPlaceholder = generateDomainData();
 const resourceDataPlaceholder: GetResourceResourcePageQuery['getResourceById'] = {
   ...generateResourceData(),
-  coveredConcepts: {
-    items: [0, 0, 0, 0].map(() => ({
-      ...generateConceptData(),
+  coveredConceptsByDomain: [
+    {
       domain: domainDataPlaceholder,
-    })),
-  },
-  domains: {
-    items: [domainDataPlaceholder],
-  },
+      coveredConcepts: [0, 0, 0, 0].map(() => ({
+        ...generateConceptData(),
+      })),
+    },
+  ],
 };
 
 export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) => {
@@ -85,13 +81,6 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
 
   const resource = data?.getResourceById || resourceDataPlaceholder;
   const selectedTags = resource.tags || [];
-
-  const conceptList: ConceptDataFragment[] = (resource.domains?.items || [])
-    .map((domain) => {
-      return !!domain.concepts ? domain.concepts.items : [];
-    })
-    .reduce((acc, items) => acc.concat(items), [])
-    .map((item) => item.concept);
 
   return (
     <PageLayout
@@ -150,7 +139,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
         <SubResourcesManager
           resourceId={resourceId}
           subResources={resource.subResources || []}
-          domains={resource.domains?.items || []}
+          domains={resource.coveredConceptsByDomain?.map((i) => i.domain) || []}
         />
         <RoleAccess accessRule="loggedInUser">
           <ResourceTagsEditor resource={resource} isDisabled={loading} />
@@ -158,21 +147,12 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
         <RoleAccess accessRule="notLoggedInUser">
           <SelectedTagsViewer selectedTags={selectedTags} />
         </RoleAccess>
-        {resource.domains && resource.coveredConcepts && (
-          <ResourceCoveredConcepts
-            domains={resource.domains.items}
-            coveredConcepts={resource.coveredConcepts.items}
-            isLoading={loading}
-          />
-        )}
-        {resource.coveredConcepts && (
-          <RoleAccess accessRule="loggedInUser">
-            <CoveredConceptsSelector
-              resourceId={resource._id}
-              coveredConcepts={resource.coveredConcepts.items}
-              conceptList={conceptList}
-              title="Covered Concepts"
-            />
+        {resource.coveredConceptsByDomain && (
+          <RoleAccess
+            accessRule="loggedInUser"
+            renderAccessDenied={() => <ResourceCoveredConceptsByDomainViewer resource={resource} isLoading={loading} />}
+          >
+            <ResourceDomainAndConceptsSelector resource={resource} />
           </RoleAccess>
         )}
       </Stack>

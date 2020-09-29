@@ -252,6 +252,7 @@ export type Resource = {
   consumed?: Maybe<ConsumedResource>;
   creator?: Maybe<User>;
   coveredConcepts?: Maybe<ResourceCoveredConceptsResults>;
+  coveredConceptsByDomain?: Maybe<Array<ResourceCoveredConceptsByDomainItem>>;
   domains?: Maybe<ResourceDomainsResults>;
   subResources?: Maybe<Array<Resource>>;
   subResourceSeries?: Maybe<Array<Resource>>;
@@ -314,6 +315,12 @@ export type ResourceCoveredConceptsOptions = {
 export type ResourceCoveredConceptsResults = {
   __typename?: 'ResourceCoveredConceptsResults';
   items: Array<Concept>;
+};
+
+export type ResourceCoveredConceptsByDomainItem = {
+  __typename?: 'ResourceCoveredConceptsByDomainItem';
+  domain: Domain;
+  coveredConcepts: Array<Concept>;
 };
 
 export type ResourceDomainsOptions = {
@@ -421,6 +428,7 @@ export type Mutation = {
   deleteResource: DeleteResourceResponse;
   addResourceToDomain: Resource;
   attachResourceToDomain: Resource;
+  detachResourceFromDomain: Resource;
   attachResourceCoversConcepts: Resource;
   detachResourceCoversConcepts: Resource;
   setResourcesConsumed: Array<Resource>;
@@ -546,6 +554,12 @@ export type MutationAddResourceToDomainArgs = {
 
 
 export type MutationAttachResourceToDomainArgs = {
+  domainId: Scalars['String'];
+  resourceId: Scalars['String'];
+};
+
+
+export type MutationDetachResourceFromDomainArgs = {
   domainId: Scalars['String'];
   resourceId: Scalars['String'];
 };

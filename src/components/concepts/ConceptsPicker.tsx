@@ -3,6 +3,7 @@ import { MinusIcon } from '@chakra-ui/icons';
 import { take } from 'lodash';
 import { useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
+import { ConceptPagePath } from '../../pages/domains/concepts/ConceptPage';
 import { EntitySelector } from '../lib/selectors/EntitySelector';
 import { InternalLink } from '../navigation/InternalLink';
 
@@ -23,6 +24,7 @@ interface ConceptsPickerProps {
   onSelect: (concept: ConceptDataFragment) => void;
   onRemove: (concept: ConceptDataFragment) => void;
   maxNbConceptsShown?: number;
+  domainKey: string;
 }
 
 export const ConceptsPicker: React.FC<ConceptsPickerProps> = ({
@@ -33,6 +35,7 @@ export const ConceptsPicker: React.FC<ConceptsPickerProps> = ({
   maxNbConceptsShown = 5,
   onSelect,
   onRemove,
+  domainKey,
 }) => {
   const [conceptSuggestions, setConceptSuggestions] = useState<ConceptDataFragment[]>([]);
   const [showAll, setShowAll] = useState(false);
@@ -50,7 +53,14 @@ export const ConceptsPicker: React.FC<ConceptsPickerProps> = ({
                   size="xs"
                   icon={<MinusIcon />}
                 />
-                <Text fontSize="sm">{pickedConcept.name}</Text>
+                <Text fontSize="sm">
+                  <InternalLink
+                    routePath="/domains/[key]/concepts/[conceptKey]"
+                    asHref={ConceptPagePath(domainKey, pickedConcept.key)}
+                  >
+                    {pickedConcept.name}
+                  </InternalLink>
+                </Text>
               </Stack>
             );
           })}

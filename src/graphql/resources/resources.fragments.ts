@@ -1,5 +1,6 @@
 import gql from 'graphql-tag';
 import { ConceptData } from '../concepts/concepts.fragments';
+import { DomainData } from '../domains/domains.fragments';
 import { ResourceMediaType, ResourceType } from '../types';
 import { ResourcePreviewDataFragment, ResourceDataFragment } from './resources.fragments.generated';
 
@@ -49,8 +50,12 @@ export const ResourcePreviewData = gql`
       openedAt
       consumedAt
     }
-    coveredConcepts(options: {}) {
-      items {
+    coveredConceptsByDomain {
+      domain {
+        _id
+        key
+      }
+      coveredConcepts {
         ...ConceptData
       }
     }
@@ -67,3 +72,19 @@ export const generateResourcePreviewData = (): ResourcePreviewDataFragment => ({
   url: 'https://myresource.url',
   mediaType: ResourceMediaType.Text,
 });
+
+export const ResourceWithCoveredConceptsByDomainData = gql`
+  fragment ResourceWithCoveredConceptsByDomainData on Resource {
+    _id
+    coveredConceptsByDomain {
+      domain {
+        ...DomainData
+      }
+      coveredConcepts {
+        ...ConceptData
+      }
+    }
+  }
+  ${DomainData}
+  ${ConceptData}
+`;

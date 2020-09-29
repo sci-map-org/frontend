@@ -56,6 +56,38 @@ export const attachResourceToDomain = gql`
           key
         }
       }
+      coveredConceptsByDomain {
+        domain {
+          _id
+          key
+        }
+        coveredConcepts {
+          _id
+        }
+      }
+    }
+  }
+`;
+
+export const detachResourceFromDomain = gql`
+  mutation detachResourceFromDomain($domainId: String!, $resourceId: String!) {
+    detachResourceFromDomain(domainId: $domainId, resourceId: $resourceId) {
+      _id
+      domains(options: {}) {
+        items {
+          _id
+          key
+        }
+      }
+      coveredConceptsByDomain {
+        domain {
+          _id
+          key
+        }
+        coveredConcepts {
+          _id
+        }
+      }
     }
   }
 `;

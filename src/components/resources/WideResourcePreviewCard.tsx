@@ -28,7 +28,7 @@ import { RoleAccess } from '../auth/RoleAccess';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import { CompletedCheckbox } from '../lib/CompletedCheckbox';
 import { InternalLink } from '../navigation/InternalLink';
-import { DomainCoveredConceptSelector } from './CoveredConceptsSelector';
+import { ResourceDomainCoveredConceptsSelector } from './CoveredConceptsSelector';
 import { shortenDescription } from './ResourceDescription';
 import { ResourceDuration } from './ResourceDuration';
 import { ResourceStarsRater, ResourceStarsRating } from './ResourceStarsRating';
@@ -138,6 +138,8 @@ const BottomBlock: React.FC<{
       };
     }, [ref]);
   };
+
+  const coveredConcepts = resource.coveredConceptsByDomain?.find((d) => d.domain.key === domainKey)?.coveredConcepts;
   useOutsideAlerter(wrapperRef);
   return (
     <Flex pb={2} pt={2} flexWrap="wrap">
@@ -176,7 +178,7 @@ const BottomBlock: React.FC<{
       )}
       <Box flexGrow={1} flexBasis={0} />
       <Flex flexShrink={0} direction="column" justifyContent="center">
-        {resource.coveredConcepts && (
+        {coveredConcepts && (
           <Skeleton isLoaded={!isLoading}>
             <Box>
               <Popover placement="bottom-end">
@@ -186,7 +188,7 @@ const BottomBlock: React.FC<{
                       About:{'  '}
                     </Text>
                     <Link color="gray.800" fontWeight={300} onClick={() => setCoveredConceptsEditorMode(false)}>
-                      {shortenCoveredConceptsList(resource.coveredConcepts?.items, 32)}
+                      {shortenCoveredConceptsList(coveredConcepts, 32)}
                     </Link>
                     <IconButton
                       onClick={(e) => {
@@ -207,14 +209,18 @@ const BottomBlock: React.FC<{
                 </PopoverTrigger>
                 <PopoverContent zIndex={4} backgroundColor="white">
                   <PopoverArrow />
-                  <PopoverHeader>Covered Concepts</PopoverHeader>
+                  <PopoverHeader fontWeight={500}>Covered Concepts</PopoverHeader>
                   <PopoverCloseButton />
-                  <PopoverBody>
+                  <PopoverBody pt={1}>
                     {coveredConceptsEditorMode ? (
-                      <DomainCoveredConceptSelector domainKey={domainKey} resource={resource} />
+                      <ResourceDomainCoveredConceptsSelector
+                        domainKey={domainKey}
+                        resourceId={resource._id}
+                        coveredConcepts={coveredConcepts}
+                      />
                     ) : (
                       <Stack direction="column">
-                        {resource.coveredConcepts.items.map((concept) => (
+                        {coveredConcepts.map((concept) => (
                           <Box key={concept._id}>
                             <InternalLink
                               routePath="/domains/[key]/concepts/[conceptKey]"
