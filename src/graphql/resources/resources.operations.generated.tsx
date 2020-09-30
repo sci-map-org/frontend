@@ -1,7 +1,25 @@
 import * as Types from '../types';
 
+import { ResourceDataFragment, ResourcePreviewDataFragment } from './resources.fragments.generated';
 import * as Operations from './resources.operations';
 import * as Apollo from '@apollo/client';
+export type SearchResourcesQueryVariables = Types.Exact<{
+  query: Types.Scalars['String'];
+  options: Types.SearchResourcesOptions;
+}>;
+
+
+export type SearchResourcesQuery = (
+  { __typename?: 'Query' }
+  & { searchResources: (
+    { __typename?: 'SearchResourcesResult' }
+    & { items: Array<(
+      { __typename?: 'Resource' }
+      & ResourceDataFragment
+    )> }
+  ) }
+);
+
 export type VoteResourceMutationVariables = Types.Exact<{
   resourceId: Types.Scalars['String'];
   value: Types.ResourceVoteValue;
@@ -132,6 +150,33 @@ export type DetachResourceFromDomainMutation = (
 );
 
 
+
+/**
+ * __useSearchResourcesQuery__
+ *
+ * To run a query within a React component, call `useSearchResourcesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchResourcesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchResourcesQuery({
+ *   variables: {
+ *      query: // value for 'query'
+ *      options: // value for 'options'
+ *   },
+ * });
+ */
+export function useSearchResourcesQuery(baseOptions?: Apollo.QueryHookOptions<SearchResourcesQuery, SearchResourcesQueryVariables>) {
+        return Apollo.useQuery<SearchResourcesQuery, SearchResourcesQueryVariables>(Operations.searchResources, baseOptions);
+      }
+export function useSearchResourcesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchResourcesQuery, SearchResourcesQueryVariables>) {
+          return Apollo.useLazyQuery<SearchResourcesQuery, SearchResourcesQueryVariables>(Operations.searchResources, baseOptions);
+        }
+export type SearchResourcesQueryHookResult = ReturnType<typeof useSearchResourcesQuery>;
+export type SearchResourcesLazyQueryHookResult = ReturnType<typeof useSearchResourcesLazyQuery>;
+export type SearchResourcesQueryResult = Apollo.QueryResult<SearchResourcesQuery, SearchResourcesQueryVariables>;
 export type VoteResourceMutationFn = Apollo.MutationFunction<VoteResourceMutation, VoteResourceMutationVariables>;
 
 /**

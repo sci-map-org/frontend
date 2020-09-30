@@ -1,4 +1,16 @@
 import gql from 'graphql-tag';
+import { ResourceData } from './resources.fragments';
+
+export const searchResources = gql`
+  query searchResources($query: String!, $options: SearchResourcesOptions!) {
+    searchResources(query: $query, options: $options) {
+      items {
+        ...ResourceData
+      }
+    }
+  }
+  ${ResourceData}
+`;
 
 export const voteResource = gql`
   mutation voteResource($resourceId: String!, $value: ResourceVoteValue!) {

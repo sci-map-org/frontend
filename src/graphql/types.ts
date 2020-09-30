@@ -20,6 +20,7 @@ export type Query = {
   searchDomains: SearchDomainsResult;
   getDomainByKey: Domain;
   searchResourceTags: Array<ResourceTagSearchResult>;
+  searchResources: SearchResourcesResult;
   getResourceById: Resource;
   getConcept: Concept;
   getConceptByKey: Concept;
@@ -53,6 +54,12 @@ export type QueryGetDomainByKeyArgs = {
 
 export type QuerySearchResourceTagsArgs = {
   options: SearchResourceTagsOptions;
+};
+
+
+export type QuerySearchResourcesArgs = {
+  query: Scalars['String'];
+  options: SearchResourcesOptions;
 };
 
 
@@ -405,6 +412,15 @@ export type ResourceTagSearchResult = {
   __typename?: 'ResourceTagSearchResult';
   name: Scalars['String'];
   usageCount?: Maybe<Scalars['Int']>;
+};
+
+export type SearchResourcesOptions = {
+  pagination?: Maybe<PaginationOptions>;
+};
+
+export type SearchResourcesResult = {
+  __typename?: 'SearchResourcesResult';
+  items: Array<Resource>;
 };
 
 export type Mutation = {
