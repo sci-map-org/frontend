@@ -16,7 +16,7 @@ const getConceptSuggestions = (entities: ConceptDataFragment[], value: string): 
     : entities.filter((entity) => entity.name.toLowerCase().indexOf(inputValue) >= 0).slice(0, 10);
 };
 
-interface ConceptsPickerProps {
+interface DomainConceptsPickerProps {
   title?: string;
   placeholder?: string;
   pickableConceptList: ConceptDataFragment[];
@@ -27,7 +27,7 @@ interface ConceptsPickerProps {
   domainKey: string;
 }
 
-export const ConceptsPicker: React.FC<ConceptsPickerProps> = ({
+export const DomainConceptsPicker: React.FC<DomainConceptsPickerProps> = ({
   title,
   placeholder,
   pickableConceptList,

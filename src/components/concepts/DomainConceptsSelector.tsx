@@ -1,7 +1,7 @@
 import { differenceBy } from 'lodash';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { useGetDomainConceptListQuery } from '../../graphql/concepts/concepts.operations.generated';
-import { ConceptsPicker } from './ConceptsPicker';
+import { DomainConceptsPicker } from './DomainConceptsPicker';
 
 // Base one: get domain covered concepts list
 export const DomainConceptsSelector: React.FC<{
@@ -16,7 +16,7 @@ export const DomainConceptsSelector: React.FC<{
   const domainConceptList = (data?.getDomainByKey.concepts?.items || []).map((item) => item.concept);
   const possibleConceptSuggestions = differenceBy(domainConceptList, selectedConcepts, (c) => c._id);
   return (
-    <ConceptsPicker
+    <DomainConceptsPicker
       domainKey={domainKey}
       pickableConceptList={possibleConceptSuggestions}
       pickedConceptList={selectedConcepts}
