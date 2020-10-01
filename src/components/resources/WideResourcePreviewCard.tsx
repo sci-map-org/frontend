@@ -29,12 +29,12 @@ import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import { CompletedCheckbox } from '../lib/CompletedCheckbox';
 import { InternalLink } from '../navigation/InternalLink';
 import { ResourceDomainCoveredConceptsSelector } from './CoveredConceptsSelector';
-import { shortenDescription } from './ResourceDescription';
-import { ResourceDuration } from './ResourceDuration';
-import { ResourceStarsRater, ResourceStarsRating } from './ResourceStarsRating';
-import { ResourceTagsEditor, SelectedTagsViewer } from './ResourceTagsEditor';
-import { ResourceTypeBadge } from './ResourceType';
-import { ResourceUrlLink } from './ResourceUrl';
+import { shortenDescription } from './elements/ResourceDescription';
+import { ResourceDuration } from './elements/ResourceDuration';
+import { ResourceStarsRater, ResourceStarsRating } from './elements/ResourceStarsRating';
+import { ResourceTagsEditor, SelectedTagsViewer } from './elements/ResourceTagsEditor';
+import { ResourceTypeBadge } from './elements/ResourceType';
+import { ResourceUrlLink } from './elements/ResourceUrl';
 
 const LeftBlock: React.FC<{ resource: ResourcePreviewDataFragment; isLoading?: boolean }> = ({
   resource,

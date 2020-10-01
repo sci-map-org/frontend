@@ -7,13 +7,13 @@ import { PageLayout } from '../../components/layout/PageLayout';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { ResourceCoveredConceptsByDomainViewer } from '../../components/resources/ResourceCoveredConceptsByDomainViewer';
 import { ResourceDomainAndCoveredConceptsSelector } from '../../components/resources/ResourceDomainAndCoveredConceptsSelector';
-import { ResourceDuration } from '../../components/resources/ResourceDuration';
-import { ResourceMediaTypeBadge } from '../../components/resources/ResourceMediaType';
-import { ResourceSeriesManager } from '../../components/resources/ResourceSeriesManager';
-import { ResourceStarsRater, ResourceStarsRating } from '../../components/resources/ResourceStarsRating';
-import { ResourceTagsEditor, SelectedTagsViewer } from '../../components/resources/ResourceTagsEditor';
-import { ResourceTypeBadge } from '../../components/resources/ResourceType';
-import { ResourceUrlLink } from '../../components/resources/ResourceUrl';
+import { ResourceDuration } from '../../components/resources/elements/ResourceDuration';
+import { ResourceMediaTypeBadge } from '../../components/resources/elements/ResourceMediaType';
+import { SubResourceSeriesManager } from '../../components/resources/SubResourceSeriesManager';
+import { ResourceStarsRater, ResourceStarsRating } from '../../components/resources/elements/ResourceStarsRating';
+import { ResourceTagsEditor, SelectedTagsViewer } from '../../components/resources/elements/ResourceTagsEditor';
+import { ResourceTypeBadge } from '../../components/resources/elements/ResourceType';
+import { ResourceUrlLink } from '../../components/resources/elements/ResourceUrl';
 import { SubResourcesManager } from '../../components/resources/SubResourcesManager';
 import { ConceptData, generateConceptData } from '../../graphql/concepts/concepts.fragments';
 import { DomainData, generateDomainData } from '../../graphql/domains/domains.fragments';
@@ -139,7 +139,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
             <ResourceTypeBadge type={resource.type} /> - <ResourceMediaTypeBadge mediaType={resource.mediaType} />{' '}
           </Skeleton>
         </Box>
-        <ResourceSeriesManager
+        <SubResourceSeriesManager
           resourceId={resourceId}
           subResourceSeries={resource.subResourceSeries || undefined}
           domains={resource.coveredConceptsByDomain?.map((i) => i.domain) || []}

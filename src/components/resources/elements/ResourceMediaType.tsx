@@ -1,6 +1,6 @@
 import { Badge, BadgeProps, FormControl, FormLabel, Select } from '@chakra-ui/core';
 import { upperFirst, values } from 'lodash';
-import { ResourceMediaType } from '../../graphql/types';
+import { ResourceMediaType } from '../../../graphql/types';
 
 export const ResourceMediaTypeBadge: React.FC<BadgeProps & { mediaType: ResourceMediaType }> = ({
   mediaType,

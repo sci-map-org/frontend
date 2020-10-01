@@ -8,11 +8,11 @@ import { GetResourceEditResourcePageQuery } from '../../pages/resources/EditReso
 import { validateUrl } from '../../services/url.service';
 import { Access } from '../auth/Access';
 import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
-import { ResourceDescriptionInput } from './ResourceDescription';
-import { ResourceDurationSelector } from './ResourceDuration';
-import { ResourceMediaTypeSelector } from './ResourceMediaType';
-import { ResourceTypeSelector } from './ResourceType';
-import { ResourceUrlInput } from './ResourceUrl';
+import { ResourceDescriptionInput } from './elements/ResourceDescription';
+import { ResourceDurationSelector } from './elements/ResourceDuration';
+import { ResourceMediaTypeSelector } from './elements/ResourceMediaType';
+import { ResourceTypeSelector } from './elements/ResourceType';
+import { ResourceUrlInput } from './elements/ResourceUrl';
 
 interface ResourceEditorProps {
   resource: GetResourceEditResourcePageQuery['getResourceById'];

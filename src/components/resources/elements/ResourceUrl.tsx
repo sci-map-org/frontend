@@ -11,8 +11,8 @@ import {
 } from '@chakra-ui/core';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
-import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
-import { toUrlPreview, validateUrl } from '../../services/url.service';
+import { ResourcePreviewDataFragment } from '../../../graphql/resources/resources.fragments.generated';
+import { toUrlPreview, validateUrl } from '../../../services/url.service';
 import { useSetResourceOpenedMutation } from './ResourceUrl.generated';
 
 export const setResourceOpened = gql`

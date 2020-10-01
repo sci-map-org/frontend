@@ -28,12 +28,12 @@ import { CreateResourcePayload, ResourceMediaType, ResourceTag, ResourceType } f
 import { validateUrl } from '../../services/url.service';
 import { DomainAndConceptsSelector, DomainAndSelectedConcepts } from '../concepts/DomainAndConceptsSelector';
 import { useCreateResourceMutation } from './NewResource.generated';
-import { ResourceDescriptionInput } from './ResourceDescription';
-import { ResourceDurationSelector } from './ResourceDuration';
-import { ResourceMediaTypeSelector } from './ResourceMediaType';
-import { ResourceTagsStatelessEditor } from './ResourceTagsEditor';
-import { ResourceTypeSelector } from './ResourceType';
-import { ResourceUrlInput } from './ResourceUrl';
+import { ResourceDescriptionInput } from './elements/ResourceDescription';
+import { ResourceDurationSelector } from './elements/ResourceDuration';
+import { ResourceMediaTypeSelector } from './elements/ResourceMediaType';
+import { ResourceTagsStatelessEditor } from './elements/ResourceTagsEditor';
+import { ResourceTypeSelector } from './elements/ResourceType';
+import { ResourceUrlInput } from './elements/ResourceUrl';
 
 interface NewResourceFormProps {
   createResource: (

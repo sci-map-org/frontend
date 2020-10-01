@@ -30,7 +30,7 @@ import { DomainResourcesOptions, DomainResourcesSortingType, ResourceType } from
 import { theme } from '../../theme/theme';
 import { RoleAccess } from '../auth/RoleAccess';
 import { ResourcePreviewCardList } from './ResourcePreviewCard';
-import { ResourceTypeBadge, resourceTypeColorMapping, resourceTypeToLabel } from './ResourceType';
+import { ResourceTypeBadge, resourceTypeColorMapping, resourceTypeToLabel } from './elements/ResourceType';
 
 export const getDomainRecommendedResources = gql`
   query getDomainRecommendedResources($key: String!, $resourcesOptions: DomainResourcesOptions!) {

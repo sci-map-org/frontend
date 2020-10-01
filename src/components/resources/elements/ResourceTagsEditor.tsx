@@ -1,10 +1,10 @@
-import { Flex, Stack, Tag, TagCloseButton, TagLabel, Text } from '@chakra-ui/core';
+import { Flex, Stack, Tag, TagCloseButton, TagLabel } from '@chakra-ui/core';
 import gql from 'graphql-tag';
 import { uniqBy } from 'lodash';
 import React from 'react';
-import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
-import { ResourceTag } from '../../graphql/types';
-import { ResourceTagSelector } from '../input/ResourceTagSelector';
+import { ResourceDataFragment } from '../../../graphql/resources/resources.fragments.generated';
+import { ResourceTag } from '../../../graphql/types';
+import { ResourceTagSelector } from '../../input/ResourceTagSelector';
 import {
   useAddTagsToResourceResourceEditorMutation,
   useRemoveTagsFromResourceResourceEditorMutation,
