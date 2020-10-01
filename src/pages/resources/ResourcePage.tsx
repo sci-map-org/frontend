@@ -3,12 +3,13 @@ import gql from 'graphql-tag';
 import Router, { useRouter } from 'next/router';
 import { Access } from '../../components/auth/Access';
 import { RoleAccess } from '../../components/auth/RoleAccess';
-import { ResourceDomainAndCoveredConceptsSelector } from '../../components/resources/ResourceDomainAndCoveredConceptsSelector';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { ResourceCoveredConceptsByDomainViewer } from '../../components/resources/ResourceCoveredConceptsByDomainViewer';
+import { ResourceDomainAndCoveredConceptsSelector } from '../../components/resources/ResourceDomainAndCoveredConceptsSelector';
 import { ResourceDuration } from '../../components/resources/ResourceDuration';
 import { ResourceMediaTypeBadge } from '../../components/resources/ResourceMediaType';
+import { ResourceSeriesManager } from '../../components/resources/ResourceSeriesManager';
 import { ResourceStarsRater, ResourceStarsRating } from '../../components/resources/ResourceStarsRating';
 import { ResourceTagsEditor, SelectedTagsViewer } from '../../components/resources/ResourceTagsEditor';
 import { ResourceTypeBadge } from '../../components/resources/ResourceType';
@@ -16,7 +17,7 @@ import { ResourceUrlLink } from '../../components/resources/ResourceUrl';
 import { SubResourcesManager } from '../../components/resources/SubResourcesManager';
 import { ConceptData, generateConceptData } from '../../graphql/concepts/concepts.fragments';
 import { DomainData, generateDomainData } from '../../graphql/domains/domains.fragments';
-import { generateResourceData, ResourceData, ResourcePreviewData } from '../../graphql/resources/resources.fragments';
+import { generateResourceData, ResourceData } from '../../graphql/resources/resources.fragments';
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { useDeleteResourceMutation } from '../../graphql/resources/resources.operations.generated';
 import { UserRole } from '../../graphql/types';
@@ -48,14 +49,16 @@ export const getResourceResourcePage = gql`
         }
       }
       subResources {
-        ...ResourcePreviewData
+        ...ResourceData
+      }
+      subResourceSeries {
+        ...ResourceData
       }
     }
   }
   ${DomainData}
   ${ResourceData}
   ${ConceptData}
-  ${ResourcePreviewData}
 `;
 
 const domainDataPlaceholder = generateDomainData();
@@ -136,6 +139,11 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
             <ResourceTypeBadge type={resource.type} /> - <ResourceMediaTypeBadge mediaType={resource.mediaType} />{' '}
           </Skeleton>
         </Box>
+        <ResourceSeriesManager
+          resourceId={resourceId}
+          subResourceSeries={resource.subResourceSeries || undefined}
+          domains={resource.coveredConceptsByDomain?.map((i) => i.domain) || []}
+        />
         <SubResourcesManager
           resourceId={resourceId}
           subResources={resource.subResources || []}

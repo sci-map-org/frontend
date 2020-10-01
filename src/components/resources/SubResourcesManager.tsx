@@ -1,15 +1,16 @@
-import { Box, Flex, IconButton, Text, useDisclosure, Wrap } from '@chakra-ui/core';
+import { Box, Flex, IconButton, Text, Wrap } from '@chakra-ui/core';
 import { AddIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
-import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { shortenString } from '../../util/utils';
 import { InternalLink } from '../navigation/InternalLink';
 import { ResourceSelectorModal } from './ResourceSelector';
-import { useAddSubResourceSubResourcesManagerMutation } from './SubResourcesManager.generated';
+import { useAddSubResourceMutation } from './SubResourcesManager.generated';
 
-export const addSubResourceSubResourcesManager = gql`
-  mutation addSubResourceSubResourcesManager($parentResourceId: String!, $subResourceId: String!) {
+export const addSubResource = gql`
+  mutation addSubResource($parentResourceId: String!, $subResourceId: String!) {
     addSubResource(parentResourceId: $parentResourceId, subResourceId: $subResourceId) {
       parentResource {
         _id
@@ -24,69 +25,74 @@ export const addSubResourceSubResourcesManager = gql`
 
 interface SubResourcesManagerProps {
   resourceId: string;
-  subResources: ResourcePreviewDataFragment[];
+  subResources: ResourceDataFragment[];
   domains?: DomainDataFragment[];
 }
 
 export const SubResourcesManager: React.FC<SubResourcesManagerProps> = ({ resourceId, subResources, domains }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [addSubResource] = useAddSubResourceSubResourcesManagerMutation();
+  const [addSubResource] = useAddSubResourceMutation();
   return (
     <Flex direction="column" alignItems="stretch">
-      <Box>
+      <Box mb={2}>
         <Text fontSize="xl">Sub Resources</Text>
       </Box>
-      <Flex>
-        <Wrap>
-          {subResources.map((subResource) => (
-            // Create SquareResourcePreviewCard + Frame HOC
-            <Flex
-              key={subResource._id}
-              backgroundColor="whiteAlpha.500"
-              boxSize="10rem"
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-              borderWidth="1px"
-              borderColor="gray.300"
-              p={2}
-              borderRadius={4}
-            >
-              <InternalLink routePath="/resources/[_id]" asHref={`/resources/${subResource._id}`}>
-                {subResource.name}
-              </InternalLink>
-            </Flex>
-          ))}
-          <Flex
-            backgroundColor="whiteAlpha.500"
-            boxSize="10rem"
-            direction="column"
-            alignItems="center"
-            justifyContent="center"
-            borderWidth="1px"
-            borderColor="gray.300"
-            borderRadius={4}
-          >
-            <ResourceSelectorModal
-              onSelect={(subResource) =>
-                addSubResource({ variables: { subResourceId: subResource._id, parentResourceId: resourceId } })
-              }
-              defaultAttachedDomains={domains}
-              renderButton={({ openModal }) => (
-                <IconButton
-                  aria-label="add subResource"
-                  icon={<AddIcon />}
-                  size="lg"
-                  isRound
-                  mb={3}
-                  onClick={() => openModal()}
-                />
-              )}
-            />
-            <Text fontWeight={500}>Add sub resource</Text>
-          </Flex>
-        </Wrap>
-      </Flex>
+      <Wrap spacing={3}>
+        {subResources.map((subResource) => (
+          <SubResourceCard key={subResource._id} subResource={subResource} />
+        ))}
+        <CardFrame>
+          <ResourceSelectorModal
+            onSelect={(subResource) =>
+              addSubResource({ variables: { subResourceId: subResource._id, parentResourceId: resourceId } })
+            }
+            defaultAttachedDomains={domains}
+            renderButton={({ openModal }) => (
+              <IconButton
+                aria-label="add subResource"
+                icon={<AddIcon />}
+                size="lg"
+                isRound
+                mb={3}
+                onClick={() => openModal()}
+              />
+            )}
+          />
+          <Text fontWeight={500}>Add sub resource</Text>
+        </CardFrame>
+      </Wrap>
     </Flex>
+  );
+};
+
+const CardFrame: React.FC<{}> = ({ children }) => {
+  return (
+    <Flex
+      backgroundColor="whiteAlpha.500"
+      boxSize="10rem"
+      direction="column"
+      alignItems="center"
+      justifyContent="center"
+      borderWidth="1px"
+      borderColor="gray.300"
+      p={2}
+      borderRadius={4}
+    >
+      {children}
+    </Flex>
+  );
+};
+
+const SubResourceCard: React.FC<{ subResource: ResourceDataFragment }> = ({ subResource }) => {
+  return (
+    <CardFrame>
+      <InternalLink
+        textAlign="center"
+        fontSize="sm"
+        routePath="/resources/[_id]"
+        asHref={`/resources/${subResource._id}`}
+      >
+        {shortenString(subResource.name, 90)}
+      </InternalLink>
+    </CardFrame>
   );
 };
