@@ -24,6 +24,7 @@ import { ResourceDataFragment } from '../../graphql/resources/resources.fragment
 import { useDeleteResourceMutation } from '../../graphql/resources/resources.operations.generated';
 import { UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
+import { isResourceGroupType, isResourceSeriesType } from '../../services/resources.service';
 import { PageInfo } from '../PageInfo';
 import { GetResourceResourcePageQuery, useGetResourceResourcePageQuery } from './ResourcePage.generated';
 
@@ -165,17 +166,21 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
             </Box>
           )}
         </Flex>
-        <SubResourceSeriesManager
-          resourceId={resourceId}
-          subResourceSeries={resource.subResourceSeries || undefined}
-          domains={resource.coveredConceptsByDomain?.map((i) => i.domain) || []}
-        />
+        {(isResourceSeriesType(resource.type) || resource.subResourceSeries?.length) && (
+          <SubResourceSeriesManager
+            resourceId={resourceId}
+            subResourceSeries={resource.subResourceSeries || undefined}
+            domains={resource.coveredConceptsByDomain?.map((i) => i.domain) || []}
+          />
+        )}
 
-        <SubResourcesManager
-          resourceId={resourceId}
-          subResources={resource.subResources || []}
-          domains={resource.coveredConceptsByDomain?.map((i) => i.domain) || []}
-        />
+        {(isResourceGroupType(resource.type) || resource.subResources?.length) && (
+          <SubResourcesManager
+            resourceId={resourceId}
+            subResources={resource.subResources || []}
+            domains={resource.coveredConceptsByDomain?.map((i) => i.domain) || []}
+          />
+        )}
       </Stack>
     </PageLayout>
   );
