@@ -1,46 +1,39 @@
-import { Box } from '@chakra-ui/core';
-import gql from 'graphql-tag';
-
-import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
-import { useListDomainResourcePreviewsQuery } from './ResourceList.generated';
-import { ResourcePreview } from './ResourcePreview';
-import { DomainResourcesSortingType, SortingDirection } from '../../graphql/types';
-
-export const listDomainResourcePreviews = gql`
-  query listDomainResourcePreviews($domainKey: String!, $options: DomainResourcesOptions!) {
-    getDomainByKey(key: $domainKey) {
-      _id
-      name
-      resources(options: $options) {
-        items {
-          ...ResourcePreviewData
-        }
-      }
-    }
-  }
-  ${ResourcePreviewData}
-`;
+import { Box, Flex, Stack, Text } from '@chakra-ui/core';
+import { ReactElement } from 'react';
+import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { InternalLink } from '../navigation/InternalLink';
+import { ResourceTypeBadge } from './elements/ResourceType';
 
 interface ResourceListProps {
-  domainKey: string;
+  resources: ResourceDataFragment[];
+  renderRightItem?: (resource: ResourceDataFragment) => ReactElement;
 }
 
-export const ResourceList: React.FC<ResourceListProps> = ({ domainKey }) => {
-  const { data } = useListDomainResourcePreviewsQuery({
-    variables: {
-      domainKey,
-      options: {
-        sortingType: DomainResourcesSortingType.Newest,
-      },
-    },
-  });
-
+export const ResourceList: React.FC<ResourceListProps> = ({ resources }) => {
   return (
-    <Box borderWidth={1} borderColor="gray.200" borderRadius={4} p={4} width="100%">
-      {data?.getDomainByKey.resources?.items &&
-        data?.getDomainByKey.resources?.items.map((preview) => (
-          <ResourcePreview key={preview._id} resourcePreview={preview} />
-        ))}
-    </Box>
+    <Flex direction="column" alignItems="stretch" borderWidth="1px 1px 0px 1px" borderColor="gray.200" width="100%">
+      {resources.map((resource) => (
+        <ResourceListItem key={resource._id} resource={resource} />
+      ))}
+    </Flex>
+  );
+};
+
+interface ResourcePreviewProps {
+  resource: ResourceDataFragment;
+  renderRight?: (resource: ResourceDataFragment) => ReactElement;
+}
+export const ResourceListItem: React.FC<ResourcePreviewProps> = ({ resource, renderRight }) => {
+  return (
+    <Flex p={2} direction="row" borderBottomWidth="1px" borderColor="gray.200">
+      <Stack direction="row" alignItems="center" spacing={2}>
+        <InternalLink routePath="/resources/[_id]" asHref={`/resources/${resource._id}`}>
+          {resource.name}
+        </InternalLink>
+        <ResourceTypeBadge type={resource.type} />
+      </Stack>
+      <Box flexGrow={1}></Box>
+      {renderRight && <Box>{renderRight(resource)}</Box>}
+    </Flex>
   );
 };
