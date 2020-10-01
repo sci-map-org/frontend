@@ -51,7 +51,16 @@ export type AttachResourceCoversConceptsMutation = (
         { __typename?: 'Concept' }
         & Pick<Types.Concept, '_id' | 'name'>
       )> }
-    )> }
+    )>, coveredConceptsByDomain?: Types.Maybe<Array<(
+      { __typename?: 'ResourceCoveredConceptsByDomainItem' }
+      & { domain: (
+        { __typename?: 'Domain' }
+        & Pick<Types.Domain, '_id'>
+      ), coveredConcepts: Array<(
+        { __typename?: 'Concept' }
+        & Pick<Types.Concept, '_id' | 'name'>
+      )> }
+    )>> }
   ) }
 );
 
@@ -72,7 +81,16 @@ export type DetachResourceCoversConceptsMutation = (
         { __typename?: 'Concept' }
         & Pick<Types.Concept, '_id' | 'name'>
       )> }
-    )> }
+    )>, coveredConceptsByDomain?: Types.Maybe<Array<(
+      { __typename?: 'ResourceCoveredConceptsByDomainItem' }
+      & { domain: (
+        { __typename?: 'Domain' }
+        & Pick<Types.Domain, '_id'>
+      ), coveredConcepts: Array<(
+        { __typename?: 'Concept' }
+        & Pick<Types.Concept, '_id' | 'name'>
+      )> }
+    )>> }
   ) }
 );
 

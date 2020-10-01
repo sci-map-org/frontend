@@ -29,7 +29,7 @@ import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.f
 import { DomainResourcesOptions, DomainResourcesSortingType, ResourceType } from '../../graphql/types';
 import { theme } from '../../theme/theme';
 import { RoleAccess } from '../auth/RoleAccess';
-import { ResourcePreviewCardList } from './ResourcePreviewCard';
+import { ResourcePreviewCardList } from './ResourcePreviewCardList';
 import { ResourceTypeBadge, resourceTypeColorMapping, resourceTypeToLabel } from './elements/ResourceType';
 
 export const getDomainRecommendedResources = gql`

@@ -1,7 +1,7 @@
 import * as Types from '../../graphql/types';
 
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
-import * as Operations from './ResourcePreviewCard';
+import * as Operations from './ResourcePreviewCardList';
 import * as Apollo from '@apollo/client';
 export type SetResourceConsumedMutationVariables = Types.Exact<{
   resourceId: Types.Scalars['String'];

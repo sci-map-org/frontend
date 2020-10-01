@@ -6,7 +6,7 @@ import { RoleAccess } from '../../../components/auth/RoleAccess';
 import { DomainConceptsPicker } from '../../../components/concepts/DomainConceptsPicker';
 import { PageLayout } from '../../../components/layout/PageLayout';
 import { DeleteButtonWithConfirmation } from '../../../components/lib/buttons/DeleteButtonWithConfirmation';
-import { ResourcePreviewCardList } from '../../../components/resources/ResourcePreviewCard';
+import { ResourcePreviewCardList } from '../../../components/resources/ResourcePreviewCardList';
 import { ConceptData, generateConceptData } from '../../../graphql/concepts/concepts.fragments';
 import { ConceptDataFragment } from '../../../graphql/concepts/concepts.fragments.generated';
 import { useDeleteConcept } from '../../../graphql/concepts/concepts.hooks';

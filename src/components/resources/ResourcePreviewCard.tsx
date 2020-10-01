@@ -1,10 +1,5 @@
 import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
   Box,
-  Button,
-  CloseButton,
   Flex,
   IconButton,
   Link,
@@ -16,337 +11,328 @@ import {
   PopoverHeader,
   PopoverTrigger,
   Skeleton,
-  Spinner,
   Stack,
   Text,
-  useToast,
+  Tooltip,
 } from '@chakra-ui/core';
-import { ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
-import gql from 'graphql-tag';
-import { useSetConceptsKnownMutation } from '../../graphql/concepts/concepts.operations.generated';
-import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
+import { ArrowDownIcon, ArrowUpIcon, EditIcon, SettingsIcon } from '@chakra-ui/icons';
+import { useEffect, useRef, useState } from 'react';
+import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { useVoteResourceMutation } from '../../graphql/resources/resources.operations.generated';
 import { ResourceVoteValue } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
-import { useMockedFeaturesEnabled } from '../../hooks/useMockedFeaturesEnabled';
+import { routerPushToPage } from '../../pages/PageInfo';
+import { EditResourcePageInfo } from '../../pages/resources/EditResourcePage';
+import { RoleAccess } from '../auth/RoleAccess';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import { CompletedCheckbox } from '../lib/CompletedCheckbox';
 import { InternalLink } from '../navigation/InternalLink';
+import { ResourceDomainCoveredConceptsSelector } from './CoveredConceptsSelector';
 import { shortenDescription } from './elements/ResourceDescription';
 import { ResourceDuration } from './elements/ResourceDuration';
-import { useSetResourceConsumedMutation } from './ResourcePreviewCard.generated';
-import { ResourceStarsRating } from './elements/ResourceStarsRating';
-import { SelectedTagsViewer } from './elements/ResourceTagsEditor';
+import { ResourceStarsRater, ResourceStarsRating } from './elements/ResourceStarsRating';
+import { ResourceTagsEditor, SelectedTagsViewer } from './elements/ResourceTagsEditor';
 import { ResourceTypeBadge } from './elements/ResourceType';
 import { ResourceUrlLink } from './elements/ResourceUrl';
-import { WideResourcePreviewCard } from './WideResourcePreviewCard';
-import { flatten } from 'lodash';
 
-export const setResourceConsumed = gql`
-  mutation setResourceConsumed($resourceId: String!, $consumed: Boolean!) {
-    setResourcesConsumed(payload: { resources: [{ resourceId: $resourceId, consumed: $consumed }] }) {
-      ...ResourcePreviewData
-    }
-  }
-  ${ResourcePreviewData}
-`;
-
-// interface ResourcePreviewCardProps {
-//   domainKey: string;
-//   resource: ResourcePreviewDataFragment;
-//   onResourceConsumed: (resource: ResourcePreviewDataFragment, consumed: boolean) => void;
-//   isLoading?: boolean;
-// }
-// export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
-//   domainKey,
-//   resource,
-//   onResourceConsumed,
-//   isLoading,
-// }) => {
-//   const { mockedFeaturesEnabled } = useMockedFeaturesEnabled();
-//   const [voteResource] = useVoteResourceMutation();
-//   const { currentUser } = useCurrentUser();
-//   const unauthentificatedModalDisclosure = useUnauthentificatedModal();
-//   return (
-//     <Flex
-//       direction="row"
-//       alignItems="stretch"
-//       borderLeftColor="gray.200"
-//       borderRightColor="gray.200"
-//       borderLeftWidth={1}
-//       borderRightWidth={1}
-//       borderBottomColor="gray.200"
-//       borderBottomWidth={1}
-//       key={resource._id}
-//       pb={0}
-//     >
-//       <Flex direction="row" alignItems="center" px={0}>
-//         <IconButton
-//           size="sm"
-//           aria-label="upvote"
-//           icon={<ArrowUpIcon />}
-//           variant="ghost"
-//           my={0}
-//           isDisabled={isLoading}
-//           onClick={() => {
-//             if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
-//             voteResource({ variables: { resourceId: resource._id, value: ResourceVoteValue.Up } });
-//           }}
-//         />
-//         <Skeleton isLoaded={!isLoading}>
-//           <Text>{resource.upvotes}</Text>
-//         </Skeleton>
-//         <IconButton
-//           size="sm"
-//           aria-label="downvote"
-//           icon={<ArrowDownIcon />}
-//           variant="ghost"
-//           my={0}
-//           isDisabled={isLoading}
-//           onClick={() => {
-//             if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
-//             voteResource({ variables: { resourceId: resource._id, value: ResourceVoteValue.Down } });
-//           }}
-//         />
-//       </Flex>
-//       <Flex direction="column" flexGrow={1} justifyContent="center">
-//         <Skeleton isLoaded={!isLoading}>
-//           <Stack spacing={2} direction="row" alignItems="baseline" mr="10px">
-//             <Text>
-//               <InternalLink routePath="/resources/[_id]" asHref={`/resources/${resource._id}`} fontSize="xl">
-//                 {resource.name}
-//               </InternalLink>
-//             </Text>
-//             <ResourceUrlLink resource={resource} />
-//             <ResourceTypeBadge type={resource.type} />
-//             <ResourceDuration value={resource.durationMs} />
-//             <ResourceStarsRating value={resource.rating} pxSize={15} />
-//           </Stack>
-//         </Skeleton>
-//         {((resource.tags && resource.tags.length > 0) || resource.description) && (
-//           <Box pb={2}>
-//             <Text fontWeight={250}>
-//               <SelectedTagsViewer selectedTags={resource.tags} />
-//               {resource.description && shortenDescription(resource.description)}
-//             </Text>
-//           </Box>
-//         )}
-//       </Flex>
-//       <Flex flexBasis="100px" flexShrink={0} direction="column" justifyContent="center" py={2}>
-//         {resource.coveredConcepts && (
-//           <Skeleton isLoaded={!isLoading}>
-//             <Box>
-//               <Popover>
-//                 <PopoverTrigger>
-//                   <Link color="gray.600" fontWeight={200}>
-//                     {resource.coveredConcepts?.items.length} Concept
-//                     {resource.coveredConcepts?.items.length === 1 ? '' : 's'}
-//                   </Link>
-//                 </PopoverTrigger>
-//                 <PopoverContent zIndex={4} backgroundColor="white">
-//                   <PopoverArrow />
-//                   <PopoverHeader>Concepts</PopoverHeader>
-//                   <PopoverCloseButton />
-//                   <PopoverBody>
-//                     <Stack direction="column">
-//                       {resource.coveredConcepts.items.map((concept) => (
-//                         <Box key={concept._id}>
-//                           <InternalLink
-//                             routePath="/domains/[key]/concepts/[conceptKey]"
-//                             asHref={`/domains/${domainKey}/concepts/${concept.key}`}
-//                           >
-//                             {concept.name}
-//                           </InternalLink>
-//                         </Box>
-//                       ))}
-//                     </Stack>
-//                   </PopoverBody>
-//                 </PopoverContent>
-//               </Popover>
-//             </Box>
-//           </Skeleton>
-//         )}
-//         {mockedFeaturesEnabled && (
-//           <Box>
-//             <Link color="gray.600" fontWeight={200}>
-//               3 comments
-//             </Link>
-//           </Box>
-//         )}
-//       </Flex>
-//       <Flex>
-//         <CompletedCheckbox
-//           size="lg"
-//           m={4}
-//           popoverLabel="Mark as completed"
-//           popoverDelay={500}
-//           isDisabled={isLoading}
-//           isChecked={!!resource.consumed && !!resource.consumed.consumedAt}
-//           onChange={async () => {
-//             if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
-//             onResourceConsumed(resource, !resource.consumed || !resource.consumed.consumedAt);
-//           }}
-//         />
-//       </Flex>
-//     </Flex>
-//   );
-// };
-
-export const ResourcePreviewCardList: React.FC<{
+interface ResourcePreviewCardProps {
   domainKey: string;
-  resourcePreviews: ResourcePreviewDataFragment[];
+  resource: ResourcePreviewDataFragment;
+  onResourceConsumed: (resource: ResourcePreviewDataFragment, consumed: boolean) => void;
   isLoading?: boolean;
-  displayMode?: 'wide' | 'dense';
-  onResourceConsumed?: (resource: ResourcePreviewDataFragment, consumed: boolean) => void;
-}> = ({ resourcePreviews, domainKey, isLoading, onResourceConsumed, displayMode = 'wide' }) => {
-  const checkedResourceToast = useToast();
-
-  const [setConceptKnown] = useSetConceptsKnownMutation();
-  const [setResourceConsumedMutation] = useSetResourceConsumedMutation();
-  const setResourceConsumed = async (resource: ResourcePreviewDataFragment, consumed: boolean) => {
-    await Promise.all([
-      setResourceConsumedMutation({
-        variables: {
-          resourceId: resource._id,
-          consumed,
-        },
-      }),
-      resource.coveredConceptsByDomain && consumed
-        ? setConceptKnown({
-            variables: {
-              payload: {
-                concepts: flatten(
-                  resource.coveredConceptsByDomain.map(({ coveredConcepts }) => coveredConcepts)
-                ).map(({ _id }) => ({ conceptId: _id })),
-              },
-            },
-          }).then(() => {
-            // Later, reload everytime we mark a resource as consumed / not consumed, and filter from the backed: will fix all issues
-            onResourceConsumed && onResourceConsumed(resource, consumed);
-          })
-        : undefined,
-    ]);
-  };
-  const handleResourceConsumed = async (resource: ResourcePreviewDataFragment, setResourceConsumedValue: boolean) => {
-    await setResourceConsumed(resource, setResourceConsumedValue);
-    checkedResourceToast({
-      render: ({ onClose, id }) => (
-        <Alert
-          status="success"
-          variant="solid"
-          id={id.toString()}
-          textAlign="left"
-          boxShadow="lg"
-          rounded="md"
-          alignItems="start"
-          m={2}
-          pr={8}
-        >
-          <AlertIcon />
-          <Box flexDirection="row" alignItems="baseline" flex="1">
-            <AlertDescription>
-              The resource was marked as {setResourceConsumedValue ? `consumed` : 'not consumed'}
-              <Button
-                ml={6}
-                size="sm"
-                variant="outline"
-                onClick={() => setResourceConsumed(resource, !setResourceConsumedValue).then(() => onClose())}
-              >
-                Undo
-              </Button>
-            </AlertDescription>
-          </Box>
-          <CloseButton size="sm" onClick={onClose} position="absolute" right="4px" top="4px" />
-        </Alert>
-      ),
-      position: 'bottom-left',
-      duration: 3000,
-    });
-  };
-
-  if (!isLoading && !resourcePreviews.length)
-    return (
-      <Flex
-        alignItems="center"
-        justifyContent="center"
-        py="50px"
-        backgroundColor="backgroundColor.0"
-        borderColor="gray.200"
-        borderWidth="1px"
-      >
-        <Text fontSize="xl" fontStyle="italic">
-          No results found
-        </Text>
-      </Flex>
-    );
-  // if (displayMode === 'dense')
-  //   return (
-  //     <Flex
-  //       borderTop="1px solid"
-  //       borderTopColor="gray.200"
-  //       direction="column"
-  //       alignItems="stretch"
-  //       backgroundColor="backgroundColor.0"
-  //     >
-  //       {isLoading && (
-  //         <Flex
-  //           backgroundColor="backgroundColor.0"
-  //           direction="column"
-  //           alignItems="center"
-  //           h="1000px"
-  //           pt="200px"
-  //           borderWidth="1px"
-  //           borderTopWidth="0px"
-  //           borderColor="gray.200"
-  //           zIndex={1000}
-  //         >
-  //           <Spinner size="xl" m={4} />
-  //           <Text fontStyle="italic">Finding the most adapted learning resources...</Text>
-  //         </Flex>
-  //       )}
-  //       {resourcePreviews.map((preview) => (
-  //         <ResourcePreviewCard
-  //           key={preview._id}
-  //           domainKey={domainKey}
-  //           resource={preview}
-  //           onResourceConsumed={handleResourceConsumed}
-  //         />
-  //       ))}
-  //     </Flex>
-  //   );
+}
+export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
+  domainKey,
+  resource,
+  onResourceConsumed,
+  isLoading,
+}) => {
+  const { currentUser } = useCurrentUser();
+  const unauthentificatedModalDisclosure = useUnauthentificatedModal();
   return (
     <Flex
-      borderTop="1px solid"
-      borderTopColor="gray.200"
-      direction="column"
+      direction="row"
       alignItems="stretch"
-      backgroundColor="backgroundColor.0"
+      borderLeftColor="gray.200"
+      borderRightColor="gray.200"
+      borderLeftWidth={1}
+      borderRightWidth={1}
+      borderBottomColor="gray.200"
+      borderBottomWidth={1}
+      key={resource._id}
     >
-      {isLoading ? (
-        <Flex
-          backgroundColor="backgroundColor.0"
-          direction="column"
-          alignItems="center"
-          h="1000px"
-          pt="200px"
-          borderWidth="1px"
-          borderTopWidth="0px"
-          borderColor="gray.200"
-        >
-          <Spinner size="xl" m={4} />
-          <Text fontStyle="italic">Finding the most adapted learning resources...</Text>
+      <LeftBlock resource={resource} isLoading={isLoading} />
+      <Flex direction="column" flexGrow={1} pt="4px">
+        <Flex direction="row" flexGrow={1}>
+          <Flex direction="column" flexGrow={1} justifyContent="center">
+            <Skeleton isLoaded={!isLoading}>
+              <Stack spacing={2} direction="row" alignItems="baseline" mr="10px">
+                <TitleLink resource={resource} isLoading={isLoading} />
+              </Stack>
+            </Skeleton>
+            <Skeleton isLoaded={!isLoading}>
+              <Stack spacing={1} direction="row" alignItems="baseline" mr="10px">
+                <ResourceStarsRating value={resource.rating} pxSize={13} />
+                <ResourceTypeBadge type={resource.type} />
+                <ResourceDuration value={resource.durationMs} />
+
+                <RoleAccess accessRule="contributorOrAdmin">
+                  <ResourceStarsRater
+                    resourceId={resource._id}
+                    size="xs"
+                    color="gray.500"
+                    _hover={{ color: 'gray.900' }}
+                  />
+                </RoleAccess>
+              </Stack>
+            </Skeleton>
+            {((resource.tags && resource.tags.length > 0) || resource.description) && (
+              <Box>
+                <Text fontWeight={250}>{resource.description && shortenDescription(resource.description)}</Text>
+              </Box>
+            )}
+          </Flex>
         </Flex>
+        <BottomBlock resource={resource} domainKey={domainKey} isLoading={isLoading} />
+      </Flex>
+      <Flex direction="row" borderLeftWidth="0px" borderLeftColor="gray.100">
+        <CompletedCheckbox
+          size="lg"
+          alignSelf="center"
+          justifySelf="center"
+          ml="32px"
+          mr="4px"
+          popoverLabel="Mark as completed"
+          popoverDelay={500}
+          isDisabled={isLoading}
+          isChecked={!!resource.consumed && !!resource.consumed.consumedAt}
+          onChange={async () => {
+            if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
+            onResourceConsumed(resource, !resource.consumed || !resource.consumed.consumedAt);
+          }}
+        />
+        <IconButton
+          m={1}
+          aria-label="edit resource"
+          color="gray.600"
+          size="xs"
+          icon={<EditIcon />}
+          variant="ghost"
+          onClick={() => {
+            if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
+            routerPushToPage(EditResourcePageInfo(resource));
+          }}
+        />
+      </Flex>
+    </Flex>
+  );
+};
+
+const LeftBlock: React.FC<{ resource: ResourcePreviewDataFragment; isLoading?: boolean }> = ({
+  resource,
+  isLoading,
+}) => {
+  const [voteResource] = useVoteResourceMutation();
+  const unauthentificatedModalDisclosure = useUnauthentificatedModal();
+  const { currentUser } = useCurrentUser();
+  return (
+    <Flex direction="column" px={5} py={1} justifyContent="center" alignItems="center">
+      <IconButton
+        size="xs"
+        aria-label="upvote"
+        icon={<ArrowUpIcon />}
+        variant="ghost"
+        my={0}
+        isDisabled={isLoading}
+        onClick={() => {
+          if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
+          voteResource({ variables: { resourceId: resource._id, value: ResourceVoteValue.Up } });
+        }}
+      />
+      <Skeleton isLoaded={!isLoading}>
+        <Text>{resource.upvotes}</Text>
+      </Skeleton>
+      <IconButton
+        size="xs"
+        aria-label="downvote"
+        icon={<ArrowDownIcon />}
+        variant="ghost"
+        my={0}
+        isDisabled={isLoading}
+        onClick={() => {
+          if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
+          voteResource({ variables: { resourceId: resource._id, value: ResourceVoteValue.Down } });
+        }}
+      />
+    </Flex>
+  );
+};
+
+const TitleLink: React.FC<{ resource: ResourcePreviewDataFragment; isLoading?: boolean }> = ({
+  resource,
+  isLoading,
+}) => {
+  return (
+    <Box>
+      <Link
+        display="flex"
+        alignItems="baseline"
+        flexDirection={{ base: 'column', md: 'row' }}
+        href={resource.url}
+        isExternal
+      >
+        <Text mr={1} as="span" fontSize="xl">
+          {/* @ts-ignore */}
+          {resource.name} <ResourceUrlLink resource={resource} isLoading={isLoading} as="span" />
+        </Text>
+      </Link>
+    </Box>
+  );
+};
+
+const shortenCoveredConceptsList = (coveredConcepts: Pick<ConceptDataFragment, 'name'>[], maxLength: number = 40) => {
+  const { s, count } = [...coveredConcepts]
+    .sort((c1, c2) => c1.name.length - c2.name.length)
+    .reduce(
+      (o, concept, index) => {
+        if (o.s.length > maxLength) {
+          o.count = o.count + 1;
+        } else {
+          o.s = index > 0 ? o.s + ', ' + concept.name : concept.name;
+        }
+        return o;
+      },
+      { s: '', count: 0 }
+    );
+  return count ? `${s}, and more...` : s;
+};
+
+const BottomBlock: React.FC<{
+  domainKey: string;
+  resource: ResourcePreviewDataFragment;
+  isLoading?: boolean;
+}> = ({ domainKey, resource, isLoading }) => {
+  const [tagEditorMode, setTagEditorMode] = useState(false);
+  const [coveredConceptsEditorMode, setCoveredConceptsEditorMode] = useState(false);
+  const wrapperRef = useRef(null);
+  const { currentUser } = useCurrentUser();
+  const unauthentificatedModalDisclosure = useUnauthentificatedModal();
+  const useOutsideAlerter = (ref: React.MutableRefObject<any>) => {
+    useEffect(() => {
+      function handleClickOutside(event: any) {
+        if (ref.current && !ref.current.contains(event.target)) {
+          setTagEditorMode(false);
+        }
+      }
+
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, [ref]);
+  };
+
+  const coveredConcepts = resource.coveredConceptsByDomain?.find((d) => d.domain.key === domainKey)?.coveredConcepts;
+  useOutsideAlerter(wrapperRef);
+  return (
+    <Flex pb={2} pt={2} flexWrap="wrap">
+      {tagEditorMode ? (
+        <Box ref={wrapperRef}>
+          <Skeleton isLoaded={!isLoading}>
+            <ResourceTagsEditor size="sm" resource={resource} inputWidth="100px" />
+          </Skeleton>
+        </Box>
       ) : (
-        resourcePreviews.map((preview) => (
-          <WideResourcePreviewCard
-            key={preview._id}
-            domainKey={domainKey}
-            resource={preview}
-            onResourceConsumed={handleResourceConsumed}
-          />
-        ))
+        <Stack direction="row" alignItems="center">
+          {resource.tags?.length && (
+            <Skeleton isLoaded={!isLoading}>
+              <SelectedTagsViewer pb={0} selectedTags={resource.tags} />
+            </Skeleton>
+          )}
+          <Tooltip hasArrow label={resource.tags?.length ? 'Add or remove tags' : 'Add tags'}>
+            <IconButton
+              isDisabled={isLoading}
+              size="xs"
+              variant="ghost"
+              aria-label="add tag"
+              onClick={(e) => {
+                if (!currentUser) {
+                  unauthentificatedModalDisclosure.onOpen();
+                  e.preventDefault();
+                  return;
+                }
+                setTagEditorMode(true);
+              }}
+              icon={<EditIcon />}
+            />
+          </Tooltip>
+          )
+        </Stack>
       )}
+      <Box flexGrow={1} flexBasis={0} />
+      <Flex flexShrink={0} direction="column" justifyContent="center">
+        {coveredConcepts && (
+          <Skeleton isLoaded={!isLoading}>
+            <Box>
+              <Popover placement="bottom-end">
+                <PopoverTrigger>
+                  <Stack direction="row" spacing="1px" _hover={{ color: 'gray.800' }} fontSize="15px">
+                    <Text color="gray.800" fontWeight={300} as="span">
+                      About:{'  '}
+                    </Text>
+                    <Link color="gray.800" fontWeight={300} onClick={() => setCoveredConceptsEditorMode(false)}>
+                      {shortenCoveredConceptsList(coveredConcepts, 32)}
+                    </Link>
+                    <IconButton
+                      onClick={(e) => {
+                        if (!currentUser) {
+                          unauthentificatedModalDisclosure.onOpen();
+                          e.preventDefault();
+                          return;
+                        }
+                        setCoveredConceptsEditorMode(true);
+                      }}
+                      aria-label="Add or remove covered concepts"
+                      variant="ghost"
+                      size="xs"
+                      color="gray.600"
+                      icon={<SettingsIcon />}
+                    />
+                  </Stack>
+                </PopoverTrigger>
+                <PopoverContent zIndex={4} backgroundColor="white">
+                  <PopoverArrow />
+                  <PopoverHeader fontWeight={500}>Covered Concepts</PopoverHeader>
+                  <PopoverCloseButton />
+                  <PopoverBody pt={1}>
+                    {coveredConceptsEditorMode ? (
+                      <ResourceDomainCoveredConceptsSelector
+                        domainKey={domainKey}
+                        resourceId={resource._id}
+                        coveredConcepts={coveredConcepts}
+                      />
+                    ) : (
+                      <Stack direction="column">
+                        {coveredConcepts.map((concept) => (
+                          <Box key={concept._id}>
+                            <InternalLink
+                              routePath="/domains/[key]/concepts/[conceptKey]"
+                              asHref={`/domains/${domainKey}/concepts/${concept.key}`}
+                            >
+                              {concept.name}
+                            </InternalLink>
+                          </Box>
+                        ))}
+                      </Stack>
+                    )}
+                  </PopoverBody>
+                </PopoverContent>
+              </Popover>
+            </Box>
+          </Skeleton>
+        )}
+      </Flex>
     </Flex>
   );
 };
