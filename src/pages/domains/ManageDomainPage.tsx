@@ -78,7 +78,7 @@ export const ManageDomainPage: React.FC<{ domainKey: string }> = ({ domainKey })
       isLoading={loading}
       title={`Manage Domain - ${domain.name}`}
       breadCrumbsLinks={[DomainPageInfo(domain), ManageDomainPageInfo(domain)]}
-      renderRight={
+      renderTopRight={
         <RoleAccess accessRule="contributorOrAdmin">
           <IconButton
             aria-label="edit domain"

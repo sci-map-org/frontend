@@ -175,7 +175,7 @@ export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = 
         ConceptPageInfo(concept.domain, concept),
       ]}
       title={concept.domain.name + ' - ' + concept.name}
-      renderRight={<ConceptPageRightIcons concept={concept} isDisabled={loading} />}
+      renderTopRight={<ConceptPageRightIcons concept={concept} isDisabled={loading} />}
       isLoading={loading}
     >
       <Box>

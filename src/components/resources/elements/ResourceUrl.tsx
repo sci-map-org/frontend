@@ -36,9 +36,9 @@ export const ResourceUrlLink: React.FC<
   return (
     <Skeleton as="span" isLoaded={!isLoading}>
       <Link
-        fontSize="sm"
         whiteSpace="nowrap"
         color={resource.consumed && resource.consumed.openedAt ? 'blue.400' : 'blue.700'}
+        fontSize="sm"
         {...linkProps}
         href={resource.url}
         onClick={() => {

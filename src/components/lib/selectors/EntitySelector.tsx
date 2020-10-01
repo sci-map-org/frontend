@@ -34,7 +34,7 @@ export const EntitySelector = <T extends EntityType>({
   };
 
   return (
-    <Box marginBottom="16px">
+    <Box>
       <Autosuggest
         shouldRenderSuggestions={() => {
           return true;

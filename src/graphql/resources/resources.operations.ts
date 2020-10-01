@@ -31,6 +31,15 @@ export const attachResourceCoversConcepts = gql`
           name
         }
       }
+      coveredConceptsByDomain {
+        domain {
+          _id
+        }
+        coveredConcepts {
+          _id
+          name
+        }
+      }
     }
   }
 `;
@@ -41,6 +50,15 @@ export const detachResourceCoversConcepts = gql`
       _id
       coveredConcepts(options: {}) {
         items {
+          _id
+          name
+        }
+      }
+      coveredConceptsByDomain {
+        domain {
+          _id
+        }
+        coveredConcepts {
           _id
           name
         }

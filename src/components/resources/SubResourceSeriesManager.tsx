@@ -72,18 +72,24 @@ export const SubResourceSeriesManager: React.FC<SubResourceSeriesManagerProps> =
               })
             }
             renderButton={({ openModal }) => (
-              <IconButton icon={<AddIcon />} aria-label="Add resource to series" onClick={() => openModal()} />
+              <IconButton
+                m={2}
+                size="md"
+                isRound
+                icon={<AddIcon />}
+                aria-label="Add resource to series"
+                onClick={() => openModal()}
+              />
             )}
           />
         </Flex>
       ) : (
-        <Flex direction="column" width="24rem">
-          <Heading size="sm" textAlign="center" mb={2}>
+        <Stack direction="column" spacing={3}>
+          <Heading size="sm" textAlign="center">
             Resource Series
           </Heading>
           <ResourceList resources={subResourceSeries} />
           <Flex direction="column" alignItems="center">
-            {/* <Text fontWeight={500}>Add resource to series</Text> */}
             <ResourceSelectorModal
               onSelect={(selectedResource) =>
                 addSubResourceToSeriesMutation({
@@ -106,7 +112,7 @@ export const SubResourceSeriesManager: React.FC<SubResourceSeriesManagerProps> =
               )}
             />
           </Flex>
-        </Flex>
+        </Stack>
       )}
     </Flex>
   );

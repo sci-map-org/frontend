@@ -1,4 +1,4 @@
-import { Box, Flex, IconButton, Text, Wrap } from '@chakra-ui/core';
+import { Flex, Heading, IconButton, Stack, Text, Wrap } from '@chakra-ui/core';
 import { AddIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
@@ -32,11 +32,11 @@ interface SubResourcesManagerProps {
 export const SubResourcesManager: React.FC<SubResourcesManagerProps> = ({ resourceId, subResources, domains }) => {
   const [addSubResource] = useAddSubResourceMutation();
   return (
-    <Flex direction="column" alignItems="stretch">
-      <Box mb={2}>
-        <Text fontSize="xl">Sub Resources</Text>
-      </Box>
-      <Wrap spacing={3}>
+    <Stack direction="column" spacing={3}>
+      <Heading size="sm" textAlign="center">
+        Sub Resources
+      </Heading>
+      <Wrap>
         {subResources.map((subResource) => (
           <SubResourceCard key={subResource._id} subResource={subResource} />
         ))}
@@ -60,7 +60,7 @@ export const SubResourcesManager: React.FC<SubResourcesManagerProps> = ({ resour
           <Text fontWeight={500}>Add sub resource</Text>
         </CardFrame>
       </Wrap>
-    </Flex>
+    </Stack>
   );
 };
 
@@ -73,8 +73,10 @@ const CardFrame: React.FC<{}> = ({ children }) => {
       alignItems="center"
       justifyContent="center"
       borderWidth="1px"
-      borderColor="gray.300"
+      borderColor="gray.400"
       p={2}
+      mb={4}
+      mx={2}
       borderRadius={4}
     >
       {children}

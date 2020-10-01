@@ -50,7 +50,8 @@ export const ResourceDomainAndCoveredConceptsSelector: React.FC<{
         </Flex>
       ))}
       <EntitySelector
-        placeholder="Search domains..."
+        inputSize="sm"
+        placeholder="Add new domain"
         entitySuggestions={differenceBy(
           data?.searchDomains.items || [],
           resource.coveredConceptsByDomain.map((s) => s.domain),

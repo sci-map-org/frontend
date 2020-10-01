@@ -32,7 +32,16 @@ export type GetResourceResourcePageQuery = (
     )>>, subResourceSeries?: Types.Maybe<Array<(
       { __typename?: 'Resource' }
       & ResourceDataFragment
-    )>> }
+    )>>, parentResource?: Types.Maybe<(
+      { __typename?: 'Resource' }
+      & Pick<Types.Resource, '_id' | 'name'>
+    )>, previousResource?: Types.Maybe<(
+      { __typename?: 'Resource' }
+      & Pick<Types.Resource, '_id' | 'name'>
+    )>, nextResource?: Types.Maybe<(
+      { __typename?: 'Resource' }
+      & Pick<Types.Resource, '_id' | 'name'>
+    )> }
     & ResourceDataFragment
   ) }
 );

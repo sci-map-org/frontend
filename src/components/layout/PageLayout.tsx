@@ -6,9 +6,11 @@ import { NavigationBreadcrumbs, NavigationBreadcrumbsProps } from './NavigationB
 
 interface PageLayoutProps {
   mode?: 'form';
+  renderLeft?: ReactNode;
+  renderRight?: ReactNode;
   breadCrumbsLinks?: NavigationBreadcrumbsProps['links'];
   title?: string;
-  renderRight?: ReactNode;
+  renderTopRight?: ReactNode;
   centerChildren?: boolean;
   isLoading?: boolean;
   accessRule?: RoleAccessAllowedRule | boolean;
@@ -18,6 +20,8 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   mode,
   breadCrumbsLinks,
   title,
+  renderTopRight,
+  renderLeft,
   renderRight,
   centerChildren,
   isLoading,
@@ -41,7 +45,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
       justifyContent="flex-start"
       backgroundColor="backgroundColor.1"
     >
-      {(breadCrumbsLinks || renderRight) && (
+      {(breadCrumbsLinks || renderTopRight) && (
         <Flex direction="row" justifyContent="space-between" pb="8px">
           {breadCrumbsLinks && breadCrumbsLinks.length ? (
             <Skeleton isLoaded={!isLoading}>
@@ -50,7 +54,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
           ) : (
             <Box />
           )}
-          <Box>{renderRight}</Box>
+          <Box>{renderTopRight}</Box>
         </Flex>
       )}
       {title && (
@@ -62,12 +66,17 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
           </Skeleton>
         </Flex>
       )}
-      <Box
-        px={mode === 'form' ? '10rem' : '0px'}
-        {...(centerChildren && { display: 'flex', flexDirection: 'column', alignItems: 'center' })}
-      >
-        {children}
-      </Box>
+      <Flex direction="row" justifyContent="stretch">
+        {renderLeft && <Box>{renderLeft}</Box>}
+        <Box
+          flexGrow={1}
+          px={mode === 'form' ? '10rem' : '0px'}
+          {...(centerChildren && { display: 'flex', flexDirection: 'column', alignItems: 'center' })}
+        >
+          {children}
+        </Box>
+        {renderRight && <Box>{renderRight}</Box>}
+      </Flex>
     </Flex>
   );
 };

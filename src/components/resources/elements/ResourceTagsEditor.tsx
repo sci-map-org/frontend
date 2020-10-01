@@ -1,4 +1,4 @@
-import { Flex, Stack, Tag, TagCloseButton, TagLabel } from '@chakra-ui/core';
+import { Flex, Stack, Tag, TagCloseButton, TagLabel, Wrap } from '@chakra-ui/core';
 import gql from 'graphql-tag';
 import { uniqBy } from 'lodash';
 import React from 'react';
@@ -27,6 +27,7 @@ export const SelectedTagsViewer: React.FC<{ selectedTags?: ResourceTag[] | null;
 };
 
 export const ResourceTagsStatelessEditor: React.FC<{
+  placeholder?: string;
   selectedTags: ResourceTag[];
   setSelectedTags?: (tags: ResourceTag[]) => void;
   onSelect?: (tag: ResourceTag) => void;
@@ -34,10 +35,11 @@ export const ResourceTagsStatelessEditor: React.FC<{
   isDisabled?: boolean;
   size?: 'sm' | 'md';
   inputWidth?: string;
-}> = ({ selectedTags, setSelectedTags, onSelect, onRemove, isDisabled, size = 'md', inputWidth }) => {
+}> = ({ selectedTags, setSelectedTags, onSelect, onRemove, isDisabled, size = 'md', inputWidth, placeholder }) => {
   return (
-    <Flex direction="row" alignItems="baseline">
+    <Stack direction="row" alignItems="baseline" spacing={2}>
       <ResourceTagSelector
+        placeholder={placeholder}
         isDisabled={isDisabled}
         size={size}
         width={inputWidth}
@@ -46,7 +48,7 @@ export const ResourceTagsStatelessEditor: React.FC<{
           onSelect && onSelect({ name: r.name });
         }}
       />
-      <Stack spacing={2} direction="row" flexGrow={1} alignItems="flex-start">
+      <Wrap spacing={2} w="100%">
         {selectedTags.map((selectedTag) => (
           <Tag size={size} colorScheme="gray" key={selectedTag.name}>
             <TagLabel>{selectedTag.name}</TagLabel>
@@ -59,8 +61,8 @@ export const ResourceTagsStatelessEditor: React.FC<{
             />
           </Tag>
         ))}
-      </Stack>
-    </Flex>
+      </Wrap>
+    </Stack>
   );
 };
 
@@ -91,12 +93,14 @@ export const ResourceTagsEditor: React.FC<{
   isDisabled?: boolean;
   size?: 'sm' | 'md';
   inputWidth?: string;
-}> = ({ resource, isDisabled, size = 'md', inputWidth }) => {
+  placeholder?: string;
+}> = ({ resource, isDisabled, size = 'md', inputWidth, placeholder }) => {
   const [addTagsToResource] = useAddTagsToResourceResourceEditorMutation();
   const [removeTagsFromResource] = useRemoveTagsFromResourceResourceEditorMutation();
   const selectedTags = resource.tags || [];
   return (
     <ResourceTagsStatelessEditor
+      placeholder={placeholder}
       size={size}
       isDisabled={isDisabled}
       selectedTags={selectedTags}

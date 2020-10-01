@@ -1,4 +1,4 @@
-import { Box, Skeleton, Stack, Text } from '@chakra-ui/core';
+import { Box, Heading, Skeleton, Stack, Text } from '@chakra-ui/core';
 import { ResourceWithCoveredConceptsByDomainDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { InternalLink } from '../navigation/InternalLink';
 
@@ -14,25 +14,24 @@ export const ResourceCoveredConceptsByDomainViewer: React.FC<ResourceCoveredConc
   if (!resource.coveredConceptsByDomain) return null;
   return (
     <Box>
-      <Text fontSize="2xl">Domains</Text>
-      <Stack spacing={2} pl={4}>
+      <Heading size="sm">Covered Topics</Heading>
+      <Stack spacing={2}>
         {resource.coveredConceptsByDomain.map(({ domain, coveredConcepts }) => (
           <Box key={domain._id}>
             <Skeleton isLoaded={!isLoading}>
-              <InternalLink fontSize="xl" routePath="/domains/[key]" asHref={`/domains/${domain.key}`}>
+              <InternalLink routePath="/domains/[key]" asHref={`/domains/${domain.key}`}>
                 {domain.name}
               </InternalLink>
             </Skeleton>
-            {coveredConcepts.length && (
-              <Stack spacing={1} pl={4}>
-                <Text fontWeight={700}>Covered Concepts</Text>
+            {!!coveredConcepts.length && (
+              <Stack spacing={1} pl={5}>
                 {coveredConcepts.map((concept) => (
-                  <Box key={concept._id} pl={2}>
+                  <Box key={concept._id}>
                     <Skeleton isLoaded={!isLoading}>
                       <InternalLink
                         routePath="/domains/[key]/concepts/[conceptKey]"
                         asHref={`/domains/${domain.key}/concepts/${concept.key}`}
-                        fontSize="md"
+                        fontSize="sm"
                       >
                         {concept.name}
                       </InternalLink>
