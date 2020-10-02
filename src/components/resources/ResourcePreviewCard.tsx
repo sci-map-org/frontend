@@ -13,11 +13,14 @@ import {
   PopoverTrigger,
   Skeleton,
   Stack,
+  Center,
   Text,
   Tooltip,
+  Button,
 } from '@chakra-ui/core';
 import { ArrowDownIcon, ArrowUpIcon, EditIcon, SettingsIcon } from '@chakra-ui/icons';
-import React, { useEffect, useRef, useState } from 'react';
+import { differenceBy } from 'lodash';
+import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { useVoteResourceMutation } from '../../graphql/resources/resources.operations.generated';
@@ -29,6 +32,8 @@ import { ResourcePageInfo } from '../../pages/resources/ResourcePage';
 import { RoleAccess } from '../auth/RoleAccess';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import { CompletedCheckbox } from '../lib/CompletedCheckbox';
+import { ResourceGroupIcon } from '../lib/icons/ResourceGroupIcon';
+import { ResourceSeriesIcon } from '../lib/icons/ResourceSeriesIcon';
 import { InternalLink } from '../navigation/InternalLink';
 import { ResourceDomainCoveredConceptsSelector } from './CoveredConceptsSelector';
 import { shortenDescription } from './elements/ResourceDescription';
@@ -265,6 +270,7 @@ const BottomBlock: React.FC<{
       };
     }, [ref]);
   };
+  const subResources = differenceBy(resource.subResources || [], resource.subResourceSeries || [], (r) => r._id);
 
   const coveredConcepts = resource.coveredConceptsByDomain?.find((d) => d.domain.key === domainKey)?.coveredConcepts;
   useOutsideAlerter(wrapperRef);
@@ -308,6 +314,26 @@ const BottomBlock: React.FC<{
         </BoxBlockDefaultClickPropagation>
       )}
       <Box flexGrow={1} flexBasis={0} />
+      <BoxBlockDefaultClickPropagation>
+        <Stack spacing={3} direction="row" alignItems="stretch" mr={4}>
+          {resource.subResourceSeries && resource.subResourceSeries.length && (
+            <SubResourcesButtonPopover
+              subResources={resource.subResourceSeries}
+              leftIcon={<ResourceSeriesIcon boxSize="24px" color="gray.700" _hover={{ color: 'black' }} />}
+              buttonText={resource.subResourceSeries.length.toString()}
+              headerTitle="Resource Series"
+            />
+          )}
+          {subResources && subResources.length && (
+            <SubResourcesButtonPopover
+              subResources={subResources}
+              leftIcon={<ResourceGroupIcon boxSize="24px" color="gray.600" _hover={{ color: 'black' }} />}
+              buttonText={subResources.length.toString()}
+              headerTitle="Sub Resources"
+            />
+          )}
+        </Stack>
+      </BoxBlockDefaultClickPropagation>
       <Flex flexShrink={0} direction="column" justifyContent="center">
         {coveredConcepts && (
           <Skeleton isLoaded={!isLoading}>
@@ -371,5 +397,39 @@ const BottomBlock: React.FC<{
         )}
       </Flex>
     </Flex>
+  );
+};
+
+const SubResourcesButtonPopover: React.FC<{
+  subResources: Pick<ResourcePreviewDataFragment, '_id' | 'name'>[];
+  leftIcon: ReactElement;
+  buttonText: string;
+  headerTitle: string;
+}> = ({ subResources, leftIcon, headerTitle, buttonText }) => {
+  return (
+    <Popover>
+      <PopoverTrigger>
+        <Button leftIcon={leftIcon} size="xs" variant="ghost">
+          {buttonText}
+        </Button>
+      </PopoverTrigger>
+
+      <PopoverContent zIndex={4} backgroundColor="white">
+        <PopoverArrow />
+        <PopoverHeader fontWeight={500}>{headerTitle}</PopoverHeader>
+        <PopoverCloseButton />
+        <PopoverBody pt={1}>
+          <Stack direction="column">
+            {subResources.map((subResource) => (
+              <Box key={subResource._id}>
+                <InternalLink routePath="/resources/[_id]" asHref={`/resources/${subResource._id}`}>
+                  {subResource.name}
+                </InternalLink>
+              </Box>
+            ))}
+          </Stack>
+        </PopoverBody>
+      </PopoverContent>
+    </Popover>
   );
 };

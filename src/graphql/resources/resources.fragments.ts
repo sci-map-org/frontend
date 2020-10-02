@@ -61,6 +61,14 @@ export const ResourcePreviewData = gql`
     }
     upvotes
     rating
+    subResourceSeries {
+      _id
+      name
+    }
+    subResources {
+      _id
+      name
+    }
   }
   ${ConceptData}
 `;

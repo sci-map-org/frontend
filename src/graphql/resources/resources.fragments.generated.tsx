@@ -32,6 +32,12 @@ export type ResourcePreviewDataFragment = (
       { __typename?: 'Concept' }
       & ConceptDataFragment
     )> }
+  )>>, subResourceSeries?: Types.Maybe<Array<(
+    { __typename?: 'Resource' }
+    & Pick<Types.Resource, '_id' | 'name'>
+  )>>, subResources?: Types.Maybe<Array<(
+    { __typename?: 'Resource' }
+    & Pick<Types.Resource, '_id' | 'name'>
   )>> }
 );
 
