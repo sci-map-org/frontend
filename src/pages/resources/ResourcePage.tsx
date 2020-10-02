@@ -1,5 +1,6 @@
 import { Box, Button, Flex, Skeleton, Stack, Text } from '@chakra-ui/core';
 import gql from 'graphql-tag';
+import { differenceBy } from 'lodash';
 import Router, { useRouter } from 'next/router';
 import { Access } from '../../components/auth/Access';
 import { RoleAccess } from '../../components/auth/RoleAccess';
@@ -177,7 +178,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
         {(isResourceGroupType(resource.type) || resource.subResources?.length) && (
           <SubResourcesManager
             resourceId={resourceId}
-            subResources={resource.subResources || []}
+            subResources={differenceBy(resource.subResources || [], resource.subResourceSeries || [], (r) => r._id)}
             domains={resource.coveredConceptsByDomain?.map((i) => i.domain) || []}
           />
         )}
