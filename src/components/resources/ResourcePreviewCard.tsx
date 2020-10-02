@@ -1,5 +1,6 @@
 import {
   Box,
+  BoxProps,
   Flex,
   IconButton,
   Link,
@@ -16,7 +17,7 @@ import {
   Tooltip,
 } from '@chakra-ui/core';
 import { ArrowDownIcon, ArrowUpIcon, EditIcon, SettingsIcon } from '@chakra-ui/icons';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { useVoteResourceMutation } from '../../graphql/resources/resources.operations.generated';
@@ -24,6 +25,7 @@ import { ResourceVoteValue } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { EditResourcePageInfo } from '../../pages/resources/EditResourcePage';
+import { ResourcePageInfo } from '../../pages/resources/ResourcePage';
 import { RoleAccess } from '../auth/RoleAccess';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import { CompletedCheckbox } from '../lib/CompletedCheckbox';
@@ -35,6 +37,21 @@ import { ResourceStarsRater, ResourceStarsRating } from './elements/ResourceStar
 import { ResourceTagsEditor, SelectedTagsViewer } from './elements/ResourceTagsEditor';
 import { ResourceTypeBadge } from './elements/ResourceType';
 import { ResourceUrlLink } from './elements/ResourceUrl';
+
+const BoxBlockDefaultClickPropagation: React.FC<BoxProps> = ({ children, ...props }) => {
+  return (
+    <Box
+      _hover={{ cursor: 'auto' }}
+      {...props}
+      onClick={(e) => {
+        e.stopPropagation();
+        props.onClick && props.onClick(e);
+      }}
+    >
+      {children}
+    </Box>
+  );
+};
 
 interface ResourcePreviewCardProps {
   domainKey: string;
@@ -54,15 +71,25 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
     <Flex
       direction="row"
       alignItems="stretch"
-      borderLeftColor="gray.200"
-      borderRightColor="gray.200"
       borderLeftWidth={1}
+      borderTopWidth={1}
+      borderTopColor="white" // hacky stuff
+      borderLeftColor="gray.200"
       borderRightWidth={1}
-      borderBottomColor="gray.200"
+      borderRightColor="gray.200"
       borderBottomWidth={1}
+      borderBottomColor="gray.200"
       key={resource._id}
+      _hover={{
+        cursor: 'pointer',
+        borderWidth: '1px',
+        borderColor: 'gray.400',
+      }}
+      // mt="-1px"
+      onClick={() => routerPushToPage(ResourcePageInfo(resource))}
     >
       <LeftBlock resource={resource} isLoading={isLoading} />
+
       <Flex direction="column" flexGrow={1} pt="4px">
         <Flex direction="row" flexGrow={1}>
           <Flex direction="column" flexGrow={1} justifyContent="center">
@@ -78,12 +105,14 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
                 <ResourceDuration value={resource.durationMs} />
 
                 <RoleAccess accessRule="contributorOrAdmin">
-                  <ResourceStarsRater
-                    resourceId={resource._id}
-                    size="xs"
-                    color="gray.500"
-                    _hover={{ color: 'gray.900' }}
-                  />
+                  <BoxBlockDefaultClickPropagation>
+                    <ResourceStarsRater
+                      resourceId={resource._id}
+                      size="xs"
+                      color="gray.500"
+                      _hover={{ color: 'gray.900' }}
+                    />
+                  </BoxBlockDefaultClickPropagation>
                 </RoleAccess>
               </Stack>
             </Skeleton>
@@ -97,33 +126,33 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
         <BottomBlock resource={resource} domainKey={domainKey} isLoading={isLoading} />
       </Flex>
       <Flex direction="row" borderLeftWidth="0px" borderLeftColor="gray.100">
-        <CompletedCheckbox
-          size="lg"
-          alignSelf="center"
-          justifySelf="center"
-          ml="32px"
-          mr="4px"
-          popoverLabel="Mark as completed"
-          popoverDelay={500}
-          isDisabled={isLoading}
-          isChecked={!!resource.consumed && !!resource.consumed.consumedAt}
-          onChange={async () => {
-            if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
-            onResourceConsumed(resource, !resource.consumed || !resource.consumed.consumedAt);
-          }}
-        />
-        <IconButton
-          m={1}
-          aria-label="edit resource"
-          color="gray.600"
-          size="xs"
-          icon={<EditIcon />}
-          variant="ghost"
-          onClick={() => {
-            if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
-            routerPushToPage(EditResourcePageInfo(resource));
-          }}
-        />
+        <BoxBlockDefaultClickPropagation alignSelf="center" justifySelf="center" ml="32px" mr="4px">
+          <CompletedCheckbox
+            size="lg"
+            popoverLabel="Mark as completed"
+            popoverDelay={500}
+            isDisabled={isLoading}
+            isChecked={!!resource.consumed && !!resource.consumed.consumedAt}
+            onChange={async () => {
+              if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
+              onResourceConsumed(resource, !resource.consumed || !resource.consumed.consumedAt);
+            }}
+          />
+        </BoxBlockDefaultClickPropagation>
+        <BoxBlockDefaultClickPropagation>
+          <IconButton
+            m={1}
+            aria-label="edit resource"
+            color="gray.600"
+            size="xs"
+            icon={<EditIcon />}
+            variant="ghost"
+            onClick={() => {
+              if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
+              routerPushToPage(EditResourcePageInfo(resource));
+            }}
+          />
+        </BoxBlockDefaultClickPropagation>
       </Flex>
     </Flex>
   );
@@ -138,33 +167,37 @@ const LeftBlock: React.FC<{ resource: ResourcePreviewDataFragment; isLoading?: b
   const { currentUser } = useCurrentUser();
   return (
     <Flex direction="column" px={5} py={1} justifyContent="center" alignItems="center">
-      <IconButton
-        size="xs"
-        aria-label="upvote"
-        icon={<ArrowUpIcon />}
-        variant="ghost"
-        my={0}
-        isDisabled={isLoading}
-        onClick={() => {
-          if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
-          voteResource({ variables: { resourceId: resource._id, value: ResourceVoteValue.Up } });
-        }}
-      />
+      <BoxBlockDefaultClickPropagation>
+        <IconButton
+          size="xs"
+          aria-label="upvote"
+          icon={<ArrowUpIcon />}
+          variant="ghost"
+          my={0}
+          isDisabled={isLoading}
+          onClick={() => {
+            if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
+            voteResource({ variables: { resourceId: resource._id, value: ResourceVoteValue.Up } });
+          }}
+        />
+      </BoxBlockDefaultClickPropagation>
       <Skeleton isLoaded={!isLoading}>
         <Text>{resource.upvotes}</Text>
       </Skeleton>
-      <IconButton
-        size="xs"
-        aria-label="downvote"
-        icon={<ArrowDownIcon />}
-        variant="ghost"
-        my={0}
-        isDisabled={isLoading}
-        onClick={() => {
-          if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
-          voteResource({ variables: { resourceId: resource._id, value: ResourceVoteValue.Down } });
-        }}
-      />
+      <BoxBlockDefaultClickPropagation>
+        <IconButton
+          size="xs"
+          aria-label="downvote"
+          icon={<ArrowDownIcon />}
+          variant="ghost"
+          my={0}
+          isDisabled={isLoading}
+          onClick={() => {
+            if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
+            voteResource({ variables: { resourceId: resource._id, value: ResourceVoteValue.Down } });
+          }}
+        />
+      </BoxBlockDefaultClickPropagation>
     </Flex>
   );
 };
@@ -174,7 +207,7 @@ const TitleLink: React.FC<{ resource: ResourcePreviewDataFragment; isLoading?: b
   isLoading,
 }) => {
   return (
-    <Box>
+    <BoxBlockDefaultClickPropagation>
       <Link
         display="flex"
         alignItems="baseline"
@@ -187,7 +220,7 @@ const TitleLink: React.FC<{ resource: ResourcePreviewDataFragment; isLoading?: b
           {resource.name} <ResourceUrlLink resource={resource} isLoading={isLoading} as="span" />
         </Text>
       </Link>
-    </Box>
+    </BoxBlockDefaultClickPropagation>
   );
 };
 
@@ -238,43 +271,47 @@ const BottomBlock: React.FC<{
   return (
     <Flex pb={2} pt={2} flexWrap="wrap">
       {tagEditorMode ? (
-        <Box ref={wrapperRef}>
-          <Skeleton isLoaded={!isLoading}>
-            <ResourceTagsEditor size="sm" resource={resource} inputWidth="100px" />
-          </Skeleton>
-        </Box>
-      ) : (
-        <Stack direction="row" alignItems="center">
-          {resource.tags?.length && (
+        <BoxBlockDefaultClickPropagation>
+          <Box ref={wrapperRef}>
             <Skeleton isLoaded={!isLoading}>
-              <SelectedTagsViewer pb={0} selectedTags={resource.tags} />
+              <ResourceTagsEditor size="sm" resource={resource} inputWidth="100px" />
             </Skeleton>
-          )}
-          <Tooltip hasArrow label={resource.tags?.length ? 'Add or remove tags' : 'Add tags'}>
-            <IconButton
-              isDisabled={isLoading}
-              size="xs"
-              variant="ghost"
-              aria-label="add tag"
-              onClick={(e) => {
-                if (!currentUser) {
-                  unauthentificatedModalDisclosure.onOpen();
-                  e.preventDefault();
-                  return;
-                }
-                setTagEditorMode(true);
-              }}
-              icon={<EditIcon />}
-            />
-          </Tooltip>
-          )
-        </Stack>
+          </Box>
+        </BoxBlockDefaultClickPropagation>
+      ) : (
+        <BoxBlockDefaultClickPropagation>
+          <Stack direction="row" alignItems="center">
+            {resource.tags?.length && (
+              <Skeleton isLoaded={!isLoading}>
+                <SelectedTagsViewer pb={0} selectedTags={resource.tags} />
+              </Skeleton>
+            )}
+            <Tooltip hasArrow label={resource.tags?.length ? 'Add or remove tags' : 'Add tags'}>
+              <IconButton
+                isDisabled={isLoading}
+                size="xs"
+                variant="ghost"
+                aria-label="add tag"
+                onClick={(e) => {
+                  if (!currentUser) {
+                    unauthentificatedModalDisclosure.onOpen();
+                    e.preventDefault();
+                    return;
+                  }
+                  setTagEditorMode(true);
+                }}
+                icon={<EditIcon />}
+              />
+            </Tooltip>
+            )
+          </Stack>
+        </BoxBlockDefaultClickPropagation>
       )}
       <Box flexGrow={1} flexBasis={0} />
       <Flex flexShrink={0} direction="column" justifyContent="center">
         {coveredConcepts && (
           <Skeleton isLoaded={!isLoading}>
-            <Box>
+            <BoxBlockDefaultClickPropagation>
               <Popover placement="bottom-end">
                 <PopoverTrigger>
                   <Stack direction="row" spacing="1px" _hover={{ color: 'gray.800' }} fontSize="15px">
@@ -329,7 +366,7 @@ const BottomBlock: React.FC<{
                   </PopoverBody>
                 </PopoverContent>
               </Popover>
-            </Box>
+            </BoxBlockDefaultClickPropagation>
           </Skeleton>
         )}
       </Flex>
