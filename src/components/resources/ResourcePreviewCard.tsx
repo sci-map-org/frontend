@@ -134,8 +134,8 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
         <BoxBlockDefaultClickPropagation alignSelf="center" justifySelf="center" ml="32px" mr="4px">
           <CompletedCheckbox
             size="lg"
-            popoverLabel="Mark as completed"
-            popoverDelay={500}
+            tooltipLabel="Mark as completed"
+            tooltipDelay={500}
             isDisabled={isLoading}
             isChecked={!!resource.consumed && !!resource.consumed.consumedAt}
             onChange={async () => {
@@ -338,7 +338,7 @@ const BottomBlock: React.FC<{
         {coveredConcepts && (
           <Skeleton isLoaded={!isLoading}>
             <BoxBlockDefaultClickPropagation>
-              <Popover placement="bottom-end">
+              <Popover placement="bottom-end" isLazy>
                 <PopoverTrigger>
                   <Stack direction="row" spacing="1px" _hover={{ color: 'gray.800' }} fontSize="15px">
                     <Text color="gray.800" fontWeight={300} as="span">
@@ -407,7 +407,7 @@ const SubResourcesButtonPopover: React.FC<{
   headerTitle: string;
 }> = ({ subResources, leftIcon, headerTitle, buttonText }) => {
   return (
-    <Popover>
+    <Popover isLazy>
       <PopoverTrigger>
         <Button leftIcon={leftIcon} size="xs" variant="ghost">
           {buttonText}

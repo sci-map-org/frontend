@@ -25,24 +25,24 @@ interface CompletedCheckboxProps
   size: keyof typeof sizeMapping;
   isChecked: boolean;
   onChange: (completedValue: boolean) => void;
-  popoverLabel?: string;
-  popoverDelay?: number;
+  tooltipLabel?: string;
+  tooltipDelay?: number;
 }
 
 export const CompletedCheckbox: React.FC<CompletedCheckboxProps> = ({
   size,
   onChange,
   isChecked,
-  popoverLabel,
-  popoverDelay,
+  tooltipLabel,
+  tooltipDelay,
   ...iconButtonProps
 }) => {
   return (
     <Tooltip
-      isDisabled={!popoverLabel}
-      openDelay={popoverDelay}
-      aria-label={popoverLabel}
-      label={popoverLabel}
+      isDisabled={!tooltipLabel}
+      openDelay={tooltipDelay}
+      aria-label={tooltipLabel}
+      label={tooltipLabel}
       placement="top"
     >
       <IconButton
