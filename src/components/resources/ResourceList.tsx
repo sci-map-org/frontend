@@ -1,4 +1,4 @@
-import { Box, Flex, Stack, Text } from '@chakra-ui/core';
+import { Box, Flex, Stack } from '@chakra-ui/core';
 import { ReactElement } from 'react';
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { InternalLink } from '../navigation/InternalLink';
@@ -19,11 +19,11 @@ export const ResourceList: React.FC<ResourceListProps> = ({ resources }) => {
   );
 };
 
-interface ResourcePreviewProps {
+interface ResourceListItemProps {
   resource: ResourceDataFragment;
   renderRight?: (resource: ResourceDataFragment) => ReactElement;
 }
-export const ResourceListItem: React.FC<ResourcePreviewProps> = ({ resource, renderRight }) => {
+export const ResourceListItem: React.FC<ResourceListItemProps> = ({ resource, renderRight }) => {
   return (
     <Flex p={2} direction="row" borderBottomWidth="1px" borderColor="gray.200">
       <Stack direction="row" alignItems="center" spacing={2}>

@@ -3,7 +3,6 @@ import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.g
 import { useGetDomainConceptListQuery } from '../../graphql/concepts/concepts.operations.generated';
 import { DomainConceptsPicker } from './DomainConceptsPicker';
 
-// Base one: get domain covered concepts list
 export const DomainConceptsSelector: React.FC<{
   domainKey: string;
   onSelect: (concept: ConceptDataFragment) => void;
