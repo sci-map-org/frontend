@@ -25,12 +25,6 @@ export const attachResourceCoversConcepts = gql`
   mutation attachResourceCoversConcepts($resourceId: String!, $conceptIds: [String!]!) {
     attachResourceCoversConcepts(resourceId: $resourceId, conceptIds: $conceptIds) {
       _id
-      coveredConcepts(options: {}) {
-        items {
-          _id
-          name
-        }
-      }
       coveredConceptsByDomain {
         domain {
           _id
@@ -48,12 +42,6 @@ export const detachResourceCoversConcepts = gql`
   mutation detachResourceCoversConcepts($resourceId: String!, $conceptIds: [String!]!) {
     detachResourceCoversConcepts(resourceId: $resourceId, conceptIds: $conceptIds) {
       _id
-      coveredConcepts(options: {}) {
-        items {
-          _id
-          name
-        }
-      }
       coveredConceptsByDomain {
         domain {
           _id
@@ -80,12 +68,6 @@ export const attachResourceToDomain = gql`
   mutation attachResourceToDomain($domainId: String!, $resourceId: String!) {
     attachResourceToDomain(domainId: $domainId, resourceId: $resourceId) {
       _id
-      domains(options: {}) {
-        items {
-          _id
-          key
-        }
-      }
       coveredConceptsByDomain {
         domain {
           _id
@@ -103,12 +85,6 @@ export const detachResourceFromDomain = gql`
   mutation detachResourceFromDomain($domainId: String!, $resourceId: String!) {
     detachResourceFromDomain(domainId: $domainId, resourceId: $resourceId) {
       _id
-      domains(options: {}) {
-        items {
-          _id
-          key
-        }
-      }
       coveredConceptsByDomain {
         domain {
           _id

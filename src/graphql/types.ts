@@ -262,8 +262,9 @@ export type Resource = {
   coveredConceptsByDomain?: Maybe<Array<ResourceCoveredConceptsByDomainItem>>;
   domains?: Maybe<ResourceDomainsResults>;
   subResources?: Maybe<Array<Resource>>;
+  parentResources?: Maybe<Array<Resource>>;
   subResourceSeries?: Maybe<Array<Resource>>;
-  parentResource?: Maybe<Resource>;
+  seriesParentResource?: Maybe<Resource>;
   nextResource?: Maybe<Resource>;
   previousResource?: Maybe<Resource>;
 };
@@ -451,8 +452,8 @@ export type Mutation = {
   voteResource: Resource;
   rateResource: Resource;
   addSubResource: SubResourceCreatedResult;
-  createSubResourceSeries: SubResourceCreatedResult;
-  addSubResourceToSeries: SubResourceCreatedResult;
+  createSubResourceSeries: SubResourceSeriesCreatedResult;
+  addSubResourceToSeries: SubResourceSeriesCreatedResult;
   addConceptToDomain: Concept;
   updateConcept: Concept;
   deleteConcept: DeleteConceptResult;
@@ -821,6 +822,12 @@ export enum ResourceVoteValue {
 export type SubResourceCreatedResult = {
   __typename?: 'SubResourceCreatedResult';
   parentResource: Resource;
+  subResource: Resource;
+};
+
+export type SubResourceSeriesCreatedResult = {
+  __typename?: 'SubResourceSeriesCreatedResult';
+  seriesParentResource: Resource;
   subResource: Resource;
 };
 

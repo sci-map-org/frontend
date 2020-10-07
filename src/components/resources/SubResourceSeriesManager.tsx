@@ -18,7 +18,7 @@ import {
 export const createSubResourceSeries = gql`
   mutation createSubResourceSeries($parentResourceId: String!, $subResourceId: String!) {
     createSubResourceSeries(parentResourceId: $parentResourceId, subResourceId: $subResourceId) {
-      parentResource {
+      seriesParentResource {
         _id
         subResourceSeries {
           ...ResourceData
@@ -36,10 +36,13 @@ export const addSubResourceToSeries = gql`
       previousResourceId: $previousResourceId
       subResourceId: $subResourceId
     ) {
-      parentResource {
+      seriesParentResource {
         _id
         subResourceSeries {
           ...ResourceData
+          nextResource {
+            ...ResourceData
+          }
         }
       }
     }

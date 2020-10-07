@@ -2,7 +2,7 @@ import { Flex, Heading, IconButton, Stack, Text, Wrap } from '@chakra-ui/core';
 import { AddIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
-import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
+import { ResourceData } from '../../graphql/resources/resources.fragments';
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { shortenString } from '../../util/utils';
 import { InternalLink } from '../navigation/InternalLink';
@@ -13,14 +13,20 @@ export const addSubResource = gql`
   mutation addSubResource($parentResourceId: String!, $subResourceId: String!) {
     addSubResource(parentResourceId: $parentResourceId, subResourceId: $subResourceId) {
       parentResource {
-        _id
+        ...ResourceData
         subResources {
-          ...ResourcePreviewData
+          _id
+        }
+      }
+      subResource {
+        ...ResourceData
+        parentResources {
+          _id
         }
       }
     }
   }
-  ${ResourcePreviewData}
+  ${ResourceData}
 `;
 
 interface SubResourcesManagerProps {

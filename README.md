@@ -11,7 +11,6 @@ React, Next.js, Apollo Client, Chakra UI
 Using avatar triggers a useless request all the time -> https://github.com/chakra-ui/chakra-ui/issues/149
 Do not use local storage (next.js...)
 Codegen: use same name for the export as the graphql query/mutation name -> c.f. ResourcePage (https://github.com/dotansimha/graphql-code-generator/issues/3244)
-ColorProvider breaks SSR styled-system (different classnames error)
 
 ## Setup
 

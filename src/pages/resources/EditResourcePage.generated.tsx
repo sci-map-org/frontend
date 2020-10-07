@@ -1,7 +1,6 @@
 import * as Types from '../../graphql/types';
 
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
-import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import * as Operations from './EditResourcePage';
 import * as Apollo from '@apollo/client';
 export type UpdateResourceResourcePageMutationVariables = Types.Exact<{
@@ -30,32 +29,6 @@ export type GetResourceEditResourcePageQuery = (
     & { creator?: Types.Maybe<(
       { __typename?: 'User' }
       & Pick<Types.User, '_id'>
-    )>, coveredConcepts?: Types.Maybe<(
-      { __typename?: 'ResourceCoveredConceptsResults' }
-      & { items: Array<(
-        { __typename?: 'Concept' }
-        & { domain?: Types.Maybe<(
-          { __typename?: 'Domain' }
-          & Pick<Types.Domain, '_id' | 'key' | 'name'>
-        )> }
-        & ConceptDataFragment
-      )> }
-    )>, domains?: Types.Maybe<(
-      { __typename?: 'ResourceDomainsResults' }
-      & { items: Array<(
-        { __typename?: 'Domain' }
-        & Pick<Types.Domain, '_id' | 'key' | 'name'>
-        & { concepts?: Types.Maybe<(
-          { __typename?: 'DomainConceptsResults' }
-          & { items: Array<(
-            { __typename?: 'DomainConceptsItem' }
-            & { concept: (
-              { __typename?: 'Concept' }
-              & ConceptDataFragment
-            ) }
-          )> }
-        )> }
-      )> }
     )> }
     & ResourceDataFragment
   ) }

@@ -12,8 +12,8 @@ export type CreateSubResourceSeriesMutationVariables = Types.Exact<{
 export type CreateSubResourceSeriesMutation = (
   { __typename?: 'Mutation' }
   & { createSubResourceSeries: (
-    { __typename?: 'SubResourceCreatedResult' }
-    & { parentResource: (
+    { __typename?: 'SubResourceSeriesCreatedResult' }
+    & { seriesParentResource: (
       { __typename?: 'Resource' }
       & Pick<Types.Resource, '_id'>
       & { subResourceSeries?: Types.Maybe<Array<(
@@ -34,12 +34,16 @@ export type AddSubResourceToSeriesMutationVariables = Types.Exact<{
 export type AddSubResourceToSeriesMutation = (
   { __typename?: 'Mutation' }
   & { addSubResourceToSeries: (
-    { __typename?: 'SubResourceCreatedResult' }
-    & { parentResource: (
+    { __typename?: 'SubResourceSeriesCreatedResult' }
+    & { seriesParentResource: (
       { __typename?: 'Resource' }
       & Pick<Types.Resource, '_id'>
       & { subResourceSeries?: Types.Maybe<Array<(
         { __typename?: 'Resource' }
+        & { nextResource?: Types.Maybe<(
+          { __typename?: 'Resource' }
+          & ResourceDataFragment
+        )> }
         & ResourceDataFragment
       )>> }
     ) }

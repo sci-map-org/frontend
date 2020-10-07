@@ -1,6 +1,6 @@
 import * as Types from '../../graphql/types';
 
-import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import * as Operations from './SubResourcesManager';
 import * as Apollo from '@apollo/client';
 export type AddSubResourceMutationVariables = Types.Exact<{
@@ -15,11 +15,18 @@ export type AddSubResourceMutation = (
     { __typename?: 'SubResourceCreatedResult' }
     & { parentResource: (
       { __typename?: 'Resource' }
-      & Pick<Types.Resource, '_id'>
       & { subResources?: Types.Maybe<Array<(
         { __typename?: 'Resource' }
-        & ResourcePreviewDataFragment
+        & Pick<Types.Resource, '_id'>
       )>> }
+      & ResourceDataFragment
+    ), subResource: (
+      { __typename?: 'Resource' }
+      & { parentResources?: Types.Maybe<Array<(
+        { __typename?: 'Resource' }
+        & Pick<Types.Resource, '_id'>
+      )>> }
+      & ResourceDataFragment
     ) }
   ) }
 );

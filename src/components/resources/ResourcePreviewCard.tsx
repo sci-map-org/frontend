@@ -1,6 +1,7 @@
 import {
   Box,
   BoxProps,
+  Button,
   Flex,
   IconButton,
   Link,
@@ -13,13 +14,10 @@ import {
   PopoverTrigger,
   Skeleton,
   Stack,
-  Center,
   Text,
   Tooltip,
-  Button,
 } from '@chakra-ui/core';
 import { ArrowDownIcon, ArrowUpIcon, EditIcon, SettingsIcon } from '@chakra-ui/icons';
-import { differenceBy } from 'lodash';
 import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
@@ -270,7 +268,6 @@ const BottomBlock: React.FC<{
       };
     }, [ref]);
   };
-  const subResources = differenceBy(resource.subResources || [], resource.subResourceSeries || [], (r) => r._id);
 
   const coveredConcepts = resource.coveredConceptsByDomain?.find((d) => d.domain.key === domainKey)?.coveredConcepts;
   useOutsideAlerter(wrapperRef);
@@ -324,11 +321,11 @@ const BottomBlock: React.FC<{
               headerTitle="Resource Series"
             />
           )}
-          {subResources && subResources.length && (
+          {resource.subResources && resource.subResources.length && (
             <SubResourcesButtonPopover
-              subResources={subResources}
+              subResources={resource.subResources}
               leftIcon={<ResourceGroupIcon boxSize="24px" color="gray.600" _hover={{ color: 'black' }} />}
-              buttonText={subResources.length.toString()}
+              buttonText={resource.subResources.length.toString()}
               headerTitle="Sub Resources"
             />
           )}

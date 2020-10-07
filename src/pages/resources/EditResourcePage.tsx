@@ -37,30 +37,6 @@ export const getResourceEditResourcePage = gql`
       creator {
         _id
       }
-      coveredConcepts(options: {}) {
-        items {
-          ...ConceptData
-          domain {
-            _id
-            key
-            name
-          }
-        }
-      }
-      domains(options: {}) {
-        items {
-          _id
-          key
-          name
-          concepts(options: {}) {
-            items {
-              concept {
-                ...ConceptData
-              }
-            }
-          }
-        }
-      }
     }
   }
   ${ResourceData}

@@ -45,13 +45,7 @@ export type AttachResourceCoversConceptsMutation = (
   & { attachResourceCoversConcepts: (
     { __typename?: 'Resource' }
     & Pick<Types.Resource, '_id'>
-    & { coveredConcepts?: Types.Maybe<(
-      { __typename?: 'ResourceCoveredConceptsResults' }
-      & { items: Array<(
-        { __typename?: 'Concept' }
-        & Pick<Types.Concept, '_id' | 'name'>
-      )> }
-    )>, coveredConceptsByDomain?: Types.Maybe<Array<(
+    & { coveredConceptsByDomain?: Types.Maybe<Array<(
       { __typename?: 'ResourceCoveredConceptsByDomainItem' }
       & { domain: (
         { __typename?: 'Domain' }
@@ -75,13 +69,7 @@ export type DetachResourceCoversConceptsMutation = (
   & { detachResourceCoversConcepts: (
     { __typename?: 'Resource' }
     & Pick<Types.Resource, '_id'>
-    & { coveredConcepts?: Types.Maybe<(
-      { __typename?: 'ResourceCoveredConceptsResults' }
-      & { items: Array<(
-        { __typename?: 'Concept' }
-        & Pick<Types.Concept, '_id' | 'name'>
-      )> }
-    )>, coveredConceptsByDomain?: Types.Maybe<Array<(
+    & { coveredConceptsByDomain?: Types.Maybe<Array<(
       { __typename?: 'ResourceCoveredConceptsByDomainItem' }
       & { domain: (
         { __typename?: 'Domain' }
@@ -118,13 +106,7 @@ export type AttachResourceToDomainMutation = (
   & { attachResourceToDomain: (
     { __typename?: 'Resource' }
     & Pick<Types.Resource, '_id'>
-    & { domains?: Types.Maybe<(
-      { __typename?: 'ResourceDomainsResults' }
-      & { items: Array<(
-        { __typename?: 'Domain' }
-        & Pick<Types.Domain, '_id' | 'key'>
-      )> }
-    )>, coveredConceptsByDomain?: Types.Maybe<Array<(
+    & { coveredConceptsByDomain?: Types.Maybe<Array<(
       { __typename?: 'ResourceCoveredConceptsByDomainItem' }
       & { domain: (
         { __typename?: 'Domain' }
@@ -148,13 +130,7 @@ export type DetachResourceFromDomainMutation = (
   & { detachResourceFromDomain: (
     { __typename?: 'Resource' }
     & Pick<Types.Resource, '_id'>
-    & { domains?: Types.Maybe<(
-      { __typename?: 'ResourceDomainsResults' }
-      & { items: Array<(
-        { __typename?: 'Domain' }
-        & Pick<Types.Domain, '_id' | 'key'>
-      )> }
-    )>, coveredConceptsByDomain?: Types.Maybe<Array<(
+    & { coveredConceptsByDomain?: Types.Maybe<Array<(
       { __typename?: 'ResourceCoveredConceptsByDomainItem' }
       & { domain: (
         { __typename?: 'Domain' }

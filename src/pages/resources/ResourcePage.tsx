@@ -1,6 +1,5 @@
 import { Box, Button, Flex, Skeleton, Stack, Text } from '@chakra-ui/core';
 import gql from 'graphql-tag';
-import { differenceBy } from 'lodash';
 import Router, { useRouter } from 'next/router';
 import { Access } from '../../components/auth/Access';
 import { RoleAccess } from '../../components/auth/RoleAccess';
@@ -58,7 +57,11 @@ export const getResourceResourcePage = gql`
       subResourceSeries {
         ...ResourceData
       }
-      parentResource {
+      parentResources {
+        _id
+        name
+      }
+      seriesParentResource {
         _id
         name
       }
@@ -122,7 +125,20 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
       renderTopRight={<TopRightIconButtons loading={loading} resource={resource} />}
     >
       <Stack w={['30rem', '36rem', '40rem', '50rem']} spacing={4}>
-        {resource.parentResource && <RelatedResourceLink text="Part of:" relatedResource={resource.parentResource} />}
+        {resource.parentResources && resource.parentResources.length && (
+          <Text fontSize="lg" fontWeight={300} textAlign="center">
+            {resource.parentResources.map((parentResource, idx) => (
+              <RelatedResourceLink
+                key={parentResource._id}
+                text={idx === 0 ? 'Part of: ' : ', '}
+                relatedResource={parentResource}
+              />
+            ))}
+          </Text>
+        )}
+        {resource.seriesParentResource && (
+          <RelatedResourceLink text="Part of Series: " relatedResource={resource.seriesParentResource} />
+        )}
         <Flex justifyContent="space-between" alignItems="flex-end">
           <Stack direction="row" spacing={2} alignItems="baseline">
             <ResourceUrlLink fontSize="md" resource={resource} isLoading={loading} />
@@ -178,7 +194,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
         {(isResourceGroupType(resource.type) || resource.subResources?.length) && (
           <SubResourcesManager
             resourceId={resourceId}
-            subResources={differenceBy(resource.subResources || [], resource.subResourceSeries || [], (r) => r._id)}
+            subResources={resource.subResources || []}
             domains={resource.coveredConceptsByDomain?.map((i) => i.domain) || []}
           />
         )}
@@ -227,7 +243,7 @@ const RelatedResourceLink: React.FC<{ text?: string; relatedResource: Pick<Resou
   relatedResource,
 }) => {
   return (
-    <Text fontSize="lg" fontWeight={300} textAlign="center">
+    <Text fontSize="lg" fontWeight={300} textAlign="center" as="span">
       {!!text && text + ' '}
       <InternalLink
         fontWeight={500}

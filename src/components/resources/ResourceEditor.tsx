@@ -30,10 +30,10 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
   const { currentUser } = useCurrentUser();
   const [deleteResource] = useDeleteResourceMutation();
   const [isValid, setIsValid] = useState(true);
+
   useEffect(() => {
     setIsValid(!!name && !!url && validateUrl(url));
   }, [name, url]);
-  if (!resource.domains) return null;
 
   return (
     <Stack spacing={4}>
