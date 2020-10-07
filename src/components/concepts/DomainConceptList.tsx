@@ -232,8 +232,8 @@ export const DomainConceptListMenuLink: React.FC<{
       <Stack direction="row" spacing={2} alignItems="center">
         <CompletedCheckbox
           size="md"
-          popoverLabel="Mark this concept as known"
-          popoverDelay={500}
+          tooltipLabel="Mark this concept as known"
+          tooltipDelay={500}
           onChange={() => {
             onToggle(concept);
           }}

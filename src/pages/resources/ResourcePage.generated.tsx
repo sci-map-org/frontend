@@ -1,8 +1,8 @@
 import * as Types from '../../graphql/types';
 
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
-import { DomainWithConceptsDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import * as Operations from './ResourcePage';
 import * as Apollo from '@apollo/client';
 export type GetResourceResourcePageQueryVariables = Types.Exact<{
@@ -17,18 +17,33 @@ export type GetResourceResourcePageQuery = (
     & { creator?: Types.Maybe<(
       { __typename?: 'User' }
       & Pick<Types.User, '_id'>
-    )>, coveredConcepts?: Types.Maybe<(
-      { __typename?: 'ResourceCoveredConceptsResults' }
-      & { items: Array<(
+    )>, coveredConceptsByDomain?: Types.Maybe<Array<(
+      { __typename?: 'ResourceCoveredConceptsByDomainItem' }
+      & { domain: (
+        { __typename?: 'Domain' }
+        & DomainDataFragment
+      ), coveredConcepts: Array<(
         { __typename?: 'Concept' }
         & ConceptDataFragment
       )> }
-    )>, domains?: Types.Maybe<(
-      { __typename?: 'ResourceDomainsResults' }
-      & { items: Array<(
-        { __typename?: 'Domain' }
-        & DomainWithConceptsDataFragment
-      )> }
+    )>>, subResources?: Types.Maybe<Array<(
+      { __typename?: 'Resource' }
+      & ResourceDataFragment
+    )>>, subResourceSeries?: Types.Maybe<Array<(
+      { __typename?: 'Resource' }
+      & ResourceDataFragment
+    )>>, parentResources?: Types.Maybe<Array<(
+      { __typename?: 'Resource' }
+      & Pick<Types.Resource, '_id' | 'name'>
+    )>>, seriesParentResource?: Types.Maybe<(
+      { __typename?: 'Resource' }
+      & Pick<Types.Resource, '_id' | 'name'>
+    )>, previousResource?: Types.Maybe<(
+      { __typename?: 'Resource' }
+      & Pick<Types.Resource, '_id' | 'name'>
+    )>, nextResource?: Types.Maybe<(
+      { __typename?: 'Resource' }
+      & Pick<Types.Resource, '_id' | 'name'>
     )> }
     & ResourceDataFragment
   ) }

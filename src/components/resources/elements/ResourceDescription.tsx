@@ -1,5 +1,8 @@
-import { FormControl, Textarea, FormHelperText } from '@chakra-ui/core';
+import { FormControl, Textarea, FormHelperText, Text } from '@chakra-ui/core';
 
+export const ResourceDescription: React.FC<{ description: string }> = ({ description }) => {
+  return <Text fontWeight={300}>{description}</Text>;
+};
 export const ResourceDescriptionInput: React.FC<{ value?: string; onChange: (value?: string) => void }> = ({
   value,
   onChange,

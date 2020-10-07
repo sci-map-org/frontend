@@ -8,13 +8,11 @@ import { GetResourceEditResourcePageQuery } from '../../pages/resources/EditReso
 import { validateUrl } from '../../services/url.service';
 import { Access } from '../auth/Access';
 import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
-import { InternalLink } from '../navigation/InternalLink';
-import { DomainCoveredConceptSelector } from './CoveredConceptsSelector';
-import { ResourceDescriptionInput } from './ResourceDescription';
-import { ResourceDurationSelector } from './ResourceDuration';
-import { ResourceMediaTypeSelector } from './ResourceMediaType';
-import { ResourceTypeSelector } from './ResourceType';
-import { ResourceUrlInput } from './ResourceUrl';
+import { ResourceDescriptionInput } from './elements/ResourceDescription';
+import { ResourceDurationSelector } from './elements/ResourceDuration';
+import { ResourceMediaTypeSelector } from './elements/ResourceMediaType';
+import { ResourceTypeSelector } from './elements/ResourceType';
+import { ResourceUrlInput } from './elements/ResourceUrl';
 
 interface ResourceEditorProps {
   resource: GetResourceEditResourcePageQuery['getResourceById'];
@@ -32,10 +30,10 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
   const { currentUser } = useCurrentUser();
   const [deleteResource] = useDeleteResourceMutation();
   const [isValid, setIsValid] = useState(true);
+
   useEffect(() => {
     setIsValid(!!name && !!url && validateUrl(url));
   }, [name, url]);
-  if (!resource.domains) return null;
 
   return (
     <Stack spacing={4}>
@@ -56,19 +54,6 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
         <ResourceDurationSelector value={durationMs} onChange={setDurationMs} />
       </Flex>
       <ResourceDescriptionInput value={description} onChange={(d) => setDescription(d)} />
-      {resource.domains && (
-        <Box>
-          <Text fontSize="xl">Domains</Text>
-          {resource.domains.items.map((domain) => (
-            <Box key={domain._id}>
-              <InternalLink asHref={`/domains/${domain.key}`} routePath="/domains/[key]">
-                {domain.name}
-              </InternalLink>
-              <DomainCoveredConceptSelector resource={resource} domainKey={domain.key} />
-            </Box>
-          ))}
-        </Box>
-      )}
       <Stack direction="row" justifyContent="space-between">
         <Access
           condition={

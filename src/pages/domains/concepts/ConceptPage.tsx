@@ -3,10 +3,10 @@ import gql from 'graphql-tag';
 import { differenceBy } from 'lodash';
 import Router from 'next/router';
 import { RoleAccess } from '../../../components/auth/RoleAccess';
-import { ConceptsPicker } from '../../../components/concepts/ConceptsPicker';
+import { DomainConceptsPicker } from '../../../components/concepts/DomainConceptsPicker';
 import { PageLayout } from '../../../components/layout/PageLayout';
 import { DeleteButtonWithConfirmation } from '../../../components/lib/buttons/DeleteButtonWithConfirmation';
-import { ResourcePreviewCardList } from '../../../components/resources/ResourcePreviewCard';
+import { ResourcePreviewCardList } from '../../../components/resources/ResourcePreviewCardList';
 import { ConceptData, generateConceptData } from '../../../graphql/concepts/concepts.fragments';
 import { ConceptDataFragment } from '../../../graphql/concepts/concepts.fragments.generated';
 import { useDeleteConcept } from '../../../graphql/concepts/concepts.hooks';
@@ -175,7 +175,7 @@ export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = 
         ConceptPageInfo(concept.domain, concept),
       ]}
       title={concept.domain.name + ' - ' + concept.name}
-      renderRight={<ConceptPageRightIcons concept={concept} isDisabled={loading} />}
+      renderTopRight={<ConceptPageRightIcons concept={concept} isDisabled={loading} />}
       isLoading={loading}
     >
       <Box>
@@ -191,7 +191,8 @@ export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = 
 
         <RoleAccess accessRule="contributorOrAdmin">
           <Box mt={5}>
-            <ConceptsPicker
+            <DomainConceptsPicker
+              domainKey={concept.domain.key}
               title="Referenced Concepts"
               pickableConceptList={differenceBy(domainConcepts, referencingConcepts, [concept], (concept) => {
                 return concept._id;
@@ -210,8 +211,9 @@ export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = 
             />
           </Box>
           <Box mt={5}>
-            <ConceptsPicker
+            <DomainConceptsPicker
               title="Sub Concepts"
+              domainKey={concept.domain.key}
               pickableConceptList={differenceBy(domainConcepts, subConcepts, [concept], (concept) => {
                 return concept._id;
               })}

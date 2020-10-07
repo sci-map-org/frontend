@@ -1,7 +1,25 @@
 import * as Types from '../types';
 
+import { ResourceDataFragment } from './resources.fragments.generated';
 import * as Operations from './resources.operations';
 import * as Apollo from '@apollo/client';
+export type SearchResourcesQueryVariables = Types.Exact<{
+  query: Types.Scalars['String'];
+  options: Types.SearchResourcesOptions;
+}>;
+
+
+export type SearchResourcesQuery = (
+  { __typename?: 'Query' }
+  & { searchResources: (
+    { __typename?: 'SearchResourcesResult' }
+    & { items: Array<(
+      { __typename?: 'Resource' }
+      & ResourceDataFragment
+    )> }
+  ) }
+);
+
 export type VoteResourceMutationVariables = Types.Exact<{
   resourceId: Types.Scalars['String'];
   value: Types.ResourceVoteValue;
@@ -27,13 +45,16 @@ export type AttachResourceCoversConceptsMutation = (
   & { attachResourceCoversConcepts: (
     { __typename?: 'Resource' }
     & Pick<Types.Resource, '_id'>
-    & { coveredConcepts?: Types.Maybe<(
-      { __typename?: 'ResourceCoveredConceptsResults' }
-      & { items: Array<(
+    & { coveredConceptsByDomain?: Types.Maybe<Array<(
+      { __typename?: 'ResourceCoveredConceptsByDomainItem' }
+      & { domain: (
+        { __typename?: 'Domain' }
+        & Pick<Types.Domain, '_id'>
+      ), coveredConcepts: Array<(
         { __typename?: 'Concept' }
         & Pick<Types.Concept, '_id' | 'name'>
       )> }
-    )> }
+    )>> }
   ) }
 );
 
@@ -48,13 +69,16 @@ export type DetachResourceCoversConceptsMutation = (
   & { detachResourceCoversConcepts: (
     { __typename?: 'Resource' }
     & Pick<Types.Resource, '_id'>
-    & { coveredConcepts?: Types.Maybe<(
-      { __typename?: 'ResourceCoveredConceptsResults' }
-      & { items: Array<(
+    & { coveredConceptsByDomain?: Types.Maybe<Array<(
+      { __typename?: 'ResourceCoveredConceptsByDomainItem' }
+      & { domain: (
+        { __typename?: 'Domain' }
+        & Pick<Types.Domain, '_id'>
+      ), coveredConcepts: Array<(
         { __typename?: 'Concept' }
         & Pick<Types.Concept, '_id' | 'name'>
       )> }
-    )> }
+    )>> }
   ) }
 );
 
@@ -71,7 +95,82 @@ export type DeleteResourceMutation = (
   ) }
 );
 
+export type AttachResourceToDomainMutationVariables = Types.Exact<{
+  domainId: Types.Scalars['String'];
+  resourceId: Types.Scalars['String'];
+}>;
 
+
+export type AttachResourceToDomainMutation = (
+  { __typename?: 'Mutation' }
+  & { attachResourceToDomain: (
+    { __typename?: 'Resource' }
+    & Pick<Types.Resource, '_id'>
+    & { coveredConceptsByDomain?: Types.Maybe<Array<(
+      { __typename?: 'ResourceCoveredConceptsByDomainItem' }
+      & { domain: (
+        { __typename?: 'Domain' }
+        & Pick<Types.Domain, '_id' | 'key'>
+      ), coveredConcepts: Array<(
+        { __typename?: 'Concept' }
+        & Pick<Types.Concept, '_id'>
+      )> }
+    )>> }
+  ) }
+);
+
+export type DetachResourceFromDomainMutationVariables = Types.Exact<{
+  domainId: Types.Scalars['String'];
+  resourceId: Types.Scalars['String'];
+}>;
+
+
+export type DetachResourceFromDomainMutation = (
+  { __typename?: 'Mutation' }
+  & { detachResourceFromDomain: (
+    { __typename?: 'Resource' }
+    & Pick<Types.Resource, '_id'>
+    & { coveredConceptsByDomain?: Types.Maybe<Array<(
+      { __typename?: 'ResourceCoveredConceptsByDomainItem' }
+      & { domain: (
+        { __typename?: 'Domain' }
+        & Pick<Types.Domain, '_id' | 'key'>
+      ), coveredConcepts: Array<(
+        { __typename?: 'Concept' }
+        & Pick<Types.Concept, '_id'>
+      )> }
+    )>> }
+  ) }
+);
+
+
+
+/**
+ * __useSearchResourcesQuery__
+ *
+ * To run a query within a React component, call `useSearchResourcesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchResourcesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchResourcesQuery({
+ *   variables: {
+ *      query: // value for 'query'
+ *      options: // value for 'options'
+ *   },
+ * });
+ */
+export function useSearchResourcesQuery(baseOptions?: Apollo.QueryHookOptions<SearchResourcesQuery, SearchResourcesQueryVariables>) {
+        return Apollo.useQuery<SearchResourcesQuery, SearchResourcesQueryVariables>(Operations.searchResources, baseOptions);
+      }
+export function useSearchResourcesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchResourcesQuery, SearchResourcesQueryVariables>) {
+          return Apollo.useLazyQuery<SearchResourcesQuery, SearchResourcesQueryVariables>(Operations.searchResources, baseOptions);
+        }
+export type SearchResourcesQueryHookResult = ReturnType<typeof useSearchResourcesQuery>;
+export type SearchResourcesLazyQueryHookResult = ReturnType<typeof useSearchResourcesLazyQuery>;
+export type SearchResourcesQueryResult = Apollo.QueryResult<SearchResourcesQuery, SearchResourcesQueryVariables>;
 export type VoteResourceMutationFn = Apollo.MutationFunction<VoteResourceMutation, VoteResourceMutationVariables>;
 
 /**
@@ -175,3 +274,55 @@ export function useDeleteResourceMutation(baseOptions?: Apollo.MutationHookOptio
 export type DeleteResourceMutationHookResult = ReturnType<typeof useDeleteResourceMutation>;
 export type DeleteResourceMutationResult = Apollo.MutationResult<DeleteResourceMutation>;
 export type DeleteResourceMutationOptions = Apollo.BaseMutationOptions<DeleteResourceMutation, DeleteResourceMutationVariables>;
+export type AttachResourceToDomainMutationFn = Apollo.MutationFunction<AttachResourceToDomainMutation, AttachResourceToDomainMutationVariables>;
+
+/**
+ * __useAttachResourceToDomainMutation__
+ *
+ * To run a mutation, you first call `useAttachResourceToDomainMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAttachResourceToDomainMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [attachResourceToDomainMutation, { data, loading, error }] = useAttachResourceToDomainMutation({
+ *   variables: {
+ *      domainId: // value for 'domainId'
+ *      resourceId: // value for 'resourceId'
+ *   },
+ * });
+ */
+export function useAttachResourceToDomainMutation(baseOptions?: Apollo.MutationHookOptions<AttachResourceToDomainMutation, AttachResourceToDomainMutationVariables>) {
+        return Apollo.useMutation<AttachResourceToDomainMutation, AttachResourceToDomainMutationVariables>(Operations.attachResourceToDomain, baseOptions);
+      }
+export type AttachResourceToDomainMutationHookResult = ReturnType<typeof useAttachResourceToDomainMutation>;
+export type AttachResourceToDomainMutationResult = Apollo.MutationResult<AttachResourceToDomainMutation>;
+export type AttachResourceToDomainMutationOptions = Apollo.BaseMutationOptions<AttachResourceToDomainMutation, AttachResourceToDomainMutationVariables>;
+export type DetachResourceFromDomainMutationFn = Apollo.MutationFunction<DetachResourceFromDomainMutation, DetachResourceFromDomainMutationVariables>;
+
+/**
+ * __useDetachResourceFromDomainMutation__
+ *
+ * To run a mutation, you first call `useDetachResourceFromDomainMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDetachResourceFromDomainMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [detachResourceFromDomainMutation, { data, loading, error }] = useDetachResourceFromDomainMutation({
+ *   variables: {
+ *      domainId: // value for 'domainId'
+ *      resourceId: // value for 'resourceId'
+ *   },
+ * });
+ */
+export function useDetachResourceFromDomainMutation(baseOptions?: Apollo.MutationHookOptions<DetachResourceFromDomainMutation, DetachResourceFromDomainMutationVariables>) {
+        return Apollo.useMutation<DetachResourceFromDomainMutation, DetachResourceFromDomainMutationVariables>(Operations.detachResourceFromDomain, baseOptions);
+      }
+export type DetachResourceFromDomainMutationHookResult = ReturnType<typeof useDetachResourceFromDomainMutation>;
+export type DetachResourceFromDomainMutationResult = Apollo.MutationResult<DetachResourceFromDomainMutation>;
+export type DetachResourceFromDomainMutationOptions = Apollo.BaseMutationOptions<DetachResourceFromDomainMutation, DetachResourceFromDomainMutationVariables>;

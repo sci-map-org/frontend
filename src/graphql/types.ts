@@ -20,6 +20,7 @@ export type Query = {
   searchDomains: SearchDomainsResult;
   getDomainByKey: Domain;
   searchResourceTags: Array<ResourceTagSearchResult>;
+  searchResources: SearchResourcesResult;
   getResourceById: Resource;
   getConcept: Concept;
   getConceptByKey: Concept;
@@ -53,6 +54,12 @@ export type QueryGetDomainByKeyArgs = {
 
 export type QuerySearchResourceTagsArgs = {
   options: SearchResourceTagsOptions;
+};
+
+
+export type QuerySearchResourcesArgs = {
+  query: Scalars['String'];
+  options: SearchResourcesOptions;
 };
 
 
@@ -252,7 +259,14 @@ export type Resource = {
   consumed?: Maybe<ConsumedResource>;
   creator?: Maybe<User>;
   coveredConcepts?: Maybe<ResourceCoveredConceptsResults>;
+  coveredConceptsByDomain?: Maybe<Array<ResourceCoveredConceptsByDomainItem>>;
   domains?: Maybe<ResourceDomainsResults>;
+  subResources?: Maybe<Array<Resource>>;
+  parentResources?: Maybe<Array<Resource>>;
+  subResourceSeries?: Maybe<Array<Resource>>;
+  seriesParentResource?: Maybe<Resource>;
+  nextResource?: Maybe<Resource>;
+  previousResource?: Maybe<Resource>;
 };
 
 
@@ -309,6 +323,12 @@ export type ResourceCoveredConceptsOptions = {
 export type ResourceCoveredConceptsResults = {
   __typename?: 'ResourceCoveredConceptsResults';
   items: Array<Concept>;
+};
+
+export type ResourceCoveredConceptsByDomainItem = {
+  __typename?: 'ResourceCoveredConceptsByDomainItem';
+  domain: Domain;
+  coveredConcepts: Array<Concept>;
 };
 
 export type ResourceDomainsOptions = {
@@ -395,6 +415,15 @@ export type ResourceTagSearchResult = {
   usageCount?: Maybe<Scalars['Int']>;
 };
 
+export type SearchResourcesOptions = {
+  pagination?: Maybe<PaginationOptions>;
+};
+
+export type SearchResourcesResult = {
+  __typename?: 'SearchResourcesResult';
+  items: Array<Resource>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   login: LoginResponse;
@@ -416,11 +445,15 @@ export type Mutation = {
   deleteResource: DeleteResourceResponse;
   addResourceToDomain: Resource;
   attachResourceToDomain: Resource;
+  detachResourceFromDomain: Resource;
   attachResourceCoversConcepts: Resource;
   detachResourceCoversConcepts: Resource;
   setResourcesConsumed: Array<Resource>;
   voteResource: Resource;
   rateResource: Resource;
+  addSubResource: SubResourceCreatedResult;
+  createSubResourceSeries: SubResourceSeriesCreatedResult;
+  addSubResourceToSeries: SubResourceSeriesCreatedResult;
   addConceptToDomain: Concept;
   updateConcept: Concept;
   deleteConcept: DeleteConceptResult;
@@ -543,6 +576,12 @@ export type MutationAttachResourceToDomainArgs = {
 };
 
 
+export type MutationDetachResourceFromDomainArgs = {
+  domainId: Scalars['String'];
+  resourceId: Scalars['String'];
+};
+
+
 export type MutationAttachResourceCoversConceptsArgs = {
   resourceId: Scalars['String'];
   conceptIds: Array<Scalars['String']>;
@@ -569,6 +608,25 @@ export type MutationVoteResourceArgs = {
 export type MutationRateResourceArgs = {
   resourceId: Scalars['String'];
   value: Scalars['Float'];
+};
+
+
+export type MutationAddSubResourceArgs = {
+  parentResourceId: Scalars['String'];
+  subResourceId: Scalars['String'];
+};
+
+
+export type MutationCreateSubResourceSeriesArgs = {
+  parentResourceId: Scalars['String'];
+  subResourceId: Scalars['String'];
+};
+
+
+export type MutationAddSubResourceToSeriesArgs = {
+  parentResourceId: Scalars['String'];
+  previousResourceId: Scalars['String'];
+  subResourceId: Scalars['String'];
 };
 
 
@@ -760,6 +818,18 @@ export enum ResourceVoteValue {
   Up = 'up',
   Down = 'down'
 }
+
+export type SubResourceCreatedResult = {
+  __typename?: 'SubResourceCreatedResult';
+  parentResource: Resource;
+  subResource: Resource;
+};
+
+export type SubResourceSeriesCreatedResult = {
+  __typename?: 'SubResourceSeriesCreatedResult';
+  seriesParentResource: Resource;
+  subResource: Resource;
+};
 
 export type AddConceptToDomainPayload = {
   key?: Maybe<Scalars['String']>;

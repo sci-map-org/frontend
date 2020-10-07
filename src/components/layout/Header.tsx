@@ -89,7 +89,7 @@ export const Header: React.FC = () => {
           Forum
         </HeaderLink>
         {!!currentUser ? (
-          <Menu placement="bottom-end">
+          <Menu placement="bottom-end" isLazy>
             <MenuButton>
               <Avatar mt="1px" size="xs" name={currentUser.displayName} backgroundColor="gray.400">
                 <AvatarBadge bg="green.500" boxSize="0.7rem" />

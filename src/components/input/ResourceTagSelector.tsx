@@ -11,6 +11,7 @@ interface ResourceTagSelectorProps {
   width?: string;
   isDisabled?: boolean;
   size?: 'sm' | 'md';
+  placeholder?: string;
 }
 
 export const searchResourceTags = gql`
@@ -26,6 +27,7 @@ export const ResourceTagSelector: React.FC<ResourceTagSelectorProps> = ({
   width,
   isDisabled,
   size = 'md',
+  placeholder,
 }) => {
   width = width || '200px';
   const [value, setValue] = useState('');
@@ -43,7 +45,7 @@ export const ResourceTagSelector: React.FC<ResourceTagSelectorProps> = ({
   );
 
   const inputProps = {
-    placeholder: 'Search tags...',
+    placeholder: placeholder || 'Search tags...',
     value,
     onChange: (
       event: any,

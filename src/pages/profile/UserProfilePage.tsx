@@ -26,7 +26,7 @@ export const UserProfilePage: React.FC<{ userKey: string }> = ({ userKey }) => {
       title={`Profile of ${user.displayName} (@${userKey})`}
       isLoading={loading}
       centerChildren
-      renderRight={
+      renderTopRight={
         <RoleAccess accessRule="admin">
           <IconButton size="sm" aria-label="edit_user" icon={<EditIcon />} />
         </RoleAccess>
