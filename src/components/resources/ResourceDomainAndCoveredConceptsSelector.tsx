@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, IconButton, Stack, Text } from '@chakra-ui/core';
+import { Box, Flex, Heading, IconButton, Skeleton, Stack, Text } from '@chakra-ui/core';
 import { MinusIcon } from '@chakra-ui/icons';
 import { differenceBy } from 'lodash';
 import { useSearchDomainsLazyQuery } from '../../graphql/domains/domains.operations.generated';
@@ -13,7 +13,8 @@ import { ResourceDomainCoveredConceptsSelector } from './CoveredConceptsSelector
 
 export const ResourceDomainAndCoveredConceptsSelector: React.FC<{
   resource: ResourceWithCoveredConceptsByDomainDataFragment;
-}> = ({ resource }) => {
+  isLoading?: boolean;
+}> = ({ resource, isLoading }) => {
   const [searchDomains, { data }] = useSearchDomainsLazyQuery();
   const [attachResourceToDomain] = useAttachResourceToDomainMutation();
   const [detachResourceFromDomain] = useDetachResourceFromDomainMutation();
@@ -33,17 +34,21 @@ export const ResourceDomainAndCoveredConceptsSelector: React.FC<{
               onClick={() =>
                 detachResourceFromDomain({ variables: { resourceId: resource._id, domainId: domain._id } })
               }
+              isDisabled={isLoading}
             />
             <Text>
-              <InternalLink asHref={`/domains/${domain.key}`} routePath="/domains/[key]">
-                {domain.name}
-              </InternalLink>
+              <Skeleton isLoaded={!isLoading} as="span">
+                <InternalLink asHref={`/domains/${domain.key}`} routePath="/domains/[key]">
+                  {domain.name}
+                </InternalLink>
+              </Skeleton>
             </Text>
           </Stack>
           <Box pl={5}>
             <ResourceDomainCoveredConceptsSelector
               domainKey={domain.key}
               resourceId={resource._id}
+              isLoading={isLoading}
               coveredConcepts={coveredConcepts}
             />
           </Box>
@@ -59,6 +64,7 @@ export const ResourceDomainAndCoveredConceptsSelector: React.FC<{
         )}
         fetchEntitySuggestions={(v) => searchDomains({ variables: { options: { pagination: {}, query: v } } })}
         onSelect={(domain) => attachResourceToDomain({ variables: { resourceId: resource._id, domainId: domain._id } })}
+        isDisabled={isLoading}
       />
       ;
     </Stack>

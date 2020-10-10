@@ -14,6 +14,7 @@ type EntitySelectorProps<T extends EntityType> = {
   fetchEntitySuggestions: (value: string) => any;
   width?: number | string;
   inputSize?: InputProps['size'];
+  isDisabled?: boolean;
 };
 
 export const EntitySelector = <T extends EntityType>({
@@ -23,11 +24,13 @@ export const EntitySelector = <T extends EntityType>({
   fetchEntitySuggestions,
   width = '180px',
   inputSize = 'md',
+  isDisabled,
 }: PropsWithChildren<EntitySelectorProps<T>>) => {
   const [value, setValue] = useState('');
   const inputProps = {
     placeholder,
     value,
+    isDisabled,
     onChange: (_event: any, { newValue }: { newValue: string }) => {
       setValue(newValue);
     },

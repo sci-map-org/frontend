@@ -95,7 +95,6 @@ const resourceDataPlaceholder: GetResourceResourcePageQuery['getResourceById'] =
 
 export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) => {
   const { data, loading, error } = useGetResourceResourcePageQuery({ variables: { id: resourceId } });
-
   if (error) return <Box>Resource not found !</Box>;
 
   const resource = data?.getResourceById || resourceDataPlaceholder;
@@ -147,7 +146,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
           <Stack direction="row" spacing={2} alignItems="center">
             <ResourceStarsRating value={resource.rating} />
             <RoleAccess accessRule="contributorOrAdmin">
-              <ResourceStarsRater resourceId={resource._id} />
+              <ResourceStarsRater resourceId={resource._id} isDisabled={loading} />
             </RoleAccess>
           </Stack>
         </Flex>
@@ -178,7 +177,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
                   )
                 }
               >
-                <ResourceDomainAndCoveredConceptsSelector resource={resource} />
+                <ResourceDomainAndCoveredConceptsSelector isLoading={loading} resource={resource} />
               </RoleAccess>
             </Box>
           )}

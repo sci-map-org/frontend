@@ -10,7 +10,8 @@ export const ResourceDomainCoveredConceptsSelector: React.FC<{
   domainKey: string;
   coveredConcepts: ConceptDataFragment[];
   title?: string;
-}> = ({ resourceId, domainKey, coveredConcepts, title }) => {
+  isLoading?: boolean;
+}> = ({ resourceId, domainKey, coveredConcepts, title, isLoading }) => {
   const [attachResourceCoversConcepts] = useAttachResourceCoversConceptsMutation();
   const [detachResourceCoversConcepts] = useDetachResourceCoversConceptsMutation();
   const selectConcept = async (conceptId: string): Promise<void> => {
@@ -26,6 +27,7 @@ export const ResourceDomainCoveredConceptsSelector: React.FC<{
       onSelect={(c) => selectConcept(c._id)}
       onRemove={(c) => removeConcept(c._id)}
       title={title}
+      isLoading={isLoading}
     />
   );
 };

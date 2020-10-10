@@ -10,8 +10,9 @@ export const DomainConceptsSelector: React.FC<{
   selectedConcepts: ConceptDataFragment[];
   title?: string;
   placeholder?: string;
-}> = ({ domainKey, selectedConcepts, title, placeholder, onSelect, onRemove }) => {
-  const { data } = useGetDomainConceptListQuery({ variables: { domainKey: domainKey } });
+  isLoading?: boolean;
+}> = ({ domainKey, selectedConcepts, title, placeholder, onSelect, onRemove, isLoading }) => {
+  const { data } = useGetDomainConceptListQuery({ variables: { domainKey: domainKey }, skip: isLoading });
   const domainConceptList = (data?.getDomainByKey.concepts?.items || []).map((item) => item.concept);
   const possibleConceptSuggestions = differenceBy(domainConceptList, selectedConcepts, (c) => c._id);
   return (
@@ -23,6 +24,7 @@ export const DomainConceptsSelector: React.FC<{
       onRemove={onRemove}
       title={title}
       placeholder={placeholder}
+      isLoading={isLoading}
     />
   );
 };

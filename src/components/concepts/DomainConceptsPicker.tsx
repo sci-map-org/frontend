@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, Stack, Text } from '@chakra-ui/core';
+import { Box, Button, IconButton, Skeleton, Stack, Text } from '@chakra-ui/core';
 import { MinusIcon } from '@chakra-ui/icons';
 import { take } from 'lodash';
 import { useState } from 'react';
@@ -25,6 +25,7 @@ interface DomainConceptsPickerProps {
   onRemove: (concept: ConceptDataFragment) => void;
   maxNbConceptsShown?: number;
   domainKey: string;
+  isLoading?: boolean;
 }
 
 export const DomainConceptsPicker: React.FC<DomainConceptsPickerProps> = ({
@@ -36,6 +37,7 @@ export const DomainConceptsPicker: React.FC<DomainConceptsPickerProps> = ({
   onSelect,
   onRemove,
   domainKey,
+  isLoading,
 }) => {
   const [conceptSuggestions, setConceptSuggestions] = useState<ConceptDataFragment[]>([]);
   const [showAll, setShowAll] = useState(false);
@@ -51,14 +53,17 @@ export const DomainConceptsPicker: React.FC<DomainConceptsPickerProps> = ({
               onClick={() => onRemove(pickedConcept)}
               size="xs"
               icon={<MinusIcon />}
+              isDisabled={isLoading}
             />
             <Text fontSize="sm">
-              <InternalLink
-                routePath="/domains/[key]/concepts/[conceptKey]"
-                asHref={ConceptPagePath(domainKey, pickedConcept.key)}
-              >
-                {pickedConcept.name}
-              </InternalLink>
+              <Skeleton isLoaded={!isLoading} as="span">
+                <InternalLink
+                  routePath="/domains/[key]/concepts/[conceptKey]"
+                  asHref={ConceptPagePath(domainKey, pickedConcept.key)}
+                >
+                  {pickedConcept.name}
+                </InternalLink>
+              </Skeleton>
             </Text>
           </Stack>
         );
@@ -81,6 +86,7 @@ export const DomainConceptsPicker: React.FC<DomainConceptsPickerProps> = ({
           entitySuggestions={conceptSuggestions}
           fetchEntitySuggestions={(v: string) => setConceptSuggestions(getConceptSuggestions(pickableConceptList, v))}
           onSelect={onSelect}
+          isDisabled={isLoading}
         />
       </Box>
     </Stack>
