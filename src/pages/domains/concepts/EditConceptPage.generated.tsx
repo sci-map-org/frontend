@@ -5,13 +5,14 @@ import { DomainDataFragment } from '../../../graphql/domains/domains.fragments.g
 import * as Operations from './EditConceptPage';
 import * as Apollo from '@apollo/client';
 export type GetConceptEditConceptPageQueryVariables = Types.Exact<{
-  key: Types.Scalars['String'];
+  domainKey: Types.Scalars['String'];
+  conceptKey: Types.Scalars['String'];
 }>;
 
 
 export type GetConceptEditConceptPageQuery = (
   { __typename?: 'Query' }
-  & { getConceptByKey: (
+  & { getDomainConceptByKey: (
     { __typename?: 'Concept' }
     & { domain?: Types.Maybe<(
       { __typename?: 'Domain' }
@@ -35,7 +36,8 @@ export type GetConceptEditConceptPageQuery = (
  * @example
  * const { data, loading, error } = useGetConceptEditConceptPageQuery({
  *   variables: {
- *      key: // value for 'key'
+ *      domainKey: // value for 'domainKey'
+ *      conceptKey: // value for 'conceptKey'
  *   },
  * });
  */

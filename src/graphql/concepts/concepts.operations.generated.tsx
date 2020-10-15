@@ -65,26 +65,6 @@ export type GetConceptQuery = (
   ) }
 );
 
-export type GetConceptByKeyQueryVariables = Types.Exact<{
-  key: Types.Scalars['String'];
-}>;
-
-
-export type GetConceptByKeyQuery = (
-  { __typename?: 'Query' }
-  & { getConceptByKey: (
-    { __typename?: 'Concept' }
-    & { coveredByResources?: Types.Maybe<(
-      { __typename?: 'ConceptCoveredByResourcesResults' }
-      & { items: Array<(
-        { __typename?: 'Resource' }
-        & ResourcePreviewDataFragment
-      )> }
-    )> }
-    & ConceptDataFragment
-  ) }
-);
-
 export type SetConceptsKnownMutationVariables = Types.Exact<{
   payload: Types.SetConceptKnownPayload;
 }>;
@@ -238,32 +218,6 @@ export function useGetConceptLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetConceptQueryHookResult = ReturnType<typeof useGetConceptQuery>;
 export type GetConceptLazyQueryHookResult = ReturnType<typeof useGetConceptLazyQuery>;
 export type GetConceptQueryResult = Apollo.QueryResult<GetConceptQuery, GetConceptQueryVariables>;
-
-/**
- * __useGetConceptByKeyQuery__
- *
- * To run a query within a React component, call `useGetConceptByKeyQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetConceptByKeyQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetConceptByKeyQuery({
- *   variables: {
- *      key: // value for 'key'
- *   },
- * });
- */
-export function useGetConceptByKeyQuery(baseOptions?: Apollo.QueryHookOptions<GetConceptByKeyQuery, GetConceptByKeyQueryVariables>) {
-        return Apollo.useQuery<GetConceptByKeyQuery, GetConceptByKeyQueryVariables>(Operations.getConceptByKey, baseOptions);
-      }
-export function useGetConceptByKeyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetConceptByKeyQuery, GetConceptByKeyQueryVariables>) {
-          return Apollo.useLazyQuery<GetConceptByKeyQuery, GetConceptByKeyQueryVariables>(Operations.getConceptByKey, baseOptions);
-        }
-export type GetConceptByKeyQueryHookResult = ReturnType<typeof useGetConceptByKeyQuery>;
-export type GetConceptByKeyLazyQueryHookResult = ReturnType<typeof useGetConceptByKeyLazyQuery>;
-export type GetConceptByKeyQueryResult = Apollo.QueryResult<GetConceptByKeyQuery, GetConceptByKeyQueryVariables>;
 export type SetConceptsKnownMutationFn = Apollo.MutationFunction<SetConceptsKnownMutation, SetConceptsKnownMutationVariables>;
 
 /**

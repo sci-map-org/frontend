@@ -6,13 +6,14 @@ import { DomainDataFragment } from '../../../graphql/domains/domains.fragments.g
 import * as Operations from './ConceptPage';
 import * as Apollo from '@apollo/client';
 export type GetConceptConceptPageQueryVariables = Types.Exact<{
-  key: Types.Scalars['String'];
+  domainKey: Types.Scalars['String'];
+  conceptKey: Types.Scalars['String'];
 }>;
 
 
 export type GetConceptConceptPageQuery = (
   { __typename?: 'Query' }
-  & { getConceptByKey: (
+  & { getDomainConceptByKey: (
     { __typename?: 'Concept' }
     & { referencingConcepts?: Types.Maybe<Array<(
       { __typename?: 'ConceptReferencesConceptItem' }
@@ -148,7 +149,8 @@ export type RemoveConceptBelongsToConceptMutation = (
  * @example
  * const { data, loading, error } = useGetConceptConceptPageQuery({
  *   variables: {
- *      key: // value for 'key'
+ *      domainKey: // value for 'domainKey'
+ *      conceptKey: // value for 'conceptKey'
  *   },
  * });
  */

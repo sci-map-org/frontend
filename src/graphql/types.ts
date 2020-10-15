@@ -23,7 +23,7 @@ export type Query = {
   searchResources: SearchResourcesResult;
   getResourceById: Resource;
   getConcept: Concept;
-  getConceptByKey: Concept;
+  getDomainConceptByKey: Concept;
 };
 
 
@@ -73,355 +73,9 @@ export type QueryGetConceptArgs = {
 };
 
 
-export type QueryGetConceptByKeyArgs = {
-  key: Scalars['String'];
-};
-
-export type CurrentUser = {
-  __typename?: 'CurrentUser';
-  _id: Scalars['String'];
-  email: Scalars['String'];
-  displayName: Scalars['String'];
-  key: Scalars['String'];
-  role: UserRole;
-  articles?: Maybe<ListArticlesResult>;
-};
-
-
-export type CurrentUserArticlesArgs = {
-  options: ListArticlesOptions;
-};
-
-export enum UserRole {
-  Admin = 'ADMIN',
-  Contributor = 'CONTRIBUTOR',
-  User = 'USER'
-}
-
-export type ListArticlesOptions = {
-  filter?: Maybe<ListArticlesFilter>;
-  pagination?: Maybe<PaginationOptions>;
-};
-
-export type ListArticlesFilter = {
-  contentType?: Maybe<ArticleContentType>;
-};
-
-export enum ArticleContentType {
-  Markdown = 'markdown'
-}
-
-export type PaginationOptions = {
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-};
-
-export type ListArticlesResult = {
-  __typename?: 'ListArticlesResult';
-  items: Array<Article>;
-};
-
-export type Article = {
-  __typename?: 'Article';
-  _id: Scalars['String'];
-  key: Scalars['String'];
-  contentType: ArticleContentType;
-  title: Scalars['String'];
-  content: Scalars['String'];
-  author?: Maybe<User>;
-};
-
-export type User = {
-  __typename?: 'User';
-  _id: Scalars['String'];
-  email: Scalars['String'];
-  displayName: Scalars['String'];
-  role: UserRole;
-  key: Scalars['String'];
-  articles?: Maybe<ListArticlesResult>;
-};
-
-
-export type UserArticlesArgs = {
-  options: ListArticlesOptions;
-};
-
-export type SearchDomainsOptions = {
-  query?: Maybe<Scalars['String']>;
-  pagination: PaginationOptions;
-};
-
-export type SearchDomainsResult = {
-  __typename?: 'SearchDomainsResult';
-  items: Array<Domain>;
-};
-
-export type Domain = {
-  __typename?: 'Domain';
-  _id: Scalars['String'];
-  name: Scalars['String'];
-  key: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-  concepts?: Maybe<DomainConceptsResults>;
-  resources?: Maybe<DomainResourcesResults>;
-  subDomains?: Maybe<Array<DomainBelongsToDomainItem>>;
-  parentDomains?: Maybe<Array<DomainBelongsToDomainItem>>;
-};
-
-
-export type DomainConceptsArgs = {
-  options: DomainConceptsOptions;
-};
-
-
-export type DomainResourcesArgs = {
-  options: DomainResourcesOptions;
-};
-
-export type DomainConceptsOptions = {
-  pagination?: Maybe<PaginationOptions>;
-  sorting?: Maybe<DomainConceptSortingOptions>;
-};
-
-export type DomainConceptSortingOptions = {
-  entity: DomainConceptSortingEntities;
-  field: DomainConceptSortingFields;
-  direction: SortingDirection;
-};
-
-export enum DomainConceptSortingEntities {
-  Concept = 'concept',
-  Relationship = 'relationship'
-}
-
-export enum DomainConceptSortingFields {
-  Id = '_id',
-  Index = 'index'
-}
-
-export enum SortingDirection {
-  Asc = 'ASC',
-  Desc = 'DESC'
-}
-
-export type DomainConceptsResults = {
-  __typename?: 'DomainConceptsResults';
-  items: Array<DomainConceptsItem>;
-};
-
-export type DomainConceptsItem = {
-  __typename?: 'DomainConceptsItem';
-  concept: Concept;
-  relationship: ConceptBelongsToDomain;
-};
-
-export type Concept = {
-  __typename?: 'Concept';
-  _id: Scalars['String'];
-  key: Scalars['String'];
-  name: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-  domain?: Maybe<Domain>;
-  coveredByResources?: Maybe<ConceptCoveredByResourcesResults>;
-  known?: Maybe<KnownConcept>;
-  referencingConcepts?: Maybe<Array<ConceptReferencesConceptItem>>;
-  referencedByConcepts?: Maybe<Array<ConceptReferencesConceptItem>>;
-  subConcepts?: Maybe<Array<ConceptBelongsToConceptItem>>;
-  parentConcepts?: Maybe<Array<ConceptBelongsToConceptItem>>;
-};
-
-
-export type ConceptCoveredByResourcesArgs = {
-  options: ConceptCoveredByResourcesOptions;
-};
-
-export type ConceptCoveredByResourcesOptions = {
-  pagination?: Maybe<PaginationOptions>;
-};
-
-export type ConceptCoveredByResourcesResults = {
-  __typename?: 'ConceptCoveredByResourcesResults';
-  items: Array<Resource>;
-};
-
-export type Resource = {
-  __typename?: 'Resource';
-  _id: Scalars['String'];
-  name: Scalars['String'];
-  type: ResourceType;
-  mediaType: ResourceMediaType;
-  tags?: Maybe<Array<ResourceTag>>;
-  url: Scalars['String'];
-  upvotes?: Maybe<Scalars['Int']>;
-  rating?: Maybe<Scalars['Float']>;
-  description?: Maybe<Scalars['String']>;
-  durationMs?: Maybe<Scalars['Int']>;
-  consumed?: Maybe<ConsumedResource>;
-  creator?: Maybe<User>;
-  coveredConcepts?: Maybe<ResourceCoveredConceptsResults>;
-  coveredConceptsByDomain?: Maybe<Array<ResourceCoveredConceptsByDomainItem>>;
-  domains?: Maybe<ResourceDomainsResults>;
-  subResources?: Maybe<Array<Resource>>;
-  parentResources?: Maybe<Array<Resource>>;
-  subResourceSeries?: Maybe<Array<Resource>>;
-  seriesParentResource?: Maybe<Resource>;
-  nextResource?: Maybe<Resource>;
-  previousResource?: Maybe<Resource>;
-};
-
-
-export type ResourceCoveredConceptsArgs = {
-  options: ResourceCoveredConceptsOptions;
-};
-
-
-export type ResourceDomainsArgs = {
-  options: ResourceDomainsOptions;
-};
-
-export enum ResourceType {
-  Article = 'article',
-  ArticleSeries = 'article_series',
-  Course = 'course',
-  Podcast = 'podcast',
-  PodcastSeries = 'podcast_series',
-  YoutubeVideo = 'youtube_video',
-  YoutubeVideoSeries = 'youtube_video_series',
-  Book = 'book',
-  Talk = 'talk',
-  Documentary = 'documentary',
-  Website = 'website',
-  VideoGame = 'video_game',
-  Infographic = 'infographic',
-  Tweet = 'tweet',
-  Other = 'other'
-}
-
-export enum ResourceMediaType {
-  Video = 'video',
-  Text = 'text',
-  Audio = 'audio',
-  InteractiveContent = 'interactive_content'
-}
-
-export type ResourceTag = {
-  __typename?: 'ResourceTag';
-  name: Scalars['String'];
-};
-
-export type ConsumedResource = {
-  __typename?: 'ConsumedResource';
-  openedAt?: Maybe<Scalars['DateTime']>;
-  consumedAt?: Maybe<Scalars['DateTime']>;
-};
-
-
-export type ResourceCoveredConceptsOptions = {
-  pagination?: Maybe<PaginationOptions>;
-};
-
-export type ResourceCoveredConceptsResults = {
-  __typename?: 'ResourceCoveredConceptsResults';
-  items: Array<Concept>;
-};
-
-export type ResourceCoveredConceptsByDomainItem = {
-  __typename?: 'ResourceCoveredConceptsByDomainItem';
-  domain: Domain;
-  coveredConcepts: Array<Concept>;
-};
-
-export type ResourceDomainsOptions = {
-  pagination?: Maybe<PaginationOptions>;
-};
-
-export type ResourceDomainsResults = {
-  __typename?: 'ResourceDomainsResults';
-  items: Array<Domain>;
-};
-
-export type KnownConcept = {
-  __typename?: 'KnownConcept';
-  level: Scalars['Float'];
-};
-
-export type ConceptReferencesConceptItem = {
-  __typename?: 'ConceptReferencesConceptItem';
-  concept: Concept;
-  relationship: ConceptReferencesConcept;
-};
-
-export type ConceptReferencesConcept = {
-  __typename?: 'ConceptReferencesConcept';
-  strength: Scalars['Float'];
-};
-
-export type ConceptBelongsToConceptItem = {
-  __typename?: 'ConceptBelongsToConceptItem';
-  concept: Concept;
-  relationship: ConceptBelongsToConcept;
-};
-
-export type ConceptBelongsToConcept = {
-  __typename?: 'ConceptBelongsToConcept';
-  index: Scalars['Float'];
-};
-
-export type ConceptBelongsToDomain = {
-  __typename?: 'ConceptBelongsToDomain';
-  index: Scalars['Float'];
-};
-
-export type DomainResourcesOptions = {
-  sortingType: DomainResourcesSortingType;
-  query?: Maybe<Scalars['String']>;
-  filter?: Maybe<DomainResourcesFilterOptions>;
-};
-
-export enum DomainResourcesSortingType {
-  Recommended = 'recommended',
-  Newest = 'newest'
-}
-
-export type DomainResourcesFilterOptions = {
-  resourceTypeIn?: Maybe<Array<ResourceType>>;
-  consumedByUser?: Maybe<Scalars['Boolean']>;
-};
-
-export type DomainResourcesResults = {
-  __typename?: 'DomainResourcesResults';
-  items: Array<Resource>;
-};
-
-export type DomainBelongsToDomainItem = {
-  __typename?: 'DomainBelongsToDomainItem';
-  domain: Domain;
-  relationship: DomainBelongsToDomain;
-};
-
-export type DomainBelongsToDomain = {
-  __typename?: 'DomainBelongsToDomain';
-  index: Scalars['Float'];
-};
-
-export type SearchResourceTagsOptions = {
-  query: Scalars['String'];
-  pagination: PaginationOptions;
-};
-
-export type ResourceTagSearchResult = {
-  __typename?: 'ResourceTagSearchResult';
-  name: Scalars['String'];
-  usageCount?: Maybe<Scalars['Int']>;
-};
-
-export type SearchResourcesOptions = {
-  pagination?: Maybe<PaginationOptions>;
-};
-
-export type SearchResourcesResult = {
-  __typename?: 'SearchResourcesResult';
-  items: Array<Resource>;
+export type QueryGetDomainConceptByKeyArgs = {
+  domainKey: Scalars['String'];
+  conceptKey: Scalars['String'];
 };
 
 export type Mutation = {
@@ -706,9 +360,162 @@ export type MutationRemoveDomainBelongsToDomainArgs = {
   subDomainId: Scalars['String'];
 };
 
-export type DiscourseSso = {
-  sig: Scalars['String'];
-  sso: Scalars['String'];
+
+export type CurrentUser = {
+  __typename?: 'CurrentUser';
+  _id: Scalars['String'];
+  email: Scalars['String'];
+  displayName: Scalars['String'];
+  key: Scalars['String'];
+  role: UserRole;
+  articles?: Maybe<ListArticlesResult>;
+};
+
+
+export type CurrentUserArticlesArgs = {
+  options: ListArticlesOptions;
+};
+
+export type User = {
+  __typename?: 'User';
+  _id: Scalars['String'];
+  email: Scalars['String'];
+  displayName: Scalars['String'];
+  role: UserRole;
+  key: Scalars['String'];
+  articles?: Maybe<ListArticlesResult>;
+};
+
+
+export type UserArticlesArgs = {
+  options: ListArticlesOptions;
+};
+
+export type Article = {
+  __typename?: 'Article';
+  _id: Scalars['String'];
+  key: Scalars['String'];
+  contentType: ArticleContentType;
+  title: Scalars['String'];
+  content: Scalars['String'];
+  author?: Maybe<User>;
+};
+
+export type ListArticlesResult = {
+  __typename?: 'ListArticlesResult';
+  items: Array<Article>;
+};
+
+export type ListArticlesOptions = {
+  filter?: Maybe<ListArticlesFilter>;
+  pagination?: Maybe<PaginationOptions>;
+};
+
+export type SearchDomainsResult = {
+  __typename?: 'SearchDomainsResult';
+  items: Array<Domain>;
+};
+
+export type SearchDomainsOptions = {
+  query?: Maybe<Scalars['String']>;
+  pagination: PaginationOptions;
+};
+
+export type Domain = {
+  __typename?: 'Domain';
+  _id: Scalars['String'];
+  name: Scalars['String'];
+  key: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  concepts?: Maybe<DomainConceptsResults>;
+  resources?: Maybe<DomainResourcesResults>;
+  subDomains?: Maybe<Array<DomainBelongsToDomainItem>>;
+  parentDomains?: Maybe<Array<DomainBelongsToDomainItem>>;
+};
+
+
+export type DomainConceptsArgs = {
+  options: DomainConceptsOptions;
+};
+
+
+export type DomainResourcesArgs = {
+  options: DomainResourcesOptions;
+};
+
+export type ResourceTagSearchResult = {
+  __typename?: 'ResourceTagSearchResult';
+  name: Scalars['String'];
+  usageCount?: Maybe<Scalars['Int']>;
+};
+
+export type SearchResourceTagsOptions = {
+  query: Scalars['String'];
+  pagination: PaginationOptions;
+};
+
+export type SearchResourcesResult = {
+  __typename?: 'SearchResourcesResult';
+  items: Array<Resource>;
+};
+
+export type SearchResourcesOptions = {
+  pagination?: Maybe<PaginationOptions>;
+};
+
+export type Resource = {
+  __typename?: 'Resource';
+  _id: Scalars['String'];
+  name: Scalars['String'];
+  type: ResourceType;
+  mediaType: ResourceMediaType;
+  tags?: Maybe<Array<ResourceTag>>;
+  url: Scalars['String'];
+  upvotes?: Maybe<Scalars['Int']>;
+  rating?: Maybe<Scalars['Float']>;
+  description?: Maybe<Scalars['String']>;
+  durationMs?: Maybe<Scalars['Int']>;
+  consumed?: Maybe<ConsumedResource>;
+  creator?: Maybe<User>;
+  coveredConcepts?: Maybe<ResourceCoveredConceptsResults>;
+  coveredConceptsByDomain?: Maybe<Array<ResourceCoveredConceptsByDomainItem>>;
+  domains?: Maybe<ResourceDomainsResults>;
+  subResources?: Maybe<Array<Resource>>;
+  parentResources?: Maybe<Array<Resource>>;
+  subResourceSeries?: Maybe<Array<Resource>>;
+  seriesParentResource?: Maybe<Resource>;
+  nextResource?: Maybe<Resource>;
+  previousResource?: Maybe<Resource>;
+};
+
+
+export type ResourceCoveredConceptsArgs = {
+  options: ResourceCoveredConceptsOptions;
+};
+
+
+export type ResourceDomainsArgs = {
+  options: ResourceDomainsOptions;
+};
+
+export type Concept = {
+  __typename?: 'Concept';
+  _id: Scalars['String'];
+  key: Scalars['String'];
+  name: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  domain?: Maybe<Domain>;
+  coveredByResources?: Maybe<ConceptCoveredByResourcesResults>;
+  known?: Maybe<KnownConcept>;
+  referencingConcepts?: Maybe<Array<ConceptReferencesConceptItem>>;
+  referencedByConcepts?: Maybe<Array<ConceptReferencesConceptItem>>;
+  subConcepts?: Maybe<Array<ConceptBelongsToConceptItem>>;
+  parentConcepts?: Maybe<Array<ConceptBelongsToConceptItem>>;
+};
+
+
+export type ConceptCoveredByResourcesArgs = {
+  options: ConceptCoveredByResourcesOptions;
 };
 
 export type LoginResponse = {
@@ -716,6 +523,11 @@ export type LoginResponse = {
   currentUser: CurrentUser;
   jwt: Scalars['String'];
   redirectUrl?: Maybe<Scalars['String']>;
+};
+
+export type DiscourseSso = {
+  sig: Scalars['String'];
+  sso: Scalars['String'];
 };
 
 export type RegisterPayload = {
@@ -808,12 +620,6 @@ export type SetResourcesConsumedPayload = {
   resources: Array<SetResourcesConsumedPayloadResourcesField>;
 };
 
-export type SetResourcesConsumedPayloadResourcesField = {
-  resourceId: Scalars['String'];
-  consumed?: Maybe<Scalars['Boolean']>;
-  opened?: Maybe<Scalars['Boolean']>;
-};
-
 export enum ResourceVoteValue {
   Up = 'up',
   Down = 'down'
@@ -854,9 +660,9 @@ export type SetConceptKnownPayload = {
   concepts: Array<SetConceptKnownPayloadConceptsField>;
 };
 
-export type SetConceptKnownPayloadConceptsField = {
-  conceptId: Scalars['String'];
-  level?: Maybe<Scalars['Float']>;
+export type ConceptBelongsToDomain = {
+  __typename?: 'ConceptBelongsToDomain';
+  index: Scalars['Float'];
 };
 
 export type UpdateConceptBelongsToDomainPayload = {
@@ -866,3 +672,198 @@ export type UpdateConceptBelongsToDomainPayload = {
 export type UpdateConceptBelongsToConceptPayload = {
   index?: Maybe<Scalars['Float']>;
 };
+
+export enum UserRole {
+  Admin = 'ADMIN',
+  Contributor = 'CONTRIBUTOR',
+  User = 'USER'
+}
+
+export enum ArticleContentType {
+  Markdown = 'markdown'
+}
+
+export type ListArticlesFilter = {
+  contentType?: Maybe<ArticleContentType>;
+};
+
+export type PaginationOptions = {
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+};
+
+export type DomainConceptsResults = {
+  __typename?: 'DomainConceptsResults';
+  items: Array<DomainConceptsItem>;
+};
+
+export type DomainConceptsOptions = {
+  pagination?: Maybe<PaginationOptions>;
+  sorting?: Maybe<DomainConceptSortingOptions>;
+};
+
+export type DomainResourcesResults = {
+  __typename?: 'DomainResourcesResults';
+  items: Array<Resource>;
+};
+
+export type DomainResourcesOptions = {
+  sortingType: DomainResourcesSortingType;
+  query?: Maybe<Scalars['String']>;
+  filter?: Maybe<DomainResourcesFilterOptions>;
+};
+
+export type DomainBelongsToDomainItem = {
+  __typename?: 'DomainBelongsToDomainItem';
+  domain: Domain;
+  relationship: DomainBelongsToDomain;
+};
+
+export enum ResourceType {
+  Article = 'article',
+  ArticleSeries = 'article_series',
+  Course = 'course',
+  Podcast = 'podcast',
+  PodcastSeries = 'podcast_series',
+  YoutubeVideo = 'youtube_video',
+  YoutubeVideoSeries = 'youtube_video_series',
+  Book = 'book',
+  Talk = 'talk',
+  Documentary = 'documentary',
+  Website = 'website',
+  VideoGame = 'video_game',
+  Infographic = 'infographic',
+  Tweet = 'tweet',
+  Other = 'other'
+}
+
+export enum ResourceMediaType {
+  Video = 'video',
+  Text = 'text',
+  Audio = 'audio',
+  InteractiveContent = 'interactive_content'
+}
+
+export type ResourceTag = {
+  __typename?: 'ResourceTag';
+  name: Scalars['String'];
+};
+
+export type ConsumedResource = {
+  __typename?: 'ConsumedResource';
+  openedAt?: Maybe<Scalars['DateTime']>;
+  consumedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type ResourceCoveredConceptsResults = {
+  __typename?: 'ResourceCoveredConceptsResults';
+  items: Array<Concept>;
+};
+
+export type ResourceCoveredConceptsOptions = {
+  pagination?: Maybe<PaginationOptions>;
+};
+
+export type ResourceCoveredConceptsByDomainItem = {
+  __typename?: 'ResourceCoveredConceptsByDomainItem';
+  domain: Domain;
+  coveredConcepts: Array<Concept>;
+};
+
+export type ResourceDomainsResults = {
+  __typename?: 'ResourceDomainsResults';
+  items: Array<Domain>;
+};
+
+export type ResourceDomainsOptions = {
+  pagination?: Maybe<PaginationOptions>;
+};
+
+export type ConceptCoveredByResourcesResults = {
+  __typename?: 'ConceptCoveredByResourcesResults';
+  items: Array<Resource>;
+};
+
+export type ConceptCoveredByResourcesOptions = {
+  pagination?: Maybe<PaginationOptions>;
+};
+
+export type KnownConcept = {
+  __typename?: 'KnownConcept';
+  level: Scalars['Float'];
+};
+
+export type ConceptReferencesConceptItem = {
+  __typename?: 'ConceptReferencesConceptItem';
+  concept: Concept;
+  relationship: ConceptReferencesConcept;
+};
+
+export type ConceptBelongsToConceptItem = {
+  __typename?: 'ConceptBelongsToConceptItem';
+  concept: Concept;
+  relationship: ConceptBelongsToConcept;
+};
+
+export type SetResourcesConsumedPayloadResourcesField = {
+  resourceId: Scalars['String'];
+  consumed?: Maybe<Scalars['Boolean']>;
+  opened?: Maybe<Scalars['Boolean']>;
+};
+
+export type SetConceptKnownPayloadConceptsField = {
+  conceptId: Scalars['String'];
+  level?: Maybe<Scalars['Float']>;
+};
+
+export type DomainConceptsItem = {
+  __typename?: 'DomainConceptsItem';
+  concept: Concept;
+  relationship: ConceptBelongsToDomain;
+};
+
+export type DomainConceptSortingOptions = {
+  entity: DomainConceptSortingEntities;
+  field: DomainConceptSortingFields;
+  direction: SortingDirection;
+};
+
+export enum DomainResourcesSortingType {
+  Recommended = 'recommended',
+  Newest = 'newest'
+}
+
+export type DomainResourcesFilterOptions = {
+  resourceTypeIn?: Maybe<Array<ResourceType>>;
+  consumedByUser?: Maybe<Scalars['Boolean']>;
+};
+
+export type DomainBelongsToDomain = {
+  __typename?: 'DomainBelongsToDomain';
+  index: Scalars['Float'];
+};
+
+export type ConceptReferencesConcept = {
+  __typename?: 'ConceptReferencesConcept';
+  strength: Scalars['Float'];
+};
+
+export type ConceptBelongsToConcept = {
+  __typename?: 'ConceptBelongsToConcept';
+  index: Scalars['Float'];
+};
+
+export enum DomainConceptSortingEntities {
+  Concept = 'concept',
+  Relationship = 'relationship'
+}
+
+export enum DomainConceptSortingFields {
+  Id = '_id',
+  Index = 'index'
+}
+
+export enum SortingDirection {
+  Asc = 'ASC',
+  Desc = 'DESC'
+}

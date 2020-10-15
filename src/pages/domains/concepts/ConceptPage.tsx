@@ -60,8 +60,8 @@ const ConceptPageRightIcons: React.FC<{ concept: ConceptDataFragment; isDisabled
 };
 
 export const getConceptConceptPage = gql`
-  query getConceptConceptPage($key: String!) {
-    getConceptByKey(key: $key) {
+  query getConceptConceptPage($domainKey: String!, $conceptKey: String!) {
+    getDomainConceptByKey(domainKey: $domainKey, conceptKey: $conceptKey) {
       ...ConceptData
       referencingConcepts {
         concept {
@@ -147,17 +147,17 @@ export const removeConceptBelongsToConcept = gql`
   }
 `;
 
-const conceptPlaceholder: GetConceptConceptPageQuery['getConceptByKey'] = {
+const conceptPlaceholder: GetConceptConceptPageQuery['getDomainConceptByKey'] = {
   ...generateConceptData(),
   coveredByResources: { items: [0, 0].map(generateResourceData) },
   domain: generateDomainData(),
 };
 
-export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = ({ conceptKey }) => {
+export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = ({ conceptKey, domainKey }) => {
   const { data, loading, error } = useGetConceptConceptPageQuery({
-    variables: { key: conceptKey },
+    variables: { domainKey, conceptKey },
   });
-  const concept = data?.getConceptByKey || conceptPlaceholder;
+  const concept = data?.getDomainConceptByKey || conceptPlaceholder;
   const domainConcepts = concept.domain?.concepts?.items.map((item) => item.concept) || [];
   const referencingConcepts = concept.referencingConcepts?.map((item) => item.concept) || [];
   const subConcepts = concept.subConcepts?.map((item) => item.concept) || [];

@@ -44,21 +44,6 @@ export const getConcept = gql`
   ${ResourcePreviewData}
 `;
 
-export const getConceptByKey = gql`
-  query getConceptByKey($key: String!) {
-    getConceptByKey(key: $key) {
-      ...ConceptData
-      coveredByResources(options: {}) {
-        items {
-          ...ResourcePreviewData
-        }
-      }
-    }
-  }
-  ${ConceptData}
-  ${ResourcePreviewData}
-`;
-
 export const setConceptsKnown = gql`
   mutation setConceptsKnown($payload: SetConceptKnownPayload!) {
     setConceptsKnown(payload: $payload) {

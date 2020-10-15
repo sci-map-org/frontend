@@ -28,8 +28,8 @@ export const EditConceptPageInfo = (
 });
 
 export const getConceptEditConceptPage = gql`
-  query getConceptEditConceptPage($key: String!) {
-    getConceptByKey(key: $key) {
+  query getConceptEditConceptPage($domainKey: String!, $conceptKey: String!) {
+    getDomainConceptByKey(domainKey: $domainKey, conceptKey: $conceptKey) {
       ...ConceptData
       domain {
         ...DomainData
@@ -41,8 +41,8 @@ export const getConceptEditConceptPage = gql`
 `;
 
 export const EditConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = ({ conceptKey, domainKey }) => {
-  const { data } = useGetConceptEditConceptPageQuery({ variables: { key: conceptKey } });
-  const concept = data?.getConceptByKey;
+  const { data } = useGetConceptEditConceptPageQuery({ variables: { conceptKey, domainKey } });
+  const concept = data?.getDomainConceptByKey;
   const domain = concept?.domain;
   if (!concept || !domain) return <NotFoundPage />;
 
