@@ -79,7 +79,7 @@ export const ResourcePreviewCardList: React.FC<{
           <AlertIcon />
           <Box flexDirection="row" alignItems="baseline" flex="1">
             <AlertDescription>
-              The resource was marked as {setResourceConsumedValue ? `consumed` : 'not consumed'}
+              The resource was marked as {setResourceConsumedValue ? `completed` : 'not completed'}
               <Button
                 ml={6}
                 size="sm"

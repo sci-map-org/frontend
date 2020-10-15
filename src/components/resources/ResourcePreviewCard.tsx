@@ -132,7 +132,9 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
         <BoxBlockDefaultClickPropagation alignSelf="center" justifySelf="center" ml="32px" mr="4px">
           <CompletedCheckbox
             size="lg"
-            tooltipLabel="Mark as completed"
+            tooltipLabel={
+              !!resource.consumed && !!resource.consumed.consumedAt ? 'Mark as not completed' : 'Mark as completed'
+            }
             tooltipDelay={500}
             isDisabled={isLoading}
             isChecked={!!resource.consumed && !!resource.consumed.consumedAt}

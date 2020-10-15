@@ -232,7 +232,7 @@ export const DomainConceptListMenuLink: React.FC<{
       <Stack direction="row" spacing={2} alignItems="center">
         <CompletedCheckbox
           size="md"
-          tooltipLabel="Mark this concept as known"
+          tooltipLabel={!!concept.known ? 'Mark this concept as unknown' : 'Mark this concept as known'}
           tooltipDelay={500}
           onChange={() => {
             onToggle(concept);
