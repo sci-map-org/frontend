@@ -24,6 +24,8 @@ export type Query = {
   getResourceById: Resource;
   getConcept: Concept;
   getDomainConceptByKey: Concept;
+  getLearningPath: LearningPath;
+  getLearningPathByKey: LearningPath;
 };
 
 
@@ -78,6 +80,16 @@ export type QueryGetDomainConceptByKeyArgs = {
   conceptKey: Scalars['String'];
 };
 
+
+export type QueryGetLearningPathArgs = {
+  _id: Scalars['String'];
+};
+
+
+export type QueryGetLearningPathByKeyArgs = {
+  key: Scalars['String'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   login: LoginResponse;
@@ -115,6 +127,9 @@ export type Mutation = {
   setConceptsUnknown: Array<Concept>;
   addConceptReferencesConcept: Concept;
   removeConceptReferencesConcept: Concept;
+  createLearningPath: LearningPath;
+  updateLearningPath: LearningPath;
+  deleteLearningPath: DeleteLearningPathResult;
   updateConceptBelongsToDomain: ConceptBelongsToDomain;
   addConceptBelongsToConcept: Concept;
   removeConceptBelongsToConcept: Concept;
@@ -323,6 +338,22 @@ export type MutationRemoveConceptReferencesConceptArgs = {
 };
 
 
+export type MutationCreateLearningPathArgs = {
+  payload: CreateLearningPathPayload;
+};
+
+
+export type MutationUpdateLearningPathArgs = {
+  _id: Scalars['String'];
+  payload: UpdateLearningPathPayload;
+};
+
+
+export type MutationDeleteLearningPathArgs = {
+  _id: Scalars['String'];
+};
+
+
 export type MutationUpdateConceptBelongsToDomainArgs = {
   conceptId: Scalars['String'];
   domainId: Scalars['String'];
@@ -369,11 +400,17 @@ export type CurrentUser = {
   key: Scalars['String'];
   role: UserRole;
   articles?: Maybe<ListArticlesResult>;
+  createdLearningPaths?: Maybe<Array<LearningPath>>;
 };
 
 
 export type CurrentUserArticlesArgs = {
   options: ListArticlesOptions;
+};
+
+
+export type CurrentUserCreatedLearningPathsArgs = {
+  options: UserLearningPathsOptions;
 };
 
 export type User = {
@@ -518,6 +555,15 @@ export type ConceptCoveredByResourcesArgs = {
   options: ConceptCoveredByResourcesOptions;
 };
 
+export type LearningPath = {
+  __typename?: 'LearningPath';
+  _id: Scalars['String'];
+  key: Scalars['String'];
+  name: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  resourceItems?: Maybe<Array<LearningPathResourceItem>>;
+};
+
 export type LoginResponse = {
   __typename?: 'LoginResponse';
   currentUser: CurrentUser;
@@ -660,6 +706,25 @@ export type SetConceptKnownPayload = {
   concepts: Array<SetConceptKnownPayloadConceptsField>;
 };
 
+export type CreateLearningPathPayload = {
+  name: Scalars['String'];
+  key?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  resourceItems: Array<CreateLearningPathResourceItem>;
+};
+
+export type UpdateLearningPathPayload = {
+  name?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  resourceItems?: Maybe<Array<CreateLearningPathResourceItem>>;
+};
+
+export type DeleteLearningPathResult = {
+  __typename?: 'DeleteLearningPathResult';
+  success: Scalars['Boolean'];
+  _id: Scalars['String'];
+};
+
 export type ConceptBelongsToDomain = {
   __typename?: 'ConceptBelongsToDomain';
   index: Scalars['Float'];
@@ -678,6 +743,10 @@ export enum UserRole {
   Contributor = 'CONTRIBUTOR',
   User = 'USER'
 }
+
+export type UserLearningPathsOptions = {
+  pagination?: Maybe<PaginationOptions>;
+};
 
 export enum ArticleContentType {
   Markdown = 'markdown'
@@ -805,6 +874,13 @@ export type ConceptBelongsToConceptItem = {
   relationship: ConceptBelongsToConcept;
 };
 
+export type LearningPathResourceItem = {
+  __typename?: 'LearningPathResourceItem';
+  resource: Resource;
+  learningPathId: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+};
+
 export type SetResourcesConsumedPayloadResourcesField = {
   resourceId: Scalars['String'];
   consumed?: Maybe<Scalars['Boolean']>;
@@ -814,6 +890,11 @@ export type SetResourcesConsumedPayloadResourcesField = {
 export type SetConceptKnownPayloadConceptsField = {
   conceptId: Scalars['String'];
   level?: Maybe<Scalars['Float']>;
+};
+
+export type CreateLearningPathResourceItem = {
+  resourceId: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
 };
 
 export type DomainConceptsItem = {
