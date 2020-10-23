@@ -4,7 +4,7 @@ import { uniqBy } from 'lodash';
 import React from 'react';
 import { ResourceDataFragment } from '../../../graphql/resources/resources.fragments.generated';
 import { ResourceTag } from '../../../graphql/types';
-import { ResourceTagSelector } from '../../input/ResourceTagSelector';
+import { ResourceTagSelector } from '../../lib/inputs/ResourceTagSelector';
 import {
   useAddTagsToResourceResourceEditorMutation,
   useRemoveTagsFromResourceResourceEditorMutation,

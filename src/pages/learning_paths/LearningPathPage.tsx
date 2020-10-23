@@ -4,6 +4,7 @@ import gql from 'graphql-tag';
 import Router from 'next/router';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
+import { EditableTextarea } from '../../components/lib/inputs/EditableTextarea';
 import { generateLearningPathData, LearningPathData } from '../../graphql/learning_paths/learning_paths.fragments';
 import { LearningPathDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
 import { useDeleteLearningPath } from '../../graphql/learning_paths/learning_paths.hooks';
@@ -85,9 +86,19 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
             </Editable>
           </Skeleton>
           <Skeleton isLoaded={!loading}>
-            <Text>
-              <IconButton aria-label="t" icon={<EditIcon />} size="xs" color="gray.600" alignSelf="end" />
-            </Text>
+            <EditableTextarea
+              backgroundColor="gray.100"
+              fontSize="lg"
+              fontWeight={300}
+              color="gray.700"
+              defaultValue={learningPath.description || ''}
+              placeholder="Add a description..."
+              onSubmit={(newDescription: string) =>
+                updateLearningPath({
+                  variables: { _id: learningPath._id, payload: { description: newDescription || null } },
+                })
+              }
+            />
           </Skeleton>
         </Stack>
       </Stack>

@@ -1,7 +1,7 @@
 import { Box, Button, Divider, Input, Stack, Text } from '@chakra-ui/core';
 import { useState } from 'react';
 import { useLogin } from '../../graphql/users/users.hooks';
-import { PasswordInput } from '../input/PasswordInput';
+import { PasswordInput } from '../lib/inputs/PasswordInput';
 import { GoogleAuthButton } from './GoogleAuthButton';
 import { DiscourseSso, LoginResponse } from '../../graphql/types';
 

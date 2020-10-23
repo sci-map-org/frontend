@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/core';
 import { useState } from 'react';
 import { validateEmail } from '../../util/email.util';
-import { PasswordInput } from '../input/PasswordInput';
+import { PasswordInput } from '../lib/inputs/PasswordInput';
 import { GoogleAuthButton } from './GoogleAuthButton';
 
 type GoogleAuthInfo = {
