@@ -1,7 +1,7 @@
 import * as Types from '../types';
 
-import { ConceptDataFragment } from '../concepts/concepts.fragments.generated';
 import { DomainDataFragment } from '../domains/domains.fragments.generated';
+import { ConceptDataFragment } from '../concepts/concepts.fragments.generated';
 export type ResourceDataFragment = (
   { __typename?: 'Resource' }
   & Pick<Types.Resource, '_id' | 'name' | 'type' | 'mediaType' | 'url' | 'description' | 'durationMs' | 'rating'>
@@ -27,7 +27,7 @@ export type ResourcePreviewDataFragment = (
     { __typename?: 'ResourceCoveredConceptsByDomainItem' }
     & { domain: (
       { __typename?: 'Domain' }
-      & Pick<Types.Domain, '_id' | 'key'>
+      & DomainDataFragment
     ), coveredConcepts: Array<(
       { __typename?: 'Concept' }
       & ConceptDataFragment

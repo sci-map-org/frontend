@@ -52,8 +52,7 @@ export const ResourcePreviewData = gql`
     }
     coveredConceptsByDomain {
       domain {
-        _id
-        key
+        ...DomainData
       }
       coveredConcepts {
         ...ConceptData
@@ -71,6 +70,7 @@ export const ResourcePreviewData = gql`
     }
   }
   ${ConceptData}
+  ${DomainData}
 `;
 
 export const generateResourcePreviewData = (): ResourcePreviewDataFragment => ({

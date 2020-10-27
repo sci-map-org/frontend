@@ -1,16 +1,20 @@
-import { Editable, EditableInput, EditablePreview, IconButton, Skeleton, Stack, Text } from '@chakra-ui/core';
+import { Box, Editable, EditableInput, EditablePreview, Flex, IconButton, Skeleton, Stack } from '@chakra-ui/core';
 import { EditIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import Router from 'next/router';
 import { PageLayout } from '../../components/layout/PageLayout';
+import { LearningPathResourceItemsManager } from '../../components/learning_paths/LearningPathResourceItems';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { EditableTextarea } from '../../components/lib/inputs/EditableTextarea';
-import { generateLearningPathData, LearningPathData } from '../../graphql/learning_paths/learning_paths.fragments';
-import { LearningPathDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
+import {
+  generateLearningPathData,
+  LearningPathWithResourceItemsPreviewData,
+} from '../../graphql/learning_paths/learning_paths.fragments';
 import { useDeleteLearningPath } from '../../graphql/learning_paths/learning_paths.hooks';
 import { useUpdateLearningPathMutation } from '../../graphql/learning_paths/learning_paths.operations.generated';
 import { PageInfo } from '../PageInfo';
 import { GetLearningPathPageQuery, useGetLearningPathPageQuery } from './LearningPathPage.generated';
+
 export const LearningPathPagePath = (learningPathKey: string = '[learningPathKey]') =>
   `/learning_paths/${learningPathKey}`;
 
@@ -23,10 +27,10 @@ export const LearningPathPageInfo = (learningPath: Pick<LearningPathDataFragment
 export const getLearningPathPage = gql`
   query getLearningPathPage($key: String!) {
     getLearningPathByKey(key: $key) {
-      ...LearningPathData
+      ...LearningPathWithResourceItemsPreviewData
     }
   }
-  ${LearningPathData}
+  ${LearningPathWithResourceItemsPreviewData}
 `;
 
 const learningPathPlaceholder: GetLearningPathPageQuery['getLearningPathByKey'] = {
@@ -51,56 +55,60 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
           md: '1800px',
         }}
       >
-        <Stack width="50%">
-          <Skeleton isLoaded={!loading}>
-            <Editable
-              // textAlign="center"
-              defaultValue={learningPath.name}
-              fontSize="5xl"
-              fontWeight={600}
-              color="gray.700"
-              isPreviewFocusable={false}
-              // submitOnBlur={false}
-              onSubmit={(newName) =>
-                updateLearningPath({ variables: { _id: learningPath._id, payload: { name: newName } } })
-              }
-              variant="solid"
-              display="flex"
-            >
-              {(props: any) => (
-                <>
-                  <EditablePreview />
-                  {!props.isEditing && (
-                    <IconButton
-                      aria-label="t"
-                      icon={<EditIcon />}
-                      onClick={props.onEdit}
-                      size="xs"
-                      color="gray.600"
-                      alignSelf="end"
-                    />
-                  )}
-                  <EditableInput />
-                </>
-              )}
-            </Editable>
-          </Skeleton>
-          <Skeleton isLoaded={!loading}>
-            <EditableTextarea
-              backgroundColor="gray.100"
-              fontSize="lg"
-              fontWeight={300}
-              color="gray.700"
-              defaultValue={learningPath.description || ''}
-              placeholder="Add a description..."
-              onSubmit={(newDescription: string) =>
-                updateLearningPath({
-                  variables: { _id: learningPath._id, payload: { description: newDescription || null } },
-                })
-              }
-            />
-          </Skeleton>
-        </Stack>
+        <Flex direction="row">
+          <Stack width="50%">
+            <Skeleton isLoaded={!loading}>
+              <Editable
+                defaultValue={learningPath.name}
+                fontSize="5xl"
+                fontWeight={600}
+                color="gray.700"
+                isPreviewFocusable={false}
+                lineHeight="52px"
+                onSubmit={(newName) =>
+                  updateLearningPath({ variables: { _id: learningPath._id, payload: { name: newName } } })
+                }
+                variant="solid"
+                display="flex"
+              >
+                {(props: any) => (
+                  <>
+                    <EditablePreview />
+                    {!props.isEditing && (
+                      <IconButton
+                        aria-label="t"
+                        icon={<EditIcon />}
+                        onClick={props.onEdit}
+                        size="xs"
+                        color="gray.600"
+                        variant="ghost"
+                        alignSelf="end"
+                      />
+                    )}
+                    <EditableInput />
+                  </>
+                )}
+              </Editable>
+            </Skeleton>
+            <Skeleton isLoaded={!loading}>
+              <EditableTextarea
+                backgroundColor="white"
+                fontSize="lg"
+                fontWeight={300}
+                color="gray.700"
+                defaultValue={learningPath.description || ''}
+                placeholder="Add a description..."
+                onSubmit={(newDescription: string) =>
+                  updateLearningPath({
+                    variables: { _id: learningPath._id, payload: { description: newDescription || null } },
+                  })
+                }
+              />
+            </Skeleton>
+          </Stack>
+          <Box width="50%" />
+        </Flex>
+        <LearningPathResourceItemsManager learningPath={learningPath} />
       </Stack>
     </PageLayout>
   );

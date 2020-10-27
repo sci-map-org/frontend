@@ -18,6 +18,7 @@ import {
   Tooltip,
 } from '@chakra-ui/core';
 import { ArrowDownIcon, ArrowUpIcon, EditIcon, SettingsIcon } from '@chakra-ui/icons';
+import { flatten } from 'lodash';
 import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
@@ -40,6 +41,8 @@ import { ResourceStarsRater, ResourceStarsRating } from './elements/ResourceStar
 import { ResourceTagsEditor, SelectedTagsViewer } from './elements/ResourceTagsEditor';
 import { ResourceTypeBadge } from './elements/ResourceType';
 import { ResourceUrlLink } from './elements/ResourceUrl';
+import { ResourceCoveredConceptsByDomainViewer } from './ResourceCoveredConceptsByDomainViewer';
+import { ResourceDomainAndCoveredConceptsSelector } from './ResourceDomainAndCoveredConceptsSelector';
 
 const BoxBlockDefaultClickPropagation: React.FC<BoxProps> = ({ children, ...props }) => {
   return (
@@ -57,15 +60,17 @@ const BoxBlockDefaultClickPropagation: React.FC<BoxProps> = ({ children, ...prop
 };
 
 interface ResourcePreviewCardProps {
-  domainKey: string;
+  domainKey?: string;
   resource: ResourcePreviewDataFragment;
   onResourceConsumed: (resource: ResourcePreviewDataFragment, consumed: boolean) => void;
   isLoading?: boolean;
+  borderTopColor?: string;
 }
 export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
   domainKey,
   resource,
   onResourceConsumed,
+  borderTopColor,
   isLoading,
 }) => {
   const { currentUser } = useCurrentUser();
@@ -76,7 +81,7 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
       alignItems="stretch"
       borderLeftWidth={1}
       borderTopWidth={1}
-      borderTopColor="white" // hacky stuff
+      borderTopColor={borderTopColor || 'white'} // hacky stuff
       borderLeftColor="gray.200"
       borderRightWidth={1}
       borderRightColor="gray.200"
@@ -247,7 +252,7 @@ const shortenCoveredConceptsList = (coveredConcepts: Pick<ConceptDataFragment, '
 };
 
 const BottomBlock: React.FC<{
-  domainKey: string;
+  domainKey?: string;
   resource: ResourcePreviewDataFragment;
   isLoading?: boolean;
 }> = ({ domainKey, resource, isLoading }) => {
@@ -271,7 +276,9 @@ const BottomBlock: React.FC<{
     }, [ref]);
   };
 
-  const coveredConcepts = resource.coveredConceptsByDomain?.find((d) => d.domain.key === domainKey)?.coveredConcepts;
+  const domainCoveredConcepts = resource.coveredConceptsByDomain?.filter(
+    (d) => !domainKey || d.domain.key === domainKey
+  );
   useOutsideAlerter(wrapperRef);
   return (
     <Flex pb={2} pt={2} flexWrap="wrap">
@@ -334,7 +341,7 @@ const BottomBlock: React.FC<{
         </Stack>
       </BoxBlockDefaultClickPropagation>
       <Flex flexShrink={0} direction="column" justifyContent="center">
-        {coveredConcepts && (
+        {domainCoveredConcepts && (
           <Skeleton isLoaded={!isLoading}>
             <BoxBlockDefaultClickPropagation>
               <Popover placement="bottom-end" isLazy>
@@ -344,7 +351,10 @@ const BottomBlock: React.FC<{
                       About:{'  '}
                     </Text>
                     <Link color="gray.800" fontWeight={300} onClick={() => setCoveredConceptsEditorMode(false)}>
-                      {shortenCoveredConceptsList(coveredConcepts, 32)}
+                      {shortenCoveredConceptsList(
+                        flatten(domainCoveredConcepts.map(({ coveredConcepts }) => coveredConcepts)),
+                        32
+                      )}
                     </Link>
                     <IconButton
                       onClick={(e) => {
@@ -369,14 +379,22 @@ const BottomBlock: React.FC<{
                   <PopoverCloseButton />
                   <PopoverBody pt={1}>
                     {coveredConceptsEditorMode ? (
-                      <ResourceDomainCoveredConceptsSelector
-                        domainKey={domainKey}
-                        resourceId={resource._id}
-                        coveredConcepts={coveredConcepts}
-                      />
-                    ) : (
+                      domainCoveredConcepts.length === 1 ? (
+                        <ResourceDomainCoveredConceptsSelector
+                          domainKey={domainCoveredConcepts[0].domain.key}
+                          resourceId={resource._id}
+                          coveredConcepts={domainCoveredConcepts[0].coveredConcepts}
+                        />
+                      ) : (
+                        <ResourceDomainAndCoveredConceptsSelector
+                          resource={resource}
+                          // resourceId={resource._id}
+                          // coveredConcepts={coveredConcepts}
+                        />
+                      )
+                    ) : domainCoveredConcepts.length === 1 ? (
                       <Stack direction="column">
-                        {coveredConcepts.map((concept) => (
+                        {domainCoveredConcepts[0].coveredConcepts.map((concept) => (
                           <Box key={concept._id}>
                             <InternalLink
                               routePath="/domains/[key]/concepts/[conceptKey]"
@@ -387,6 +405,8 @@ const BottomBlock: React.FC<{
                           </Box>
                         ))}
                       </Stack>
+                    ) : (
+                      <ResourceCoveredConceptsByDomainViewer resource={resource} />
                     )}
                   </PopoverBody>
                 </PopoverContent>

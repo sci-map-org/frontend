@@ -1,6 +1,6 @@
 import * as Types from '../types';
 
-import { LearningPathDataFragment } from './learning_paths.fragments.generated';
+import { LearningPathWithResourceItemsPreviewDataFragment } from './learning_paths.fragments.generated';
 import * as Operations from './learning_paths.operations';
 import * as Apollo from '@apollo/client';
 export type UpdateLearningPathMutationVariables = Types.Exact<{
@@ -13,7 +13,7 @@ export type UpdateLearningPathMutation = (
   { __typename?: 'Mutation' }
   & { updateLearningPath: (
     { __typename?: 'LearningPath' }
-    & LearningPathDataFragment
+    & LearningPathWithResourceItemsPreviewDataFragment
   ) }
 );
 

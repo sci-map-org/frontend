@@ -6,11 +6,16 @@ export type SearchResourceTagsQueryVariables = Types.Exact<{
   options: Types.SearchResourceTagsOptions;
 }>;
 
-export type SearchResourceTagsQuery = { __typename?: 'Query' } & {
-  searchResourceTags: Array<
-    { __typename?: 'ResourceTagSearchResult' } & Pick<Types.ResourceTagSearchResult, 'name' | 'usageCount'>
-  >;
-};
+
+export type SearchResourceTagsQuery = (
+  { __typename?: 'Query' }
+  & { searchResourceTags: Array<(
+    { __typename?: 'ResourceTagSearchResult' }
+    & Pick<Types.ResourceTagSearchResult, 'name' | 'usageCount'>
+  )> }
+);
+
+
 
 /**
  * __useSearchResourceTagsQuery__
@@ -28,25 +33,12 @@ export type SearchResourceTagsQuery = { __typename?: 'Query' } & {
  *   },
  * });
  */
-export function useSearchResourceTagsQuery(
-  baseOptions?: Apollo.QueryHookOptions<SearchResourceTagsQuery, SearchResourceTagsQueryVariables>
-) {
-  return Apollo.useQuery<SearchResourceTagsQuery, SearchResourceTagsQueryVariables>(
-    Operations.searchResourceTags,
-    baseOptions
-  );
-}
-export function useSearchResourceTagsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<SearchResourceTagsQuery, SearchResourceTagsQueryVariables>
-) {
-  return Apollo.useLazyQuery<SearchResourceTagsQuery, SearchResourceTagsQueryVariables>(
-    Operations.searchResourceTags,
-    baseOptions
-  );
-}
+export function useSearchResourceTagsQuery(baseOptions?: Apollo.QueryHookOptions<SearchResourceTagsQuery, SearchResourceTagsQueryVariables>) {
+        return Apollo.useQuery<SearchResourceTagsQuery, SearchResourceTagsQueryVariables>(Operations.searchResourceTags, baseOptions);
+      }
+export function useSearchResourceTagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchResourceTagsQuery, SearchResourceTagsQueryVariables>) {
+          return Apollo.useLazyQuery<SearchResourceTagsQuery, SearchResourceTagsQueryVariables>(Operations.searchResourceTags, baseOptions);
+        }
 export type SearchResourceTagsQueryHookResult = ReturnType<typeof useSearchResourceTagsQuery>;
 export type SearchResourceTagsLazyQueryHookResult = ReturnType<typeof useSearchResourceTagsLazyQuery>;
-export type SearchResourceTagsQueryResult = Apollo.QueryResult<
-  SearchResourceTagsQuery,
-  SearchResourceTagsQueryVariables
->;
+export type SearchResourceTagsQueryResult = Apollo.QueryResult<SearchResourceTagsQuery, SearchResourceTagsQueryVariables>;

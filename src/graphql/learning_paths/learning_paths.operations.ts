@@ -1,13 +1,13 @@
 import gql from "graphql-tag";
-import { LearningPathData } from "./learning_paths.fragments";
+import { LearningPathWithResourceItemsPreviewData } from "./learning_paths.fragments";
 
 export const updateLearningPath = gql`
   mutation updateLearningPath($_id: String!, $payload: UpdateLearningPathPayload!) {
     updateLearningPath(_id: $_id, payload: $payload) {
-      ...LearningPathData
+      ...LearningPathWithResourceItemsPreviewData
     }
   }
-  ${LearningPathData}
+  ${LearningPathWithResourceItemsPreviewData}
 `;
 
 export const deleteLearningPath = gql`

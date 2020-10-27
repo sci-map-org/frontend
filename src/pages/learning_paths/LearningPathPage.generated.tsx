@@ -1,6 +1,6 @@
 import * as Types from '../../graphql/types';
 
-import { LearningPathDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
+import { LearningPathWithResourceItemsPreviewDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
 import * as Operations from './LearningPathPage';
 import * as Apollo from '@apollo/client';
 export type GetLearningPathPageQueryVariables = Types.Exact<{
@@ -12,7 +12,7 @@ export type GetLearningPathPageQuery = (
   { __typename?: 'Query' }
   & { getLearningPathByKey: (
     { __typename?: 'LearningPath' }
-    & LearningPathDataFragment
+    & LearningPathWithResourceItemsPreviewDataFragment
   ) }
 );
 
