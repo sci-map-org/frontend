@@ -112,7 +112,7 @@ export const Header: React.FC = () => {
                           </InternalLink>
                         ))}
                       </Stack>
-                      <Divider />
+                      <Divider my={3} />
                     </>
                   )}
                   <InternalLink
@@ -120,6 +120,7 @@ export const Header: React.FC = () => {
                     asHref="/learning_paths/new"
                     {...HeaderLinkStyle}
                     fontSize="md"
+                    fontWeight={400}
                   >
                     New Learning Path
                   </InternalLink>
