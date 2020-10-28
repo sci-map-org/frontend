@@ -10,6 +10,7 @@ import {
   generateLearningPathData,
   LearningPathWithResourceItemsPreviewData,
 } from '../../graphql/learning_paths/learning_paths.fragments';
+import { LearningPathDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
 import { useDeleteLearningPath } from '../../graphql/learning_paths/learning_paths.hooks';
 import { useUpdateLearningPathMutation } from '../../graphql/learning_paths/learning_paths.operations.generated';
 import { PageInfo } from '../PageInfo';
@@ -98,9 +99,9 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
                 color="gray.700"
                 defaultValue={learningPath.description || ''}
                 placeholder="Add a description..."
-                onSubmit={(newDescription: string) =>
+                onSubmit={(newDescription: any) =>
                   updateLearningPath({
-                    variables: { _id: learningPath._id, payload: { description: newDescription || null } },
+                    variables: { _id: learningPath._id, payload: { description: (newDescription as string) || null } },
                   })
                 }
               />
