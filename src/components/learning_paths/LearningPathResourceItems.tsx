@@ -87,7 +87,7 @@ export const LearningPathResourceItemsManager: React.FC<LearningPathResourceItem
                   color="gray.700"
                   defaultValue={description || ''}
                   placeholder="Add a description..."
-                  onSubmit={(newDescription: string) => updateDescription(resource._id, newDescription)}
+                  onSubmit={(newDescription: any) => updateDescription(resource._id, newDescription as string)}
                 />
                 <Box flexBasis="60px" />
               </Flex>
