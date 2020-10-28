@@ -88,7 +88,7 @@ export const Header: React.FC = () => {
             <PopoverContent
               zIndex={4}
               width="260px"
-              backgroundColor="gray.100"
+              backgroundColor="backgroundColor.0"
               borderRadius={6}
               _focus={{ outline: 'none' }}
               borderWidth={1}
