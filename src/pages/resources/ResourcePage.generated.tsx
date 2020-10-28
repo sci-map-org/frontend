@@ -1,6 +1,6 @@
 import * as Types from '../../graphql/types';
 
-import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { ResourceDataFragment, ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import * as Operations from './ResourcePage';

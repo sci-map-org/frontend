@@ -3,7 +3,7 @@ import gql from 'graphql-tag';
 import { uniqBy } from 'lodash';
 import { useState } from 'react';
 import Autosuggest from 'react-autosuggest';
-import { ResourceTagSearchResult } from '../../graphql/types';
+import { ResourceTagSearchResult } from '../../../graphql/types';
 import { useSearchResourceTagsLazyQuery } from './ResourceTagSelector.generated';
 
 interface ResourceTagSelectorProps {

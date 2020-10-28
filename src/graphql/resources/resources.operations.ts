@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { ResourceData } from './resources.fragments';
+import { ResourceData, ResourcePreviewData } from './resources.fragments';
 
 export const searchResources = gql`
   query searchResources($query: String!, $options: SearchResourcesOptions!) {
@@ -10,6 +10,15 @@ export const searchResources = gql`
     }
   }
   ${ResourceData}
+`;
+
+export const getResourcePreviewData = gql`
+  query getResourcePreviewData($id: String!) {
+    getResourceById(id: $id) {
+      ...ResourcePreviewData
+    }
+  }
+  ${ResourcePreviewData}
 `;
 
 export const voteResource = gql`

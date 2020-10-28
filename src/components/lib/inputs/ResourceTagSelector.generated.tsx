@@ -1,4 +1,4 @@
-import * as Types from '../../graphql/types';
+import * as Types from '../../../graphql/types';
 
 import * as Operations from './ResourceTagSelector';
 import * as Apollo from '@apollo/client';

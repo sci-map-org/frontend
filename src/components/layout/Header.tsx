@@ -8,44 +8,44 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Popover,
+  PopoverArrow,
+  PopoverContent,
+  PopoverBody,
   Stack,
+  PopoverTrigger,
+  Divider,
 } from '@chakra-ui/core';
 import { omit } from 'lodash';
 import getConfig from 'next/config';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useCurrentUser, useLogout } from '../../graphql/users/users.hooks';
+import { LearningPathPagePath } from '../../pages/learning_paths/LearningPathPage';
 import { globalStyleVariables } from '../../theme/theme';
 import { RoleAccess } from '../auth/RoleAccess';
 import { InternalLink, InternalLinkProps } from '../navigation/InternalLink';
 
 const { publicRuntimeConfig } = getConfig();
 
+const HeaderLinkStyle: LinkProps = {
+  fontWeight: 'light',
+  color: 'blackAlpha.700',
+  _hover: { color: 'blackAlpha.900' },
+  _focus: {},
+};
 const HeaderLink: React.FC<(InternalLinkProps & { external?: false }) | ({ external: true } & LinkProps)> = ({
   children,
   ...props // not taking out 'external' prop as it would mess with the ts trick
 }) =>
   props.external ? (
     <Box>
-      <Link
-        {...omit(props, 'external')}
-        fontWeight="light"
-        color="blackAlpha.700"
-        _hover={{ color: 'blackAlpha.900' }}
-        _focus={{}}
-        isExternal
-      >
+      <Link {...omit(props, 'external')} {...HeaderLinkStyle} isExternal>
         {children}
       </Link>
     </Box>
   ) : (
-    <InternalLink
-      {...omit(props, 'external')}
-      fontWeight="light"
-      color="blackAlpha.700"
-      _hover={{ color: 'blackAlpha.900' }}
-      _focus={{}}
-    >
+    <InternalLink {...omit(props, 'external')} {...HeaderLinkStyle}>
       {children}
     </InternalLink>
   );
@@ -78,7 +78,57 @@ export const Header: React.FC = () => {
         Sci-Map.org
       </InternalLink>
       <Box flexGrow={1} />
+
       <Stack direction="row" spacing={4}>
+        {!!currentUser && (
+          <Popover placement="auto">
+            <PopoverTrigger>
+              <Link {...HeaderLinkStyle}>My Learning Paths</Link>
+            </PopoverTrigger>
+            <PopoverContent
+              zIndex={4}
+              width="260px"
+              backgroundColor="backgroundColor.0"
+              borderRadius={6}
+              _focus={{ outline: 'none' }}
+              borderWidth={1}
+              borderColor="gray.300"
+            >
+              <PopoverArrow />
+              <PopoverBody pt={1}>
+                <Stack direction="column" spacing={0}>
+                  {currentUser.createdLearningPaths && currentUser.createdLearningPaths.length && (
+                    <>
+                      <Stack>
+                        {currentUser.createdLearningPaths.map((createdLearningPath) => (
+                          <InternalLink
+                            key={createdLearningPath._id}
+                            routePath={LearningPathPagePath()}
+                            asHref={LearningPathPagePath(createdLearningPath.key)}
+                            {...HeaderLinkStyle}
+                            fontSize="md"
+                          >
+                            {createdLearningPath.name}
+                          </InternalLink>
+                        ))}
+                      </Stack>
+                      <Divider my={3} />
+                    </>
+                  )}
+                  <InternalLink
+                    routePath="/learning_paths/new"
+                    asHref="/learning_paths/new"
+                    {...HeaderLinkStyle}
+                    fontSize="md"
+                    fontWeight={400}
+                  >
+                    New Learning Path
+                  </InternalLink>
+                </Stack>
+              </PopoverBody>
+            </PopoverContent>
+          </Popover>
+        )}
         <HeaderLink routePath="/domains" asHref="/domains">
           Domains
         </HeaderLink>
