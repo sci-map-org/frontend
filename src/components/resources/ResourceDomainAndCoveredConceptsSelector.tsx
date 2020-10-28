@@ -23,7 +23,6 @@ export const ResourceDomainAndCoveredConceptsSelector: React.FC<{
 
   return (
     <Stack direction="column">
-      <Heading size="sm">Covered Topics</Heading>
       {resource.coveredConceptsByDomain.map(({ domain, coveredConcepts }, index) => (
         <Flex direction="column" alignItems="stretch" key={domain.key}>
           <Stack direction="row">

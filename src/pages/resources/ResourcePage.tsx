@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Skeleton, Stack, Text } from '@chakra-ui/core';
+import { Box, Button, Flex, Heading, Skeleton, Stack, Text } from '@chakra-ui/core';
 import gql from 'graphql-tag';
 import Router, { useRouter } from 'next/router';
 import { Access } from '../../components/auth/Access';
@@ -168,7 +168,8 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
           </Stack>
 
           {resource.coveredConceptsByDomain && (
-            <Box backgroundColor="gray.100" px={4} mt={4} py={3} borderRadius={5}>
+            <Stack backgroundColor="gray.100" px={4} mt={4} py={3} borderRadius={5}>
+              <Heading size="sm">Covered Topics</Heading>
               <RoleAccess
                 accessRule="loggedInUser"
                 renderAccessDenied={() =>
@@ -179,7 +180,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
               >
                 <ResourceDomainAndCoveredConceptsSelector isLoading={loading} resource={resource} />
               </RoleAccess>
-            </Box>
+            </Stack>
           )}
         </Flex>
         {(isResourceSeriesType(resource.type) || resource.subResourceSeries?.length) && (

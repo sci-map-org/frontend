@@ -13,37 +13,34 @@ export const ResourceCoveredConceptsByDomainViewer: React.FC<ResourceCoveredConc
 }) => {
   if (!resource.coveredConceptsByDomain) return null;
   return (
-    <Box>
-      <Heading size="sm">Covered Topics</Heading>
-      <Stack spacing={2}>
-        {resource.coveredConceptsByDomain.map(({ domain, coveredConcepts }) => (
-          <Box key={domain._id}>
-            <Skeleton isLoaded={!isLoading}>
-              <InternalLink routePath="/domains/[key]" asHref={`/domains/${domain.key}`}>
-                {domain.name}
-              </InternalLink>
-            </Skeleton>
-            {!!coveredConcepts.length && (
-              <Stack spacing={1} pl={5}>
-                {coveredConcepts.map((concept) => (
-                  <Box key={concept._id}>
-                    <Skeleton isLoaded={!isLoading}>
-                      <InternalLink
-                        routePath="/domains/[key]/concepts/[conceptKey]"
-                        asHref={`/domains/${domain.key}/concepts/${concept.key}`}
-                        fontSize="sm"
-                      >
-                        {concept.name}
-                      </InternalLink>
-                    </Skeleton>
-                  </Box>
-                ))}
-                )
-              </Stack>
-            )}
-          </Box>
-        ))}
-      </Stack>
-    </Box>
+    <Stack spacing={2}>
+      {resource.coveredConceptsByDomain.map(({ domain, coveredConcepts }) => (
+        <Box key={domain._id}>
+          <Skeleton isLoaded={!isLoading}>
+            <InternalLink routePath="/domains/[key]" asHref={`/domains/${domain.key}`}>
+              {domain.name}
+            </InternalLink>
+          </Skeleton>
+          {!!coveredConcepts.length && (
+            <Stack spacing={1} pl={5}>
+              {coveredConcepts.map((concept) => (
+                <Box key={concept._id}>
+                  <Skeleton isLoaded={!isLoading}>
+                    <InternalLink
+                      routePath="/domains/[key]/concepts/[conceptKey]"
+                      asHref={`/domains/${domain.key}/concepts/${concept.key}`}
+                      fontSize="sm"
+                    >
+                      {concept.name}
+                    </InternalLink>
+                  </Skeleton>
+                </Box>
+              ))}
+              )
+            </Stack>
+          )}
+        </Box>
+      ))}
+    </Stack>
   );
 };
