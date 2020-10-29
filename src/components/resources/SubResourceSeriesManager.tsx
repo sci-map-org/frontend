@@ -69,6 +69,7 @@ export const SubResourceSeriesManager: React.FC<SubResourceSeriesManagerProps> =
         <Flex direction="column" alignItems="center">
           <Heading size="sm">Start resource series</Heading>
           <ResourceSelectorModal
+            defaultAttachedDomains={domains}
             onSelect={(selectedResource) =>
               createSubResourceSeriesMutation({
                 variables: { parentResourceId: resourceId, subResourceId: selectedResource._id },
@@ -94,6 +95,7 @@ export const SubResourceSeriesManager: React.FC<SubResourceSeriesManagerProps> =
           <ResourceList resources={subResourceSeries} />
           <Flex direction="column" alignItems="center">
             <ResourceSelectorModal
+              defaultAttachedDomains={domains}
               onSelect={(selectedResource) =>
                 addSubResourceToSeriesMutation({
                   variables: {
