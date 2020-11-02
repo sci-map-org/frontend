@@ -36,7 +36,7 @@ export const Wrapper: React.FC<WrapperProps> = ({ children, apolloClient }) => {
             }
           `}
         </style>
-        <script async defer data-domain="sci-map.org" src="http://analytics.sci-map.org/js/plausible.js"></script>
+        <script async defer data-domain="sci-map.org" src="https://plausible.io/js/plausible.js"></script>
       </ChakraProvider>
     </ApolloProvider>
   );
