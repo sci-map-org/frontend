@@ -12,5 +12,6 @@ module.exports = withCSS({
     awsAccessKeyId: process.env.AWS_ACCESS_KEY_ID,
     awsSecretKey: process.env.AWS_SECRET_KEY,
     awsRegion: process.env.AWS_REGION,
+    googleAnalyticsMeasurementId: process.env.GA_MEASUREMENT_ID,
   },
 });

@@ -53,6 +53,7 @@
     "react-autosuggest": "^10.0.2",
     "react-cytoscapejs": "^1.2.1",
     "react-dom": "^16.12.0",
+    "react-ga": "^3.2.0",
     "react-google-login": "5.1.21",
     "react-icons": "^3.11.0",
     "react-markdown": "^4.3.1",
