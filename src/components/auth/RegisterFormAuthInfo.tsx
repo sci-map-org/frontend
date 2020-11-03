@@ -59,7 +59,7 @@ export const RegisterFormAuthInfo: React.FC<RegisterFormAuthInfoProps> = ({ onNe
       <Text fontSize="xl" fontWeight={300}>
         Register using your Google account
       </Text>
-      <Stack spacing={2} textAlign="center" onClick={(e) => e.stopPropagation()}>
+      <Stack spacing={2} textAlign="center" onClick={(e: any) => e.stopPropagation()}>
         <GoogleAuthButton
           buttonText="Register with Google"
           onSuccessfulLogin={onSuccessfulLogin}

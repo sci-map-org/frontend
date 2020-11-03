@@ -204,15 +204,25 @@ export const CollapsableMenuLink: React.FC<{
         expanded={show}
         onExpand={handleExpand}
       />
-      <Collapse isOpen={show} display="flex" flexDir="row">
-        <Divider orientation="vertical" ml="7px" mr="10px" mb={2} mt={1} borderColor="gray.300" borderStyle="dashed" />
-        <DomainConceptListMenuLevel
-          nestedConceptItems={subConceptItems}
-          domainKey={domainKey}
-          onToggle={onToggle}
-          isLoading={isLoading}
-          level={level + 1}
-        />
+      <Collapse in={show}>
+        <Flex direction="row">
+          <Divider
+            orientation="vertical"
+            ml="7px"
+            mr="10px"
+            mb={2}
+            mt={1}
+            borderColor="gray.300"
+            borderStyle="dashed"
+          />
+          <DomainConceptListMenuLevel
+            nestedConceptItems={subConceptItems}
+            domainKey={domainKey}
+            onToggle={onToggle}
+            isLoading={isLoading}
+            level={level + 1}
+          />
+        </Flex>
       </Collapse>
     </Box>
   );

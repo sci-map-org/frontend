@@ -50,7 +50,7 @@ export const ResourceStarsRater: React.FC<{ resourceId: string } & Omit<ButtonPr
   const open = () => setIsOpen(!isOpen);
   const close = () => setIsOpen(false);
   return (
-    <Popover isOpen={isOpen} onClose={close} returnFocus={false} placement="right" isLazy>
+    <Popover isOpen={isOpen} onClose={close} returnFocusOnClose={false} placement="right" isLazy>
       <PopoverTrigger>
         <Button variant="outline" aria-label="rate-this" size="sm" leftIcon={<StarIcon />} onClick={open} {...props}>
           Rate this
