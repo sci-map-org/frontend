@@ -4,10 +4,12 @@ import Router from 'next/router';
 import { useState } from 'react';
 import { LearningPathData } from '../../graphql/learning_paths/learning_paths.fragments';
 import { LearningPathDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
-import { CreateLearningPathPayload, CreateLearningPathResourceItem } from '../../graphql/types';
+import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { CreateLearningPathPayload } from '../../graphql/types';
 import { LearningPathPageInfo } from '../../pages/learning_paths/LearningPathPage';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { RoleAccess } from '../auth/RoleAccess';
+import { StatelessLearningPathResourceItemsManager } from './LearningPathResourceItems';
 import { useCreateLearningPathMutation } from './NewLearningPath.generated';
 
 interface NewLearningPathProps {
@@ -17,9 +19,20 @@ interface NewLearningPathProps {
 
 export const NewLearningPathForm: React.FC<NewLearningPathProps> = ({ createLearningPath, onLearningPathCreated }) => {
   const [name, setName] = useState('');
-  const [key, setKey] = useState<string>();
+  const [key, setKey] = useState<string>('');
   const [description, setDescription] = useState<string | undefined>(undefined);
-  const [resourceItems, setResourceItems] = useState<CreateLearningPathResourceItem[]>([]);
+  const [resourceItems, setResourceItems] = useState<{ resource: ResourcePreviewDataFragment; description?: string }[]>(
+    []
+  );
+
+  const updateResourceItemDescription = (resourceId: string, description: string) => {
+    setResourceItems(
+      resourceItems.map((resourceItem) => {
+        if (resourceItem.resource._id === resourceId) return { ...resourceItem, description: description || undefined };
+        return resourceItem;
+      })
+    );
+  };
   return (
     <Stack>
       <FormControl isRequired>
@@ -27,33 +40,41 @@ export const NewLearningPathForm: React.FC<NewLearningPathProps> = ({ createLear
         <Input
           placeholder="My Learning Path"
           size="md"
-          id="title"
+          id="Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
         ></Input>
       </FormControl>
       <RoleAccess accessRule="admin">
         <FormControl>
-          <FormLabel htmlFor="Name">Url key</FormLabel>
+          <FormLabel htmlFor="key">Url key</FormLabel>
           <Input
             placeholder="my_learning_path"
             size="md"
-            id="title"
+            id="key"
             value={key}
-            onChange={(e) => setKey(e.target.value || undefined)}
+            onChange={(e) => setKey(e.target.value)}
           ></Input>
         </FormControl>
       </RoleAccess>
       <FormControl>
-        <FormLabel htmlFor="Name">Description</FormLabel>
+        <FormLabel htmlFor="Description">Description</FormLabel>
         <Textarea
-          id="description"
+          id="Description"
           placeholder="Description"
           size="md"
           value={description}
           onChange={(e) => setDescription(e.target.value || undefined)}
         ></Textarea>
       </FormControl>
+      <StatelessLearningPathResourceItemsManager
+        updateDescription={updateResourceItemDescription}
+        addResourceItem={(resource) => setResourceItems([...resourceItems, { resource }])}
+        removeResourceItem={(resource) =>
+          setResourceItems(resourceItems.filter((i) => i.resource._id !== resource._id))
+        }
+        resourceItems={resourceItems}
+      />
       <Flex justifyContent="flex-end">
         <ButtonGroup spacing={8}>
           <Button size="lg" w="18rem" variant="outline" onClick={() => Router.back()}>
@@ -65,18 +86,18 @@ export const NewLearningPathForm: React.FC<NewLearningPathProps> = ({ createLear
             variant="solid"
             colorScheme="brand"
             onClick={() =>
-              createLearningPath({ name, description, resourceItems: [], ...(key && { key }) }).then(
-                (lp) => onLearningPathCreated && onLearningPathCreated(lp)
-              )
+              createLearningPath({
+                name,
+                description,
+                resourceItems: resourceItems.map((i) => ({ resourceId: i.resource._id, description: i.description })),
+                ...(key && { key }),
+              }).then((lp) => onLearningPathCreated && onLearningPathCreated(lp))
             }
           >
             Add
           </Button>
         </ButtonGroup>
       </Flex>
-      {/* <Box>
-          <LearningPathResourceItemsManager resourceItems={resourceItems} addResourceItem={r => setResourceItems([...resourceItems, {resourceId: r.resource._id}])}/>
-      </Box> */}
     </Stack>
   );
 };
