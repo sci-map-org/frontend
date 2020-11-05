@@ -130,6 +130,8 @@ export type Mutation = {
   createLearningPath: LearningPath;
   updateLearningPath: LearningPath;
   deleteLearningPath: DeleteLearningPathResult;
+  addComplementaryResourceToLearningPath: ComplementaryResourceUpdatedResult;
+  removeComplementaryResourceFromLearningPath: ComplementaryResourceUpdatedResult;
   updateConceptBelongsToDomain: ConceptBelongsToDomain;
   addConceptBelongsToConcept: Concept;
   removeConceptBelongsToConcept: Concept;
@@ -354,6 +356,18 @@ export type MutationDeleteLearningPathArgs = {
 };
 
 
+export type MutationAddComplementaryResourceToLearningPathArgs = {
+  learningPathId: Scalars['String'];
+  resourceId: Scalars['String'];
+};
+
+
+export type MutationRemoveComplementaryResourceFromLearningPathArgs = {
+  learningPathId: Scalars['String'];
+  resourceId: Scalars['String'];
+};
+
+
 export type MutationUpdateConceptBelongsToDomainArgs = {
   conceptId: Scalars['String'];
   domainId: Scalars['String'];
@@ -562,6 +576,7 @@ export type LearningPath = {
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
   resourceItems?: Maybe<Array<LearningPathResourceItem>>;
+  complementaryResources?: Maybe<Array<Resource>>;
 };
 
 export type LoginResponse = {
@@ -723,6 +738,12 @@ export type DeleteLearningPathResult = {
   __typename?: 'DeleteLearningPathResult';
   success: Scalars['Boolean'];
   _id: Scalars['String'];
+};
+
+export type ComplementaryResourceUpdatedResult = {
+  __typename?: 'ComplementaryResourceUpdatedResult';
+  resource: Resource;
+  learningPath: LearningPath;
 };
 
 export type ConceptBelongsToDomain = {

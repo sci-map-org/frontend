@@ -16,7 +16,7 @@ import { ResourceUrlLink } from '../../components/resources/elements/ResourceUrl
 import { ResourceCoveredConceptsByDomainViewer } from '../../components/resources/ResourceCoveredConceptsByDomainViewer';
 import { ResourceDomainAndCoveredConceptsSelector } from '../../components/resources/ResourceDomainAndCoveredConceptsSelector';
 import { SubResourceSeriesManager } from '../../components/resources/SubResourceSeriesManager';
-import { SubResourcesManager } from '../../components/resources/SubResourcesManager';
+import { ResourceSubResourcesManager } from '../../components/resources/SubResourcesManager';
 import { ConceptData, generateConceptData } from '../../graphql/concepts/concepts.fragments';
 import { DomainData, generateDomainData } from '../../graphql/domains/domains.fragments';
 import { generateResourceData, ResourceData } from '../../graphql/resources/resources.fragments';
@@ -192,7 +192,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
         )}
 
         {(isResourceGroupType(resource.type) || resource.subResources?.length) && (
-          <SubResourcesManager
+          <ResourceSubResourcesManager
             resourceId={resourceId}
             subResources={resource.subResources || []}
             domains={resource.coveredConceptsByDomain?.map((i) => i.domain) || []}

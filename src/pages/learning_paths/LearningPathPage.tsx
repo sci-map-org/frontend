@@ -3,6 +3,7 @@ import { EditIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import Router from 'next/router';
 import { PageLayout } from '../../components/layout/PageLayout';
+import { LearningPathComplementaryResourcesManager } from '../../components/learning_paths/LearningPathComplementaryResourcesManager';
 import { LearningPathResourceItemsManager } from '../../components/learning_paths/LearningPathResourceItems';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { EditableTextarea } from '../../components/lib/inputs/EditableTextarea';
@@ -13,6 +14,7 @@ import {
 import { LearningPathDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
 import { useDeleteLearningPath } from '../../graphql/learning_paths/learning_paths.hooks';
 import { useUpdateLearningPathMutation } from '../../graphql/learning_paths/learning_paths.operations.generated';
+import { ResourceData } from '../../graphql/resources/resources.fragments';
 import { PageInfo } from '../PageInfo';
 import { GetLearningPathPageQuery, useGetLearningPathPageQuery } from './LearningPathPage.generated';
 
@@ -29,9 +31,13 @@ export const getLearningPathPage = gql`
   query getLearningPathPage($key: String!) {
     getLearningPathByKey(key: $key) {
       ...LearningPathWithResourceItemsPreviewData
+      complementaryResources {
+        ...ResourceData
+      }
     }
   }
   ${LearningPathWithResourceItemsPreviewData}
+  ${ResourceData}
 `;
 
 const learningPathPlaceholder: GetLearningPathPageQuery['getLearningPathByKey'] = {
@@ -110,6 +116,10 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
           <Box width="50%" />
         </Flex>
         <LearningPathResourceItemsManager learningPath={learningPath} />
+        <LearningPathComplementaryResourcesManager
+          learningPathId={learningPath._id}
+          complementaryResources={learningPath.complementaryResources || []}
+        />
       </Stack>
     </PageLayout>
   );

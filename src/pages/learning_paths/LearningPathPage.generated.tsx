@@ -1,6 +1,7 @@
 import * as Types from '../../graphql/types';
 
 import { LearningPathWithResourceItemsPreviewDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
+import { ResourceDataFragment, ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import * as Operations from './LearningPathPage';
 import * as Apollo from '@apollo/client';
 export type GetLearningPathPageQueryVariables = Types.Exact<{
@@ -12,6 +13,10 @@ export type GetLearningPathPageQuery = (
   { __typename?: 'Query' }
   & { getLearningPathByKey: (
     { __typename?: 'LearningPath' }
+    & { complementaryResources?: Types.Maybe<Array<(
+      { __typename?: 'Resource' }
+      & ResourceDataFragment
+    )>> }
     & LearningPathWithResourceItemsPreviewDataFragment
   ) }
 );
