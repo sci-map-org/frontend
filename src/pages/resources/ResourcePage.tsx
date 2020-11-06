@@ -146,7 +146,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
           <Stack direction="row" spacing={2} alignItems="center">
             <ResourceStarsRating value={resource.rating} />
             <RoleAccess accessRule="contributorOrAdmin">
-              <ResourceStarsRater resourceId={resource._id} isDisabled={loading} />
+              <ResourceStarsRater learningMaterialId={resource._id} isDisabled={loading} />
             </RoleAccess>
           </Stack>
         </Flex>

@@ -21,6 +21,9 @@ export type AddComplementaryResourceToLearningPathMutation = (
         & Pick<Types.Resource, '_id'>
       )>> }
       & LearningPathDataFragment
+    ), resource: (
+      { __typename?: 'Resource' }
+      & ResourceDataFragment
     ) }
   ) }
 );
@@ -42,9 +45,6 @@ export type RemoveComplementaryResourceFromLearningPathMutation = (
         & Pick<Types.Resource, '_id'>
       )>> }
       & LearningPathDataFragment
-    ), resource: (
-      { __typename?: 'Resource' }
-      & ResourceDataFragment
     ) }
   ) }
 );

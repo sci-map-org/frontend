@@ -59,7 +59,7 @@ export type AttachResourceCoversConceptsMutation = (
     { __typename?: 'Resource' }
     & Pick<Types.Resource, '_id'>
     & { coveredConceptsByDomain?: Types.Maybe<Array<(
-      { __typename?: 'ResourceCoveredConceptsByDomainItem' }
+      { __typename?: 'LearningMaterialCoveredConceptsByDomainItem' }
       & { domain: (
         { __typename?: 'Domain' }
         & Pick<Types.Domain, '_id'>
@@ -83,7 +83,7 @@ export type DetachResourceCoversConceptsMutation = (
     { __typename?: 'Resource' }
     & Pick<Types.Resource, '_id'>
     & { coveredConceptsByDomain?: Types.Maybe<Array<(
-      { __typename?: 'ResourceCoveredConceptsByDomainItem' }
+      { __typename?: 'LearningMaterialCoveredConceptsByDomainItem' }
       & { domain: (
         { __typename?: 'Domain' }
         & Pick<Types.Domain, '_id'>
@@ -120,7 +120,7 @@ export type AttachResourceToDomainMutation = (
     { __typename?: 'Resource' }
     & Pick<Types.Resource, '_id'>
     & { coveredConceptsByDomain?: Types.Maybe<Array<(
-      { __typename?: 'ResourceCoveredConceptsByDomainItem' }
+      { __typename?: 'LearningMaterialCoveredConceptsByDomainItem' }
       & { domain: (
         { __typename?: 'Domain' }
         & Pick<Types.Domain, '_id' | 'key'>
@@ -144,7 +144,7 @@ export type DetachResourceFromDomainMutation = (
     { __typename?: 'Resource' }
     & Pick<Types.Resource, '_id'>
     & { coveredConceptsByDomain?: Types.Maybe<Array<(
-      { __typename?: 'ResourceCoveredConceptsByDomainItem' }
+      { __typename?: 'LearningMaterialCoveredConceptsByDomainItem' }
       & { domain: (
         { __typename?: 'Domain' }
         & Pick<Types.Domain, '_id' | 'key'>

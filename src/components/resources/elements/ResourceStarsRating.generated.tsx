@@ -2,44 +2,47 @@ import * as Types from '../../../graphql/types';
 
 import * as Operations from './ResourceStarsRating';
 import * as Apollo from '@apollo/client';
-export type RateResourceMutationVariables = Types.Exact<{
-  resourceId: Types.Scalars['String'];
+export type RateLearningMaterialMutationVariables = Types.Exact<{
+  learningMaterialId: Types.Scalars['String'];
   value: Types.Scalars['Float'];
 }>;
 
 
-export type RateResourceMutation = (
+export type RateLearningMaterialMutation = (
   { __typename?: 'Mutation' }
-  & { rateResource: (
+  & { rateLearningMaterial: (
     { __typename?: 'Resource' }
     & Pick<Types.Resource, '_id' | 'rating'>
+  ) | (
+    { __typename?: 'LearningPath' }
+    & Pick<Types.LearningPath, '_id' | 'rating'>
   ) }
 );
 
 
-export type RateResourceMutationFn = Apollo.MutationFunction<RateResourceMutation, RateResourceMutationVariables>;
+export type RateLearningMaterialMutationFn = Apollo.MutationFunction<RateLearningMaterialMutation, RateLearningMaterialMutationVariables>;
 
 /**
- * __useRateResourceMutation__
+ * __useRateLearningMaterialMutation__
  *
- * To run a mutation, you first call `useRateResourceMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRateResourceMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useRateLearningMaterialMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRateLearningMaterialMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [rateResourceMutation, { data, loading, error }] = useRateResourceMutation({
+ * const [rateLearningMaterialMutation, { data, loading, error }] = useRateLearningMaterialMutation({
  *   variables: {
- *      resourceId: // value for 'resourceId'
+ *      learningMaterialId: // value for 'learningMaterialId'
  *      value: // value for 'value'
  *   },
  * });
  */
-export function useRateResourceMutation(baseOptions?: Apollo.MutationHookOptions<RateResourceMutation, RateResourceMutationVariables>) {
-        return Apollo.useMutation<RateResourceMutation, RateResourceMutationVariables>(Operations.rateResource, baseOptions);
+export function useRateLearningMaterialMutation(baseOptions?: Apollo.MutationHookOptions<RateLearningMaterialMutation, RateLearningMaterialMutationVariables>) {
+        return Apollo.useMutation<RateLearningMaterialMutation, RateLearningMaterialMutationVariables>(Operations.rateLearningMaterial, baseOptions);
       }
-export type RateResourceMutationHookResult = ReturnType<typeof useRateResourceMutation>;
-export type RateResourceMutationResult = Apollo.MutationResult<RateResourceMutation>;
-export type RateResourceMutationOptions = Apollo.BaseMutationOptions<RateResourceMutation, RateResourceMutationVariables>;
+export type RateLearningMaterialMutationHookResult = ReturnType<typeof useRateLearningMaterialMutation>;
+export type RateLearningMaterialMutationResult = Apollo.MutationResult<RateLearningMaterialMutation>;
+export type RateLearningMaterialMutationOptions = Apollo.BaseMutationOptions<RateLearningMaterialMutation, RateLearningMaterialMutationVariables>;

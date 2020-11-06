@@ -13,6 +13,7 @@ export type GetLearningPathPageQuery = (
   { __typename?: 'Query' }
   & { getLearningPathByKey: (
     { __typename?: 'LearningPath' }
+    & Pick<Types.LearningPath, 'rating'>
     & { complementaryResources?: Types.Maybe<Array<(
       { __typename?: 'Resource' }
       & ResourceDataFragment

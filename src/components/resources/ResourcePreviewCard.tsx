@@ -115,7 +115,7 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
                 <RoleAccess accessRule="contributorOrAdmin">
                   <BoxBlockDefaultClickPropagation>
                     <ResourceStarsRater
-                      resourceId={resource._id}
+                      learningMaterialId={resource._id}
                       size="xs"
                       color="gray.500"
                       _hover={{ color: 'gray.900' }}

@@ -1,7 +1,6 @@
 import {
   Button,
   ButtonProps,
-  Icon,
   Popover,
   PopoverArrow,
   PopoverBody,
@@ -10,11 +9,11 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/core';
+import { StarIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import { useState } from 'react';
 import ReactStars from 'react-rating-stars-component';
-import { useRateResourceMutation } from './ResourceStarsRating.generated';
-import { StarIcon } from '@chakra-ui/icons';
+import { useRateLearningMaterialMutation } from './ResourceStarsRating.generated';
 
 export const ResourceStarsRating: React.FC<{ value?: number | null; pxSize?: number }> = ({ value, pxSize = 18 }) => {
   return value ? (
@@ -30,20 +29,11 @@ export const ResourceStarsRating: React.FC<{ value?: number | null; pxSize?: num
   ) : null;
 };
 
-export const rateResource = gql`
-  mutation rateResource($resourceId: String!, $value: Float!) {
-    rateResource(resourceId: $resourceId, value: $value) {
-      _id
-      rating
-    }
-  }
-`;
-
 /**
  * TODO: show user's own rating on button, show star as yellow then
  */
-export const ResourceStarsRater: React.FC<{ resourceId: string } & Omit<ButtonProps, 'onClick'>> = ({
-  resourceId,
+export const ResourceStarsRater: React.FC<{ learningMaterialId: string } & Omit<ButtonProps, 'onClick'>> = ({
+  learningMaterialId,
   ...props
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -59,23 +49,32 @@ export const ResourceStarsRater: React.FC<{ resourceId: string } & Omit<ButtonPr
       <PopoverContent w="146px" zIndex={4}>
         <PopoverArrow />
         <PopoverBody>
-          <ResourceStarsRatingSelector resourceId={resourceId} onSelected={() => close()} />
+          <ResourceStarsRatingSelector learningMaterialId={learningMaterialId} onSelected={() => close()} />
         </PopoverBody>
       </PopoverContent>
     </Popover>
   );
 };
 
+export const rateLearningMaterial = gql`
+  mutation rateLearningMaterial($learningMaterialId: String!, $value: Float!) {
+    rateLearningMaterial(learningMaterialId: $learningMaterialId, value: $value) {
+      _id
+      rating
+    }
+  }
+`;
+
 export const ResourceStarsRatingSelector: React.FC<{
-  resourceId: string;
+  learningMaterialId: string;
   onSelected?: (selectedRating: number) => void;
-}> = ({ resourceId, onSelected }) => {
-  const [rateResourceMutation] = useRateResourceMutation();
+}> = ({ learningMaterialId, onSelected }) => {
+  const [rateLearningMaterialMutation] = useRateLearningMaterialMutation();
   return (
     <ReactStars
       count={5}
       onChange={async (rating: number) => {
-        await rateResourceMutation({ variables: { resourceId, value: rating } });
+        await rateLearningMaterialMutation({ variables: { learningMaterialId, value: rating } });
         onSelected && onSelected(rating);
       }}
       size={24}

@@ -2,11 +2,13 @@ import { Box, Editable, EditableInput, EditablePreview, Flex, IconButton, Skelet
 import { EditIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import Router from 'next/router';
+import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { LearningPathComplementaryResourcesManager } from '../../components/learning_paths/LearningPathComplementaryResourcesManager';
 import { LearningPathResourceItemsManager } from '../../components/learning_paths/LearningPathResourceItems';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { EditableTextarea } from '../../components/lib/inputs/EditableTextarea';
+import { ResourceStarsRater, ResourceStarsRating } from '../../components/resources/elements/ResourceStarsRating';
 import {
   generateLearningPathData,
   LearningPathWithResourceItemsPreviewData,
@@ -34,6 +36,7 @@ export const getLearningPathPage = gql`
       complementaryResources {
         ...ResourceData
       }
+      rating
     }
   }
   ${LearningPathWithResourceItemsPreviewData}
@@ -97,6 +100,12 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
                 )}
               </Editable>
             </Skeleton>
+            <Stack direction="row" spacing={2} alignItems="center">
+              <ResourceStarsRating value={learningPath.rating} />
+              <RoleAccess accessRule="contributorOrAdmin">
+                <ResourceStarsRater learningMaterialId={learningPath._id} isDisabled={loading} />
+              </RoleAccess>
+            </Stack>
             <Skeleton isLoaded={!loading}>
               <EditableTextarea
                 backgroundColor="white"
