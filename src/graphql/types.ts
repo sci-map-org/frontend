@@ -598,6 +598,7 @@ export type LearningPath = LearningMaterial & {
   key: Scalars['String'];
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
+  durationMs?: Maybe<Scalars['Int']>;
   resourceItems?: Maybe<Array<LearningPathResourceItem>>;
   complementaryResources?: Maybe<Array<Resource>>;
   tags?: Maybe<Array<LearningMaterialTag>>;
@@ -772,6 +773,7 @@ export type CreateLearningPathPayload = {
   name: Scalars['String'];
   key?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  durationMs?: Maybe<Scalars['Int']>;
   tags?: Maybe<Array<Scalars['String']>>;
   resourceItems: Array<CreateLearningPathResourceItem>;
 };
@@ -779,6 +781,7 @@ export type CreateLearningPathPayload = {
 export type UpdateLearningPathPayload = {
   name?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  durationMs?: Maybe<Scalars['Int']>;
   resourceItems?: Maybe<Array<CreateLearningPathResourceItem>>;
 };
 

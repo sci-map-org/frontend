@@ -10,6 +10,7 @@ import { LearningPathPageInfo } from '../../pages/learning_paths/LearningPathPag
 import { routerPushToPage } from '../../pages/PageInfo';
 import { RoleAccess } from '../auth/RoleAccess';
 import { LearningMaterialTagsStatelessEditor } from '../learning_materials/LearningMaterialTagsEditor';
+import { ResourceDurationSelector } from '../resources/elements/ResourceDuration';
 import { StatelessLearningPathResourceItemsManager } from './LearningPathResourceItems';
 import { useCreateLearningPathMutation } from './NewLearningPath.generated';
 
@@ -26,6 +27,7 @@ export const NewLearningPathForm: React.FC<NewLearningPathProps> = ({ createLear
     []
   );
   const [selectedTags, setSelectedTags] = useState<LearningMaterialTag[]>([]);
+  const [durationMs, setDurationMs] = useState<number | null>();
   const updateResourceItemDescription = (resourceId: string, description: string) => {
     setResourceItems(
       resourceItems.map((resourceItem) => {
@@ -58,7 +60,7 @@ export const NewLearningPathForm: React.FC<NewLearningPathProps> = ({ createLear
           ></Input>
         </FormControl>
       </RoleAccess>
-      <LearningMaterialTagsStatelessEditor selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
+
       <FormControl>
         <FormLabel htmlFor="Description">Description</FormLabel>
         <Textarea
@@ -69,6 +71,8 @@ export const NewLearningPathForm: React.FC<NewLearningPathProps> = ({ createLear
           onChange={(e) => setDescription(e.target.value || undefined)}
         ></Textarea>
       </FormControl>
+      <LearningMaterialTagsStatelessEditor selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
+      <ResourceDurationSelector value={durationMs} onChange={setDurationMs} />
       <StatelessLearningPathResourceItemsManager
         updateDescription={updateResourceItemDescription}
         addResourceItem={(resource) => setResourceItems([...resourceItems, { resource }])}
@@ -91,6 +95,7 @@ export const NewLearningPathForm: React.FC<NewLearningPathProps> = ({ createLear
               createLearningPath({
                 name,
                 description,
+                durationMs,
                 resourceItems: resourceItems.map((i) => ({ resourceId: i.resource._id, description: i.description })),
                 tags: selectedTags.map((t) => t.name),
                 ...(key && { key }),

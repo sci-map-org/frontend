@@ -8,6 +8,7 @@ export const LearningPathData = gql`
     key
     name
     description
+    durationMs
   }
 `;
 

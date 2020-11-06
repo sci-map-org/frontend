@@ -23,6 +23,7 @@ import { useUpdateLearningPathMutation } from '../../graphql/learning_paths/lear
 import { ResourceData } from '../../graphql/resources/resources.fragments';
 import { PageInfo } from '../PageInfo';
 import { GetLearningPathPageQuery, useGetLearningPathPageQuery } from './LearningPathPage.generated';
+import { ResourceDuration } from '../../components/resources/elements/ResourceDuration';
 
 export const LearningPathPagePath = (learningPathKey: string = '[learningPathKey]') =>
   `/learning_paths/${learningPathKey}`;
@@ -124,6 +125,7 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
                 isDisabled={loading}
               />
             </RoleAccess>
+            <ResourceDuration value={learningPath.durationMs} />
             <Skeleton isLoaded={!loading}>
               <EditableTextarea
                 backgroundColor="white"
