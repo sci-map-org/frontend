@@ -24,14 +24,14 @@ import {
   useAttachResourceCoversConceptsMutation,
   useAttachResourceToDomainMutation,
 } from '../../graphql/resources/resources.operations.generated';
-import { CreateResourcePayload, ResourceMediaType, ResourceTag, ResourceType } from '../../graphql/types';
+import { CreateResourcePayload, ResourceMediaType, LearningMaterialTag, ResourceType } from '../../graphql/types';
 import { validateUrl } from '../../services/url.service';
 import { DomainAndConceptsSelector, DomainAndSelectedConcepts } from '../concepts/DomainAndConceptsSelector';
 import { useCreateResourceMutation } from './NewResource.generated';
 import { ResourceDescriptionInput } from './elements/ResourceDescription';
 import { ResourceDurationSelector } from './elements/ResourceDuration';
 import { ResourceMediaTypeSelector } from './elements/ResourceMediaType';
-import { ResourceTagsStatelessEditor } from './elements/ResourceTagsEditor';
+import { LearningMaterialTagsStatelessEditor } from '../learning_materials/LearningMaterialTagsEditor';
 import { ResourceTypeSelector } from './elements/ResourceType';
 import { ResourceUrlInput } from './elements/ResourceUrl';
 
@@ -60,7 +60,7 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
   const [selectedDomainsAndCoveredConcepts, setSelectedDomainsAndCoveredConcepts] = useState<
     DomainAndSelectedConcepts[]
   >([]);
-  const [selectedTags, setSelectedTags] = useState<ResourceTag[]>([]);
+  const [selectedTags, setSelectedTags] = useState<LearningMaterialTag[]>([]);
   const [isValid, setIsValid] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
 
@@ -77,7 +77,7 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
       <Flex flexDirection="row" justifyContent="space-between">
         <ResourceTypeSelector value={type} onSelect={(t) => setType(t)} />
       </Flex>
-      <ResourceTagsStatelessEditor selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
+      <LearningMaterialTagsStatelessEditor selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
       <Flex direction="row" alignItems="center" justifyContent="space-between">
         <ResourceMediaTypeSelector value={mediaType} onSelect={(t) => setMediaType(t)} />
         <ResourceDurationSelector value={durationMs} onChange={setDurationMs} />

@@ -17,6 +17,9 @@ export type GetLearningPathPageQuery = (
     & { complementaryResources?: Types.Maybe<Array<(
       { __typename?: 'Resource' }
       & ResourceDataFragment
+    )>>, tags?: Types.Maybe<Array<(
+      { __typename?: 'LearningMaterialTag' }
+      & Pick<Types.LearningMaterialTag, 'name'>
     )>> }
     & LearningPathWithResourceItemsPreviewDataFragment
   ) }

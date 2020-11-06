@@ -3,26 +3,26 @@ import gql from 'graphql-tag';
 import { uniqBy } from 'lodash';
 import { useState } from 'react';
 import Autosuggest from 'react-autosuggest';
-import { ResourceTagSearchResult } from '../../../graphql/types';
-import { useSearchResourceTagsLazyQuery } from './ResourceTagSelector.generated';
+import { LearningMaterialTagSearchResult } from '../../../graphql/types';
+import { useSearchLearningMaterialTagsLazyQuery } from './LearningMaterialTagSelector.generated';
 
-interface ResourceTagSelectorProps {
-  onSelect: (tag: ResourceTagSearchResult | { name: string; new: true }) => any;
+interface LearningMaterialTagSelectorProps {
+  onSelect: (tag: LearningMaterialTagSearchResult | { name: string; new: true }) => any;
   width?: string;
   isDisabled?: boolean;
   size?: 'sm' | 'md';
   placeholder?: string;
 }
 
-export const searchResourceTags = gql`
-  query searchResourceTags($options: SearchResourceTagsOptions!) {
-    searchResourceTags(options: $options) {
+export const searchLearningMaterialTags = gql`
+  query searchLearningMaterialTags($options: SearchLearningMaterialTagsOptions!) {
+    searchLearningMaterialTags(options: $options) {
       name
       usageCount
     }
   }
 `;
-export const ResourceTagSelector: React.FC<ResourceTagSelectorProps> = ({
+export const LearningMaterialTagSelector: React.FC<LearningMaterialTagSelectorProps> = ({
   onSelect,
   width,
   isDisabled,
@@ -31,15 +31,15 @@ export const ResourceTagSelector: React.FC<ResourceTagSelectorProps> = ({
 }) => {
   width = width || '200px';
   const [value, setValue] = useState('');
-  const [refetch, { data }] = useSearchResourceTagsLazyQuery();
+  const [refetch, { data }] = useSearchLearningMaterialTagsLazyQuery();
 
-  const suggestions: ResourceTagSearchResult[] = uniqBy(
+  const suggestions: LearningMaterialTagSearchResult[] = uniqBy(
     [
       {
         name: value,
         usageCount: 0,
       },
-      ...(data?.searchResourceTags || []),
+      ...(data?.searchLearningMaterialTags || []),
     ],
     'name'
   );

@@ -5,10 +5,11 @@ import { useState } from 'react';
 import { LearningPathData } from '../../graphql/learning_paths/learning_paths.fragments';
 import { LearningPathDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
-import { CreateLearningPathPayload } from '../../graphql/types';
+import { CreateLearningPathPayload, LearningMaterialTag } from '../../graphql/types';
 import { LearningPathPageInfo } from '../../pages/learning_paths/LearningPathPage';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { RoleAccess } from '../auth/RoleAccess';
+import { LearningMaterialTagsStatelessEditor } from '../learning_materials/LearningMaterialTagsEditor';
 import { StatelessLearningPathResourceItemsManager } from './LearningPathResourceItems';
 import { useCreateLearningPathMutation } from './NewLearningPath.generated';
 
@@ -24,7 +25,7 @@ export const NewLearningPathForm: React.FC<NewLearningPathProps> = ({ createLear
   const [resourceItems, setResourceItems] = useState<{ resource: ResourcePreviewDataFragment; description?: string }[]>(
     []
   );
-
+  const [selectedTags, setSelectedTags] = useState<LearningMaterialTag[]>([]);
   const updateResourceItemDescription = (resourceId: string, description: string) => {
     setResourceItems(
       resourceItems.map((resourceItem) => {
@@ -57,6 +58,7 @@ export const NewLearningPathForm: React.FC<NewLearningPathProps> = ({ createLear
           ></Input>
         </FormControl>
       </RoleAccess>
+      <LearningMaterialTagsStatelessEditor selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
       <FormControl>
         <FormLabel htmlFor="Description">Description</FormLabel>
         <Textarea
@@ -90,6 +92,7 @@ export const NewLearningPathForm: React.FC<NewLearningPathProps> = ({ createLear
                 name,
                 description,
                 resourceItems: resourceItems.map((i) => ({ resourceId: i.resource._id, description: i.description })),
+                tags: selectedTags.map((t) => t.name),
                 ...(key && { key }),
               }).then((lp) => onLearningPathCreated && onLearningPathCreated(lp))
             }

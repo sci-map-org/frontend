@@ -8,6 +8,10 @@ import { LearningPathComplementaryResourcesManager } from '../../components/lear
 import { LearningPathResourceItemsManager } from '../../components/learning_paths/LearningPathResourceItems';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { EditableTextarea } from '../../components/lib/inputs/EditableTextarea';
+import {
+  LearningMaterialTagsEditor,
+  SelectedTagsViewer,
+} from '../../components/learning_materials/LearningMaterialTagsEditor';
 import { ResourceStarsRater, ResourceStarsRating } from '../../components/resources/elements/ResourceStarsRating';
 import {
   generateLearningPathData,
@@ -37,6 +41,9 @@ export const getLearningPathPage = gql`
         ...ResourceData
       }
       rating
+      tags {
+        name
+      }
     }
   }
   ${LearningPathWithResourceItemsPreviewData}
@@ -106,6 +113,17 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
                 <ResourceStarsRater learningMaterialId={learningPath._id} isDisabled={loading} />
               </RoleAccess>
             </Stack>
+            <RoleAccess
+              accessRule="loggedInUser"
+              renderAccessDenied={() => <SelectedTagsViewer selectedTags={learningPath.tags || []} />}
+            >
+              <LearningMaterialTagsEditor
+                size="sm"
+                placeholder="Add tags"
+                learningMaterial={learningPath}
+                isDisabled={loading}
+              />
+            </RoleAccess>
             <Skeleton isLoaded={!loading}>
               <EditableTextarea
                 backgroundColor="white"

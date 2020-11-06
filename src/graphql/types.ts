@@ -19,7 +19,7 @@ export type Query = {
   listArticles: ListArticlesResult;
   searchDomains: SearchDomainsResult;
   getDomainByKey: Domain;
-  searchResourceTags: Array<ResourceTagSearchResult>;
+  searchLearningMaterialTags: Array<LearningMaterialTagSearchResult>;
   searchResources: SearchResourcesResult;
   getResourceById: Resource;
   getConcept: Concept;
@@ -54,8 +54,8 @@ export type QueryGetDomainByKeyArgs = {
 };
 
 
-export type QuerySearchResourceTagsArgs = {
-  options: SearchResourceTagsOptions;
+export type QuerySearchLearningMaterialTagsArgs = {
+  options: SearchLearningMaterialTagsOptions;
 };
 
 
@@ -104,8 +104,8 @@ export type Mutation = {
   createDomain: Domain;
   updateDomain: Domain;
   deleteDomain: DeleteDomainResponse;
-  addTagsToResource: Resource;
-  removeTagsFromResource: Resource;
+  addTagsToLearningMaterial: LearningMaterial;
+  removeTagsFromLearningMaterial: LearningMaterial;
   attachLearningMaterialToDomain: LearningMaterial;
   detachLearningMaterialFromDomain: LearningMaterial;
   attachLearningMaterialCoversConcepts: LearningMaterial;
@@ -211,14 +211,14 @@ export type MutationDeleteDomainArgs = {
 };
 
 
-export type MutationAddTagsToResourceArgs = {
-  resourceId: Scalars['String'];
+export type MutationAddTagsToLearningMaterialArgs = {
+  learningMaterialId: Scalars['String'];
   tags: Array<Scalars['String']>;
 };
 
 
-export type MutationRemoveTagsFromResourceArgs = {
-  resourceId: Scalars['String'];
+export type MutationRemoveTagsFromLearningMaterialArgs = {
+  learningMaterialId: Scalars['String'];
   tags: Array<Scalars['String']>;
 };
 
@@ -522,13 +522,13 @@ export type DomainResourcesArgs = {
   options: DomainResourcesOptions;
 };
 
-export type ResourceTagSearchResult = {
-  __typename?: 'ResourceTagSearchResult';
+export type LearningMaterialTagSearchResult = {
+  __typename?: 'LearningMaterialTagSearchResult';
   name: Scalars['String'];
   usageCount?: Maybe<Scalars['Int']>;
 };
 
-export type SearchResourceTagsOptions = {
+export type SearchLearningMaterialTagsOptions = {
   query: Scalars['String'];
   pagination: PaginationOptions;
 };
@@ -548,7 +548,7 @@ export type Resource = LearningMaterial & {
   name: Scalars['String'];
   type: ResourceType;
   mediaType: ResourceMediaType;
-  tags?: Maybe<Array<ResourceTag>>;
+  tags?: Maybe<Array<LearningMaterialTag>>;
   url: Scalars['String'];
   upvotes?: Maybe<Scalars['Int']>;
   rating?: Maybe<Scalars['Float']>;
@@ -600,7 +600,7 @@ export type LearningPath = LearningMaterial & {
   description?: Maybe<Scalars['String']>;
   resourceItems?: Maybe<Array<LearningPathResourceItem>>;
   complementaryResources?: Maybe<Array<Resource>>;
-  tags?: Maybe<Array<ResourceTag>>;
+  tags?: Maybe<Array<LearningMaterialTag>>;
   rating?: Maybe<Scalars['Float']>;
   coveredConcepts?: Maybe<LearningMaterialCoveredConceptsResults>;
   coveredConceptsByDomain?: Maybe<Array<LearningMaterialCoveredConceptsByDomainItem>>;
@@ -687,7 +687,7 @@ export type DeleteDomainResponse = {
 
 export type LearningMaterial = {
   _id: Scalars['String'];
-  tags?: Maybe<Array<ResourceTag>>;
+  tags?: Maybe<Array<LearningMaterialTag>>;
   rating?: Maybe<Scalars['Float']>;
   coveredConcepts?: Maybe<LearningMaterialCoveredConceptsResults>;
   coveredConceptsByDomain?: Maybe<Array<LearningMaterialCoveredConceptsByDomainItem>>;
@@ -772,6 +772,7 @@ export type CreateLearningPathPayload = {
   name: Scalars['String'];
   key?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  tags?: Maybe<Array<Scalars['String']>>;
   resourceItems: Array<CreateLearningPathResourceItem>;
 };
 
@@ -881,8 +882,8 @@ export enum ResourceMediaType {
   InteractiveContent = 'interactive_content'
 }
 
-export type ResourceTag = {
-  __typename?: 'ResourceTag';
+export type LearningMaterialTag = {
+  __typename?: 'LearningMaterialTag';
   name: Scalars['String'];
 };
 

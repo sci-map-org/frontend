@@ -38,7 +38,7 @@ import { ResourceDomainCoveredConceptsSelector } from './CoveredConceptsSelector
 import { shortenDescription } from './elements/ResourceDescription';
 import { ResourceDuration } from './elements/ResourceDuration';
 import { ResourceStarsRater, ResourceStarsRating } from './elements/ResourceStarsRating';
-import { ResourceTagsEditor, SelectedTagsViewer } from './elements/ResourceTagsEditor';
+import { LearningMaterialTagsEditor, SelectedTagsViewer } from '../learning_materials/LearningMaterialTagsEditor';
 import { ResourceTypeBadge } from './elements/ResourceType';
 import { ResourceUrlLink } from './elements/ResourceUrl';
 import { ResourceCoveredConceptsByDomainViewer } from './ResourceCoveredConceptsByDomainViewer';
@@ -286,7 +286,7 @@ const BottomBlock: React.FC<{
         <BoxBlockDefaultClickPropagation>
           <Box ref={wrapperRef}>
             <Skeleton isLoaded={!isLoading}>
-              <ResourceTagsEditor size="sm" resource={resource} inputWidth="100px" />
+              <LearningMaterialTagsEditor size="sm" learningMaterial={resource} inputWidth="100px" />
             </Skeleton>
           </Box>
         </BoxBlockDefaultClickPropagation>

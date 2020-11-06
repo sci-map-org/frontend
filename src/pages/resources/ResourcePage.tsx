@@ -10,7 +10,10 @@ import { ResourceDescription } from '../../components/resources/elements/Resourc
 import { ResourceDuration } from '../../components/resources/elements/ResourceDuration';
 import { ResourceMediaTypeBadge } from '../../components/resources/elements/ResourceMediaType';
 import { ResourceStarsRater, ResourceStarsRating } from '../../components/resources/elements/ResourceStarsRating';
-import { ResourceTagsEditor, SelectedTagsViewer } from '../../components/resources/elements/ResourceTagsEditor';
+import {
+  LearningMaterialTagsEditor,
+  SelectedTagsViewer,
+} from '../../components/learning_materials/LearningMaterialTagsEditor';
 import { ResourceTypeBadge } from '../../components/resources/elements/ResourceType';
 import { ResourceUrlLink } from '../../components/resources/elements/ResourceUrl';
 import { ResourceCoveredConceptsByDomainViewer } from '../../components/resources/ResourceCoveredConceptsByDomainViewer';
@@ -162,7 +165,12 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
               accessRule="loggedInUser"
               renderAccessDenied={() => <SelectedTagsViewer selectedTags={selectedTags} />}
             >
-              <ResourceTagsEditor size="sm" placeholder="Add tags" resource={resource} isDisabled={loading} />
+              <LearningMaterialTagsEditor
+                size="sm"
+                placeholder="Add tags"
+                learningMaterial={resource}
+                isDisabled={loading}
+              />
             </RoleAccess>
             {resource.description && <ResourceDescription description={resource.description} />}
           </Stack>
