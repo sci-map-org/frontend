@@ -2,6 +2,7 @@ import * as Types from '../../graphql/types';
 
 import { LearningPathWithResourceItemsPreviewDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
 import { ResourceDataFragment, ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { LearningMaterialWithCoveredConceptsByDomainData_Resource_Fragment, LearningMaterialWithCoveredConceptsByDomainData_LearningPath_Fragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
 import * as Operations from './LearningPathPage';
 import * as Apollo from '@apollo/client';
 export type GetLearningPathPageQueryVariables = Types.Exact<{
@@ -22,6 +23,7 @@ export type GetLearningPathPageQuery = (
       & Pick<Types.LearningMaterialTag, 'name'>
     )>> }
     & LearningPathWithResourceItemsPreviewDataFragment
+    & LearningMaterialWithCoveredConceptsByDomainData_LearningPath_Fragment
   ) }
 );
 

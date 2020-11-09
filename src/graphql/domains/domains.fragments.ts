@@ -11,6 +11,14 @@ export const DomainData = gql`
   }
 `;
 
+export const DomainLinkData = gql`
+  fragment DomainLinkData on Domain {
+    _id
+    name
+    key
+  }
+`;
+
 export const generateDomainData = (): DomainDataFragment => ({
   _id: Math.random().toString(),
   name: 'Placeholder Name',

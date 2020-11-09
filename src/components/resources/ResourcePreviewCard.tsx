@@ -34,15 +34,15 @@ import { CompletedCheckbox } from '../lib/CompletedCheckbox';
 import { ResourceGroupIcon } from '../lib/icons/ResourceGroupIcon';
 import { ResourceSeriesIcon } from '../lib/icons/ResourceSeriesIcon';
 import { InternalLink } from '../navigation/InternalLink';
-import { ResourceDomainCoveredConceptsSelector } from './CoveredConceptsSelector';
+import { LearningMaterialDomainCoveredConceptsSelector } from './CoveredConceptsSelector';
 import { shortenDescription } from './elements/ResourceDescription';
 import { ResourceDuration } from './elements/ResourceDuration';
 import { ResourceStarsRater, ResourceStarsRating } from './elements/ResourceStarsRating';
 import { LearningMaterialTagsEditor, SelectedTagsViewer } from '../learning_materials/LearningMaterialTagsEditor';
 import { ResourceTypeBadge } from './elements/ResourceType';
 import { ResourceUrlLink } from './elements/ResourceUrl';
-import { ResourceCoveredConceptsByDomainViewer } from './ResourceCoveredConceptsByDomainViewer';
-import { ResourceDomainAndCoveredConceptsSelector } from './ResourceDomainAndCoveredConceptsSelector';
+import { LearningMaterialCoveredConceptsByDomainViewer } from './LearningMaterialCoveredConceptsByDomainViewer';
+import { LearningMaterialDomainAndCoveredConceptsSelector } from './LearningMaterialDomainAndCoveredConceptsSelector';
 
 const BoxBlockDefaultClickPropagation: React.FC<BoxProps> = ({ children, ...props }) => {
   return (
@@ -380,14 +380,14 @@ const BottomBlock: React.FC<{
                   <PopoverBody pt={1}>
                     {coveredConceptsEditorMode ? (
                       domainCoveredConcepts.length === 1 ? (
-                        <ResourceDomainCoveredConceptsSelector
+                        <LearningMaterialDomainCoveredConceptsSelector
                           domainKey={domainCoveredConcepts[0].domain.key}
-                          resourceId={resource._id}
+                          learningMaterialId={resource._id}
                           coveredConcepts={domainCoveredConcepts[0].coveredConcepts}
                         />
                       ) : (
-                        <ResourceDomainAndCoveredConceptsSelector
-                          resource={resource}
+                        <LearningMaterialDomainAndCoveredConceptsSelector
+                          learningMaterial={resource}
                           // resourceId={resource._id}
                           // coveredConcepts={coveredConcepts}
                         />
@@ -406,7 +406,7 @@ const BottomBlock: React.FC<{
                         ))}
                       </Stack>
                     ) : (
-                      <ResourceCoveredConceptsByDomainViewer resource={resource} />
+                      <LearningMaterialCoveredConceptsByDomainViewer learningMaterial={resource} />
                     )}
                   </PopoverBody>
                 </PopoverContent>

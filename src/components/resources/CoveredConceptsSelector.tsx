@@ -5,23 +5,23 @@ import {
 } from '../../graphql/learning_materials/learning_materials.operations.generated';
 import { DomainConceptsSelector } from '../concepts/DomainConceptsSelector';
 
-export const ResourceDomainCoveredConceptsSelector: React.FC<{
-  resourceId: string;
+export const LearningMaterialDomainCoveredConceptsSelector: React.FC<{
+  learningMaterialId: string;
   domainKey: string;
   coveredConcepts: ConceptDataFragment[];
   title?: string;
   isLoading?: boolean;
-}> = ({ resourceId, domainKey, coveredConcepts, title, isLoading }) => {
+}> = ({ learningMaterialId, domainKey, coveredConcepts, title, isLoading }) => {
   const [attachLearningMaterialCoversConcepts] = useAttachLearningMaterialCoversConceptsMutation();
   const [detachLearningMaterialCoversConcepts] = useDetachLearningMaterialCoversConceptsMutation();
   const selectConcept = async (conceptId: string): Promise<void> => {
     await attachLearningMaterialCoversConcepts({
-      variables: { learningMaterialId: resourceId, conceptIds: [conceptId] },
+      variables: { learningMaterialId, conceptIds: [conceptId] },
     });
   };
   const removeConcept = async (conceptId: string) => {
     await detachLearningMaterialCoversConcepts({
-      variables: { learningMaterialId: resourceId, conceptIds: [conceptId] },
+      variables: { learningMaterialId, conceptIds: [conceptId] },
     });
   };
   return (

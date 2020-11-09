@@ -1,29 +1,29 @@
-import { Box, Flex, Heading, IconButton, Skeleton, Stack, Text } from '@chakra-ui/core';
+import { Box, Flex, IconButton, Skeleton, Stack, Text } from '@chakra-ui/core';
 import { MinusIcon } from '@chakra-ui/icons';
 import { differenceBy } from 'lodash';
 import { useSearchDomainsLazyQuery } from '../../graphql/domains/domains.operations.generated';
-import { ResourceWithCoveredConceptsByDomainDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { LearningMaterialWithCoveredConceptsByDomainDataFragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
 import {
   useAttachLearningMaterialToDomainMutation,
   useDetachLearningMaterialFromDomainMutation,
 } from '../../graphql/learning_materials/learning_materials.operations.generated';
 import { EntitySelector } from '../lib/selectors/EntitySelector';
 import { InternalLink } from '../navigation/InternalLink';
-import { ResourceDomainCoveredConceptsSelector } from './CoveredConceptsSelector';
+import { LearningMaterialDomainCoveredConceptsSelector } from './CoveredConceptsSelector';
 
-export const ResourceDomainAndCoveredConceptsSelector: React.FC<{
-  resource: ResourceWithCoveredConceptsByDomainDataFragment;
+export const LearningMaterialDomainAndCoveredConceptsSelector: React.FC<{
+  learningMaterial: LearningMaterialWithCoveredConceptsByDomainDataFragment;
   isLoading?: boolean;
-}> = ({ resource, isLoading }) => {
+}> = ({ learningMaterial, isLoading }) => {
   const [searchDomains, { data }] = useSearchDomainsLazyQuery();
   const [attachLearningMaterialToDomain] = useAttachLearningMaterialToDomainMutation();
   const [detachLearningMaterialFromDomain] = useDetachLearningMaterialFromDomainMutation();
 
-  if (!resource.coveredConceptsByDomain) return null;
+  if (!learningMaterial.coveredConceptsByDomain) return null;
 
   return (
     <Stack direction="column">
-      {resource.coveredConceptsByDomain.map(({ domain, coveredConcepts }, index) => (
+      {learningMaterial.coveredConceptsByDomain.map(({ domain, coveredConcepts }, index) => (
         <Flex direction="column" alignItems="stretch" key={domain.key}>
           <Stack direction="row">
             <IconButton
@@ -32,7 +32,7 @@ export const ResourceDomainAndCoveredConceptsSelector: React.FC<{
               icon={<MinusIcon />}
               onClick={() =>
                 detachLearningMaterialFromDomain({
-                  variables: { learningMaterialId: resource._id, domainId: domain._id },
+                  variables: { learningMaterialId: learningMaterial._id, domainId: domain._id },
                 })
               }
               isDisabled={isLoading}
@@ -46,9 +46,9 @@ export const ResourceDomainAndCoveredConceptsSelector: React.FC<{
             </Text>
           </Stack>
           <Box pl={5}>
-            <ResourceDomainCoveredConceptsSelector
+            <LearningMaterialDomainCoveredConceptsSelector
               domainKey={domain.key}
-              resourceId={resource._id}
+              learningMaterialId={learningMaterial._id}
               isLoading={isLoading}
               coveredConcepts={coveredConcepts}
             />
@@ -60,12 +60,14 @@ export const ResourceDomainAndCoveredConceptsSelector: React.FC<{
         placeholder="Add new domain"
         entitySuggestions={differenceBy(
           data?.searchDomains.items || [],
-          resource.coveredConceptsByDomain.map((s) => s.domain),
+          learningMaterial.coveredConceptsByDomain.map((s) => s.domain),
           (d) => d._id
         )}
         fetchEntitySuggestions={(v) => searchDomains({ variables: { options: { pagination: {}, query: v } } })}
         onSelect={(domain) =>
-          attachLearningMaterialToDomain({ variables: { learningMaterialId: resource._id, domainId: domain._id } })
+          attachLearningMaterialToDomain({
+            variables: { learningMaterialId: learningMaterial._id, domainId: domain._id },
+          })
         }
         isDisabled={isLoading}
       />

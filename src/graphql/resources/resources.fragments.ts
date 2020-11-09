@@ -81,18 +81,4 @@ export const generateResourcePreviewData = (): ResourcePreviewDataFragment => ({
   mediaType: ResourceMediaType.Text,
 });
 
-export const ResourceWithCoveredConceptsByDomainData = gql`
-  fragment ResourceWithCoveredConceptsByDomainData on Resource {
-    _id
-    coveredConceptsByDomain {
-      domain {
-        ...DomainData
-      }
-      coveredConcepts {
-        ...ConceptData
-      }
-    }
-  }
-  ${DomainData}
-  ${ConceptData}
-`;
+

@@ -16,8 +16,8 @@ import {
 } from '../../components/learning_materials/LearningMaterialTagsEditor';
 import { ResourceTypeBadge } from '../../components/resources/elements/ResourceType';
 import { ResourceUrlLink } from '../../components/resources/elements/ResourceUrl';
-import { ResourceCoveredConceptsByDomainViewer } from '../../components/resources/ResourceCoveredConceptsByDomainViewer';
-import { ResourceDomainAndCoveredConceptsSelector } from '../../components/resources/ResourceDomainAndCoveredConceptsSelector';
+import { LearningMaterialCoveredConceptsByDomainViewer } from '../../components/resources/LearningMaterialCoveredConceptsByDomainViewer';
+import { LearningMaterialDomainAndCoveredConceptsSelector } from '../../components/resources/LearningMaterialDomainAndCoveredConceptsSelector';
 import { SubResourceSeriesManager } from '../../components/resources/SubResourceSeriesManager';
 import { ResourceSubResourcesManager } from '../../components/resources/SubResourcesManager';
 import { ConceptData, generateConceptData } from '../../graphql/concepts/concepts.fragments';
@@ -182,11 +182,11 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
                 accessRule="loggedInUser"
                 renderAccessDenied={() =>
                   resource.coveredConceptsByDomain?.length && (
-                    <ResourceCoveredConceptsByDomainViewer resource={resource} isLoading={loading} />
+                    <LearningMaterialCoveredConceptsByDomainViewer learningMaterial={resource} isLoading={loading} />
                   )
                 }
               >
-                <ResourceDomainAndCoveredConceptsSelector isLoading={loading} resource={resource} />
+                <LearningMaterialDomainAndCoveredConceptsSelector isLoading={loading} learningMaterial={resource} />
               </RoleAccess>
             </Stack>
           )}

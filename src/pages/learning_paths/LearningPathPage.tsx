@@ -24,6 +24,8 @@ import { ResourceData } from '../../graphql/resources/resources.fragments';
 import { PageInfo } from '../PageInfo';
 import { GetLearningPathPageQuery, useGetLearningPathPageQuery } from './LearningPathPage.generated';
 import { ResourceDuration } from '../../components/resources/elements/ResourceDuration';
+import { LearningMaterialDomainAndCoveredConceptsSelector } from '../../components/resources/LearningMaterialDomainAndCoveredConceptsSelector';
+import { LearningMaterialWithCoveredConceptsByDomainData } from '../../graphql/learning_materials/learning_materials.fragments';
 
 export const LearningPathPagePath = (learningPathKey: string = '[learningPathKey]') =>
   `/learning_paths/${learningPathKey}`;
@@ -45,8 +47,10 @@ export const getLearningPathPage = gql`
       tags {
         name
       }
+      ...LearningMaterialWithCoveredConceptsByDomainData
     }
   }
+  ${LearningMaterialWithCoveredConceptsByDomainData}
   ${LearningPathWithResourceItemsPreviewData}
   ${ResourceData}
 `;
@@ -142,7 +146,9 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
               />
             </Skeleton>
           </Stack>
-          <Box width="50%" />
+          <Box width="50%">
+            <LearningMaterialDomainAndCoveredConceptsSelector isLoading={loading} learningMaterial={learningPath} />
+          </Box>
         </Flex>
         <LearningPathResourceItemsManager learningPath={learningPath} />
         <LearningPathComplementaryResourcesManager
