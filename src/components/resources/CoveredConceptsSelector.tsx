@@ -1,8 +1,8 @@
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import {
-  useAttachResourceCoversConceptsMutation,
-  useDetachResourceCoversConceptsMutation,
-} from '../../graphql/resources/resources.operations.generated';
+  useAttachLearningMaterialCoversConceptsMutation,
+  useDetachLearningMaterialCoversConceptsMutation,
+} from '../../graphql/learning_materials/learning_materials.operations.generated';
 import { DomainConceptsSelector } from '../concepts/DomainConceptsSelector';
 
 export const ResourceDomainCoveredConceptsSelector: React.FC<{
@@ -12,13 +12,17 @@ export const ResourceDomainCoveredConceptsSelector: React.FC<{
   title?: string;
   isLoading?: boolean;
 }> = ({ resourceId, domainKey, coveredConcepts, title, isLoading }) => {
-  const [attachResourceCoversConcepts] = useAttachResourceCoversConceptsMutation();
-  const [detachResourceCoversConcepts] = useDetachResourceCoversConceptsMutation();
+  const [attachLearningMaterialCoversConcepts] = useAttachLearningMaterialCoversConceptsMutation();
+  const [detachLearningMaterialCoversConcepts] = useDetachLearningMaterialCoversConceptsMutation();
   const selectConcept = async (conceptId: string): Promise<void> => {
-    await attachResourceCoversConcepts({ variables: { resourceId, conceptIds: [conceptId] } });
+    await attachLearningMaterialCoversConcepts({
+      variables: { learningMaterialId: resourceId, conceptIds: [conceptId] },
+    });
   };
   const removeConcept = async (conceptId: string) => {
-    await detachResourceCoversConcepts({ variables: { resourceId, conceptIds: [conceptId] } });
+    await detachLearningMaterialCoversConcepts({
+      variables: { learningMaterialId: resourceId, conceptIds: [conceptId] },
+    });
   };
   return (
     <DomainConceptsSelector

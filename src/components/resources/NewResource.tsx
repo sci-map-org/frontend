@@ -21,9 +21,9 @@ import { DomainDataFragment } from '../../graphql/domains/domains.fragments.gene
 import { ResourceData } from '../../graphql/resources/resources.fragments';
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import {
-  useAttachResourceCoversConceptsMutation,
-  useAttachResourceToDomainMutation,
-} from '../../graphql/resources/resources.operations.generated';
+  useAttachLearningMaterialCoversConceptsMutation,
+  useAttachLearningMaterialToDomainMutation,
+} from '../../graphql/learning_materials/learning_materials.operations.generated';
 import { CreateResourcePayload, ResourceMediaType, LearningMaterialTag, ResourceType } from '../../graphql/types';
 import { validateUrl } from '../../services/url.service';
 import { DomainAndConceptsSelector, DomainAndSelectedConcepts } from '../concepts/DomainAndConceptsSelector';
@@ -137,8 +137,8 @@ export const createResource = gql`
 `;
 
 const useAddResourceToDomainsAndAddCoveredConcepts = () => {
-  const [attachResourceCoveredConcepts] = useAttachResourceCoversConceptsMutation();
-  const [attachResourceToDomain] = useAttachResourceToDomainMutation();
+  const [attachLearningMaterialCoveredConcepts] = useAttachLearningMaterialCoversConceptsMutation();
+  const [attachLearningMaterialToDomain] = useAttachLearningMaterialToDomainMutation();
   const [createResource] = useCreateResourceMutation();
 
   const addResourceToDomainsAndAddCoveredConcepts = async (
@@ -150,10 +150,12 @@ const useAddResourceToDomainsAndAddCoveredConcepts = () => {
     const createdResource = resourceResults.data.createResource;
     await Promise.all(
       domainsAndCoveredConcepts.map(async ({ domain, selectedConcepts }) => {
-        await attachResourceToDomain({ variables: { domainId: domain._id, resourceId: createdResource._id } });
+        await attachLearningMaterialToDomain({
+          variables: { domainId: domain._id, learningMaterialId: createdResource._id },
+        });
         if (selectedConcepts.length) {
-          await attachResourceCoveredConcepts({
-            variables: { resourceId: createdResource._id, conceptIds: selectedConcepts.map((c) => c._id) },
+          await attachLearningMaterialCoveredConcepts({
+            variables: { learningMaterialId: createdResource._id, conceptIds: selectedConcepts.map((c) => c._id) },
           });
         }
       })

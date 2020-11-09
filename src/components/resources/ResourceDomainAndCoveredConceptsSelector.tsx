@@ -4,9 +4,9 @@ import { differenceBy } from 'lodash';
 import { useSearchDomainsLazyQuery } from '../../graphql/domains/domains.operations.generated';
 import { ResourceWithCoveredConceptsByDomainDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import {
-  useAttachResourceToDomainMutation,
-  useDetachResourceFromDomainMutation,
-} from '../../graphql/resources/resources.operations.generated';
+  useAttachLearningMaterialToDomainMutation,
+  useDetachLearningMaterialFromDomainMutation,
+} from '../../graphql/learning_materials/learning_materials.operations.generated';
 import { EntitySelector } from '../lib/selectors/EntitySelector';
 import { InternalLink } from '../navigation/InternalLink';
 import { ResourceDomainCoveredConceptsSelector } from './CoveredConceptsSelector';
@@ -16,8 +16,8 @@ export const ResourceDomainAndCoveredConceptsSelector: React.FC<{
   isLoading?: boolean;
 }> = ({ resource, isLoading }) => {
   const [searchDomains, { data }] = useSearchDomainsLazyQuery();
-  const [attachResourceToDomain] = useAttachResourceToDomainMutation();
-  const [detachResourceFromDomain] = useDetachResourceFromDomainMutation();
+  const [attachLearningMaterialToDomain] = useAttachLearningMaterialToDomainMutation();
+  const [detachLearningMaterialFromDomain] = useDetachLearningMaterialFromDomainMutation();
 
   if (!resource.coveredConceptsByDomain) return null;
 
@@ -31,7 +31,9 @@ export const ResourceDomainAndCoveredConceptsSelector: React.FC<{
               size="xs"
               icon={<MinusIcon />}
               onClick={() =>
-                detachResourceFromDomain({ variables: { resourceId: resource._id, domainId: domain._id } })
+                detachLearningMaterialFromDomain({
+                  variables: { learningMaterialId: resource._id, domainId: domain._id },
+                })
               }
               isDisabled={isLoading}
             />
@@ -62,7 +64,9 @@ export const ResourceDomainAndCoveredConceptsSelector: React.FC<{
           (d) => d._id
         )}
         fetchEntitySuggestions={(v) => searchDomains({ variables: { options: { pagination: {}, query: v } } })}
-        onSelect={(domain) => attachResourceToDomain({ variables: { resourceId: resource._id, domainId: domain._id } })}
+        onSelect={(domain) =>
+          attachLearningMaterialToDomain({ variables: { learningMaterialId: resource._id, domainId: domain._id } })
+        }
         isDisabled={isLoading}
       />
       ;

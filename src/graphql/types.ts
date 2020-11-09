@@ -115,10 +115,6 @@ export type Mutation = {
   updateResource: Resource;
   deleteResource: DeleteResourceResponse;
   addResourceToDomain: Resource;
-  attachResourceToDomain: Resource;
-  detachResourceFromDomain: Resource;
-  attachResourceCoversConcepts: Resource;
-  detachResourceCoversConcepts: Resource;
   setResourcesConsumed: Array<Resource>;
   voteResource: Resource;
   addSubResource: SubResourceCreatedResult;
@@ -272,30 +268,6 @@ export type MutationDeleteResourceArgs = {
 export type MutationAddResourceToDomainArgs = {
   domainId: Scalars['String'];
   payload: CreateResourcePayload;
-};
-
-
-export type MutationAttachResourceToDomainArgs = {
-  domainId: Scalars['String'];
-  resourceId: Scalars['String'];
-};
-
-
-export type MutationDetachResourceFromDomainArgs = {
-  domainId: Scalars['String'];
-  resourceId: Scalars['String'];
-};
-
-
-export type MutationAttachResourceCoversConceptsArgs = {
-  resourceId: Scalars['String'];
-  conceptIds: Array<Scalars['String']>;
-};
-
-
-export type MutationDetachResourceCoversConceptsArgs = {
-  resourceId: Scalars['String'];
-  conceptIds: Array<Scalars['String']>;
 };
 
 
