@@ -132,6 +132,7 @@ export type Mutation = {
   deleteLearningPath: DeleteLearningPathResult;
   addComplementaryResourceToLearningPath: ComplementaryResourceUpdatedResult;
   removeComplementaryResourceFromLearningPath: ComplementaryResourceUpdatedResult;
+  startLearningPath: LearningPathStartedResult;
   updateConceptBelongsToDomain: ConceptBelongsToDomain;
   addConceptBelongsToConcept: Concept;
   removeConceptBelongsToConcept: Concept;
@@ -368,6 +369,11 @@ export type MutationRemoveComplementaryResourceFromLearningPathArgs = {
 };
 
 
+export type MutationStartLearningPathArgs = {
+  learningPathId: Scalars['String'];
+};
+
+
 export type MutationUpdateConceptBelongsToDomainArgs = {
   conceptId: Scalars['String'];
   domainId: Scalars['String'];
@@ -415,6 +421,7 @@ export type CurrentUser = {
   role: UserRole;
   articles?: Maybe<ListArticlesResult>;
   createdLearningPaths?: Maybe<Array<LearningPath>>;
+  startedLearningPaths?: Maybe<Array<LearningPath>>;
 };
 
 
@@ -424,6 +431,11 @@ export type CurrentUserArticlesArgs = {
 
 
 export type CurrentUserCreatedLearningPathsArgs = {
+  options: UserLearningPathsOptions;
+};
+
+
+export type CurrentUserStartedLearningPathsArgs = {
   options: UserLearningPathsOptions;
 };
 
@@ -569,6 +581,7 @@ export type LearningPath = LearningMaterial & {
   _id: Scalars['String'];
   key: Scalars['String'];
   name: Scalars['String'];
+  public: Scalars['Boolean'];
   description?: Maybe<Scalars['String']>;
   durationMs?: Maybe<Scalars['Int']>;
   resourceItems?: Maybe<Array<LearningPathResourceItem>>;
@@ -578,6 +591,8 @@ export type LearningPath = LearningMaterial & {
   coveredConcepts?: Maybe<LearningMaterialCoveredConceptsResults>;
   coveredConceptsByDomain?: Maybe<Array<LearningMaterialCoveredConceptsByDomainItem>>;
   domains?: Maybe<Array<Domain>>;
+  started?: Maybe<LearningPathStarted>;
+  createdBy?: Maybe<User>;
 };
 
 
@@ -745,6 +760,7 @@ export type CreateLearningPathPayload = {
   name: Scalars['String'];
   key?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  public?: Maybe<Scalars['Boolean']>;
   durationMs?: Maybe<Scalars['Int']>;
   tags?: Maybe<Array<Scalars['String']>>;
   resourceItems: Array<CreateLearningPathResourceItem>;
@@ -752,6 +768,7 @@ export type CreateLearningPathPayload = {
 
 export type UpdateLearningPathPayload = {
   name?: Maybe<Scalars['String']>;
+  public?: Maybe<Scalars['Boolean']>;
   description?: Maybe<Scalars['String']>;
   durationMs?: Maybe<Scalars['Int']>;
   resourceItems?: Maybe<Array<CreateLearningPathResourceItem>>;
@@ -766,6 +783,12 @@ export type DeleteLearningPathResult = {
 export type ComplementaryResourceUpdatedResult = {
   __typename?: 'ComplementaryResourceUpdatedResult';
   resource: Resource;
+  learningPath: LearningPath;
+};
+
+export type LearningPathStartedResult = {
+  __typename?: 'LearningPathStartedResult';
+  user: CurrentUser;
   learningPath: LearningPath;
 };
 
@@ -914,6 +937,11 @@ export type LearningPathResourceItem = {
   resource: Resource;
   learningPathId: Scalars['String'];
   description?: Maybe<Scalars['String']>;
+};
+
+export type LearningPathStarted = {
+  __typename?: 'LearningPathStarted';
+  startedAt: Scalars['DateTime'];
 };
 
 export type SetResourcesConsumedPayloadResourcesField = {

@@ -4,15 +4,19 @@ import gql from 'graphql-tag';
 import Router from 'next/router';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
-import { LearningPathComplementaryResourcesManager } from '../../components/learning_paths/LearningPathComplementaryResourcesManager';
-import { LearningPathResourceItemsManager } from '../../components/learning_paths/LearningPathResourceItems';
-import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
-import { EditableTextarea } from '../../components/lib/inputs/EditableTextarea';
 import {
   LearningMaterialTagsEditor,
   SelectedTagsViewer,
 } from '../../components/learning_materials/LearningMaterialTagsEditor';
+import { LearningPathComplementaryResourcesManager } from '../../components/learning_paths/LearningPathComplementaryResourcesManager';
+import { LearningPathCompletion } from '../../components/learning_paths/LearningPathCompletion';
+import { LearningPathResourceItemsManager } from '../../components/learning_paths/LearningPathResourceItems';
+import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
+import { EditableTextarea } from '../../components/lib/inputs/EditableTextarea';
+import { ResourceDuration } from '../../components/resources/elements/ResourceDuration';
 import { ResourceStarsRater, ResourceStarsRating } from '../../components/resources/elements/ResourceStarsRating';
+import { LearningMaterialCoveredTopics } from '../../components/resources/LearningMaterialCoveredTopics';
+import { LearningMaterialWithCoveredConceptsByDomainData } from '../../graphql/learning_materials/learning_materials.fragments';
 import {
   generateLearningPathData,
   LearningPathWithResourceItemsPreviewData,
@@ -23,9 +27,6 @@ import { useUpdateLearningPathMutation } from '../../graphql/learning_paths/lear
 import { ResourceData } from '../../graphql/resources/resources.fragments';
 import { PageInfo } from '../PageInfo';
 import { GetLearningPathPageQuery, useGetLearningPathPageQuery } from './LearningPathPage.generated';
-import { ResourceDuration } from '../../components/resources/elements/ResourceDuration';
-import { LearningMaterialDomainAndCoveredConceptsSelector } from '../../components/resources/LearningMaterialDomainAndCoveredConceptsSelector';
-import { LearningMaterialWithCoveredConceptsByDomainData } from '../../graphql/learning_materials/learning_materials.fragments';
 
 export const LearningPathPagePath = (learningPathKey: string = '[learningPathKey]') =>
   `/learning_paths/${learningPathKey}`;
@@ -145,9 +146,12 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
                 }
               />
             </Skeleton>
+            <LearningPathCompletion learningPath={learningPath} />
           </Stack>
           <Box width="50%">
-            <LearningMaterialDomainAndCoveredConceptsSelector isLoading={loading} learningMaterial={learningPath} />
+            <Box>
+              <LearningMaterialCoveredTopics isLoading={loading} learningMaterial={learningPath} />
+            </Box>
           </Box>
         </Flex>
         <LearningPathResourceItemsManager learningPath={learningPath} />

@@ -30,6 +30,7 @@ import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { isResourceGroupType, isResourceSeriesType } from '../../services/resources.service';
 import { PageInfo } from '../PageInfo';
 import { GetResourceResourcePageQuery, useGetResourceResourcePageQuery } from './ResourcePage.generated';
+import { LearningMaterialCoveredTopics } from '../../components/resources/LearningMaterialCoveredTopics';
 
 export const ResourcePagePath = (resourceId: string) => `/resources/${resourceId}`;
 
@@ -175,21 +176,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
             {resource.description && <ResourceDescription description={resource.description} />}
           </Stack>
 
-          {resource.coveredConceptsByDomain && (
-            <Stack backgroundColor="gray.100" px={4} mt={4} py={3} borderRadius={5}>
-              <Heading size="sm">Covered Topics</Heading>
-              <RoleAccess
-                accessRule="loggedInUser"
-                renderAccessDenied={() =>
-                  resource.coveredConceptsByDomain?.length && (
-                    <LearningMaterialCoveredConceptsByDomainViewer learningMaterial={resource} isLoading={loading} />
-                  )
-                }
-              >
-                <LearningMaterialDomainAndCoveredConceptsSelector isLoading={loading} learningMaterial={resource} />
-              </RoleAccess>
-            </Stack>
-          )}
+          <LearningMaterialCoveredTopics isLoading={loading} learningMaterial={resource} />
         </Flex>
         {(isResourceSeriesType(resource.type) || resource.subResourceSeries?.length) && (
           <SubResourceSeriesManager
