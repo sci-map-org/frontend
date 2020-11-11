@@ -10,7 +10,7 @@ import { LearningPathPageInfo } from '../../pages/learning_paths/LearningPathPag
 import { routerPushToPage } from '../../pages/PageInfo';
 import { RoleAccess } from '../auth/RoleAccess';
 import { LearningMaterialTagsStatelessEditor } from '../learning_materials/LearningMaterialTagsEditor';
-import { ResourceDurationSelector } from '../resources/elements/ResourceDuration';
+import { DurationFormField, DurationInput } from '../resources/elements/Duration';
 import { StatelessLearningPathResourceItemsManager } from './LearningPathResourceItems';
 import { useCreateLearningPathMutation } from './NewLearningPath.generated';
 
@@ -72,7 +72,7 @@ export const NewLearningPathForm: React.FC<NewLearningPathProps> = ({ createLear
         ></Textarea>
       </FormControl>
       <LearningMaterialTagsStatelessEditor selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
-      <ResourceDurationSelector value={durationMs} onChange={setDurationMs} />
+      <DurationFormField value={durationMs} onChange={setDurationMs} />
       <StatelessLearningPathResourceItemsManager
         updateDescription={updateResourceItemDescription}
         addResourceItem={(resource) => setResourceItems([...resourceItems, { resource }])}

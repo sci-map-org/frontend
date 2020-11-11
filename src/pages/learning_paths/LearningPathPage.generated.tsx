@@ -21,7 +21,10 @@ export type GetLearningPathPageQuery = (
     )>>, tags?: Types.Maybe<Array<(
       { __typename?: 'LearningMaterialTag' }
       & Pick<Types.LearningMaterialTag, 'name'>
-    )>> }
+    )>>, createdBy?: Types.Maybe<(
+      { __typename?: 'User' }
+      & Pick<Types.User, '_id'>
+    )> }
     & LearningPathWithResourceItemsPreviewDataFragment
     & LearningMaterialWithCoveredConceptsByDomainData_LearningPath_Fragment
   ) }

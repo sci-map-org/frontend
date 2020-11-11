@@ -17,6 +17,7 @@ interface StatelessLearningPathResourceItemsProps {
   addResourceItem: (resource: ResourcePreviewDataFragment) => void;
   removeResourceItem: (resource: ResourcePreviewDataFragment) => void;
   confirmDeletion?: boolean;
+  editMode?: boolean;
 }
 
 export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearningPathResourceItemsProps> = ({
@@ -25,6 +26,7 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
   addResourceItem,
   removeResourceItem,
   confirmDeletion,
+  editMode,
 }) => {
   return (
     <Flex direction="column" alignItems="stretch">
@@ -52,6 +54,7 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
                   defaultValue={description || ''}
                   placeholder="Add a description..."
                   onSubmit={(newDescription: any) => updateDescription(resource._id, newDescription as string)}
+                  isDisabled={!editMode}
                 />
                 <Box flexBasis="60px" />
               </Flex>
@@ -63,57 +66,65 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
                     onResourceConsumed={(r) => console.log('consumed r')}
                   />
                 </Box>
-                <Flex
-                  flexBasis="60px"
-                  flexShrink={0}
-                  direction="column"
-                  alignItems="center"
-                  justifyContent="space-around"
-                >
-                  {confirmDeletion ? (
-                    <DeleteButtonWithConfirmation
-                      variant="ghost"
-                      modalBodyText={`Remove the resource ${resource.name} from the learning path ?`}
-                      modalHeaderText="Remove Resource"
-                      onConfirmation={() => removeResourceItem(resource)}
-                    />
-                  ) : (
-                    <IconButton
-                      aria-label="remove resource from learning path"
-                      size="xs"
-                      icon={<DeleteIcon />}
-                      onClick={() => removeResourceItem(resource)}
-                    />
-                  )}
-                </Flex>
+                {editMode && (
+                  <Flex
+                    flexBasis="60px"
+                    flexShrink={0}
+                    direction="column"
+                    alignItems="center"
+                    justifyContent="space-around"
+                  >
+                    {confirmDeletion ? (
+                      <DeleteButtonWithConfirmation
+                        variant="ghost"
+                        modalBodyText={`Remove the resource ${resource.name} from the learning path ?`}
+                        modalHeaderText="Remove Resource"
+                        onConfirmation={() => removeResourceItem(resource)}
+                      />
+                    ) : (
+                      <IconButton
+                        aria-label="remove resource from learning path"
+                        size="xs"
+                        icon={<DeleteIcon />}
+                        onClick={() => removeResourceItem(resource)}
+                      />
+                    )}
+                  </Flex>
+                )}
               </Flex>
             </Flex>
           ))}
         </Flex>
-        <Flex direction="row" justifyContent="center">
-          <ResourceSelectorModal
-            onSelect={(selectedResource) => addResourceItem(selectedResource)}
-            renderButton={({ openModal }) => (
-              <IconButton
-                m={2}
-                size="md"
-                isRound
-                icon={<AddIcon />}
-                aria-label="Add resource to learning path"
-                onClick={() => openModal()}
-              />
-            )}
-          />
-        </Flex>
+        {editMode && (
+          <Flex direction="row" justifyContent="center">
+            <ResourceSelectorModal
+              onSelect={(selectedResource) => addResourceItem(selectedResource)}
+              renderButton={({ openModal }) => (
+                <IconButton
+                  m={2}
+                  size="md"
+                  isRound
+                  icon={<AddIcon />}
+                  aria-label="Add resource to learning path"
+                  onClick={() => openModal()}
+                />
+              )}
+            />
+          </Flex>
+        )}
       </Stack>
     </Flex>
   );
 };
 interface LearningPathResourceItemsProps {
   learningPath: LearningPathWithResourceItemsPreviewDataFragment;
+  editMode?: boolean;
 }
 
-export const LearningPathResourceItemsManager: React.FC<LearningPathResourceItemsProps> = ({ learningPath }) => {
+export const LearningPathResourceItemsManager: React.FC<LearningPathResourceItemsProps> = ({
+  learningPath,
+  editMode,
+}) => {
   const [updateLearningPath] = useUpdateLearningPathMutation();
   const addResourceItem = (resource: ResourceDataFragment) => {
     // TODO throw if resource already in the path (or on the API ?)
@@ -170,6 +181,7 @@ export const LearningPathResourceItemsManager: React.FC<LearningPathResourceItem
       removeResourceItem={removeResourceItem}
       resourceItems={learningPath.resourceItems}
       confirmDeletion
+      editMode={editMode}
     />
   );
 };

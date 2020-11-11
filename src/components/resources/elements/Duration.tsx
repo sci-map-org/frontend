@@ -1,9 +1,21 @@
-import { FormControl, FormLabel, Input, InputGroup, InputRightElement, Stack, Text, Tooltip } from '@chakra-ui/core';
-import { QuestionIcon } from '@chakra-ui/icons';
+import {
+  Flex,
+  FormControl,
+  FormLabel,
+  IconButton,
+  Input,
+  InputGroup,
+  InputProps,
+  InputRightElement,
+  Stack,
+  Text,
+  Tooltip,
+} from '@chakra-ui/core';
+import { EditIcon, QuestionIcon } from '@chakra-ui/icons';
 import humanizeDuration from 'humanize-duration';
 import React, { useCallback, useEffect, useState } from 'react';
 
-export const ResourceDuration: React.FC<{ value?: number | null }> = ({ value }) => {
+export const DurationViewer: React.FC<{ value?: number | null }> = ({ value }) => {
   return value ? (
     <Text fontSize="sm" color="gray.400" mb={1} pr={1}>
       {humanizeDuration(value, { largest: 2 })}
@@ -11,10 +23,12 @@ export const ResourceDuration: React.FC<{ value?: number | null }> = ({ value })
   ) : null;
 };
 
-export const ResourceDurationSelector: React.FC<{
-  value?: number | null;
-  onChange: (durationMs: number | null) => void;
-}> = ({ value, onChange }) => {
+export const DurationInput: React.FC<
+  {
+    value?: number | null;
+    onChange: (durationMs: number | null) => void;
+  } & Omit<InputProps, 'value' | 'onChange'>
+> = ({ value, onChange, size, w, ...inputProps }) => {
   const [duration, setDuration] = useState(convertFromValue(value, 'ms'));
   const [isValid, setIsValid] = useState(true);
   const [showTooltip, setShowTooltip] = useState(false);
@@ -38,8 +52,8 @@ export const ResourceDurationSelector: React.FC<{
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => setDuration(e.target.value);
 
   const onBlur = useCallback(
-    (e: React.FocusEvent<HTMLInputElement>) => {
-      const newValue = convertDurationToValue(e.target.value);
+    (e: React.FocusEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
+      const newValue = convertDurationToValue(e.currentTarget.value);
 
       if (newValue === null || !isNaN(newValue)) {
         onChange(newValue);
@@ -51,37 +65,35 @@ export const ResourceDurationSelector: React.FC<{
   );
 
   return (
-    <FormControl display="flex" alignItems="baseline" isInvalid={!isValid}>
-      <FormLabel htmlFor="resource_duration" whiteSpace="nowrap">
-        Estimated Duration
-      </FormLabel>
-      <Stack direction="column">
-        <InputGroup size="md">
-          <Input
-            id="resource_duration"
-            placeholder="1h 30m"
-            value={duration}
-            onChange={onInputChange}
-            onBlur={onBlur}
-          />
+    <InputGroup size={size} w={w}>
+      <Input
+        isInvalid={!isValid}
+        id="duration"
+        placeholder="1h 30m"
+        onKeyPress={(e) => {
+          if (e.key === 'Enter') onBlur(e);
+        }}
+        value={duration}
+        onChange={onInputChange}
+        onBlur={onBlur}
+        {...inputProps}
+      />
 
-          <InputRightElement>
-            <Tooltip
-              isOpen={showTooltip}
-              hasArrow
-              aria-label="format: #w #d #h #m #s"
-              label="Please use the following format: #w #d #h #m #s"
-              placement="top"
-              {...(!isValid && { bg: 'red.500' })}
-              onOpen={() => setShowTooltip(true)}
-              onClose={() => setShowTooltip(false)}
-            >
-              <QuestionIcon color={isValid ? 'grey.700' : 'red.500'} />
-            </Tooltip>
-          </InputRightElement>
-        </InputGroup>
-      </Stack>
-    </FormControl>
+      <InputRightElement>
+        <Tooltip
+          isOpen={showTooltip}
+          hasArrow
+          aria-label="format: #w #d #h #m #s"
+          label="Please use the following format: #w #d #h #m #s"
+          placement="top"
+          {...(!isValid && { bg: 'red.500' })}
+          onOpen={() => setShowTooltip(true)}
+          onClose={() => setShowTooltip(false)}
+        >
+          <QuestionIcon color={isValid ? 'grey.700' : 'red.500'} />
+        </Tooltip>
+      </InputRightElement>
+    </InputGroup>
   );
 };
 export const SCALE_CONVERSIONS = {
@@ -142,3 +154,54 @@ export const convertFromValue = (value: number | null | undefined, scale: keyof 
 
 export const convertToValue = (duration: string, scale: ScaleDuration) =>
   convertValueToScale(convertDurationToValue(duration), scale);
+
+interface EditableDurationProps {
+  defaultValue?: number | null;
+  isDisabled?: boolean;
+  onSubmit: (durationMs: number | null) => void;
+}
+export const EditableDuration: React.FC<EditableDurationProps> = ({ defaultValue, onSubmit }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  return (
+    <Flex>
+      {isEditing ? (
+        <DurationInput
+          value={defaultValue}
+          onChange={(d) => {
+            setIsEditing(false);
+            onSubmit(d);
+          }}
+          size="sm"
+          w="120px"
+        />
+      ) : (
+        <>
+          <DurationViewer value={defaultValue} />
+          <IconButton
+            aria-label="t"
+            icon={<EditIcon />}
+            onClick={() => setIsEditing(true)}
+            size="xs"
+            color="gray.600"
+            variant="ghost"
+            alignSelf="end"
+          />
+        </>
+      )}
+    </Flex>
+  );
+};
+
+export const DurationFormField: React.FC<{
+  value?: number | null;
+  onChange: (durationMs: number | null) => void;
+}> = ({ value, onChange }) => {
+  return (
+    <FormControl display="flex" alignItems="baseline">
+      <FormLabel htmlFor="duration" whiteSpace="nowrap">
+        Estimated Duration
+      </FormLabel>
+      <DurationInput w="200px" value={value} onChange={onChange} />
+    </FormControl>
+  );
+};

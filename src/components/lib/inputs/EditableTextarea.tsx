@@ -11,19 +11,20 @@ import {
 import { EditIcon } from '@chakra-ui/icons';
 
 export const EditableTextarea: React.FC<
-  Pick<UseEditableProps, 'onSubmit' | 'defaultValue' | 'placeholder'> & FlexProps & { rows?: number }
-> = ({ defaultValue, onSubmit, placeholder, rows, ...flexProps }) => {
+  Pick<UseEditableProps, 'onSubmit' | 'defaultValue' | 'placeholder' | 'isDisabled'> & FlexProps & { rows?: number }
+> = ({ defaultValue, onSubmit, isDisabled, placeholder, rows, ...flexProps }) => {
   const { getInputProps, getPreviewProps, isEditing, onEdit } = useEditable({
     placeholder,
     onSubmit,
     defaultValue,
+    isDisabled,
     isPreviewFocusable: false,
   });
   return (
     <Flex {...flexProps}>
       <Textarea rows={rows} {...getInputProps()}></Textarea>
       <Text {...getPreviewProps()}></Text>
-      {!isEditing && (
+      {!isEditing && !isDisabled && (
         <IconButton
           aria-label="t"
           icon={<EditIcon />}

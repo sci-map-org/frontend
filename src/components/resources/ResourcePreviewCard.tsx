@@ -36,7 +36,7 @@ import { ResourceSeriesIcon } from '../lib/icons/ResourceSeriesIcon';
 import { InternalLink } from '../navigation/InternalLink';
 import { LearningMaterialDomainCoveredConceptsSelector } from './CoveredConceptsSelector';
 import { shortenDescription } from './elements/ResourceDescription';
-import { ResourceDuration } from './elements/ResourceDuration';
+import { DurationViewer } from './elements/Duration';
 import { ResourceStarsRater, ResourceStarsRating } from './elements/ResourceStarsRating';
 import { LearningMaterialTagsEditor, SelectedTagsViewer } from '../learning_materials/LearningMaterialTagsEditor';
 import { ResourceTypeBadge } from './elements/ResourceType';
@@ -110,7 +110,7 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
               <Stack spacing={1} direction="row" alignItems="baseline" mr="10px">
                 <ResourceStarsRating value={resource.rating} pxSize={13} />
                 <ResourceTypeBadge type={resource.type} />
-                <ResourceDuration value={resource.durationMs} />
+                <DurationViewer value={resource.durationMs} />
 
                 <RoleAccess accessRule="contributorOrAdmin">
                   <BoxBlockDefaultClickPropagation>

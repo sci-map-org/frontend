@@ -9,7 +9,7 @@ import { validateUrl } from '../../services/url.service';
 import { Access } from '../auth/Access';
 import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
 import { ResourceDescriptionInput } from './elements/ResourceDescription';
-import { ResourceDurationSelector } from './elements/ResourceDuration';
+import { DurationFormField } from './elements/Duration';
 import { ResourceMediaTypeSelector } from './elements/ResourceMediaType';
 import { ResourceTypeSelector } from './elements/ResourceType';
 import { ResourceUrlInput } from './elements/ResourceUrl';
@@ -51,7 +51,7 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
       <Flex flexDirection="row">
         <ResourceMediaTypeSelector value={mediaType} onSelect={(t) => setMediaType(t)} />
         <Box flexGrow={1}></Box>
-        <ResourceDurationSelector value={durationMs} onChange={setDurationMs} />
+        <DurationFormField value={durationMs} onChange={setDurationMs} />
       </Flex>
       <ResourceDescriptionInput value={description} onChange={(d) => setDescription(d)} />
       <Stack direction="row" justifyContent="space-between">

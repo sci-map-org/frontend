@@ -1,23 +1,22 @@
-import { Box, Button, Flex, Heading, Skeleton, Stack, Text } from '@chakra-ui/core';
+import { Box, Button, Flex, Skeleton, Stack, Text } from '@chakra-ui/core';
 import gql from 'graphql-tag';
 import Router, { useRouter } from 'next/router';
 import { Access } from '../../components/auth/Access';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
-import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
-import { InternalLink } from '../../components/navigation/InternalLink';
-import { ResourceDescription } from '../../components/resources/elements/ResourceDescription';
-import { ResourceDuration } from '../../components/resources/elements/ResourceDuration';
-import { ResourceMediaTypeBadge } from '../../components/resources/elements/ResourceMediaType';
-import { ResourceStarsRater, ResourceStarsRating } from '../../components/resources/elements/ResourceStarsRating';
 import {
   LearningMaterialTagsEditor,
   SelectedTagsViewer,
 } from '../../components/learning_materials/LearningMaterialTagsEditor';
+import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
+import { InternalLink } from '../../components/navigation/InternalLink';
+import { DurationViewer } from '../../components/resources/elements/Duration';
+import { ResourceDescription } from '../../components/resources/elements/ResourceDescription';
+import { ResourceMediaTypeBadge } from '../../components/resources/elements/ResourceMediaType';
+import { ResourceStarsRater, ResourceStarsRating } from '../../components/resources/elements/ResourceStarsRating';
 import { ResourceTypeBadge } from '../../components/resources/elements/ResourceType';
 import { ResourceUrlLink } from '../../components/resources/elements/ResourceUrl';
-import { LearningMaterialCoveredConceptsByDomainViewer } from '../../components/resources/LearningMaterialCoveredConceptsByDomainViewer';
-import { LearningMaterialDomainAndCoveredConceptsSelector } from '../../components/resources/LearningMaterialDomainAndCoveredConceptsSelector';
+import { LearningMaterialCoveredTopics } from '../../components/resources/LearningMaterialCoveredTopics';
 import { SubResourceSeriesManager } from '../../components/resources/SubResourceSeriesManager';
 import { ResourceSubResourcesManager } from '../../components/resources/SubResourcesManager';
 import { ConceptData, generateConceptData } from '../../graphql/concepts/concepts.fragments';
@@ -30,7 +29,6 @@ import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { isResourceGroupType, isResourceSeriesType } from '../../services/resources.service';
 import { PageInfo } from '../PageInfo';
 import { GetResourceResourcePageQuery, useGetResourceResourcePageQuery } from './ResourcePage.generated';
-import { LearningMaterialCoveredTopics } from '../../components/resources/LearningMaterialCoveredTopics';
 
 export const ResourcePagePath = (resourceId: string) => `/resources/${resourceId}`;
 
@@ -145,7 +143,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
         <Flex justifyContent="space-between" alignItems="flex-end">
           <Stack direction="row" spacing={2} alignItems="baseline">
             <ResourceUrlLink fontSize="md" resource={resource} isLoading={loading} />
-            <ResourceDuration value={resource.durationMs} />
+            <DurationViewer value={resource.durationMs} />
           </Stack>
           <Stack direction="row" spacing={2} alignItems="center">
             <ResourceStarsRating value={resource.rating} />
@@ -176,7 +174,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
             {resource.description && <ResourceDescription description={resource.description} />}
           </Stack>
 
-          <LearningMaterialCoveredTopics isLoading={loading} learningMaterial={resource} />
+          <LearningMaterialCoveredTopics editMode="loggedInUser" isLoading={loading} learningMaterial={resource} />
         </Flex>
         {(isResourceSeriesType(resource.type) || resource.subResourceSeries?.length) && (
           <SubResourceSeriesManager

@@ -29,7 +29,7 @@ import { validateUrl } from '../../services/url.service';
 import { DomainAndConceptsSelector, DomainAndSelectedConcepts } from '../concepts/DomainAndConceptsSelector';
 import { useCreateResourceMutation } from './NewResource.generated';
 import { ResourceDescriptionInput } from './elements/ResourceDescription';
-import { ResourceDurationSelector } from './elements/ResourceDuration';
+import { DurationFormField } from './elements/Duration';
 import { ResourceMediaTypeSelector } from './elements/ResourceMediaType';
 import { LearningMaterialTagsStatelessEditor } from '../learning_materials/LearningMaterialTagsEditor';
 import { ResourceTypeSelector } from './elements/ResourceType';
@@ -80,7 +80,7 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
       <LearningMaterialTagsStatelessEditor selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
       <Flex direction="row" alignItems="center" justifyContent="space-between">
         <ResourceMediaTypeSelector value={mediaType} onSelect={(t) => setMediaType(t)} />
-        <ResourceDurationSelector value={durationMs} onChange={setDurationMs} />
+        <DurationFormField value={durationMs} onChange={setDurationMs} />
       </Flex>
       <ResourceDescriptionInput value={description} onChange={(d) => setDescription(d)} />
       <DomainAndConceptsSelector

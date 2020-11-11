@@ -1,7 +1,19 @@
-import { Box, Editable, EditableInput, EditablePreview, Flex, IconButton, Skeleton, Stack } from '@chakra-ui/core';
+import {
+  Box,
+  Button,
+  Editable,
+  EditableInput,
+  EditablePreview,
+  Flex,
+  IconButton,
+  Skeleton,
+  Stack,
+} from '@chakra-ui/core';
 import { EditIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import Router from 'next/router';
+import { useState } from 'react';
+import { Access } from '../../components/auth/Access';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
 import {
@@ -13,7 +25,7 @@ import { LearningPathCompletion } from '../../components/learning_paths/Learning
 import { LearningPathResourceItemsManager } from '../../components/learning_paths/LearningPathResourceItems';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { EditableTextarea } from '../../components/lib/inputs/EditableTextarea';
-import { ResourceDuration } from '../../components/resources/elements/ResourceDuration';
+import { DurationViewer, EditableDuration } from '../../components/resources/elements/Duration';
 import { ResourceStarsRater, ResourceStarsRating } from '../../components/resources/elements/ResourceStarsRating';
 import { LearningMaterialCoveredTopics } from '../../components/resources/LearningMaterialCoveredTopics';
 import { LearningMaterialWithCoveredConceptsByDomainData } from '../../graphql/learning_materials/learning_materials.fragments';
@@ -25,6 +37,7 @@ import { LearningPathDataFragment } from '../../graphql/learning_paths/learning_
 import { useDeleteLearningPath } from '../../graphql/learning_paths/learning_paths.hooks';
 import { useUpdateLearningPathMutation } from '../../graphql/learning_paths/learning_paths.operations.generated';
 import { ResourceData } from '../../graphql/resources/resources.fragments';
+import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { PageInfo } from '../PageInfo';
 import { GetLearningPathPageQuery, useGetLearningPathPageQuery } from './LearningPathPage.generated';
 
@@ -48,6 +61,9 @@ export const getLearningPathPage = gql`
       tags {
         name
       }
+      createdBy {
+        _id
+      }
       ...LearningMaterialWithCoveredConceptsByDomainData
     }
   }
@@ -64,6 +80,11 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
   const [updateLearningPath] = useUpdateLearningPathMutation();
   const { data, loading, error } = useGetLearningPathPageQuery({ variables: { key: learningPathKey } });
   const learningPath = data?.getLearningPathByKey || learningPathPlaceholder;
+  const { currentUser } = useCurrentUser();
+  const [editMode, setEditMode] = useState(
+    // false
+    !!learningPath.createdBy && !!currentUser && learningPath.createdBy._id === currentUser._id
+  );
   if (error) return null;
   return (
     <PageLayout
@@ -93,11 +114,12 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
                 }
                 variant="solid"
                 display="flex"
+                isDisabled={!editMode}
               >
                 {(props: any) => (
                   <>
                     <EditablePreview />
-                    {!props.isEditing && (
+                    {!props.isEditing && editMode && (
                       <IconButton
                         aria-label="t"
                         icon={<EditIcon />}
@@ -119,8 +141,8 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
                 <ResourceStarsRater learningMaterialId={learningPath._id} isDisabled={loading} />
               </RoleAccess>
             </Stack>
-            <RoleAccess
-              accessRule="loggedInUser"
+            <Access
+              condition={editMode}
               renderAccessDenied={() => <SelectedTagsViewer selectedTags={learningPath.tags || []} />}
             >
               <LearningMaterialTagsEditor
@@ -129,8 +151,16 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
                 learningMaterial={learningPath}
                 isDisabled={loading}
               />
-            </RoleAccess>
-            <ResourceDuration value={learningPath.durationMs} />
+            </Access>
+            <EditableDuration
+              defaultValue={learningPath.durationMs}
+              onSubmit={(newDuration) =>
+                newDuration !== learningPath.durationMs &&
+                updateLearningPath({
+                  variables: { _id: learningPath._id, payload: { durationMs: newDuration } },
+                })
+              }
+            />
             <Skeleton isLoaded={!loading}>
               <EditableTextarea
                 backgroundColor="white"
@@ -144,21 +174,30 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
                     variables: { _id: learningPath._id, payload: { description: (newDescription as string) || null } },
                   })
                 }
+                isDisabled={!editMode}
               />
             </Skeleton>
             <LearningPathCompletion learningPath={learningPath} />
           </Stack>
           <Box width="50%">
             <Box>
-              <LearningMaterialCoveredTopics isLoading={loading} learningMaterial={learningPath} />
+              <LearningMaterialCoveredTopics editMode={editMode} isLoading={loading} learningMaterial={learningPath} />
             </Box>
           </Box>
         </Flex>
-        <LearningPathResourceItemsManager learningPath={learningPath} />
+        <LearningPathResourceItemsManager editMode={editMode} learningPath={learningPath} />
         <LearningPathComplementaryResourcesManager
+          editMode={editMode}
           learningPathId={learningPath._id}
           complementaryResources={learningPath.complementaryResources || []}
         />
+        <Flex>
+          {!learningPath.public && (
+            <Button size="lg" colorScheme="blue">
+              Publish
+            </Button>
+          )}
+        </Flex>
       </Stack>
     </PageLayout>
   );
