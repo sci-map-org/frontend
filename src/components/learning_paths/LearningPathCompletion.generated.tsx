@@ -3,7 +3,10 @@ import * as Types from '../../graphql/types';
 export type LearningPathCompletionFragmentFragment = (
   { __typename?: 'LearningPath' }
   & Pick<Types.LearningPath, '_id' | 'durationMs'>
-  & { resourceItems?: Types.Maybe<Array<(
+  & { started?: Types.Maybe<(
+    { __typename?: 'LearningPathStarted' }
+    & Pick<Types.LearningPathStarted, 'startedAt'>
+  )>, resourceItems?: Types.Maybe<Array<(
     { __typename?: 'LearningPathResourceItem' }
     & { resource: (
       { __typename?: 'Resource' }

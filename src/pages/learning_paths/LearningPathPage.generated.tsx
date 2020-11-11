@@ -2,6 +2,7 @@ import * as Types from '../../graphql/types';
 
 import { LearningPathWithResourceItemsPreviewDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
 import { ResourceDataFragment, ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { LearningPathCompletionFragmentFragment } from '../../components/learning_paths/LearningPathCompletion.generated';
 import { LearningMaterialWithCoveredConceptsByDomainData_Resource_Fragment, LearningMaterialWithCoveredConceptsByDomainData_LearningPath_Fragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
 import * as Operations from './LearningPathPage';
 import * as Apollo from '@apollo/client';
@@ -26,6 +27,7 @@ export type GetLearningPathPageQuery = (
       & Pick<Types.User, '_id'>
     )> }
     & LearningPathWithResourceItemsPreviewDataFragment
+    & LearningPathCompletionFragmentFragment
     & LearningMaterialWithCoveredConceptsByDomainData_LearningPath_Fragment
   ) }
 );

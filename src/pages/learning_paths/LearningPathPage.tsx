@@ -21,11 +21,14 @@ import {
   SelectedTagsViewer,
 } from '../../components/learning_materials/LearningMaterialTagsEditor';
 import { LearningPathComplementaryResourcesManager } from '../../components/learning_paths/LearningPathComplementaryResourcesManager';
-import { LearningPathCompletion } from '../../components/learning_paths/LearningPathCompletion';
+import {
+  LearningPathCompletion,
+  LearningPathCompletionFragment,
+} from '../../components/learning_paths/LearningPathCompletion';
 import { LearningPathResourceItemsManager } from '../../components/learning_paths/LearningPathResourceItems';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { EditableTextarea } from '../../components/lib/inputs/EditableTextarea';
-import { DurationViewer, EditableDuration } from '../../components/resources/elements/Duration';
+import { EditableDuration } from '../../components/resources/elements/Duration';
 import { ResourceStarsRater, ResourceStarsRating } from '../../components/resources/elements/ResourceStarsRating';
 import { LearningMaterialCoveredTopics } from '../../components/resources/LearningMaterialCoveredTopics';
 import { LearningMaterialWithCoveredConceptsByDomainData } from '../../graphql/learning_materials/learning_materials.fragments';
@@ -64,12 +67,14 @@ export const getLearningPathPage = gql`
       createdBy {
         _id
       }
+      ...LearningPathCompletionFragment
       ...LearningMaterialWithCoveredConceptsByDomainData
     }
   }
   ${LearningMaterialWithCoveredConceptsByDomainData}
   ${LearningPathWithResourceItemsPreviewData}
   ${ResourceData}
+  ${LearningPathCompletionFragment}
 `;
 
 const learningPathPlaceholder: GetLearningPathPageQuery['getLearningPathByKey'] = {
@@ -193,7 +198,11 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
         />
         <Flex>
           {!learningPath.public && (
-            <Button size="lg" colorScheme="blue">
+            <Button
+              size="lg"
+              colorScheme="blue"
+              onClick={() => updateLearningPath({ variables: { _id: learningPath._id, payload: { public: true } } })}
+            >
               Publish
             </Button>
           )}
