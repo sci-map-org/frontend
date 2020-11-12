@@ -23,6 +23,7 @@ interface RoleAccessProps extends Omit<AccessProps, 'condition'> {
   accessRule: boolean | RoleAccessAllowedRule;
 }
 
+// Add boolean logic: pass OR / AND conditions, including RoleAccess
 export const RoleAccess: React.FC<RoleAccessProps> = ({ children, accessRule, ...props }) => {
   const { currentUser } = useCurrentUser();
   return (

@@ -3,6 +3,8 @@ import gql from 'graphql-tag';
 import { useMemo } from 'react';
 import { FaPlay } from 'react-icons/fa';
 import { useStartLearningPathMutation } from '../../graphql/learning_paths/learning_paths.operations.generated';
+import { useCurrentUser } from '../../graphql/users/users.hooks';
+import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import { LearningPathCompletionDataFragment } from './LearningPathCompletion.generated';
 
 export const LearningPathCompletionData = gql`
@@ -33,6 +35,8 @@ interface LearningPathCompletionProps {
 export const LearningPathCompletion: React.FC<LearningPathCompletionProps> = ({ learningPath }) => {
   const resourceItems = learningPath.resourceItems || [];
   const [startLearningPath] = useStartLearningPathMutation();
+  const { currentUser } = useCurrentUser();
+  const unauthentificatedModalDisclosure = useUnauthentificatedModal();
   const completedResources = useMemo(() => {
     return learningPath.resourceItems
       ? learningPath.resourceItems.filter((i) => i.resource.consumed && i.resource.consumed.consumedAt)
@@ -59,7 +63,10 @@ export const LearningPathCompletion: React.FC<LearningPathCompletionProps> = ({ 
             colorScheme="teal"
             size="lg"
             isRound
-            onClick={() => startLearningPath({ variables: { learningPathId: learningPath._id } })}
+            onClick={() => {
+              if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
+              startLearningPath({ variables: { learningPathId: learningPath._id } });
+            }}
           />
         )}
       </Center>
