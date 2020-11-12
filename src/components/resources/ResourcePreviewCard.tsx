@@ -15,7 +15,7 @@ import {
   Skeleton,
   Stack,
   Text,
-  Tooltip,
+  Tooltip
 } from '@chakra-ui/core';
 import { ArrowDownIcon, ArrowUpIcon, EditIcon, SettingsIcon } from '@chakra-ui/icons';
 import { flatten } from 'lodash';
@@ -30,15 +30,15 @@ import { EditResourcePageInfo } from '../../pages/resources/EditResourcePage';
 import { ResourcePageInfo } from '../../pages/resources/ResourcePage';
 import { RoleAccess } from '../auth/RoleAccess';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
-import { CompletedCheckbox } from '../lib/CompletedCheckbox';
+import { LearningMaterialTagsEditor, SelectedTagsViewer } from '../learning_materials/LearningMaterialTagsEditor';
 import { ResourceGroupIcon } from '../lib/icons/ResourceGroupIcon';
 import { ResourceSeriesIcon } from '../lib/icons/ResourceSeriesIcon';
 import { InternalLink } from '../navigation/InternalLink';
 import { LearningMaterialDomainCoveredConceptsSelector } from './CoveredConceptsSelector';
-import { shortenDescription } from './elements/ResourceDescription';
 import { DurationViewer } from './elements/Duration';
+import { ResourceCompletedCheckbox } from './elements/ResourceCompletedCheckbox';
+import { shortenDescription } from './elements/ResourceDescription';
 import { ResourceStarsRater, ResourceStarsRating } from './elements/ResourceStarsRating';
-import { LearningMaterialTagsEditor, SelectedTagsViewer } from '../learning_materials/LearningMaterialTagsEditor';
 import { ResourceTypeBadge } from './elements/ResourceType';
 import { ResourceUrlLink } from './elements/ResourceUrl';
 import { LearningMaterialCoveredConceptsByDomainViewer } from './LearningMaterialCoveredConceptsByDomainViewer';
@@ -62,7 +62,7 @@ const BoxBlockDefaultClickPropagation: React.FC<BoxProps> = ({ children, ...prop
 interface ResourcePreviewCardProps {
   domainKey?: string;
   resource: ResourcePreviewDataFragment;
-  onResourceConsumed: (resource: ResourcePreviewDataFragment, consumed: boolean) => void;
+  onResourceConsumed?: (resourceId: string, consumed: boolean) => void;
   isLoading?: boolean;
   borderTopColor?: string;
 }
@@ -135,18 +135,11 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
       </Flex>
       <Flex direction="row" borderLeftWidth="0px" borderLeftColor="gray.100">
         <BoxBlockDefaultClickPropagation alignSelf="center" justifySelf="center" ml="32px" mr="4px">
-          <CompletedCheckbox
+          <ResourceCompletedCheckbox
             size="lg"
-            tooltipLabel={
-              !!resource.consumed && !!resource.consumed.consumedAt ? 'Mark as not completed' : 'Mark as completed'
-            }
-            tooltipDelay={500}
-            isDisabled={isLoading}
-            isChecked={!!resource.consumed && !!resource.consumed.consumedAt}
-            onChange={async () => {
-              if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
-              onResourceConsumed(resource, !resource.consumed || !resource.consumed.consumedAt);
-            }}
+            resource={resource}
+            isLoading={isLoading}
+            onResourceConsumed={onResourceConsumed}
           />
         </BoxBlockDefaultClickPropagation>
         <BoxBlockDefaultClickPropagation>

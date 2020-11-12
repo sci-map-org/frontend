@@ -4,8 +4,6 @@ import { DomainData } from '../domains/domains.fragments';
 import { ResourceMediaType, ResourceType } from '../types';
 import { ResourcePreviewDataFragment, ResourceDataFragment } from './resources.fragments.generated';
 
-// Define fragment based on components use cases
-
 export const ResourceData = gql`
   fragment ResourceData on Resource {
     _id
@@ -81,4 +79,18 @@ export const generateResourcePreviewData = (): ResourcePreviewDataFragment => ({
   mediaType: ResourceMediaType.Text,
 });
 
-
+export const ResourceWithCoveredConceptsByDomainData = gql`
+  fragment ResourceWithCoveredConceptsByDomainData on Resource {
+    _id
+    coveredConceptsByDomain {
+      domain {
+        ...DomainData
+      }
+      coveredConcepts {
+        ...ConceptData
+      }
+    }
+  }
+  ${ConceptData}
+  ${DomainData}
+`;

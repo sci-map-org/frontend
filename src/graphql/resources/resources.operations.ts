@@ -39,3 +39,15 @@ export const deleteResource = gql`
     }
   }
 `;
+
+export const setResourceConsumed = gql`
+  mutation setResourceConsumed($resourceId: String!, $consumed: Boolean!) {
+    setResourcesConsumed(payload: { resources: [{ resourceId: $resourceId, consumed: $consumed }] }) {
+      _id
+      consumed {
+        openedAt
+        consumedAt
+      }
+    }
+  }
+`;

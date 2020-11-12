@@ -40,3 +40,18 @@ export type ResourcePreviewDataFragment = (
     & Pick<Types.Resource, '_id' | 'name'>
   )>> }
 );
+
+export type ResourceWithCoveredConceptsByDomainDataFragment = (
+  { __typename?: 'Resource' }
+  & Pick<Types.Resource, '_id'>
+  & { coveredConceptsByDomain?: Types.Maybe<Array<(
+    { __typename?: 'LearningMaterialCoveredConceptsByDomainItem' }
+    & { domain: (
+      { __typename?: 'Domain' }
+      & DomainDataFragment
+    ), coveredConcepts: Array<(
+      { __typename?: 'Concept' }
+      & ConceptDataFragment
+    )> }
+  )>> }
+);
