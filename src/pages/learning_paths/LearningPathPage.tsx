@@ -1,5 +1,6 @@
 import {
   AvatarGroup,
+  Badge,
   Box,
   Button,
   Center,
@@ -15,7 +16,7 @@ import {
 import { EditIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import Router from 'next/router';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Access } from '../../components/auth/Access';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
@@ -44,9 +45,11 @@ import { LearningPathDataFragment } from '../../graphql/learning_paths/learning_
 import { useDeleteLearningPath } from '../../graphql/learning_paths/learning_paths.hooks';
 import { useUpdateLearningPathMutation } from '../../graphql/learning_paths/learning_paths.operations.generated';
 import { ResourceData } from '../../graphql/resources/resources.fragments';
+import { UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { PageInfo } from '../PageInfo';
 import { GetLearningPathPageQuery, useGetLearningPathPageQuery } from './LearningPathPage.generated';
+import { LearningPathPublishButton } from './LearningPathPublishButton';
 
 export const LearningPathPagePath = (learningPathKey: string = '[learningPathKey]') =>
   `/learning_paths/${learningPathKey}`;
@@ -99,16 +102,29 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
   const { data, loading, error } = useGetLearningPathPageQuery({ variables: { key: learningPathKey } });
   const learningPath = data?.getLearningPathByKey || learningPathPlaceholder;
   const { currentUser } = useCurrentUser();
+  const currentUserIsOwner = useMemo(
+    () => !!learningPath.createdBy && !!currentUser && learningPath.createdBy._id === currentUser._id,
+    [learningPath, currentUser]
+  );
+  const currentUserStartedThePath = useMemo(() => !!learningPath.started && !currentUserIsOwner, [
+    learningPath,
+    currentUserIsOwner,
+  ]);
   const [editMode, setEditMode] = useState(
-    // false
-    !!learningPath.createdBy && !!currentUser && learningPath.createdBy._id === currentUser._id
+    currentUserIsOwner || (!!currentUser && [UserRole.Admin, UserRole.Contributor].indexOf(currentUser.role) > -1)
   );
   if (error) return null;
   return (
     <PageLayout
       isLoading={loading}
       centerChildren
-      renderTopRight={<LearningPageRightIcons learningPath={learningPath} isDisabled={loading} />}
+      renderTopRight={
+        <LearningPageRightIcons
+          learningPath={learningPath}
+          currentUserIsOwner={currentUserIsOwner}
+          isDisabled={loading}
+        />
+      }
     >
       <Stack
         width={{ base: '100%', md: '80%' }}
@@ -155,9 +171,15 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
             </Skeleton>
             <Stack direction="row" spacing={2} alignItems="center">
               <ResourceStarsRating value={learningPath.rating} />
-              <RoleAccess accessRule="contributorOrAdmin">
+              {currentUserStartedThePath ? (
                 <ResourceStarsRater learningMaterialId={learningPath._id} isDisabled={loading} />
-              </RoleAccess>
+              ) : (
+                !currentUserIsOwner && (
+                  <RoleAccess accessRule="contributorOrAdmin">
+                    <ResourceStarsRater learningMaterialId={learningPath._id} isDisabled={loading} />
+                  </RoleAccess>
+                )
+              )}
             </Stack>
             <Access
               condition={editMode}
@@ -165,6 +187,7 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
             >
               <LearningMaterialTagsEditor
                 size="sm"
+                inputWidth="140px"
                 placeholder="Add tags"
                 learningMaterial={learningPath}
                 isDisabled={loading}
@@ -178,6 +201,8 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
                   variables: { _id: learningPath._id, payload: { durationMs: newDuration } },
                 })
               }
+              placeholder="Estimated Duration"
+              isDisabled={!editMode}
             />
             <Skeleton isLoaded={!loading}>
               <EditableTextarea
@@ -201,21 +226,30 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
             <Stack w="300px" spacing={3}>
               {learningPath.createdBy && (
                 <Center>
-                  <Stack spacing={1}>
-                    <Text fontWeight={300}>Created By</Text>
-                    <Center>
-                      <UserAvatar size="sm" user={learningPath.createdBy} />
+                  {currentUserIsOwner ? (
+                    <Center flexDirection="column">
+                      <Text fontWeight={300}>Created By You</Text>
+
+                      <Badge colorScheme="green">PUBLIC</Badge>
                     </Center>
-                  </Stack>
+                  ) : (
+                    <Stack spacing={1}>
+                      <Text fontWeight={300}>Created By</Text>
+                      <Center>
+                        <UserAvatar size="sm" user={learningPath.createdBy} />
+                      </Center>
+                      {currentUserIsOwner && <Badge colorScheme="green">PUBLIC</Badge>}
+                    </Stack>
+                  )}
                 </Center>
               )}
-              {learningPath.startedBy?.items.length && (
+              {learningPath.startedBy?.items.length && (currentUserIsOwner || learningPath.startedBy.items.length > 4) && (
                 <Center>
                   <Stack spacing={1}>
-                    <Text fontWeight={300}>Path taken by {learningPath.startedBy?.items.length} people</Text>
+                    <Text fontWeight={300}>Path taken by {learningPath.startedBy.items.length} people</Text>
                     <AvatarGroup alignSelf="center" spacing={-3} size="sm" max={3}>
                       {learningPath.startedBy.items.map(({ user }) => (
-                        <UserAvatar user={user} />
+                        <UserAvatar key={user._id} user={user} />
                       ))}
                     </AvatarGroup>
                   </Stack>
@@ -237,33 +271,30 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
           learningPathId={learningPath._id}
           complementaryResources={learningPath.complementaryResources || []}
         />
-        <Flex>
-          {!learningPath.public && (
-            <Button
-              size="lg"
-              colorScheme="blue"
-              onClick={() => updateLearningPath({ variables: { _id: learningPath._id, payload: { public: true } } })}
-            >
-              Publish
-            </Button>
-          )}
-        </Flex>
+        <Flex>{!learningPath.public && <LearningPathPublishButton learningPath={learningPath} />}</Flex>
       </Stack>
     </PageLayout>
   );
 };
 
-const LearningPageRightIcons: React.FC<{ learningPath: LearningPathDataFragment; isDisabled?: boolean }> = ({
-  learningPath,
-  isDisabled,
-}) => {
+const LearningPageRightIcons: React.FC<{
+  learningPath: LearningPathDataFragment;
+  isDisabled?: boolean;
+  currentUserIsOwner: boolean;
+}> = ({ learningPath, isDisabled, currentUserIsOwner }) => {
   const { deleteLearningPath } = useDeleteLearningPath();
+  const { currentUser } = useCurrentUser();
   return (
-    <DeleteButtonWithConfirmation
-      modalHeaderText="Delete Learning Path"
-      modalBodyText={`Confirm deleting the learning path "${learningPath.name}" ?`}
-      isDisabled={isDisabled}
-      onConfirmation={() => deleteLearningPath({ variables: { _id: learningPath._id } }).then(() => Router.back())}
-    />
+    <Flex>
+      {currentUser && (currentUserIsOwner || currentUser.role === UserRole.Admin) && (
+        <DeleteButtonWithConfirmation
+          variant="outline"
+          modalHeaderText="Delete Learning Path"
+          modalBodyText={`Confirm deleting the learning path "${learningPath.name}" ?`}
+          isDisabled={isDisabled}
+          onConfirmation={() => deleteLearningPath({ variables: { _id: learningPath._id } }).then(() => Router.back())}
+        />
+      )}
+    </Flex>
   );
 };

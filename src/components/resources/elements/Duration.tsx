@@ -7,13 +7,12 @@ import {
   InputGroup,
   InputProps,
   InputRightElement,
-  Stack,
   Text,
   Tooltip,
 } from '@chakra-ui/core';
 import { EditIcon, QuestionIcon } from '@chakra-ui/icons';
 import humanizeDuration from 'humanize-duration';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 export const DurationViewer: React.FC<{ value?: number | null }> = ({ value }) => {
   return value ? (
@@ -27,12 +26,18 @@ export const DurationInput: React.FC<
   {
     value?: number | null;
     onChange: (durationMs: number | null) => void;
+    autoFocus?: boolean;
   } & Omit<InputProps, 'value' | 'onChange'>
-> = ({ value, onChange, size, w, ...inputProps }) => {
+> = ({ value, onChange, autoFocus, size, w, ...inputProps }) => {
   const [duration, setDuration] = useState(convertFromValue(value, 'ms'));
   const [isValid, setIsValid] = useState(true);
   const [showTooltip, setShowTooltip] = useState(false);
-
+  let inputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    const { current } = inputRef;
+    // autoFocus
+    if (current) current.focus();
+  }, []);
   useEffect(() => {
     setShowTooltip(!isValid);
   }, [isValid]);
@@ -67,6 +72,7 @@ export const DurationInput: React.FC<
   return (
     <InputGroup size={size} w={w}>
       <Input
+        ref={inputRef}
         isInvalid={!isValid}
         id="duration"
         placeholder="1h 30m"
@@ -159,12 +165,18 @@ interface EditableDurationProps {
   defaultValue?: number | null;
   isDisabled?: boolean;
   onSubmit: (durationMs: number | null) => void;
+  placeholder?: string;
 }
-export const EditableDuration: React.FC<EditableDurationProps> = ({ defaultValue, onSubmit }) => {
+export const EditableDuration: React.FC<EditableDurationProps> = ({
+  placeholder,
+  defaultValue,
+  onSubmit,
+  isDisabled,
+}) => {
   const [isEditing, setIsEditing] = useState(false);
   return (
     <Flex>
-      {isEditing ? (
+      {isEditing && !isDisabled ? (
         <DurationInput
           value={defaultValue}
           onChange={(d) => {
@@ -173,19 +185,27 @@ export const EditableDuration: React.FC<EditableDurationProps> = ({ defaultValue
           }}
           size="sm"
           w="120px"
+          autoFocus
         />
       ) : (
         <>
           <DurationViewer value={defaultValue} />
-          <IconButton
-            aria-label="t"
-            icon={<EditIcon />}
-            onClick={() => setIsEditing(true)}
-            size="xs"
-            color="gray.600"
-            variant="ghost"
-            alignSelf="end"
-          />
+          {!defaultValue && placeholder && (
+            <Text fontSize="sm" color="gray.300" mb={1} pr={1}>
+              {placeholder}
+            </Text>
+          )}
+          {!isDisabled && (
+            <IconButton
+              aria-label="t"
+              icon={<EditIcon />}
+              onClick={() => setIsEditing(true)}
+              size="xs"
+              color="gray.600"
+              variant="ghost"
+              alignSelf="end"
+            />
+          )}
         </>
       )}
     </Flex>
