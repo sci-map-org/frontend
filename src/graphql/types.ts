@@ -593,11 +593,17 @@ export type LearningPath = LearningMaterial & {
   domains?: Maybe<Array<Domain>>;
   started?: Maybe<LearningPathStarted>;
   createdBy?: Maybe<User>;
+  startedBy?: Maybe<LearningPathStartedByResults>;
 };
 
 
 export type LearningPathCoveredConceptsArgs = {
   options: LearningMaterialCoveredConceptsOptions;
+};
+
+
+export type LearningPathStartedByArgs = {
+  options: LearningPathStartedByOptions;
 };
 
 export type LoginResponse = {
@@ -944,6 +950,16 @@ export type LearningPathStarted = {
   startedAt: Scalars['DateTime'];
 };
 
+export type LearningPathStartedByResults = {
+  __typename?: 'LearningPathStartedByResults';
+  items: Array<LearningPathStartedByItem>;
+  count: Scalars['Int'];
+};
+
+export type LearningPathStartedByOptions = {
+  pagination?: Maybe<PaginationOptions>;
+};
+
 export type SetResourcesConsumedPayloadResourcesField = {
   resourceId: Scalars['String'];
   consumed?: Maybe<Scalars['Boolean']>;
@@ -995,6 +1011,12 @@ export type ConceptReferencesConcept = {
 export type ConceptBelongsToConcept = {
   __typename?: 'ConceptBelongsToConcept';
   index: Scalars['Float'];
+};
+
+export type LearningPathStartedByItem = {
+  __typename?: 'LearningPathStartedByItem';
+  user: User;
+  startedAt: Scalars['DateTime'];
 };
 
 export enum DomainConceptSortingEntities {

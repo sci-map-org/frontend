@@ -3,10 +3,10 @@ import gql from 'graphql-tag';
 import { useMemo } from 'react';
 import { FaPlay } from 'react-icons/fa';
 import { useStartLearningPathMutation } from '../../graphql/learning_paths/learning_paths.operations.generated';
-import { LearningPathCompletionFragmentFragment } from './LearningPathCompletion.generated';
+import { LearningPathCompletionDataFragment } from './LearningPathCompletion.generated';
 
-export const LearningPathCompletionFragment = gql`
-  fragment LearningPathCompletionFragment on LearningPath {
+export const LearningPathCompletionData = gql`
+  fragment LearningPathCompletionData on LearningPath {
     _id
     durationMs
     started {
@@ -26,7 +26,7 @@ export const LearningPathCompletionFragment = gql`
 `;
 
 interface LearningPathCompletionProps {
-  learningPath: LearningPathCompletionFragmentFragment;
+  learningPath: LearningPathCompletionDataFragment;
 }
 
 // TODO find a good name. Badge / widget ? urgh

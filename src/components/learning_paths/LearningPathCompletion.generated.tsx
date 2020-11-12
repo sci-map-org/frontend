@@ -1,6 +1,6 @@
 import * as Types from '../../graphql/types';
 
-export type LearningPathCompletionFragmentFragment = (
+export type LearningPathCompletionDataFragment = (
   { __typename?: 'LearningPath' }
   & Pick<Types.LearningPath, '_id' | 'durationMs'>
   & { started?: Types.Maybe<(

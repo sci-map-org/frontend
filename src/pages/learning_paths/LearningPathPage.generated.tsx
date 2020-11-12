@@ -2,7 +2,8 @@ import * as Types from '../../graphql/types';
 
 import { LearningPathWithResourceItemsPreviewDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
 import { ResourceDataFragment, ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
-import { LearningPathCompletionFragmentFragment } from '../../components/learning_paths/LearningPathCompletion.generated';
+import { UserAvatarDataFragment } from '../../components/users/UserAvatar.generated';
+import { LearningPathCompletionDataFragment } from '../../components/learning_paths/LearningPathCompletion.generated';
 import { LearningMaterialWithCoveredConceptsByDomainData_Resource_Fragment, LearningMaterialWithCoveredConceptsByDomainData_LearningPath_Fragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
 import * as Operations from './LearningPathPage';
 import * as Apollo from '@apollo/client';
@@ -24,10 +25,20 @@ export type GetLearningPathPageQuery = (
       & Pick<Types.LearningMaterialTag, 'name'>
     )>>, createdBy?: Types.Maybe<(
       { __typename?: 'User' }
-      & Pick<Types.User, '_id'>
+      & UserAvatarDataFragment
+    )>, startedBy?: Types.Maybe<(
+      { __typename?: 'LearningPathStartedByResults' }
+      & Pick<Types.LearningPathStartedByResults, 'count'>
+      & { items: Array<(
+        { __typename?: 'LearningPathStartedByItem' }
+        & { user: (
+          { __typename?: 'User' }
+          & UserAvatarDataFragment
+        ) }
+      )> }
     )> }
     & LearningPathWithResourceItemsPreviewDataFragment
-    & LearningPathCompletionFragmentFragment
+    & LearningPathCompletionDataFragment
     & LearningMaterialWithCoveredConceptsByDomainData_LearningPath_Fragment
   ) }
 );

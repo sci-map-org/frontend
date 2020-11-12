@@ -1,4 +1,4 @@
-import { Heading, Stack } from '@chakra-ui/core';
+import { Heading, Stack, StackProps } from '@chakra-ui/core';
 import { LearningMaterialWithCoveredConceptsByDomainDataFragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
 import { RoleAccess, RoleAccessAllowedRule } from '../auth/RoleAccess';
 import { LearningMaterialCoveredConceptsByDomainViewer } from './LearningMaterialCoveredConceptsByDomainViewer';
@@ -8,9 +8,10 @@ export const LearningMaterialCoveredTopics: React.FC<{
   learningMaterial: LearningMaterialWithCoveredConceptsByDomainDataFragment;
   isLoading?: boolean;
   editMode: boolean | RoleAccessAllowedRule;
-}> = ({ learningMaterial, isLoading, editMode }) => {
+  w?: StackProps['w'];
+}> = ({ w, learningMaterial, isLoading, editMode }) => {
   return (
-    <Stack backgroundColor="gray.100" px={4} mt={4} py={3} borderRadius={5}>
+    <Stack w={w} backgroundColor="gray.100" px={4} mt={4} py={3} borderRadius={5}>
       <Heading size="sm">Covered Topics</Heading>
       <RoleAccess
         accessRule={editMode}

@@ -1,6 +1,8 @@
 import {
+  AvatarGroup,
   Box,
   Button,
+  Center,
   Editable,
   EditableInput,
   EditablePreview,
@@ -8,6 +10,7 @@ import {
   IconButton,
   Skeleton,
   Stack,
+  Text,
 } from '@chakra-ui/core';
 import { EditIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
@@ -23,7 +26,7 @@ import {
 import { LearningPathComplementaryResourcesManager } from '../../components/learning_paths/LearningPathComplementaryResourcesManager';
 import {
   LearningPathCompletion,
-  LearningPathCompletionFragment,
+  LearningPathCompletionData,
 } from '../../components/learning_paths/LearningPathCompletion';
 import { LearningPathResourceItemsManager } from '../../components/learning_paths/LearningPathResourceItems';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
@@ -31,6 +34,7 @@ import { EditableTextarea } from '../../components/lib/inputs/EditableTextarea';
 import { EditableDuration } from '../../components/resources/elements/Duration';
 import { ResourceStarsRater, ResourceStarsRating } from '../../components/resources/elements/ResourceStarsRating';
 import { LearningMaterialCoveredTopics } from '../../components/resources/LearningMaterialCoveredTopics';
+import { UserAvatar, UserAvatarData } from '../../components/users/UserAvatar';
 import { LearningMaterialWithCoveredConceptsByDomainData } from '../../graphql/learning_materials/learning_materials.fragments';
 import {
   generateLearningPathData,
@@ -65,16 +69,25 @@ export const getLearningPathPage = gql`
         name
       }
       createdBy {
-        _id
+        ...UserAvatarData
       }
-      ...LearningPathCompletionFragment
+      startedBy(options: {}) {
+        items {
+          user {
+            ...UserAvatarData
+          }
+        }
+        count
+      }
+      ...LearningPathCompletionData
       ...LearningMaterialWithCoveredConceptsByDomainData
     }
   }
   ${LearningMaterialWithCoveredConceptsByDomainData}
   ${LearningPathWithResourceItemsPreviewData}
   ${ResourceData}
-  ${LearningPathCompletionFragment}
+  ${LearningPathCompletionData}
+  ${UserAvatarData}
 `;
 
 const learningPathPlaceholder: GetLearningPathPageQuery['getLearningPathByKey'] = {
@@ -184,11 +197,39 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
             </Skeleton>
             <LearningPathCompletion learningPath={learningPath} />
           </Stack>
-          <Box width="50%">
-            <Box>
-              <LearningMaterialCoveredTopics editMode={editMode} isLoading={loading} learningMaterial={learningPath} />
-            </Box>
-          </Box>
+          <Flex width="50%" direction="column" alignItems="flex-end">
+            <Stack w="300px" spacing={3}>
+              {learningPath.createdBy && (
+                <Center>
+                  <Stack spacing={1}>
+                    <Text fontWeight={300}>Created By</Text>
+                    <Center>
+                      <UserAvatar size="sm" user={learningPath.createdBy} />
+                    </Center>
+                  </Stack>
+                </Center>
+              )}
+              {learningPath.startedBy?.items.length && (
+                <Center>
+                  <Stack spacing={1}>
+                    <Text fontWeight={300}>Path taken by {learningPath.startedBy?.items.length} people</Text>
+                    <AvatarGroup alignSelf="center" spacing={-3} size="sm" max={3}>
+                      {learningPath.startedBy.items.map(({ user }) => (
+                        <UserAvatar user={user} />
+                      ))}
+                    </AvatarGroup>
+                  </Stack>
+                </Center>
+              )}
+              <Box>
+                <LearningMaterialCoveredTopics
+                  editMode={editMode}
+                  isLoading={loading}
+                  learningMaterial={learningPath}
+                />
+              </Box>
+            </Stack>
+          </Flex>
         </Flex>
         <LearningPathResourceItemsManager editMode={editMode} learningPath={learningPath} />
         <LearningPathComplementaryResourcesManager
