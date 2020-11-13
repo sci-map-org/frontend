@@ -43,7 +43,7 @@ import { ResourceUrlLink } from './elements/ResourceUrl';
 import { LearningMaterialCoveredConceptsByDomainViewer } from './LearningMaterialCoveredConceptsByDomainViewer';
 import { LearningMaterialDomainAndCoveredConceptsSelector } from './LearningMaterialDomainAndCoveredConceptsSelector';
 
-const BoxBlockDefaultClickPropagation: React.FC<BoxProps> = ({ children, ...props }) => {
+export const BoxBlockDefaultClickPropagation: React.FC<BoxProps> = ({ children, ...props }) => {
   return (
     <Box
       _hover={{ cursor: 'auto' }}
@@ -132,7 +132,7 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
         </Flex>
         <BottomBlock resource={resource} domainKey={domainKey} isLoading={isLoading} />
       </Flex>
-      <Flex direction="row" borderLeftWidth="0px" borderLeftColor="gray.100">
+      <Flex direction="row">
         <BoxBlockDefaultClickPropagation alignSelf="center" justifySelf="center" ml="32px" mr="4px">
           <ResourceCompletedCheckbox
             size="lg"

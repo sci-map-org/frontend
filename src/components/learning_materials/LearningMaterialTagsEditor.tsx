@@ -173,7 +173,7 @@ export const EditableLearningMaterialTags: React.FC<{
     </Box>
   ) : (
     <Stack direction="row" alignItems="center">
-      {learningMaterial.tags?.length && (
+      {learningMaterial.tags && !isDisabled && (
         <Skeleton isLoaded={!isLoading}>
           <SelectedTagsViewer
             pb={0}

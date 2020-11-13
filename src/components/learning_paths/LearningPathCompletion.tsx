@@ -34,41 +34,11 @@ interface LearningPathCompletionProps {
 // TODO find a good name. Badge / widget ? urgh
 export const LearningPathCompletion: React.FC<LearningPathCompletionProps> = ({ learningPath }) => {
   const resourceItems = learningPath.resourceItems || [];
-  const [startLearningPath] = useStartLearningPathMutation();
-  const { currentUser } = useCurrentUser();
-  const unauthentificatedModalDisclosure = useUnauthentificatedModal();
-  const completedResources = useMemo(() => {
-    return learningPath.resourceItems
-      ? learningPath.resourceItems.filter((i) => i.resource.consumed && i.resource.consumed.consumedAt)
-      : [];
-  }, [resourceItems]);
-
-  const completionRate = useMemo(() => {
-    return completedResources.length / resourceItems.length;
-  }, [resourceItems, completedResources]);
 
   return (
     <Flex direction="column" alignItems="stretch" w="200px">
       <Center>
-        {learningPath.started ? (
-          <CircularProgress value={completionRate * 100} color="teal.400" trackColor="gray.200" size="96px" capIsRound>
-            <CircularProgressLabel color="teal.400" fontWeight={500}>
-              {(completionRate * 100).toFixed(0)}%
-            </CircularProgressLabel>
-          </CircularProgress>
-        ) : (
-          <IconButton
-            aria-label="start learning path"
-            icon={<FaPlay />}
-            colorScheme="teal"
-            size="lg"
-            isRound
-            onClick={() => {
-              if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
-              startLearningPath({ variables: { learningPathId: learningPath._id } });
-            }}
-          />
-        )}
+        <LearningPathCircularCompletion size="lg" learningPath={learningPath} />
       </Center>
       <Wrap spacing={3} mt={3} justify="center">
         {resourceItems.map((resourceItem) => (
@@ -81,5 +51,57 @@ export const LearningPathCompletion: React.FC<LearningPathCompletionProps> = ({ 
         ))}
       </Wrap>
     </Flex>
+  );
+};
+
+const sizes: { [key in 'sm' | 'lg']: { progressWidth: string | number } } = {
+  sm: { progressWidth: '56px' },
+  lg: { progressWidth: '96px' },
+};
+
+export const LearningPathCircularCompletion: React.FC<{
+  learningPath: LearningPathCompletionDataFragment;
+  size: 'lg' | 'sm';
+}> = ({ learningPath, size }) => {
+  const [startLearningPath] = useStartLearningPathMutation();
+  const { currentUser } = useCurrentUser();
+  const unauthentificatedModalDisclosure = useUnauthentificatedModal();
+
+  const resourceItems = learningPath.resourceItems || [];
+
+  const completedResources = useMemo(() => {
+    return learningPath.resourceItems
+      ? learningPath.resourceItems.filter((i) => i.resource.consumed && i.resource.consumed.consumedAt)
+      : [];
+  }, [resourceItems]);
+
+  const completionRate = useMemo(() => {
+    return completedResources.length / resourceItems.length;
+  }, [resourceItems, completedResources]);
+
+  return learningPath.started ? (
+    <CircularProgress
+      value={completionRate * 100}
+      color="teal.400"
+      trackColor="gray.200"
+      size={sizes[size].progressWidth}
+      capIsRound
+    >
+      <CircularProgressLabel color="teal.400" fontWeight={500}>
+        {(completionRate * 100).toFixed(0)}%
+      </CircularProgressLabel>
+    </CircularProgress>
+  ) : (
+    <IconButton
+      aria-label="start learning path"
+      icon={<FaPlay />}
+      colorScheme="teal"
+      size={size}
+      isRound
+      onClick={() => {
+        if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
+        startLearningPath({ variables: { learningPathId: learningPath._id } });
+      }}
+    />
   );
 };
