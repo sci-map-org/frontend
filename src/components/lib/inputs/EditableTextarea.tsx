@@ -23,18 +23,29 @@ export const EditableTextarea: React.FC<
   return (
     <Flex {...flexProps}>
       <Textarea rows={rows} {...getInputProps()}></Textarea>
-      <Text {...getPreviewProps()}></Text>
-      {!isEditing && !isDisabled && (
-        <IconButton
-          aria-label="t"
-          icon={<EditIcon />}
-          onClick={onEdit}
-          size="xs"
-          color="gray.600"
-          variant="ghost"
-          alignSelf="end"
-        />
-      )}
+      <Text {...getPreviewProps()}>
+        <>
+          {!isEditing && !isDisabled && (
+            <IconButton
+              aria-label="edit"
+              icon={<EditIcon />}
+              onClick={onEdit}
+              size="xs"
+              color="gray.700"
+              variant="ghost"
+              float="right"
+              ml={2}
+              mb={2}
+              // position="absolute"
+              // top="10px"
+              // right="10px"
+              // float="right"
+              // alignSelf="end"
+            />
+          )}
+          {getPreviewProps().children}
+        </>
+      </Text>
     </Flex>
   );
 };

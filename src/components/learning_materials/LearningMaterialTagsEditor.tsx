@@ -1,27 +1,33 @@
-import { Stack, Tag, TagCloseButton, TagLabel, Wrap } from '@chakra-ui/core';
+import { Box, IconButton, Skeleton, Stack, Tag, TagCloseButton, TagLabel, Tooltip, Wrap } from '@chakra-ui/core';
+import { EditIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import { uniqBy } from 'lodash';
-import React from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import { LearningMaterial, LearningMaterialTag } from '../../graphql/types';
+import { useCurrentUser } from '../../graphql/users/users.hooks';
+import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import { LearningMaterialTagSelector } from '../lib/inputs/LearningMaterialTagSelector';
 import {
   useAddTagsToLearningMaterialMutation,
   useRemoveTagsFromLearningMaterialMutation,
 } from './LearningMaterialTagsEditor.generated';
 
-export const SelectedTagsViewer: React.FC<{ selectedTags?: LearningMaterialTag[] | null; pb?: number | string }> = ({
-  selectedTags,
-  pb = 2,
-}) => {
-  if (!selectedTags || !selectedTags.length) return null;
+export const SelectedTagsViewer: React.FC<{
+  selectedTags?: LearningMaterialTag[] | null;
+  pb?: number | string;
+  renderEnd?: () => ReactNode;
+  justify?: string;
+}> = ({ selectedTags, renderEnd, justify, pb = 2 }) => {
+  if (!selectedTags || (!selectedTags.length && !renderEnd)) return null;
   return (
-    <Stack direction="row" fontWeight={250} pb={pb} as="span">
+    <Wrap fontWeight={250} pb={pb} as="span" justify={justify}>
       {selectedTags.map((tag, idx) => (
         <Tag size="sm" colorScheme="gray" key={idx} as="span">
           <TagLabel>{tag.name}</TagLabel>
         </Tag>
       ))}
-    </Stack>
+      {renderEnd && renderEnd()}
+    </Wrap>
   );
 };
 
@@ -34,21 +40,34 @@ export const LearningMaterialTagsStatelessEditor: React.FC<{
   isDisabled?: boolean;
   size?: 'sm' | 'md';
   inputWidth?: string;
-}> = ({ selectedTags, setSelectedTags, onSelect, onRemove, isDisabled, size = 'md', inputWidth, placeholder }) => {
+  justify?: string;
+}> = ({
+  selectedTags,
+  justify,
+  setSelectedTags,
+  onSelect,
+  onRemove,
+  isDisabled,
+  size = 'md',
+  inputWidth,
+  placeholder,
+}) => {
   return (
-    <Stack direction="row" alignItems="baseline" spacing={2}>
-      <LearningMaterialTagSelector
-        placeholder={placeholder}
-        isDisabled={isDisabled}
-        size={size}
-        width={inputWidth}
-        onSelect={(r) => {
-          setSelectedTags && setSelectedTags(uniqBy(selectedTags.concat({ name: r.name }), 'name'));
-          onSelect && onSelect({ name: r.name });
-        }}
-      />
-      <Wrap spacing={2} w="100%">
-        {selectedTags.map((selectedTag) => (
+    <Wrap spacing={2} justify={justify} align="flex-end">
+      <Box width={inputWidth}>
+        <LearningMaterialTagSelector
+          placeholder={placeholder}
+          isDisabled={isDisabled}
+          size={size}
+          width={inputWidth}
+          onSelect={(r) => {
+            setSelectedTags && setSelectedTags(uniqBy(selectedTags.concat({ name: r.name }), 'name'));
+            onSelect && onSelect({ name: r.name });
+          }}
+        />
+      </Box>
+      {selectedTags.map((selectedTag) => (
+        <Box>
           <Tag size={size} colorScheme="gray" key={selectedTag.name}>
             <TagLabel>{selectedTag.name}</TagLabel>
             <TagCloseButton
@@ -59,9 +78,9 @@ export const LearningMaterialTagsStatelessEditor: React.FC<{
               }}
             />
           </Tag>
-        ))}
-      </Wrap>
-    </Stack>
+        </Box>
+      ))}
+    </Wrap>
   );
 };
 
@@ -93,7 +112,8 @@ export const LearningMaterialTagsEditor: React.FC<{
   size?: 'sm' | 'md';
   inputWidth?: string;
   placeholder?: string;
-}> = ({ learningMaterial, isDisabled, size = 'md', inputWidth, placeholder }) => {
+  justify?: string;
+}> = ({ learningMaterial, justify, isDisabled, size = 'md', inputWidth, placeholder }) => {
   const [addTagsToLearningMaterial] = useAddTagsToLearningMaterialMutation();
   const [removeTagsFromLearningMaterial] = useRemoveTagsFromLearningMaterialMutation();
   const selectedTags = learningMaterial.tags || [];
@@ -101,6 +121,7 @@ export const LearningMaterialTagsEditor: React.FC<{
     <LearningMaterialTagsStatelessEditor
       placeholder={placeholder}
       size={size}
+      justify={justify}
       isDisabled={isDisabled}
       selectedTags={selectedTags}
       inputWidth={inputWidth}
@@ -111,5 +132,78 @@ export const LearningMaterialTagsEditor: React.FC<{
         removeTagsFromLearningMaterial({ variables: { learningMaterialId: learningMaterial._id, tags: [t.name] } })
       }
     />
+  );
+};
+
+export const EditableLearningMaterialTags: React.FC<{
+  isLoading?: boolean;
+  learningMaterial: Pick<LearningMaterial, '_id' | 'tags'>;
+  isDisabled?: boolean;
+  justify?: 'center';
+}> = ({ learningMaterial, isLoading, justify, isDisabled }) => {
+  const wrapperRef = useRef(null);
+  const { currentUser } = useCurrentUser();
+  const unauthentificatedModalDisclosure = useUnauthentificatedModal();
+  const [tagEditorMode, setTagEditorMode] = useState(false);
+  const useOutsideAlerter = (ref: React.MutableRefObject<any>) => {
+    useEffect(() => {
+      function handleClickOutside(event: any) {
+        if (ref.current && !ref.current.contains(event.target)) {
+          setTagEditorMode(false);
+        }
+      }
+
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, [ref]);
+  };
+  useOutsideAlerter(wrapperRef);
+  return tagEditorMode ? (
+    <Box ref={wrapperRef}>
+      <Skeleton isLoaded={!isLoading}>
+        <LearningMaterialTagsEditor
+          justify={justify}
+          size="sm"
+          learningMaterial={learningMaterial}
+          inputWidth="100px"
+        />
+      </Skeleton>
+    </Box>
+  ) : (
+    <Stack direction="row" alignItems="center">
+      {learningMaterial.tags?.length && (
+        <Skeleton isLoaded={!isLoading}>
+          <SelectedTagsViewer
+            pb={0}
+            selectedTags={learningMaterial.tags}
+            justify={justify}
+            renderEnd={() =>
+              !isDisabled && (
+                <Tooltip hasArrow label={learningMaterial.tags?.length ? 'Add or remove tags' : 'Add tags'}>
+                  <IconButton
+                    isDisabled={isLoading}
+                    size="xs"
+                    variant="ghost"
+                    aria-label="add tag"
+                    onClick={(e) => {
+                      if (!currentUser) {
+                        unauthentificatedModalDisclosure.onOpen();
+                        e.preventDefault();
+                        return;
+                      }
+                      setTagEditorMode(true);
+                    }}
+                    icon={<EditIcon />}
+                  />
+                </Tooltip>
+              )
+            }
+          />
+        </Skeleton>
+      )}
+      )
+    </Stack>
   );
 };

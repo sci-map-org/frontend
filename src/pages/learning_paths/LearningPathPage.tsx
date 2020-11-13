@@ -2,7 +2,6 @@ import {
   AvatarGroup,
   Badge,
   Box,
-  Button,
   Center,
   Editable,
   EditableInput,
@@ -17,13 +16,13 @@ import { EditIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import Router from 'next/router';
 import { useMemo, useState } from 'react';
-import { Access } from '../../components/auth/Access';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
 import {
-  LearningMaterialTagsEditor,
-  SelectedTagsViewer,
-} from '../../components/learning_materials/LearningMaterialTagsEditor';
+  LearningMaterialStarsRater,
+  StarsRatingViewer,
+} from '../../components/learning_materials/LearningMaterialStarsRating';
+import { EditableLearningMaterialTags } from '../../components/learning_materials/LearningMaterialTagsEditor';
 import { LearningPathComplementaryResourcesManager } from '../../components/learning_paths/LearningPathComplementaryResourcesManager';
 import {
   LearningPathCompletion,
@@ -33,10 +32,6 @@ import { LearningPathResourceItemsManager } from '../../components/learning_path
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { EditableTextarea } from '../../components/lib/inputs/EditableTextarea';
 import { EditableDuration } from '../../components/resources/elements/Duration';
-import {
-  LearningMaterialStarsRater,
-  StarsRatingViewer,
-} from '../../components/learning_materials/LearningMaterialStarsRating';
 import { LearningMaterialCoveredTopics } from '../../components/resources/LearningMaterialCoveredTopics';
 import { UserAvatar, UserAvatarData } from '../../components/users/UserAvatar';
 import { LearningMaterialWithCoveredConceptsByDomainData } from '../../graphql/learning_materials/learning_materials.fragments';
@@ -130,49 +125,48 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
       }
     >
       <Stack
-        width={{ base: '100%', md: '80%' }}
+        width={{ base: '96%', md: '86%' }}
         maxWidth={{
           base: '100%',
           md: '1800px',
         }}
       >
+        <Center>
+          <LearningPathEditableName
+            name={learningPath.name}
+            isLoading={loading}
+            onChange={(newName) =>
+              updateLearningPath({ variables: { _id: learningPath._id, payload: { name: newName } } })
+            }
+            editMode={editMode}
+          />
+        </Center>
         <Flex direction="row">
-          <Stack width="50%">
-            <Skeleton isLoaded={!loading}>
-              <Editable
-                defaultValue={learningPath.name}
-                fontSize="5xl"
-                fontWeight={600}
-                color="gray.700"
-                isPreviewFocusable={false}
-                lineHeight="52px"
-                onSubmit={(newName) =>
-                  updateLearningPath({ variables: { _id: learningPath._id, payload: { name: newName } } })
+          <Stack width="25%" spacing={4} minWidth="260px">
+            <Center>
+              <EditableDuration
+                defaultValue={learningPath.durationMs}
+                onSubmit={(newDuration) =>
+                  newDuration !== learningPath.durationMs &&
+                  updateLearningPath({
+                    variables: { _id: learningPath._id, payload: { durationMs: newDuration } },
+                  })
                 }
-                variant="solid"
-                display="flex"
+                placeholder="Estimated Duration"
                 isDisabled={!editMode}
-              >
-                {(props: any) => (
-                  <>
-                    <EditablePreview />
-                    {!props.isEditing && editMode && (
-                      <IconButton
-                        aria-label="t"
-                        icon={<EditIcon />}
-                        onClick={props.onEdit}
-                        size="xs"
-                        color="gray.600"
-                        variant="ghost"
-                        alignSelf="end"
-                      />
-                    )}
-                    <EditableInput />
-                  </>
-                )}
-              </Editable>
-            </Skeleton>
-            <Stack direction="row" spacing={2} alignItems="center">
+              />
+            </Center>
+            <Center>
+              <EditableLearningMaterialTags
+                justify="center"
+                learningMaterial={learningPath}
+                isLoading={loading}
+                isDisabled={!editMode}
+              />
+            </Center>
+          </Stack>
+          <Stack flexGrow={1}>
+            <Stack direction="row" justifyContent="center" spacing={2} alignItems="center">
               <StarsRatingViewer value={learningPath.rating} />
               {currentUserStartedThePath ? (
                 <LearningMaterialStarsRater learningMaterialId={learningPath._id} isDisabled={loading} />
@@ -184,80 +178,32 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
                 )
               )}
             </Stack>
-            <Access
-              condition={editMode}
-              renderAccessDenied={() => <SelectedTagsViewer selectedTags={learningPath.tags || []} />}
-            >
-              <LearningMaterialTagsEditor
-                size="sm"
-                inputWidth="140px"
-                placeholder="Add tags"
-                learningMaterial={learningPath}
-                isDisabled={loading}
-              />
-            </Access>
-            <EditableDuration
-              defaultValue={learningPath.durationMs}
-              onSubmit={(newDuration) =>
-                newDuration !== learningPath.durationMs &&
-                updateLearningPath({
-                  variables: { _id: learningPath._id, payload: { durationMs: newDuration } },
-                })
-              }
-              placeholder="Estimated Duration"
-              isDisabled={!editMode}
-            />
-            <Skeleton isLoaded={!loading}>
-              <EditableTextarea
-                backgroundColor="white"
-                fontSize="lg"
-                fontWeight={300}
-                color="gray.700"
-                defaultValue={learningPath.description || ''}
-                placeholder="Add a description..."
-                onSubmit={(newDescription: any) =>
-                  updateLearningPath({
-                    variables: { _id: learningPath._id, payload: { description: (newDescription as string) || null } },
-                  })
-                }
-                isDisabled={!editMode}
-              />
-            </Skeleton>
-            <LearningPathCompletion learningPath={learningPath} />
+            <Box>
+              <Skeleton isLoaded={!loading}>
+                <EditableTextarea
+                  textAlign="center"
+                  px={4}
+                  backgroundColor="backgroundColor.0"
+                  fontSize="lg"
+                  fontWeight={300}
+                  color="gray.700"
+                  defaultValue={learningPath.description || ''}
+                  placeholder="Add a description..."
+                  onSubmit={(newDescription: any) =>
+                    updateLearningPath({
+                      variables: {
+                        _id: learningPath._id,
+                        payload: { description: (newDescription as string) || null },
+                      },
+                    })
+                  }
+                  isDisabled={!editMode}
+                />
+              </Skeleton>
+            </Box>
           </Stack>
-          <Flex width="50%" direction="column" alignItems="flex-end">
-            <Stack w="300px" spacing={3}>
-              {learningPath.createdBy && (
-                <Center>
-                  {currentUserIsOwner ? (
-                    <Center flexDirection="column">
-                      <Text fontWeight={300}>Created By You</Text>
-
-                      <Badge colorScheme="green">PUBLIC</Badge>
-                    </Center>
-                  ) : (
-                    <Stack spacing={1}>
-                      <Text fontWeight={300}>Created By</Text>
-                      <Center>
-                        <UserAvatar size="sm" user={learningPath.createdBy} />
-                      </Center>
-                      {currentUserIsOwner && <Badge colorScheme="green">PUBLIC</Badge>}
-                    </Stack>
-                  )}
-                </Center>
-              )}
-              {learningPath.startedBy?.items.length && (currentUserIsOwner || learningPath.startedBy.items.length > 4) && (
-                <Center>
-                  <Stack spacing={1}>
-                    <Text fontWeight={300}>Path taken by {learningPath.startedBy.items.length} people</Text>
-                    <AvatarGroup alignSelf="center" spacing={-3} size="sm" max={3}>
-                      {learningPath.startedBy.items.map(({ user }) => (
-                        <UserAvatar key={user._id} user={user} />
-                      ))}
-                    </AvatarGroup>
-                  </Stack>
-                </Center>
-              )}
+          <Flex width="25%" minWidth="260px" direction="column" alignItems="flex-end">
+            <Stack w="260px" spacing={3}>
               <Box>
                 <LearningMaterialCoveredTopics
                   editMode={editMode}
@@ -267,6 +213,42 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
               </Box>
             </Stack>
           </Flex>
+        </Flex>
+        <Flex justifyContent="space-between">
+          <LearningPathCompletion learningPath={learningPath} />
+          <Stack>
+            {learningPath.createdBy && (
+              <Center>
+                {currentUserIsOwner ? (
+                  <Center flexDirection="column">
+                    <Text fontWeight={300}>Created By You</Text>
+
+                    <Badge colorScheme="green">PUBLIC</Badge>
+                  </Center>
+                ) : (
+                  <Stack spacing={1}>
+                    <Text fontWeight={300}>Created By</Text>
+                    <Center>
+                      <UserAvatar size="sm" user={learningPath.createdBy} />
+                    </Center>
+                    {currentUserIsOwner && <Badge colorScheme="green">PUBLIC</Badge>}
+                  </Stack>
+                )}
+              </Center>
+            )}
+            {learningPath.startedBy?.items.length && (currentUserIsOwner || learningPath.startedBy.items.length > 4) && (
+              <Center>
+                <Stack spacing={1}>
+                  <Text fontWeight={300}>Path taken by {learningPath.startedBy.items.length} people</Text>
+                  <AvatarGroup alignSelf="center" spacing={-3} size="sm" max={3}>
+                    {learningPath.startedBy.items.map(({ user }) => (
+                      <UserAvatar key={user._id} user={user} />
+                    ))}
+                  </AvatarGroup>
+                </Stack>
+              </Center>
+            )}
+          </Stack>
         </Flex>
         <LearningPathResourceItemsManager editMode={editMode} learningPath={learningPath} />
         <LearningPathComplementaryResourcesManager
@@ -299,5 +281,51 @@ const LearningPageRightIcons: React.FC<{
         />
       )}
     </Flex>
+  );
+};
+
+const LearningPathEditableName: React.FC<{
+  name: string;
+  isLoading?: boolean;
+  onChange: (newName: string) => void;
+  editMode?: boolean;
+}> = ({ name, isLoading, onChange, editMode }) => {
+  return (
+    <Skeleton isLoaded={!isLoading}>
+      <Editable
+        defaultValue={name}
+        fontSize="5xl"
+        fontWeight={600}
+        color="gray.700"
+        isPreviewFocusable={false}
+        lineHeight="52px"
+        onSubmit={onChange}
+        textAlign="center"
+        variant="solid"
+        display="flex"
+        isDisabled={!editMode}
+      >
+        {(props: any) => (
+          <>
+            {!props.isEditing && editMode && (
+              <Box w="24px" /> // used to center the title properly. Change when changing the size of the edit icon button
+            )}
+            <EditablePreview />
+            {!props.isEditing && editMode && (
+              <IconButton
+                aria-label="t"
+                icon={<EditIcon />}
+                onClick={props.onEdit}
+                size="xs"
+                color="gray.700"
+                variant="ghost"
+                alignSelf="end"
+              />
+            )}
+            <EditableInput />
+          </>
+        )}
+      </Editable>
+    </Skeleton>
   );
 };

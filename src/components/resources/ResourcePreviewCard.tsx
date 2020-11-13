@@ -15,7 +15,6 @@ import {
   Skeleton,
   Stack,
   Text,
-  Tooltip,
 } from '@chakra-ui/core';
 import { ArrowDownIcon, ArrowUpIcon, EditIcon, SettingsIcon } from '@chakra-ui/icons';
 import { flatten } from 'lodash';
@@ -30,7 +29,8 @@ import { EditResourcePageInfo } from '../../pages/resources/EditResourcePage';
 import { ResourcePageInfo } from '../../pages/resources/ResourcePage';
 import { RoleAccess } from '../auth/RoleAccess';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
-import { LearningMaterialTagsEditor, SelectedTagsViewer } from '../learning_materials/LearningMaterialTagsEditor';
+import { LearningMaterialStarsRater, StarsRatingViewer } from '../learning_materials/LearningMaterialStarsRating';
+import { EditableLearningMaterialTags } from '../learning_materials/LearningMaterialTagsEditor';
 import { ResourceGroupIcon } from '../lib/icons/ResourceGroupIcon';
 import { ResourceSeriesIcon } from '../lib/icons/ResourceSeriesIcon';
 import { InternalLink } from '../navigation/InternalLink';
@@ -38,7 +38,6 @@ import { LearningMaterialDomainCoveredConceptsSelector } from './CoveredConcepts
 import { DurationViewer } from './elements/Duration';
 import { ResourceCompletedCheckbox } from './elements/ResourceCompletedCheckbox';
 import { shortenDescription } from './elements/ResourceDescription';
-import { LearningMaterialStarsRater, StarsRatingViewer } from '../learning_materials/LearningMaterialStarsRating';
 import { ResourceTypeBadge } from './elements/ResourceType';
 import { ResourceUrlLink } from './elements/ResourceUrl';
 import { LearningMaterialCoveredConceptsByDomainViewer } from './LearningMaterialCoveredConceptsByDomainViewer';
@@ -275,43 +274,9 @@ const BottomBlock: React.FC<{
   useOutsideAlerter(wrapperRef);
   return (
     <Flex pb={2} pt={2} flexWrap="wrap">
-      {tagEditorMode ? (
-        <BoxBlockDefaultClickPropagation>
-          <Box ref={wrapperRef}>
-            <Skeleton isLoaded={!isLoading}>
-              <LearningMaterialTagsEditor size="sm" learningMaterial={resource} inputWidth="100px" />
-            </Skeleton>
-          </Box>
-        </BoxBlockDefaultClickPropagation>
-      ) : (
-        <BoxBlockDefaultClickPropagation>
-          <Stack direction="row" alignItems="center">
-            {resource.tags?.length && (
-              <Skeleton isLoaded={!isLoading}>
-                <SelectedTagsViewer pb={0} selectedTags={resource.tags} />
-              </Skeleton>
-            )}
-            <Tooltip hasArrow label={resource.tags?.length ? 'Add or remove tags' : 'Add tags'}>
-              <IconButton
-                isDisabled={isLoading}
-                size="xs"
-                variant="ghost"
-                aria-label="add tag"
-                onClick={(e) => {
-                  if (!currentUser) {
-                    unauthentificatedModalDisclosure.onOpen();
-                    e.preventDefault();
-                    return;
-                  }
-                  setTagEditorMode(true);
-                }}
-                icon={<EditIcon />}
-              />
-            </Tooltip>
-            )
-          </Stack>
-        </BoxBlockDefaultClickPropagation>
-      )}
+      <BoxBlockDefaultClickPropagation>
+        <EditableLearningMaterialTags learningMaterial={resource} isLoading={isLoading} />
+      </BoxBlockDefaultClickPropagation>
       <Box flexGrow={1} flexBasis={0} />
       <BoxBlockDefaultClickPropagation>
         <Stack spacing={3} direction="row" alignItems="stretch" mr={4}>
