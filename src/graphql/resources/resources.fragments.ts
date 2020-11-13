@@ -4,8 +4,6 @@ import { DomainData } from '../domains/domains.fragments';
 import { ResourceMediaType, ResourceType } from '../types';
 import { ResourcePreviewDataFragment, ResourceDataFragment } from './resources.fragments.generated';
 
-// Define fragment based on components use cases
-
 export const ResourceData = gql`
   fragment ResourceData on Resource {
     _id
@@ -93,6 +91,6 @@ export const ResourceWithCoveredConceptsByDomainData = gql`
       }
     }
   }
-  ${DomainData}
   ${ConceptData}
+  ${DomainData}
 `;

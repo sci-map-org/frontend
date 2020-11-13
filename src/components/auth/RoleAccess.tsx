@@ -1,11 +1,12 @@
-import { CurrentUser, UserRole } from '../../graphql/types';
+import { UserRole } from '../../graphql/types';
+import { CurrentUserDataFragment } from '../../graphql/users/users.fragments.generated';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { Access, AccessProps } from './Access';
 
 export type RoleAccessAllowedRule = 'all' | 'loggedInUser' | 'admin' | 'notLoggedInUser' | 'contributorOrAdmin';
 
 const accessRuleMapping: {
-  [key in RoleAccessAllowedRule]: (currentUser: CurrentUser | false) => boolean;
+  [key in RoleAccessAllowedRule]: (currentUser: CurrentUserDataFragment | false) => boolean;
 } = {
   all: () => true,
   loggedInUser: (currentUser) => !!currentUser,
@@ -15,17 +16,21 @@ const accessRuleMapping: {
     !!currentUser && (currentUser.role === UserRole.Contributor || currentUser.role === UserRole.Admin),
 };
 
-export const userHasAccess = (accessRule: RoleAccessAllowedRule, user: CurrentUser | false) =>
+export const userHasAccess = (accessRule: RoleAccessAllowedRule, user: CurrentUserDataFragment | false) =>
   accessRuleMapping[accessRule](user);
 
 interface RoleAccessProps extends Omit<AccessProps, 'condition'> {
-  accessRule: RoleAccessAllowedRule;
+  accessRule: boolean | RoleAccessAllowedRule;
 }
 
+// Add boolean logic: pass OR / AND conditions, including RoleAccess
 export const RoleAccess: React.FC<RoleAccessProps> = ({ children, accessRule, ...props }) => {
   const { currentUser } = useCurrentUser();
   return (
-    <Access condition={userHasAccess(accessRule, currentUser)} {...props}>
+    <Access
+      condition={typeof accessRule === 'boolean' ? accessRule : userHasAccess(accessRule, currentUser)}
+      {...props}
+    >
       {children}
     </Access>
   );

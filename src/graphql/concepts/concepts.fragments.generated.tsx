@@ -1,5 +1,10 @@
 import * as Types from '../types';
 
+export type ConceptLinkDataFragment = (
+  { __typename?: 'Concept' }
+  & Pick<Types.Concept, '_id' | 'key' | 'name'>
+);
+
 export type ConceptDataFragment = (
   { __typename?: 'Concept' }
   & Pick<Types.Concept, '_id' | 'key' | 'name' | 'description'>

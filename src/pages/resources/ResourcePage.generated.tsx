@@ -18,7 +18,7 @@ export type GetResourceResourcePageQuery = (
       { __typename?: 'User' }
       & Pick<Types.User, '_id'>
     )>, coveredConceptsByDomain?: Types.Maybe<Array<(
-      { __typename?: 'ResourceCoveredConceptsByDomainItem' }
+      { __typename?: 'LearningMaterialCoveredConceptsByDomainItem' }
       & { domain: (
         { __typename?: 'Domain' }
         & DomainDataFragment

@@ -5,10 +5,12 @@ import { useState } from 'react';
 import { LearningPathData } from '../../graphql/learning_paths/learning_paths.fragments';
 import { LearningPathDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
-import { CreateLearningPathPayload } from '../../graphql/types';
+import { CreateLearningPathPayload, LearningMaterialTag } from '../../graphql/types';
 import { LearningPathPageInfo } from '../../pages/learning_paths/LearningPathPage';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { RoleAccess } from '../auth/RoleAccess';
+import { LearningMaterialTagsStatelessEditor } from '../learning_materials/LearningMaterialTagsEditor';
+import { DurationFormField, DurationInput } from '../resources/elements/Duration';
 import { StatelessLearningPathResourceItemsManager } from './LearningPathResourceItems';
 import { useCreateLearningPathMutation } from './NewLearningPath.generated';
 
@@ -24,7 +26,8 @@ export const NewLearningPathForm: React.FC<NewLearningPathProps> = ({ createLear
   const [resourceItems, setResourceItems] = useState<{ resource: ResourcePreviewDataFragment; description?: string }[]>(
     []
   );
-
+  const [selectedTags, setSelectedTags] = useState<LearningMaterialTag[]>([]);
+  const [durationMs, setDurationMs] = useState<number | null>();
   const updateResourceItemDescription = (resourceId: string, description: string) => {
     setResourceItems(
       resourceItems.map((resourceItem) => {
@@ -57,6 +60,7 @@ export const NewLearningPathForm: React.FC<NewLearningPathProps> = ({ createLear
           ></Input>
         </FormControl>
       </RoleAccess>
+
       <FormControl>
         <FormLabel htmlFor="Description">Description</FormLabel>
         <Textarea
@@ -67,6 +71,8 @@ export const NewLearningPathForm: React.FC<NewLearningPathProps> = ({ createLear
           onChange={(e) => setDescription(e.target.value || undefined)}
         ></Textarea>
       </FormControl>
+      <LearningMaterialTagsStatelessEditor selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
+      <DurationFormField value={durationMs} onChange={setDurationMs} />
       <StatelessLearningPathResourceItemsManager
         updateDescription={updateResourceItemDescription}
         addResourceItem={(resource) => setResourceItems([...resourceItems, { resource }])}
@@ -89,7 +95,9 @@ export const NewLearningPathForm: React.FC<NewLearningPathProps> = ({ createLear
               createLearningPath({
                 name,
                 description,
+                durationMs,
                 resourceItems: resourceItems.map((i) => ({ resourceId: i.resource._id, description: i.description })),
+                tags: selectedTags.map((t) => t.name),
                 ...(key && { key }),
               }).then((lp) => onLearningPathCreated && onLearningPathCreated(lp))
             }

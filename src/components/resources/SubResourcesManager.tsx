@@ -15,6 +15,7 @@ interface StatelessSubResourcesManagerProps {
   domains?: DomainDataFragment[];
   addSubResource?: (subResource: ResourceDataFragment) => void;
   removeSubResource?: (subResource: ResourceDataFragment) => void;
+  editMode?: boolean;
 }
 
 export const StatelessSubResourcesManager: React.FC<StatelessSubResourcesManagerProps> = ({
@@ -22,6 +23,7 @@ export const StatelessSubResourcesManager: React.FC<StatelessSubResourcesManager
   domains,
   addSubResource,
   removeSubResource,
+  editMode,
 }) => {
   return (
     <Stack direction="column" spacing={3}>
@@ -32,7 +34,7 @@ export const StatelessSubResourcesManager: React.FC<StatelessSubResourcesManager
         {subResources.map((subResource) => (
           <SubResourceCard key={subResource._id} subResource={subResource} onRemove={removeSubResource} />
         ))}
-        {addSubResource && (
+        {addSubResource && editMode && (
           <CardFrame>
             <ResourceSelectorModal
               onSelect={(subResource) => addSubResource(subResource)}

@@ -19,7 +19,7 @@ export type Query = {
   listArticles: ListArticlesResult;
   searchDomains: SearchDomainsResult;
   getDomainByKey: Domain;
-  searchResourceTags: Array<ResourceTagSearchResult>;
+  searchLearningMaterialTags: Array<LearningMaterialTagSearchResult>;
   searchResources: SearchResourcesResult;
   getResourceById: Resource;
   getConcept: Concept;
@@ -54,8 +54,8 @@ export type QueryGetDomainByKeyArgs = {
 };
 
 
-export type QuerySearchResourceTagsArgs = {
-  options: SearchResourceTagsOptions;
+export type QuerySearchLearningMaterialTagsArgs = {
+  options: SearchLearningMaterialTagsOptions;
 };
 
 
@@ -104,19 +104,19 @@ export type Mutation = {
   createDomain: Domain;
   updateDomain: Domain;
   deleteDomain: DeleteDomainResponse;
-  addTagsToResource: Resource;
-  removeTagsFromResource: Resource;
+  addTagsToLearningMaterial: LearningMaterial;
+  removeTagsFromLearningMaterial: LearningMaterial;
+  attachLearningMaterialToDomain: LearningMaterial;
+  detachLearningMaterialFromDomain: LearningMaterial;
+  attachLearningMaterialCoversConcepts: LearningMaterial;
+  detachLearningMaterialCoversConcepts: LearningMaterial;
+  rateLearningMaterial: LearningMaterial;
   createResource: Resource;
   updateResource: Resource;
   deleteResource: DeleteResourceResponse;
   addResourceToDomain: Resource;
-  attachResourceToDomain: Resource;
-  detachResourceFromDomain: Resource;
-  attachResourceCoversConcepts: Resource;
-  detachResourceCoversConcepts: Resource;
   setResourcesConsumed: Array<Resource>;
   voteResource: Resource;
-  rateResource: Resource;
   addSubResource: SubResourceCreatedResult;
   createSubResourceSeries: SubResourceSeriesCreatedResult;
   addSubResourceToSeries: SubResourceSeriesCreatedResult;
@@ -132,6 +132,7 @@ export type Mutation = {
   deleteLearningPath: DeleteLearningPathResult;
   addComplementaryResourceToLearningPath: ComplementaryResourceUpdatedResult;
   removeComplementaryResourceFromLearningPath: ComplementaryResourceUpdatedResult;
+  startLearningPath: LearningPathStartedResult;
   updateConceptBelongsToDomain: ConceptBelongsToDomain;
   addConceptBelongsToConcept: Concept;
   removeConceptBelongsToConcept: Concept;
@@ -207,15 +208,45 @@ export type MutationDeleteDomainArgs = {
 };
 
 
-export type MutationAddTagsToResourceArgs = {
-  resourceId: Scalars['String'];
+export type MutationAddTagsToLearningMaterialArgs = {
+  learningMaterialId: Scalars['String'];
   tags: Array<Scalars['String']>;
 };
 
 
-export type MutationRemoveTagsFromResourceArgs = {
-  resourceId: Scalars['String'];
+export type MutationRemoveTagsFromLearningMaterialArgs = {
+  learningMaterialId: Scalars['String'];
   tags: Array<Scalars['String']>;
+};
+
+
+export type MutationAttachLearningMaterialToDomainArgs = {
+  domainId: Scalars['String'];
+  learningMaterialId: Scalars['String'];
+};
+
+
+export type MutationDetachLearningMaterialFromDomainArgs = {
+  domainId: Scalars['String'];
+  learningMaterialId: Scalars['String'];
+};
+
+
+export type MutationAttachLearningMaterialCoversConceptsArgs = {
+  learningMaterialId: Scalars['String'];
+  conceptIds: Array<Scalars['String']>;
+};
+
+
+export type MutationDetachLearningMaterialCoversConceptsArgs = {
+  learningMaterialId: Scalars['String'];
+  conceptIds: Array<Scalars['String']>;
+};
+
+
+export type MutationRateLearningMaterialArgs = {
+  learningMaterialId: Scalars['String'];
+  value: Scalars['Float'];
 };
 
 
@@ -241,30 +272,6 @@ export type MutationAddResourceToDomainArgs = {
 };
 
 
-export type MutationAttachResourceToDomainArgs = {
-  domainId: Scalars['String'];
-  resourceId: Scalars['String'];
-};
-
-
-export type MutationDetachResourceFromDomainArgs = {
-  domainId: Scalars['String'];
-  resourceId: Scalars['String'];
-};
-
-
-export type MutationAttachResourceCoversConceptsArgs = {
-  resourceId: Scalars['String'];
-  conceptIds: Array<Scalars['String']>;
-};
-
-
-export type MutationDetachResourceCoversConceptsArgs = {
-  resourceId: Scalars['String'];
-  conceptIds: Array<Scalars['String']>;
-};
-
-
 export type MutationSetResourcesConsumedArgs = {
   payload: SetResourcesConsumedPayload;
 };
@@ -273,12 +280,6 @@ export type MutationSetResourcesConsumedArgs = {
 export type MutationVoteResourceArgs = {
   resourceId: Scalars['String'];
   value: ResourceVoteValue;
-};
-
-
-export type MutationRateResourceArgs = {
-  resourceId: Scalars['String'];
-  value: Scalars['Float'];
 };
 
 
@@ -368,6 +369,11 @@ export type MutationRemoveComplementaryResourceFromLearningPathArgs = {
 };
 
 
+export type MutationStartLearningPathArgs = {
+  learningPathId: Scalars['String'];
+};
+
+
 export type MutationUpdateConceptBelongsToDomainArgs = {
   conceptId: Scalars['String'];
   domainId: Scalars['String'];
@@ -415,6 +421,7 @@ export type CurrentUser = {
   role: UserRole;
   articles?: Maybe<ListArticlesResult>;
   createdLearningPaths?: Maybe<Array<LearningPath>>;
+  startedLearningPaths?: Maybe<Array<LearningPath>>;
 };
 
 
@@ -424,6 +431,11 @@ export type CurrentUserArticlesArgs = {
 
 
 export type CurrentUserCreatedLearningPathsArgs = {
+  options: UserLearningPathsOptions;
+};
+
+
+export type CurrentUserStartedLearningPathsArgs = {
   options: UserLearningPathsOptions;
 };
 
@@ -494,13 +506,13 @@ export type DomainResourcesArgs = {
   options: DomainResourcesOptions;
 };
 
-export type ResourceTagSearchResult = {
-  __typename?: 'ResourceTagSearchResult';
+export type LearningMaterialTagSearchResult = {
+  __typename?: 'LearningMaterialTagSearchResult';
   name: Scalars['String'];
   usageCount?: Maybe<Scalars['Int']>;
 };
 
-export type SearchResourceTagsOptions = {
+export type SearchLearningMaterialTagsOptions = {
   query: Scalars['String'];
   pagination: PaginationOptions;
 };
@@ -514,13 +526,13 @@ export type SearchResourcesOptions = {
   pagination?: Maybe<PaginationOptions>;
 };
 
-export type Resource = {
+export type Resource = LearningMaterial & {
   __typename?: 'Resource';
   _id: Scalars['String'];
   name: Scalars['String'];
   type: ResourceType;
   mediaType: ResourceMediaType;
-  tags?: Maybe<Array<ResourceTag>>;
+  tags?: Maybe<Array<LearningMaterialTag>>;
   url: Scalars['String'];
   upvotes?: Maybe<Scalars['Int']>;
   rating?: Maybe<Scalars['Float']>;
@@ -528,9 +540,9 @@ export type Resource = {
   durationMs?: Maybe<Scalars['Int']>;
   consumed?: Maybe<ConsumedResource>;
   creator?: Maybe<User>;
-  coveredConcepts?: Maybe<ResourceCoveredConceptsResults>;
-  coveredConceptsByDomain?: Maybe<Array<ResourceCoveredConceptsByDomainItem>>;
-  domains?: Maybe<ResourceDomainsResults>;
+  coveredConcepts?: Maybe<LearningMaterialCoveredConceptsResults>;
+  coveredConceptsByDomain?: Maybe<Array<LearningMaterialCoveredConceptsByDomainItem>>;
+  domains?: Maybe<Array<Domain>>;
   subResources?: Maybe<Array<Resource>>;
   parentResources?: Maybe<Array<Resource>>;
   subResourceSeries?: Maybe<Array<Resource>>;
@@ -541,12 +553,7 @@ export type Resource = {
 
 
 export type ResourceCoveredConceptsArgs = {
-  options: ResourceCoveredConceptsOptions;
-};
-
-
-export type ResourceDomainsArgs = {
-  options: ResourceDomainsOptions;
+  options: LearningMaterialCoveredConceptsOptions;
 };
 
 export type Concept = {
@@ -569,14 +576,34 @@ export type ConceptCoveredByResourcesArgs = {
   options: ConceptCoveredByResourcesOptions;
 };
 
-export type LearningPath = {
+export type LearningPath = LearningMaterial & {
   __typename?: 'LearningPath';
   _id: Scalars['String'];
   key: Scalars['String'];
   name: Scalars['String'];
+  public: Scalars['Boolean'];
   description?: Maybe<Scalars['String']>;
+  durationMs?: Maybe<Scalars['Int']>;
   resourceItems?: Maybe<Array<LearningPathResourceItem>>;
   complementaryResources?: Maybe<Array<Resource>>;
+  tags?: Maybe<Array<LearningMaterialTag>>;
+  rating?: Maybe<Scalars['Float']>;
+  coveredConcepts?: Maybe<LearningMaterialCoveredConceptsResults>;
+  coveredConceptsByDomain?: Maybe<Array<LearningMaterialCoveredConceptsByDomainItem>>;
+  domains?: Maybe<Array<Domain>>;
+  started?: Maybe<LearningPathStarted>;
+  createdBy?: Maybe<User>;
+  startedBy?: Maybe<LearningPathStartedByResults>;
+};
+
+
+export type LearningPathCoveredConceptsArgs = {
+  options: LearningMaterialCoveredConceptsOptions;
+};
+
+
+export type LearningPathStartedByArgs = {
+  options: LearningPathStartedByOptions;
 };
 
 export type LoginResponse = {
@@ -652,6 +679,20 @@ export type DeleteDomainResponse = {
   success: Scalars['Boolean'];
 };
 
+export type LearningMaterial = {
+  _id: Scalars['String'];
+  tags?: Maybe<Array<LearningMaterialTag>>;
+  rating?: Maybe<Scalars['Float']>;
+  coveredConcepts?: Maybe<LearningMaterialCoveredConceptsResults>;
+  coveredConceptsByDomain?: Maybe<Array<LearningMaterialCoveredConceptsByDomainItem>>;
+  domains?: Maybe<Array<Domain>>;
+};
+
+
+export type LearningMaterialCoveredConceptsArgs = {
+  options: LearningMaterialCoveredConceptsOptions;
+};
+
 export type CreateResourcePayload = {
   name: Scalars['String'];
   type: ResourceType;
@@ -725,12 +766,17 @@ export type CreateLearningPathPayload = {
   name: Scalars['String'];
   key?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  public?: Maybe<Scalars['Boolean']>;
+  durationMs?: Maybe<Scalars['Int']>;
+  tags?: Maybe<Array<Scalars['String']>>;
   resourceItems: Array<CreateLearningPathResourceItem>;
 };
 
 export type UpdateLearningPathPayload = {
   name?: Maybe<Scalars['String']>;
+  public?: Maybe<Scalars['Boolean']>;
   description?: Maybe<Scalars['String']>;
+  durationMs?: Maybe<Scalars['Int']>;
   resourceItems?: Maybe<Array<CreateLearningPathResourceItem>>;
 };
 
@@ -743,6 +789,12 @@ export type DeleteLearningPathResult = {
 export type ComplementaryResourceUpdatedResult = {
   __typename?: 'ComplementaryResourceUpdatedResult';
   resource: Resource;
+  learningPath: LearningPath;
+};
+
+export type LearningPathStartedResult = {
+  __typename?: 'LearningPathStartedResult';
+  user: CurrentUser;
   learningPath: LearningPath;
 };
 
@@ -834,8 +886,8 @@ export enum ResourceMediaType {
   InteractiveContent = 'interactive_content'
 }
 
-export type ResourceTag = {
-  __typename?: 'ResourceTag';
+export type LearningMaterialTag = {
+  __typename?: 'LearningMaterialTag';
   name: Scalars['String'];
 };
 
@@ -845,28 +897,19 @@ export type ConsumedResource = {
   consumedAt?: Maybe<Scalars['DateTime']>;
 };
 
-export type ResourceCoveredConceptsResults = {
-  __typename?: 'ResourceCoveredConceptsResults';
+export type LearningMaterialCoveredConceptsResults = {
+  __typename?: 'LearningMaterialCoveredConceptsResults';
   items: Array<Concept>;
 };
 
-export type ResourceCoveredConceptsOptions = {
+export type LearningMaterialCoveredConceptsOptions = {
   pagination?: Maybe<PaginationOptions>;
 };
 
-export type ResourceCoveredConceptsByDomainItem = {
-  __typename?: 'ResourceCoveredConceptsByDomainItem';
+export type LearningMaterialCoveredConceptsByDomainItem = {
+  __typename?: 'LearningMaterialCoveredConceptsByDomainItem';
   domain: Domain;
   coveredConcepts: Array<Concept>;
-};
-
-export type ResourceDomainsResults = {
-  __typename?: 'ResourceDomainsResults';
-  items: Array<Domain>;
-};
-
-export type ResourceDomainsOptions = {
-  pagination?: Maybe<PaginationOptions>;
 };
 
 export type ConceptCoveredByResourcesResults = {
@@ -900,6 +943,21 @@ export type LearningPathResourceItem = {
   resource: Resource;
   learningPathId: Scalars['String'];
   description?: Maybe<Scalars['String']>;
+};
+
+export type LearningPathStarted = {
+  __typename?: 'LearningPathStarted';
+  startedAt: Scalars['DateTime'];
+};
+
+export type LearningPathStartedByResults = {
+  __typename?: 'LearningPathStartedByResults';
+  items: Array<LearningPathStartedByItem>;
+  count: Scalars['Int'];
+};
+
+export type LearningPathStartedByOptions = {
+  pagination?: Maybe<PaginationOptions>;
 };
 
 export type SetResourcesConsumedPayloadResourcesField = {
@@ -953,6 +1011,12 @@ export type ConceptReferencesConcept = {
 export type ConceptBelongsToConcept = {
   __typename?: 'ConceptBelongsToConcept';
   index: Scalars['Float'];
+};
+
+export type LearningPathStartedByItem = {
+  __typename?: 'LearningPathStartedByItem';
+  user: User;
+  startedAt: Scalars['DateTime'];
 };
 
 export enum DomainConceptSortingEntities {

@@ -43,7 +43,8 @@ export const removeComplementaryResourceFromLearningPath = gql`
 export const LearningPathComplementaryResourcesManager: React.FC<{
   learningPathId: string;
   complementaryResources: ResourceDataFragment[];
-}> = ({ learningPathId, complementaryResources }) => {
+  editMode?: boolean;
+}> = ({ learningPathId, complementaryResources, editMode }) => {
   const [addComplementaryResource] = useAddComplementaryResourceToLearningPathMutation();
   const [removeComplementaryResource] = useRemoveComplementaryResourceFromLearningPathMutation();
   return (
@@ -55,6 +56,7 @@ export const LearningPathComplementaryResourcesManager: React.FC<{
       removeSubResource={(resource) =>
         removeComplementaryResource({ variables: { learningPathId, resourceId: resource._id } })
       }
+      editMode={editMode}
     />
   );
 };

@@ -6,6 +6,11 @@ export type DomainDataFragment = (
   & Pick<Types.Domain, '_id' | 'name' | 'key' | 'description'>
 );
 
+export type DomainLinkDataFragment = (
+  { __typename?: 'Domain' }
+  & Pick<Types.Domain, '_id' | 'name' | 'key'>
+);
+
 export type DomainWithConceptsDataFragment = (
   { __typename?: 'Domain' }
   & Pick<Types.Domain, '_id' | 'name' | 'key' | 'description'>
