@@ -62,6 +62,18 @@ export const useSetResourceConsumed = ({
           resourceId: resource._id,
           consumed,
         },
+        optimisticResponse: {
+          __typename: 'Mutation',
+          setResourcesConsumed: [
+            {
+              ...resource,
+              consumed: {
+                __typename: 'ConsumedResource',
+                consumedAt: consumed ? Date.now() : null,
+              },
+            },
+          ],
+        },
       }),
       resource.coveredConceptsByDomain && consumed
         ? setConceptKnown({

@@ -60,11 +60,7 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
               </Flex>
               <Flex direction="row">
                 <Box flexGrow={1}>
-                  <ResourcePreviewCard
-                    borderTopColor="gray.200"
-                    resource={resource}
-                    onResourceConsumed={(r) => console.log('consumed r')}
-                  />
+                  <ResourcePreviewCard borderTopColor="gray.200" resource={resource} />
                 </Box>
                 {editMode && (
                   <Flex
