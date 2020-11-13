@@ -24,13 +24,7 @@ export const ResourcePreviewCardList: React.FC<{
       </Flex>
     );
   return (
-    <Flex
-      borderTop="1px solid"
-      borderTopColor="gray.200"
-      direction="column"
-      alignItems="stretch"
-      backgroundColor="backgroundColor.0"
-    >
+    <Flex direction="column" alignItems="stretch" backgroundColor="backgroundColor.0">
       {isLoading ? (
         <Flex
           backgroundColor="backgroundColor.0"
@@ -46,8 +40,10 @@ export const ResourcePreviewCardList: React.FC<{
           <Text fontStyle="italic">Finding the most adapted learning resources...</Text>
         </Flex>
       ) : (
-        resourcePreviews.map((preview) => (
+        resourcePreviews.map((preview, idx) => (
           <ResourcePreviewCard
+            inCompactList
+            firstItemInCompactList={idx === 0}
             key={preview._id}
             domainKey={domainKey}
             resource={preview}

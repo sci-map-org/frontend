@@ -29,7 +29,7 @@ export const LearningMaterialCardContainer: React.FC<{
       direction="row"
       alignItems="stretch"
       borderWidth={1}
-      borderTopColor={inCompactList && firstItemInCompactList !== false ? 'white' : borderColor} // hacky stuff
+      borderTopColor={inCompactList ? (firstItemInCompactList ? borderColor : 'white') : borderColor} // hacky stuff
       borderLeftColor={borderColor}
       borderRightColor={borderColor}
       borderBottomColor={borderColor}
@@ -42,7 +42,7 @@ export const LearningMaterialCardContainer: React.FC<{
       <Center w={leftBlockWidth}>
         <BoxBlockDefaultClickPropagation>{renderCenterLeft}</BoxBlockDefaultClickPropagation>
       </Center>
-      <Flex direction="column" alignItems="stretch">
+      <Flex direction="column" alignItems="stretch" flexGrow={1}>
         {children}
         {renderBottom}
       </Flex>
