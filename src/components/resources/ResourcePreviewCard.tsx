@@ -2,6 +2,7 @@ import {
   Box,
   BoxProps,
   Button,
+  Center,
   Flex,
   IconButton,
   Link,
@@ -16,13 +17,11 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/core';
-import { ArrowDownIcon, ArrowUpIcon, EditIcon, SettingsIcon } from '@chakra-ui/icons';
+import { EditIcon, SettingsIcon } from '@chakra-ui/icons';
 import { flatten } from 'lodash';
-import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
-import { useVoteResourceMutation } from '../../graphql/resources/resources.operations.generated';
-import { ResourceVoteValue } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { EditResourcePageInfo } from '../../pages/resources/EditResourcePage';
@@ -39,6 +38,7 @@ import { DurationViewer } from './elements/Duration';
 import { ResourceCompletedCheckbox } from './elements/ResourceCompletedCheckbox';
 import { shortenDescription } from './elements/ResourceDescription';
 import { ResourceTypeBadge } from './elements/ResourceType';
+import { ResourceUpvoter } from './elements/ResourceUpvoter';
 import { ResourceUrlLink } from './elements/ResourceUrl';
 import { LearningMaterialCoveredConceptsByDomainViewer } from './LearningMaterialCoveredConceptsByDomainViewer';
 import { LearningMaterialDomainAndCoveredConceptsSelector } from './LearningMaterialDomainAndCoveredConceptsSelector';
@@ -164,43 +164,12 @@ const LeftBlock: React.FC<{ resource: ResourcePreviewDataFragment; isLoading?: b
   resource,
   isLoading,
 }) => {
-  const [voteResource] = useVoteResourceMutation();
-  const unauthentificatedModalDisclosure = useUnauthentificatedModal();
-  const { currentUser } = useCurrentUser();
   return (
-    <Flex direction="column" px={5} py={1} justifyContent="center" alignItems="center">
+    <Center w="100px">
       <BoxBlockDefaultClickPropagation>
-        <IconButton
-          size="xs"
-          aria-label="upvote"
-          icon={<ArrowUpIcon />}
-          variant="ghost"
-          my={0}
-          isDisabled={isLoading}
-          onClick={() => {
-            if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
-            voteResource({ variables: { resourceId: resource._id, value: ResourceVoteValue.Up } });
-          }}
-        />
+        <ResourceUpvoter resource={resource} isLoading={isLoading} />
       </BoxBlockDefaultClickPropagation>
-      <Skeleton isLoaded={!isLoading}>
-        <Text>{resource.upvotes}</Text>
-      </Skeleton>
-      <BoxBlockDefaultClickPropagation>
-        <IconButton
-          size="xs"
-          aria-label="downvote"
-          icon={<ArrowDownIcon />}
-          variant="ghost"
-          my={0}
-          isDisabled={isLoading}
-          onClick={() => {
-            if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
-            voteResource({ variables: { resourceId: resource._id, value: ResourceVoteValue.Down } });
-          }}
-        />
-      </BoxBlockDefaultClickPropagation>
-    </Flex>
+    </Center>
   );
 };
 
@@ -248,30 +217,13 @@ const BottomBlock: React.FC<{
   resource: ResourcePreviewDataFragment;
   isLoading?: boolean;
 }> = ({ domainKey, resource, isLoading }) => {
-  const [tagEditorMode, setTagEditorMode] = useState(false);
   const [coveredConceptsEditorMode, setCoveredConceptsEditorMode] = useState(false);
-  const wrapperRef = useRef(null);
   const { currentUser } = useCurrentUser();
   const unauthentificatedModalDisclosure = useUnauthentificatedModal();
-  const useOutsideAlerter = (ref: React.MutableRefObject<any>) => {
-    useEffect(() => {
-      function handleClickOutside(event: any) {
-        if (ref.current && !ref.current.contains(event.target)) {
-          setTagEditorMode(false);
-        }
-      }
-
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
-      };
-    }, [ref]);
-  };
 
   const domainCoveredConcepts = resource.coveredConceptsByDomain?.filter(
     (d) => !domainKey || d.domain.key === domainKey
   );
-  useOutsideAlerter(wrapperRef);
   return (
     <Flex pb={2} pt={2} flexWrap="wrap">
       <BoxBlockDefaultClickPropagation>

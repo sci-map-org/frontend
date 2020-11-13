@@ -67,7 +67,7 @@ export const LearningMaterialTagsStatelessEditor: React.FC<{
         />
       </Box>
       {selectedTags.map((selectedTag) => (
-        <Box>
+        <Box key={selectedTag.name}>
           <Tag size={size} colorScheme="gray" key={selectedTag.name}>
             <TagLabel>{selectedTag.name}</TagLabel>
             <TagCloseButton

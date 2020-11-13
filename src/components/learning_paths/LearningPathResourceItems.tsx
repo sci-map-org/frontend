@@ -31,17 +31,7 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
   return (
     <Flex direction="column" alignItems="stretch">
       <Stack direction="column" spacing={3}>
-        <Heading size="sm" textAlign="center">
-          Resources
-        </Heading>
-
-        <Flex
-          borderTop="1px solid"
-          borderTopColor="gray.200"
-          direction="column"
-          alignItems="stretch"
-          backgroundColor="backgroundColor.0"
-        >
+        <Flex direction="column" alignItems="stretch" backgroundColor="backgroundColor.0">
           {resourceItems.map(({ resource, description }) => (
             <Flex key={resource._id} direction="column" justifyContent="stretch">
               <Flex direction="row" pt={3}>
