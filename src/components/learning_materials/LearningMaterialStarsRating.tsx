@@ -13,9 +13,9 @@ import { StarIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import { useState } from 'react';
 import ReactStars from 'react-rating-stars-component';
-import { useRateLearningMaterialMutation } from './ResourceStarsRating.generated';
+import { useRateLearningMaterialMutation } from './LearningMaterialStarsRating.generated';
 
-export const ResourceStarsRating: React.FC<{ value?: number | null; pxSize?: number }> = ({ value, pxSize = 18 }) => {
+export const StarsRatingViewer: React.FC<{ value?: number | null; pxSize?: number }> = ({ value, pxSize = 18 }) => {
   return value ? (
     <Stack direction="row" spacing="2px" alignItems="baseline" px="2px">
       <StarIcon boxSize={`${pxSize + 1}px`} color="rgb(255, 215, 0)" />
@@ -32,7 +32,7 @@ export const ResourceStarsRating: React.FC<{ value?: number | null; pxSize?: num
 /**
  * TODO: show user's own rating on button, show star as yellow then
  */
-export const ResourceStarsRater: React.FC<{ learningMaterialId: string } & Omit<ButtonProps, 'onClick'>> = ({
+export const LearningMaterialStarsRater: React.FC<{ learningMaterialId: string } & Omit<ButtonProps, 'onClick'>> = ({
   learningMaterialId,
   ...props
 }) => {
@@ -49,7 +49,7 @@ export const ResourceStarsRater: React.FC<{ learningMaterialId: string } & Omit<
       <PopoverContent w="146px" zIndex={4}>
         <PopoverArrow />
         <PopoverBody>
-          <ResourceStarsRatingSelector learningMaterialId={learningMaterialId} onSelected={() => close()} />
+          <LearningMaterialStarsRatingSelector learningMaterialId={learningMaterialId} onSelected={() => close()} />
         </PopoverBody>
       </PopoverContent>
     </Popover>
@@ -65,7 +65,7 @@ export const rateLearningMaterial = gql`
   }
 `;
 
-export const ResourceStarsRatingSelector: React.FC<{
+export const LearningMaterialStarsRatingSelector: React.FC<{
   learningMaterialId: string;
   onSelected?: (selectedRating: number) => void;
 }> = ({ learningMaterialId, onSelected }) => {

@@ -33,7 +33,10 @@ import { LearningPathResourceItemsManager } from '../../components/learning_path
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { EditableTextarea } from '../../components/lib/inputs/EditableTextarea';
 import { EditableDuration } from '../../components/resources/elements/Duration';
-import { ResourceStarsRater, ResourceStarsRating } from '../../components/resources/elements/ResourceStarsRating';
+import {
+  LearningMaterialStarsRater,
+  StarsRatingViewer,
+} from '../../components/learning_materials/LearningMaterialStarsRating';
 import { LearningMaterialCoveredTopics } from '../../components/resources/LearningMaterialCoveredTopics';
 import { UserAvatar, UserAvatarData } from '../../components/users/UserAvatar';
 import { LearningMaterialWithCoveredConceptsByDomainData } from '../../graphql/learning_materials/learning_materials.fragments';
@@ -170,13 +173,13 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
               </Editable>
             </Skeleton>
             <Stack direction="row" spacing={2} alignItems="center">
-              <ResourceStarsRating value={learningPath.rating} />
+              <StarsRatingViewer value={learningPath.rating} />
               {currentUserStartedThePath ? (
-                <ResourceStarsRater learningMaterialId={learningPath._id} isDisabled={loading} />
+                <LearningMaterialStarsRater learningMaterialId={learningPath._id} isDisabled={loading} />
               ) : (
                 !currentUserIsOwner && (
                   <RoleAccess accessRule="contributorOrAdmin">
-                    <ResourceStarsRater learningMaterialId={learningPath._id} isDisabled={loading} />
+                    <LearningMaterialStarsRater learningMaterialId={learningPath._id} isDisabled={loading} />
                   </RoleAccess>
                 )
               )}

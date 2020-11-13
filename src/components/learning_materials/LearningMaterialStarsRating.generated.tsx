@@ -1,6 +1,6 @@
-import * as Types from '../../../graphql/types';
+import * as Types from '../../graphql/types';
 
-import * as Operations from './ResourceStarsRating';
+import * as Operations from './LearningMaterialStarsRating';
 import * as Apollo from '@apollo/client';
 export type RateLearningMaterialMutationVariables = Types.Exact<{
   learningMaterialId: Types.Scalars['String'];

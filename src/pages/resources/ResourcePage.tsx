@@ -13,7 +13,10 @@ import { InternalLink } from '../../components/navigation/InternalLink';
 import { DurationViewer } from '../../components/resources/elements/Duration';
 import { ResourceDescription } from '../../components/resources/elements/ResourceDescription';
 import { ResourceMediaTypeBadge } from '../../components/resources/elements/ResourceMediaType';
-import { ResourceStarsRater, ResourceStarsRating } from '../../components/resources/elements/ResourceStarsRating';
+import {
+  LearningMaterialStarsRater,
+  StarsRatingViewer,
+} from '../../components/learning_materials/LearningMaterialStarsRating';
 import { ResourceTypeBadge } from '../../components/resources/elements/ResourceType';
 import { ResourceUrlLink } from '../../components/resources/elements/ResourceUrl';
 import { LearningMaterialCoveredTopics } from '../../components/resources/LearningMaterialCoveredTopics';
@@ -146,9 +149,9 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
             <DurationViewer value={resource.durationMs} />
           </Stack>
           <Stack direction="row" spacing={2} alignItems="center">
-            <ResourceStarsRating value={resource.rating} />
+            <StarsRatingViewer value={resource.rating} />
             <RoleAccess accessRule="contributorOrAdmin">
-              <ResourceStarsRater learningMaterialId={resource._id} isDisabled={loading} />
+              <LearningMaterialStarsRater learningMaterialId={resource._id} isDisabled={loading} />
             </RoleAccess>
           </Stack>
         </Flex>

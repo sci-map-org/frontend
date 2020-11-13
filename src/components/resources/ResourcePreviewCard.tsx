@@ -15,7 +15,7 @@ import {
   Skeleton,
   Stack,
   Text,
-  Tooltip
+  Tooltip,
 } from '@chakra-ui/core';
 import { ArrowDownIcon, ArrowUpIcon, EditIcon, SettingsIcon } from '@chakra-ui/icons';
 import { flatten } from 'lodash';
@@ -38,7 +38,7 @@ import { LearningMaterialDomainCoveredConceptsSelector } from './CoveredConcepts
 import { DurationViewer } from './elements/Duration';
 import { ResourceCompletedCheckbox } from './elements/ResourceCompletedCheckbox';
 import { shortenDescription } from './elements/ResourceDescription';
-import { ResourceStarsRater, ResourceStarsRating } from './elements/ResourceStarsRating';
+import { LearningMaterialStarsRater, StarsRatingViewer } from '../learning_materials/LearningMaterialStarsRating';
 import { ResourceTypeBadge } from './elements/ResourceType';
 import { ResourceUrlLink } from './elements/ResourceUrl';
 import { LearningMaterialCoveredConceptsByDomainViewer } from './LearningMaterialCoveredConceptsByDomainViewer';
@@ -108,13 +108,13 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
             </Skeleton>
             <Skeleton isLoaded={!isLoading}>
               <Stack spacing={1} direction="row" alignItems="baseline" mr="10px">
-                <ResourceStarsRating value={resource.rating} pxSize={13} />
+                <StarsRatingViewer value={resource.rating} pxSize={13} />
                 <ResourceTypeBadge type={resource.type} />
                 <DurationViewer value={resource.durationMs} />
 
                 <RoleAccess accessRule="contributorOrAdmin">
                   <BoxBlockDefaultClickPropagation>
-                    <ResourceStarsRater
+                    <LearningMaterialStarsRater
                       learningMaterialId={resource._id}
                       size="xs"
                       color="gray.500"
@@ -379,11 +379,7 @@ const BottomBlock: React.FC<{
                           coveredConcepts={domainCoveredConcepts[0].coveredConcepts}
                         />
                       ) : (
-                        <LearningMaterialDomainAndCoveredConceptsSelector
-                          learningMaterial={resource}
-                          // resourceId={resource._id}
-                          // coveredConcepts={coveredConcepts}
-                        />
+                        <LearningMaterialDomainAndCoveredConceptsSelector learningMaterial={resource} />
                       )
                     ) : domainCoveredConcepts.length === 1 ? (
                       <Stack direction="column">
