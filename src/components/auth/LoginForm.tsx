@@ -3,10 +3,11 @@ import { useState } from 'react';
 import { useLogin } from '../../graphql/users/users.hooks';
 import { PasswordInput } from '../lib/inputs/PasswordInput';
 import { GoogleAuthButton } from './GoogleAuthButton';
-import { DiscourseSso, LoginResponse } from '../../graphql/types';
+import { DiscourseSso } from '../../graphql/types';
+import { LoginResponseDataFragment } from '../../graphql/users/users.fragments.generated';
 
 export const LoginForm: React.FC<{
-  onSuccessfulLogin?: (loginResponse: LoginResponse) => void;
+  onSuccessfulLogin?: (loginResponse: LoginResponseDataFragment) => void;
   discourseSSO?: DiscourseSso;
 }> = ({ onSuccessfulLogin, discourseSSO }) => {
   const [email, setEmail] = useState('');
