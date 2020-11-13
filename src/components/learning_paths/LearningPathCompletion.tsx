@@ -54,9 +54,14 @@ export const LearningPathCompletion: React.FC<LearningPathCompletionProps> = ({ 
   );
 };
 
-const sizes: { [key in 'sm' | 'lg']: { progressWidth: string | number } } = {
-  sm: { progressWidth: '56px' },
-  lg: { progressWidth: '96px' },
+const sizes: {
+  [key in 'sm' | 'lg']: {
+    progressWidth: string | number;
+    buttonSize: string;
+  };
+} = {
+  sm: { progressWidth: '56px', buttonSize: 'md' },
+  lg: { progressWidth: '96px', buttonSize: 'lg' },
 };
 
 export const LearningPathCircularCompletion: React.FC<{
@@ -96,7 +101,7 @@ export const LearningPathCircularCompletion: React.FC<{
       aria-label="start learning path"
       icon={<FaPlay />}
       colorScheme="teal"
-      size={size}
+      size={sizes[size].buttonSize}
       isRound
       onClick={() => {
         if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
