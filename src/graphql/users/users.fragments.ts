@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
-import { PublicUserDataFragment } from './users.fragments.generated';
 import { UserRole } from '../types';
+import { PublicUserDataFragment } from './users.fragments.generated';
 
 export const CurrentUserData = gql`
   fragment CurrentUserData on CurrentUser {
@@ -32,3 +32,14 @@ export const generatePublicUserData = (): PublicUserDataFragment => ({
   displayName: 'Concept Name',
   role: UserRole.User,
 });
+
+export const LoginResponseData = gql`
+  fragment LoginResponseData on LoginResponse {
+    jwt
+    currentUser {
+      ...CurrentUserData
+    }
+    redirectUrl
+  }
+  ${CurrentUserData}
+`;

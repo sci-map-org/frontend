@@ -1,6 +1,5 @@
 import gql from 'graphql-tag';
-
-import { CurrentUserData } from './users.fragments';
+import { CurrentUserData, LoginResponseData } from './users.fragments';
 
 export const getCurrentUser = gql`
   query getCurrentUser {
@@ -14,27 +13,19 @@ export const getCurrentUser = gql`
 export const login = gql`
   mutation login($email: String!, $password: String!, $discourseSSO: DiscourseSSO) {
     login(email: $email, password: $password, discourseSSO: $discourseSSO) {
-      jwt
-      currentUser {
-        ...CurrentUserData
-      }
-      redirectUrl
+      ...LoginResponseData
     }
   }
-  ${CurrentUserData}
+  ${LoginResponseData}
 `;
 
 export const loginGoogle = gql`
   mutation loginGoogle($idToken: String!, $discourseSSO: DiscourseSSO) {
     loginGoogle(idToken: $idToken, discourseSSO: $discourseSSO) {
-      jwt
-      currentUser {
-        ...CurrentUserData
-      }
-      redirectUrl
+      ...LoginResponseData
     }
   }
-  ${CurrentUserData}
+  ${LoginResponseData}
 `;
 
 export const register = gql`

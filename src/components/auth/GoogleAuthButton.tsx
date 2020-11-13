@@ -1,13 +1,14 @@
-import GoogleLogin, { GoogleLoginResponse } from 'react-google-login';
-import { useLoginGoogle } from '../../graphql/users/users.hooks';
 import getConfig from 'next/config';
-import { LoginResponse, DiscourseSso } from '../../graphql/types';
+import GoogleLogin, { GoogleLoginResponse } from 'react-google-login';
+import { DiscourseSso } from '../../graphql/types';
+import { LoginResponseDataFragment } from '../../graphql/users/users.fragments.generated';
+import { useLoginGoogle } from '../../graphql/users/users.hooks';
 
 const { publicRuntimeConfig } = getConfig();
 
 export const GoogleAuthButton: React.FC<{
   buttonText: string;
-  onSuccessfulLogin: (loginResponse: LoginResponse) => void;
+  onSuccessfulLogin: (loginResponse: LoginResponseDataFragment) => void;
   onFailedLogin: (googleUser: GoogleLoginResponse) => void;
   onFailure: (err: any) => void;
   discourseSSO?: DiscourseSso;
