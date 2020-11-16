@@ -1,4 +1,13 @@
-import { Box, Center, CircularProgress, CircularProgressLabel, Flex, IconButton, Wrap } from '@chakra-ui/react';
+import {
+  Box,
+  Center,
+  CircularProgress,
+  CircularProgressLabel,
+  Flex,
+  IconButton,
+  Wrap,
+  WrapItem,
+} from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useMemo } from 'react';
 import { FaPlay } from 'react-icons/fa';
@@ -42,7 +51,7 @@ export const LearningPathCompletion: React.FC<LearningPathCompletionProps> = ({ 
       </Center>
       <Wrap spacing={3} mt={3} justify="center">
         {resourceItems.map((resourceItem) => (
-          <Box
+          <WrapItem
             key={resourceItem.resource._id}
             w={6}
             h={3}

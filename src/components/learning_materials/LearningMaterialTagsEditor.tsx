@@ -1,4 +1,15 @@
-import { Box, IconButton, Skeleton, Stack, Tag, TagCloseButton, TagLabel, Tooltip, Wrap } from '@chakra-ui/react';
+import {
+  Box,
+  IconButton,
+  Skeleton,
+  Stack,
+  Tag,
+  TagCloseButton,
+  TagLabel,
+  Tooltip,
+  Wrap,
+  WrapItem,
+} from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import { uniqBy } from 'lodash';
@@ -22,9 +33,11 @@ export const SelectedTagsViewer: React.FC<{
   return (
     <Wrap fontWeight={250} pb={pb} as="span" justify={justify}>
       {selectedTags.map((tag, idx) => (
-        <Tag size="sm" colorScheme="gray" key={idx} as="span">
-          <TagLabel>{tag.name}</TagLabel>
-        </Tag>
+        <WrapItem>
+          <Tag size="sm" colorScheme="gray" key={idx} as="span">
+            <TagLabel>{tag.name}</TagLabel>
+          </Tag>
+        </WrapItem>
       ))}
       {renderEnd && renderEnd()}
     </Wrap>
@@ -54,7 +67,7 @@ export const LearningMaterialTagsStatelessEditor: React.FC<{
 }) => {
   return (
     <Wrap spacing={2} justify={justify} align="flex-end">
-      <Box width={inputWidth}>
+      <WrapItem width={inputWidth}>
         <LearningMaterialTagSelector
           placeholder={placeholder}
           isDisabled={isDisabled}
@@ -65,9 +78,9 @@ export const LearningMaterialTagsStatelessEditor: React.FC<{
             onSelect && onSelect({ name: r.name });
           }}
         />
-      </Box>
+      </WrapItem>
       {selectedTags.map((selectedTag) => (
-        <Box key={selectedTag.name}>
+        <WrapItem key={selectedTag.name}>
           <Tag size={size} colorScheme="gray" key={selectedTag.name}>
             <TagLabel>{selectedTag.name}</TagLabel>
             <TagCloseButton
@@ -78,7 +91,7 @@ export const LearningMaterialTagsStatelessEditor: React.FC<{
               }}
             />
           </Tag>
-        </Box>
+        </WrapItem>
       ))}
     </Wrap>
   );
