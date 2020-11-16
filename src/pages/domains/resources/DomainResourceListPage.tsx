@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/core';
+import { Box } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { PageLayout } from '../../../components/layout/PageLayout';
 import { ResourceList } from '../../../components/resources/ResourceList';

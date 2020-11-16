@@ -1,4 +1,4 @@
-import { Flex } from '@chakra-ui/core';
+import { Flex } from '@chakra-ui/react';
 import { useState } from 'react';
 import { ArticleViewerDataFragment } from '../../graphql/articles/articles.fragments.generated';
 import { useGetArticleByKey } from '../../graphql/articles/articles.hooks';

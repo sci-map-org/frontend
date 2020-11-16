@@ -15,7 +15,7 @@ import {
   TagCloseButton,
   TagLabel,
   Text,
-} from '@chakra-ui/core';
+} from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import { values, without } from 'lodash';

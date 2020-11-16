@@ -13,7 +13,7 @@ import {
   ModalOverlay,
   Stack,
   useDisclosure,
-} from '@chakra-ui/core';
+} from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import Router from 'next/router';
 import React, { ReactElement, useEffect, useState } from 'react';

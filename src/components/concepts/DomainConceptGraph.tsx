@@ -1,5 +1,5 @@
 import { GetDomainByKeyDomainPageQuery } from '../../pages/domains/DomainPage.generated';
-import { Flex, Text } from '@chakra-ui/core';
+import { Flex, Text } from '@chakra-ui/react';
 import { HorizontalConceptMappingVisualisation } from './ConceptMappingVisualisation';
 
 interface DomainConceptGraphProps {

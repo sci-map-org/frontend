@@ -1,4 +1,4 @@
-import { Flex } from '@chakra-ui/core';
+import { Flex } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce/lib';
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';

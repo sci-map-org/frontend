@@ -10,7 +10,7 @@ import {
   ListItem,
   Stack,
   Text,
-} from '@chakra-ui/core';
+} from '@chakra-ui/react';
 import { useState } from 'react';
 import { validateEmail } from '../../util/email.util';
 import { PasswordInput } from '../lib/inputs/PasswordInput';

@@ -1,4 +1,4 @@
-import { Flex, Box } from '@chakra-ui/core';
+import { Flex, Box } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 
 export const ArticleLayout: React.FC<{ renderLeft: ReactNode; renderRight: ReactNode }> = ({

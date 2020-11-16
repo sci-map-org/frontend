@@ -1,4 +1,4 @@
-import { InputProps, InputGroup, Input, InputRightElement, Button } from '@chakra-ui/core';
+import { InputProps, InputGroup, Input, InputRightElement, Button } from '@chakra-ui/react';
 import { useState } from 'react';
 
 export const PasswordInput: React.FC<InputProps> = (props) => {

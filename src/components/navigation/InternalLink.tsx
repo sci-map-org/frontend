@@ -1,4 +1,4 @@
-import { Link, Button, LinkProps, ButtonProps } from '@chakra-ui/core';
+import { Link, Button, LinkProps, ButtonProps } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';

@@ -1,4 +1,4 @@
-import { Box, Flex, IconButton, Skeleton, Stack, Text } from '@chakra-ui/core';
+import { Box, Flex, IconButton, Skeleton, Stack, Text } from '@chakra-ui/react';
 import { MinusIcon } from '@chakra-ui/icons';
 import { differenceBy } from 'lodash';
 import { useSearchDomainsLazyQuery } from '../../graphql/domains/domains.operations.generated';

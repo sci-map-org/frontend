@@ -1,4 +1,4 @@
-import { Box, Divider, Link, Text } from '@chakra-ui/core';
+import { Box, Divider, Link, Text } from '@chakra-ui/react';
 import Router from 'next/router';
 import { RegisterForm } from '../components/auth/RegisterForm';
 import { RoleAccess } from '../components/auth/RoleAccess';

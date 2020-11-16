@@ -10,7 +10,7 @@ import {
   ModalHeader,
   ModalOverlay,
   useDisclosure,
-} from '@chakra-ui/core';
+} from '@chakra-ui/react';
 import { useUpdateLearningPathMutation } from '../../graphql/learning_paths/learning_paths.operations.generated';
 import { LearningPath } from '../../graphql/types';
 

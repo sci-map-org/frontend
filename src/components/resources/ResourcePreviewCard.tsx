@@ -16,7 +16,7 @@ import {
   Skeleton,
   Stack,
   Text,
-} from '@chakra-ui/core';
+} from '@chakra-ui/react';
 import { EditIcon, SettingsIcon } from '@chakra-ui/icons';
 import { flatten } from 'lodash';
 import React, { ReactElement, useState } from 'react';

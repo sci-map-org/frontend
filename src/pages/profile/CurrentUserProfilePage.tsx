@@ -1,4 +1,4 @@
-import { Checkbox, Stack, Text } from '@chakra-ui/core';
+import { Checkbox, Stack, Text } from '@chakra-ui/react';
 import NoSSR from 'react-no-ssr';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { UserRole } from '../../graphql/types';

@@ -1,4 +1,4 @@
-import { Box, Flex, Stack } from '@chakra-ui/core';
+import { Box, Flex, Stack } from '@chakra-ui/react';
 import { ReactElement } from 'react';
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { InternalLink } from '../navigation/InternalLink';

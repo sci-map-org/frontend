@@ -1,4 +1,4 @@
-import { Flex, Heading, Image, Link, List, ListItem, Stack, Text } from '@chakra-ui/core';
+import { Flex, Heading, Image, Link, List, ListItem, Stack, Text } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 import ReactMarkdown from 'react-markdown';
 import breaks from 'remark-breaks';

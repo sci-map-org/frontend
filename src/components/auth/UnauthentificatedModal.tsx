@@ -10,7 +10,7 @@ import {
   ModalOverlay,
   Text,
   useDisclosure,
-} from '@chakra-ui/core';
+} from '@chakra-ui/react';
 import { createContext, useContext, useState } from 'react';
 import { LoginForm } from './LoginForm';
 import { RegisterForm } from './RegisterForm';

@@ -1,4 +1,4 @@
-import { Box, Input, InputProps, Text } from '@chakra-ui/core';
+import { Box, Input, InputProps, Text } from '@chakra-ui/react';
 import { useState, PropsWithChildren } from 'react';
 import Autosuggest from 'react-autosuggest';
 

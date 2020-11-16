@@ -12,7 +12,7 @@ import {
   ModalOverlay,
   Text,
   useDisclosure,
-} from '@chakra-ui/core';
+} from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 
 type DeleteButtonWithConfirmationProps = (

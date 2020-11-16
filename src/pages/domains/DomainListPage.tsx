@@ -1,4 +1,4 @@
-import { Box, Flex, IconButton, Stack } from '@chakra-ui/core';
+import { Box, Flex, IconButton, Stack } from '@chakra-ui/react';
 import { SettingsIcon } from '@chakra-ui/icons';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';

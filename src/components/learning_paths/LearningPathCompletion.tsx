@@ -1,4 +1,4 @@
-import { Box, Center, CircularProgress, CircularProgressLabel, Flex, IconButton, Wrap } from '@chakra-ui/core';
+import { Box, Center, CircularProgress, CircularProgressLabel, Flex, IconButton, Wrap } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useMemo } from 'react';
 import { FaPlay } from 'react-icons/fa';

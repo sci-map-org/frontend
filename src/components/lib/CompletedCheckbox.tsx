@@ -1,4 +1,4 @@
-import { IconButton, Tooltip, IconButtonProps } from '@chakra-ui/core';
+import { IconButton, Tooltip, IconButtonProps } from '@chakra-ui/react';
 import { CheckCircleIcon } from '@chakra-ui/icons';
 
 const sizeMapping = {

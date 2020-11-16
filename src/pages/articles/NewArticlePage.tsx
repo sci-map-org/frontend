@@ -1,4 +1,4 @@
-import { Box, Button, Input, Text } from '@chakra-ui/core';
+import { Box, Button, Input, Text } from '@chakra-ui/react';
 import { NextPage } from 'next';
 import dynamic from 'next/dynamic';
 import Router from 'next/router';

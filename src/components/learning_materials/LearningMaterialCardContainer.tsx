@@ -1,4 +1,4 @@
-import { Center, Flex, FlexProps } from '@chakra-ui/core';
+import { Center, Flex, FlexProps } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 import { BoxBlockDefaultClickPropagation } from '../resources/ResourcePreviewCard';
 

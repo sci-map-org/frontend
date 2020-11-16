@@ -8,7 +8,7 @@ import {
   Heading,
   Stack,
   Text,
-} from '@chakra-ui/core';
+} from '@chakra-ui/react';
 import { useState } from 'react';
 import { useLoginGoogle } from '../../graphql/users/users.hooks';
 import { useRegisterGoogleMutation, useRegisterMutation } from '../../graphql/users/users.operations.generated';

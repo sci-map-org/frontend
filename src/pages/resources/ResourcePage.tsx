@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Skeleton, Stack, Text } from '@chakra-ui/core';
+import { Box, Button, Flex, Skeleton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import Router, { useRouter } from 'next/router';
 import { Access } from '../../components/auth/Access';

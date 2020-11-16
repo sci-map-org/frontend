@@ -1,4 +1,4 @@
-import { IconProps, Icon } from '@chakra-ui/core';
+import { IconProps, Icon } from '@chakra-ui/react';
 
 export const MapIcon = (props: IconProps) => (
   <Icon viewBox="0 0 512 512" {...props}>

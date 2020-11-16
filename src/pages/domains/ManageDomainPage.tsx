@@ -1,4 +1,4 @@
-import { Box, IconButton, Stack, Text } from '@chakra-ui/core';
+import { Box, IconButton, Stack, Text } from '@chakra-ui/react';
 import { EditIcon, ExternalLinkIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import { RoleAccess } from '../../components/auth/RoleAccess';

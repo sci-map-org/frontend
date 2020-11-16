@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, Skeleton, Stack, Text } from '@chakra-ui/core';
+import { Box, Button, IconButton, Skeleton, Stack, Text } from '@chakra-ui/react';
 import { MinusIcon } from '@chakra-ui/icons';
 import { take } from 'lodash';
 import { useState } from 'react';

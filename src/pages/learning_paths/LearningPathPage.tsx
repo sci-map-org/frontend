@@ -11,7 +11,7 @@ import {
   Skeleton,
   Stack,
   Text,
-} from '@chakra-ui/core';
+} from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import Router from 'next/router';

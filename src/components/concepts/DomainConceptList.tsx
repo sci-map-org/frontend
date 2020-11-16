@@ -1,4 +1,4 @@
-import { Box, Collapse, Divider, Flex, IconButton, Skeleton, Stack } from '@chakra-ui/core';
+import { Box, Collapse, Divider, Flex, IconButton, Skeleton, Stack } from '@chakra-ui/react';
 import { AddIcon, MinusIcon } from '@chakra-ui/icons';
 import { remove } from 'lodash';
 import Router from 'next/router';

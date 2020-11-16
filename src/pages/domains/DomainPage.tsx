@@ -1,5 +1,5 @@
 import { NetworkStatus } from '@apollo/react-hooks';
-import { Box, Flex, Heading, IconButton, Skeleton } from '@chakra-ui/core';
+import { Box, Flex, Heading, IconButton, Skeleton } from '@chakra-ui/react';
 import { SettingsIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import { useRouter } from 'next/router';

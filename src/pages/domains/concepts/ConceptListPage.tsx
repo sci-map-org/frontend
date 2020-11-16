@@ -1,4 +1,4 @@
-import { Box, Flex, Stack } from '@chakra-ui/core';
+import { Box, Flex, Stack } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { RoleAccess } from '../../../components/auth/RoleAccess';
 import { ConceptList } from '../../../components/concepts/ConceptList';

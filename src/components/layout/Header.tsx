@@ -15,7 +15,7 @@ import {
   Stack,
   PopoverTrigger,
   Divider,
-} from '@chakra-ui/core';
+} from '@chakra-ui/react';
 import { omit } from 'lodash';
 import getConfig from 'next/config';
 import NextLink from 'next/link';

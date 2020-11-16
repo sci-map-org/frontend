@@ -1,11 +1,10 @@
-import { Box, Button, Divider, Input, Stack, Text } from '@chakra-ui/core';
+import { Box, Button, Divider, Input, Stack, Text } from '@chakra-ui/react';
 import { useState } from 'react';
-import { DiscourseSso, LoginResponse } from '../../graphql/types';
+import { DiscourseSso } from '../../graphql/types';
+import { LoginResponseDataFragment } from '../../graphql/users/users.fragments.generated';
 import { useLogin } from '../../graphql/users/users.hooks';
 import { PasswordInput } from '../lib/inputs/PasswordInput';
 import { GoogleAuthButton } from './GoogleAuthButton';
-import { DiscourseSso } from '../../graphql/types';
-import { LoginResponseDataFragment } from '../../graphql/users/users.fragments.generated';
 
 export const LoginForm: React.FC<{
   onSuccessfulLogin?: (loginResponse: LoginResponseDataFragment) => void;

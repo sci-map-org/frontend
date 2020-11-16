@@ -1,4 +1,4 @@
-import { Badge, Box, Flex, Stack, Text } from '@chakra-ui/core';
+import { Badge, Box, Flex, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { LearningPathData } from '../../graphql/learning_paths/learning_paths.fragments';
 import { LearningPathPageInfo } from '../../pages/learning_paths/LearningPathPage';

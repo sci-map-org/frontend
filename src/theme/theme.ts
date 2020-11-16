@@ -1,4 +1,4 @@
-import { extendTheme } from '@chakra-ui/core';
+import { extendTheme } from '@chakra-ui/react';
 
 export const fonts = {
   main: 'Helvetica Neue,Helvetica,Arial,sans-serif', // menu, titles, etc.

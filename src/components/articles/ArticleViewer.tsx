@@ -1,4 +1,4 @@
-import { Button, Divider, Flex, Heading, Stack } from '@chakra-ui/core';
+import { Button, Divider, Flex, Heading, Stack } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
 import { ArticleViewerDataFragment } from '../../graphql/articles/articles.fragments.generated';
 import { ArticleContentType } from '../../graphql/types';

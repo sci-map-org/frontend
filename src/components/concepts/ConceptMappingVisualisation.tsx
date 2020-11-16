@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/core';
+import { Box } from '@chakra-ui/react';
 import Cytoscape from 'cytoscape';
 import dagre from 'cytoscape-dagre';
 import dynamic from 'next/dynamic';

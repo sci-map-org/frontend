@@ -1,4 +1,4 @@
-import { Heading, Stack, StackProps } from '@chakra-ui/core';
+import { Heading, Stack, StackProps } from '@chakra-ui/react';
 import { LearningMaterialWithCoveredConceptsByDomainDataFragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
 import { RoleAccess, RoleAccessAllowedRule } from '../auth/RoleAccess';
 import { LearningMaterialCoveredConceptsByDomainViewer } from './LearningMaterialCoveredConceptsByDomainViewer';

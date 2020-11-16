@@ -1,4 +1,4 @@
-import { Alert, AlertDescription, AlertIcon, Box, Button, CloseButton, useToast } from '@chakra-ui/core';
+import { Alert, AlertDescription, AlertIcon, Box, Button, CloseButton, useToast } from '@chakra-ui/react';
 import { flatten } from 'lodash';
 import { ReactText } from 'react';
 import { useSetConceptsKnownMutation } from '../concepts/concepts.operations.generated';

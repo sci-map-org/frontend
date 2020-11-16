@@ -7,7 +7,7 @@ import {
   useEditable,
   UseEditableProps,
   useEditableState,
-} from '@chakra-ui/core';
+} from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
 
 export const EditableTextarea: React.FC<

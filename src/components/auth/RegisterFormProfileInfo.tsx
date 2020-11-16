@@ -10,7 +10,7 @@ import {
   Stack,
   Text,
   Tooltip,
-} from '@chakra-ui/core';
+} from '@chakra-ui/react';
 import { CheckIcon, NotAllowedIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import { useEffect, useState } from 'react';

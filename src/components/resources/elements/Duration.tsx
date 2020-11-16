@@ -9,7 +9,7 @@ import {
   InputRightElement,
   Text,
   Tooltip,
-} from '@chakra-ui/core';
+} from '@chakra-ui/react';
 import { EditIcon, QuestionIcon } from '@chakra-ui/icons';
 import humanizeDuration from 'humanize-duration';
 import React, { useCallback, useEffect, useRef, useState } from 'react';

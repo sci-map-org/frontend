@@ -1,4 +1,4 @@
-import { Box, IconButton, Stack, Text } from '@chakra-ui/core';
+import { Box, IconButton, Stack, Text } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { useSearchDomainsLazyQuery } from '../../graphql/domains/domains.operations.generated';

@@ -1,4 +1,4 @@
-import { Box, Flex, Link, Tag, Text } from '@chakra-ui/core';
+import { Box, Flex, Link, Tag, Text } from '@chakra-ui/react';
 
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 
@@ -27,7 +27,7 @@ export const DomainLearningPaths: React.FC<{ domain: DomainDataFragment }> = ({ 
     <Flex direction="column">
       <Text fontSize="2xl">Learning Paths</Text>
       <Flex direction="row" flexWrap="wrap" justifyContent="space-between">
-        {learningPaths.map(learningPath => (
+        {learningPaths.map((learningPath) => (
           <Flex key={learningPath._id} direction="column" borderWidth={1} borderRadius={1} p={1} width="15rem" my={2}>
             <Flex justifyContent="center">
               <Link fontSize="xl">{learningPath.name}</Link>
@@ -37,7 +37,7 @@ export const DomainLearningPaths: React.FC<{ domain: DomainDataFragment }> = ({ 
                 What you'll get out of it:
               </Text>
               <Flex direction="row" flexWrap="wrap">
-                {learningPath.posteriorKnowledgeLevel.map(postkl => (
+                {learningPath.posteriorKnowledgeLevel.map((postkl) => (
                   <Tag key={postkl} size="sm" m={1}>
                     {postkl}
                   </Tag>
@@ -50,7 +50,7 @@ export const DomainLearningPaths: React.FC<{ domain: DomainDataFragment }> = ({ 
                 Expected prior knowledge:
               </Text>
               <Flex direction="row" flexWrap="wrap">
-                {learningPath.priorKnowledgeLevel.map(priorkl => (
+                {learningPath.priorKnowledgeLevel.map((priorkl) => (
                   <Tag key={priorkl} size="sm" m={1}>
                     {priorkl}
                   </Tag>

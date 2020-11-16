@@ -1,4 +1,4 @@
-import { Box, Editable, EditableInput, EditablePreview, Flex, Stack } from '@chakra-ui/core';
+import { Box, Editable, EditableInput, EditablePreview, Flex, Stack } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';

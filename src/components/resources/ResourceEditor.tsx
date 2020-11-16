@@ -1,4 +1,4 @@
-import { Box, Button, ButtonGroup, Flex, FormControl, FormLabel, Input, Stack, Text } from '@chakra-ui/core';
+import { Box, Button, ButtonGroup, Flex, FormControl, FormLabel, Input, Stack, Text } from '@chakra-ui/react';
 import Router from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDeleteResourceMutation } from '../../graphql/resources/resources.operations.generated';

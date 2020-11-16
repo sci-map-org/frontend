@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, IconButton, Stack } from '@chakra-ui/core';
+import { Box, Flex, Heading, IconButton, Stack } from '@chakra-ui/react';
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import { LearningPathWithResourceItemsPreviewDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
 import { useUpdateLearningPathMutation } from '../../graphql/learning_paths/learning_paths.operations.generated';

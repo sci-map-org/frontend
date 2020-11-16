@@ -1,4 +1,4 @@
-import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, CloseButton, Spinner, useToast } from '@chakra-ui/core';
+import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, CloseButton, Spinner, useToast } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';

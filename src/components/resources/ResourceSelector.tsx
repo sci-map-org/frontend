@@ -12,7 +12,7 @@ import {
   ModalOverlay,
   Stack,
   useDisclosure,
-} from '@chakra-ui/core';
+} from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import { ReactElement } from 'react';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';

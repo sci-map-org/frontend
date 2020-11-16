@@ -1,4 +1,4 @@
-import { Box, Divider, Link, Stack, Text } from '@chakra-ui/core';
+import { Box, Divider, Link, Stack, Text } from '@chakra-ui/react';
 import Router, { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { LoginForm } from '../components/auth/LoginForm';

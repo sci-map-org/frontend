@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/core';
+import { Box } from '@chakra-ui/react';
 import { ArticlePreviewDataFragment } from '../../graphql/articles/articles.fragments.generated';
 import { useDeleteArticle } from '../../graphql/articles/articles.hooks';
 import { useCurrentUser } from '../../graphql/users/users.hooks';

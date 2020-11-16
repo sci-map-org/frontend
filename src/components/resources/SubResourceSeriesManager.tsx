@@ -1,4 +1,4 @@
-import { Flex, Heading, IconButton, Stack, Text } from '@chakra-ui/core';
+import { Flex, Heading, IconButton, Stack, Text } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import { last } from 'lodash';

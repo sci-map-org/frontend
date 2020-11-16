@@ -1,4 +1,4 @@
-import { Flex, Spinner, Text } from '@chakra-ui/core';
+import { Flex, Spinner, Text } from '@chakra-ui/react';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { ResourcePreviewCard } from './ResourcePreviewCard';
 

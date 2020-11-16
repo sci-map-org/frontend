@@ -1,4 +1,4 @@
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@chakra-ui/core';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { shortenString } from '../../util/utils';

@@ -1,4 +1,4 @@
-import { Box, Flex, Link, Text } from '@chakra-ui/core';
+import { Box, Flex, Link, Text } from '@chakra-ui/react';
 import Router from 'next/router';
 
 import { PageLayout } from '../components/layout/PageLayout';

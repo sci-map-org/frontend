@@ -1,4 +1,4 @@
-import { Box, Flex, Input, Text } from '@chakra-ui/core';
+import { Box, Flex, Input, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { uniqBy } from 'lodash';
 import { useState } from 'react';

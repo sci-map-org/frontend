@@ -8,7 +8,7 @@ import {
   Link,
   LinkProps,
   Skeleton,
-} from '@chakra-ui/core';
+} from '@chakra-ui/react';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import { ResourcePreviewDataFragment } from '../../../graphql/resources/resources.fragments.generated';

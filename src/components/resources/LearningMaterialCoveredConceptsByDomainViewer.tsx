@@ -1,4 +1,4 @@
-import { Box, Skeleton, Stack } from '@chakra-ui/core';
+import { Box, Skeleton, Stack } from '@chakra-ui/react';
 import { LearningMaterialWithCoveredConceptsByDomainDataFragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
 import { InternalLink } from '../navigation/InternalLink';
 

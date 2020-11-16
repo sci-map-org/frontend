@@ -1,4 +1,4 @@
-import { Box, IconButton, Skeleton, Stack, Tag, TagCloseButton, TagLabel, Tooltip, Wrap } from '@chakra-ui/core';
+import { Box, IconButton, Skeleton, Stack, Tag, TagCloseButton, TagLabel, Tooltip, Wrap } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import { uniqBy } from 'lodash';

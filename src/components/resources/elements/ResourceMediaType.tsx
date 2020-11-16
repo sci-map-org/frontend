@@ -1,4 +1,4 @@
-import { Badge, BadgeProps, FormControl, FormLabel, Select } from '@chakra-ui/core';
+import { Badge, BadgeProps, FormControl, FormLabel, Select } from '@chakra-ui/react';
 import { upperFirst, values } from 'lodash';
 import { ResourceMediaType } from '../../../graphql/types';
 

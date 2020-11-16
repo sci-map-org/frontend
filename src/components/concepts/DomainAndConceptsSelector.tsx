@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, IconButton, Stack, Text } from '@chakra-ui/core';
+import { Box, Flex, Heading, IconButton, Stack, Text } from '@chakra-ui/react';
 import { MinusIcon } from '@chakra-ui/icons';
 import { differenceBy } from 'lodash';
 import { useEffect, useState } from 'react';

@@ -1,4 +1,4 @@
-import { Box, Flex, FlexProps, Heading, Link, Stack, Text, Divider } from '@chakra-ui/core';
+import { Box, Flex, FlexProps, Heading, Link, Stack, Text, Divider } from '@chakra-ui/react';
 import React, { ReactNode } from 'react';
 import { MapIcon } from '../components/lib/icons/MapIcon';
 import { SocialNetworkIcon } from '../components/lib/icons/SocialNetworkIcon';

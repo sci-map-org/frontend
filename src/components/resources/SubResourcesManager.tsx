@@ -1,4 +1,4 @@
-import { Center, Flex, Heading, IconButton, Stack, Text, Wrap } from '@chakra-ui/core';
+import { Center, Flex, Heading, IconButton, Stack, Text, Wrap } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';

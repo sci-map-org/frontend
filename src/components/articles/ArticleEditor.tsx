@@ -1,4 +1,4 @@
-import { Box, Button, ButtonProps, Flex, Heading, Input, Stack } from '@chakra-ui/core';
+import { Box, Button, ButtonProps, Flex, Heading, Input, Stack } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { ArticleViewerDataFragment } from '../../graphql/articles/articles.fragments.generated';

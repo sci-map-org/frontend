@@ -1,4 +1,4 @@
-import { Flex, IconButton, Skeleton, Text } from '@chakra-ui/core';
+import { Flex, IconButton, Skeleton, Text } from '@chakra-ui/react';
 import { ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import React from 'react';

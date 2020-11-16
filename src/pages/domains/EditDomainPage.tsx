@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, Flex, Input, Stack, Textarea } from '@chakra-ui/core';
+import { Button, ButtonGroup, Flex, Input, Stack, Textarea } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import Router from 'next/router';
 import { useState } from 'react';

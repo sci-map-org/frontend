@@ -1,4 +1,4 @@
-import { Avatar, AvatarProps } from '@chakra-ui/core';
+import { Avatar, AvatarProps } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { UserAvatarDataFragment } from './UserAvatar.generated';
 

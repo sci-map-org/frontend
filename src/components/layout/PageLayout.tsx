@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, Skeleton, Text } from '@chakra-ui/core';
+import { Box, Flex, Heading, Skeleton, Text } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { RoleAccessAllowedRule, userHasAccess } from '../auth/RoleAccess';

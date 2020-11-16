@@ -8,7 +8,7 @@ import {
   PopoverTrigger,
   Stack,
   Text,
-} from '@chakra-ui/core';
+} from '@chakra-ui/react';
 import { StarIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import { useState } from 'react';

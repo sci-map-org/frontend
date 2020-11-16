@@ -1,4 +1,4 @@
-import { Box, Button, Heading, Stack, Text } from '@chakra-ui/core';
+import { Box, Button, Heading, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { differenceBy } from 'lodash';
 import Router from 'next/router';

@@ -1,4 +1,4 @@
-import { IconProps, Icon } from '@chakra-ui/core';
+import { IconProps, Icon } from '@chakra-ui/react';
 
 export const UserCentricIcon = (props: IconProps) => (
   <Icon viewBox="0 0 100 100" {...props}>
