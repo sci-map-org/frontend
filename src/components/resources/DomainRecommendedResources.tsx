@@ -23,7 +23,7 @@ import { DependencyList, useEffect, useRef, useState } from 'react';
 import MultiSelect from 'react-multi-select-component';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 import BeatLoader from 'react-spinners/BeatLoader';
-import { useDebounce } from 'use-debounce/lib';
+import { useDebounce } from 'use-debounce';
 import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { DomainResourcesOptions, DomainResourcesSortingType, ResourceType } from '../../graphql/types';

@@ -1,6 +1,6 @@
 import { Flex } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { useDebouncedCallback } from 'use-debounce/lib';
+import { useDebouncedCallback } from 'use-debounce';
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { useSearchResourcesLazyQuery } from '../../graphql/resources/resources.operations.generated';
 import { EntitySelector } from '../lib/selectors/EntitySelector';
@@ -17,7 +17,7 @@ export const ResourceFinder: React.FC<ResourceFinderProps> = ({ onSelect }) => {
 
   const [searchResults, setSearchResults] = useState<ResourceDataFragment[]>([]);
 
-  const [debouncedSearchResourcesLazyQuery] = useDebouncedCallback(
+  const debouncedSearchResourcesLazyQuery = useDebouncedCallback(
     (query: string) => searchResourcesLazyQuery({ variables: { query, options: { pagination: { limit: 10 } } } }),
     300
   );
