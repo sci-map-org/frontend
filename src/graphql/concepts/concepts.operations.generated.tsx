@@ -209,7 +209,7 @@ export type DeleteConceptMutationOptions = Apollo.BaseMutationOptions<DeleteConc
  *   },
  * });
  */
-export function useGetConceptQuery(baseOptions?: Apollo.QueryHookOptions<GetConceptQuery, GetConceptQueryVariables>) {
+export function useGetConceptQuery(baseOptions: Apollo.QueryHookOptions<GetConceptQuery, GetConceptQueryVariables>) {
         return Apollo.useQuery<GetConceptQuery, GetConceptQueryVariables>(Operations.getConcept, baseOptions);
       }
 export function useGetConceptLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetConceptQuery, GetConceptQueryVariables>) {
@@ -285,7 +285,7 @@ export type SetConceptsUnknownMutationOptions = Apollo.BaseMutationOptions<SetCo
  *   },
  * });
  */
-export function useGetDomainConceptListQuery(baseOptions?: Apollo.QueryHookOptions<GetDomainConceptListQuery, GetDomainConceptListQueryVariables>) {
+export function useGetDomainConceptListQuery(baseOptions: Apollo.QueryHookOptions<GetDomainConceptListQuery, GetDomainConceptListQueryVariables>) {
         return Apollo.useQuery<GetDomainConceptListQuery, GetDomainConceptListQueryVariables>(Operations.getDomainConceptList, baseOptions);
       }
 export function useGetDomainConceptListLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDomainConceptListQuery, GetDomainConceptListQueryVariables>) {

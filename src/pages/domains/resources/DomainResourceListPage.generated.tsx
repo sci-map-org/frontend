@@ -44,7 +44,7 @@ export type GetResourcesDomainResourceListPageQuery = (
  *   },
  * });
  */
-export function useGetResourcesDomainResourceListPageQuery(baseOptions?: Apollo.QueryHookOptions<GetResourcesDomainResourceListPageQuery, GetResourcesDomainResourceListPageQueryVariables>) {
+export function useGetResourcesDomainResourceListPageQuery(baseOptions: Apollo.QueryHookOptions<GetResourcesDomainResourceListPageQuery, GetResourcesDomainResourceListPageQueryVariables>) {
         return Apollo.useQuery<GetResourcesDomainResourceListPageQuery, GetResourcesDomainResourceListPageQueryVariables>(Operations.getResourcesDomainResourceListPage, baseOptions);
       }
 export function useGetResourcesDomainResourceListPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetResourcesDomainResourceListPageQuery, GetResourcesDomainResourceListPageQueryVariables>) {

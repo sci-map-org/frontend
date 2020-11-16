@@ -83,7 +83,7 @@ export type RemoveDomainBelongsToDomainMutation = (
  *   },
  * });
  */
-export function useGetDomainByKeyManageDomainPageQuery(baseOptions?: Apollo.QueryHookOptions<GetDomainByKeyManageDomainPageQuery, GetDomainByKeyManageDomainPageQueryVariables>) {
+export function useGetDomainByKeyManageDomainPageQuery(baseOptions: Apollo.QueryHookOptions<GetDomainByKeyManageDomainPageQuery, GetDomainByKeyManageDomainPageQueryVariables>) {
         return Apollo.useQuery<GetDomainByKeyManageDomainPageQuery, GetDomainByKeyManageDomainPageQueryVariables>(Operations.getDomainByKeyManageDomainPage, baseOptions);
       }
 export function useGetDomainByKeyManageDomainPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDomainByKeyManageDomainPageQuery, GetDomainByKeyManageDomainPageQueryVariables>) {

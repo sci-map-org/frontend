@@ -34,7 +34,7 @@ export type GetUserUserProfilePageQuery = (
  *   },
  * });
  */
-export function useGetUserUserProfilePageQuery(baseOptions?: Apollo.QueryHookOptions<GetUserUserProfilePageQuery, GetUserUserProfilePageQueryVariables>) {
+export function useGetUserUserProfilePageQuery(baseOptions: Apollo.QueryHookOptions<GetUserUserProfilePageQuery, GetUserUserProfilePageQueryVariables>) {
         return Apollo.useQuery<GetUserUserProfilePageQuery, GetUserUserProfilePageQueryVariables>(Operations.getUserUserProfilePage, baseOptions);
       }
 export function useGetUserUserProfilePageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserUserProfilePageQuery, GetUserUserProfilePageQueryVariables>) {

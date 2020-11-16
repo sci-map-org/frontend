@@ -78,7 +78,7 @@ export type UpdateResourceResourcePageMutationOptions = Apollo.BaseMutationOptio
  *   },
  * });
  */
-export function useGetResourceEditResourcePageQuery(baseOptions?: Apollo.QueryHookOptions<GetResourceEditResourcePageQuery, GetResourceEditResourcePageQueryVariables>) {
+export function useGetResourceEditResourcePageQuery(baseOptions: Apollo.QueryHookOptions<GetResourceEditResourcePageQuery, GetResourceEditResourcePageQueryVariables>) {
         return Apollo.useQuery<GetResourceEditResourcePageQuery, GetResourceEditResourcePageQueryVariables>(Operations.getResourceEditResourcePage, baseOptions);
       }
 export function useGetResourceEditResourcePageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetResourceEditResourcePageQuery, GetResourceEditResourcePageQueryVariables>) {

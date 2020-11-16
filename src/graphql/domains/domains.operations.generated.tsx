@@ -90,7 +90,7 @@ export type DeleteDomainMutation = (
  *   },
  * });
  */
-export function useGetDomainByKeyQuery(baseOptions?: Apollo.QueryHookOptions<GetDomainByKeyQuery, GetDomainByKeyQueryVariables>) {
+export function useGetDomainByKeyQuery(baseOptions: Apollo.QueryHookOptions<GetDomainByKeyQuery, GetDomainByKeyQueryVariables>) {
         return Apollo.useQuery<GetDomainByKeyQuery, GetDomainByKeyQueryVariables>(Operations.getDomainByKey, baseOptions);
       }
 export function useGetDomainByKeyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDomainByKeyQuery, GetDomainByKeyQueryVariables>) {
@@ -116,7 +116,7 @@ export type GetDomainByKeyQueryResult = Apollo.QueryResult<GetDomainByKeyQuery, 
  *   },
  * });
  */
-export function useSearchDomainsQuery(baseOptions?: Apollo.QueryHookOptions<SearchDomainsQuery, SearchDomainsQueryVariables>) {
+export function useSearchDomainsQuery(baseOptions: Apollo.QueryHookOptions<SearchDomainsQuery, SearchDomainsQueryVariables>) {
         return Apollo.useQuery<SearchDomainsQuery, SearchDomainsQueryVariables>(Operations.searchDomains, baseOptions);
       }
 export function useSearchDomainsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchDomainsQuery, SearchDomainsQueryVariables>) {

@@ -61,7 +61,7 @@ export type GetLearningPathPageQuery = (
  *   },
  * });
  */
-export function useGetLearningPathPageQuery(baseOptions?: Apollo.QueryHookOptions<GetLearningPathPageQuery, GetLearningPathPageQueryVariables>) {
+export function useGetLearningPathPageQuery(baseOptions: Apollo.QueryHookOptions<GetLearningPathPageQuery, GetLearningPathPageQueryVariables>) {
         return Apollo.useQuery<GetLearningPathPageQuery, GetLearningPathPageQueryVariables>(Operations.getLearningPathPage, baseOptions);
       }
 export function useGetLearningPathPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetLearningPathPageQuery, GetLearningPathPageQueryVariables>) {

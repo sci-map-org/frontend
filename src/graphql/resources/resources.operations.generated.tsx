@@ -97,7 +97,7 @@ export type SetResourceConsumedMutation = (
  *   },
  * });
  */
-export function useSearchResourcesQuery(baseOptions?: Apollo.QueryHookOptions<SearchResourcesQuery, SearchResourcesQueryVariables>) {
+export function useSearchResourcesQuery(baseOptions: Apollo.QueryHookOptions<SearchResourcesQuery, SearchResourcesQueryVariables>) {
         return Apollo.useQuery<SearchResourcesQuery, SearchResourcesQueryVariables>(Operations.searchResources, baseOptions);
       }
 export function useSearchResourcesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchResourcesQuery, SearchResourcesQueryVariables>) {
@@ -123,7 +123,7 @@ export type SearchResourcesQueryResult = Apollo.QueryResult<SearchResourcesQuery
  *   },
  * });
  */
-export function useGetResourcePreviewDataQuery(baseOptions?: Apollo.QueryHookOptions<GetResourcePreviewDataQuery, GetResourcePreviewDataQueryVariables>) {
+export function useGetResourcePreviewDataQuery(baseOptions: Apollo.QueryHookOptions<GetResourcePreviewDataQuery, GetResourcePreviewDataQueryVariables>) {
         return Apollo.useQuery<GetResourcePreviewDataQuery, GetResourcePreviewDataQueryVariables>(Operations.getResourcePreviewData, baseOptions);
       }
 export function useGetResourcePreviewDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetResourcePreviewDataQuery, GetResourcePreviewDataQueryVariables>) {

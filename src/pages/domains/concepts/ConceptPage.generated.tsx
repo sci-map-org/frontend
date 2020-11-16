@@ -154,7 +154,7 @@ export type RemoveConceptBelongsToConceptMutation = (
  *   },
  * });
  */
-export function useGetConceptConceptPageQuery(baseOptions?: Apollo.QueryHookOptions<GetConceptConceptPageQuery, GetConceptConceptPageQueryVariables>) {
+export function useGetConceptConceptPageQuery(baseOptions: Apollo.QueryHookOptions<GetConceptConceptPageQuery, GetConceptConceptPageQueryVariables>) {
         return Apollo.useQuery<GetConceptConceptPageQuery, GetConceptConceptPageQueryVariables>(Operations.getConceptConceptPage, baseOptions);
       }
 export function useGetConceptConceptPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetConceptConceptPageQuery, GetConceptConceptPageQueryVariables>) {

@@ -41,7 +41,7 @@ export type GetConceptEditConceptPageQuery = (
  *   },
  * });
  */
-export function useGetConceptEditConceptPageQuery(baseOptions?: Apollo.QueryHookOptions<GetConceptEditConceptPageQuery, GetConceptEditConceptPageQueryVariables>) {
+export function useGetConceptEditConceptPageQuery(baseOptions: Apollo.QueryHookOptions<GetConceptEditConceptPageQuery, GetConceptEditConceptPageQueryVariables>) {
         return Apollo.useQuery<GetConceptEditConceptPageQuery, GetConceptEditConceptPageQueryVariables>(Operations.getConceptEditConceptPage, baseOptions);
       }
 export function useGetConceptEditConceptPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetConceptEditConceptPageQuery, GetConceptEditConceptPageQueryVariables>) {

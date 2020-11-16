@@ -61,7 +61,7 @@ export type GetDomainByKeyDomainPageQuery = (
  *   },
  * });
  */
-export function useGetDomainByKeyDomainPageQuery(baseOptions?: Apollo.QueryHookOptions<GetDomainByKeyDomainPageQuery, GetDomainByKeyDomainPageQueryVariables>) {
+export function useGetDomainByKeyDomainPageQuery(baseOptions: Apollo.QueryHookOptions<GetDomainByKeyDomainPageQuery, GetDomainByKeyDomainPageQueryVariables>) {
         return Apollo.useQuery<GetDomainByKeyDomainPageQuery, GetDomainByKeyDomainPageQueryVariables>(Operations.getDomainByKeyDomainPage, baseOptions);
       }
 export function useGetDomainByKeyDomainPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDomainByKeyDomainPageQuery, GetDomainByKeyDomainPageQueryVariables>) {

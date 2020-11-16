@@ -33,7 +33,7 @@ export type GetUserByKeyQuery = (
  *   },
  * });
  */
-export function useGetUserByKeyQuery(baseOptions?: Apollo.QueryHookOptions<GetUserByKeyQuery, GetUserByKeyQueryVariables>) {
+export function useGetUserByKeyQuery(baseOptions: Apollo.QueryHookOptions<GetUserByKeyQuery, GetUserByKeyQueryVariables>) {
         return Apollo.useQuery<GetUserByKeyQuery, GetUserByKeyQueryVariables>(Operations.getUserByKey, baseOptions);
       }
 export function useGetUserByKeyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserByKeyQuery, GetUserByKeyQueryVariables>) {

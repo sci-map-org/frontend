@@ -120,7 +120,7 @@ export type CreateArticleMutationOptions = Apollo.BaseMutationOptions<CreateArti
  *   },
  * });
  */
-export function useGetArticleByKeyQuery(baseOptions?: Apollo.QueryHookOptions<GetArticleByKeyQuery, GetArticleByKeyQueryVariables>) {
+export function useGetArticleByKeyQuery(baseOptions: Apollo.QueryHookOptions<GetArticleByKeyQuery, GetArticleByKeyQueryVariables>) {
         return Apollo.useQuery<GetArticleByKeyQuery, GetArticleByKeyQueryVariables>(Operations.getArticleByKey, baseOptions);
       }
 export function useGetArticleByKeyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetArticleByKeyQuery, GetArticleByKeyQueryVariables>) {
@@ -198,7 +198,7 @@ export type DeleteArticleMutationOptions = Apollo.BaseMutationOptions<DeleteArti
  *   },
  * });
  */
-export function useListUserArticlePreviewsQuery(baseOptions?: Apollo.QueryHookOptions<ListUserArticlePreviewsQuery, ListUserArticlePreviewsQueryVariables>) {
+export function useListUserArticlePreviewsQuery(baseOptions: Apollo.QueryHookOptions<ListUserArticlePreviewsQuery, ListUserArticlePreviewsQueryVariables>) {
         return Apollo.useQuery<ListUserArticlePreviewsQuery, ListUserArticlePreviewsQueryVariables>(Operations.listUserArticlePreviews, baseOptions);
       }
 export function useListUserArticlePreviewsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ListUserArticlePreviewsQuery, ListUserArticlePreviewsQueryVariables>) {

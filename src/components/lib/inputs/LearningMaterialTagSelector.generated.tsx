@@ -33,7 +33,7 @@ export type SearchLearningMaterialTagsQuery = (
  *   },
  * });
  */
-export function useSearchLearningMaterialTagsQuery(baseOptions?: Apollo.QueryHookOptions<SearchLearningMaterialTagsQuery, SearchLearningMaterialTagsQueryVariables>) {
+export function useSearchLearningMaterialTagsQuery(baseOptions: Apollo.QueryHookOptions<SearchLearningMaterialTagsQuery, SearchLearningMaterialTagsQueryVariables>) {
         return Apollo.useQuery<SearchLearningMaterialTagsQuery, SearchLearningMaterialTagsQueryVariables>(Operations.searchLearningMaterialTags, baseOptions);
       }
 export function useSearchLearningMaterialTagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchLearningMaterialTagsQuery, SearchLearningMaterialTagsQueryVariables>) {
