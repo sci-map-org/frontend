@@ -1,6 +1,5 @@
-import { ApolloClient, ApolloProvider } from '@apollo/client';
+import { ApolloClient, ApolloProvider, NormalizedCacheObject } from '@apollo/client';
 import { ChakraProvider } from '@chakra-ui/react';
-import { NormalizedCacheObject } from 'apollo-cache-inmemory';
 import { DefaultSeo } from 'next-seo';
 import React from 'react';
 import '../../src/services/cloudwatch_error_logger.service';

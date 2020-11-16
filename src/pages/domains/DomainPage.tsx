@@ -1,6 +1,6 @@
-import { NetworkStatus } from '@apollo/react-hooks';
-import { Box, Flex, Heading, IconButton, Skeleton } from '@chakra-ui/react';
+import { NetworkStatus } from '@apollo/client';
 import { SettingsIcon } from '@chakra-ui/icons';
+import { Box, Flex, Heading, IconButton, Skeleton } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';

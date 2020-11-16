@@ -1,14 +1,13 @@
-import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
-import { ApolloClient } from 'apollo-client';
-import { setContext } from 'apollo-link-context';
-import { HttpLink } from 'apollo-link-http';
+// import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
+import { ApolloClient, InMemoryCache, NormalizedCacheObject, HttpLink } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
 import cookie from 'cookie';
 import { IncomingMessage } from 'http';
 import fetch from 'isomorphic-unfetch';
-import NextApp, { AppProps as NextAppProps, AppContext as NextAppContext } from 'next/app';
+import NextApp, { AppContext as NextAppContext, AppProps as NextAppProps } from 'next/app';
+import getConfig from 'next/config';
 import Head from 'next/head';
 import React from 'react';
-import getConfig from 'next/config';
 
 const { publicRuntimeConfig } = getConfig();
 const getInitialState = (req?: IncomingMessage): NormalizedCacheObject => {
@@ -76,7 +75,7 @@ export function withApollo(AppComponent: typeof NextApp) {
       // Run all GraphQL queries
       // https://github.com/apollographql/apollo-client/issues/3897
       //(errors are rendered as loading)
-      const { getDataFromTree } = await import('@apollo/react-ssr');
+      const { getDataFromTree } = await import('@apollo/client/react/ssr');
       await getDataFromTree(
         <AppTree
           pageProps={{

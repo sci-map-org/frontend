@@ -1,4 +1,4 @@
-import { useApolloClient } from '@apollo/react-hooks';
+import { useApolloClient } from '@apollo/client';
 import Cookies from 'js-cookie';
 import { get } from 'lodash';
 import { getCurrentUser } from './users.operations';

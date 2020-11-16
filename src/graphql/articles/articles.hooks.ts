@@ -1,12 +1,9 @@
-import { useMutation } from '@apollo/react-hooks';
-
-import { useQuery } from '../hooks/useQuery';
 import {
   useCreateArticleMutation,
-  useGetArticleByKeyQuery,
-  useUpdateArticleMutation,
   useDeleteArticleMutation,
+  useGetArticleByKeyQuery,
   useListUserArticlePreviewsQuery,
+  useUpdateArticleMutation,
 } from './articles.operations.generated';
 
 export const useCreateArticle = () => {
