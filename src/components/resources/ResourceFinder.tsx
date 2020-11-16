@@ -33,7 +33,7 @@ export const ResourceFinder: React.FC<ResourceFinderProps> = ({ onSelect }) => {
         placeholder="Search resources..."
         entitySuggestions={searchResults}
         fetchEntitySuggestions={(query) =>
-          query.length >= 3 ? debouncedSearchResourcesLazyQuery(query) : setSearchResults([])
+          query.length >= 3 ? debouncedSearchResourcesLazyQuery.callback(query) : setSearchResults([])
         }
         onSelect={onSelect}
       />
