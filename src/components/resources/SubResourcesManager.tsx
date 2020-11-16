@@ -1,4 +1,4 @@
-import { Center, Flex, Heading, IconButton, Stack, Text, Wrap } from '@chakra-ui/react';
+import { Center, Flex, Heading, IconButton, Stack, Text, Wrap, WrapItem } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
@@ -32,26 +32,30 @@ export const StatelessSubResourcesManager: React.FC<StatelessSubResourcesManager
       </Heading>
       <Wrap>
         {subResources.map((subResource) => (
-          <SubResourceCard key={subResource._id} subResource={subResource} onRemove={removeSubResource} />
+          <WrapItem>
+            <SubResourceCard key={subResource._id} subResource={subResource} onRemove={removeSubResource} />
+          </WrapItem>
         ))}
         {addSubResource && editMode && (
-          <CardFrame>
-            <ResourceSelectorModal
-              onSelect={(subResource) => addSubResource(subResource)}
-              defaultAttachedDomains={domains}
-              renderButton={({ openModal }) => (
-                <IconButton
-                  aria-label="add subResource"
-                  icon={<AddIcon />}
-                  size="lg"
-                  isRound
-                  mb={3}
-                  onClick={() => openModal()}
-                />
-              )}
-            />
-            <Text fontWeight={500}>Add sub resource</Text>
-          </CardFrame>
+          <WrapItem>
+            <CardFrame>
+              <ResourceSelectorModal
+                onSelect={(subResource) => addSubResource(subResource)}
+                defaultAttachedDomains={domains}
+                renderButton={({ openModal }) => (
+                  <IconButton
+                    aria-label="add subResource"
+                    icon={<AddIcon />}
+                    size="lg"
+                    isRound
+                    mb={3}
+                    onClick={() => openModal()}
+                  />
+                )}
+              />
+              <Text fontWeight={500}>Add sub resource</Text>
+            </CardFrame>
+          </WrapItem>
         )}
       </Wrap>
     </Stack>

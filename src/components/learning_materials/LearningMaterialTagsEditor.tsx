@@ -33,8 +33,8 @@ export const SelectedTagsViewer: React.FC<{
   return (
     <Wrap fontWeight={250} pb={pb} as="span" justify={justify}>
       {selectedTags.map((tag, idx) => (
-        <WrapItem>
-          <Tag size="sm" colorScheme="gray" key={idx} as="span">
+        <WrapItem key={idx}>
+          <Tag size="sm" colorScheme="gray" as="span">
             <TagLabel>{tag.name}</TagLabel>
           </Tag>
         </WrapItem>
