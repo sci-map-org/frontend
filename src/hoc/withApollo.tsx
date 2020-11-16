@@ -1,5 +1,4 @@
-// import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
-import { ApolloClient, InMemoryCache, NormalizedCacheObject, HttpLink } from '@apollo/client';
+import { ApolloClient, HttpLink, InMemoryCache, NormalizedCacheObject } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import cookie from 'cookie';
 import { IncomingMessage } from 'http';
@@ -149,7 +148,11 @@ function createApolloClient(config: CreateApolloClientConfig): ApolloClient<Norm
       },
     };
   });
-  const cache = new InMemoryCache().restore(config.getInitialState());
+  const cache = new InMemoryCache({
+    possibleTypes: {
+      LearningMaterial: ['Resource', 'LearningPath'],
+    },
+  }).restore(config.getInitialState());
   const client = new ApolloClient({
     // Disables forceFetch on the server (so queries are only run once)
     ssrMode: typeof window === 'undefined',

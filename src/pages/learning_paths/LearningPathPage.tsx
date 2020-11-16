@@ -1,3 +1,4 @@
+import { EditIcon } from '@chakra-ui/icons';
 import {
   AvatarGroup,
   Badge,
@@ -12,7 +13,6 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
-import { EditIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import Router from 'next/router';
 import { useMemo, useState } from 'react';
@@ -28,7 +28,6 @@ import {
   LearningPathCompletion,
   LearningPathCompletionData,
 } from '../../components/learning_paths/LearningPathCompletion';
-import { LearningPathPreviewCard } from '../../components/learning_paths/LearningPathPreviewCard';
 import { LearningPathResourceItemsManager } from '../../components/learning_paths/LearningPathResourceItems';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { EditableTextarea } from '../../components/lib/inputs/EditableTextarea';
