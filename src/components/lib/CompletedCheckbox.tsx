@@ -7,7 +7,7 @@ const sizeMapping = {
   lg: 6,
 };
 
-interface CompletedCheckboxProps
+export interface CompletedCheckboxProps
   extends Omit<
     IconButtonProps,
     | 'size'

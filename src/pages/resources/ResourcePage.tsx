@@ -1,22 +1,27 @@
-import { Box, Button, Flex, Heading, Skeleton, Stack, Text } from '@chakra-ui/core';
+import { Box, Button, Flex, Skeleton, Stack, Text } from '@chakra-ui/core';
 import gql from 'graphql-tag';
 import Router, { useRouter } from 'next/router';
 import { Access } from '../../components/auth/Access';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
+import {
+  LearningMaterialTagsEditor,
+  SelectedTagsViewer,
+} from '../../components/learning_materials/LearningMaterialTagsEditor';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { InternalLink } from '../../components/navigation/InternalLink';
+import { DurationViewer } from '../../components/resources/elements/Duration';
 import { ResourceDescription } from '../../components/resources/elements/ResourceDescription';
-import { ResourceDuration } from '../../components/resources/elements/ResourceDuration';
 import { ResourceMediaTypeBadge } from '../../components/resources/elements/ResourceMediaType';
-import { ResourceStarsRater, ResourceStarsRating } from '../../components/resources/elements/ResourceStarsRating';
-import { ResourceTagsEditor, SelectedTagsViewer } from '../../components/resources/elements/ResourceTagsEditor';
+import {
+  LearningMaterialStarsRater,
+  StarsRatingViewer,
+} from '../../components/learning_materials/LearningMaterialStarsRating';
 import { ResourceTypeBadge } from '../../components/resources/elements/ResourceType';
 import { ResourceUrlLink } from '../../components/resources/elements/ResourceUrl';
-import { ResourceCoveredConceptsByDomainViewer } from '../../components/resources/ResourceCoveredConceptsByDomainViewer';
-import { ResourceDomainAndCoveredConceptsSelector } from '../../components/resources/ResourceDomainAndCoveredConceptsSelector';
+import { LearningMaterialCoveredTopics } from '../../components/resources/LearningMaterialCoveredTopics';
 import { SubResourceSeriesManager } from '../../components/resources/SubResourceSeriesManager';
-import { SubResourcesManager } from '../../components/resources/SubResourcesManager';
+import { ResourceSubResourcesManager } from '../../components/resources/SubResourcesManager';
 import { ConceptData, generateConceptData } from '../../graphql/concepts/concepts.fragments';
 import { DomainData, generateDomainData } from '../../graphql/domains/domains.fragments';
 import { generateResourceData, ResourceData } from '../../graphql/resources/resources.fragments';
@@ -141,12 +146,12 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
         <Flex justifyContent="space-between" alignItems="flex-end">
           <Stack direction="row" spacing={2} alignItems="baseline">
             <ResourceUrlLink fontSize="md" resource={resource} isLoading={loading} />
-            <ResourceDuration value={resource.durationMs} />
+            <DurationViewer value={resource.durationMs} />
           </Stack>
           <Stack direction="row" spacing={2} alignItems="center">
-            <ResourceStarsRating value={resource.rating} />
+            <StarsRatingViewer value={resource.rating} />
             <RoleAccess accessRule="contributorOrAdmin">
-              <ResourceStarsRater resourceId={resource._id} isDisabled={loading} />
+              <LearningMaterialStarsRater learningMaterialId={resource._id} isDisabled={loading} />
             </RoleAccess>
           </Stack>
         </Flex>
@@ -162,26 +167,17 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
               accessRule="loggedInUser"
               renderAccessDenied={() => <SelectedTagsViewer selectedTags={selectedTags} />}
             >
-              <ResourceTagsEditor size="sm" placeholder="Add tags" resource={resource} isDisabled={loading} />
+              <LearningMaterialTagsEditor
+                size="sm"
+                placeholder="Add tags"
+                learningMaterial={resource}
+                isDisabled={loading}
+              />
             </RoleAccess>
             {resource.description && <ResourceDescription description={resource.description} />}
           </Stack>
 
-          {resource.coveredConceptsByDomain && (
-            <Stack backgroundColor="gray.100" px={4} mt={4} py={3} borderRadius={5}>
-              <Heading size="sm">Covered Topics</Heading>
-              <RoleAccess
-                accessRule="loggedInUser"
-                renderAccessDenied={() =>
-                  resource.coveredConceptsByDomain?.length && (
-                    <ResourceCoveredConceptsByDomainViewer resource={resource} isLoading={loading} />
-                  )
-                }
-              >
-                <ResourceDomainAndCoveredConceptsSelector isLoading={loading} resource={resource} />
-              </RoleAccess>
-            </Stack>
-          )}
+          <LearningMaterialCoveredTopics editMode="loggedInUser" isLoading={loading} learningMaterial={resource} />
         </Flex>
         {(isResourceSeriesType(resource.type) || resource.subResourceSeries?.length) && (
           <SubResourceSeriesManager
@@ -192,7 +188,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
         )}
 
         {(isResourceGroupType(resource.type) || resource.subResources?.length) && (
-          <SubResourcesManager
+          <ResourceSubResourcesManager
             resourceId={resourceId}
             subResources={resource.subResources || []}
             domains={resource.coveredConceptsByDomain?.map((i) => i.domain) || []}

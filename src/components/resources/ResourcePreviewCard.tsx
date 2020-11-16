@@ -2,6 +2,7 @@ import {
   Box,
   BoxProps,
   Button,
+  Center,
   Flex,
   IconButton,
   Link,
@@ -15,36 +16,35 @@ import {
   Skeleton,
   Stack,
   Text,
-  Tooltip,
 } from '@chakra-ui/core';
-import { ArrowDownIcon, ArrowUpIcon, EditIcon, SettingsIcon } from '@chakra-ui/icons';
+import { EditIcon, SettingsIcon } from '@chakra-ui/icons';
 import { flatten } from 'lodash';
-import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
-import { useVoteResourceMutation } from '../../graphql/resources/resources.operations.generated';
-import { ResourceVoteValue } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { EditResourcePageInfo } from '../../pages/resources/EditResourcePage';
 import { ResourcePageInfo } from '../../pages/resources/ResourcePage';
 import { RoleAccess } from '../auth/RoleAccess';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
-import { CompletedCheckbox } from '../lib/CompletedCheckbox';
+import { LearningMaterialCardContainer } from '../learning_materials/LearningMaterialCardContainer';
+import { LearningMaterialStarsRater, StarsRatingViewer } from '../learning_materials/LearningMaterialStarsRating';
+import { EditableLearningMaterialTags } from '../learning_materials/LearningMaterialTagsEditor';
 import { ResourceGroupIcon } from '../lib/icons/ResourceGroupIcon';
 import { ResourceSeriesIcon } from '../lib/icons/ResourceSeriesIcon';
 import { InternalLink } from '../navigation/InternalLink';
-import { ResourceDomainCoveredConceptsSelector } from './CoveredConceptsSelector';
+import { LearningMaterialDomainCoveredConceptsSelector } from './CoveredConceptsSelector';
+import { DurationViewer } from './elements/Duration';
+import { ResourceCompletedCheckbox } from './elements/ResourceCompletedCheckbox';
 import { shortenDescription } from './elements/ResourceDescription';
-import { ResourceDuration } from './elements/ResourceDuration';
-import { ResourceStarsRater, ResourceStarsRating } from './elements/ResourceStarsRating';
-import { ResourceTagsEditor, SelectedTagsViewer } from './elements/ResourceTagsEditor';
 import { ResourceTypeBadge } from './elements/ResourceType';
+import { ResourceUpvoter } from './elements/ResourceUpvoter';
 import { ResourceUrlLink } from './elements/ResourceUrl';
-import { ResourceCoveredConceptsByDomainViewer } from './ResourceCoveredConceptsByDomainViewer';
-import { ResourceDomainAndCoveredConceptsSelector } from './ResourceDomainAndCoveredConceptsSelector';
+import { LearningMaterialCoveredConceptsByDomainViewer } from './LearningMaterialCoveredConceptsByDomainViewer';
+import { LearningMaterialDomainAndCoveredConceptsSelector } from './LearningMaterialDomainAndCoveredConceptsSelector';
 
-const BoxBlockDefaultClickPropagation: React.FC<BoxProps> = ({ children, ...props }) => {
+export const BoxBlockDefaultClickPropagation: React.FC<BoxProps> = ({ children, ...props }) => {
   return (
     <Box
       _hover={{ cursor: 'auto' }}
@@ -62,153 +62,65 @@ const BoxBlockDefaultClickPropagation: React.FC<BoxProps> = ({ children, ...prop
 interface ResourcePreviewCardProps {
   domainKey?: string;
   resource: ResourcePreviewDataFragment;
-  onResourceConsumed: (resource: ResourcePreviewDataFragment, consumed: boolean) => void;
+  onResourceConsumed?: (resourceId: string, consumed: boolean) => void;
   isLoading?: boolean;
   borderTopColor?: string;
+  inCompactList?: boolean;
+  firstItemInCompactList?: boolean;
 }
+
 export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
   domainKey,
   resource,
   onResourceConsumed,
   borderTopColor,
   isLoading,
+  inCompactList,
+  firstItemInCompactList,
 }) => {
-  const { currentUser } = useCurrentUser();
-  const unauthentificatedModalDisclosure = useUnauthentificatedModal();
   return (
-    <Flex
-      direction="row"
-      alignItems="stretch"
-      borderLeftWidth={1}
-      borderTopWidth={1}
-      borderTopColor={borderTopColor || 'white'} // hacky stuff
-      borderLeftColor="gray.200"
-      borderRightWidth={1}
-      borderRightColor="gray.200"
-      borderBottomWidth={1}
-      borderBottomColor="gray.200"
-      key={resource._id}
-      _hover={{
-        cursor: 'pointer',
-        borderWidth: '1px',
-        borderColor: 'gray.400',
-      }}
-      // mt="-1px"
+    <LearningMaterialCardContainer
+      renderCenterLeft={<ResourceUpvoter resource={resource} isLoading={isLoading} />}
+      leftBlockWidth="100px"
+      inCompactList={inCompactList}
+      firstItemInCompactList={firstItemInCompactList}
       onClick={() => routerPushToPage(ResourcePageInfo(resource))}
+      renderRight={<RightBlock resource={resource} isLoading={isLoading} onResourceConsumed={onResourceConsumed} />}
+      renderBottom={<BottomBlock resource={resource} domainKey={domainKey} isLoading={isLoading} />}
     >
-      <LeftBlock resource={resource} isLoading={isLoading} />
+      <Flex direction="row" flexGrow={1} pt="4px">
+        <Flex direction="column" flexGrow={1} justifyContent="center">
+          <Skeleton isLoaded={!isLoading}>
+            <Stack spacing={2} direction="row" alignItems="baseline" mr="10px">
+              <TitleLink resource={resource} isLoading={isLoading} />
+            </Stack>
+          </Skeleton>
+          <Skeleton isLoaded={!isLoading}>
+            <Stack spacing={1} direction="row" alignItems="baseline" mr="10px">
+              <StarsRatingViewer value={resource.rating} pxSize={13} />
+              <ResourceTypeBadge type={resource.type} />
+              <DurationViewer value={resource.durationMs} />
 
-      <Flex direction="column" flexGrow={1} pt="4px">
-        <Flex direction="row" flexGrow={1}>
-          <Flex direction="column" flexGrow={1} justifyContent="center">
-            <Skeleton isLoaded={!isLoading}>
-              <Stack spacing={2} direction="row" alignItems="baseline" mr="10px">
-                <TitleLink resource={resource} isLoading={isLoading} />
-              </Stack>
-            </Skeleton>
-            <Skeleton isLoaded={!isLoading}>
-              <Stack spacing={1} direction="row" alignItems="baseline" mr="10px">
-                <ResourceStarsRating value={resource.rating} pxSize={13} />
-                <ResourceTypeBadge type={resource.type} />
-                <ResourceDuration value={resource.durationMs} />
-
-                <RoleAccess accessRule="contributorOrAdmin">
-                  <BoxBlockDefaultClickPropagation>
-                    <ResourceStarsRater
-                      resourceId={resource._id}
-                      size="xs"
-                      color="gray.500"
-                      _hover={{ color: 'gray.900' }}
-                    />
-                  </BoxBlockDefaultClickPropagation>
-                </RoleAccess>
-              </Stack>
-            </Skeleton>
-            {((resource.tags && resource.tags.length > 0) || resource.description) && (
-              <Box>
-                <Text fontWeight={250}>{resource.description && shortenDescription(resource.description)}</Text>
-              </Box>
-            )}
-          </Flex>
+              <RoleAccess accessRule="contributorOrAdmin">
+                <BoxBlockDefaultClickPropagation>
+                  <LearningMaterialStarsRater
+                    learningMaterialId={resource._id}
+                    size="xs"
+                    color="gray.500"
+                    _hover={{ color: 'gray.900' }}
+                  />
+                </BoxBlockDefaultClickPropagation>
+              </RoleAccess>
+            </Stack>
+          </Skeleton>
+          {((resource.tags && resource.tags.length > 0) || resource.description) && (
+            <Box>
+              <Text fontWeight={250}>{resource.description && shortenDescription(resource.description)}</Text>
+            </Box>
+          )}
         </Flex>
-        <BottomBlock resource={resource} domainKey={domainKey} isLoading={isLoading} />
       </Flex>
-      <Flex direction="row" borderLeftWidth="0px" borderLeftColor="gray.100">
-        <BoxBlockDefaultClickPropagation alignSelf="center" justifySelf="center" ml="32px" mr="4px">
-          <CompletedCheckbox
-            size="lg"
-            tooltipLabel={
-              !!resource.consumed && !!resource.consumed.consumedAt ? 'Mark as not completed' : 'Mark as completed'
-            }
-            tooltipDelay={500}
-            isDisabled={isLoading}
-            isChecked={!!resource.consumed && !!resource.consumed.consumedAt}
-            onChange={async () => {
-              if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
-              onResourceConsumed(resource, !resource.consumed || !resource.consumed.consumedAt);
-            }}
-          />
-        </BoxBlockDefaultClickPropagation>
-        <BoxBlockDefaultClickPropagation>
-          <IconButton
-            m={1}
-            aria-label="edit resource"
-            color="gray.600"
-            size="xs"
-            icon={<EditIcon />}
-            variant="ghost"
-            onClick={() => {
-              if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
-              routerPushToPage(EditResourcePageInfo(resource));
-            }}
-          />
-        </BoxBlockDefaultClickPropagation>
-      </Flex>
-    </Flex>
-  );
-};
-
-const LeftBlock: React.FC<{ resource: ResourcePreviewDataFragment; isLoading?: boolean }> = ({
-  resource,
-  isLoading,
-}) => {
-  const [voteResource] = useVoteResourceMutation();
-  const unauthentificatedModalDisclosure = useUnauthentificatedModal();
-  const { currentUser } = useCurrentUser();
-  return (
-    <Flex direction="column" px={5} py={1} justifyContent="center" alignItems="center">
-      <BoxBlockDefaultClickPropagation>
-        <IconButton
-          size="xs"
-          aria-label="upvote"
-          icon={<ArrowUpIcon />}
-          variant="ghost"
-          my={0}
-          isDisabled={isLoading}
-          onClick={() => {
-            if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
-            voteResource({ variables: { resourceId: resource._id, value: ResourceVoteValue.Up } });
-          }}
-        />
-      </BoxBlockDefaultClickPropagation>
-      <Skeleton isLoaded={!isLoading}>
-        <Text>{resource.upvotes}</Text>
-      </Skeleton>
-      <BoxBlockDefaultClickPropagation>
-        <IconButton
-          size="xs"
-          aria-label="downvote"
-          icon={<ArrowDownIcon />}
-          variant="ghost"
-          my={0}
-          isDisabled={isLoading}
-          onClick={() => {
-            if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
-            voteResource({ variables: { resourceId: resource._id, value: ResourceVoteValue.Down } });
-          }}
-        />
-      </BoxBlockDefaultClickPropagation>
-    </Flex>
+    </LearningMaterialCardContainer>
   );
 };
 
@@ -256,69 +168,18 @@ const BottomBlock: React.FC<{
   resource: ResourcePreviewDataFragment;
   isLoading?: boolean;
 }> = ({ domainKey, resource, isLoading }) => {
-  const [tagEditorMode, setTagEditorMode] = useState(false);
   const [coveredConceptsEditorMode, setCoveredConceptsEditorMode] = useState(false);
-  const wrapperRef = useRef(null);
   const { currentUser } = useCurrentUser();
   const unauthentificatedModalDisclosure = useUnauthentificatedModal();
-  const useOutsideAlerter = (ref: React.MutableRefObject<any>) => {
-    useEffect(() => {
-      function handleClickOutside(event: any) {
-        if (ref.current && !ref.current.contains(event.target)) {
-          setTagEditorMode(false);
-        }
-      }
-
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
-      };
-    }, [ref]);
-  };
 
   const domainCoveredConcepts = resource.coveredConceptsByDomain?.filter(
     (d) => !domainKey || d.domain.key === domainKey
   );
-  useOutsideAlerter(wrapperRef);
   return (
     <Flex pb={2} pt={2} flexWrap="wrap">
-      {tagEditorMode ? (
-        <BoxBlockDefaultClickPropagation>
-          <Box ref={wrapperRef}>
-            <Skeleton isLoaded={!isLoading}>
-              <ResourceTagsEditor size="sm" resource={resource} inputWidth="100px" />
-            </Skeleton>
-          </Box>
-        </BoxBlockDefaultClickPropagation>
-      ) : (
-        <BoxBlockDefaultClickPropagation>
-          <Stack direction="row" alignItems="center">
-            {resource.tags?.length && (
-              <Skeleton isLoaded={!isLoading}>
-                <SelectedTagsViewer pb={0} selectedTags={resource.tags} />
-              </Skeleton>
-            )}
-            <Tooltip hasArrow label={resource.tags?.length ? 'Add or remove tags' : 'Add tags'}>
-              <IconButton
-                isDisabled={isLoading}
-                size="xs"
-                variant="ghost"
-                aria-label="add tag"
-                onClick={(e) => {
-                  if (!currentUser) {
-                    unauthentificatedModalDisclosure.onOpen();
-                    e.preventDefault();
-                    return;
-                  }
-                  setTagEditorMode(true);
-                }}
-                icon={<EditIcon />}
-              />
-            </Tooltip>
-            )
-          </Stack>
-        </BoxBlockDefaultClickPropagation>
-      )}
+      <BoxBlockDefaultClickPropagation>
+        <EditableLearningMaterialTags learningMaterial={resource} isLoading={isLoading} />
+      </BoxBlockDefaultClickPropagation>
       <Box flexGrow={1} flexBasis={0} />
       <BoxBlockDefaultClickPropagation>
         <Stack spacing={3} direction="row" alignItems="stretch" mr={4}>
@@ -380,17 +241,13 @@ const BottomBlock: React.FC<{
                   <PopoverBody pt={1}>
                     {coveredConceptsEditorMode ? (
                       domainCoveredConcepts.length === 1 ? (
-                        <ResourceDomainCoveredConceptsSelector
+                        <LearningMaterialDomainCoveredConceptsSelector
                           domainKey={domainCoveredConcepts[0].domain.key}
-                          resourceId={resource._id}
+                          learningMaterialId={resource._id}
                           coveredConcepts={domainCoveredConcepts[0].coveredConcepts}
                         />
                       ) : (
-                        <ResourceDomainAndCoveredConceptsSelector
-                          resource={resource}
-                          // resourceId={resource._id}
-                          // coveredConcepts={coveredConcepts}
-                        />
+                        <LearningMaterialDomainAndCoveredConceptsSelector learningMaterial={resource} />
                       )
                     ) : domainCoveredConcepts.length === 1 ? (
                       <Stack direction="column">
@@ -406,7 +263,7 @@ const BottomBlock: React.FC<{
                         ))}
                       </Stack>
                     ) : (
-                      <ResourceCoveredConceptsByDomainViewer resource={resource} />
+                      <LearningMaterialCoveredConceptsByDomainViewer learningMaterial={resource} />
                     )}
                   </PopoverBody>
                 </PopoverContent>
@@ -450,5 +307,40 @@ const SubResourcesButtonPopover: React.FC<{
         </PopoverBody>
       </PopoverContent>
     </Popover>
+  );
+};
+
+const RightBlock: React.FC<{
+  resource: ResourcePreviewDataFragment;
+  isLoading?: boolean;
+  onResourceConsumed?: (resourceId: string, consumed: boolean) => void;
+}> = ({ resource, isLoading, onResourceConsumed }) => {
+  const { currentUser } = useCurrentUser();
+  const unauthentificatedModalDisclosure = useUnauthentificatedModal();
+  return (
+    <Flex direction="row">
+      <BoxBlockDefaultClickPropagation alignSelf="center" justifySelf="center" ml="32px" mr="4px">
+        <ResourceCompletedCheckbox
+          size="lg"
+          resource={resource}
+          isLoading={isLoading}
+          onResourceConsumed={onResourceConsumed}
+        />
+      </BoxBlockDefaultClickPropagation>
+      <BoxBlockDefaultClickPropagation>
+        <IconButton
+          m={1}
+          aria-label="edit resource"
+          color="gray.600"
+          size="xs"
+          icon={<EditIcon />}
+          variant="ghost"
+          onClick={() => {
+            if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
+            routerPushToPage(EditResourcePageInfo(resource));
+          }}
+        />
+      </BoxBlockDefaultClickPropagation>
+    </Flex>
   );
 };

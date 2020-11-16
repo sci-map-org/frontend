@@ -30,39 +30,6 @@ export const voteResource = gql`
   }
 `;
 
-export const attachResourceCoversConcepts = gql`
-  mutation attachResourceCoversConcepts($resourceId: String!, $conceptIds: [String!]!) {
-    attachResourceCoversConcepts(resourceId: $resourceId, conceptIds: $conceptIds) {
-      _id
-      coveredConceptsByDomain {
-        domain {
-          _id
-        }
-        coveredConcepts {
-          _id
-          name
-        }
-      }
-    }
-  }
-`;
-
-export const detachResourceCoversConcepts = gql`
-  mutation detachResourceCoversConcepts($resourceId: String!, $conceptIds: [String!]!) {
-    detachResourceCoversConcepts(resourceId: $resourceId, conceptIds: $conceptIds) {
-      _id
-      coveredConceptsByDomain {
-        domain {
-          _id
-        }
-        coveredConcepts {
-          _id
-          name
-        }
-      }
-    }
-  }
-`;
 
 export const deleteResource = gql`
   mutation deleteResource($_id: String!) {
@@ -73,35 +40,13 @@ export const deleteResource = gql`
   }
 `;
 
-export const attachResourceToDomain = gql`
-  mutation attachResourceToDomain($domainId: String!, $resourceId: String!) {
-    attachResourceToDomain(domainId: $domainId, resourceId: $resourceId) {
+export const setResourceConsumed = gql`
+  mutation setResourceConsumed($resourceId: String!, $consumed: Boolean!) {
+    setResourcesConsumed(payload: { resources: [{ resourceId: $resourceId, consumed: $consumed }] }) {
       _id
-      coveredConceptsByDomain {
-        domain {
-          _id
-          key
-        }
-        coveredConcepts {
-          _id
-        }
-      }
-    }
-  }
-`;
-
-export const detachResourceFromDomain = gql`
-  mutation detachResourceFromDomain($domainId: String!, $resourceId: String!) {
-    detachResourceFromDomain(domainId: $domainId, resourceId: $resourceId) {
-      _id
-      coveredConceptsByDomain {
-        domain {
-          _id
-          key
-        }
-        coveredConcepts {
-          _id
-        }
+      consumed {
+        openedAt
+        consumedAt
       }
     }
   }

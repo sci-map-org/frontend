@@ -21,17 +21,17 @@ import { DomainDataFragment } from '../../graphql/domains/domains.fragments.gene
 import { ResourceData } from '../../graphql/resources/resources.fragments';
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import {
-  useAttachResourceCoversConceptsMutation,
-  useAttachResourceToDomainMutation,
-} from '../../graphql/resources/resources.operations.generated';
-import { CreateResourcePayload, ResourceMediaType, ResourceTag, ResourceType } from '../../graphql/types';
+  useAttachLearningMaterialCoversConceptsMutation,
+  useAttachLearningMaterialToDomainMutation,
+} from '../../graphql/learning_materials/learning_materials.operations.generated';
+import { CreateResourcePayload, ResourceMediaType, LearningMaterialTag, ResourceType } from '../../graphql/types';
 import { validateUrl } from '../../services/url.service';
 import { DomainAndConceptsSelector, DomainAndSelectedConcepts } from '../concepts/DomainAndConceptsSelector';
 import { useCreateResourceMutation } from './NewResource.generated';
 import { ResourceDescriptionInput } from './elements/ResourceDescription';
-import { ResourceDurationSelector } from './elements/ResourceDuration';
+import { DurationFormField } from './elements/Duration';
 import { ResourceMediaTypeSelector } from './elements/ResourceMediaType';
-import { ResourceTagsStatelessEditor } from './elements/ResourceTagsEditor';
+import { LearningMaterialTagsStatelessEditor } from '../learning_materials/LearningMaterialTagsEditor';
 import { ResourceTypeSelector } from './elements/ResourceType';
 import { ResourceUrlInput } from './elements/ResourceUrl';
 
@@ -60,7 +60,7 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
   const [selectedDomainsAndCoveredConcepts, setSelectedDomainsAndCoveredConcepts] = useState<
     DomainAndSelectedConcepts[]
   >([]);
-  const [selectedTags, setSelectedTags] = useState<ResourceTag[]>([]);
+  const [selectedTags, setSelectedTags] = useState<LearningMaterialTag[]>([]);
   const [isValid, setIsValid] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
 
@@ -77,10 +77,10 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
       <Flex flexDirection="row" justifyContent="space-between">
         <ResourceTypeSelector value={type} onSelect={(t) => setType(t)} />
       </Flex>
-      <ResourceTagsStatelessEditor selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
+      <LearningMaterialTagsStatelessEditor selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
       <Flex direction="row" alignItems="center" justifyContent="space-between">
         <ResourceMediaTypeSelector value={mediaType} onSelect={(t) => setMediaType(t)} />
-        <ResourceDurationSelector value={durationMs} onChange={setDurationMs} />
+        <DurationFormField value={durationMs} onChange={setDurationMs} />
       </Flex>
       <ResourceDescriptionInput value={description} onChange={(d) => setDescription(d)} />
       <DomainAndConceptsSelector
@@ -137,8 +137,8 @@ export const createResource = gql`
 `;
 
 const useAddResourceToDomainsAndAddCoveredConcepts = () => {
-  const [attachResourceCoveredConcepts] = useAttachResourceCoversConceptsMutation();
-  const [attachResourceToDomain] = useAttachResourceToDomainMutation();
+  const [attachLearningMaterialCoveredConcepts] = useAttachLearningMaterialCoversConceptsMutation();
+  const [attachLearningMaterialToDomain] = useAttachLearningMaterialToDomainMutation();
   const [createResource] = useCreateResourceMutation();
 
   const addResourceToDomainsAndAddCoveredConcepts = async (
@@ -150,10 +150,12 @@ const useAddResourceToDomainsAndAddCoveredConcepts = () => {
     const createdResource = resourceResults.data.createResource;
     await Promise.all(
       domainsAndCoveredConcepts.map(async ({ domain, selectedConcepts }) => {
-        await attachResourceToDomain({ variables: { domainId: domain._id, resourceId: createdResource._id } });
+        await attachLearningMaterialToDomain({
+          variables: { domainId: domain._id, learningMaterialId: createdResource._id },
+        });
         if (selectedConcepts.length) {
-          await attachResourceCoveredConcepts({
-            variables: { resourceId: createdResource._id, conceptIds: selectedConcepts.map((c) => c._id) },
+          await attachLearningMaterialCoveredConcepts({
+            variables: { learningMaterialId: createdResource._id, conceptIds: selectedConcepts.map((c) => c._id) },
           });
         }
       })

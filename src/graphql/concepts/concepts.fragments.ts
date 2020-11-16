@@ -1,6 +1,14 @@
 import gql from 'graphql-tag';
 import { ConceptDataFragment } from './concepts.fragments.generated';
 
+export const ConceptLinkData = gql`
+  fragment ConceptLinkData on Concept {
+    _id
+    key
+    name
+  }
+`
+
 export const ConceptData = gql`
   fragment ConceptData on Concept {
     _id

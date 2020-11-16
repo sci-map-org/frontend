@@ -6,6 +6,7 @@ module.exports = withCSS({
   },
   publicRuntimeConfig: {
     // Will be available on both server and client
+    nodeEnv: process.env.NODE_ENV,
     apiUrl: process.env.API_URL,
     googleClientId: process.env.GOOGLE_CLIENT_ID,
     discourseForumUrl: process.env.DISCOURSE_FORUM_URL,

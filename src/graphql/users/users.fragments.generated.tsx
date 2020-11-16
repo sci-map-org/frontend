@@ -13,3 +13,12 @@ export type PublicUserDataFragment = (
   { __typename?: 'User' }
   & Pick<Types.User, '_id' | 'key' | 'role' | 'displayName'>
 );
+
+export type LoginResponseDataFragment = (
+  { __typename?: 'LoginResponse' }
+  & Pick<Types.LoginResponse, 'jwt' | 'redirectUrl'>
+  & { currentUser: (
+    { __typename?: 'CurrentUser' }
+    & CurrentUserDataFragment
+  ) }
+);

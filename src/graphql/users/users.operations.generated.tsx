@@ -1,6 +1,6 @@
 import * as Types from '../types';
 
-import { CurrentUserDataFragment } from './users.fragments.generated';
+import { CurrentUserDataFragment, LoginResponseDataFragment } from './users.fragments.generated';
 import * as Operations from './users.operations';
 import * as Apollo from '@apollo/client';
 export type GetCurrentUserQueryVariables = Types.Exact<{ [key: string]: never; }>;
@@ -25,11 +25,7 @@ export type LoginMutation = (
   { __typename?: 'Mutation' }
   & { login: (
     { __typename?: 'LoginResponse' }
-    & Pick<Types.LoginResponse, 'jwt' | 'redirectUrl'>
-    & { currentUser: (
-      { __typename?: 'CurrentUser' }
-      & CurrentUserDataFragment
-    ) }
+    & LoginResponseDataFragment
   ) }
 );
 
@@ -43,11 +39,7 @@ export type LoginGoogleMutation = (
   { __typename?: 'Mutation' }
   & { loginGoogle: (
     { __typename?: 'LoginResponse' }
-    & Pick<Types.LoginResponse, 'jwt' | 'redirectUrl'>
-    & { currentUser: (
-      { __typename?: 'CurrentUser' }
-      & CurrentUserDataFragment
-    ) }
+    & LoginResponseDataFragment
   ) }
 );
 

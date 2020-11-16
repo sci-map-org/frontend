@@ -1,20 +1,20 @@
-import { Box, Heading, Skeleton, Stack, Text } from '@chakra-ui/core';
-import { ResourceWithCoveredConceptsByDomainDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { Box, Skeleton, Stack } from '@chakra-ui/core';
+import { LearningMaterialWithCoveredConceptsByDomainDataFragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
 import { InternalLink } from '../navigation/InternalLink';
 
-interface ResourceCoveredConceptsByDomainViewerProps {
-  resource: ResourceWithCoveredConceptsByDomainDataFragment;
+interface LearningMaterialCoveredConceptsByDomainViewerProps {
+  learningMaterial: LearningMaterialWithCoveredConceptsByDomainDataFragment;
   isLoading?: boolean;
 }
 
-export const ResourceCoveredConceptsByDomainViewer: React.FC<ResourceCoveredConceptsByDomainViewerProps> = ({
-  resource,
+export const LearningMaterialCoveredConceptsByDomainViewer: React.FC<LearningMaterialCoveredConceptsByDomainViewerProps> = ({
+  learningMaterial,
   isLoading,
 }) => {
-  if (!resource.coveredConceptsByDomain) return null;
+  if (!learningMaterial.coveredConceptsByDomain) return null;
   return (
     <Stack spacing={2}>
-      {resource.coveredConceptsByDomain.map(({ domain, coveredConcepts }) => (
+      {learningMaterial.coveredConceptsByDomain.map(({ domain, coveredConcepts }) => (
         <Box key={domain._id}>
           <Skeleton isLoaded={!isLoading}>
             <InternalLink routePath="/domains/[key]" asHref={`/domains/${domain.key}`}>
