@@ -10,6 +10,7 @@ export const ResourceCompletedCheckboxData = gql`
     _id
     consumed {
       consumedAt
+      openedAt
     }
   }
 `;
