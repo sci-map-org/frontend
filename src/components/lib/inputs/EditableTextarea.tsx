@@ -10,8 +10,10 @@ import {
 } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
 
+const estimateNbRows = (value?: string) => Math.ceil((value?.length || 0) / 128);
 export const EditableTextarea: React.FC<
-  Pick<UseEditableProps, 'onSubmit' | 'defaultValue' | 'placeholder' | 'isDisabled'> & FlexProps & { rows?: number }
+  Pick<UseEditableProps, 'onSubmit' | 'placeholder' | 'isDisabled'> &
+    FlexProps & { rows?: number; defaultValue?: string }
 > = ({ defaultValue, onSubmit, isDisabled, placeholder, rows, ...flexProps }) => {
   const { getInputProps, getPreviewProps, isEditing, onEdit } = useEditable({
     placeholder,
@@ -21,9 +23,9 @@ export const EditableTextarea: React.FC<
     isPreviewFocusable: false,
   });
   return (
-    <Flex {...flexProps}>
-      <Textarea rows={rows} {...getInputProps()}></Textarea>
-      <Text {...getPreviewProps()}>
+    <Flex {...flexProps} onKeyPress={(e) => console.log(e.key)}>
+      <Textarea rows={rows || estimateNbRows(defaultValue)} {...getInputProps()}></Textarea>
+      <Text {...getPreviewProps()} {...(!defaultValue && { color: 'gray.500' })}>
         <>
           {!isEditing && !isDisabled && (
             <IconButton

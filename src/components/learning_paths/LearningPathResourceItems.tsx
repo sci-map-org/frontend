@@ -30,11 +30,11 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
 }) => {
   return (
     <Flex direction="column" alignItems="stretch">
-      <Stack direction="column" spacing={3}>
+      <Flex direction="column">
         <Flex direction="column" alignItems="stretch" backgroundColor="backgroundColor.0">
           {resourceItems.map(({ resource, description }) => (
             <Flex key={resource._id} direction="column" justifyContent="stretch">
-              <Flex direction="row" pt={3}>
+              <Flex direction="row" pt={3} pl="100px" pb={2}>
                 <EditableTextarea
                   flexGrow={1}
                   backgroundColor="white"
@@ -46,7 +46,7 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
                   onSubmit={(newDescription: any) => updateDescription(resource._id, newDescription as string)}
                   isDisabled={!editMode}
                 />
-                <Box flexBasis="60px" />
+                <Box flexBasis="60px" flexShrink={0} />
               </Flex>
               <Flex direction="row">
                 <Box flexGrow={1}>
@@ -82,13 +82,14 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
           ))}
         </Flex>
         {editMode && (
-          <Flex direction="row" justifyContent="center">
+          <Flex direction="row" justifyContent="center" mt={2}>
             <ResourceSelectorModal
               onSelect={(selectedResource) => addResourceItem(selectedResource)}
               renderButton={({ openModal }) => (
                 <IconButton
                   m={2}
-                  size="md"
+                  size="lg"
+                  variant="outline"
                   isRound
                   icon={<AddIcon />}
                   aria-label="Add resource to learning path"
@@ -98,7 +99,7 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
             />
           </Flex>
         )}
-      </Stack>
+      </Flex>
     </Flex>
   );
 };

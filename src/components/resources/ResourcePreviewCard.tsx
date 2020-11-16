@@ -80,7 +80,14 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
 }) => {
   return (
     <LearningMaterialCardContainer
-      renderCenterLeft={<ResourceUpvoter resource={resource} isLoading={isLoading} />}
+      renderCenterLeft={
+        <ResourceCompletedCheckbox
+          size="lg"
+          resource={resource}
+          isLoading={isLoading}
+          onResourceConsumed={onResourceConsumed}
+        />
+      }
       leftBlockWidth="100px"
       inCompactList={inCompactList}
       firstItemInCompactList={firstItemInCompactList}
@@ -320,12 +327,7 @@ const RightBlock: React.FC<{
   return (
     <Flex direction="row">
       <BoxBlockDefaultClickPropagation alignSelf="center" justifySelf="center" ml="32px" mr="4px">
-        <ResourceCompletedCheckbox
-          size="lg"
-          resource={resource}
-          isLoading={isLoading}
-          onResourceConsumed={onResourceConsumed}
-        />
+        <ResourceUpvoter resource={resource} isLoading={isLoading} />
       </BoxBlockDefaultClickPropagation>
       <BoxBlockDefaultClickPropagation>
         <IconButton
