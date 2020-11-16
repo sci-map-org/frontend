@@ -1,4 +1,4 @@
-import { Box, Flex, Stack, Text } from '@chakra-ui/core';
+import { Badge, Box, Flex, Stack, Text } from '@chakra-ui/core';
 import gql from 'graphql-tag';
 import { LearningPathData } from '../../graphql/learning_paths/learning_paths.fragments';
 import { LearningPathPageInfo } from '../../pages/learning_paths/LearningPathPage';
@@ -32,7 +32,13 @@ interface LearningPathPreviewCardProps {
 export const LearningPathPreviewCard: React.FC<LearningPathPreviewCardProps> = ({ learningPath, isLoading }) => {
   return (
     <LearningMaterialCardContainer
-      renderCenterLeft={<LearningPathCircularCompletion size="sm" learningPath={learningPath} />}
+      renderCenterLeft={
+        <LearningPathCircularCompletion
+          size="sm"
+          learningPath={learningPath}
+          onStarted={() => routerPushToPage(LearningPathPageInfo(learningPath))}
+        />
+      }
       leftBlockWidth="130px"
       onClick={() => routerPushToPage(LearningPathPageInfo(learningPath))}
       renderRight={<Flex></Flex>}
@@ -51,8 +57,12 @@ export const LearningPathPreviewCard: React.FC<LearningPathPreviewCardProps> = (
     >
       <Flex direction="column">
         <Text fontSize="xl">{learningPath.name}</Text>
+
         <Stack direction="row" alignItems="baseline" spacing={2}>
           <StarsRatingViewer pxSize={13} value={learningPath.rating} />
+          <Badge colorScheme="teal" fontSize="0.8em">
+            Learning Path
+          </Badge>
           <DurationViewer value={learningPath.durationMs} />
         </Stack>
         <Box>

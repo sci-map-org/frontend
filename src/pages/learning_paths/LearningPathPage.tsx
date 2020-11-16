@@ -28,6 +28,7 @@ import {
   LearningPathCompletion,
   LearningPathCompletionData,
 } from '../../components/learning_paths/LearningPathCompletion';
+import { LearningPathPreviewCard } from '../../components/learning_paths/LearningPathPreviewCard';
 import { LearningPathResourceItemsManager } from '../../components/learning_paths/LearningPathResourceItems';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { EditableTextarea } from '../../components/lib/inputs/EditableTextarea';
@@ -223,7 +224,11 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
                   <Center flexDirection="column">
                     <Text fontWeight={300}>Created By You</Text>
 
-                    <Badge colorScheme="green">PUBLIC</Badge>
+                    {learningPath.public ? (
+                      <Badge colorScheme="green">PUBLIC</Badge>
+                    ) : (
+                      <LearningPathPublishButton size="md" learningPath={learningPath} />
+                    )}
                   </Center>
                 ) : (
                   <Stack spacing={1}>

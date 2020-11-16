@@ -15,7 +15,7 @@ import {
   PopoverTrigger,
   Skeleton,
   Stack,
-  Text
+  Text,
 } from '@chakra-ui/core';
 import { EditIcon, SettingsIcon } from '@chakra-ui/icons';
 import { flatten } from 'lodash';
@@ -121,19 +121,6 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
         </Flex>
       </Flex>
     </LearningMaterialCardContainer>
-  );
-};
-
-const LeftBlock: React.FC<{ resource: ResourcePreviewDataFragment; isLoading?: boolean }> = ({
-  resource,
-  isLoading,
-}) => {
-  return (
-    <Center w="100px">
-      <BoxBlockDefaultClickPropagation>
-        <ResourceUpvoter resource={resource} isLoading={isLoading} />
-      </BoxBlockDefaultClickPropagation>
-    </Center>
   );
 };
 

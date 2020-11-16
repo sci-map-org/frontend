@@ -67,7 +67,8 @@ const sizes: {
 export const LearningPathCircularCompletion: React.FC<{
   learningPath: LearningPathCompletionDataFragment;
   size: 'lg' | 'sm';
-}> = ({ learningPath, size }) => {
+  onStarted?: () => void;
+}> = ({ learningPath, size, onStarted }) => {
   const [startLearningPath] = useStartLearningPathMutation();
   const { currentUser } = useCurrentUser();
   const unauthentificatedModalDisclosure = useUnauthentificatedModal();
@@ -81,7 +82,7 @@ export const LearningPathCircularCompletion: React.FC<{
   }, [resourceItems]);
 
   const completionRate = useMemo(() => {
-    return completedResources.length / resourceItems.length;
+    return resourceItems.length ? completedResources.length / resourceItems.length : 1;
   }, [resourceItems, completedResources]);
 
   return learningPath.started ? (
@@ -103,9 +104,10 @@ export const LearningPathCircularCompletion: React.FC<{
       colorScheme="teal"
       size={sizes[size].buttonSize}
       isRound
-      onClick={() => {
+      onClick={async () => {
         if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
-        startLearningPath({ variables: { learningPathId: learningPath._id } });
+        await startLearningPath({ variables: { learningPathId: learningPath._id } });
+        onStarted && onStarted();
       }}
     />
   );

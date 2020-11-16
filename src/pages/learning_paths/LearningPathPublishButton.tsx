@@ -1,6 +1,7 @@
 import {
   Button,
   ButtonGroup,
+  ButtonProps,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -13,12 +14,15 @@ import {
 import { useUpdateLearningPathMutation } from '../../graphql/learning_paths/learning_paths.operations.generated';
 import { LearningPath } from '../../graphql/types';
 
-export const LearningPathPublishButton: React.FC<{ learningPath: Pick<LearningPath, '_id'> }> = ({ learningPath }) => {
+export const LearningPathPublishButton: React.FC<{
+  size?: ButtonProps['size'];
+  learningPath: Pick<LearningPath, '_id'>;
+}> = ({ learningPath, size = 'lg' }) => {
   const [updateLearningPath] = useUpdateLearningPathMutation();
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
-      <Button size="lg" colorScheme="blue" onClick={onOpen}>
+      <Button size={size} colorScheme="blue" onClick={onOpen}>
         Publish
       </Button>
       <Modal isOpen={isOpen} onClose={onClose}>
