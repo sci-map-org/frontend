@@ -6,8 +6,8 @@ import Router from 'next/router';
 import { ConceptWithDependenciesDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { theme } from '../../theme/theme';
 
-Cytoscape.use(dagre);
 const CytoscapeComponent = dynamic(import('react-cytoscapejs'), { ssr: false });
+Cytoscape.use(dagre);
 
 export const ConceptMappingVisualisation: React.FC<{
   domainKey: string;
