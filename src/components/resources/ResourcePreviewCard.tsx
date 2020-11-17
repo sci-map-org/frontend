@@ -37,7 +37,7 @@ import { InternalLink } from '../navigation/InternalLink';
 import { LearningMaterialDomainCoveredConceptsSelector } from './CoveredConceptsSelector';
 import { DurationViewer } from './elements/Duration';
 import { ResourceCompletedCheckbox } from './elements/ResourceCompletedCheckbox';
-import { shortenDescription } from './elements/ResourceDescription';
+import { ResourceDescription, shortenDescription } from './elements/ResourceDescription';
 import { ResourceTypeBadge } from './elements/ResourceType';
 import { ResourceUpvoter } from './elements/ResourceUpvoter';
 import { ResourceUrlLink } from './elements/ResourceUrl';
@@ -122,7 +122,7 @@ export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
           </Skeleton>
           {((resource.tags && resource.tags.length > 0) || resource.description) && (
             <Box>
-              <Text fontWeight={250}>{resource.description && shortenDescription(resource.description)}</Text>
+              <ResourceDescription description={resource.description} noOfLines={2} />
             </Box>
           )}
         </Flex>

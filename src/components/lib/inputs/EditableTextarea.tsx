@@ -10,7 +10,8 @@ import {
 } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
 
-const estimateNbRows = (value?: string) => Math.ceil((value?.length || 0) / 128);
+const estimateNbRows = (value?: string) => Math.ceil((value?.length || 1) / 128);
+
 export const EditableTextarea: React.FC<
   Pick<UseEditableProps, 'onSubmit' | 'placeholder' | 'isDisabled'> &
     FlexProps & { rows?: number; defaultValue?: string }
@@ -23,8 +24,13 @@ export const EditableTextarea: React.FC<
     isPreviewFocusable: false,
   });
   return (
-    <Flex {...flexProps} onKeyPress={(e) => console.log(e.key)}>
-      <Textarea rows={rows || estimateNbRows(defaultValue)} {...getInputProps()}></Textarea>
+    <Flex {...flexProps}>
+      <Textarea
+        {...getInputProps()}
+        //onKeyDown: undefined => cancel submitting on pressing Enter. Can't render line breaks without <br />,
+        // so in the future just use markdown editor.
+        rows={rows || estimateNbRows(defaultValue)}
+      ></Textarea>
       <Text {...getPreviewProps()} {...(!defaultValue && { color: 'gray.500' })}>
         <>
           {!isEditing && !isDisabled && (
@@ -38,11 +44,6 @@ export const EditableTextarea: React.FC<
               float="right"
               ml={2}
               mb={2}
-              // position="absolute"
-              // top="10px"
-              // right="10px"
-              // float="right"
-              // alignSelf="end"
             />
           )}
           {getPreviewProps().children}
