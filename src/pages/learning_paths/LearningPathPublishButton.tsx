@@ -39,9 +39,10 @@ export const LearningPathPublishButton: React.FC<{
                 </Button>
                 <Button
                   colorScheme="blue"
-                  onClick={() =>
-                    updateLearningPath({ variables: { _id: learningPath._id, payload: { public: true } } })
-                  }
+                  onClick={async () => {
+                    await updateLearningPath({ variables: { _id: learningPath._id, payload: { public: true } } });
+                    onClose();
+                  }}
                 >
                   Publish
                 </Button>

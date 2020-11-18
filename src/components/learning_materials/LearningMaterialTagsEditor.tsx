@@ -6,6 +6,7 @@ import {
   Tag,
   TagCloseButton,
   TagLabel,
+  Text,
   Tooltip,
   Wrap,
   WrapItem,
@@ -153,7 +154,8 @@ export const EditableLearningMaterialTags: React.FC<{
   learningMaterial: Pick<LearningMaterial, '_id' | 'tags'>;
   isDisabled?: boolean;
   justify?: 'center';
-}> = ({ learningMaterial, isLoading, justify, isDisabled }) => {
+  placeholder?: string;
+}> = ({ learningMaterial, isLoading, justify, isDisabled, placeholder }) => {
   const wrapperRef = useRef(null);
   const { currentUser } = useCurrentUser();
   const unauthentificatedModalDisclosure = useUnauthentificatedModal();
@@ -187,34 +189,43 @@ export const EditableLearningMaterialTags: React.FC<{
   ) : (
     <Stack direction="row" alignItems="center">
       {learningMaterial.tags && !isDisabled && (
-        <Skeleton isLoaded={!isLoading}>
-          <SelectedTagsViewer
-            pb={0}
-            selectedTags={learningMaterial.tags}
-            justify={justify}
-            renderEnd={() =>
-              !isDisabled && (
-                <Tooltip hasArrow label={learningMaterial.tags?.length ? 'Add or remove tags' : 'Add tags'}>
-                  <IconButton
-                    isDisabled={isLoading}
-                    size="xs"
-                    variant="ghost"
-                    aria-label="add tag"
-                    onClick={(e) => {
-                      if (!currentUser) {
-                        unauthentificatedModalDisclosure.onOpen();
-                        e.preventDefault();
-                        return;
-                      }
-                      setTagEditorMode(true);
-                    }}
-                    icon={<EditIcon />}
-                  />
-                </Tooltip>
-              )
-            }
-          />
-        </Skeleton>
+        <>
+          {!learningMaterial.tags.length && placeholder && (
+            <Skeleton isLoaded={!isLoading}>
+              <Text fontSize="sm" color="gray.400">
+                {placeholder}
+              </Text>
+            </Skeleton>
+          )}
+          <Skeleton isLoaded={!isLoading}>
+            <SelectedTagsViewer
+              pb={0}
+              selectedTags={learningMaterial.tags}
+              justify={justify}
+              renderEnd={() =>
+                !isDisabled && (
+                  <Tooltip hasArrow label={learningMaterial.tags?.length ? 'Add or remove tags' : 'Add tags'}>
+                    <IconButton
+                      isDisabled={isLoading}
+                      size="xs"
+                      variant="ghost"
+                      aria-label="add tag"
+                      onClick={(e) => {
+                        if (!currentUser) {
+                          unauthentificatedModalDisclosure.onOpen();
+                          e.preventDefault();
+                          return;
+                        }
+                        setTagEditorMode(true);
+                      }}
+                      icon={<EditIcon />}
+                    />
+                  </Tooltip>
+                )
+              }
+            />
+          </Skeleton>
+        </>
       )}
       )
     </Stack>

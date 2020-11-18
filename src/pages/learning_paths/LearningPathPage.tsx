@@ -12,13 +12,12 @@ import {
   Skeleton,
   Stack,
   Text,
-  Textarea,
   Tooltip,
 } from '@chakra-ui/react';
-import { AiOutlineEye } from 'react-icons/ai';
 import gql from 'graphql-tag';
 import Router from 'next/router';
 import { useMemo, useState } from 'react';
+import { AiOutlineEye } from 'react-icons/ai';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
 import {
@@ -200,6 +199,7 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
                 learningMaterial={learningPath}
                 isLoading={loading}
                 isDisabled={!editMode}
+                placeholder="Add tags"
               />
             </Center>
           </Stack>
@@ -259,7 +259,7 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
               <Center>
                 {currentUserIsOwner ? (
                   <Center flexDirection="column">
-                    <Text fontWeight={300}>Created By You</Text>
+                    <Text fontWeight={300}>You are the owner</Text>
 
                     {learningPath.public ? (
                       <Badge colorScheme="green">PUBLIC</Badge>
@@ -315,30 +315,35 @@ const LearningPageRightIcons: React.FC<{
   const { deleteLearningPath } = useDeleteLearningPath();
   const { currentUser } = useCurrentUser();
   return currentUser && (currentUserIsOwner || currentUser.role === UserRole.Admin) ? (
-    <Stack direction="row">
+    <Stack direction="row" spacing={3}>
       <Stack direction="row" spacing={0}>
-        <Tooltip label="Preview learning path" aria-label="preview learning path">
+        <Tooltip label="Preview Mode" aria-label="preview learning path">
           <IconButton
             aria-label="view mode"
-            size="sm"
+            size="md"
+            variant="ghost"
             onClick={() => setEditMode(false)}
-            isDisabled={!editMode}
+            isActive={!editMode}
             icon={<AiOutlineEye />}
+            _focus={{}}
           />
         </Tooltip>
-        <Tooltip label="Edit learning path" aria-label="edit learning path">
+        <Tooltip label="Edit Mode" aria-label="edit learning path">
           <IconButton
             aria-label="edit mode"
-            size="sm"
+            size="md"
             onClick={() => setEditMode(true)}
-            isDisabled={editMode}
+            variant="ghost"
+            isActive={editMode}
             icon={<EditIcon />}
+            _focus={{}}
           />
         </Tooltip>
       </Stack>
 
       <DeleteButtonWithConfirmation
         variant="outline"
+        size="md"
         modalHeaderText="Delete Learning Path"
         modalBodyText={`Confirm deleting the learning path "${learningPath.name}" ?`}
         isDisabled={isDisabled}

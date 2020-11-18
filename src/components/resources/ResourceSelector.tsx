@@ -46,8 +46,8 @@ export const ResourceSelector: React.FC<ResourceSelectorProps> = ({ onSelect, de
 };
 
 export const ResourceSelectorModal: React.FC<
-  { renderButton: (args: { openModal: () => void }) => ReactElement } & ResourceSelectorProps
-> = ({ renderButton, children, onSelect, ...resourceSelectorProps }) => {
+  { modalHeaderTitle?: string; renderButton: (args: { openModal: () => void }) => ReactElement } & ResourceSelectorProps
+> = ({ modalHeaderTitle = 'Add a resource', renderButton, children, onSelect, ...resourceSelectorProps }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
@@ -55,7 +55,7 @@ export const ResourceSelectorModal: React.FC<
       <Modal onClose={onClose} size="xl" isOpen={isOpen}>
         <ModalOverlay>
           <ModalContent>
-            <ModalHeader>Create new Resource</ModalHeader>
+            <ModalHeader>{modalHeaderTitle}</ModalHeader>
             <ModalCloseButton />
             <ModalBody pb={5}>
               <ResourceSelector

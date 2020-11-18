@@ -17,7 +17,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 export const DurationViewer: React.FC<{ value?: number | null }> = ({ value }) => {
   return value ? (
-    <Text fontSize="sm" color="gray.400" mb={1} pr={1}>
+    <Text fontSize="sm" color="gray.400" mb={0}>
       {humanizeDuration(value, { largest: 2 })}
     </Text>
   ) : null;
@@ -179,7 +179,7 @@ export const EditableDuration: React.FC<EditableDurationProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   return (
     <Skeleton isLoaded={!isLoading}>
-      <Flex>
+      <Flex direction="row" alignItems="center">
         {isEditing && !isDisabled ? (
           <DurationInput
             value={defaultValue}
@@ -194,8 +194,8 @@ export const EditableDuration: React.FC<EditableDurationProps> = ({
         ) : (
           <>
             <DurationViewer value={defaultValue} />
-            {!defaultValue && placeholder && (
-              <Text fontSize="sm" color="gray.300" mb={1} pr={1}>
+            {!defaultValue && placeholder && !isDisabled && (
+              <Text fontSize="sm" color="gray.400" mb={1} pr={1}>
                 {placeholder}
               </Text>
             )}
