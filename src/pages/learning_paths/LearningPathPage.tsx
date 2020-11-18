@@ -13,7 +13,9 @@ import {
   Stack,
   Text,
   Textarea,
+  Tooltip,
 } from '@chakra-ui/react';
+import { AiOutlineEye } from 'react-icons/ai';
 import gql from 'graphql-tag';
 import Router from 'next/router';
 import { useMemo, useState } from 'react';
@@ -143,9 +145,7 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
     learningPath,
     currentUserIsOwner,
   ]);
-  const [editMode, setEditMode] = useState(
-    currentUserIsOwner || (!!currentUser && [UserRole.Admin, UserRole.Contributor].indexOf(currentUser.role) > -1)
-  );
+  const [editMode, setEditMode] = useState(currentUserIsOwner);
   if (error) return null;
   return (
     <PageLayout
@@ -156,6 +156,8 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
           learningPath={learningPath}
           currentUserIsOwner={currentUserIsOwner}
           isDisabled={loading}
+          editMode={editMode}
+          setEditMode={setEditMode}
         />
       }
     >
@@ -308,22 +310,43 @@ const LearningPageRightIcons: React.FC<{
   learningPath: LearningPathDataFragment;
   isDisabled?: boolean;
   currentUserIsOwner: boolean;
-}> = ({ learningPath, isDisabled, currentUserIsOwner }) => {
+  setEditMode: (editMode: boolean) => void;
+  editMode: boolean;
+}> = ({ learningPath, isDisabled, currentUserIsOwner, editMode, setEditMode }) => {
   const { deleteLearningPath } = useDeleteLearningPath();
   const { currentUser } = useCurrentUser();
-  return (
-    <Flex>
-      {currentUser && (currentUserIsOwner || currentUser.role === UserRole.Admin) && (
-        <DeleteButtonWithConfirmation
-          variant="outline"
-          modalHeaderText="Delete Learning Path"
-          modalBodyText={`Confirm deleting the learning path "${learningPath.name}" ?`}
-          isDisabled={isDisabled}
-          onConfirmation={() => deleteLearningPath({ variables: { _id: learningPath._id } }).then(() => Router.back())}
-        />
-      )}
-    </Flex>
-  );
+  return currentUser && (currentUserIsOwner || currentUser.role === UserRole.Admin) ? (
+    <Stack direction="row">
+      <Stack direction="row" spacing={0}>
+        <Tooltip label="Preview learning path" aria-label="preview learning path">
+          <IconButton
+            aria-label="view mode"
+            size="sm"
+            onClick={() => setEditMode(false)}
+            isDisabled={!editMode}
+            icon={<AiOutlineEye />}
+          />
+        </Tooltip>
+        <Tooltip label="Edit learning path" aria-label="edit learning path">
+          <IconButton
+            aria-label="edit mode"
+            size="sm"
+            onClick={() => setEditMode(true)}
+            isDisabled={editMode}
+            icon={<EditIcon />}
+          />
+        </Tooltip>
+      </Stack>
+
+      <DeleteButtonWithConfirmation
+        variant="outline"
+        modalHeaderText="Delete Learning Path"
+        modalBodyText={`Confirm deleting the learning path "${learningPath.name}" ?`}
+        isDisabled={isDisabled}
+        onConfirmation={() => deleteLearningPath({ variables: { _id: learningPath._id } }).then(() => Router.back())}
+      />
+    </Stack>
+  ) : null;
 };
 
 const LearningPathEditableName: React.FC<{
