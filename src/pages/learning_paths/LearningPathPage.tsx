@@ -140,10 +140,9 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
     () => !!learningPath.createdBy && !!currentUser && learningPath.createdBy._id === currentUser._id,
     [learningPath, currentUser]
   );
-  const currentUserStartedThePath = useMemo(() => !!learningPath.started && !currentUserIsOwner, [
-    learningPath,
-    currentUserIsOwner,
-  ]);
+
+  const currentUserStartedPath = useMemo(() => !!learningPath.started, [learningPath]);
+
   const [editMode, setEditMode] = useState(currentUserIsOwner);
   if (error) return null;
   return (
@@ -207,7 +206,8 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
             <Stack direction="row" justifyContent="center" spacing={2} alignItems="center">
               <StarsRatingViewer value={learningPath.rating} isLoading={loading} />
               {!loading &&
-                (currentUserStartedThePath ? (
+                !currentUserIsOwner &&
+                (currentUserStartedPath ? (
                   <LearningMaterialStarsRater learningMaterialId={learningPath._id} isDisabled={loading} />
                 ) : (
                   !currentUserIsOwner && (
@@ -292,7 +292,12 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
             )}
           </Stack>
         </Flex>
-        <LearningPathResourceItemsManager editMode={editMode} learningPath={learningPath} isLoading={loading} />
+        <LearningPathResourceItemsManager
+          editMode={editMode}
+          learningPath={learningPath}
+          isLoading={loading}
+          currentUserStartedPath={currentUserStartedPath}
+        />
         <LearningPathComplementaryResourcesManager
           editMode={editMode}
           learningPathId={learningPath._id}

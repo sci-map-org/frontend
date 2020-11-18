@@ -20,6 +20,7 @@ interface StatelessLearningPathResourceItemsProps {
   confirmDeletion?: boolean;
   editMode?: boolean;
   isLoading?: boolean;
+  currentUserStartedPath?: boolean;
 }
 
 const completedCheckboxHeight = 24;
@@ -52,6 +53,7 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
   confirmDeletion,
   editMode,
   isLoading,
+  currentUserStartedPath,
 }) => {
   const previewCardsRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [previewCardsHeight, setPreviewCardsHeight] = useState<(number | undefined)[]>([]);
@@ -73,7 +75,9 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
                     position="absolute"
                     top={getArrowTopPosition(index, previewCardsHeight)}
                     color={
-                      !isLoading && (index === 0 || resourceItems[index - 1].resource.consumed?.consumedAt)
+                      !isLoading &&
+                      !!currentUserStartedPath &&
+                      (index === 0 || resourceItems[index - 1].resource.consumed?.consumedAt)
                         ? 'teal.400'
                         : 'gray.300'
                     }
@@ -162,12 +166,14 @@ interface LearningPathResourceItemsProps {
   learningPath: LearningPathWithResourceItemsPreviewDataFragment;
   editMode?: boolean;
   isLoading?: boolean;
+  currentUserStartedPath?: boolean;
 }
 
 export const LearningPathResourceItemsManager: React.FC<LearningPathResourceItemsProps> = ({
   learningPath,
   editMode,
   isLoading,
+  currentUserStartedPath,
 }) => {
   const [updateLearningPath] = useUpdateLearningPathMutation();
   const addResourceItem = (resource: ResourceDataFragment) => {
@@ -227,6 +233,7 @@ export const LearningPathResourceItemsManager: React.FC<LearningPathResourceItem
       confirmDeletion
       editMode={editMode}
       isLoading={isLoading}
+      currentUserStartedPath={currentUserStartedPath}
     />
   );
 };

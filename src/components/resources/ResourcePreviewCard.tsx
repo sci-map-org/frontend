@@ -65,10 +65,22 @@ interface ResourcePreviewCardProps {
   isLoading?: boolean;
   inCompactList?: boolean;
   firstItemInCompactList?: boolean;
+  showCompletedNotificationToast?: boolean;
 }
 
 export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCardProps>(
-  ({ domainKey, resource, onResourceConsumed, isLoading, inCompactList, firstItemInCompactList }, ref) => {
+  (
+    {
+      domainKey,
+      resource,
+      onResourceConsumed,
+      isLoading,
+      inCompactList,
+      firstItemInCompactList,
+      showCompletedNotificationToast,
+    },
+    ref
+  ) => {
     return (
       <LearningMaterialCardContainer
         ref={ref}
@@ -78,6 +90,7 @@ export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCar
             resource={resource}
             isLoading={isLoading}
             onResourceConsumed={onResourceConsumed}
+            showCompletedNotificationToast={showCompletedNotificationToast}
           />
         }
         leftBlockWidth="100px"

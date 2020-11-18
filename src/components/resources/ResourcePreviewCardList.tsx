@@ -7,7 +7,8 @@ export const ResourcePreviewCardList: React.FC<{
   resourcePreviews: ResourcePreviewDataFragment[];
   isLoading?: boolean;
   onResourceConsumed?: (resourceId: string, consumed: boolean) => void;
-}> = ({ resourcePreviews, domainKey, isLoading, onResourceConsumed }) => {
+  showCompletedNotificationToast?: boolean;
+}> = ({ resourcePreviews, domainKey, isLoading, onResourceConsumed, showCompletedNotificationToast }) => {
   if (!isLoading && !resourcePreviews.length)
     return (
       <Flex
@@ -48,6 +49,7 @@ export const ResourcePreviewCardList: React.FC<{
             domainKey={domainKey}
             resource={preview}
             onResourceConsumed={onResourceConsumed}
+            showCompletedNotificationToast={showCompletedNotificationToast}
           />
         ))
       )}
