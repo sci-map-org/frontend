@@ -24,25 +24,25 @@ interface StatelessLearningPathResourceItemsProps {
 }
 
 const completedCheckboxHeight = 24;
-const checkboxMargin = 5;
+const checkboxMargin = 8;
+const borderWidth = 1;
 
 // top = - ([idx -1] - 24) / 2 + margin
-const getArrowTopPosition = (resourceItemIndex: number, previewCardsHeight: (number | undefined)[]): string => {
-  return `${
-    resourceItemIndex === 0
-      ? 0
-      : -((previewCardsHeight[resourceItemIndex - 1] || 0) - completedCheckboxHeight) / 2 + checkboxMargin
-  }px`;
+const getArrowTopPosition = (resourceItemIndex: number, previewCardsHeight: number[]): string => {
+  return resourceItemIndex === 0
+    ? '0px'
+    : `${-(previewCardsHeight[resourceItemIndex - 1] + borderWidth - completedCheckboxHeight) / 2 + checkboxMargin}px`;
 };
 
 // h = 100 % + ([idx -1] - 24) / 2 + ([idx] - 24) / 2 - 2 * margin
-const getArrowHeight = (resourceItemIndex: number, previewCardsHeight: (number | undefined)[]): string => {
-  return `calc(100% + ${
-    ((previewCardsHeight[resourceItemIndex] || 0) - completedCheckboxHeight) / 2 -
-    checkboxMargin +
-    (resourceItemIndex === 0 ? 0 : ((previewCardsHeight[resourceItemIndex - 1] || 0) - completedCheckboxHeight) / 2) -
-    checkboxMargin
-  }px)`;
+const getArrowHeight = (resourceItemIndex: number, previewCardsHeight: number[]): string => {
+  const arrowHeightInPreviousResourceCard =
+    resourceItemIndex === 0
+      ? 0
+      : (previewCardsHeight[resourceItemIndex - 1] - completedCheckboxHeight) / 2 - checkboxMargin + borderWidth;
+  const arrowHeightInNextResourceCard =
+    (previewCardsHeight[resourceItemIndex] - completedCheckboxHeight) / 2 - checkboxMargin + borderWidth;
+  return `calc(100% + ${arrowHeightInPreviousResourceCard + arrowHeightInNextResourceCard}px)`;
 };
 
 export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearningPathResourceItemsProps> = ({
@@ -56,10 +56,10 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
   currentUserStartedPath,
 }) => {
   const previewCardsRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [previewCardsHeight, setPreviewCardsHeight] = useState<(number | undefined)[]>([]);
+  const [previewCardsHeight, setPreviewCardsHeight] = useState<number[]>([]);
 
   useEffect(() => {
-    previewCardsRefs.current && setPreviewCardsHeight(previewCardsRefs.current.map((c) => c?.offsetHeight));
+    previewCardsRefs.current && setPreviewCardsHeight(previewCardsRefs.current.map((c) => c?.offsetHeight as number));
   }, [previewCardsRefs.current, previewCardsRefs.current.length]);
 
   return (
