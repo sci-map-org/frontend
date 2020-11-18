@@ -45,16 +45,16 @@ export const LearningPathCompletion: React.FC<LearningPathCompletionProps> = ({ 
   const resourceItems = learningPath.resourceItems || [];
 
   return (
-    <Flex direction="column" alignItems="stretch" w="200px">
+    <Flex direction="column" alignItems="stretch" w="100px">
       <Center>
         <LearningPathCircularCompletion size="lg" learningPath={learningPath} />
       </Center>
-      <Wrap spacing={3} mt={3} justify="center">
+      <Wrap spacing="9px" mt={3} justify="center">
         {resourceItems.map((resourceItem) => (
           <WrapItem
             key={resourceItem.resource._id}
-            w={6}
-            h={3}
+            w="18px"
+            h="9px"
             bgColor={resourceItem.resource.consumed?.consumedAt ? 'teal.400' : 'gray.200'}
           />
         ))}

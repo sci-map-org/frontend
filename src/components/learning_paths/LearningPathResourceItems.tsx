@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, IconButton, Stack } from '@chakra-ui/react';
+import { Box, BoxProps, Flex, FlexProps, Heading, IconButton, Stack } from '@chakra-ui/react';
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import { LearningPathWithResourceItemsPreviewDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
 import { useUpdateLearningPathMutation } from '../../graphql/learning_paths/learning_paths.operations.generated';
@@ -10,6 +10,7 @@ import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithCon
 import { EditableTextarea } from '../lib/inputs/EditableTextarea';
 import { ResourcePreviewCard } from '../resources/ResourcePreviewCard';
 import { ResourceSelectorModal } from '../resources/ResourceSelector';
+import { useEffect, useRef, useState } from 'react';
 
 interface StatelessLearningPathResourceItemsProps {
   resourceItems: { description?: string | null; resource: ResourcePreviewDataFragment }[];
@@ -20,6 +21,28 @@ interface StatelessLearningPathResourceItemsProps {
   editMode?: boolean;
 }
 
+const completedCheckboxHeight = 24;
+const checkboxMargin = 5;
+
+// top = - ([idx -1] - 24) / 2 + margin
+const getArrowTopPosition = (resourceItemIndex: number, previewCardsHeight: (number | undefined)[]): string => {
+  return `${
+    resourceItemIndex === 0
+      ? 0
+      : -((previewCardsHeight[resourceItemIndex - 1] || 0) - completedCheckboxHeight) / 2 + checkboxMargin
+  }px`;
+};
+
+// h = 100 % + ([idx -1] - 24) / 2 + ([idx] - 24) / 2 - 2 * margin
+const getArrowHeight = (resourceItemIndex: number, previewCardsHeight: (number | undefined)[]): string => {
+  return `calc(100% + ${
+    ((previewCardsHeight[resourceItemIndex] || 0) - completedCheckboxHeight) / 2 -
+    checkboxMargin +
+    (resourceItemIndex === 0 ? 0 : ((previewCardsHeight[resourceItemIndex - 1] || 0) - completedCheckboxHeight) / 2) -
+    checkboxMargin
+  }px)`;
+};
+
 export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearningPathResourceItemsProps> = ({
   resourceItems,
   updateDescription,
@@ -28,29 +51,54 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
   confirmDeletion,
   editMode,
 }) => {
+  const previewCardsRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [previewCardsHeight, setPreviewCardsHeight] = useState<(number | undefined)[]>([]);
+
+  useEffect(() => {
+    console.log(previewCardsRefs);
+    previewCardsRefs.current && setPreviewCardsHeight(previewCardsRefs.current.map((c) => c?.offsetHeight));
+  }, [previewCardsRefs.current, previewCardsRefs.current.length]);
+
   return (
     <Flex direction="column" alignItems="stretch">
       <Flex direction="column">
         <Flex direction="column" alignItems="stretch" backgroundColor="backgroundColor.0">
-          {resourceItems.map(({ resource, description }) => (
+          {resourceItems.map(({ resource, description }, index) => (
             <Flex key={resource._id} direction="column" justifyContent="stretch">
-              <Flex direction="row" pt={3} pl="100px" pb={2}>
-                <EditableTextarea
-                  flexGrow={1}
-                  backgroundColor="white"
-                  fontSize="lg"
-                  fontWeight={300}
-                  color="gray.700"
-                  defaultValue={description || ''}
-                  placeholder="Add a description..."
-                  onSubmit={(newDescription: any) => updateDescription(resource._id, newDescription as string)}
-                  isDisabled={!editMode}
-                />
+              <Flex direction="row" py={0} position="relative">
+                <Flex w="100px" borderLeft="1px solid transparent" flexShrink={0} justifyContent="center">
+                  <ProgressArrow
+                    pxWidth={8}
+                    position="absolute"
+                    top={getArrowTopPosition(index, previewCardsHeight)}
+                    color={
+                      index === 0 || resourceItems[index - 1].resource.consumed?.consumedAt ? 'teal.400' : 'gray.300'
+                    }
+                    h={getArrowHeight(index, previewCardsHeight)}
+                  />
+                </Flex>
+                <Box pt={2} pb={1}>
+                  <EditableTextarea
+                    flexGrow={1}
+                    backgroundColor="white"
+                    fontSize="lg"
+                    fontWeight={300}
+                    color="gray.700"
+                    defaultValue={description || ''}
+                    placeholder="Add a description..."
+                    onSubmit={(newDescription: any) => updateDescription(resource._id, newDescription as string)}
+                    isDisabled={!editMode}
+                  />
+                </Box>
                 <Box flexBasis="60px" flexShrink={0} />
               </Flex>
               <Flex direction="row">
                 <Box flexGrow={1}>
-                  <ResourcePreviewCard borderTopColor="gray.200" resource={resource} />
+                  <ResourcePreviewCard
+                    ref={(el) => (previewCardsRefs.current[index] = el)}
+                    borderTopColor="gray.200"
+                    resource={resource}
+                  />
                 </Box>
                 {editMode && (
                   <Flex
@@ -170,5 +218,28 @@ export const LearningPathResourceItemsManager: React.FC<LearningPathResourceItem
       confirmDeletion
       editMode={editMode}
     />
+  );
+};
+
+const ProgressArrow: React.FC<{ color: BoxProps['bgColor']; h: string; pxWidth: number } & FlexProps> = ({
+  color,
+  h,
+  pxWidth,
+  ...props
+}) => {
+  return (
+    <Flex direction="column" alignItems="center" h={h} {...props} w={`${pxWidth * 2}px`}>
+      <Box w={`${pxWidth}px`} h="100%" backgroundColor={color} />
+      <Box
+        w={`${pxWidth * 2}px`}
+        bgColor="transparent"
+        borderColor={color}
+        borderTopWidth={`${pxWidth * 2 - 4}px`}
+        borderLeftColor="transparent"
+        borderRightColor="transparent"
+        borderLeftWidth={`${pxWidth * 2 - 4}px`}
+        borderRightWidth={`${pxWidth * 2 - 4}px`}
+      />
+    </Flex>
   );
 };

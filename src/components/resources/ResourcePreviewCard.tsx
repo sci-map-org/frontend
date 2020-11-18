@@ -19,7 +19,7 @@ import {
 } from '@chakra-ui/react';
 import { EditIcon, SettingsIcon } from '@chakra-ui/icons';
 import { flatten } from 'lodash';
-import React, { ReactElement, useState } from 'react';
+import React, { forwardRef, ReactElement, useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
@@ -67,69 +67,73 @@ interface ResourcePreviewCardProps {
   borderTopColor?: string;
   inCompactList?: boolean;
   firstItemInCompactList?: boolean;
+  // progressArrowOptions?: {
+  //   showStartNextArrow?: boolean;
+  //   previousArrowColor?: BoxProps['bgColor'];
+  //   nextArrowColor?: BoxProps['bgColor']
+  //   arrowPxWidth?: number
+  // }
 }
 
-export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
-  domainKey,
-  resource,
-  onResourceConsumed,
-  borderTopColor,
-  isLoading,
-  inCompactList,
-  firstItemInCompactList,
-}) => {
-  return (
-    <LearningMaterialCardContainer
-      renderCenterLeft={
-        <ResourceCompletedCheckbox
-          size="lg"
-          resource={resource}
-          isLoading={isLoading}
-          onResourceConsumed={onResourceConsumed}
-        />
-      }
-      leftBlockWidth="100px"
-      inCompactList={inCompactList}
-      firstItemInCompactList={firstItemInCompactList}
-      onClick={() => routerPushToPage(ResourcePageInfo(resource))}
-      renderRight={<RightBlock resource={resource} isLoading={isLoading} onResourceConsumed={onResourceConsumed} />}
-      renderBottom={<BottomBlock resource={resource} domainKey={domainKey} isLoading={isLoading} />}
-    >
-      <Flex direction="row" flexGrow={1} pt="4px">
-        <Flex direction="column" flexGrow={1} justifyContent="center">
-          <Skeleton isLoaded={!isLoading}>
-            <Stack spacing={2} direction="row" alignItems="baseline" mr="10px">
-              <TitleLink resource={resource} isLoading={isLoading} />
-            </Stack>
-          </Skeleton>
-          <Skeleton isLoaded={!isLoading}>
-            <Stack spacing={1} direction="row" alignItems="baseline" mr="10px">
-              <StarsRatingViewer value={resource.rating} pxSize={13} />
-              <ResourceTypeBadge type={resource.type} />
-              <DurationViewer value={resource.durationMs} />
+export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCardProps>(
+  (
+    { domainKey, resource, onResourceConsumed, borderTopColor, isLoading, inCompactList, firstItemInCompactList },
+    ref
+  ) => {
+    return (
+      <LearningMaterialCardContainer
+        ref={ref}
+        renderCenterLeft={
+          <ResourceCompletedCheckbox
+            size="lg"
+            resource={resource}
+            isLoading={isLoading}
+            onResourceConsumed={onResourceConsumed}
+          />
+        }
+        leftBlockWidth="100px"
+        inCompactList={inCompactList}
+        firstItemInCompactList={firstItemInCompactList}
+        onClick={() => routerPushToPage(ResourcePageInfo(resource))}
+        renderRight={<RightBlock resource={resource} isLoading={isLoading} onResourceConsumed={onResourceConsumed} />}
+        renderBottom={<BottomBlock resource={resource} domainKey={domainKey} isLoading={isLoading} />}
+      >
+        <Flex direction="row" flexGrow={1} pt="4px">
+          <Flex direction="column" flexGrow={1} justifyContent="center">
+            <Skeleton isLoaded={!isLoading}>
+              <Stack spacing={2} direction="row" alignItems="baseline" mr="10px">
+                <TitleLink resource={resource} isLoading={isLoading} />
+              </Stack>
+            </Skeleton>
+            <Skeleton isLoaded={!isLoading}>
+              <Stack spacing={1} direction="row" alignItems="baseline" mr="10px">
+                <StarsRatingViewer value={resource.rating} pxSize={13} />
+                <ResourceTypeBadge type={resource.type} />
+                <DurationViewer value={resource.durationMs} />
 
-              <RoleAccess accessRule="contributorOrAdmin">
-                <BoxBlockDefaultClickPropagation>
-                  <LearningMaterialStarsRater
-                    learningMaterialId={resource._id}
-                    size="xs"
-                    color="gray.500"
-                    _hover={{ color: 'gray.900' }}
-                  />
-                </BoxBlockDefaultClickPropagation>
-              </RoleAccess>
-            </Stack>
-          </Skeleton>
-          {((resource.tags && resource.tags.length > 0) || resource.description) && (
-            <Box>
-              <ResourceDescription description={resource.description} noOfLines={2} />
-            </Box>
-          )}
+                <RoleAccess accessRule="contributorOrAdmin">
+                  <BoxBlockDefaultClickPropagation>
+                    <LearningMaterialStarsRater
+                      learningMaterialId={resource._id}
+                      size="xs"
+                      color="gray.500"
+                      _hover={{ color: 'gray.900' }}
+                    />
+                  </BoxBlockDefaultClickPropagation>
+                </RoleAccess>
+              </Stack>
+            </Skeleton>
+            {((resource.tags && resource.tags.length > 0) || resource.description) && (
+              <Box>
+                <ResourceDescription description={resource.description} noOfLines={2} />
+              </Box>
+            )}
+          </Flex>
         </Flex>
-      </Flex>
-    </LearningMaterialCardContainer>
-  );
-};
+      </LearningMaterialCardContainer>
+    );
+  }
+);
 
 const TitleLink: React.FC<{ resource: ResourcePreviewDataFragment; isLoading?: boolean }> = ({
   resource,

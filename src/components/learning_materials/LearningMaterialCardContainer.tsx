@@ -1,8 +1,8 @@
 import { Center, Flex, FlexProps } from '@chakra-ui/react';
-import { ReactNode } from 'react';
+import { forwardRef, ReactNode } from 'react';
 import { BoxBlockDefaultClickPropagation } from '../resources/ResourcePreviewCard';
 
-export const LearningMaterialCardContainer: React.FC<{
+interface LearningMaterialCardContainerProps {
   renderCenterLeft: ReactNode;
   leftBlockWidth: FlexProps['w'];
   renderRight: ReactNode;
@@ -12,41 +12,50 @@ export const LearningMaterialCardContainer: React.FC<{
   borderColor?: FlexProps['borderColor'];
   hoverBorderColor?: FlexProps['borderColor'];
   onClick: () => void;
-}> = ({
-  renderCenterLeft,
-  leftBlockWidth,
-  renderRight,
-  renderBottom,
-  children,
-  inCompactList,
-  firstItemInCompactList,
-  borderColor = 'gray.200',
-  hoverBorderColor = 'gray.400',
-  onClick,
-}) => {
-  return (
-    <Flex
-      direction="row"
-      alignItems="stretch"
-      borderWidth={1}
-      borderTopColor={inCompactList ? (firstItemInCompactList ? borderColor : 'white') : borderColor} // hacky stuff
-      borderLeftColor={borderColor}
-      borderRightColor={borderColor}
-      borderBottomColor={borderColor}
-      _hover={{
-        cursor: 'pointer',
-        borderColor: hoverBorderColor,
-      }}
-      onClick={() => onClick()}
-    >
-      <Center w={leftBlockWidth}>
-        <BoxBlockDefaultClickPropagation>{renderCenterLeft}</BoxBlockDefaultClickPropagation>
-      </Center>
-      <Flex direction="column" alignItems="stretch" flexGrow={1}>
-        {children}
-        {renderBottom}
+  children: ReactNode;
+}
+
+export const LearningMaterialCardContainer = forwardRef<HTMLDivElement, LearningMaterialCardContainerProps>(
+  (
+    {
+      renderCenterLeft,
+      leftBlockWidth,
+      renderRight,
+      renderBottom,
+      children,
+      inCompactList,
+      firstItemInCompactList,
+      borderColor = 'gray.200',
+      hoverBorderColor = 'gray.400',
+      onClick,
+    },
+    ref
+  ) => {
+    return (
+      <Flex
+        ref={ref}
+        direction="row"
+        alignItems="stretch"
+        borderWidth={1}
+        borderTopColor={inCompactList ? (firstItemInCompactList ? borderColor : 'white') : borderColor} // hacky stuff
+        borderLeftColor={borderColor}
+        borderRightColor={borderColor}
+        borderBottomColor={borderColor}
+        _hover={{
+          cursor: 'pointer',
+          borderColor: hoverBorderColor,
+        }}
+        onClick={() => onClick()}
+      >
+        <Center w={leftBlockWidth} flexShrink={0}>
+          <BoxBlockDefaultClickPropagation display="flex">{renderCenterLeft}</BoxBlockDefaultClickPropagation>
+        </Center>
+        <Flex direction="column" alignItems="stretch" flexGrow={1}>
+          {children}
+          {renderBottom}
+        </Flex>
+        {renderRight}
       </Flex>
-      {renderRight}
-    </Flex>
-  );
-};
+    );
+  }
+);
