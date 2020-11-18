@@ -217,29 +217,28 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
                   )
                 ))}
             </Stack>
-            <Box>
-              <Skeleton isLoaded={!loading}>
-                <EditableTextarea
-                  textAlign="center"
-                  px={4}
-                  backgroundColor="backgroundColor.0"
-                  fontSize="lg"
-                  fontWeight={300}
-                  color="gray.700"
-                  defaultValue={learningPath.description || ''}
-                  placeholder="Add a description..."
-                  onSubmit={(newDescription: any) =>
-                    updateLearningPath({
-                      variables: {
-                        _id: learningPath._id,
-                        payload: { description: (newDescription as string) || null },
-                      },
-                    })
-                  }
-                  isDisabled={!editMode}
-                />
-              </Skeleton>
-            </Box>
+            <Skeleton isLoaded={!loading}>
+              <EditableTextarea
+                textAlign="center"
+                justifyContent="center"
+                px={4}
+                backgroundColor="backgroundColor.0"
+                fontSize="lg"
+                fontWeight={300}
+                color="gray.700"
+                defaultValue={learningPath.description || ''}
+                placeholder="Add a description..."
+                onSubmit={(newDescription: any) =>
+                  updateLearningPath({
+                    variables: {
+                      _id: learningPath._id,
+                      payload: { description: (newDescription as string) || null },
+                    },
+                  })
+                }
+                isDisabled={!editMode}
+              />
+            </Skeleton>
           </Stack>
           <Flex width="25%" minWidth="260px" direction="column" alignItems="flex-end">
             <Stack w="260px" spacing={3}>
