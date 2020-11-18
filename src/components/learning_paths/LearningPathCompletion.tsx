@@ -1,10 +1,10 @@
 import {
-  Box,
   Center,
   CircularProgress,
   CircularProgressLabel,
   Flex,
   IconButton,
+  Skeleton,
   Wrap,
   WrapItem,
 } from '@chakra-ui/react';
@@ -38,28 +38,31 @@ export const LearningPathCompletionData = gql`
 
 interface LearningPathCompletionProps {
   learningPath: LearningPathCompletionDataFragment;
+  isLoading?: boolean;
 }
 
 // TODO find a good name. Badge / widget ? urgh
-export const LearningPathCompletion: React.FC<LearningPathCompletionProps> = ({ learningPath }) => {
+export const LearningPathCompletion: React.FC<LearningPathCompletionProps> = ({ learningPath, isLoading }) => {
   const resourceItems = learningPath.resourceItems || [];
 
   return (
-    <Flex direction="column" alignItems="stretch" w="100px">
-      <Center>
-        <LearningPathCircularCompletion size="lg" learningPath={learningPath} />
-      </Center>
-      <Wrap spacing="9px" mt={3} justify="center">
-        {resourceItems.map((resourceItem) => (
-          <WrapItem
-            key={resourceItem.resource._id}
-            w="18px"
-            h="9px"
-            bgColor={resourceItem.resource.consumed?.consumedAt ? 'teal.400' : 'gray.200'}
-          />
-        ))}
-      </Wrap>
-    </Flex>
+    <Skeleton isLoaded={!isLoading}>
+      <Flex direction="column" alignItems="stretch" w="100px">
+        <Center>
+          <LearningPathCircularCompletion size="lg" learningPath={learningPath} />
+        </Center>
+        <Wrap spacing="9px" mt={3} justify="center">
+          {resourceItems.map((resourceItem) => (
+            <WrapItem
+              key={resourceItem.resource._id}
+              w="18px"
+              h="9px"
+              bgColor={resourceItem.resource.consumed?.consumedAt ? 'teal.400' : 'gray.200'}
+            />
+          ))}
+        </Wrap>
+      </Flex>
+    </Skeleton>
   );
 };
 

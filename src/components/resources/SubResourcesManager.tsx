@@ -16,6 +16,7 @@ interface StatelessSubResourcesManagerProps {
   addSubResource?: (subResource: ResourceDataFragment) => void;
   removeSubResource?: (subResource: ResourceDataFragment) => void;
   editMode?: boolean;
+  isLoading?: boolean;
 }
 
 export const StatelessSubResourcesManager: React.FC<StatelessSubResourcesManagerProps> = ({
@@ -24,6 +25,7 @@ export const StatelessSubResourcesManager: React.FC<StatelessSubResourcesManager
   addSubResource,
   removeSubResource,
   editMode,
+  isLoading,
 }) => {
   return (
     <Stack direction="column" spacing={3}>
@@ -50,6 +52,7 @@ export const StatelessSubResourcesManager: React.FC<StatelessSubResourcesManager
                     isRound
                     mb={3}
                     onClick={() => openModal()}
+                    isDisabled={isLoading}
                   />
                 )}
               />

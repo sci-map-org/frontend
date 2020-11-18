@@ -1,5 +1,6 @@
-import { Box, BoxProps, Flex, FlexProps, Heading, IconButton, Stack } from '@chakra-ui/react';
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
+import { Box, BoxProps, Flex, FlexProps, IconButton } from '@chakra-ui/react';
+import { useEffect, useRef, useState } from 'react';
 import { LearningPathWithResourceItemsPreviewDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
 import { useUpdateLearningPathMutation } from '../../graphql/learning_paths/learning_paths.operations.generated';
 import {
@@ -10,7 +11,6 @@ import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithCon
 import { EditableTextarea } from '../lib/inputs/EditableTextarea';
 import { ResourcePreviewCard } from '../resources/ResourcePreviewCard';
 import { ResourceSelectorModal } from '../resources/ResourceSelector';
-import { useEffect, useRef, useState } from 'react';
 
 interface StatelessLearningPathResourceItemsProps {
   resourceItems: { description?: string | null; resource: ResourcePreviewDataFragment }[];
@@ -19,6 +19,7 @@ interface StatelessLearningPathResourceItemsProps {
   removeResourceItem: (resource: ResourcePreviewDataFragment) => void;
   confirmDeletion?: boolean;
   editMode?: boolean;
+  isLoading?: boolean;
 }
 
 const completedCheckboxHeight = 24;
@@ -50,12 +51,12 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
   removeResourceItem,
   confirmDeletion,
   editMode,
+  isLoading,
 }) => {
   const previewCardsRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [previewCardsHeight, setPreviewCardsHeight] = useState<(number | undefined)[]>([]);
 
   useEffect(() => {
-    console.log(previewCardsRefs);
     previewCardsRefs.current && setPreviewCardsHeight(previewCardsRefs.current.map((c) => c?.offsetHeight));
   }, [previewCardsRefs.current, previewCardsRefs.current.length]);
 
@@ -72,12 +73,14 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
                     position="absolute"
                     top={getArrowTopPosition(index, previewCardsHeight)}
                     color={
-                      index === 0 || resourceItems[index - 1].resource.consumed?.consumedAt ? 'teal.400' : 'gray.300'
+                      !isLoading && (index === 0 || resourceItems[index - 1].resource.consumed?.consumedAt)
+                        ? 'teal.400'
+                        : 'gray.300'
                     }
                     h={getArrowHeight(index, previewCardsHeight)}
                   />
                 </Flex>
-                <Box pt={2} pb={1}>
+                <Flex pt={2} pb={1} flexGrow={1}>
                   <EditableTextarea
                     flexGrow={1}
                     backgroundColor="white"
@@ -88,15 +91,16 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
                     placeholder="Add a description..."
                     onSubmit={(newDescription: any) => updateDescription(resource._id, newDescription as string)}
                     isDisabled={!editMode}
+                    isLoading={isLoading}
                   />
-                </Box>
-                <Box flexBasis="60px" flexShrink={0} />
+                </Flex>
+                <Box flexBasis="60px" flexGrow={0} flexShrink={0} />
               </Flex>
               <Flex direction="row">
                 <Box flexGrow={1}>
                   <ResourcePreviewCard
+                    isLoading={isLoading}
                     ref={(el) => (previewCardsRefs.current[index] = el)}
-                    borderTopColor="gray.200"
                     resource={resource}
                   />
                 </Box>
@@ -114,6 +118,7 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
                         modalBodyText={`Remove the resource ${resource.name} from the learning path ?`}
                         modalHeaderText="Remove Resource"
                         onConfirmation={() => removeResourceItem(resource)}
+                        isDisabled={isLoading}
                       />
                     ) : (
                       <IconButton
@@ -121,6 +126,7 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
                         size="xs"
                         icon={<DeleteIcon />}
                         onClick={() => removeResourceItem(resource)}
+                        isDisabled={isLoading}
                       />
                     )}
                   </Flex>
@@ -142,6 +148,7 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
                   icon={<AddIcon />}
                   aria-label="Add resource to learning path"
                   onClick={() => openModal()}
+                  isDisabled={isLoading}
                 />
               )}
             />
@@ -154,11 +161,13 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
 interface LearningPathResourceItemsProps {
   learningPath: LearningPathWithResourceItemsPreviewDataFragment;
   editMode?: boolean;
+  isLoading?: boolean;
 }
 
 export const LearningPathResourceItemsManager: React.FC<LearningPathResourceItemsProps> = ({
   learningPath,
   editMode,
+  isLoading,
 }) => {
   const [updateLearningPath] = useUpdateLearningPathMutation();
   const addResourceItem = (resource: ResourceDataFragment) => {
@@ -217,6 +226,7 @@ export const LearningPathResourceItemsManager: React.FC<LearningPathResourceItem
       resourceItems={learningPath.resourceItems}
       confirmDeletion
       editMode={editMode}
+      isLoading={isLoading}
     />
   );
 };

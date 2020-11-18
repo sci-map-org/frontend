@@ -1,8 +1,8 @@
+import { EditIcon, SettingsIcon } from '@chakra-ui/icons';
 import {
   Box,
   BoxProps,
   Button,
-  Center,
   Flex,
   IconButton,
   Link,
@@ -17,7 +17,6 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
-import { EditIcon, SettingsIcon } from '@chakra-ui/icons';
 import { flatten } from 'lodash';
 import React, { forwardRef, ReactElement, useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
@@ -37,7 +36,7 @@ import { InternalLink } from '../navigation/InternalLink';
 import { LearningMaterialDomainCoveredConceptsSelector } from './CoveredConceptsSelector';
 import { DurationViewer } from './elements/Duration';
 import { ResourceCompletedCheckbox } from './elements/ResourceCompletedCheckbox';
-import { ResourceDescription, shortenDescription } from './elements/ResourceDescription';
+import { ResourceDescription } from './elements/ResourceDescription';
 import { ResourceTypeBadge } from './elements/ResourceType';
 import { ResourceUpvoter } from './elements/ResourceUpvoter';
 import { ResourceUrlLink } from './elements/ResourceUrl';
@@ -64,22 +63,12 @@ interface ResourcePreviewCardProps {
   resource: ResourcePreviewDataFragment;
   onResourceConsumed?: (resourceId: string, consumed: boolean) => void;
   isLoading?: boolean;
-  borderTopColor?: string;
   inCompactList?: boolean;
   firstItemInCompactList?: boolean;
-  // progressArrowOptions?: {
-  //   showStartNextArrow?: boolean;
-  //   previousArrowColor?: BoxProps['bgColor'];
-  //   nextArrowColor?: BoxProps['bgColor']
-  //   arrowPxWidth?: number
-  // }
 }
 
 export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCardProps>(
-  (
-    { domainKey, resource, onResourceConsumed, borderTopColor, isLoading, inCompactList, firstItemInCompactList },
-    ref
-  ) => {
+  ({ domainKey, resource, onResourceConsumed, isLoading, inCompactList, firstItemInCompactList }, ref) => {
     return (
       <LearningMaterialCardContainer
         ref={ref}
@@ -94,7 +83,7 @@ export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCar
         leftBlockWidth="100px"
         inCompactList={inCompactList}
         firstItemInCompactList={firstItemInCompactList}
-        onClick={() => routerPushToPage(ResourcePageInfo(resource))}
+        onClick={() => !isLoading && routerPushToPage(ResourcePageInfo(resource))}
         renderRight={<RightBlock resource={resource} isLoading={isLoading} onResourceConsumed={onResourceConsumed} />}
         renderBottom={<BottomBlock resource={resource} domainKey={domainKey} isLoading={isLoading} />}
       >
@@ -125,7 +114,7 @@ export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCar
             </Skeleton>
             {((resource.tags && resource.tags.length > 0) || resource.description) && (
               <Box>
-                <ResourceDescription description={resource.description} noOfLines={2} />
+                <ResourceDescription description={resource.description} noOfLines={2} isLoading={isLoading} />
               </Box>
             )}
           </Flex>
@@ -345,6 +334,7 @@ const RightBlock: React.FC<{
             if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
             routerPushToPage(EditResourcePageInfo(resource));
           }}
+          isDisabled={isLoading}
         />
       </BoxBlockDefaultClickPropagation>
     </Flex>

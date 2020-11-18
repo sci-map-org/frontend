@@ -44,7 +44,8 @@ export const LearningPathComplementaryResourcesManager: React.FC<{
   learningPathId: string;
   complementaryResources: ResourceDataFragment[];
   editMode?: boolean;
-}> = ({ learningPathId, complementaryResources, editMode }) => {
+  isLoading?: boolean;
+}> = ({ learningPathId, complementaryResources, editMode, isLoading }) => {
   const [addComplementaryResource] = useAddComplementaryResourceToLearningPathMutation();
   const [removeComplementaryResource] = useRemoveComplementaryResourceFromLearningPathMutation();
   return (
@@ -57,6 +58,7 @@ export const LearningPathComplementaryResourcesManager: React.FC<{
         removeComplementaryResource({ variables: { learningPathId, resourceId: resource._id } })
       }
       editMode={editMode}
+      isLoading={isLoading}
     />
   );
 };

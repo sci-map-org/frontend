@@ -1,3 +1,4 @@
+import { EditIcon, QuestionIcon } from '@chakra-ui/icons';
 import {
   Flex,
   FormControl,
@@ -7,10 +8,10 @@ import {
   InputGroup,
   InputProps,
   InputRightElement,
+  Skeleton,
   Text,
   Tooltip,
 } from '@chakra-ui/react';
-import { EditIcon, QuestionIcon } from '@chakra-ui/icons';
 import humanizeDuration from 'humanize-duration';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -166,49 +167,53 @@ interface EditableDurationProps {
   isDisabled?: boolean;
   onSubmit: (durationMs: number | null) => void;
   placeholder?: string;
+  isLoading?: boolean;
 }
 export const EditableDuration: React.FC<EditableDurationProps> = ({
   placeholder,
   defaultValue,
   onSubmit,
   isDisabled,
+  isLoading,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   return (
-    <Flex>
-      {isEditing && !isDisabled ? (
-        <DurationInput
-          value={defaultValue}
-          onChange={(d) => {
-            setIsEditing(false);
-            onSubmit(d);
-          }}
-          size="sm"
-          w="120px"
-          autoFocus
-        />
-      ) : (
-        <>
-          <DurationViewer value={defaultValue} />
-          {!defaultValue && placeholder && (
-            <Text fontSize="sm" color="gray.300" mb={1} pr={1}>
-              {placeholder}
-            </Text>
-          )}
-          {!isDisabled && (
-            <IconButton
-              aria-label="t"
-              icon={<EditIcon />}
-              onClick={() => setIsEditing(true)}
-              size="xs"
-              color="gray.600"
-              variant="ghost"
-              alignSelf="end"
-            />
-          )}
-        </>
-      )}
-    </Flex>
+    <Skeleton isLoaded={!isLoading}>
+      <Flex>
+        {isEditing && !isDisabled ? (
+          <DurationInput
+            value={defaultValue}
+            onChange={(d) => {
+              setIsEditing(false);
+              onSubmit(d);
+            }}
+            size="sm"
+            w="120px"
+            autoFocus
+          />
+        ) : (
+          <>
+            <DurationViewer value={defaultValue} />
+            {!defaultValue && placeholder && (
+              <Text fontSize="sm" color="gray.300" mb={1} pr={1}>
+                {placeholder}
+              </Text>
+            )}
+            {!isDisabled && (
+              <IconButton
+                aria-label="t"
+                icon={<EditIcon />}
+                onClick={() => setIsEditing(true)}
+                size="xs"
+                color="gray.600"
+                variant="ghost"
+                alignSelf="end"
+              />
+            )}
+          </>
+        )}
+      </Flex>
+    </Skeleton>
   );
 };
 

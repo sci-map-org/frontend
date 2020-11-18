@@ -35,6 +35,8 @@ import { EditableTextarea } from '../../components/lib/inputs/EditableTextarea';
 import { EditableDuration } from '../../components/resources/elements/Duration';
 import { LearningMaterialCoveredTopics } from '../../components/resources/LearningMaterialCoveredTopics';
 import { UserAvatar, UserAvatarData } from '../../components/users/UserAvatar';
+import { generateConceptData } from '../../graphql/concepts/concepts.fragments';
+import { generateDomainData } from '../../graphql/domains/domains.fragments';
 import { LearningMaterialWithCoveredConceptsByDomainData } from '../../graphql/learning_materials/learning_materials.fragments';
 import {
   generateLearningPathData,
@@ -43,7 +45,7 @@ import {
 import { LearningPathDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
 import { useDeleteLearningPath } from '../../graphql/learning_paths/learning_paths.hooks';
 import { useUpdateLearningPathMutation } from '../../graphql/learning_paths/learning_paths.operations.generated';
-import { ResourceData } from '../../graphql/resources/resources.fragments';
+import { generateResourcePreviewData, ResourceData } from '../../graphql/resources/resources.fragments';
 import { UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { PageInfo } from '../PageInfo';
@@ -94,11 +96,43 @@ export const getLearningPathPage = gql`
 
 const learningPathPlaceholder: GetLearningPathPageQuery['getLearningPathByKey'] = {
   ...generateLearningPathData(),
+  durationMs: 100000,
+  tags: [{ name: 'tag 1' }],
+  public: true,
+  rating: 4.5,
+  coveredConceptsByDomain: [
+    {
+      domain: generateDomainData(),
+      coveredConcepts: [generateConceptData(), generateConceptData(), generateConceptData()],
+    },
+  ],
+  resourceItems: [
+    {
+      description:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore',
+      resource: generateResourcePreviewData(),
+      learningPathId: 'id',
+    },
+    {
+      description:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore',
+      resource: generateResourcePreviewData(),
+      learningPathId: 'id',
+    },
+    {
+      description:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore',
+      resource: generateResourcePreviewData(),
+      learningPathId: 'id',
+    },
+  ],
 };
 
 export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learningPathKey }) => {
   const [updateLearningPath] = useUpdateLearningPathMutation();
-  const { data, loading, error } = useGetLearningPathPageQuery({ variables: { key: learningPathKey } });
+  const { data, loading, error } = useGetLearningPathPageQuery({
+    variables: { key: learningPathKey },
+  });
   const learningPath = data?.getLearningPathByKey || learningPathPlaceholder;
   const { currentUser } = useCurrentUser();
   const currentUserIsOwner = useMemo(
@@ -155,6 +189,7 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
                 }
                 placeholder="Estimated Duration"
                 isDisabled={!editMode}
+                isLoading={loading}
               />
             </Center>
             <Center>
@@ -168,16 +203,17 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
           </Stack>
           <Stack flexGrow={1}>
             <Stack direction="row" justifyContent="center" spacing={2} alignItems="center">
-              <StarsRatingViewer value={learningPath.rating} />
-              {currentUserStartedThePath ? (
-                <LearningMaterialStarsRater learningMaterialId={learningPath._id} isDisabled={loading} />
-              ) : (
-                !currentUserIsOwner && (
-                  <RoleAccess accessRule="contributorOrAdmin">
-                    <LearningMaterialStarsRater learningMaterialId={learningPath._id} isDisabled={loading} />
-                  </RoleAccess>
-                )
-              )}
+              <StarsRatingViewer value={learningPath.rating} isLoading={loading} />
+              {!loading &&
+                (currentUserStartedThePath ? (
+                  <LearningMaterialStarsRater learningMaterialId={learningPath._id} isDisabled={loading} />
+                ) : (
+                  !currentUserIsOwner && (
+                    <RoleAccess accessRule="contributorOrAdmin">
+                      <LearningMaterialStarsRater learningMaterialId={learningPath._id} isDisabled={loading} />
+                    </RoleAccess>
+                  )
+                ))}
             </Stack>
             <Box>
               <Skeleton isLoaded={!loading}>
@@ -216,7 +252,7 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
           </Flex>
         </Flex>
         <Flex justifyContent="space-between">
-          <LearningPathCompletion learningPath={learningPath} />
+          <LearningPathCompletion learningPath={learningPath} isLoading={loading} />
           <Stack>
             {learningPath.createdBy && (
               <Center>
@@ -255,11 +291,12 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
             )}
           </Stack>
         </Flex>
-        <LearningPathResourceItemsManager editMode={editMode} learningPath={learningPath} />
+        <LearningPathResourceItemsManager editMode={editMode} learningPath={learningPath} isLoading={loading} />
         <LearningPathComplementaryResourcesManager
           editMode={editMode}
           learningPathId={learningPath._id}
           complementaryResources={learningPath.complementaryResources || []}
+          isLoading={loading}
         />
         <Flex>{!learningPath.public && <LearningPathPublishButton learningPath={learningPath} />}</Flex>
       </Stack>
