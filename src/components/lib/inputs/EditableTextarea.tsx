@@ -23,24 +23,26 @@ export const EditableTextarea: React.FC<
         rows={rows || estimateNbRows(defaultValue)}
       ></Textarea>
       <Skeleton isLoaded={!isLoading}>
-        <Text {...getPreviewProps()} {...(!defaultValue && { color: 'gray.500' })}>
-          <>
-            {!isEditing && !isDisabled && (
-              <IconButton
-                aria-label="edit"
-                icon={<EditIcon />}
-                onClick={onEdit}
-                size="xs"
-                color="gray.700"
-                variant="ghost"
-                float="right"
-                ml={2}
-                mb={2}
-              />
-            )}
-            {getPreviewProps().children}
-          </>
-        </Text>
+        {(!isDisabled || defaultValue) && (
+          <Text {...getPreviewProps()} {...(!defaultValue && { color: 'gray.500' })}>
+            <>
+              {!isEditing && !isDisabled && (
+                <IconButton
+                  aria-label="edit"
+                  icon={<EditIcon />}
+                  onClick={onEdit}
+                  size="xs"
+                  color="gray.700"
+                  variant="ghost"
+                  float="right"
+                  ml={2}
+                  mb={2}
+                />
+              )}
+              {getPreviewProps().children}
+            </>
+          </Text>
+        )}
       </Skeleton>
     </Flex>
   );
