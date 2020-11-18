@@ -188,9 +188,9 @@ export const EditableLearningMaterialTags: React.FC<{
     </Box>
   ) : (
     <Stack direction="row" alignItems="center">
-      {learningMaterial.tags && !isDisabled && (
+      {learningMaterial.tags && (
         <>
-          {!learningMaterial.tags.length && placeholder && (
+          {!learningMaterial.tags.length && !isDisabled && placeholder && (
             <Skeleton isLoaded={!isLoading}>
               <Text fontSize="sm" color="gray.400">
                 {placeholder}
