@@ -5,6 +5,6 @@ export type ResourceCompletedCheckboxDataFragment = (
   & Pick<Types.Resource, '_id'>
   & { consumed?: Types.Maybe<(
     { __typename?: 'ConsumedResource' }
-    & Pick<Types.ConsumedResource, 'consumedAt'>
+    & Pick<Types.ConsumedResource, 'consumedAt' | 'openedAt'>
   )> }
 );

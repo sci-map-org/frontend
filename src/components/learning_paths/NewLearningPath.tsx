@@ -71,7 +71,11 @@ export const NewLearningPathForm: React.FC<NewLearningPathProps> = ({ createLear
           onChange={(e) => setDescription(e.target.value || undefined)}
         ></Textarea>
       </FormControl>
-      <LearningMaterialTagsStatelessEditor selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
+      <LearningMaterialTagsStatelessEditor
+        selectedTags={selectedTags}
+        setSelectedTags={setSelectedTags}
+        inputWidth="200px"
+      />
       <DurationFormField value={durationMs} onChange={setDurationMs} />
       <StatelessLearningPathResourceItemsManager
         updateDescription={updateResourceItemDescription}
@@ -80,6 +84,7 @@ export const NewLearningPathForm: React.FC<NewLearningPathProps> = ({ createLear
           setResourceItems(resourceItems.filter((i) => i.resource._id !== resource._id))
         }
         resourceItems={resourceItems}
+        editMode
       />
       <Flex justifyContent="flex-end">
         <ButtonGroup spacing={8}>

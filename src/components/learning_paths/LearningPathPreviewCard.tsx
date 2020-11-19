@@ -1,9 +1,13 @@
-import { Badge, Box, Flex, Stack, Text } from '@chakra-ui/react';
+import { Badge, Box, Flex, Skeleton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
+import { LearningMaterialWithCoveredConceptsByDomainData } from '../../graphql/learning_materials/learning_materials.fragments';
 import { LearningPathData } from '../../graphql/learning_paths/learning_paths.fragments';
 import { LearningPathPageInfo } from '../../pages/learning_paths/LearningPathPage';
 import { routerPushToPage } from '../../pages/PageInfo';
-import { LearningMaterialCardContainer } from '../learning_materials/LearningMaterialCardContainer';
+import {
+  LearningMaterialCardContainer,
+  LearningMaterialCardCoveredTopics,
+} from '../learning_materials/LearningMaterialCardContainer';
 import { StarsRatingViewer } from '../learning_materials/LearningMaterialStarsRating';
 import { EditableLearningMaterialTags } from '../learning_materials/LearningMaterialTagsEditor';
 import { DurationViewer } from '../resources/elements/Duration';
@@ -20,9 +24,11 @@ export const LearningPathPreviewCardData = gql`
       name
     }
     rating
+    ...LearningMaterialWithCoveredConceptsByDomainData
   }
   ${LearningPathCompletionData}
   ${LearningPathData}
+  ${LearningMaterialWithCoveredConceptsByDomainData}
 `;
 
 interface LearningPathPreviewCardProps {
@@ -48,7 +54,17 @@ export const LearningPathPreviewCard: React.FC<LearningPathPreviewCardProps> = (
             <EditableLearningMaterialTags learningMaterial={learningPath} isLoading={isLoading} />
           </BoxBlockDefaultClickPropagation>
           <Box flexGrow={1} flexBasis={0} />
-          <Flex>
+          <Flex flexWrap="wrap">
+            <Box flexGrow={1} flexBasis={0} />
+            <Flex flexShrink={0} direction="column" justifyContent="center" pr={2}>
+              {learningPath.coveredConceptsByDomain && (
+                <Skeleton isLoaded={!isLoading}>
+                  <BoxBlockDefaultClickPropagation>
+                    <LearningMaterialCardCoveredTopics learningMaterial={learningPath} />
+                  </BoxBlockDefaultClickPropagation>
+                </Skeleton>
+              )}
+            </Flex>
             {/* Nb resources here like resource series -> future should be expandable */}
             {/* Covered topics */}
           </Flex>

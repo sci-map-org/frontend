@@ -67,7 +67,7 @@ export const LearningMaterialTagsStatelessEditor: React.FC<{
   placeholder,
 }) => {
   return (
-    <Wrap spacing={2} justify={justify} align="flex-end">
+    <Wrap spacing={2} justify={justify} align="center">
       <WrapItem width={inputWidth}>
         <LearningMaterialTagSelector
           placeholder={placeholder}
@@ -176,16 +176,9 @@ export const EditableLearningMaterialTags: React.FC<{
   };
   useOutsideAlerter(wrapperRef);
   return tagEditorMode ? (
-    <Box ref={wrapperRef}>
-      <Skeleton isLoaded={!isLoading}>
-        <LearningMaterialTagsEditor
-          justify={justify}
-          size="sm"
-          learningMaterial={learningMaterial}
-          inputWidth="100px"
-        />
-      </Skeleton>
-    </Box>
+    <Skeleton ref={wrapperRef} isLoaded={!isLoading}>
+      <LearningMaterialTagsEditor justify={justify} size="sm" learningMaterial={learningMaterial} inputWidth="100px" />
+    </Skeleton>
   ) : (
     <Stack direction="row" alignItems="center">
       {learningMaterial.tags && (
@@ -206,6 +199,7 @@ export const EditableLearningMaterialTags: React.FC<{
                 !isDisabled && (
                   <Tooltip hasArrow label={learningMaterial.tags?.length ? 'Add or remove tags' : 'Add tags'}>
                     <IconButton
+                      alignSelf="center"
                       isDisabled={isLoading}
                       size="xs"
                       variant="ghost"

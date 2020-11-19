@@ -34,8 +34,8 @@ export const StatelessSubResourcesManager: React.FC<StatelessSubResourcesManager
       </Heading>
       <Wrap>
         {subResources.map((subResource) => (
-          <WrapItem>
-            <SubResourceCard key={subResource._id} subResource={subResource} onRemove={removeSubResource} />
+          <WrapItem key={subResource._id}>
+            <SubResourceCard subResource={subResource} onRemove={removeSubResource} />
           </WrapItem>
         ))}
         {addSubResource && editMode && (
