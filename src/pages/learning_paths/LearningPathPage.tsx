@@ -4,14 +4,17 @@ import {
   Badge,
   Box,
   Center,
+  Collapse,
   Editable,
   EditableInput,
   EditablePreview,
+  Fade,
   Flex,
   Heading,
   IconButton,
   SimpleGrid,
   Skeleton,
+  SlideFade,
   Stack,
   Text,
   Tooltip,
@@ -147,6 +150,14 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
 
   const currentUserStartedPath = useMemo(() => !!learningPath.started, [learningPath]);
 
+  const currentUserCompletedPath = useMemo(
+    () =>
+      currentUserStartedPath &&
+      !!learningPath.resourceItems?.length &&
+      learningPath.resourceItems.every(({ resource }) => resource.consumed?.consumedAt),
+    [currentUserStartedPath, learningPath.resourceItems]
+  );
+
   const [editMode, setEditMode] = useState(currentUserIsOwner);
   if (error) return null;
   return (
@@ -209,6 +220,9 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
           <Stack flexGrow={1}>
             <Stack direction="row" justifyContent="center" spacing={2} alignItems="center">
               <StarsRatingViewer value={learningPath.rating} isLoading={loading} />
+              <RoleAccess accessRule="contributorOrAdmin">
+                <LearningMaterialStarsRater learningMaterialId={learningPath._id} isDisabled={loading} />
+              </RoleAccess>
             </Stack>
             <Skeleton isLoaded={!loading}>
               <EditableTextarea
@@ -291,26 +305,35 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
           isLoading={loading}
           currentUserStartedPath={currentUserStartedPath}
         />
-        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10}>
-          <Stack direction="column">
-            <Heading size="md" textAlign="center">
-              Review
-            </Heading>
-            <Stack direction="row" justifyContent="center" spacing={2} alignItems="center">
-              <StarsRatingViewer value={learningPath.rating} isLoading={loading} />
-              {!loading &&
-                !currentUserIsOwner &&
-                (currentUserStartedPath ? (
-                  <LearningMaterialStarsRater learningMaterialId={learningPath._id} isDisabled={loading} />
-                ) : (
-                  !currentUserIsOwner && (
-                    <RoleAccess accessRule="contributorOrAdmin">
-                      <LearningMaterialStarsRater learningMaterialId={learningPath._id} isDisabled={loading} />
-                    </RoleAccess>
-                  )
-                ))}
-            </Stack>
-          </Stack>
+        <SimpleGrid
+          pt={5}
+          columns={{ base: 1, md: currentUserCompletedPath && !currentUserIsOwner ? 2 : 1 }}
+          spacing={10}
+        >
+          {currentUserCompletedPath && !currentUserIsOwner && (
+            <SlideFade in={currentUserCompletedPath}>
+              <Stack direction="column">
+                <Heading color="teal.500" size="md" textAlign="center">
+                  Congratulations!
+                </Heading>
+                <Text textAlign="center">You just finished this learning path!</Text>
+                <Text textAlign="center" mt={3}>
+                  Let the creator know if this was useful for you by leaving a rating:
+                </Text>
+                <Center pt={3}>
+                  <Stack direction="row" alignItems="center" spacing={3}>
+                    <StarsRatingViewer value={learningPath.rating} isLoading={loading} />
+                    <LearningMaterialStarsRater
+                      buttonText="Rate this path"
+                      learningMaterialId={learningPath._id}
+                      isDisabled={loading}
+                      size="md"
+                    />
+                  </Stack>
+                </Center>
+              </Stack>
+            </SlideFade>
+          )}
 
           <LearningPathComplementaryResourcesManager
             editMode={editMode}
