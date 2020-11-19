@@ -16,7 +16,7 @@ import {
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import Router from 'next/router';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { AiOutlineEye } from 'react-icons/ai';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
@@ -30,6 +30,7 @@ import {
   LearningPathCompletion,
   LearningPathCompletionData,
 } from '../../components/learning_paths/LearningPathCompletion';
+import { LearningPathPreviewCard } from '../../components/learning_paths/LearningPathPreviewCard';
 import { LearningPathResourceItemsManager } from '../../components/learning_paths/LearningPathResourceItems';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { EditableTextarea } from '../../components/lib/inputs/EditableTextarea';
@@ -305,6 +306,7 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
           isLoading={loading}
         />
         <Flex>{!learningPath.public && <LearningPathPublishButton learningPath={learningPath} />}</Flex>
+        <LearningPathPreviewCard learningPath={learningPath} />
       </Stack>
     </PageLayout>
   );
@@ -364,10 +366,15 @@ const LearningPathEditableName: React.FC<{
   onChange: (newName: string) => void;
   editMode?: boolean;
 }> = ({ name, isLoading, onChange, editMode }) => {
+  const [updatedName, setUpdatedName] = useState(name);
+  useEffect(() => {
+    setUpdatedName(name);
+  }, [name]);
   return (
     <Skeleton isLoaded={!isLoading}>
       <Editable
-        defaultValue={name}
+        value={updatedName}
+        onChange={setUpdatedName}
         fontSize="5xl"
         fontWeight={600}
         color="gray.700"

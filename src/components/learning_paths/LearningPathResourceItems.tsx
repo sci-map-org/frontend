@@ -60,7 +60,8 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
 
   useEffect(() => {
     previewCardsRefs.current && setPreviewCardsHeight(previewCardsRefs.current.map((c) => c?.offsetHeight as number));
-  }, [previewCardsRefs.current, previewCardsRefs.current.length]);
+    // need to watch resourceItems as ref don't change when going from 1 lp to another
+  }, [resourceItems]);
 
   return (
     <Flex direction="column" alignItems="stretch">

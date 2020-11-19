@@ -45,7 +45,7 @@ export const LearningPathPreviewCard: React.FC<LearningPathPreviewCardProps> = (
           onStarted={() => routerPushToPage(LearningPathPageInfo(learningPath))}
         />
       }
-      leftBlockWidth="130px"
+      leftBlockWidth="120px"
       onClick={() => routerPushToPage(LearningPathPageInfo(learningPath))}
       renderRight={<Flex></Flex>}
       renderBottom={
