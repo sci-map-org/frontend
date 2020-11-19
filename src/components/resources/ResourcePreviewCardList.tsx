@@ -34,7 +34,6 @@ export const ResourcePreviewCardList: React.FC<{
           h="1000px"
           pt="200px"
           borderWidth="1px"
-          borderTopWidth="0px"
           borderColor="gray.200"
         >
           <Spinner size="xl" m={4} />

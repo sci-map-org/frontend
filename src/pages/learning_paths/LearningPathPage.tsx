@@ -8,7 +8,9 @@ import {
   EditableInput,
   EditablePreview,
   Flex,
+  Heading,
   IconButton,
+  SimpleGrid,
   Skeleton,
   Stack,
   Text,
@@ -36,6 +38,7 @@ import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/Delet
 import { EditableTextarea } from '../../components/lib/inputs/EditableTextarea';
 import { EditableDuration } from '../../components/resources/elements/Duration';
 import { LearningMaterialCoveredTopics } from '../../components/resources/LearningMaterialCoveredTopics';
+import { SquareResourceCardData } from '../../components/resources/SquareResourceCard';
 import { UserAvatar, UserAvatarData } from '../../components/users/UserAvatar';
 import { generateConceptData } from '../../graphql/concepts/concepts.fragments';
 import { generateDomainData } from '../../graphql/domains/domains.fragments';
@@ -47,7 +50,7 @@ import {
 import { LearningPathDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
 import { useDeleteLearningPath } from '../../graphql/learning_paths/learning_paths.hooks';
 import { useUpdateLearningPathMutation } from '../../graphql/learning_paths/learning_paths.operations.generated';
-import { generateResourcePreviewData, ResourceData } from '../../graphql/resources/resources.fragments';
+import { generateResourcePreviewData } from '../../graphql/resources/resources.fragments';
 import { UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { PageInfo } from '../PageInfo';
@@ -68,7 +71,7 @@ export const getLearningPathPage = gql`
     getLearningPathByKey(key: $key) {
       ...LearningPathWithResourceItemsPreviewData
       complementaryResources {
-        ...ResourceData
+        ...SquareResourceCardData
       }
       rating
       tags {
@@ -91,7 +94,7 @@ export const getLearningPathPage = gql`
   }
   ${LearningMaterialWithCoveredConceptsByDomainData}
   ${LearningPathWithResourceItemsPreviewData}
-  ${ResourceData}
+  ${SquareResourceCardData}
   ${LearningPathCompletionData}
   ${UserAvatarData}
 `;
@@ -206,17 +209,6 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
           <Stack flexGrow={1}>
             <Stack direction="row" justifyContent="center" spacing={2} alignItems="center">
               <StarsRatingViewer value={learningPath.rating} isLoading={loading} />
-              {!loading &&
-                !currentUserIsOwner &&
-                (currentUserStartedPath ? (
-                  <LearningMaterialStarsRater learningMaterialId={learningPath._id} isDisabled={loading} />
-                ) : (
-                  !currentUserIsOwner && (
-                    <RoleAccess accessRule="contributorOrAdmin">
-                      <LearningMaterialStarsRater learningMaterialId={learningPath._id} isDisabled={loading} />
-                    </RoleAccess>
-                  )
-                ))}
             </Stack>
             <Skeleton isLoaded={!loading}>
               <EditableTextarea
@@ -299,12 +291,35 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
           isLoading={loading}
           currentUserStartedPath={currentUserStartedPath}
         />
-        <LearningPathComplementaryResourcesManager
-          editMode={editMode}
-          learningPathId={learningPath._id}
-          complementaryResources={learningPath.complementaryResources || []}
-          isLoading={loading}
-        />
+        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10}>
+          <Stack direction="column">
+            <Heading size="md" textAlign="center">
+              Review
+            </Heading>
+            <Stack direction="row" justifyContent="center" spacing={2} alignItems="center">
+              <StarsRatingViewer value={learningPath.rating} isLoading={loading} />
+              {!loading &&
+                !currentUserIsOwner &&
+                (currentUserStartedPath ? (
+                  <LearningMaterialStarsRater learningMaterialId={learningPath._id} isDisabled={loading} />
+                ) : (
+                  !currentUserIsOwner && (
+                    <RoleAccess accessRule="contributorOrAdmin">
+                      <LearningMaterialStarsRater learningMaterialId={learningPath._id} isDisabled={loading} />
+                    </RoleAccess>
+                  )
+                ))}
+            </Stack>
+          </Stack>
+
+          <LearningPathComplementaryResourcesManager
+            editMode={editMode}
+            learningPathId={learningPath._id}
+            complementaryResources={learningPath.complementaryResources || []}
+            isLoading={loading}
+          />
+        </SimpleGrid>
+
         <Flex>{!learningPath.public && <LearningPathPublishButton learningPath={learningPath} />}</Flex>
         <LearningPathPreviewCard learningPath={learningPath} />
       </Stack>
