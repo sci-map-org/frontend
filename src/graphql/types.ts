@@ -492,6 +492,7 @@ export type Domain = {
   description?: Maybe<Scalars['String']>;
   concepts?: Maybe<DomainConceptsResults>;
   resources?: Maybe<DomainResourcesResults>;
+  learningPaths?: Maybe<DomainLearningPathsResults>;
   subDomains?: Maybe<Array<DomainBelongsToDomainItem>>;
   parentDomains?: Maybe<Array<DomainBelongsToDomainItem>>;
 };
@@ -504,6 +505,11 @@ export type DomainConceptsArgs = {
 
 export type DomainResourcesArgs = {
   options: DomainResourcesOptions;
+};
+
+
+export type DomainLearningPathsArgs = {
+  options: DomainLearningPathsOptions;
 };
 
 export type LearningMaterialTagSearchResult = {
@@ -855,6 +861,16 @@ export type DomainResourcesOptions = {
   filter?: Maybe<DomainResourcesFilterOptions>;
 };
 
+export type DomainLearningPathsResults = {
+  __typename?: 'DomainLearningPathsResults';
+  items: Array<LearningPath>;
+};
+
+export type DomainLearningPathsOptions = {
+  pagination?: Maybe<PaginationOptions>;
+  sorting: DomainLearningPathsSortingOptions;
+};
+
 export type DomainBelongsToDomainItem = {
   __typename?: 'DomainBelongsToDomainItem';
   domain: Domain;
@@ -998,6 +1014,11 @@ export type DomainResourcesFilterOptions = {
   consumedByUser?: Maybe<Scalars['Boolean']>;
 };
 
+export type DomainLearningPathsSortingOptions = {
+  field: DomainLearningPathsSortingFields;
+  direction: SortingDirection;
+};
+
 export type DomainBelongsToDomain = {
   __typename?: 'DomainBelongsToDomain';
   index: Scalars['Float'];
@@ -1032,4 +1053,8 @@ export enum DomainConceptSortingFields {
 export enum SortingDirection {
   Asc = 'ASC',
   Desc = 'DESC'
+}
+
+export enum DomainLearningPathsSortingFields {
+  CreatedAt = 'createdAt'
 }

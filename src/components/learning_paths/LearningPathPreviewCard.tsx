@@ -34,10 +34,19 @@ export const LearningPathPreviewCardData = gql`
 interface LearningPathPreviewCardProps {
   learningPath: LearningPathPreviewCardDataFragment;
   isLoading?: boolean;
+  inCompactList?: boolean;
+  firstItemInCompactList?: boolean;
 }
-export const LearningPathPreviewCard: React.FC<LearningPathPreviewCardProps> = ({ learningPath, isLoading }) => {
+export const LearningPathPreviewCard: React.FC<LearningPathPreviewCardProps> = ({
+  learningPath,
+  isLoading,
+  inCompactList,
+  firstItemInCompactList,
+}) => {
   return (
     <LearningMaterialCardContainer
+      inCompactList={inCompactList}
+      firstItemInCompactList={firstItemInCompactList}
       renderCenterLeft={
         <LearningPathCircularCompletion
           size="sm"
@@ -66,7 +75,6 @@ export const LearningPathPreviewCard: React.FC<LearningPathPreviewCardProps> = (
               )}
             </Flex>
             {/* Nb resources here like resource series -> future should be expandable */}
-            {/* Covered topics */}
           </Flex>
         </Flex>
       }

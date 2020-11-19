@@ -8,6 +8,7 @@ import { RoleAccess } from '../../components/auth/RoleAccess';
 import { DomainConceptGraph } from '../../components/concepts/DomainConceptGraph';
 import { DomainConceptList } from '../../components/concepts/DomainConceptList';
 import { PageLayout } from '../../components/layout/PageLayout';
+import { DomainLearningPaths } from '../../components/learning_paths/DomainLearningPaths';
 import { InternalButtonLink } from '../../components/navigation/InternalLink';
 import { DomainRecommendedResources } from '../../components/resources/DomainRecommendedResources';
 import { useGetDomainRecommendedResourcesQuery } from '../../components/resources/DomainRecommendedResources.generated';
@@ -181,6 +182,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
             setResourcesOptions={setResourcesOptions}
           />
           <DomainConceptGraph domain={domain} isLoading={loading} minNbRelationships={5} />
+          <DomainLearningPaths domain={domain} />
           {/* {mockedFeaturesEnabled && <DomainLearningPaths domain={domain} />} */}
         </Flex>
         {/* )} */}
