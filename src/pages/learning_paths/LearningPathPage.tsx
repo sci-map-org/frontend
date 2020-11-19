@@ -4,11 +4,9 @@ import {
   Badge,
   Box,
   Center,
-  Collapse,
   Editable,
   EditableInput,
   EditablePreview,
-  Fade,
   Flex,
   Heading,
   IconButton,
@@ -35,7 +33,6 @@ import {
   LearningPathCompletion,
   LearningPathCompletionData,
 } from '../../components/learning_paths/LearningPathCompletion';
-import { LearningPathPreviewCard } from '../../components/learning_paths/LearningPathPreviewCard';
 import { LearningPathResourceItemsManager } from '../../components/learning_paths/LearningPathResourceItems';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { EditableTextarea } from '../../components/lib/inputs/EditableTextarea';
@@ -305,32 +302,32 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
           isLoading={loading}
           currentUserStartedPath={currentUserStartedPath}
         />
-        <SimpleGrid
-          pt={5}
-          columns={{ base: 1, md: currentUserCompletedPath && !currentUserIsOwner ? 2 : 1 }}
-          spacing={10}
-        >
-          {currentUserCompletedPath && !currentUserIsOwner && (
+        <SimpleGrid pt={5} columns={{ base: 1, md: currentUserCompletedPath ? 2 : 1 }} spacing={10}>
+          {currentUserCompletedPath && (
             <SlideFade in={currentUserCompletedPath}>
               <Stack direction="column">
                 <Heading color="teal.500" size="md" textAlign="center">
                   Congratulations!
                 </Heading>
                 <Text textAlign="center">You just finished this learning path!</Text>
-                <Text textAlign="center" mt={3}>
-                  Let the creator know if this was useful for you by leaving a rating:
-                </Text>
-                <Center pt={3}>
-                  <Stack direction="row" alignItems="center" spacing={3}>
-                    <StarsRatingViewer value={learningPath.rating} isLoading={loading} />
-                    <LearningMaterialStarsRater
-                      buttonText="Rate this path"
-                      learningMaterialId={learningPath._id}
-                      isDisabled={loading}
-                      size="md"
-                    />
-                  </Stack>
-                </Center>
+                {!currentUserIsOwner && (
+                  <>
+                    <Text textAlign="center" mt={3}>
+                      Let the creator know if this was useful for you by leaving a rating:
+                    </Text>
+                    <Center pt={3}>
+                      <Stack direction="row" alignItems="center" spacing={3}>
+                        <StarsRatingViewer value={learningPath.rating} isLoading={loading} />
+                        <LearningMaterialStarsRater
+                          buttonText="Rate this path"
+                          learningMaterialId={learningPath._id}
+                          isDisabled={loading}
+                          size="md"
+                        />
+                      </Stack>
+                    </Center>
+                  </>
+                )}
               </Stack>
             </SlideFade>
           )}
@@ -344,7 +341,6 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
         </SimpleGrid>
 
         <Flex>{!learningPath.public && <LearningPathPublishButton learningPath={learningPath} />}</Flex>
-        <LearningPathPreviewCard learningPath={learningPath} />
       </Stack>
     </PageLayout>
   );
