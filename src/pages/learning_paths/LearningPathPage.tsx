@@ -144,6 +144,10 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
     () => !!learningPath.createdBy && !!currentUser && learningPath.createdBy._id === currentUser._id,
     [learningPath, currentUser]
   );
+  const [editMode, setEditMode] = useState(currentUserIsOwner);
+  useEffect(() => {
+    setEditMode(currentUserIsOwner);
+  }, [learningPath._id]);
 
   const currentUserStartedPath = useMemo(() => !!learningPath.started, [learningPath]); // always true ?
 
@@ -161,7 +165,7 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
         : [],
     [currentUser, learningPath.startedBy]
   );
-  const [editMode, setEditMode] = useState(currentUserIsOwner);
+
   if (error) return null;
   return (
     <PageLayout
@@ -263,12 +267,16 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
           </Flex>
         </Flex>
         <Flex justifyContent="space-between">
-          <LearningPathCompletion learningPath={learningPath} isLoading={loading} />
+          {learningPath.resourceItems?.length ? (
+            <LearningPathCompletion learningPath={learningPath} isLoading={loading} />
+          ) : (
+            <Box />
+          )}
           <Stack>
             {learningPath.createdBy && (
               <Center>
                 {currentUserIsOwner ? (
-                  <Center flexDirection="column">
+                  <Stack direction="column" alignItems="center">
                     <Text fontWeight={300}>You are the owner</Text>
 
                     {learningPath.public ? (
@@ -276,7 +284,7 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
                     ) : (
                       <LearningPathPublishButton size="md" learningPath={learningPath} />
                     )}
-                  </Center>
+                  </Stack>
                 ) : (
                   <Stack spacing={1}>
                     <Text fontWeight={300}>Created By</Text>
@@ -304,6 +312,11 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
             )}
           </Stack>
         </Flex>
+        {!learningPath.resourceItems?.length && (
+          <Flex justify="center">
+            <Heading size="md">Start adding resources</Heading>
+          </Flex>
+        )}
         <LearningPathResourceItemsManager
           editMode={editMode}
           learningPath={learningPath}
