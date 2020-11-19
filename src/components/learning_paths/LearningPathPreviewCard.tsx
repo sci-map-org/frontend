@@ -13,6 +13,7 @@ import { EditableLearningMaterialTags } from '../learning_materials/LearningMate
 import { DurationViewer } from '../resources/elements/Duration';
 import { shortenDescription } from '../resources/elements/ResourceDescription';
 import { BoxBlockDefaultClickPropagation } from '../resources/ResourcePreviewCard';
+import { UserAvatar, UserAvatarData } from '../users/UserAvatar';
 import { LearningPathCircularCompletion, LearningPathCompletionData } from './LearningPathCompletion';
 import { LearningPathPreviewCardDataFragment } from './LearningPathPreviewCard.generated';
 
@@ -25,9 +26,13 @@ export const LearningPathPreviewCardData = gql`
     }
     rating
     ...LearningMaterialWithCoveredConceptsByDomainData
+    createdBy {
+      ...UserAvatarData
+    }
   }
   ${LearningPathCompletionData}
   ${LearningPathData}
+  ${UserAvatarData}
   ${LearningMaterialWithCoveredConceptsByDomainData}
 `;
 
@@ -63,35 +68,41 @@ export const LearningPathPreviewCard: React.FC<LearningPathPreviewCardProps> = (
             <EditableLearningMaterialTags learningMaterial={learningPath} isLoading={isLoading} />
           </BoxBlockDefaultClickPropagation>
           <Box flexGrow={1} flexBasis={0} />
-          <Flex flexWrap="wrap">
-            <Box flexGrow={1} flexBasis={0} />
-            <Flex flexShrink={0} direction="column" justifyContent="center" pr={2}>
-              {learningPath.coveredConceptsByDomain && (
-                <Skeleton isLoaded={!isLoading}>
-                  <BoxBlockDefaultClickPropagation>
-                    <LearningMaterialCardCoveredTopics learningMaterial={learningPath} />
-                  </BoxBlockDefaultClickPropagation>
-                </Skeleton>
-              )}
-            </Flex>
-            {/* Nb resources here like resource series -> future should be expandable */}
-          </Flex>
+
+          {learningPath.coveredConceptsByDomain && (
+            <BoxBlockDefaultClickPropagation pr={2}>
+              <Skeleton isLoaded={!isLoading}>
+                <LearningMaterialCardCoveredTopics learningMaterial={learningPath} />
+              </Skeleton>
+            </BoxBlockDefaultClickPropagation>
+          )}
+
+          {/* Nb resources here like resource series -> future should be expandable */}
         </Flex>
       }
     >
-      <Flex direction="column">
-        <Text fontSize="xl">{learningPath.name}</Text>
-
-        <Stack direction="row" alignItems="baseline" spacing={2}>
-          <StarsRatingViewer pxSize={13} value={learningPath.rating} />
-          <Badge colorScheme="teal" fontSize="0.8em">
-            Learning Path
-          </Badge>
-          <DurationViewer value={learningPath.durationMs} />
-        </Stack>
-        <Box>
-          <Text fontWeight={250}>{learningPath.description && shortenDescription(learningPath.description)}</Text>
-        </Box>
+      <Flex direction="row" justifyContent="space-between">
+        <Flex direction="column">
+          <Text fontSize="xl">{learningPath.name}</Text>
+          <Stack direction="row" alignItems="baseline" spacing={2}>
+            <StarsRatingViewer pxSize={13} value={learningPath.rating} />
+            <Badge colorScheme="teal" fontSize="0.8em">
+              Learning Path
+            </Badge>
+            <DurationViewer value={learningPath.durationMs} />
+          </Stack>
+          <Box>
+            <Text fontWeight={250}>{learningPath.description && shortenDescription(learningPath.description)}</Text>
+          </Box>
+        </Flex>
+        {learningPath.createdBy && (
+          <Flex direction="column" flexShrink={0} alignItems="center" pt={1} pr={2}>
+            <Text fontSize="sm" fontWeight={300}>
+              Created by
+            </Text>
+            <UserAvatar user={learningPath.createdBy} size="xs" />
+          </Flex>
+        )}
         {/* Future: goals and prerequisites */}
         {/* Np people having started it */}
         {/* Comments, etc. */}

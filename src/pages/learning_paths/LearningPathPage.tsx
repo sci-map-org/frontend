@@ -145,7 +145,7 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
     [learningPath, currentUser]
   );
 
-  const currentUserStartedPath = useMemo(() => !!learningPath.started, [learningPath]);
+  const currentUserStartedPath = useMemo(() => !!learningPath.started, [learningPath]); // always true ?
 
   const currentUserCompletedPath = useMemo(
     () =>
@@ -154,7 +154,13 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
       learningPath.resourceItems.every(({ resource }) => resource.consumed?.consumedAt),
     [currentUserStartedPath, learningPath.resourceItems]
   );
-
+  const otherUsersInPath = useMemo(
+    () =>
+      learningPath.startedBy && currentUser
+        ? learningPath.startedBy.items.filter(({ user }) => user._id !== currentUser._id)
+        : [],
+    [currentUser, learningPath.startedBy]
+  );
   const [editMode, setEditMode] = useState(currentUserIsOwner);
   if (error) return null;
   return (
@@ -282,12 +288,14 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
                 )}
               </Center>
             )}
-            {learningPath.startedBy?.items.length && (currentUserIsOwner || learningPath.startedBy.items.length > 4) && (
+            {otherUsersInPath.length && (currentUserIsOwner || otherUsersInPath.length > 4) && (
               <Center>
                 <Stack spacing={1}>
-                  <Text fontWeight={300}>Path taken by {learningPath.startedBy.items.length} people</Text>
+                  <Text fontWeight={300}>
+                    Path taken by {otherUsersInPath.length} {otherUsersInPath.length === 1 ? 'user' : 'users'}
+                  </Text>
                   <AvatarGroup alignSelf="center" spacing={-3} size="sm" max={3}>
-                    {learningPath.startedBy.items.map(({ user }) => (
+                    {otherUsersInPath.map(({ user }) => (
                       <UserAvatar key={user._id} user={user} />
                     ))}
                   </AvatarGroup>
