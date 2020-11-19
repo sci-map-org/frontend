@@ -97,18 +97,18 @@ export const Header: React.FC = () => {
               <PopoverArrow />
               <PopoverBody pt={1}>
                 <Stack direction="column" spacing={0}>
-                  {currentUser.createdLearningPaths && currentUser.createdLearningPaths.length && (
+                  {currentUser.startedLearningPaths && currentUser.startedLearningPaths.length && (
                     <>
                       <Stack>
-                        {currentUser.createdLearningPaths.map((createdLearningPath) => (
+                        {currentUser.startedLearningPaths.map((startedLearningPath) => (
                           <InternalLink
-                            key={createdLearningPath._id}
+                            key={startedLearningPath._id}
                             routePath={LearningPathPagePath()}
-                            asHref={LearningPathPagePath(createdLearningPath.key)}
+                            asHref={LearningPathPagePath(startedLearningPath.key)}
                             {...HeaderLinkStyle}
                             fontSize="md"
                           >
-                            {createdLearningPath.name}
+                            {startedLearningPath.name}
                           </InternalLink>
                         ))}
                       </Stack>

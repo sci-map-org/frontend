@@ -9,7 +9,7 @@ export const CurrentUserData = gql`
     key
     role
     displayName
-    createdLearningPaths(options: {}) {
+    startedLearningPaths(options: {}) {
       _id
       key
       name
