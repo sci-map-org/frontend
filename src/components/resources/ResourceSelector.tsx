@@ -45,13 +45,21 @@ export const ResourceSelector: React.FC<ResourceSelectorProps> = ({ onSelect, de
   );
 };
 
-export const ResourceSelectorModal: React.FC<
-  { modalHeaderTitle?: string; renderButton: (args: { openModal: () => void }) => ReactElement } & ResourceSelectorProps
-> = ({ modalHeaderTitle = 'Add a resource', renderButton, children, onSelect, ...resourceSelectorProps }) => {
+interface ResourceSelectorModalProps extends ResourceSelectorProps {
+  modalHeaderTitle?: string;
+  renderTrigger: (args: { openModal: () => void }) => ReactElement;
+}
+export const ResourceSelectorModal: React.FC<ResourceSelectorModalProps> = ({
+  modalHeaderTitle = 'Add a resource',
+  renderTrigger,
+  children,
+  onSelect,
+  ...resourceSelectorProps
+}) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
-      {renderButton({ openModal: onOpen })}
+      {renderTrigger({ openModal: onOpen })}
       <Modal onClose={onClose} size="xl" isOpen={isOpen}>
         <ModalOverlay>
           <ModalContent>

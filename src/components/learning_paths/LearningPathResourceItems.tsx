@@ -1,5 +1,5 @@
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
-import { Box, BoxProps, Flex, FlexProps, IconButton } from '@chakra-ui/react';
+import { Box, BoxProps, ButtonProps, Flex, FlexProps, IconButton } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
 import { LearningPathWithResourceItemsPreviewDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
 import { useUpdateLearningPathMutation } from '../../graphql/learning_paths/learning_paths.operations.generated';
@@ -21,6 +21,8 @@ interface StatelessLearningPathResourceItemsProps {
   editMode?: boolean;
   isLoading?: boolean;
   currentUserStartedPath?: boolean;
+  resourceSelectorButtonColorScheme?: ButtonProps['colorScheme'];
+  hideProgressArrow?: boolean;
 }
 
 const completedCheckboxHeight = 24;
@@ -54,6 +56,8 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
   editMode,
   isLoading,
   currentUserStartedPath,
+  resourceSelectorButtonColorScheme,
+  hideProgressArrow,
 }) => {
   const previewCardsRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [previewCardsHeight, setPreviewCardsHeight] = useState<number[]>([]);
@@ -71,19 +75,21 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
             <Flex key={resource._id} direction="column" justifyContent="stretch">
               <Flex direction="row" py={0} position="relative">
                 <Flex w="100px" borderLeft="1px solid transparent" flexShrink={0} justifyContent="center">
-                  <ProgressArrow
-                    pxWidth={8}
-                    position="absolute"
-                    top={getArrowTopPosition(index, previewCardsHeight)}
-                    color={
-                      !isLoading &&
-                      !!currentUserStartedPath &&
-                      (index === 0 || resourceItems[index - 1].resource.consumed?.consumedAt)
-                        ? 'teal.400'
-                        : 'gray.300'
-                    }
-                    h={getArrowHeight(index, previewCardsHeight)}
-                  />
+                  {!hideProgressArrow && (
+                    <ProgressArrow
+                      pxWidth={8}
+                      position="absolute"
+                      top={getArrowTopPosition(index, previewCardsHeight)}
+                      color={
+                        !isLoading &&
+                        !!currentUserStartedPath &&
+                        (index === 0 || resourceItems[index - 1].resource.consumed?.consumedAt)
+                          ? 'teal.400'
+                          : 'gray.300'
+                      }
+                      h={getArrowHeight(index, previewCardsHeight)}
+                    />
+                  )}
                 </Flex>
                 <Flex pt={2} pb={1} flexGrow={1}>
                   <EditableTextarea
@@ -93,7 +99,7 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
                     fontWeight={300}
                     color="gray.700"
                     defaultValue={description || ''}
-                    placeholder="Add a description..."
+                    placeholder="Write something..."
                     onSubmit={(newDescription: any) => updateDescription(resource._id, newDescription as string)}
                     isDisabled={!editMode}
                     isLoading={isLoading}
@@ -144,11 +150,12 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
           <Flex direction="row" justifyContent="center" mt={2}>
             <ResourceSelectorModal
               onSelect={(selectedResource) => addResourceItem(selectedResource)}
-              renderButton={({ openModal }) => (
+              renderTrigger={({ openModal }) => (
                 <IconButton
                   m={2}
                   size="lg"
                   variant="outline"
+                  colorScheme={resourceSelectorButtonColorScheme}
                   isRound
                   icon={<AddIcon />}
                   aria-label="Add resource to learning path"

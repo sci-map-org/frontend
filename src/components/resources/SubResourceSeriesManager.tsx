@@ -75,7 +75,7 @@ export const SubResourceSeriesManager: React.FC<SubResourceSeriesManagerProps> =
                 variables: { parentResourceId: resourceId, subResourceId: selectedResource._id },
               })
             }
-            renderButton={({ openModal }) => (
+            renderTrigger={({ openModal }) => (
               <IconButton
                 m={2}
                 size="lg"
@@ -105,7 +105,7 @@ export const SubResourceSeriesManager: React.FC<SubResourceSeriesManagerProps> =
                   },
                 })
               }
-              renderButton={({ openModal }) => (
+              renderTrigger={({ openModal }) => (
                 <IconButton
                   m={2}
                   size="md"

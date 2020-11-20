@@ -32,25 +32,29 @@ export const SquareResourceCardWrapper: React.FC<SquareResourceCardWrapperProps>
       ))}
       {onAdd && editable && (
         <WrapItem>
-          <SquareResourceCardContainer>
-            <Stack align="center" spacing={2}>
-              <ResourceSelectorModal
-                onSelect={(subResource) => onAdd(subResource)}
-                defaultAttachedDomains={defaultAttachedDomains}
-                renderButton={({ openModal }) => (
+          <ResourceSelectorModal
+            onSelect={(subResource) => onAdd(subResource)}
+            defaultAttachedDomains={defaultAttachedDomains}
+            renderTrigger={({ openModal }) => (
+              <SquareResourceCardContainer onClick={() => openModal()}>
+                <Stack align="center" spacing={2}>
                   <IconButton
                     aria-label="add resource"
                     icon={<AddIcon />}
+                    variant="outline"
                     size="lg"
                     isRound
                     onClick={() => openModal()}
                     isDisabled={isLoading}
                   />
-                )}
-              />
-              <Text fontWeight={500}>Add resource</Text>
-            </Stack>
-          </SquareResourceCardContainer>
+
+                  <Text fontWeight={300} fontSize="lg">
+                    Add a resource
+                  </Text>
+                </Stack>
+              </SquareResourceCardContainer>
+            )}
+          />
         </WrapItem>
       )}
     </Wrap>

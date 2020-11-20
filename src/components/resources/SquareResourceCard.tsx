@@ -73,7 +73,7 @@ export const SquareResourceCard: React.FC<SquareResourceCardProps> = ({ resource
 interface SquareResourceCardContainerProps {
   renderTopRight?: ReactElement;
   renderBottom?: ReactElement;
-  onClick: () => void;
+  onClick?: () => void;
 }
 
 export const SquareResourceCardContainer: React.FC<SquareResourceCardContainerProps> = ({
@@ -96,7 +96,7 @@ export const SquareResourceCardContainer: React.FC<SquareResourceCardContainerPr
       mb={4}
       mx={2}
       borderRadius={4}
-      onClick={() => onClick()}
+      onClick={() => onClick && onClick()}
     >
       <Flex direction="column" w="100%" h="100%" justifyContent="stretch" alignItems="stretch">
         {renderTopRight && (
