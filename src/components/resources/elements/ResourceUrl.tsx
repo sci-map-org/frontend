@@ -30,8 +30,9 @@ export const ResourceUrlLink: React.FC<
   {
     resource: Pick<ResourcePreviewDataFragment, '_id' | 'consumed' | 'url'>;
     isLoading?: boolean;
+    maxLength?: number;
   } & Omit<LinkProps, 'href' | 'onClick' | 'isExternal' | 'resource'>
-> = ({ resource, isLoading, ...linkProps }) => {
+> = ({ resource, isLoading, maxLength, ...linkProps }) => {
   const [setResourceOpened] = useSetResourceOpenedMutation({ variables: { resourceId: resource._id } });
   return (
     <Skeleton as="span" isLoaded={!isLoading}>
@@ -48,7 +49,7 @@ export const ResourceUrlLink: React.FC<
         }}
         isExternal
       >
-        {toUrlPreview(resource.url)}
+        {toUrlPreview(resource.url, maxLength)}
         <ExternalLinkIcon mx="2px" />
       </Link>
     </Skeleton>

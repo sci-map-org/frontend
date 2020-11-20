@@ -1,11 +1,15 @@
-import { Center, Flex, Stack } from '@chakra-ui/react';
+import { Center, Flex, Link, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { ReactElement } from 'react';
+import { routerPushToPage } from '../../pages/PageInfo';
+import { ResourcePageInfo } from '../../pages/resources/ResourcePage';
 import { shortenString } from '../../util/utils';
 import { StarsRatingViewer } from '../learning_materials/LearningMaterialStarsRating';
 import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
 import { InternalLink } from '../navigation/InternalLink';
 import { ResourceTypeBadge } from './elements/ResourceType';
+import { ResourceUrlLink } from './elements/ResourceUrl';
+import { BoxBlockDefaultClickPropagation } from './ResourcePreviewCard';
 import { SquareResourceCardDataFragment } from './SquareResourceCard.generated';
 
 export const SquareResourceCardData = gql`
@@ -14,6 +18,10 @@ export const SquareResourceCardData = gql`
     name
     type
     rating
+    consumed {
+      openedAt
+    }
+    url
   }
 `;
 
@@ -25,6 +33,7 @@ interface SquareResourceCardProps {
 export const SquareResourceCard: React.FC<SquareResourceCardProps> = ({ resource, onRemove }) => {
   return (
     <SquareResourceCardContainer
+      onClick={() => routerPushToPage(ResourcePageInfo(resource))}
       renderTopRight={
         onRemove && (
           <DeleteButtonWithConfirmation
@@ -47,17 +56,31 @@ export const SquareResourceCard: React.FC<SquareResourceCardProps> = ({ resource
         </Stack>
       }
     >
-      <InternalLink textAlign="center" fontSize="sm" routePath="/resources/[_id]" asHref={`/resources/${resource._id}`}>
-        {shortenString(resource.name, 90)}
-      </InternalLink>
+      <BoxBlockDefaultClickPropagation display="flex" justifyContent="center" alignItems="center">
+        <Link display="flex" alignItems="stretch" flexDirection="column" href={resource.url} isExternal>
+          <Text mr={1} as="span" textAlign="center" fontSize="sm" noOfLines={3}>
+            {/* @ts-ignore */}
+            {resource.name}
+          </Text>
+          <Center>
+            <ResourceUrlLink resource={resource} as="span" maxLength={15} />
+          </Center>
+        </Link>
+      </BoxBlockDefaultClickPropagation>
     </SquareResourceCardContainer>
   );
 };
+interface SquareResourceCardContainerProps {
+  renderTopRight?: ReactElement;
+  renderBottom?: ReactElement;
+  onClick: () => void;
+}
 
-export const SquareResourceCardContainer: React.FC<{ renderTopRight?: ReactElement; renderBottom?: ReactElement }> = ({
+export const SquareResourceCardContainer: React.FC<SquareResourceCardContainerProps> = ({
   children,
   renderTopRight,
   renderBottom,
+  onClick,
 }) => {
   return (
     <Flex
@@ -68,11 +91,12 @@ export const SquareResourceCardContainer: React.FC<{ renderTopRight?: ReactEleme
       justifyContent="center"
       borderWidth="1px"
       borderColor="gray.200"
-      _hover={{ borderColor: 'gray.400' }}
+      _hover={{ cursor: 'pointer', borderColor: 'gray.400' }}
       p={2}
       mb={4}
       mx={2}
       borderRadius={4}
+      onClick={() => onClick()}
     >
       <Flex direction="column" w="100%" h="100%" justifyContent="stretch" alignItems="stretch">
         {renderTopRight && (
