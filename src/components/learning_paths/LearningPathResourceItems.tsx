@@ -10,7 +10,7 @@ import {
 import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
 import { EditableTextarea } from '../lib/inputs/EditableTextarea';
 import { ResourcePreviewCard } from '../resources/ResourcePreviewCard';
-import { ResourceSelectorModal } from '../resources/ResourceSelector';
+import { PreviewResourceSelectorModal } from '../resources/ResourceSelector';
 
 interface StatelessLearningPathResourceItemsProps {
   resourceItems: { description?: string | null; resource: ResourcePreviewDataFragment }[];
@@ -148,7 +148,7 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
         </Flex>
         {editMode && (
           <Flex direction="row" justifyContent="center" mt={2}>
-            <ResourceSelectorModal
+            <PreviewResourceSelectorModal
               onSelect={(selectedResource) => addResourceItem(selectedResource)}
               renderTrigger={({ openModal }) => (
                 <IconButton

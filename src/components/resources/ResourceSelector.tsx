@@ -14,20 +14,35 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
-import { ReactElement } from 'react';
+import { PropsWithChildren, ReactElement } from 'react';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
-import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import {
+  ResourceDataFragment,
+  ResourcePreviewDataFragment,
+} from '../../graphql/resources/resources.fragments.generated';
 import { NewResourceModal } from './NewResource';
 import { ResourceFinder } from './ResourceFinder';
+import { useApolloClient } from '@apollo/client';
+import {
+  GetResourcePreviewDataQuery,
+  GetResourcePreviewDataQueryVariables,
+  useGetResourcePreviewDataQuery,
+} from '../../graphql/resources/resources.operations.generated';
+import { getResourcePreviewData } from '../../graphql/resources/resources.operations';
 
-interface ResourceSelectorProps {
-  onSelect: (resource: ResourceDataFragment) => void;
+interface GenericResourceSelectorProps<ResourceFragmentType> {
+  onSelect: (resource: ResourceFragmentType) => void;
   defaultAttachedDomains?: DomainDataFragment[];
+  increaseResourceType: (resourceData: ResourceDataFragment) => ResourceFragmentType | Promise<ResourceFragmentType>;
 }
-export const ResourceSelector: React.FC<ResourceSelectorProps> = ({ onSelect, defaultAttachedDomains }) => {
+export function GenericResourceSelector<ResourceFragmentType>({
+  onSelect,
+  defaultAttachedDomains,
+  increaseResourceType,
+}: PropsWithChildren<GenericResourceSelectorProps<ResourceFragmentType>>) {
   return (
     <Flex direction="column" alignItems="stretch">
-      <ResourceFinder onSelect={onSelect} />
+      <ResourceFinder onSelect={async (resourceData) => onSelect(await increaseResourceType(resourceData))} />
       <Divider my={4} />
       <Center>
         <Stack spacing={2} alignItems="center">
@@ -37,25 +52,26 @@ export const ResourceSelector: React.FC<ResourceSelectorProps> = ({ onSelect, de
               <IconButton aria-label="Create resource" icon={<AddIcon />} size="lg" isRound mb={3} onClick={onClick} />
             )}
             defaultAttachedDomains={defaultAttachedDomains}
-            onResourceCreated={onSelect}
+            onResourceCreated={async (resourceData) => onSelect(await increaseResourceType(resourceData))}
           />
         </Stack>
       </Center>
     </Flex>
   );
-};
+}
 
-interface ResourceSelectorModalProps extends ResourceSelectorProps {
+interface GenericResourceSelectorModalProps<ResourceFragmentType>
+  extends GenericResourceSelectorProps<ResourceFragmentType> {
   modalHeaderTitle?: string;
   renderTrigger: (args: { openModal: () => void }) => ReactElement;
 }
-export const ResourceSelectorModal: React.FC<ResourceSelectorModalProps> = ({
+export function GenericResourceSelectorModal<ResourceFragmentType>({
   modalHeaderTitle = 'Add a resource',
   renderTrigger,
   children,
   onSelect,
   ...resourceSelectorProps
-}) => {
+}: PropsWithChildren<GenericResourceSelectorModalProps<ResourceFragmentType>>) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
@@ -66,7 +82,7 @@ export const ResourceSelectorModal: React.FC<ResourceSelectorModalProps> = ({
             <ModalHeader>{modalHeaderTitle}</ModalHeader>
             <ModalCloseButton />
             <ModalBody pb={5}>
-              <ResourceSelector
+              <GenericResourceSelector<ResourceFragmentType>
                 {...resourceSelectorProps}
                 onSelect={(...args) => {
                   onClose();
@@ -78,5 +94,34 @@ export const ResourceSelectorModal: React.FC<ResourceSelectorModalProps> = ({
         </ModalOverlay>
       </Modal>
     </>
+  );
+}
+
+export const ResourceSelectorModal: React.FC<Omit<
+  GenericResourceSelectorModalProps<ResourceDataFragment>,
+  'increaseResourceType'
+>> = ({ ...props }) => {
+  return <GenericResourceSelectorModal<ResourceDataFragment> {...props} increaseResourceType={(r) => r} />;
+};
+
+export const PreviewResourceSelectorModal: React.FC<Omit<
+  GenericResourceSelectorModalProps<ResourcePreviewDataFragment>,
+  'increaseResourceType'
+>> = ({ ...props }) => {
+  const client = useApolloClient();
+
+  return (
+    <GenericResourceSelectorModal<ResourcePreviewDataFragment>
+      {...props}
+      increaseResourceType={async (resourceData) => {
+        const { data } = await client.query<GetResourcePreviewDataQuery, GetResourcePreviewDataQueryVariables>({
+          query: getResourcePreviewData,
+          variables: {
+            id: resourceData._id,
+          },
+        });
+        return data.getResourceById;
+      }}
+    />
   );
 };
