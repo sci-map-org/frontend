@@ -42,7 +42,10 @@ export function GenericResourceSelector<ResourceFragmentType>({
 }: PropsWithChildren<GenericResourceSelectorProps<ResourceFragmentType>>) {
   return (
     <Flex direction="column" alignItems="stretch">
-      <ResourceFinder onSelect={async (resourceData) => onSelect(await increaseResourceType(resourceData))} />
+      <ResourceFinder
+        width="100%"
+        onSelect={async (resourceData) => onSelect(await increaseResourceType(resourceData))}
+      />
       <Divider my={4} />
       <Center>
         <Stack spacing={2} alignItems="center">

@@ -1,5 +1,5 @@
 import { Box, Input, InputProps, Text } from '@chakra-ui/react';
-import { useState, PropsWithChildren } from 'react';
+import { useState, PropsWithChildren, useRef } from 'react';
 import Autosuggest from 'react-autosuggest';
 
 type EntityType = {
@@ -35,9 +35,9 @@ export const EntitySelector = <T extends EntityType>({
       setValue(newValue);
     },
   };
-
+  let inputRef = useRef<HTMLDivElement>(null);
   return (
-    <Box>
+    <Box w={width} ref={inputRef}>
       <Autosuggest
         shouldRenderSuggestions={() => {
           return true;
@@ -51,7 +51,7 @@ export const EntitySelector = <T extends EntityType>({
           setValue('');
         }}
         renderSuggestion={(suggestion) => (
-          <Box px={5} py={1} borderBottomWidth={1}>
+          <Box px={5} py={1} borderBottomWidth={1} w={width}>
             <Text fontWeight={500}>{suggestion.name}</Text>
           </Box>
         )}
@@ -63,7 +63,7 @@ export const EntitySelector = <T extends EntityType>({
             borderRightWidth={1}
             position="absolute"
             backgroundColor="white"
-            w={width}
+            w={inputRef.current?.offsetWidth || undefined}
           >
             {children}
           </Box>
