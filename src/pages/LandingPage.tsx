@@ -47,7 +47,7 @@ const LandingHeader: React.FC<{ layoutProps: FlexProps }> = ({ layoutProps }) =>
             personalized learning experience for every topic. It allows you to explore knowledge intuitively, whether
             you have a specific goal in mind or you simply are following your curiosity. <br />
             <br />
-            As of September 2020, it is in a state of closed audience release.
+            As of November 2020, it is in a state of closed audience release.
           </Text>
           <Stack direction="column" spacing={2} mb="15px">
             <Text>
