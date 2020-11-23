@@ -29,7 +29,7 @@ interface NewLearningPathProps {
 
 export const NewLearningPathForm: React.FC<NewLearningPathProps> = ({ createLearningPath, onLearningPathCreated }) => {
   const [name, setName] = useState('');
-  const [key, setKey] = useState<string | undefined>(undefined);
+  const [key, setKey] = useState<string>('');
   const [description, setDescription] = useState<string | undefined>(undefined);
   const [resourceItems, setResourceItems] = useState<{ resource: ResourcePreviewDataFragment; description?: string }[]>(
     []
@@ -43,8 +43,8 @@ export const NewLearningPathForm: React.FC<NewLearningPathProps> = ({ createLear
         <NewLearningPathFirstStep
           name={name}
           setName={setName}
-          key={key}
-          setKey={setKey}
+          learningPathKey={key}
+          setLearningPathKey={setKey}
           description={description}
           setDescription={setDescription}
         />
@@ -69,7 +69,7 @@ export const NewLearningPathForm: React.FC<NewLearningPathProps> = ({ createLear
                 name,
                 description,
                 resourceItems: resourceItems.map((i) => ({ resourceId: i.resource._id, description: i.description })),
-                ...(key && { key }),
+                ...(!!key && { key }),
               }).then((lp) => onLearningPathCreated && onLearningPathCreated(lp));
             }}
           >
@@ -108,8 +108,8 @@ export const NewLearningPath: React.FC<{}> = () => {
 interface NewLearningPathFirstStepProps {
   name: string;
   setName: (newName: string) => void;
-  key?: string;
-  setKey: (newKey?: string) => void;
+  learningPathKey: string;
+  setLearningPathKey: (newKey: string) => void;
   description?: string;
   setDescription: (newDescription?: string) => void;
 }
@@ -117,8 +117,8 @@ interface NewLearningPathFirstStepProps {
 const NewLearningPathFirstStep: React.FC<NewLearningPathFirstStepProps> = ({
   name,
   setName,
-  key,
-  setKey,
+  learningPathKey,
+  setLearningPathKey,
   description,
   setDescription,
 }) => {
@@ -141,8 +141,8 @@ const NewLearningPathFirstStep: React.FC<NewLearningPathFirstStepProps> = ({
             placeholder="my_learning_path"
             size="md"
             id="key"
-            value={key}
-            onChange={(e) => setKey(e.target.value)}
+            value={learningPathKey}
+            onChange={(e) => setLearningPathKey(e.target.value)}
           ></Input>
         </FormControl>
       </RoleAccess>

@@ -406,7 +406,7 @@ const LearningPageRightIcons: React.FC<{
         modalHeaderText="Delete Learning Path"
         modalBodyText={`Confirm deleting the learning path "${learningPath.name}" ?`}
         isDisabled={isDisabled}
-        onConfirmation={() => deleteLearningPath({ variables: { _id: learningPath._id } }).then(() => Router.back())}
+        onConfirmation={() => deleteLearningPath({ variables: { _id: learningPath._id } }).then(() => Router.push('/'))}
       />
     </Stack>
   ) : null;
