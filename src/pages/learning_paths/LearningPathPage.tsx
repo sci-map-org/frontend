@@ -170,6 +170,7 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
   return (
     <PageLayout
       isLoading={loading}
+      marginSize="md"
       centerChildren
       renderTopRight={
         <LearningPageRightIcons
@@ -181,13 +182,7 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
         />
       }
     >
-      <Stack
-        width={{ base: '96%', md: '86%' }}
-        maxWidth={{
-          base: '100%',
-          md: '1800px',
-        }}
-      >
+      <Stack w="100%">
         <Center>
           <LearningPathEditableName
             name={learningPath.name}
@@ -198,33 +193,35 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
             editMode={editMode}
           />
         </Center>
-        <Flex direction="row">
-          <Stack width="25%" spacing={4} minWidth="260px">
-            <Center>
-              <EditableDuration
-                defaultValue={learningPath.durationMs}
-                onSubmit={(newDuration) =>
-                  newDuration !== learningPath.durationMs &&
-                  updateLearningPath({
-                    variables: { _id: learningPath._id, payload: { durationMs: newDuration } },
-                  })
-                }
-                placeholder="Estimated Duration"
-                isDisabled={!editMode}
-                isLoading={loading}
-              />
-            </Center>
-            <Center>
-              <EditableLearningMaterialTags
-                justify="center"
-                learningMaterial={learningPath}
-                isLoading={loading}
-                isDisabled={!editMode}
-                placeholder="Add tags"
-              />
-            </Center>
-          </Stack>
-          <Stack flexGrow={1}>
+        <Flex direction={{ base: 'column', md: 'row' }} alignItems="stretch">
+          <Flex direction="column" justifyContent="space-between" alignItems="stretch" minWidth={{ md: '260px' }}>
+            <Stack spacing={2} pb={2}>
+              <Center>
+                <EditableDuration
+                  defaultValue={learningPath.durationMs}
+                  onSubmit={(newDuration) =>
+                    newDuration !== learningPath.durationMs &&
+                    updateLearningPath({
+                      variables: { _id: learningPath._id, payload: { durationMs: newDuration } },
+                    })
+                  }
+                  placeholder="Estimated Duration"
+                  isDisabled={!editMode}
+                  isLoading={loading}
+                />
+              </Center>
+              <Center>
+                <EditableLearningMaterialTags
+                  justify="center"
+                  learningMaterial={learningPath}
+                  isLoading={loading}
+                  isDisabled={!editMode}
+                  placeholder="Add tags"
+                />
+              </Center>
+            </Stack>
+          </Flex>
+          <Stack flexGrow={1} px={4}>
             <Stack direction="row" justifyContent="center" spacing={2} alignItems="center">
               <StarsRatingViewer value={learningPath.rating} isLoading={loading} />
               <RoleAccess accessRule="contributorOrAdmin">
@@ -235,7 +232,6 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
               <EditableTextarea
                 textAlign="center"
                 justifyContent="center"
-                px={4}
                 backgroundColor="backgroundColor.0"
                 fontSize="lg"
                 fontWeight={300}
@@ -254,63 +250,62 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
               />
             </Skeleton>
           </Stack>
-          <Flex width="25%" minWidth="260px" direction="column" alignItems="flex-end">
-            <Stack w="260px" spacing={3}>
-              <Box>
-                <LearningMaterialCoveredTopics
-                  editMode={editMode}
-                  isLoading={loading}
-                  learningMaterial={learningPath}
-                />
-              </Box>
-            </Stack>
+          <Flex minWidth="260px" direction="column" alignItems="center">
+            <LearningMaterialCoveredTopics
+              w="260px"
+              editMode={editMode}
+              isLoading={loading}
+              learningMaterial={learningPath}
+            />
           </Flex>
         </Flex>
         <Flex justifyContent="space-between">
           {learningPath.resourceItems?.length ? (
-            <LearningPathCompletion learningPath={learningPath} isLoading={loading} />
+            <LearningPathCompletion w="100px" learningPath={learningPath} isLoading={loading} />
           ) : (
             <Box />
           )}
-          <Stack>
-            {learningPath.createdBy && (
-              <Center>
-                {currentUserIsOwner ? (
-                  <Stack direction="column" alignItems="center">
-                    <Text fontWeight={300}>You are the owner</Text>
+          <Center w="260px">
+            <Stack>
+              {learningPath.createdBy && (
+                <Center>
+                  {currentUserIsOwner ? (
+                    <Stack direction="column" alignItems="center">
+                      <Text fontWeight={300}>You are the owner</Text>
 
-                    {learningPath.public ? (
-                      <Badge colorScheme="green">PUBLIC</Badge>
-                    ) : (
-                      <LearningPathPublishButton size="md" learningPath={learningPath} />
-                    )}
-                  </Stack>
-                ) : (
+                      {learningPath.public ? (
+                        <Badge colorScheme="green">PUBLIC</Badge>
+                      ) : (
+                        <LearningPathPublishButton size="md" learningPath={learningPath} />
+                      )}
+                    </Stack>
+                  ) : (
+                    <Stack spacing={1}>
+                      <Text fontWeight={300}>Created By</Text>
+                      <Center>
+                        <UserAvatar size="sm" user={learningPath.createdBy} />
+                      </Center>
+                      {currentUserIsOwner && <Badge colorScheme="green">PUBLIC</Badge>}
+                    </Stack>
+                  )}
+                </Center>
+              )}
+              {otherUsersInPath.length && (currentUserIsOwner || otherUsersInPath.length > 4) && (
+                <Center>
                   <Stack spacing={1}>
-                    <Text fontWeight={300}>Created By</Text>
-                    <Center>
-                      <UserAvatar size="sm" user={learningPath.createdBy} />
-                    </Center>
-                    {currentUserIsOwner && <Badge colorScheme="green">PUBLIC</Badge>}
+                    <Text fontWeight={300}>
+                      Path taken by {otherUsersInPath.length} {otherUsersInPath.length === 1 ? 'user' : 'users'}
+                    </Text>
+                    <AvatarGroup alignSelf="center" spacing={-3} size="sm" max={3}>
+                      {otherUsersInPath.map(({ user }) => (
+                        <UserAvatar key={user._id} user={user} />
+                      ))}
+                    </AvatarGroup>
                   </Stack>
-                )}
-              </Center>
-            )}
-            {otherUsersInPath.length && (currentUserIsOwner || otherUsersInPath.length > 4) && (
-              <Center>
-                <Stack spacing={1}>
-                  <Text fontWeight={300}>
-                    Path taken by {otherUsersInPath.length} {otherUsersInPath.length === 1 ? 'user' : 'users'}
-                  </Text>
-                  <AvatarGroup alignSelf="center" spacing={-3} size="sm" max={3}>
-                    {otherUsersInPath.map(({ user }) => (
-                      <UserAvatar key={user._id} user={user} />
-                    ))}
-                  </AvatarGroup>
-                </Stack>
-              </Center>
-            )}
-          </Stack>
+                </Center>
+              )}
+            </Stack>
+          </Center>
         </Flex>
         {!learningPath.resourceItems?.length && (
           <Flex justify="center">
@@ -361,7 +356,9 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
           />
         </SimpleGrid>
 
-        <Flex>{!learningPath.public && <LearningPathPublishButton learningPath={learningPath} />}</Flex>
+        <Flex justify="flex-end">
+          {!learningPath.public && <LearningPathPublishButton size="lg" learningPath={learningPath} />}
+        </Flex>
       </Stack>
     </PageLayout>
   );

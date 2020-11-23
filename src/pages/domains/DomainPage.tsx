@@ -120,7 +120,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
   const { mockedFeaturesEnabled } = useMockedFeaturesEnabled();
 
   return (
-    <PageLayout>
+    <PageLayout marginSize="sm">
       <Flex direction="row" alignItems="center" pb={5}>
         <Skeleton isLoaded={!loading}>
           <Heading fontSize="4xl" fontWeight="normal" color="blackAlpha.800">

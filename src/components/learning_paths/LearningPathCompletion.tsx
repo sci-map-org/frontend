@@ -3,6 +3,7 @@ import {
   CircularProgress,
   CircularProgressLabel,
   Flex,
+  FlexProps,
   IconButton,
   Skeleton,
   Tooltip,
@@ -40,15 +41,20 @@ export const LearningPathCompletionData = gql`
 interface LearningPathCompletionProps {
   learningPath: LearningPathCompletionDataFragment;
   isLoading?: boolean;
+  w?: FlexProps['w'];
 }
 
 // TODO find a good name. Badge / widget ? urgh
-export const LearningPathCompletion: React.FC<LearningPathCompletionProps> = ({ learningPath, isLoading }) => {
+export const LearningPathCompletion: React.FC<LearningPathCompletionProps> = ({
+  learningPath,
+  isLoading,
+  w = '100px',
+}) => {
   const resourceItems = learningPath.resourceItems || [];
 
   return (
     <Skeleton isLoaded={!isLoading}>
-      <Flex direction="column" alignItems="stretch" w="100px">
+      <Flex direction="column" alignItems="stretch" w={w}>
         <Center>
           <LearningPathCircularCompletion size="lg" learningPath={learningPath} />
         </Center>

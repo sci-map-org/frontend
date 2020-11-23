@@ -1,8 +1,23 @@
-import { Box, Flex, Heading, Skeleton, Text } from '@chakra-ui/react';
+import { Box, Flex, FlexProps, Heading, Skeleton, Text } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { RoleAccessAllowedRule, userHasAccess } from '../auth/RoleAccess';
 import { NavigationBreadcrumbs, NavigationBreadcrumbsProps } from './NavigationBreadcrumbs';
+
+const marginSizesMapping: { [key in 'sm' | 'md' | 'lg' | 'xl']: { px: FlexProps['px'] } } = {
+  sm: {
+    px: { sm: '1%', md: '3%' },
+  },
+  md: {
+    px: { sm: '2%', md: '5%' },
+  },
+  lg: {
+    px: { sm: '3%', md: '8%' },
+  },
+  xl: {
+    px: { sm: '5%', md: '12%' },
+  },
+};
 
 interface PageLayoutProps {
   mode?: 'form';
@@ -14,7 +29,9 @@ interface PageLayoutProps {
   centerChildren?: boolean;
   isLoading?: boolean;
   accessRule?: RoleAccessAllowedRule | boolean;
+  marginSize?: keyof typeof marginSizesMapping;
 }
+
 export const PageLayout: React.FC<PageLayoutProps> = ({
   children,
   mode,
@@ -26,6 +43,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   centerChildren,
   isLoading,
   accessRule,
+  marginSize = 'md',
 }) => {
   const { currentUser } = useCurrentUser();
   if ((typeof accessRule === 'string' && !userHasAccess(accessRule, currentUser)) || accessRule === false)
@@ -39,11 +57,12 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   return (
     <Flex
       direction="column"
-      px="50px"
+      px={marginSizesMapping[marginSize].px}
       pt="16px"
       pb="100px"
       justifyContent="flex-start"
       backgroundColor="backgroundColor.1"
+      maxWidth={{ base: '100%', md: '1800px' }}
     >
       {(breadCrumbsLinks || renderTopRight) && (
         <Flex direction="row" justifyContent="space-between" pb="8px">
