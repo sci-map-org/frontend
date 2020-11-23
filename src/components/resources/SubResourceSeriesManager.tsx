@@ -67,7 +67,7 @@ export const SubResourceSeriesManager: React.FC<SubResourceSeriesManagerProps> =
     <Flex direction="column" alignItems="stretch">
       {!subResourceSeries || !subResourceSeries.length ? (
         <Flex direction="column" alignItems="center">
-          <Heading size="sm">Start resource series</Heading>
+          <Heading size="md">Start resource series</Heading>
           <ResourceSelectorModal
             defaultAttachedDomains={domains}
             onSelect={(selectedResource) =>
@@ -75,10 +75,10 @@ export const SubResourceSeriesManager: React.FC<SubResourceSeriesManagerProps> =
                 variables: { parentResourceId: resourceId, subResourceId: selectedResource._id },
               })
             }
-            renderButton={({ openModal }) => (
+            renderTrigger={({ openModal }) => (
               <IconButton
                 m={2}
-                size="md"
+                size="lg"
                 isRound
                 icon={<AddIcon />}
                 aria-label="Add resource to series"
@@ -105,7 +105,7 @@ export const SubResourceSeriesManager: React.FC<SubResourceSeriesManagerProps> =
                   },
                 })
               }
-              renderButton={({ openModal }) => (
+              renderTrigger={({ openModal }) => (
                 <IconButton
                   m={2}
                   size="md"

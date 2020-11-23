@@ -77,6 +77,7 @@ export const generateResourcePreviewData = (): ResourcePreviewDataFragment => ({
   type: ResourceType.Article,
   url: 'https://myresource.url',
   mediaType: ResourceMediaType.Text,
+  upvotes: 32,
 });
 
 export const ResourceWithCoveredConceptsByDomainData = gql`

@@ -1,7 +1,17 @@
-import { FormControl, Textarea, FormHelperText, Text } from '@chakra-ui/react';
+import { FormControl, FormHelperText, Skeleton, Text, Textarea } from '@chakra-ui/react';
 
-export const ResourceDescription: React.FC<{ description: string }> = ({ description }) => {
-  return <Text fontWeight={300}>{description}</Text>;
+export const ResourceDescription: React.FC<{
+  description?: string | null;
+  noOfLines?: number;
+  isLoading?: boolean;
+}> = ({ description, noOfLines, isLoading }) => {
+  return description ? (
+    <Skeleton isLoaded={!isLoading}>
+      <Text fontWeight={300} noOfLines={noOfLines}>
+        {description}
+      </Text>
+    </Skeleton>
+  ) : null;
 };
 export const ResourceDescriptionInput: React.FC<{ value?: string; onChange: (value?: string) => void }> = ({
   value,

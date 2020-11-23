@@ -3,6 +3,7 @@ import * as Types from '../../graphql/types';
 import { ResourceDataFragment, ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
+import { SquareResourceCardDataFragment } from '../../components/resources/SquareResourceCard.generated';
 import * as Operations from './ResourcePage';
 import * as Apollo from '@apollo/client';
 export type GetResourceResourcePageQueryVariables = Types.Exact<{
@@ -28,7 +29,7 @@ export type GetResourceResourcePageQuery = (
       )> }
     )>>, subResources?: Types.Maybe<Array<(
       { __typename?: 'Resource' }
-      & ResourceDataFragment
+      & SquareResourceCardDataFragment
     )>>, subResourceSeries?: Types.Maybe<Array<(
       { __typename?: 'Resource' }
       & ResourceDataFragment

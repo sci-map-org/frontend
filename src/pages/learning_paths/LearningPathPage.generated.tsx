@@ -1,7 +1,7 @@
 import * as Types from '../../graphql/types';
 
 import { LearningPathWithResourceItemsPreviewDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
-import { ResourceDataFragment, ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { SquareResourceCardDataFragment } from '../../components/resources/SquareResourceCard.generated';
 import { UserAvatarDataFragment } from '../../components/users/UserAvatar.generated';
 import { LearningPathCompletionDataFragment } from '../../components/learning_paths/LearningPathCompletion.generated';
 import { LearningMaterialWithCoveredConceptsByDomainData_Resource_Fragment, LearningMaterialWithCoveredConceptsByDomainData_LearningPath_Fragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
@@ -19,7 +19,7 @@ export type GetLearningPathPageQuery = (
     & Pick<Types.LearningPath, 'rating'>
     & { complementaryResources?: Types.Maybe<Array<(
       { __typename?: 'Resource' }
-      & ResourceDataFragment
+      & SquareResourceCardDataFragment
     )>>, tags?: Types.Maybe<Array<(
       { __typename?: 'LearningMaterialTag' }
       & Pick<Types.LearningMaterialTag, 'name'>

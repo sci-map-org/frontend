@@ -69,7 +69,8 @@ export const useSetResourceConsumed = ({
               ...resource,
               consumed: {
                 __typename: 'ConsumedResource',
-                consumedAt: consumed ? Date.now() : null,
+                consumedAt: consumed ? new Date() : null,
+                openedAt: null,
               },
             },
           ],

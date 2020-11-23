@@ -6,6 +6,7 @@ import {
   PopoverBody,
   PopoverContent,
   PopoverTrigger,
+  Skeleton,
   Stack,
   Text,
 } from '@chakra-ui/react';
@@ -15,27 +16,32 @@ import { useState } from 'react';
 import ReactStars from 'react-rating-stars-component';
 import { useRateLearningMaterialMutation } from './LearningMaterialStarsRating.generated';
 
-export const StarsRatingViewer: React.FC<{ value?: number | null; pxSize?: number }> = ({ value, pxSize = 18 }) => {
+export const StarsRatingViewer: React.FC<{ value?: number | null; pxSize?: number; isLoading?: boolean }> = ({
+  value,
+  isLoading,
+  pxSize = 18,
+}) => {
   return value ? (
-    <Stack direction="row" spacing="2px" alignItems="baseline" px="2px">
-      <StarIcon boxSize={`${pxSize + 1}px`} color="rgb(255, 215, 0)" />
-      <Text fontSize={pxSize + 'px'} fontWeight={400}>
-        {value}
-        <Text as="span" fontSize={pxSize - 5 + 'px'} fontWeight={300}>
-          /5
+    <Skeleton isLoaded={!isLoading}>
+      <Stack direction="row" spacing="2px" alignItems="baseline" px="2px">
+        <StarIcon boxSize={`${pxSize + 1}px`} color="rgb(255, 215, 0)" />
+        <Text fontSize={pxSize + 'px'} fontWeight={400}>
+          {value}
+          <Text as="span" fontSize={pxSize - 5 + 'px'} fontWeight={300}>
+            /5
+          </Text>
         </Text>
-      </Text>
-    </Stack>
+      </Stack>
+    </Skeleton>
   ) : null;
 };
 
 /**
  * TODO: show user's own rating on button, show star as yellow then
  */
-export const LearningMaterialStarsRater: React.FC<{ learningMaterialId: string } & Omit<ButtonProps, 'onClick'>> = ({
-  learningMaterialId,
-  ...props
-}) => {
+export const LearningMaterialStarsRater: React.FC<
+  { learningMaterialId: string; buttonText?: string } & Omit<ButtonProps, 'onClick'>
+> = ({ learningMaterialId, buttonText = 'Rate this', ...props }) => {
   const [isOpen, setIsOpen] = useState(false);
   const open = () => setIsOpen(!isOpen);
   const close = () => setIsOpen(false);
@@ -43,7 +49,7 @@ export const LearningMaterialStarsRater: React.FC<{ learningMaterialId: string }
     <Popover isOpen={isOpen} onClose={close} returnFocusOnClose={false} placement="right" isLazy>
       <PopoverTrigger>
         <Button variant="outline" aria-label="rate-this" size="sm" leftIcon={<StarIcon />} onClick={open} {...props}>
-          Rate this
+          {buttonText}
         </Button>
       </PopoverTrigger>
       <PopoverContent w="146px" zIndex={4}>

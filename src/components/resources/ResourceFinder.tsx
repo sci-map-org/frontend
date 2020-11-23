@@ -7,12 +7,13 @@ import { EntitySelector } from '../lib/selectors/EntitySelector';
 
 interface ResourceFinderProps {
   onSelect: (resource: ResourceDataFragment) => void;
+  width?: number | string;
 }
 
 // N.B: for no-op memory leak warning, checkout https://github.com/apollographql/apollo-client/issues/4150#issuecomment-500127694
 // and https://github.com/apollographql/apollo-feature-requests/issues/40
 
-export const ResourceFinder: React.FC<ResourceFinderProps> = ({ onSelect }) => {
+export const ResourceFinder: React.FC<ResourceFinderProps> = ({ onSelect, width }) => {
   const [searchResourcesLazyQuery, { data }] = useSearchResourcesLazyQuery();
 
   const [searchResults, setSearchResults] = useState<ResourceDataFragment[]>([]);
@@ -27,16 +28,14 @@ export const ResourceFinder: React.FC<ResourceFinderProps> = ({ onSelect }) => {
   }, [data]);
 
   return (
-    <Flex>
-      <EntitySelector
-        width="25rem"
-        placeholder="Search resources..."
-        entitySuggestions={searchResults}
-        fetchEntitySuggestions={(query) =>
-          query.length >= 3 ? debouncedSearchResourcesLazyQuery.callback(query) : setSearchResults([])
-        }
-        onSelect={onSelect}
-      />
-    </Flex>
+    <EntitySelector
+      width={width}
+      placeholder="Search resources..."
+      entitySuggestions={searchResults}
+      fetchEntitySuggestions={(query) =>
+        query.length >= 3 ? debouncedSearchResourcesLazyQuery.callback(query) : setSearchResults([])
+      }
+      onSelect={onSelect}
+    />
   );
 };

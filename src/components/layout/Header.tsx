@@ -15,6 +15,7 @@ import {
   Stack,
   PopoverTrigger,
   Divider,
+  Flex,
 } from '@chakra-ui/react';
 import { omit } from 'lodash';
 import getConfig from 'next/config';
@@ -96,35 +97,36 @@ export const Header: React.FC = () => {
             >
               <PopoverArrow />
               <PopoverBody pt={1}>
-                <Stack direction="column" spacing={0}>
-                  {currentUser.createdLearningPaths && currentUser.createdLearningPaths.length && (
+                <Flex direction="column" alignItems="stretch" spacing={0}>
+                  {currentUser.startedLearningPaths && currentUser.startedLearningPaths.length && (
                     <>
                       <Stack>
-                        {currentUser.createdLearningPaths.map((createdLearningPath) => (
+                        {currentUser.startedLearningPaths.map((startedLearningPath) => (
                           <InternalLink
-                            key={createdLearningPath._id}
+                            key={startedLearningPath._id}
                             routePath={LearningPathPagePath()}
-                            asHref={LearningPathPagePath(createdLearningPath.key)}
+                            asHref={LearningPathPagePath(startedLearningPath.key)}
                             {...HeaderLinkStyle}
                             fontSize="md"
                           >
-                            {createdLearningPath.name}
+                            {startedLearningPath.name}
                           </InternalLink>
                         ))}
                       </Stack>
-                      <Divider my={3} />
+                      <Divider my={2} />
                     </>
                   )}
                   <InternalLink
+                    textAlign="center"
                     routePath="/learning_paths/new"
                     asHref="/learning_paths/new"
                     {...HeaderLinkStyle}
                     fontSize="md"
-                    fontWeight={400}
+                    fontWeight={500}
                   >
-                    New Learning Path
+                    Create Learning Path
                   </InternalLink>
-                </Stack>
+                </Flex>
               </PopoverBody>
             </PopoverContent>
           </Popover>

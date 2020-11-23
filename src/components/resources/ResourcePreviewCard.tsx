@@ -1,8 +1,8 @@
+import { EditIcon } from '@chakra-ui/icons';
 import {
   Box,
   BoxProps,
   Button,
-  Center,
   Flex,
   IconButton,
   Link,
@@ -17,10 +17,7 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
-import { EditIcon, SettingsIcon } from '@chakra-ui/icons';
-import { flatten } from 'lodash';
-import React, { ReactElement, useState } from 'react';
-import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
+import React, { forwardRef, ReactElement } from 'react';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { routerPushToPage } from '../../pages/PageInfo';
@@ -28,21 +25,21 @@ import { EditResourcePageInfo } from '../../pages/resources/EditResourcePage';
 import { ResourcePageInfo } from '../../pages/resources/ResourcePage';
 import { RoleAccess } from '../auth/RoleAccess';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
-import { LearningMaterialCardContainer } from '../learning_materials/LearningMaterialCardContainer';
+import {
+  LearningMaterialCardContainer,
+  LearningMaterialCardCoveredTopics,
+} from '../learning_materials/LearningMaterialCardContainer';
 import { LearningMaterialStarsRater, StarsRatingViewer } from '../learning_materials/LearningMaterialStarsRating';
 import { EditableLearningMaterialTags } from '../learning_materials/LearningMaterialTagsEditor';
 import { ResourceGroupIcon } from '../lib/icons/ResourceGroupIcon';
 import { ResourceSeriesIcon } from '../lib/icons/ResourceSeriesIcon';
 import { InternalLink } from '../navigation/InternalLink';
-import { LearningMaterialDomainCoveredConceptsSelector } from './CoveredConceptsSelector';
 import { DurationViewer } from './elements/Duration';
 import { ResourceCompletedCheckbox } from './elements/ResourceCompletedCheckbox';
-import { shortenDescription } from './elements/ResourceDescription';
+import { ResourceDescription } from './elements/ResourceDescription';
 import { ResourceTypeBadge } from './elements/ResourceType';
 import { ResourceUpvoter } from './elements/ResourceUpvoter';
 import { ResourceUrlLink } from './elements/ResourceUrl';
-import { LearningMaterialCoveredConceptsByDomainViewer } from './LearningMaterialCoveredConceptsByDomainViewer';
-import { LearningMaterialDomainAndCoveredConceptsSelector } from './LearningMaterialDomainAndCoveredConceptsSelector';
 
 export const BoxBlockDefaultClickPropagation: React.FC<BoxProps> = ({ children, ...props }) => {
   return (
@@ -64,65 +61,79 @@ interface ResourcePreviewCardProps {
   resource: ResourcePreviewDataFragment;
   onResourceConsumed?: (resourceId: string, consumed: boolean) => void;
   isLoading?: boolean;
-  borderTopColor?: string;
   inCompactList?: boolean;
   firstItemInCompactList?: boolean;
+  showCompletedNotificationToast?: boolean;
 }
 
-export const ResourcePreviewCard: React.FC<ResourcePreviewCardProps> = ({
-  domainKey,
-  resource,
-  onResourceConsumed,
-  borderTopColor,
-  isLoading,
-  inCompactList,
-  firstItemInCompactList,
-}) => {
-  return (
-    <LearningMaterialCardContainer
-      renderCenterLeft={<ResourceUpvoter resource={resource} isLoading={isLoading} />}
-      leftBlockWidth="100px"
-      inCompactList={inCompactList}
-      firstItemInCompactList={firstItemInCompactList}
-      onClick={() => routerPushToPage(ResourcePageInfo(resource))}
-      renderRight={<RightBlock resource={resource} isLoading={isLoading} onResourceConsumed={onResourceConsumed} />}
-      renderBottom={<BottomBlock resource={resource} domainKey={domainKey} isLoading={isLoading} />}
-    >
-      <Flex direction="row" flexGrow={1} pt="4px">
-        <Flex direction="column" flexGrow={1} justifyContent="center">
-          <Skeleton isLoaded={!isLoading}>
-            <Stack spacing={2} direction="row" alignItems="baseline" mr="10px">
-              <TitleLink resource={resource} isLoading={isLoading} />
-            </Stack>
-          </Skeleton>
-          <Skeleton isLoaded={!isLoading}>
-            <Stack spacing={1} direction="row" alignItems="baseline" mr="10px">
-              <StarsRatingViewer value={resource.rating} pxSize={13} />
-              <ResourceTypeBadge type={resource.type} />
-              <DurationViewer value={resource.durationMs} />
+export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCardProps>(
+  (
+    {
+      domainKey,
+      resource,
+      onResourceConsumed,
+      isLoading,
+      inCompactList,
+      firstItemInCompactList,
+      showCompletedNotificationToast,
+    },
+    ref
+  ) => {
+    return (
+      <LearningMaterialCardContainer
+        ref={ref}
+        renderCenterLeft={
+          <ResourceCompletedCheckbox
+            size="lg"
+            resource={resource}
+            isLoading={isLoading}
+            onResourceConsumed={onResourceConsumed}
+            showCompletedNotificationToast={showCompletedNotificationToast}
+          />
+        }
+        leftBlockWidth="100px"
+        inCompactList={inCompactList}
+        firstItemInCompactList={firstItemInCompactList}
+        onClick={() => !isLoading && routerPushToPage(ResourcePageInfo(resource))}
+        renderRight={<RightBlock resource={resource} isLoading={isLoading} onResourceConsumed={onResourceConsumed} />}
+        renderBottom={<BottomBlock resource={resource} domainKey={domainKey} isLoading={isLoading} />}
+      >
+        <Flex direction="row" flexGrow={1} pt="4px">
+          <Flex direction="column" flexGrow={1} justifyContent="center">
+            <Skeleton isLoaded={!isLoading}>
+              <Stack spacing={2} direction="row" alignItems="baseline" mr="10px">
+                <TitleLink resource={resource} isLoading={isLoading} />
+              </Stack>
+            </Skeleton>
+            <Skeleton isLoaded={!isLoading}>
+              <Stack spacing={1} direction="row" alignItems="baseline" mr="10px">
+                <StarsRatingViewer value={resource.rating} pxSize={13} />
+                <ResourceTypeBadge type={resource.type} />
+                <DurationViewer value={resource.durationMs} />
 
-              <RoleAccess accessRule="contributorOrAdmin">
-                <BoxBlockDefaultClickPropagation>
-                  <LearningMaterialStarsRater
-                    learningMaterialId={resource._id}
-                    size="xs"
-                    color="gray.500"
-                    _hover={{ color: 'gray.900' }}
-                  />
-                </BoxBlockDefaultClickPropagation>
-              </RoleAccess>
-            </Stack>
-          </Skeleton>
-          {((resource.tags && resource.tags.length > 0) || resource.description) && (
-            <Box>
-              <Text fontWeight={250}>{resource.description && shortenDescription(resource.description)}</Text>
-            </Box>
-          )}
+                <RoleAccess accessRule="contributorOrAdmin">
+                  <BoxBlockDefaultClickPropagation>
+                    <LearningMaterialStarsRater
+                      learningMaterialId={resource._id}
+                      size="xs"
+                      color="gray.500"
+                      _hover={{ color: 'gray.900' }}
+                    />
+                  </BoxBlockDefaultClickPropagation>
+                </RoleAccess>
+              </Stack>
+            </Skeleton>
+            {((resource.tags && resource.tags.length > 0) || resource.description) && (
+              <Box>
+                <ResourceDescription description={resource.description} noOfLines={2} isLoading={isLoading} />
+              </Box>
+            )}
+          </Flex>
         </Flex>
-      </Flex>
-    </LearningMaterialCardContainer>
-  );
-};
+      </LearningMaterialCardContainer>
+    );
+  }
+);
 
 const TitleLink: React.FC<{ resource: ResourcePreviewDataFragment; isLoading?: boolean }> = ({
   resource,
@@ -146,38 +157,14 @@ const TitleLink: React.FC<{ resource: ResourcePreviewDataFragment; isLoading?: b
   );
 };
 
-const shortenCoveredConceptsList = (coveredConcepts: Pick<ConceptDataFragment, 'name'>[], maxLength: number = 40) => {
-  const { s, count } = [...coveredConcepts]
-    .sort((c1, c2) => c1.name.length - c2.name.length)
-    .reduce(
-      (o, concept, index) => {
-        if (o.s.length > maxLength) {
-          o.count = o.count + 1;
-        } else {
-          o.s = index > 0 ? o.s + ', ' + concept.name : concept.name;
-        }
-        return o;
-      },
-      { s: '', count: 0 }
-    );
-  return count ? `${s}, and more...` : s;
-};
-
 const BottomBlock: React.FC<{
   domainKey?: string;
   resource: ResourcePreviewDataFragment;
   isLoading?: boolean;
 }> = ({ domainKey, resource, isLoading }) => {
-  const [coveredConceptsEditorMode, setCoveredConceptsEditorMode] = useState(false);
-  const { currentUser } = useCurrentUser();
-  const unauthentificatedModalDisclosure = useUnauthentificatedModal();
-
-  const domainCoveredConcepts = resource.coveredConceptsByDomain?.filter(
-    (d) => !domainKey || d.domain.key === domainKey
-  );
   return (
     <Flex pb={2} pt={2} flexWrap="wrap">
-      <BoxBlockDefaultClickPropagation>
+      <BoxBlockDefaultClickPropagation display="flex" alignItems="center">
         <EditableLearningMaterialTags learningMaterial={resource} isLoading={isLoading} />
       </BoxBlockDefaultClickPropagation>
       <Box flexGrow={1} flexBasis={0} />
@@ -202,72 +189,10 @@ const BottomBlock: React.FC<{
         </Stack>
       </BoxBlockDefaultClickPropagation>
       <Flex flexShrink={0} direction="column" justifyContent="center">
-        {domainCoveredConcepts && (
+        {resource.coveredConceptsByDomain && (
           <Skeleton isLoaded={!isLoading}>
             <BoxBlockDefaultClickPropagation>
-              <Popover placement="bottom-end" isLazy>
-                <PopoverTrigger>
-                  <Stack direction="row" spacing="1px" _hover={{ color: 'gray.800' }} fontSize="15px">
-                    <Text color="gray.800" fontWeight={300} as="span">
-                      About:{'  '}
-                    </Text>
-                    <Link color="gray.800" fontWeight={300} onClick={() => setCoveredConceptsEditorMode(false)}>
-                      {shortenCoveredConceptsList(
-                        flatten(domainCoveredConcepts.map(({ coveredConcepts }) => coveredConcepts)),
-                        32
-                      )}
-                    </Link>
-                    <IconButton
-                      onClick={(e) => {
-                        if (!currentUser) {
-                          unauthentificatedModalDisclosure.onOpen();
-                          e.preventDefault();
-                          return;
-                        }
-                        setCoveredConceptsEditorMode(true);
-                      }}
-                      aria-label="Add or remove covered concepts"
-                      variant="ghost"
-                      size="xs"
-                      color="gray.600"
-                      icon={<SettingsIcon />}
-                    />
-                  </Stack>
-                </PopoverTrigger>
-                <PopoverContent zIndex={4} backgroundColor="white">
-                  <PopoverArrow />
-                  <PopoverHeader fontWeight={500}>Covered Concepts</PopoverHeader>
-                  <PopoverCloseButton />
-                  <PopoverBody pt={1}>
-                    {coveredConceptsEditorMode ? (
-                      domainCoveredConcepts.length === 1 ? (
-                        <LearningMaterialDomainCoveredConceptsSelector
-                          domainKey={domainCoveredConcepts[0].domain.key}
-                          learningMaterialId={resource._id}
-                          coveredConcepts={domainCoveredConcepts[0].coveredConcepts}
-                        />
-                      ) : (
-                        <LearningMaterialDomainAndCoveredConceptsSelector learningMaterial={resource} />
-                      )
-                    ) : domainCoveredConcepts.length === 1 ? (
-                      <Stack direction="column">
-                        {domainCoveredConcepts[0].coveredConcepts.map((concept) => (
-                          <Box key={concept._id}>
-                            <InternalLink
-                              routePath="/domains/[key]/concepts/[conceptKey]"
-                              asHref={`/domains/${domainKey}/concepts/${concept.key}`}
-                            >
-                              {concept.name}
-                            </InternalLink>
-                          </Box>
-                        ))}
-                      </Stack>
-                    ) : (
-                      <LearningMaterialCoveredConceptsByDomainViewer learningMaterial={resource} />
-                    )}
-                  </PopoverBody>
-                </PopoverContent>
-              </Popover>
+              <LearningMaterialCardCoveredTopics learningMaterial={resource} domainKey={domainKey} />
             </BoxBlockDefaultClickPropagation>
           </Skeleton>
         )}
@@ -314,18 +239,13 @@ const RightBlock: React.FC<{
   resource: ResourcePreviewDataFragment;
   isLoading?: boolean;
   onResourceConsumed?: (resourceId: string, consumed: boolean) => void;
-}> = ({ resource, isLoading, onResourceConsumed }) => {
+}> = ({ resource, isLoading }) => {
   const { currentUser } = useCurrentUser();
   const unauthentificatedModalDisclosure = useUnauthentificatedModal();
   return (
     <Flex direction="row">
       <BoxBlockDefaultClickPropagation alignSelf="center" justifySelf="center" ml="32px" mr="4px">
-        <ResourceCompletedCheckbox
-          size="lg"
-          resource={resource}
-          isLoading={isLoading}
-          onResourceConsumed={onResourceConsumed}
-        />
+        <ResourceUpvoter resource={resource} isLoading={isLoading} />
       </BoxBlockDefaultClickPropagation>
       <BoxBlockDefaultClickPropagation>
         <IconButton
@@ -339,6 +259,7 @@ const RightBlock: React.FC<{
             if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
             routerPushToPage(EditResourcePageInfo(resource));
           }}
+          isDisabled={isLoading}
         />
       </BoxBlockDefaultClickPropagation>
     </Flex>

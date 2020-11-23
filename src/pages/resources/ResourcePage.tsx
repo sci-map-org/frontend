@@ -5,6 +5,10 @@ import { Access } from '../../components/auth/Access';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
 import {
+  LearningMaterialStarsRater,
+  StarsRatingViewer,
+} from '../../components/learning_materials/LearningMaterialStarsRating';
+import {
   LearningMaterialTagsEditor,
   SelectedTagsViewer,
 } from '../../components/learning_materials/LearningMaterialTagsEditor';
@@ -13,13 +17,10 @@ import { InternalLink } from '../../components/navigation/InternalLink';
 import { DurationViewer } from '../../components/resources/elements/Duration';
 import { ResourceDescription } from '../../components/resources/elements/ResourceDescription';
 import { ResourceMediaTypeBadge } from '../../components/resources/elements/ResourceMediaType';
-import {
-  LearningMaterialStarsRater,
-  StarsRatingViewer,
-} from '../../components/learning_materials/LearningMaterialStarsRating';
 import { ResourceTypeBadge } from '../../components/resources/elements/ResourceType';
 import { ResourceUrlLink } from '../../components/resources/elements/ResourceUrl';
 import { LearningMaterialCoveredTopics } from '../../components/resources/LearningMaterialCoveredTopics';
+import { SquareResourceCardData } from '../../components/resources/SquareResourceCard';
 import { SubResourceSeriesManager } from '../../components/resources/SubResourceSeriesManager';
 import { ResourceSubResourcesManager } from '../../components/resources/SubResourcesManager';
 import { ConceptData, generateConceptData } from '../../graphql/concepts/concepts.fragments';
@@ -57,7 +58,7 @@ export const getResourceResourcePage = gql`
         }
       }
       subResources {
-        ...ResourceData
+        ...SquareResourceCardData
       }
       subResourceSeries {
         ...ResourceData
@@ -80,6 +81,7 @@ export const getResourceResourcePage = gql`
       }
     }
   }
+  ${SquareResourceCardData}
   ${DomainData}
   ${ResourceData}
   ${ConceptData}

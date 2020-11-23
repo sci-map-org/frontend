@@ -10,6 +10,7 @@ export const ResourceCompletedCheckboxData = gql`
     _id
     consumed {
       consumedAt
+      openedAt
     }
   }
 `;
@@ -18,13 +19,17 @@ export const ResourceCompletedCheckbox: React.FC<
     resource: ResourceCompletedCheckboxDataFragment;
     onResourceConsumed?: (resourceId: string, consumed: boolean) => void;
     isLoading?: boolean;
+    showCompletedNotificationToast?: boolean;
   } & Omit<
     CompletedCheckboxProps,
     'resource' | 'onChange' | 'isChecked' | 'tooltipLabel' | 'tooltipDelay' | 'isDisabled'
   >
-> = ({ resource, onResourceConsumed, isLoading, ...checkboxProps }) => {
+> = ({ resource, onResourceConsumed, showCompletedNotificationToast, isLoading, ...checkboxProps }) => {
   const { currentUser } = useCurrentUser();
-  const [setResourceConsumed] = useSetResourceConsumed({ onResourceConsumed, showNotificationToast: true });
+  const [setResourceConsumed] = useSetResourceConsumed({
+    onResourceConsumed,
+    showNotificationToast: !!showCompletedNotificationToast,
+  });
   const unauthentificatedModalDisclosure = useUnauthentificatedModal();
   return (
     <CompletedCheckbox

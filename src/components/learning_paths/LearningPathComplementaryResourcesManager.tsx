@@ -1,8 +1,9 @@
+import { Heading, Stack } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { LearningPathData } from '../../graphql/learning_paths/learning_paths.fragments';
 import { ResourceData } from '../../graphql/resources/resources.fragments';
-import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
-import { StatelessSubResourcesManager } from '../resources/SubResourcesManager';
+import { SquareResourceCardDataFragment } from '../resources/SquareResourceCard.generated';
+import { SquareResourceCardWrapper } from '../resources/SquareResourceCardsWrapper';
 import {
   useAddComplementaryResourceToLearningPathMutation,
   useRemoveComplementaryResourceFromLearningPathMutation,
@@ -42,21 +43,27 @@ export const removeComplementaryResourceFromLearningPath = gql`
 
 export const LearningPathComplementaryResourcesManager: React.FC<{
   learningPathId: string;
-  complementaryResources: ResourceDataFragment[];
+  complementaryResources: SquareResourceCardDataFragment[];
   editMode?: boolean;
-}> = ({ learningPathId, complementaryResources, editMode }) => {
+  isLoading?: boolean;
+}> = ({ learningPathId, complementaryResources, editMode, isLoading }) => {
   const [addComplementaryResource] = useAddComplementaryResourceToLearningPathMutation();
   const [removeComplementaryResource] = useRemoveComplementaryResourceFromLearningPathMutation();
+  if (!editMode && !complementaryResources?.length) return null;
   return (
-    <StatelessSubResourcesManager
-      subResources={complementaryResources}
-      addSubResource={(resource) =>
-        addComplementaryResource({ variables: { learningPathId, resourceId: resource._id } })
-      }
-      removeSubResource={(resource) =>
-        removeComplementaryResource({ variables: { learningPathId, resourceId: resource._id } })
-      }
-      editMode={editMode}
-    />
+    <Stack direction="column" spacing={3}>
+      <Heading size="md" textAlign="center">
+        Complementary Resources
+      </Heading>
+      <SquareResourceCardWrapper
+        resources={complementaryResources}
+        onRemove={(resource) =>
+          removeComplementaryResource({ variables: { learningPathId, resourceId: resource._id } })
+        }
+        onAdd={(resource) => addComplementaryResource({ variables: { learningPathId, resourceId: resource._id } })}
+        editable={editMode}
+        isLoading={isLoading}
+      />
+    </Stack>
   );
 };

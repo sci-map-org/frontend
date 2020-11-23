@@ -133,6 +133,7 @@ export const DomainRecommendedResources: React.FC<{
         resourcePreviews={resourcePreviews}
         isLoading={isLoading}
         onResourceConsumed={() => reloadRecommendedResources()}
+        showCompletedNotificationToast={true}
       />
     </Flex>
   );

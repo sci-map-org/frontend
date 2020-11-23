@@ -1,16 +1,18 @@
 import {
-  Box,
   Center,
   CircularProgress,
   CircularProgressLabel,
   Flex,
+  FlexProps,
   IconButton,
+  Skeleton,
+  Tooltip,
   Wrap,
   WrapItem,
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useMemo } from 'react';
-import { FaPlay } from 'react-icons/fa';
+import { ImPlay2 } from 'react-icons/im';
 import { useStartLearningPathMutation } from '../../graphql/learning_paths/learning_paths.operations.generated';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
@@ -38,39 +40,50 @@ export const LearningPathCompletionData = gql`
 
 interface LearningPathCompletionProps {
   learningPath: LearningPathCompletionDataFragment;
+  isLoading?: boolean;
+  w?: FlexProps['w'];
 }
 
 // TODO find a good name. Badge / widget ? urgh
-export const LearningPathCompletion: React.FC<LearningPathCompletionProps> = ({ learningPath }) => {
+export const LearningPathCompletion: React.FC<LearningPathCompletionProps> = ({
+  learningPath,
+  isLoading,
+  w = '100px',
+}) => {
   const resourceItems = learningPath.resourceItems || [];
 
   return (
-    <Flex direction="column" alignItems="stretch" w="200px">
-      <Center>
-        <LearningPathCircularCompletion size="lg" learningPath={learningPath} />
-      </Center>
-      <Wrap spacing={3} mt={3} justify="center">
-        {resourceItems.map((resourceItem) => (
-          <WrapItem
-            key={resourceItem.resource._id}
-            w={6}
-            h={3}
-            bgColor={resourceItem.resource.consumed?.consumedAt ? 'teal.400' : 'gray.200'}
-          />
-        ))}
-      </Wrap>
-    </Flex>
+    <Skeleton isLoaded={!isLoading}>
+      <Flex direction="column" alignItems="stretch" w={w}>
+        <Center>
+          <LearningPathCircularCompletion size="lg" learningPath={learningPath} />
+        </Center>
+        <Wrap spacing="9px" mt={3} justify="center">
+          {resourceItems.map((resourceItem) => (
+            <WrapItem
+              key={resourceItem.resource._id}
+              borderRadius={1}
+              w="18px"
+              h="9px"
+              bgColor={resourceItem.resource.consumed?.consumedAt ? 'teal.400' : 'gray.200'}
+            />
+          ))}
+        </Wrap>
+      </Flex>
+    </Skeleton>
   );
 };
 
 const sizes: {
   [key in 'sm' | 'lg']: {
     progressWidth: string | number;
-    buttonSize: string;
+    progressThickness: string;
+    buttonHeight: string;
+    iconSize: number;
   };
 } = {
-  sm: { progressWidth: '56px', buttonSize: 'md' },
-  lg: { progressWidth: '96px', buttonSize: 'lg' },
+  sm: { progressWidth: '56px', progressThickness: '7px', buttonHeight: '50px', iconSize: 50 },
+  lg: { progressWidth: '90px', progressThickness: '9px', buttonHeight: '83px', iconSize: 83 },
 };
 
 export const LearningPathCircularCompletion: React.FC<{
@@ -100,24 +113,31 @@ export const LearningPathCircularCompletion: React.FC<{
       color="teal.400"
       trackColor="gray.200"
       size={sizes[size].progressWidth}
+      thickness={sizes[size].progressThickness}
       capIsRound
     >
       <CircularProgressLabel color="teal.400" fontWeight={500}>
-        {(completionRate * 100).toFixed(0)}%
+        {(completionRate * 100).toFixed(0)}%{/* <Text transform="scaleX(.8)"></Text */}
       </CircularProgressLabel>
     </CircularProgress>
   ) : (
-    <IconButton
-      aria-label="start learning path"
-      icon={<FaPlay />}
-      colorScheme="teal"
-      size={sizes[size].buttonSize}
-      isRound
-      onClick={async () => {
-        if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
-        await startLearningPath({ variables: { learningPathId: learningPath._id } });
-        onStarted && onStarted();
-      }}
-    />
+    <Tooltip openDelay={1000} label="Start this path">
+      <IconButton
+        aria-label="start learning path"
+        icon={<ImPlay2 title="title" size={sizes[size].iconSize} />}
+        color="teal.400"
+        _hover={{ color: 'teal.500' }}
+        _focus={{}}
+        _active={{}}
+        variant="ghost"
+        h={sizes[size].buttonHeight}
+        isRound
+        onClick={async () => {
+          if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
+          await startLearningPath({ variables: { learningPathId: learningPath._id } });
+          onStarted && onStarted();
+        }}
+      />
+    </Tooltip>
   );
 };

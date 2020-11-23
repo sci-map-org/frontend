@@ -1,21 +1,20 @@
-import { Center, Flex, Heading, IconButton, Stack, Text, Wrap, WrapItem } from '@chakra-ui/react';
-import { AddIcon } from '@chakra-ui/icons';
+import { Heading, Stack } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { ResourceData } from '../../graphql/resources/resources.fragments';
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
-import { shortenString } from '../../util/utils';
-import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
-import { InternalLink } from '../navigation/InternalLink';
-import { ResourceSelectorModal } from './ResourceSelector';
+import { useCurrentUser } from '../../graphql/users/users.hooks';
+import { SquareResourceCardDataFragment } from './SquareResourceCard.generated';
+import { SquareResourceCardWrapper } from './SquareResourceCardsWrapper';
 import { useAddSubResourceMutation } from './SubResourcesManager.generated';
 
 interface StatelessSubResourcesManagerProps {
-  subResources: ResourceDataFragment[];
+  subResources: SquareResourceCardDataFragment[];
   domains?: DomainDataFragment[];
   addSubResource?: (subResource: ResourceDataFragment) => void;
-  removeSubResource?: (subResource: ResourceDataFragment) => void;
-  editMode?: boolean;
+  removeSubResource?: (subResource: SquareResourceCardDataFragment) => void;
+  editable?: boolean;
+  isLoading?: boolean;
 }
 
 export const StatelessSubResourcesManager: React.FC<StatelessSubResourcesManagerProps> = ({
@@ -23,41 +22,22 @@ export const StatelessSubResourcesManager: React.FC<StatelessSubResourcesManager
   domains,
   addSubResource,
   removeSubResource,
-  editMode,
+  editable,
+  isLoading,
 }) => {
   return (
     <Stack direction="column" spacing={3}>
-      <Heading size="sm" textAlign="center">
+      <Heading size="md" textAlign="center">
         Sub Resources
       </Heading>
-      <Wrap>
-        {subResources.map((subResource) => (
-          <WrapItem>
-            <SubResourceCard key={subResource._id} subResource={subResource} onRemove={removeSubResource} />
-          </WrapItem>
-        ))}
-        {addSubResource && editMode && (
-          <WrapItem>
-            <CardFrame>
-              <ResourceSelectorModal
-                onSelect={(subResource) => addSubResource(subResource)}
-                defaultAttachedDomains={domains}
-                renderButton={({ openModal }) => (
-                  <IconButton
-                    aria-label="add subResource"
-                    icon={<AddIcon />}
-                    size="lg"
-                    isRound
-                    mb={3}
-                    onClick={() => openModal()}
-                  />
-                )}
-              />
-              <Text fontWeight={500}>Add sub resource</Text>
-            </CardFrame>
-          </WrapItem>
-        )}
-      </Wrap>
+      <SquareResourceCardWrapper
+        resources={subResources}
+        onRemove={removeSubResource}
+        onAdd={addSubResource}
+        defaultAttachedDomains={domains}
+        editable={editable}
+        isLoading={isLoading}
+      />
     </Stack>
   );
 };
@@ -84,7 +64,7 @@ export const addSubResource = gql`
 
 interface ResourceSubResourcesManagerProps {
   resourceId: string;
-  subResources: ResourceDataFragment[];
+  subResources: SquareResourceCardDataFragment[];
   domains?: DomainDataFragment[];
 }
 
@@ -94,70 +74,15 @@ export const ResourceSubResourcesManager: React.FC<ResourceSubResourcesManagerPr
   domains,
 }) => {
   const [addSubResource] = useAddSubResourceMutation();
+  const { currentUser } = useCurrentUser();
   return (
     <StatelessSubResourcesManager
       subResources={subResources}
       addSubResource={(subResource) =>
         addSubResource({ variables: { subResourceId: subResource._id, parentResourceId: resourceId } })
       }
+      domains={domains}
+      editable={!!currentUser}
     />
-  );
-};
-
-const CardFrame: React.FC<{}> = ({ children }) => {
-  return (
-    <Flex
-      backgroundColor="whiteAlpha.500"
-      boxSize="10rem"
-      direction="column"
-      alignItems="center"
-      justifyContent="center"
-      borderWidth="1px"
-      borderColor="gray.400"
-      p={2}
-      mb={4}
-      mx={2}
-      borderRadius={4}
-    >
-      {children}
-    </Flex>
-  );
-};
-
-const SubResourceCard: React.FC<{
-  subResource: ResourceDataFragment;
-  onRemove?: (subResource: ResourceDataFragment) => void;
-}> = ({ subResource, onRemove }) => {
-  return (
-    <CardFrame>
-      <Flex direction="column" w="100%" h="100%" justifyContent="stretch" alignItems="stretch">
-        {onRemove && (
-          <Flex direction="row" justifyContent="flex-end">
-            <DeleteButtonWithConfirmation
-              mode="iconButton"
-              modalBodyText="Confirm removing this resource ?"
-              modalHeaderText="Remove resource"
-              confirmButtonText="Remove"
-              justifySelf="start"
-              alignSelf="flex-end"
-              size="xs"
-              aria-label="remove sub resource"
-              onConfirmation={() => onRemove(subResource)}
-            />
-          </Flex>
-        )}
-
-        <Center flexGrow={1}>
-          <InternalLink
-            textAlign="center"
-            fontSize="sm"
-            routePath="/resources/[_id]"
-            asHref={`/resources/${subResource._id}`}
-          >
-            {shortenString(subResource.name, 90)}
-          </InternalLink>
-        </Center>
-      </Flex>
-    </CardFrame>
   );
 };
