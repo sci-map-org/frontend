@@ -11,7 +11,7 @@ import {
 import { StarsRatingViewer } from '../learning_materials/LearningMaterialStarsRating';
 import { EditableLearningMaterialTags } from '../learning_materials/LearningMaterialTagsEditor';
 import { DurationViewer } from '../resources/elements/Duration';
-import { shortenDescription } from '../resources/elements/ResourceDescription';
+import { ResourceDescription, shortenDescription } from '../resources/elements/ResourceDescription';
 import { BoxBlockDefaultClickPropagation } from '../resources/ResourcePreviewCard';
 import { UserAvatar, UserAvatarData } from '../users/UserAvatar';
 import { LearningPathCircularCompletion, LearningPathCompletionData } from './LearningPathCompletion';
@@ -91,14 +91,13 @@ export const LearningPathPreviewCard: React.FC<LearningPathPreviewCardProps> = (
             </Badge>
             <DurationViewer value={learningPath.durationMs} />
           </Stack>
-          <Box>
-            <Text fontWeight={250}>{learningPath.description && shortenDescription(learningPath.description)}</Text>
-          </Box>
+          <ResourceDescription description={learningPath.description} noOfLines={2} isLoading={isLoading} />
         </Flex>
+
         {learningPath.createdBy && (
           <Flex direction="column" flexShrink={0} alignItems="center" pt={1} pr={2}>
             <Text fontSize="sm" fontWeight={300}>
-              Created by
+              Curated By
             </Text>
             <UserAvatar user={learningPath.createdBy} size="xs" />
           </Flex>

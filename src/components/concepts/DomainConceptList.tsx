@@ -105,7 +105,7 @@ export const DomainConceptList: React.FC<{
   };
   if (!domainConceptItems) return null;
   return (
-    <Flex mr={8} direction="column" backgroundColor="backgroundColor.0">
+    <Flex direction="column" backgroundColor="gray.100" borderRadius={10} pl={5} py={1}>
       <Stack direction="row" spacing={2}>
         <Box>
           <InternalLink
@@ -114,7 +114,7 @@ export const DomainConceptList: React.FC<{
             asHref={`/domains/${domain.key}/concepts`}
             isDisabled={isLoading}
           >
-            Concepts
+            My Progress
           </InternalLink>
         </Box>
 

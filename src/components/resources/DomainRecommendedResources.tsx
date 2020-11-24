@@ -64,7 +64,7 @@ export const DomainRecommendedResources: React.FC<{
   return (
     <Flex direction="column" mb={4}>
       <Flex direction="row" justifyContent="space-between" alignItems="center" mb={2}>
-        <Text fontSize="2xl">Resources</Text>
+        <Text fontSize="2xl">Recommended Next</Text>
         <Box pr={3}>
           <FormControl id="sort_by" display="flex" flexDir="row" alignItems="center">
             <FormLabel mb={0} fontWeight={300}>

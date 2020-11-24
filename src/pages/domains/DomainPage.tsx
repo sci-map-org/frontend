@@ -120,7 +120,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
   const { mockedFeaturesEnabled } = useMockedFeaturesEnabled();
 
   return (
-    <PageLayout marginSize="sm">
+    <PageLayout marginSize="md">
       <Flex direction="row" alignItems="center" pb={5}>
         <Skeleton isLoaded={!loading}>
           <Heading fontSize="4xl" fontWeight="normal" color="blackAlpha.800">
@@ -163,15 +163,11 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
         )}
       </Flex>
       {domain && domain.description && (
-        <Box mb={2} fontWeight={250}>
+        <Box mb={3} fontWeight={250}>
           {domain.description}
         </Box>
       )}
       <Flex direction={{ base: 'column-reverse', md: 'row' }} mb="100px">
-        <Flex direction="column" flexShrink={0} minWidth="260px">
-          <DomainConceptList domain={domain} isLoading={loading} onConceptToggled={() => refetchResources()} />
-        </Flex>
-
         <Flex direction="column" flexShrink={1} flexGrow={1}>
           <DomainRecommendedResources
             domainKey={domainKey}
@@ -184,6 +180,9 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
           <DomainConceptGraph domain={domain} isLoading={loading} minNbRelationships={5} />
           {/* <DomainLearningPaths domain={domain} /> */}
           {/* {mockedFeaturesEnabled && <DomainLearningPaths domain={domain} />} */}
+        </Flex>
+        <Flex direction="column" flexShrink={0} minWidth="260px" ml={{ base: 0, md: 8 }}>
+          <DomainConceptList domain={domain} isLoading={loading} onConceptToggled={() => refetchResources()} />
         </Flex>
         {/* )} */}
         {/* {mockedFeaturesEnabled && (
