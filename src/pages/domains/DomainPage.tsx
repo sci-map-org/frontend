@@ -113,7 +113,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
     );
   }, [networkStatus]);
 
-  const resources = resourceData?.getDomainByKey.resources?.items || resourcesPreviews;
+  const resources = resourceData?.getDomainByKey?.resources?.items || resourcesPreviews; // ? after getDomainByKey because of https://github.com/apollographql/apollo-client/issues/6986
 
   const domain = data?.getDomainByKey || placeholderDomainData;
 
