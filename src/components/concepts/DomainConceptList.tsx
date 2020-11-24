@@ -204,7 +204,8 @@ export const CollapsableMenuLink: React.FC<{
         expanded={show}
         onExpand={handleExpand}
       />
-      <Collapse in={show}>
+      <Collapse in={show} unmountOnExit={true}>
+        {/* Remove unmountOnExit={true} once resolved: https://github.com/chakra-ui/chakra-ui/issues/2534 */}
         <Flex direction="row">
           <Divider
             orientation="vertical"
