@@ -44,6 +44,7 @@ export const DomainResourceListPage: React.FC<{ domainKey: string }> = ({ domain
       domainKey,
       options: {
         sortingType: DomainResourcesSortingType.Newest,
+        filter: { consumedByUser: false }, // TODO fix that: should show all the resources
       },
     },
   });
