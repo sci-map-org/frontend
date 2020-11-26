@@ -26,40 +26,54 @@ import BeatLoader from 'react-spinners/BeatLoader';
 import { useDebounce } from 'use-debounce';
 import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
-import { DomainResourcesOptions, DomainResourcesSortingType, ResourceType } from '../../graphql/types';
+import {
+  DomainLearningMaterialsOptions,
+  DomainLearningMaterialsSortingType,
+  DomainResourcesOptions,
+  DomainResourcesSortingType,
+  ResourceType,
+} from '../../graphql/types';
 import { theme } from '../../theme/theme';
 import { RoleAccess } from '../auth/RoleAccess';
 import { ResourcePreviewCardList } from './ResourcePreviewCardList';
 import { ResourceTypeBadge, resourceTypeColorMapping, resourceTypeToLabel } from './elements/ResourceType';
+import { LearningPathPreviewCardData } from '../learning_paths/LearningPathPreviewCard';
+import { LearningPathPreviewCardDataFragment } from '../learning_paths/LearningPathPreviewCard.generated';
+import { LearningMaterialPreviewCardList } from './LearningMaterialPreviewCardList';
 
-export const getDomainRecommendedResources = gql`
-  query getDomainRecommendedResources($key: String!, $resourcesOptions: DomainResourcesOptions!) {
+export const getDomainRecommendedLearningMaterials = gql`
+  query getDomainRecommendedLearningMaterials(
+    $key: String!
+    $learningMaterialsOptions: DomainLearningMaterialsOptions!
+  ) {
     getDomainByKey(key: $key) {
       _id
-      resources(options: $resourcesOptions) {
+      learningMaterials(options: $learningMaterialsOptions) {
         items {
           ...ResourcePreviewData
+          ...LearningPathPreviewCardData
         }
       }
     }
   }
   ${ResourcePreviewData}
+  ${LearningPathPreviewCardData}
 `;
 
-export const DomainRecommendedResources: React.FC<{
+export const DomainRecommendedLearningMaterials: React.FC<{
   domainKey: string;
-  resourcePreviews: ResourcePreviewDataFragment[];
+  learningMaterialsPreviews: (ResourcePreviewDataFragment | LearningPathPreviewCardDataFragment)[];
   isLoading: boolean;
-  resourcesOptions: DomainResourcesOptions;
-  setResourcesOptions: (resourceOptions: DomainResourcesOptions) => void;
+  learningMaterialsOptions: DomainLearningMaterialsOptions;
+  setLearningMaterialsOptions: (learningMaterialsOptions: DomainLearningMaterialsOptions) => void;
   reloadRecommendedResources: () => void;
 }> = ({
   domainKey,
-  resourcePreviews,
+  learningMaterialsPreviews,
   isLoading,
   reloadRecommendedResources,
-  resourcesOptions,
-  setResourcesOptions,
+  learningMaterialsOptions,
+  setLearningMaterialsOptions,
 }) => {
   return (
     <Flex direction="column" mb={4}>
@@ -75,12 +89,15 @@ export const DomainRecommendedResources: React.FC<{
               size="sm"
               variant="flushed"
               onChange={(e) =>
-                setResourcesOptions({ ...resourcesOptions, sortingType: e.target.value as DomainResourcesSortingType })
+                setLearningMaterialsOptions({
+                  ...learningMaterialsOptions,
+                  sortingType: e.target.value as DomainLearningMaterialsSortingType,
+                })
               }
-              value={resourcesOptions.sortingType}
+              value={learningMaterialsOptions.sortingType}
             >
-              <option value={DomainResourcesSortingType.Recommended}>Most Relevant</option>
-              <option value={DomainResourcesSortingType.Newest}>Newest First</option>
+              <option value={DomainLearningMaterialsSortingType.Recommended}>Most Relevant</option>
+              <option value={DomainLearningMaterialsSortingType.Newest}>Newest First</option>
             </Select>
           </FormControl>
         </Box>
@@ -97,14 +114,19 @@ export const DomainRecommendedResources: React.FC<{
           alignItems={{ base: 'flex-start', md: 'center' }}
         >
           <SearchResourcesInput
-            onChange={(value) => setResourcesOptions({ ...resourcesOptions, query: value || undefined })}
+            onChange={(value) =>
+              setLearningMaterialsOptions({ ...learningMaterialsOptions, query: value || undefined })
+            }
           />
           <ResourceTypeFilter
-            selectedTypes={resourcesOptions.filter?.resourceTypeIn || []}
+            selectedTypes={learningMaterialsOptions.filter?.resourceTypeIn || []}
             onChange={(selectedTypes) =>
-              setResourcesOptions({
-                ...resourcesOptions,
-                filter: { ...resourcesOptions.filter, resourceTypeIn: selectedTypes.length ? selectedTypes : null },
+              setLearningMaterialsOptions({
+                ...learningMaterialsOptions,
+                filter: {
+                  ...learningMaterialsOptions.filter,
+                  resourceTypeIn: selectedTypes.length ? selectedTypes : null,
+                },
               })
             }
           />
@@ -118,9 +140,9 @@ export const DomainRecommendedResources: React.FC<{
               <Switch
                 colorScheme="brand"
                 onChange={(e) =>
-                  setResourcesOptions({
-                    ...resourcesOptions,
-                    filter: { ...resourcesOptions.filter, consumedByUser: e.target.checked },
+                  setLearningMaterialsOptions({
+                    ...learningMaterialsOptions,
+                    filter: { ...learningMaterialsOptions.filter, completedByUser: e.target.checked },
                   })
                 }
               />
@@ -128,9 +150,9 @@ export const DomainRecommendedResources: React.FC<{
           </Box>
         </RoleAccess>
       </Flex>
-      <ResourcePreviewCardList
+      <LearningMaterialPreviewCardList
         domainKey={domainKey}
-        resourcePreviews={resourcePreviews}
+        learningMaterialsPreviews={learningMaterialsPreviews}
         isLoading={isLoading}
         onResourceConsumed={() => reloadRecommendedResources()}
         showCompletedNotificationToast={true}

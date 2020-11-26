@@ -12,19 +12,6 @@ import { EditableTextarea } from '../lib/inputs/EditableTextarea';
 import { ResourcePreviewCard } from '../resources/ResourcePreviewCard';
 import { PreviewResourceSelectorModal } from '../resources/ResourceSelector';
 
-interface StatelessLearningPathResourceItemsProps {
-  resourceItems: { description?: string | null; resource: ResourcePreviewDataFragment }[];
-  updateDescription: (resourceId: string, description: string) => void;
-  addResourceItem: (resource: ResourcePreviewDataFragment) => void;
-  removeResourceItem: (resource: ResourcePreviewDataFragment) => void;
-  confirmDeletion?: boolean;
-  editMode?: boolean;
-  isLoading?: boolean;
-  currentUserStartedPath?: boolean;
-  resourceSelectorButtonColorScheme?: ButtonProps['colorScheme'];
-  hideProgressArrow?: boolean;
-}
-
 const completedCheckboxHeight = 24;
 const checkboxMargin = 8;
 const borderWidth = 1;
@@ -47,6 +34,20 @@ const getArrowHeight = (resourceItemIndex: number, previewCardsHeight: number[])
   return `calc(100% + ${arrowHeightInPreviousResourceCard + arrowHeightInNextResourceCard}px)`;
 };
 
+interface StatelessLearningPathResourceItemsProps {
+  resourceItems: { description?: string | null; resource: ResourcePreviewDataFragment }[];
+  updateDescription: (resourceId: string, description: string) => void;
+  addResourceItem: (resource: ResourcePreviewDataFragment) => void;
+  removeResourceItem: (resource: ResourcePreviewDataFragment) => void;
+  confirmDeletion?: boolean;
+  editMode?: boolean;
+  isLoading?: boolean;
+  currentUserStartedPath?: boolean;
+  resourceSelectorButtonColorScheme?: ButtonProps['colorScheme'];
+  hideProgressArrow?: boolean;
+  onResourceConsumed?: (resourceId: string, consumed: boolean) => void;
+}
+
 export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearningPathResourceItemsProps> = ({
   resourceItems,
   updateDescription,
@@ -58,6 +59,7 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
   currentUserStartedPath,
   resourceSelectorButtonColorScheme,
   hideProgressArrow,
+  onResourceConsumed,
 }) => {
   const previewCardsRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [previewCardsHeight, setPreviewCardsHeight] = useState<number[]>([]);
@@ -113,6 +115,7 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
                     isLoading={isLoading}
                     ref={(el) => (previewCardsRefs.current[index] = el)}
                     resource={resource}
+                    onResourceConsumed={onResourceConsumed}
                   />
                 </Box>
                 {editMode && (
@@ -175,6 +178,7 @@ interface LearningPathResourceItemsProps {
   editMode?: boolean;
   isLoading?: boolean;
   currentUserStartedPath?: boolean;
+  onResourceConsumed?: (resourceId: string, consumed: boolean) => void;
 }
 
 export const LearningPathResourceItemsManager: React.FC<LearningPathResourceItemsProps> = ({
@@ -182,6 +186,7 @@ export const LearningPathResourceItemsManager: React.FC<LearningPathResourceItem
   editMode,
   isLoading,
   currentUserStartedPath,
+  onResourceConsumed,
 }) => {
   const [updateLearningPath] = useUpdateLearningPathMutation();
   const addResourceItem = (resource: ResourceDataFragment) => {
@@ -242,6 +247,7 @@ export const LearningPathResourceItemsManager: React.FC<LearningPathResourceItem
       editMode={editMode}
       isLoading={isLoading}
       currentUserStartedPath={currentUserStartedPath}
+      onResourceConsumed={onResourceConsumed}
     />
   );
 };

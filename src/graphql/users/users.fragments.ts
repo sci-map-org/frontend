@@ -10,9 +10,12 @@ export const CurrentUserData = gql`
     role
     displayName
     startedLearningPaths(options: {}) {
-      _id
-      key
-      name
+      startedAt
+      learningPath {
+        _id
+        key
+        name
+      }
     }
   }
 `;

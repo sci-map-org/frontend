@@ -4,8 +4,12 @@ export type CurrentUserDataFragment = (
   { __typename?: 'CurrentUser' }
   & Pick<Types.CurrentUser, '_id' | 'email' | 'key' | 'role' | 'displayName'>
   & { startedLearningPaths?: Types.Maybe<Array<(
-    { __typename?: 'LearningPath' }
-    & Pick<Types.LearningPath, '_id' | 'key' | 'name'>
+    { __typename?: 'LearningPathStartedItem' }
+    & Pick<Types.LearningPathStartedItem, 'startedAt'>
+    & { learningPath: (
+      { __typename?: 'LearningPath' }
+      & Pick<Types.LearningPath, '_id' | 'key' | 'name'>
+    ) }
   )>> }
 );
 
