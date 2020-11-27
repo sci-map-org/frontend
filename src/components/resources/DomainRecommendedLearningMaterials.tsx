@@ -1,4 +1,5 @@
 import {
+  Badge,
   Box,
   Button,
   Checkbox,
@@ -8,6 +9,7 @@ import {
   Input,
   InputGroup,
   InputRightElement,
+  MenuOptionGroup,
   Select,
   Stack,
   Switch,
@@ -18,8 +20,8 @@ import {
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
-import { values, without } from 'lodash';
-import { DependencyList, useEffect, useRef, useState } from 'react';
+import { filter, values, without } from 'lodash';
+import { DependencyList, useEffect, useMemo, useRef, useState } from 'react';
 import MultiSelect from 'react-multi-select-component';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 import BeatLoader from 'react-spinners/BeatLoader';
@@ -27,10 +29,12 @@ import { useDebounce } from 'use-debounce';
 import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import {
+  DomainLearningMaterialsFilterOptions,
   DomainLearningMaterialsOptions,
   DomainLearningMaterialsSortingType,
   DomainResourcesOptions,
   DomainResourcesSortingType,
+  LearningMaterialType,
   ResourceType,
 } from '../../graphql/types';
 import { theme } from '../../theme/theme';
@@ -118,15 +122,12 @@ export const DomainRecommendedLearningMaterials: React.FC<{
               setLearningMaterialsOptions({ ...learningMaterialsOptions, query: value || undefined })
             }
           />
-          <ResourceTypeFilter
-            selectedTypes={learningMaterialsOptions.filter?.resourceTypeIn || []}
-            onChange={(selectedTypes) =>
+          <LearningMaterialTypeFilter
+            filterOptions={learningMaterialsOptions.filter}
+            setFilterOptions={(filterOptions) =>
               setLearningMaterialsOptions({
                 ...learningMaterialsOptions,
-                filter: {
-                  ...learningMaterialsOptions.filter,
-                  resourceTypeIn: selectedTypes.length ? selectedTypes : null,
-                },
+                filter: filterOptions,
               })
             }
           />
@@ -197,24 +198,81 @@ export const SearchResourcesInput: React.FC<{ onChange: (value: string) => void;
   );
 };
 
-const resourceTypetoOption = (type: ResourceType) => ({
-  value: type,
-  label: resourceTypeToLabel(type),
-});
+type LearningMaterialFilterType = ResourceType | typeof LearningMaterialType.LearningPath;
 
-const options = values(ResourceType).map(resourceTypetoOption);
+const learningPathOption = { value: LearningMaterialType.LearningPath, label: 'Learning Path' };
 
-const ResourceTypeFilter: React.FC<{
-  selectedTypes?: ResourceType[];
-  onChange: (selectedTypes: ResourceType[]) => void;
-}> = ({ selectedTypes, onChange }) => {
+const learningMaterialTypeToOption = (type: LearningMaterialFilterType) =>
+  type === LearningMaterialType.LearningPath
+    ? learningPathOption
+    : {
+        value: type,
+        label: resourceTypeToLabel(type),
+      };
+
+const optionsValues: LearningMaterialFilterType[] = [LearningMaterialType.LearningPath, ...values(ResourceType)];
+
+const options = optionsValues.map(learningMaterialTypeToOption);
+
+const learningMaterialFilterTypeColorMapping: { [key in LearningMaterialFilterType]: string } = {
+  ...resourceTypeColorMapping,
+  [LearningMaterialType.LearningPath]: 'teal',
+};
+
+const LearningMaterialTypeFilter: React.FC<{
+  filterOptions: DomainLearningMaterialsFilterOptions;
+  setFilterOptions: (filterOptions: DomainLearningMaterialsFilterOptions) => void;
+}> = ({ filterOptions, setFilterOptions }) => {
+  const selectedTypes = useMemo<LearningMaterialFilterType[]>(() => {
+    const containsLearningPath =
+      (!filterOptions.learningMaterialTypeIn && filterOptions.resourceTypeIn) ||
+      (filterOptions.learningMaterialTypeIn &&
+        filterOptions.learningMaterialTypeIn.indexOf(LearningMaterialType.LearningPath) > -1);
+    const types: LearningMaterialFilterType[] = [];
+    if (containsLearningPath) types.push(LearningMaterialType.LearningPath);
+    if (filterOptions.resourceTypeIn) types.push(...filterOptions.resourceTypeIn);
+
+    return types;
+  }, [filterOptions]);
+
+  const onChange = (values: LearningMaterialFilterType[]) => {
+    if (!values.length)
+      return setFilterOptions({
+        ...filterOptions,
+        learningMaterialTypeIn: undefined,
+        resourceTypeIn: undefined,
+      });
+    if (values.length === 1 && values[0] === LearningMaterialType.LearningPath) {
+      return setFilterOptions({
+        ...filterOptions,
+        learningMaterialTypeIn: [LearningMaterialType.LearningPath],
+        resourceTypeIn: [],
+      });
+    }
+
+    const resourceTypes = values.filter((value) => value !== LearningMaterialType.LearningPath) as ResourceType[];
+    const containsLearningPath = values.indexOf(LearningMaterialType.LearningPath) > -1;
+    if (!containsLearningPath)
+      return setFilterOptions({
+        ...filterOptions,
+        learningMaterialTypeIn: [LearningMaterialType.Resource],
+        resourceTypeIn: resourceTypes,
+      });
+    setFilterOptions({
+      ...filterOptions,
+      learningMaterialTypeIn: undefined,
+      resourceTypeIn: resourceTypes,
+    });
+  };
   return (
     <Stack direction="row" alignItems="baseline">
       <Box w="16rem">
         <MultiSelect
           options={options}
-          value={(selectedTypes || []).map(resourceTypetoOption)}
-          onChange={(selectedOptions: { value: ResourceType }[]) => onChange(selectedOptions.map((o) => o.value))}
+          value={(selectedTypes || []).map(learningMaterialTypeToOption)}
+          onChange={(selectedOptions: { value: LearningMaterialFilterType }[]) =>
+            onChange(selectedOptions.map((o) => o.value))
+          }
           labelledBy={'Filter by type'}
           valueRenderer={(selectedOptions) => (<ValueRenderer selected={selectedOptions} onChange={onChange} />) as any}
           ItemRenderer={ItemRenderer}
@@ -228,7 +286,7 @@ const ResourceTypeFilter: React.FC<{
             key={defaultTypeFilter}
             size="xs"
             variant="outline"
-            colorScheme={resourceTypeColorMapping[defaultTypeFilter]}
+            colorScheme={learningMaterialFilterTypeColorMapping[defaultTypeFilter]}
             leftIcon={<AddIcon />}
             onClick={() => onChange([...(selectedTypes || []), defaultTypeFilter])}
           >
@@ -241,12 +299,17 @@ const ResourceTypeFilter: React.FC<{
 
 const ValueRenderer: React.FC<{
   selected: Option[];
-  onChange: (selectedTypes: ResourceType[]) => void;
+  onChange: (selectedTypes: LearningMaterialFilterType[]) => void;
 }> = ({ selected, onChange }) => {
   return selected.length ? (
     <Stack spacing={2} direction="row">
       {selected.map(({ value, label }) => (
-        <Tag size="md" key={value} variant="subtle" colorScheme={resourceTypeColorMapping[value as ResourceType]}>
+        <Tag
+          size="md"
+          key={value}
+          variant="subtle"
+          colorScheme={learningMaterialFilterTypeColorMapping[value as LearningMaterialFilterType]}
+        >
           <TagLabel>{label}</TagLabel>
           <TagCloseButton
             onClick={(e) => {
@@ -282,7 +345,13 @@ const ItemRenderer = ({
   return (
     <Stack spacing={4} direction="row" alignItems="center">
       <Checkbox onChange={onClick} isChecked={checked} isDisabled={disabled} />
-      <ResourceTypeBadge type={option.value as ResourceType} />
+      {option.value !== LearningMaterialType.LearningPath ? (
+        <ResourceTypeBadge type={option.value as ResourceType} />
+      ) : (
+        <Badge colorScheme="teal" fontSize="0.8em">
+          Learning Path
+        </Badge>
+      )}
     </Stack>
   );
 };

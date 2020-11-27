@@ -1,6 +1,6 @@
 import { NetworkStatus } from '@apollo/client';
 import { SettingsIcon } from '@chakra-ui/icons';
-import { Box, Flex, Heading, IconButton, Skeleton } from '@chakra-ui/react';
+import { Box, ButtonGroup, Flex, Heading, IconButton, Skeleton } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -91,6 +91,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
     sortingType: DomainLearningMaterialsSortingType.Recommended,
     filter: { completedByUser: false },
   });
+
   const [learningMaterialPreviews, setLearningMaterialPreviews] = useState<
     (ResourcePreviewDataFragment | LearningPathPreviewCardDataFragment)[]
   >([]);
@@ -134,18 +135,32 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
           </Heading>
         </Skeleton>
         <Box flexGrow={1} />
-        <InternalButtonLink
-          variant="outline"
-          borderColor="blue.500"
-          color="blue.700"
-          borderWidth="1px"
-          routePath="/domains/[key]/resources/new"
-          asHref={router.asPath + '/resources/new'}
-          loggedInOnly
-          isDisabled={loading}
-        >
-          + Add resource
-        </InternalButtonLink>
+        <ButtonGroup spacing={2}>
+          <InternalButtonLink
+            variant="outline"
+            borderColor="blue.500"
+            color="blue.700"
+            borderWidth="1px"
+            routePath="/domains/[key]/resources/new"
+            asHref={router.asPath + '/resources/new'}
+            loggedInOnly
+            isDisabled={loading}
+          >
+            + Add resource
+          </InternalButtonLink>
+          <InternalButtonLink
+            variant="outline"
+            colorScheme="teal"
+            borderWidth="1px"
+            routePath="/learning_paths/new"
+            asHref="/resources/new"
+            loggedInOnly
+            isDisabled={loading}
+          >
+            + Add Learning Path
+          </InternalButtonLink>
+          {/* ? would be expected to be there from the start maybe (attached + public). good to push for creation though */}
+        </ButtonGroup>
         <RoleAccess accessRule="contributorOrAdmin">
           <IconButton
             ml={2}
