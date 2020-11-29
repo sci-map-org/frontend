@@ -91,7 +91,7 @@ export const LearningPathPreviewCard: React.FC<LearningPathPreviewCardProps> = (
             <Badge colorScheme="teal" fontSize="0.8em">
               Learning Path
             </Badge>
-            <DurationViewer value={learningPath.durationMs} />
+            <DurationViewer value={learningPath.durationSeconds} />
           </Stack>
           <Box>
             <Text fontWeight={250}>{learningPath.description && shortenDescription(learningPath.description)}</Text>

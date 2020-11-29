@@ -556,7 +556,7 @@ export type Resource = LearningMaterial & {
   upvotes?: Maybe<Scalars['Int']>;
   rating?: Maybe<Scalars['Float']>;
   description?: Maybe<Scalars['String']>;
-  durationMs?: Maybe<Scalars['Int']>;
+  durationSeconds?: Maybe<Scalars['Int']>;
   consumed?: Maybe<ConsumedResource>;
   creator?: Maybe<User>;
   coveredConcepts?: Maybe<LearningMaterialCoveredConceptsResults>;
@@ -602,7 +602,7 @@ export type LearningPath = LearningMaterial & {
   name: Scalars['String'];
   public: Scalars['Boolean'];
   description?: Maybe<Scalars['String']>;
-  durationMs?: Maybe<Scalars['Int']>;
+  durationSeconds?: Maybe<Scalars['Int']>;
   resourceItems?: Maybe<Array<LearningPathResourceItem>>;
   complementaryResources?: Maybe<Array<Resource>>;
   tags?: Maybe<Array<LearningMaterialTag>>;
@@ -718,7 +718,7 @@ export type CreateResourcePayload = {
   mediaType: ResourceMediaType;
   url: Scalars['String'];
   description?: Maybe<Scalars['String']>;
-  durationMs?: Maybe<Scalars['Int']>;
+  durationSeconds?: Maybe<Scalars['Int']>;
   tags?: Maybe<Array<Scalars['String']>>;
 };
 
@@ -728,7 +728,7 @@ export type UpdateResourcePayload = {
   mediaType?: Maybe<ResourceMediaType>;
   url?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  durationMs?: Maybe<Scalars['Int']>;
+  durationSeconds?: Maybe<Scalars['Int']>;
 };
 
 export type DeleteResourceResponse = {
@@ -786,7 +786,7 @@ export type CreateLearningPathPayload = {
   key?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   public?: Maybe<Scalars['Boolean']>;
-  durationMs?: Maybe<Scalars['Int']>;
+  durationSeconds?: Maybe<Scalars['Int']>;
   tags?: Maybe<Array<Scalars['String']>>;
   resourceItems: Array<CreateLearningPathResourceItem>;
 };
@@ -795,7 +795,7 @@ export type UpdateLearningPathPayload = {
   name?: Maybe<Scalars['String']>;
   public?: Maybe<Scalars['Boolean']>;
   description?: Maybe<Scalars['String']>;
-  durationMs?: Maybe<Scalars['Int']>;
+  durationSeconds?: Maybe<Scalars['Int']>;
   resourceItems?: Maybe<Array<CreateLearningPathResourceItem>>;
 };
 

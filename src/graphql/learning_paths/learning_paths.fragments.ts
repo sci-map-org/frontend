@@ -9,7 +9,7 @@ export const LearningPathData = gql`
     public
     name
     description
-    durationMs
+    durationSeconds
   }
 `;
 

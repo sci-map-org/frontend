@@ -24,7 +24,7 @@ import { LearningPathCompletionDataFragment } from './LearningPathCompletion.gen
 export const LearningPathCompletionData = gql`
   fragment LearningPathCompletionData on LearningPath {
     _id
-    durationMs
+    durationSeconds
     started {
       startedAt
       completedAt
@@ -36,7 +36,7 @@ export const LearningPathCompletionData = gql`
           openedAt
           consumedAt
         }
-        durationMs
+        durationSeconds
       }
     }
   }
