@@ -101,15 +101,15 @@ export const Header: React.FC = () => {
                   {!!currentUser.startedLearningPaths && !!currentUser.startedLearningPaths.length && (
                     <>
                       <Stack>
-                        {currentUser.startedLearningPaths.map((startedLearningPath) => (
+                        {currentUser.startedLearningPaths.map(({ learningPath }) => (
                           <InternalLink
-                            key={startedLearningPath._id}
+                            key={learningPath._id}
                             routePath={LearningPathPagePath()}
-                            asHref={LearningPathPagePath(startedLearningPath.key)}
+                            asHref={LearningPathPagePath(learningPath.key)}
                             {...HeaderLinkStyle}
                             fontSize="md"
                           >
-                            {startedLearningPath.name}
+                            {learningPath.name}
                           </InternalLink>
                         ))}
                       </Stack>

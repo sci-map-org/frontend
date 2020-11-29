@@ -4,6 +4,7 @@ import {
   BoxProps,
   Button,
   Flex,
+  FlexProps,
   IconButton,
   Link,
   Popover,
@@ -64,6 +65,7 @@ interface ResourcePreviewCardProps {
   inCompactList?: boolean;
   firstItemInCompactList?: boolean;
   showCompletedNotificationToast?: boolean;
+  leftBlockWidth?: FlexProps['w'];
 }
 
 export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCardProps>(
@@ -76,6 +78,7 @@ export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCar
       inCompactList,
       firstItemInCompactList,
       showCompletedNotificationToast,
+      leftBlockWidth = '100px',
     },
     ref
   ) => {
@@ -91,7 +94,7 @@ export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCar
             showCompletedNotificationToast={showCompletedNotificationToast}
           />
         }
-        leftBlockWidth="100px"
+        leftBlockWidth={leftBlockWidth}
         inCompactList={inCompactList}
         firstItemInCompactList={firstItemInCompactList}
         onClick={() => !isLoading && routerPushToPage(ResourcePageInfo(resource))}

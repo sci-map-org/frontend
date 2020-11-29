@@ -11,9 +11,12 @@ import {
   WrapItem,
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { ImPlay2 } from 'react-icons/im';
-import { useStartLearningPathMutation } from '../../graphql/learning_paths/learning_paths.operations.generated';
+import {
+  useCompleteLearningPathMutation,
+  useStartLearningPathMutation,
+} from '../../graphql/learning_paths/learning_paths.operations.generated';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import { LearningPathCompletionDataFragment } from './LearningPathCompletion.generated';
@@ -24,6 +27,7 @@ export const LearningPathCompletionData = gql`
     durationMs
     started {
       startedAt
+      completedAt
     }
     resourceItems {
       resource {
@@ -107,6 +111,17 @@ export const LearningPathCircularCompletion: React.FC<{
     return resourceItems.length ? completedResources.length / resourceItems.length : 1;
   }, [resourceItems, completedResources]);
 
+  const [completeLearningPath, { loading }] = useCompleteLearningPathMutation();
+
+  useEffect(() => {
+    // TODO: have cleaner, reactive /computed way of handling "completed" (also on recommendation engine).
+    if (!resourceItems.length) return;
+    const completedLp = resourceItems.every(({ resource }) => resource.consumed?.consumedAt);
+    if (!!learningPath.started?.completedAt !== completedLp && !loading) {
+      completeLearningPath({ variables: { learningPathId: learningPath._id, completed: completedLp } });
+    }
+  }, [resourceItems]);
+
   return learningPath.started ? (
     <CircularProgress
       value={completionRate * 100}
@@ -121,7 +136,7 @@ export const LearningPathCircularCompletion: React.FC<{
       </CircularProgressLabel>
     </CircularProgress>
   ) : (
-    <Tooltip openDelay={1000} label="Start this path">
+    <Tooltip openDelay={300} label="Start this path">
       <IconButton
         aria-label="start learning path"
         icon={<ImPlay2 title="title" size={sizes[size].iconSize} />}

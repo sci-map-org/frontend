@@ -22,6 +22,7 @@ export const resourceTypeColorMapping: { [key in ResourceType]: string } = {
 
 export const resourceTypeToLabel = (type: ResourceType) => type.split('_').map(upperFirst).join(' ');
 
+//ItemRenderer in DomainRecommendedLearningMaterials copies this style. TODO: refactor
 export const ResourceTypeBadge: React.FC<BadgeProps & { type: ResourceType }> = ({ type, ...badgeProps }) => {
   return (
     <Badge colorScheme={resourceTypeColorMapping[type]} fontSize="0.8em" {...badgeProps}>

@@ -26,6 +26,30 @@ export type StartLearningPathMutation = (
   ) }
 );
 
+export type CompleteLearningPathMutationVariables = Types.Exact<{
+  learningPathId: Types.Scalars['String'];
+  completed: Types.Scalars['Boolean'];
+}>;
+
+
+export type CompleteLearningPathMutation = (
+  { __typename?: 'Mutation' }
+  & { completeLearningPath: (
+    { __typename?: 'LearningPathCompletedResult' }
+    & { learningPath: (
+      { __typename?: 'LearningPath' }
+      & Pick<Types.LearningPath, '_id' | 'key'>
+      & { started?: Types.Maybe<(
+        { __typename?: 'LearningPathStarted' }
+        & Pick<Types.LearningPathStarted, 'startedAt' | 'completedAt'>
+      )> }
+    ), user: (
+      { __typename?: 'CurrentUser' }
+      & Pick<Types.CurrentUser, '_id'>
+    ) }
+  ) }
+);
+
 export type UpdateLearningPathMutationVariables = Types.Exact<{
   _id: Types.Scalars['String'];
   payload: Types.UpdateLearningPathPayload;
@@ -79,6 +103,32 @@ export function useStartLearningPathMutation(baseOptions?: Apollo.MutationHookOp
 export type StartLearningPathMutationHookResult = ReturnType<typeof useStartLearningPathMutation>;
 export type StartLearningPathMutationResult = Apollo.MutationResult<StartLearningPathMutation>;
 export type StartLearningPathMutationOptions = Apollo.BaseMutationOptions<StartLearningPathMutation, StartLearningPathMutationVariables>;
+export type CompleteLearningPathMutationFn = Apollo.MutationFunction<CompleteLearningPathMutation, CompleteLearningPathMutationVariables>;
+
+/**
+ * __useCompleteLearningPathMutation__
+ *
+ * To run a mutation, you first call `useCompleteLearningPathMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCompleteLearningPathMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [completeLearningPathMutation, { data, loading, error }] = useCompleteLearningPathMutation({
+ *   variables: {
+ *      learningPathId: // value for 'learningPathId'
+ *      completed: // value for 'completed'
+ *   },
+ * });
+ */
+export function useCompleteLearningPathMutation(baseOptions?: Apollo.MutationHookOptions<CompleteLearningPathMutation, CompleteLearningPathMutationVariables>) {
+        return Apollo.useMutation<CompleteLearningPathMutation, CompleteLearningPathMutationVariables>(Operations.completeLearningPath, baseOptions);
+      }
+export type CompleteLearningPathMutationHookResult = ReturnType<typeof useCompleteLearningPathMutation>;
+export type CompleteLearningPathMutationResult = Apollo.MutationResult<CompleteLearningPathMutation>;
+export type CompleteLearningPathMutationOptions = Apollo.BaseMutationOptions<CompleteLearningPathMutation, CompleteLearningPathMutationVariables>;
 export type UpdateLearningPathMutationFn = Apollo.MutationFunction<UpdateLearningPathMutation, UpdateLearningPathMutationVariables>;
 
 /**

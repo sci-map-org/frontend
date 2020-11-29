@@ -1,6 +1,6 @@
 import { NetworkStatus } from '@apollo/client';
 import { SettingsIcon } from '@chakra-ui/icons';
-import { Box, Flex, Heading, IconButton, Skeleton } from '@chakra-ui/react';
+import { Box, ButtonGroup, Flex, Heading, IconButton, Skeleton } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -8,15 +8,15 @@ import { RoleAccess } from '../../components/auth/RoleAccess';
 import { DomainConceptGraph } from '../../components/concepts/DomainConceptGraph';
 import { DomainConceptList } from '../../components/concepts/DomainConceptList';
 import { PageLayout } from '../../components/layout/PageLayout';
-import { DomainLearningPaths } from '../../components/learning_paths/DomainLearningPaths';
+import { LearningPathPreviewCardDataFragment } from '../../components/learning_paths/LearningPathPreviewCard.generated';
 import { InternalButtonLink } from '../../components/navigation/InternalLink';
-import { DomainRecommendedResources } from '../../components/resources/DomainRecommendedResources';
-import { useGetDomainRecommendedResourcesQuery } from '../../components/resources/DomainRecommendedResources.generated';
+import { DomainRecommendedLearningMaterials } from '../../components/resources/DomainRecommendedLearningMaterials';
+import { useGetDomainRecommendedLearningMaterialsQuery } from '../../components/resources/DomainRecommendedLearningMaterials.generated';
 import { ConceptData, generateConceptData } from '../../graphql/concepts/concepts.fragments';
 import { DomainData, generateDomainData } from '../../graphql/domains/domains.fragments';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
-import { DomainResourcesOptions, DomainResourcesSortingType } from '../../graphql/types';
+import { DomainLearningMaterialsOptions, DomainLearningMaterialsSortingType } from '../../graphql/types';
 import { useMockedFeaturesEnabled } from '../../hooks/useMockedFeaturesEnabled';
 import { PageInfo, routerPushToPage } from '../PageInfo';
 import { GetDomainByKeyDomainPageQuery, useGetDomainByKeyDomainPageQuery } from './DomainPage.generated';
@@ -87,20 +87,27 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
     variables: { key: domainKey },
   });
 
-  const [resourcesOptions, setResourcesOptions] = useState<DomainResourcesOptions>({
-    sortingType: DomainResourcesSortingType.Recommended,
-    filter: { consumedByUser: false },
+  const [learningMaterialsOptions, setLearningMaterialsOptions] = useState<DomainLearningMaterialsOptions>({
+    sortingType: DomainLearningMaterialsSortingType.Recommended,
+    filter: { completedByUser: false },
   });
-  const [resourcesPreviews, setResourcePreviews] = useState<ResourcePreviewDataFragment[]>([]);
 
-  const { data: resourceData, networkStatus, refetch: refetchResources } = useGetDomainRecommendedResourcesQuery({
-    variables: { key: domainKey, resourcesOptions: resourcesOptions },
+  const [learningMaterialPreviews, setLearningMaterialPreviews] = useState<
+    (ResourcePreviewDataFragment | LearningPathPreviewCardDataFragment)[]
+  >([]);
+
+  const {
+    data: learningMaterialsData,
+    networkStatus,
+    refetch: refetchLearningMaterials,
+  } = useGetDomainRecommendedLearningMaterialsQuery({
+    variables: { key: domainKey, learningMaterialsOptions: learningMaterialsOptions },
     fetchPolicy: 'network-only',
     ssr: false,
     notifyOnNetworkStatusChange: true,
     onCompleted(data) {
-      if (data?.getDomainByKey.resources?.items) {
-        setResourcePreviews(data?.getDomainByKey.resources?.items);
+      if (data?.getDomainByKey.learningMaterials?.items) {
+        setLearningMaterialPreviews(data?.getDomainByKey.learningMaterials?.items);
       }
     },
   });
@@ -113,7 +120,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
     );
   }, [networkStatus]);
 
-  const resources = resourceData?.getDomainByKey.resources?.items || resourcesPreviews;
+  const learningMaterials = learningMaterialsData?.getDomainByKey?.learningMaterials?.items || learningMaterialPreviews; // ? after getDomainByKey because of https://github.com/apollographql/apollo-client/issues/6986
 
   const domain = data?.getDomainByKey || placeholderDomainData;
 
@@ -128,18 +135,32 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
           </Heading>
         </Skeleton>
         <Box flexGrow={1} />
-        <InternalButtonLink
-          variant="outline"
-          borderColor="blue.500"
-          color="blue.700"
-          borderWidth="1px"
-          routePath="/domains/[key]/resources/new"
-          asHref={router.asPath + '/resources/new'}
-          loggedInOnly
-          isDisabled={loading}
-        >
-          + Add resource
-        </InternalButtonLink>
+        <ButtonGroup spacing={2}>
+          <InternalButtonLink
+            variant="outline"
+            borderColor="blue.500"
+            color="blue.700"
+            borderWidth="1px"
+            routePath="/domains/[key]/resources/new"
+            asHref={router.asPath + '/resources/new'}
+            loggedInOnly
+            isDisabled={loading}
+          >
+            + Add resource
+          </InternalButtonLink>
+          <InternalButtonLink
+            variant="outline"
+            colorScheme="teal"
+            borderWidth="1px"
+            routePath="/learning_paths/new"
+            asHref="/resources/new"
+            loggedInOnly
+            isDisabled={loading}
+          >
+            + Add Learning Path
+          </InternalButtonLink>
+          {/* ? would be expected to be there from the start maybe (attached + public). good to push for creation though */}
+        </ButtonGroup>
         <RoleAccess accessRule="contributorOrAdmin">
           <IconButton
             ml={2}
@@ -169,20 +190,21 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
       )}
       <Flex direction={{ base: 'column-reverse', md: 'row' }} mb="100px">
         <Flex direction="column" flexShrink={1} flexGrow={1}>
-          <DomainRecommendedResources
+          <DomainRecommendedLearningMaterials
             domainKey={domainKey}
-            resourcePreviews={resources}
+            learningMaterialsPreviews={learningMaterials}
             isLoading={resourcesLoading}
-            reloadRecommendedResources={() => refetchResources()}
-            resourcesOptions={resourcesOptions}
-            setResourcesOptions={setResourcesOptions}
+            reloadRecommendedResources={() => refetchLearningMaterials()}
+            learningMaterialsOptions={learningMaterialsOptions}
+            setLearningMaterialsOptions={setLearningMaterialsOptions}
           />
           <DomainConceptGraph domain={domain} isLoading={loading} minNbRelationships={5} />
           {/* <DomainLearningPaths domain={domain} /> */}
           {/* {mockedFeaturesEnabled && <DomainLearningPaths domain={domain} />} */}
         </Flex>
         <Flex direction="column" flexShrink={0} minWidth="260px" ml={{ base: 0, md: 8 }}>
-          <DomainConceptList domain={domain} isLoading={loading} onConceptToggled={() => refetchResources()} />
+          <DomainConceptList domain={domain} isLoading={loading} onConceptToggled={() => refetchLearningMaterials()} />
+          {/* <DomainConceptList domain={domain} isLoading={loading} onConceptToggled={() => refetchResources()} /> */}
         </Flex>
         {/* )} */}
         {/* {mockedFeaturesEnabled && (

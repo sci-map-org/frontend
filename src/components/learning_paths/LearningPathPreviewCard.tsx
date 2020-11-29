@@ -1,4 +1,4 @@
-import { Badge, Box, Flex, Skeleton, Stack, Text } from '@chakra-ui/react';
+import { Badge, Box, Flex, FlexProps, Skeleton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { LearningMaterialWithCoveredConceptsByDomainData } from '../../graphql/learning_materials/learning_materials.fragments';
 import { LearningPathData } from '../../graphql/learning_paths/learning_paths.fragments';
@@ -41,12 +41,14 @@ interface LearningPathPreviewCardProps {
   isLoading?: boolean;
   inCompactList?: boolean;
   firstItemInCompactList?: boolean;
+  leftBlockWidth?: FlexProps['w'];
 }
 export const LearningPathPreviewCard: React.FC<LearningPathPreviewCardProps> = ({
   learningPath,
   isLoading,
   inCompactList,
   firstItemInCompactList,
+  leftBlockWidth = '120px',
 }) => {
   return (
     <LearningMaterialCardContainer
@@ -59,7 +61,7 @@ export const LearningPathPreviewCard: React.FC<LearningPathPreviewCardProps> = (
           onStarted={() => routerPushToPage(LearningPathPageInfo(learningPath))}
         />
       }
-      leftBlockWidth="120px"
+      leftBlockWidth={leftBlockWidth}
       onClick={() => routerPushToPage(LearningPathPageInfo(learningPath))}
       renderRight={<Flex></Flex>}
       renderBottom={
@@ -93,15 +95,14 @@ export const LearningPathPreviewCard: React.FC<LearningPathPreviewCardProps> = (
           </Stack>
           <ResourceDescription description={learningPath.description} noOfLines={2} isLoading={isLoading} />
         </Flex>
-
-        {learningPath.createdBy && (
+        {/* {learningPath.createdBy && (
           <Flex direction="column" flexShrink={0} alignItems="center" pt={1} pr={2}>
             <Text fontSize="sm" fontWeight={300}>
               Curated By
             </Text>
             <UserAvatar user={learningPath.createdBy} size="xs" />
           </Flex>
-        )}
+        )} */}
         {/* Future: goals and prerequisites */}
         {/* Np people having started it */}
         {/* Comments, etc. */}

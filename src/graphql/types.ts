@@ -133,6 +133,7 @@ export type Mutation = {
   addComplementaryResourceToLearningPath: ComplementaryResourceUpdatedResult;
   removeComplementaryResourceFromLearningPath: ComplementaryResourceUpdatedResult;
   startLearningPath: LearningPathStartedResult;
+  completeLearningPath: LearningPathCompletedResult;
   updateConceptBelongsToDomain: ConceptBelongsToDomain;
   addConceptBelongsToConcept: Concept;
   removeConceptBelongsToConcept: Concept;
@@ -374,6 +375,12 @@ export type MutationStartLearningPathArgs = {
 };
 
 
+export type MutationCompleteLearningPathArgs = {
+  learningPathId: Scalars['String'];
+  completed: Scalars['Boolean'];
+};
+
+
 export type MutationUpdateConceptBelongsToDomainArgs = {
   conceptId: Scalars['String'];
   domainId: Scalars['String'];
@@ -421,7 +428,7 @@ export type CurrentUser = {
   role: UserRole;
   articles?: Maybe<ListArticlesResult>;
   createdLearningPaths?: Maybe<Array<LearningPath>>;
-  startedLearningPaths?: Maybe<Array<LearningPath>>;
+  startedLearningPaths?: Maybe<Array<LearningPathStartedItem>>;
 };
 
 
@@ -493,6 +500,7 @@ export type Domain = {
   concepts?: Maybe<DomainConceptsResults>;
   resources?: Maybe<DomainResourcesResults>;
   learningPaths?: Maybe<DomainLearningPathsResults>;
+  learningMaterials?: Maybe<DomainLearningMaterialsResults>;
   subDomains?: Maybe<Array<DomainBelongsToDomainItem>>;
   parentDomains?: Maybe<Array<DomainBelongsToDomainItem>>;
 };
@@ -510,6 +518,11 @@ export type DomainResourcesArgs = {
 
 export type DomainLearningPathsArgs = {
   options: DomainLearningPathsOptions;
+};
+
+
+export type DomainLearningMaterialsArgs = {
+  options: DomainLearningMaterialsOptions;
 };
 
 export type LearningMaterialTagSearchResult = {
@@ -804,6 +817,12 @@ export type LearningPathStartedResult = {
   learningPath: LearningPath;
 };
 
+export type LearningPathCompletedResult = {
+  __typename?: 'LearningPathCompletedResult';
+  user: CurrentUser;
+  learningPath: LearningPath;
+};
+
 export type ConceptBelongsToDomain = {
   __typename?: 'ConceptBelongsToDomain';
   index: Scalars['Float'];
@@ -825,6 +844,13 @@ export enum UserRole {
 
 export type UserLearningPathsOptions = {
   pagination?: Maybe<PaginationOptions>;
+};
+
+export type LearningPathStartedItem = {
+  __typename?: 'LearningPathStartedItem';
+  learningPath: LearningPath;
+  startedAt: Scalars['DateTime'];
+  completedAt?: Maybe<Scalars['DateTime']>;
 };
 
 export enum ArticleContentType {
@@ -858,7 +884,7 @@ export type DomainResourcesResults = {
 export type DomainResourcesOptions = {
   sortingType: DomainResourcesSortingType;
   query?: Maybe<Scalars['String']>;
-  filter?: Maybe<DomainResourcesFilterOptions>;
+  filter: DomainResourcesFilterOptions;
 };
 
 export type DomainLearningPathsResults = {
@@ -869,6 +895,17 @@ export type DomainLearningPathsResults = {
 export type DomainLearningPathsOptions = {
   pagination?: Maybe<PaginationOptions>;
   sorting: DomainLearningPathsSortingOptions;
+};
+
+export type DomainLearningMaterialsResults = {
+  __typename?: 'DomainLearningMaterialsResults';
+  items: Array<LearningMaterial>;
+};
+
+export type DomainLearningMaterialsOptions = {
+  sortingType: DomainLearningMaterialsSortingType;
+  query?: Maybe<Scalars['String']>;
+  filter: DomainLearningMaterialsFilterOptions;
 };
 
 export type DomainBelongsToDomainItem = {
@@ -964,6 +1001,7 @@ export type LearningPathResourceItem = {
 export type LearningPathStarted = {
   __typename?: 'LearningPathStarted';
   startedAt: Scalars['DateTime'];
+  completedAt?: Maybe<Scalars['DateTime']>;
 };
 
 export type LearningPathStartedByResults = {
@@ -1011,12 +1049,23 @@ export enum DomainResourcesSortingType {
 
 export type DomainResourcesFilterOptions = {
   resourceTypeIn?: Maybe<Array<ResourceType>>;
-  consumedByUser?: Maybe<Scalars['Boolean']>;
+  consumedByUser: Scalars['Boolean'];
 };
 
 export type DomainLearningPathsSortingOptions = {
   field: DomainLearningPathsSortingFields;
   direction: SortingDirection;
+};
+
+export enum DomainLearningMaterialsSortingType {
+  Recommended = 'recommended',
+  Newest = 'newest'
+}
+
+export type DomainLearningMaterialsFilterOptions = {
+  resourceTypeIn?: Maybe<Array<ResourceType>>;
+  completedByUser: Scalars['Boolean'];
+  learningMaterialTypeIn?: Maybe<Array<LearningMaterialType>>;
 };
 
 export type DomainBelongsToDomain = {
@@ -1038,6 +1087,7 @@ export type LearningPathStartedByItem = {
   __typename?: 'LearningPathStartedByItem';
   user: User;
   startedAt: Scalars['DateTime'];
+  completedAt?: Maybe<Scalars['DateTime']>;
 };
 
 export enum DomainConceptSortingEntities {
@@ -1057,4 +1107,9 @@ export enum SortingDirection {
 
 export enum DomainLearningPathsSortingFields {
   CreatedAt = 'createdAt'
+}
+
+export enum LearningMaterialType {
+  Resource = 'Resource',
+  LearningPath = 'LearningPath'
 }
