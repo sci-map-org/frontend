@@ -56,7 +56,7 @@ export const LearningPathPreviewCard: React.FC<LearningPathPreviewCardProps> = (
       firstItemInCompactList={firstItemInCompactList}
       renderCenterLeft={
         <LearningPathCircularCompletion
-          size="sm"
+          size="md"
           learningPath={learningPath}
           onStarted={() => routerPushToPage(LearningPathPageInfo(learningPath))}
         />
