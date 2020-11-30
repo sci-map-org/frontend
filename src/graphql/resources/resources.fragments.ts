@@ -12,7 +12,7 @@ export const ResourceData = gql`
     mediaType
     url
     description
-    durationMs
+    durationSeconds
     rating
     tags {
       name
@@ -40,7 +40,7 @@ export const ResourcePreviewData = gql`
     mediaType
     url
     description
-    durationMs
+    durationSeconds
     tags {
       name
     }

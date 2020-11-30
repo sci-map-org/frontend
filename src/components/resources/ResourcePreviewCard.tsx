@@ -112,7 +112,7 @@ export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCar
               <Stack spacing={1} direction="row" alignItems="baseline" mr="10px">
                 <StarsRatingViewer value={resource.rating} pxSize={13} />
                 <ResourceTypeBadge type={resource.type} />
-                <DurationViewer value={resource.durationMs} />
+                <DurationViewer value={resource.durationSeconds} />
 
                 <RoleAccess accessRule="contributorOrAdmin">
                   <BoxBlockDefaultClickPropagation>

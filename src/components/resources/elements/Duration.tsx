@@ -18,7 +18,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 export const DurationViewer: React.FC<{ value?: number | null }> = ({ value }) => {
   return value ? (
     <Text fontSize="sm" color="gray.400" mb={0}>
-      {humanizeDuration(value, { largest: 2 })}
+      {humanizeDuration(value * 1000, { largest: 2 })}
     </Text>
   ) : null;
 };
@@ -26,11 +26,11 @@ export const DurationViewer: React.FC<{ value?: number | null }> = ({ value }) =
 export const DurationInput: React.FC<
   {
     value?: number | null;
-    onChange: (durationMs: number | null) => void;
+    onChange: (durationSeconds: number | null) => void;
     autoFocus?: boolean;
   } & Omit<InputProps, 'value' | 'onChange'>
 > = ({ value, onChange, autoFocus, size, w, ...inputProps }) => {
-  const [duration, setDuration] = useState(convertFromValue(value, 'ms'));
+  const [duration, setDuration] = useState(convertFromValue(value, 's'));
   const [isValid, setIsValid] = useState(true);
   const [showTooltip, setShowTooltip] = useState(false);
   let inputRef = useRef<HTMLInputElement>(null);
@@ -45,7 +45,7 @@ export const DurationInput: React.FC<
 
   useEffect(() => {
     if (value) {
-      const newDuration = convertFromValue(value, 'ms');
+      const newDuration = convertFromValue(value, 's');
       if (newDuration !== duration) setDuration(newDuration);
     }
   }, [value]);
@@ -64,7 +64,7 @@ export const DurationInput: React.FC<
       if (newValue === null || !isNaN(newValue)) {
         onChange(newValue);
       } else {
-        setDuration(convertFromValue(value, 'ms'));
+        setDuration(convertFromValue(value, 's'));
       }
     },
     [onChange, value]
@@ -104,12 +104,11 @@ export const DurationInput: React.FC<
   );
 };
 export const SCALE_CONVERSIONS = {
-  ms: 1,
-  s: 1000,
-  m: 60000,
-  h: 3600000,
-  d: 86400000,
-  w: 86400000 * 7,
+  s: 1,
+  m: 60,
+  h: 3600,
+  d: 86400,
+  w: 86400 * 7,
 };
 
 type ScaleDuration = keyof typeof SCALE_CONVERSIONS;
@@ -125,19 +124,18 @@ export function convertValueToScale(value: number | null, scale: ScaleDuration) 
 
 export function convertValueToDuration(value?: number): string {
   if (value === undefined) return '';
-  const milliseconds = Math.round(value % 1000);
-  const seconds = Math.floor((value / 1000) % 60);
-  const minutes = Math.floor((value / 60000) % 60);
-  const hours = Math.floor((value / 3600000) % 24);
-  const days = Math.floor((value / 86400000) % 7);
-  const weeks = Math.floor(value / (86400000 * 7));
+  // const milliseconds = Math.round(value % 1000);
+  const seconds = Math.floor(value % 60);
+  const minutes = Math.floor((value / 60) % 60);
+  const hours = Math.floor((value / 3600) % 24);
+  const days = Math.floor((value / 86400) % 7);
+  const weeks = Math.floor(value / (86400 * 7));
   return [
     weeks && `${weeks}w`,
     days && `${days}d`,
     hours && `${hours}h`,
     (minutes || value === 0) && `${minutes}m`,
     seconds && `${seconds}s`,
-    milliseconds && `${milliseconds}ms`,
   ]
     .filter((x) => !!x)
     .join(' ');
@@ -150,8 +148,8 @@ export function convertDurationToValue(duration: string): number | null {
   if (!valid) return NaN;
   const matches = duration.trim().match(regexp);
   if (!matches) return parseFloat(duration);
-  const [weeks, days, hours, minutes, seconds, milliseconds] = matches.slice(1).map((x) => parseInt(x) || 0);
-  return ((((weeks * 7 + days) * 24 + hours) * 60 + minutes) * 60 + seconds) * 1000 + milliseconds;
+  const [weeks, days, hours, minutes, seconds] = matches.slice(1).map((x) => parseInt(x) || 0);
+  return (((weeks * 7 + days) * 24 + hours) * 60 + minutes) * 60 + seconds;
 }
 
 export const convertFromValue = (value: number | null | undefined, scale: keyof typeof SCALE_CONVERSIONS) => {
@@ -165,7 +163,7 @@ export const convertToValue = (duration: string, scale: ScaleDuration) =>
 interface EditableDurationProps {
   defaultValue?: number | null;
   isDisabled?: boolean;
-  onSubmit: (durationMs: number | null) => void;
+  onSubmit: (durationSeconds: number | null) => void;
   placeholder?: string;
   isLoading?: boolean;
 }
@@ -219,7 +217,7 @@ export const EditableDuration: React.FC<EditableDurationProps> = ({
 
 export const DurationFormField: React.FC<{
   value?: number | null;
-  onChange: (durationMs: number | null) => void;
+  onChange: (durationSeconds: number | null) => void;
 }> = ({ value, onChange }) => {
   return (
     <FormControl display="flex" alignItems="baseline">

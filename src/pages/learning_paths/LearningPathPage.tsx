@@ -101,7 +101,7 @@ export const getLearningPathPage = gql`
 
 const learningPathPlaceholder: GetLearningPathPageQuery['getLearningPathByKey'] = {
   ...generateLearningPathData(),
-  durationMs: 100000,
+  durationSeconds: 100,
   tags: [{ name: 'tag 1' }],
   public: true,
   rating: 4.5,
@@ -198,11 +198,11 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
             <Stack spacing={2} pb={2}>
               <Center>
                 <EditableDuration
-                  defaultValue={learningPath.durationMs}
+                  defaultValue={learningPath.durationSeconds}
                   onSubmit={(newDuration) =>
-                    newDuration !== learningPath.durationMs &&
+                    newDuration !== learningPath.durationSeconds &&
                     updateLearningPath({
-                      variables: { _id: learningPath._id, payload: { durationMs: newDuration } },
+                      variables: { _id: learningPath._id, payload: { durationSeconds: newDuration } },
                     })
                   }
                   placeholder="Estimated Duration"

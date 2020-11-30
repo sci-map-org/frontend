@@ -56,7 +56,7 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
   const [type, setType] = useState<ResourceType>(ResourceType.Article);
   const [url, setUrl] = useState('');
   const [description, setDescription] = useState<string | undefined>(undefined);
-  const [durationMs, setDurationMs] = useState<number | null>();
+  const [durationSeconds, setDurationSeconds] = useState<number | null>();
   const [selectedDomainsAndCoveredConcepts, setSelectedDomainsAndCoveredConcepts] = useState<
     DomainAndSelectedConcepts[]
   >([]);
@@ -80,7 +80,7 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
       <LearningMaterialTagsStatelessEditor selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
       <Flex direction="row" alignItems="center" justifyContent="space-between">
         <ResourceMediaTypeSelector value={mediaType} onSelect={(t) => setMediaType(t)} />
-        <DurationFormField value={durationMs} onChange={setDurationMs} />
+        <DurationFormField value={durationSeconds} onChange={setDurationSeconds} />
       </Flex>
       <ResourceDescriptionInput value={description} onChange={(d) => setDescription(d)} />
       <DomainAndConceptsSelector
@@ -110,7 +110,7 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
                   type,
                   mediaType,
                   url,
-                  durationMs,
+                  durationSeconds,
                   tags: selectedTags.map((t) => t.name),
                 },
                 selectedDomainsAndCoveredConcepts

@@ -3,7 +3,7 @@ import * as Types from '../types';
 import { ResourcePreviewDataFragment } from '../resources/resources.fragments.generated';
 export type LearningPathDataFragment = (
   { __typename?: 'LearningPath' }
-  & Pick<Types.LearningPath, '_id' | 'key' | 'public' | 'name' | 'description' | 'durationMs'>
+  & Pick<Types.LearningPath, '_id' | 'key' | 'public' | 'name' | 'description' | 'durationSeconds'>
 );
 
 export type LearningPathWithResourceItemsPreviewDataFragment = (

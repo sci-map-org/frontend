@@ -25,7 +25,7 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
   const [type, setType] = useState(resource.type);
 
   const [url, setUrl] = useState(resource.url);
-  const [durationMs, setDurationMs] = useState(resource.durationMs);
+  const [durationSeconds, setDurationSeconds] = useState(resource.durationSeconds);
   const [description, setDescription] = useState(resource.description || undefined);
   const { currentUser } = useCurrentUser();
   const [deleteResource] = useDeleteResourceMutation();
@@ -51,7 +51,7 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
       <Flex flexDirection="row">
         <ResourceMediaTypeSelector value={mediaType} onSelect={(t) => setMediaType(t)} />
         <Box flexGrow={1}></Box>
-        <DurationFormField value={durationMs} onChange={setDurationMs} />
+        <DurationFormField value={durationSeconds} onChange={setDurationSeconds} />
       </Flex>
       <ResourceDescriptionInput value={description} onChange={(d) => setDescription(d)} />
       <Stack direction="row" justifyContent="space-between">
@@ -94,7 +94,7 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
                 type,
                 url,
                 description,
-                durationMs,
+                durationSeconds,
               })
             }
           >

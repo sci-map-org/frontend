@@ -148,7 +148,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
         <Flex justifyContent="space-between" alignItems="flex-end">
           <Stack direction="row" spacing={2} alignItems="baseline">
             <ResourceUrlLink fontSize="md" resource={resource} isLoading={loading} />
-            <DurationViewer value={resource.durationMs} />
+            <DurationViewer value={resource.durationSeconds} />
           </Stack>
           <Stack direction="row" spacing={2} alignItems="center">
             <StarsRatingViewer value={resource.rating} />
