@@ -87,7 +87,7 @@ export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCar
         ref={ref}
         renderCenterLeft={
           <ResourceCompletedCheckbox
-            size="lg"
+            size="md"
             resource={resource}
             isLoading={isLoading}
             onResourceConsumed={onResourceConsumed}

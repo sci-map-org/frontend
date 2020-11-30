@@ -1,4 +1,5 @@
-import { Box, Button, Flex, Skeleton, Stack, Text } from '@chakra-ui/react';
+import { CheckCircleIcon, DownloadIcon } from '@chakra-ui/icons';
+import { Box, Button, Flex, IconButton, Skeleton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import Router, { useRouter } from 'next/router';
 import { Access } from '../../components/auth/Access';
@@ -15,6 +16,7 @@ import {
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { InternalLink } from '../../components/navigation/InternalLink';
 import { DurationViewer } from '../../components/resources/elements/Duration';
+import { ResourceCompletedCheckbox } from '../../components/resources/elements/ResourceCompletedCheckbox';
 import { ResourceDescription } from '../../components/resources/elements/ResourceDescription';
 import { ResourceMediaTypeBadge } from '../../components/resources/elements/ResourceMediaType';
 import { ResourceTypeBadge } from '../../components/resources/elements/ResourceType';
@@ -151,6 +153,8 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
             <DurationViewer value={resource.durationSeconds} />
           </Stack>
           <Stack direction="row" spacing={2} alignItems="center">
+            <ResourceCompletedCheckbox resource={resource} size="sm" />
+
             <StarsRatingViewer value={resource.rating} />
             <RoleAccess accessRule="contributorOrAdmin">
               <LearningMaterialStarsRater learningMaterialId={resource._id} isDisabled={loading} />

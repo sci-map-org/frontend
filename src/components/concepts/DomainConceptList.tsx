@@ -247,7 +247,8 @@ export const DomainConceptListMenuLink: React.FC<{
           {concept.name}
         </InternalLink>
         <CompletedCheckbox
-          size="md"
+          size="xs"
+          uncheckedColor="gray.400"
           tooltipLabel={!!concept.known ? 'Mark this concept as unknown' : 'Mark this concept as known'}
           tooltipDelay={500}
           onChange={() => {
