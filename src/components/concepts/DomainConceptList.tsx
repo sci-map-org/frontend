@@ -1,7 +1,6 @@
-import { Box, Collapse, Divider, Flex, IconButton, Skeleton, Stack } from '@chakra-ui/react';
 import { AddIcon, MinusIcon } from '@chakra-ui/icons';
+import { Box, Collapse, Divider, Flex, IconButton, Skeleton, Stack, Text } from '@chakra-ui/react';
 import { remove } from 'lodash';
-import Router from 'next/router';
 import { useMemo, useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import {
@@ -10,7 +9,6 @@ import {
 } from '../../graphql/concepts/concepts.operations.generated';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { GetDomainByKeyDomainPageQuery } from '../../pages/domains/DomainPage.generated';
-import { RoleAccess } from '../auth/RoleAccess';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import { CompletedCheckbox } from '../lib/CompletedCheckbox';
 import { InternalLink } from '../navigation/InternalLink';
@@ -105,34 +103,13 @@ export const DomainConceptList: React.FC<{
   };
   if (!domainConceptItems) return null;
   return (
-    <Flex direction="column" backgroundColor="gray.100" borderRadius={10} pl={5} py={1}>
-      <Stack direction="row" spacing={2}>
-        <Box>
-          <InternalLink
-            fontSize="2xl"
-            routePath="/domains/[key]/concepts"
-            asHref={`/domains/${domain.key}/concepts`}
-            isDisabled={isLoading}
-          >
-            My Progress
-          </InternalLink>
-        </Box>
+    <Flex direction="column" backgroundColor="gray.100" borderRadius={10} px={5} py={2}>
+      <Box>
+        <Text fontSize="xl" textAlign="center" fontWeight={600} color="gray.600" pb={1}>
+          My Progress
+        </Text>
+      </Box>
 
-        <RoleAccess accessRule="contributorOrAdmin">
-          {!isLoading && (
-            <IconButton
-              aria-label="add-concept"
-              variant="ghost"
-              color="blue.700"
-              icon={<AddIcon />}
-              size="sm"
-              alignSelf="center"
-              borderRadius={16}
-              onClick={() => Router.push('/domains/[key]/concepts/new', `/domains/${domain.key}/concepts/new`)}
-            ></IconButton>
-          )}
-        </RoleAccess>
-      </Stack>
       <DomainConceptListMenuLevel
         nestedConceptItems={conceptNestedList}
         domainKey={domain.key}
@@ -140,6 +117,17 @@ export const DomainConceptList: React.FC<{
         isLoading={isLoading}
         level={0}
       />
+      <Flex direction="row" justifyContent="center" pt={2} pb={1}>
+        <InternalLink
+          color="gray.600"
+          fontWeight={600}
+          routePath="/domains/[key]/concepts/new"
+          asHref={`/domains/${domain.key}/concepts/new`}
+          isDisabled={isLoading}
+        >
+          + Add Concept
+        </InternalLink>
+      </Flex>
     </Flex>
   );
 };
@@ -241,21 +229,6 @@ export const DomainConceptListMenuLink: React.FC<{
   return (
     <Skeleton isLoaded={!isLoading}>
       <Stack direction="row" spacing={2} alignItems="center">
-        <CompletedCheckbox
-          size="md"
-          tooltipLabel={!!concept.known ? 'Mark this concept as unknown' : 'Mark this concept as known'}
-          tooltipDelay={500}
-          onChange={() => {
-            onToggle(concept);
-          }}
-          isChecked={!!concept.known}
-        />
-        <InternalLink
-          routePath="/domains/[key]/concepts/[conceptKey]"
-          asHref={`/domains/${domainKey}/concepts/${concept.key}`}
-        >
-          {concept.name}
-        </InternalLink>
         {expandable && (
           <IconButton
             isRound
@@ -267,6 +240,21 @@ export const DomainConceptListMenuLink: React.FC<{
             onClick={() => onExpand && onExpand()}
           />
         )}
+        <InternalLink
+          routePath="/domains/[key]/concepts/[conceptKey]"
+          asHref={`/domains/${domainKey}/concepts/${concept.key}`}
+        >
+          {concept.name}
+        </InternalLink>
+        <CompletedCheckbox
+          size="md"
+          tooltipLabel={!!concept.known ? 'Mark this concept as unknown' : 'Mark this concept as known'}
+          tooltipDelay={500}
+          onChange={() => {
+            onToggle(concept);
+          }}
+          isChecked={!!concept.known}
+        />
       </Stack>
     </Skeleton>
   );

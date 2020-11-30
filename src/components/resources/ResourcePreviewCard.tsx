@@ -195,7 +195,7 @@ const BottomBlock: React.FC<{
         {resource.coveredConceptsByDomain && (
           <Skeleton isLoaded={!isLoading}>
             <BoxBlockDefaultClickPropagation>
-              <LearningMaterialCardCoveredTopics learningMaterial={resource} domainKey={domainKey} />
+              <LearningMaterialCardCoveredTopics learningMaterial={resource} domainKey={domainKey} editable />
             </BoxBlockDefaultClickPropagation>
           </Skeleton>
         )}

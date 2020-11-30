@@ -1,5 +1,5 @@
+import { EditIcon } from '@chakra-ui/icons';
 import {
-  Box,
   IconButton,
   Skeleton,
   Stack,
@@ -11,10 +11,10 @@ import {
   Wrap,
   WrapItem,
 } from '@chakra-ui/react';
-import { EditIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import { uniqBy } from 'lodash';
 import { ReactNode, useEffect, useRef, useState } from 'react';
+import { AiTwotoneTags } from 'react-icons/ai';
 import { LearningMaterial, LearningMaterialTag } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
@@ -212,7 +212,7 @@ export const EditableLearningMaterialTags: React.FC<{
                         }
                         setTagEditorMode(true);
                       }}
-                      icon={<EditIcon />}
+                      icon={learningMaterial.tags?.length ? <EditIcon /> : <AiTwotoneTags />}
                     />
                   </Tooltip>
                 )

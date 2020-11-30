@@ -106,42 +106,46 @@ const shortenCoveredConceptsList = (coveredConcepts: Pick<ConceptDataFragment, '
 export const LearningMaterialCardCoveredTopics: React.FC<{
   learningMaterial: LearningMaterialWithCoveredConceptsByDomainDataFragment;
   domainKey?: string;
-}> = ({ learningMaterial, domainKey }) => {
+  editable?: boolean;
+}> = ({ learningMaterial, domainKey, editable }) => {
   const [coveredConceptsEditorMode, setCoveredConceptsEditorMode] = useState(false);
   const { currentUser } = useCurrentUser();
   const unauthentificatedModalDisclosure = useUnauthentificatedModal();
   const domainCoveredConcepts = learningMaterial.coveredConceptsByDomain?.filter(
     (d) => !domainKey || d.domain.key === domainKey
   );
+
   if (!domainCoveredConcepts) return null;
+  const coveredConcepts = flatten(domainCoveredConcepts.map(({ coveredConcepts }) => coveredConcepts));
+  if (!coveredConcepts.length && !editable) return null;
+
   return (
     <Popover placement="bottom-end" isLazy>
       <PopoverTrigger>
         <Stack direction="row" spacing="1px" _hover={{ color: 'gray.800' }} fontSize="15px">
           <Text color="gray.800" fontWeight={300} as="span">
-            About:{'  '}
+            About:{' '}
           </Text>
           <Link color="gray.800" fontWeight={300} onClick={() => setCoveredConceptsEditorMode(false)}>
-            {shortenCoveredConceptsList(
-              flatten(domainCoveredConcepts.map(({ coveredConcepts }) => coveredConcepts)),
-              32
-            )}
+            {shortenCoveredConceptsList(flatten(coveredConcepts), 32)}
           </Link>
-          <IconButton
-            onClick={(e) => {
-              if (!currentUser) {
-                unauthentificatedModalDisclosure.onOpen();
-                e.preventDefault();
-                return;
-              }
-              setCoveredConceptsEditorMode(true);
-            }}
-            aria-label="Add or remove covered concepts"
-            variant="ghost"
-            size="xs"
-            color="gray.600"
-            icon={<SettingsIcon />}
-          />
+          {editable && (
+            <IconButton
+              onClick={(e) => {
+                if (!currentUser) {
+                  unauthentificatedModalDisclosure.onOpen();
+                  e.preventDefault();
+                  return;
+                }
+                setCoveredConceptsEditorMode(true);
+              }}
+              aria-label="Add or remove covered concepts"
+              variant="ghost"
+              size="xs"
+              color="gray.600"
+              icon={<SettingsIcon />}
+            />
+          )}
         </Stack>
       </PopoverTrigger>
       <PopoverContent zIndex={4} backgroundColor="white">
