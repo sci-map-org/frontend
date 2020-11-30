@@ -1,3 +1,4 @@
+import { AddIcon } from '@chakra-ui/icons';
 import {
   Badge,
   Box,
@@ -9,7 +10,6 @@ import {
   Input,
   InputGroup,
   InputRightElement,
-  MenuOptionGroup,
   Select,
   Stack,
   Switch,
@@ -18,9 +18,8 @@ import {
   TagLabel,
   Text,
 } from '@chakra-ui/react';
-import { AddIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
-import { filter, values, without } from 'lodash';
+import { values, without } from 'lodash';
 import { DependencyList, useEffect, useMemo, useRef, useState } from 'react';
 import MultiSelect from 'react-multi-select-component';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
@@ -32,17 +31,14 @@ import {
   DomainLearningMaterialsFilterOptions,
   DomainLearningMaterialsOptions,
   DomainLearningMaterialsSortingType,
-  DomainResourcesOptions,
-  DomainResourcesSortingType,
   LearningMaterialType,
   ResourceType,
 } from '../../graphql/types';
 import { theme } from '../../theme/theme';
 import { RoleAccess } from '../auth/RoleAccess';
-import { ResourcePreviewCardList } from './ResourcePreviewCardList';
-import { ResourceTypeBadge, resourceTypeColorMapping, resourceTypeToLabel } from './elements/ResourceType';
 import { LearningPathPreviewCardData } from '../learning_paths/LearningPathPreviewCard';
 import { LearningPathPreviewCardDataFragment } from '../learning_paths/LearningPathPreviewCard.generated';
+import { ResourceTypeBadge, resourceTypeColorMapping, resourceTypeToLabel } from './elements/ResourceType';
 import { LearningMaterialPreviewCardList } from './LearningMaterialPreviewCardList';
 
 export const getDomainRecommendedLearningMaterials = gql`
@@ -82,7 +78,7 @@ export const DomainRecommendedLearningMaterials: React.FC<{
   return (
     <Flex direction="column" mb={4}>
       <Flex direction="row" justifyContent="space-between" alignItems="center" mb={2}>
-        <Text fontSize="2xl">Recommended Next</Text>
+        <Text fontSize="2xl">Recommended for You</Text>
         <Box pr={3}>
           <FormControl id="sort_by" display="flex" flexDir="row" alignItems="center">
             <FormLabel mb={0} fontWeight={300}>
