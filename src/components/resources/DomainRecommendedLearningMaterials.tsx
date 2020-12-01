@@ -75,8 +75,30 @@ export const DomainRecommendedLearningMaterials: React.FC<{
 }) => {
   return (
     <Flex direction="column" mb={4}>
-      <Flex direction="row" justifyContent="space-between" alignItems="center" mb={2}>
+      <Flex direction="row" alignItems="baseline" mb={2}>
         <Text fontSize="2xl">Recommended for You</Text>
+        <Box pl={3}>
+          <FormControl id="sort_by" display="flex" flexDir="row" alignItems="center">
+            <FormLabel mb={0} fontWeight={300} flexShrink={0}>
+              Sort by:
+            </FormLabel>
+            <Select
+              w="8rem"
+              size="sm"
+              variant="flushed"
+              onChange={(e) =>
+                setLearningMaterialsOptions({
+                  ...learningMaterialsOptions,
+                  sortingType: e.target.value as DomainLearningMaterialsSortingType,
+                })
+              }
+              value={learningMaterialsOptions.sortingType}
+            >
+              <option value={DomainLearningMaterialsSortingType.Recommended}>Most Relevant</option>
+              <option value={DomainLearningMaterialsSortingType.Newest}>Newest First</option>
+            </Select>
+          </FormControl>
+        </Box>
       </Flex>
       <Flex
         direction={{ base: 'column', md: 'row' }}
@@ -104,28 +126,6 @@ export const DomainRecommendedLearningMaterials: React.FC<{
             }
           />
         </Stack>
-        <Box pl={3}>
-          <FormControl id="sort_by" display="flex" flexDir="row" alignItems="center">
-            <FormLabel mb={0} fontWeight={300} flexShrink={0}>
-              Sort by:
-            </FormLabel>
-            <Select
-              w="8rem"
-              size="sm"
-              variant="flushed"
-              onChange={(e) =>
-                setLearningMaterialsOptions({
-                  ...learningMaterialsOptions,
-                  sortingType: e.target.value as DomainLearningMaterialsSortingType,
-                })
-              }
-              value={learningMaterialsOptions.sortingType}
-            >
-              <option value={DomainLearningMaterialsSortingType.Recommended}>Most Relevant</option>
-              <option value={DomainLearningMaterialsSortingType.Newest}>Newest First</option>
-            </Select>
-          </FormControl>
-        </Box>
       </Flex>
       <LearningMaterialPreviewCardList
         domainKey={domainKey}

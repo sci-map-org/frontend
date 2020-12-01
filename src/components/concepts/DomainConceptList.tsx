@@ -105,7 +105,7 @@ export const DomainConceptList: React.FC<{
   if (!domainConceptItems) return null;
   if (!isLoading && !domainConceptItems.length) return null;
   return (
-    <Flex direction="column" backgroundColor="gray.100" borderRadius={5} px={5} pt={1} pb={2} minW={minWidth}>
+    <Flex direction="column" backgroundColor="gray.100" borderRadius={5} px={0} pt={1} pb={2} minW={minWidth}>
       <Box>
         <Text fontSize="xl" textAlign="center" fontWeight={600} color="gray.600" pb={2}>
           My Progress
@@ -199,7 +199,7 @@ export const CollapsableMenuLink: React.FC<{
         <Flex direction="row">
           <Divider
             orientation="vertical"
-            ml="7px"
+            ml="8px"
             mr="10px"
             mb={2}
             mt={1}
@@ -230,25 +230,27 @@ export const DomainConceptListMenuLink: React.FC<{
 }> = ({ domainKey, concept, onToggle, isLoading, expandable, onExpand, expanded }) => {
   return (
     <Skeleton isLoaded={!isLoading}>
-      <Stack direction="row" spacing={2} alignItems="center">
+      <Flex direction="row" alignItems="center" px={expandable ? 1 : 5}>
         {expandable && (
           <IconButton
             isRound
             aria-label="expand-menu"
-            size="xs"
+            size="16px"
             variant="ghost"
             color="gray.400"
-            icon={expanded ? <MinusIcon /> : <AddIcon />}
+            icon={expanded ? <MinusIcon boxSize="12px" /> : <AddIcon boxSize="12px" />}
             onClick={() => onExpand && onExpand()}
           />
         )}
         <InternalLink
+          ml={expandable ? 1 : 0}
           routePath="/domains/[key]/concepts/[conceptKey]"
           asHref={`/domains/${domainKey}/concepts/${concept.key}`}
         >
           {concept.name}
         </InternalLink>
         <CompletedCheckbox
+          ml={2}
           size="xs"
           uncheckedColor="gray.400"
           tooltipLabel={!!concept.known ? 'Mark this concept as unknown' : 'Mark this concept as known'}
@@ -258,7 +260,7 @@ export const DomainConceptListMenuLink: React.FC<{
           }}
           isChecked={!!concept.known}
         />
-      </Stack>
+      </Flex>
     </Skeleton>
   );
 };
