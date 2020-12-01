@@ -57,19 +57,19 @@ export const getDomainByKeyDomainPage = gql`
           }
         }
       }
-      # learningMaterials(options: { sortingType: newest, filter: { completedByUser: true } }) {
-      #   items {
-      #     ...ResourceMiniCardData
-      #     ...LearningPathMiniCardData
-      #   }
-      # }
+      learningMaterials(options: { sortingType: newest, filter: { completedByUser: true } }) {
+        items {
+          ...ResourceMiniCardData
+          ...LearningPathMiniCardData
+        }
+      }
     }
   }
+  ${ResourceMiniCardData}
+  ${LearningPathMiniCardData}
   ${DomainData}
   ${ConceptData}
 `;
-// # ${ResourceMiniCardData}
-//   # ${LearningPathMiniCardData}
 
 const placeholderDomainData: GetDomainByKeyDomainPageQuery['getDomainByKey'] = {
   ...generateDomainData(),
@@ -227,7 +227,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
           flexShrink={0}
           ml={{ base: 0, md: 8 }}
         >
-          {/* <RoleAccess accessRule="loggedInUser">
+          <RoleAccess accessRule="loggedInUser">
             {domain.learningMaterials && (
               <DomainUserHistory
                 maxH={{ md: '210px' }}
@@ -235,7 +235,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
                 learningMaterials={domain.learningMaterials.items}
               />
             )}
-          </RoleAccess> */}
+          </RoleAccess>
           <DomainConceptList
             minWidth="260px"
             domain={domain}

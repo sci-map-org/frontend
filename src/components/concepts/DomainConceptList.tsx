@@ -229,19 +229,19 @@ export const DomainConceptListMenuLink: React.FC<{
   onExpand?: () => void;
 }> = ({ domainKey, concept, onToggle, isLoading, expandable, onExpand, expanded }) => {
   return (
-    <Skeleton isLoaded={!isLoading}>
-      <Flex direction="row" alignItems="center" px={expandable ? 1 : 5}>
-        {expandable && (
-          <IconButton
-            isRound
-            aria-label="expand-menu"
-            size="16px"
-            variant="ghost"
-            color="gray.400"
-            icon={expanded ? <MinusIcon boxSize="12px" /> : <AddIcon boxSize="12px" />}
-            onClick={() => onExpand && onExpand()}
-          />
-        )}
+    <Flex direction="row" alignItems="center" px={expandable ? 1 : 5}>
+      {expandable && (
+        <IconButton
+          isRound
+          aria-label="expand-menu"
+          size="16px"
+          variant="ghost"
+          color="gray.400"
+          icon={expanded ? <MinusIcon boxSize="12px" /> : <AddIcon boxSize="12px" />}
+          onClick={() => onExpand && onExpand()}
+        />
+      )}
+      <Skeleton isLoaded={!isLoading} display="flex" alignItems="center">
         <InternalLink
           ml={expandable ? 1 : 0}
           routePath="/domains/[key]/concepts/[conceptKey]"
@@ -260,7 +260,7 @@ export const DomainConceptListMenuLink: React.FC<{
           }}
           isChecked={!!concept.known}
         />
-      </Flex>
-    </Skeleton>
+      </Skeleton>
+    </Flex>
   );
 };
