@@ -23,6 +23,7 @@ export const generateDomainData = (): DomainDataFragment => ({
   _id: Math.random().toString(),
   name: 'Placeholder Name',
   key: Math.random().toString(),
+  description: 'One line description',
 });
 
 export const DomainWithConceptsData = gql`

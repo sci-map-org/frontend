@@ -1,17 +1,20 @@
 import { NetworkStatus } from '@apollo/client';
 import { SettingsIcon } from '@chakra-ui/icons';
-import { Box, ButtonGroup, Flex, Heading, IconButton, Skeleton } from '@chakra-ui/react';
+import { Box, ButtonGroup, Flex, Heading, IconButton, Skeleton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { DomainConceptGraph } from '../../components/concepts/DomainConceptGraph';
 import { DomainConceptList } from '../../components/concepts/DomainConceptList';
+import { DomainUserHistory } from '../../components/domains/DomainUserHistory';
 import { PageLayout } from '../../components/layout/PageLayout';
+import { LearningPathMiniCardData } from '../../components/learning_paths/LearningPathMiniCard';
 import { LearningPathPreviewCardDataFragment } from '../../components/learning_paths/LearningPathPreviewCard.generated';
-import { InternalButtonLink } from '../../components/navigation/InternalLink';
+import { InternalButtonLink, InternalLink } from '../../components/navigation/InternalLink';
 import { DomainRecommendedLearningMaterials } from '../../components/resources/DomainRecommendedLearningMaterials';
 import { useGetDomainRecommendedLearningMaterialsQuery } from '../../components/resources/DomainRecommendedLearningMaterials.generated';
+import { ResourceMiniCardData } from '../../components/resources/ResourceMiniCard';
 import { ConceptData, generateConceptData } from '../../graphql/concepts/concepts.fragments';
 import { DomainData, generateDomainData } from '../../graphql/domains/domains.fragments';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
@@ -54,36 +57,36 @@ export const getDomainByKeyDomainPage = gql`
           }
         }
       }
+      learningMaterials(options: { sortingType: newest, filter: { completedByUser: true } }) {
+        items {
+          ...ResourceMiniCardData
+          ...LearningPathMiniCardData
+        }
+      }
     }
   }
   ${DomainData}
   ${ConceptData}
+  ${ResourceMiniCardData}
+  ${LearningPathMiniCardData}
 `;
 
 const placeholderDomainData: GetDomainByKeyDomainPageQuery['getDomainByKey'] = {
   ...generateDomainData(),
   concepts: {
-    items: [
-      {
-        concept: generateConceptData(),
-        relationship: {
-          index: 0,
-        },
+    items: [...Array(12)].map(() => ({
+      concept: generateConceptData(),
+      relationship: {
+        index: 0,
       },
-      {
-        concept: generateConceptData(),
-        relationship: {
-          index: 0,
-        },
-      },
-    ],
+    })),
   },
 };
 
 export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
   const router = useRouter();
 
-  const { data, loading } = useGetDomainByKeyDomainPageQuery({
+  const { data, loading, error } = useGetDomainByKeyDomainPageQuery({
     variables: { key: domainKey },
   });
 
@@ -124,53 +127,72 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
 
   const domain = data?.getDomainByKey || placeholderDomainData;
 
-  const { mockedFeaturesEnabled } = useMockedFeaturesEnabled();
-
+  // const { mockedFeaturesEnabled } = useMockedFeaturesEnabled();
+  if (error) return null;
   return (
-    <PageLayout marginSize="sm">
-      <Flex direction="row" alignItems="center" pb={5}>
-        <Skeleton isLoaded={!loading}>
-          <Heading fontSize="4xl" fontWeight="normal" color="blackAlpha.800">
-            Learn {domain.name}
-          </Heading>
-        </Skeleton>
-        <Box flexGrow={1} />
-        <ButtonGroup spacing={2}>
-          <InternalButtonLink
-            variant="outline"
-            borderColor="blue.500"
-            color="blue.700"
-            borderWidth="1px"
-            routePath="/domains/[key]/resources/new"
-            asHref={router.asPath + '/resources/new'}
-            loggedInOnly
-            isDisabled={loading}
-          >
-            + Add resource
-          </InternalButtonLink>
-          <InternalButtonLink
-            variant="outline"
-            colorScheme="teal"
-            borderWidth="1px"
-            routePath="/learning_paths/new"
-            asHref="/resources/new"
-            loggedInOnly
-            isDisabled={loading}
-          >
-            + Add Learning Path
-          </InternalButtonLink>
-          {/* ? would be expected to be there from the start maybe (attached + public). good to push for creation though */}
-        </ButtonGroup>
-        <RoleAccess accessRule="contributorOrAdmin">
-          <IconButton
-            ml={2}
-            variant="outline"
-            aria-label="manage_domain"
-            icon={<SettingsIcon />}
-            onClick={() => routerPushToPage(ManageDomainPageInfo(domain))}
-          />
-        </RoleAccess>
-        {mockedFeaturesEnabled && (
+    <PageLayout marginSize="md">
+      <Stack direction={{ base: 'column', md: 'row' }} alignItems="stretch" pb={5} spacing={5}>
+        <Flex direction="column" alignItems="flex-start" flexGrow={1}>
+          <Skeleton isLoaded={!loading}>
+            <Heading fontSize="4xl" fontWeight="normal" color="blackAlpha.800">
+              Learn {domain.name}
+            </Heading>
+          </Skeleton>
+          <Skeleton isLoaded={!loading}>
+            <InternalLink
+              color="gray.600"
+              _hover={{ color: 'gray.700', textDecoration: 'underline' }}
+              fontWeight={600}
+              routePath="/domains/[key]/concepts"
+              asHref={`/domains/${domain.key}/concepts`}
+              isDisabled={loading}
+            >
+              {domain.concepts?.items.length ? domain.concepts?.items.length + ' Concepts ' : 'No concepts yet'}
+            </InternalLink>
+          </Skeleton>
+          {domain && domain.description && (
+            <Skeleton mt={2} isLoaded={!loading}>
+              <Box fontWeight={250}>{domain.description}</Box>
+            </Skeleton>
+          )}
+        </Flex>
+        <Flex direction="column" alignItems={{ base: 'flex-start', md: 'flex-end' }}>
+          <ButtonGroup spacing={2}>
+            <InternalButtonLink
+              variant="solid"
+              colorScheme="blue"
+              routePath="/domains/[key]/resources/new"
+              asHref={router.asPath + '/resources/new'}
+              loggedInOnly
+              isDisabled={loading}
+            >
+              Add Resource
+            </InternalButtonLink>
+            <InternalButtonLink
+              variant="outline"
+              colorScheme="teal"
+              // borderWidth="1px"
+              routePath="/learning_paths/new"
+              asHref="/resources/new"
+              loggedInOnly
+              isDisabled={loading}
+            >
+              Add Learning Path
+            </InternalButtonLink>
+            {/* ? would be expected to be there from the start maybe (attached + public). good to push for creation though */}
+            <RoleAccess accessRule="contributorOrAdmin">
+              <IconButton
+                ml={2}
+                isDisabled={loading}
+                variant="outline"
+                aria-label="manage_domain"
+                icon={<SettingsIcon />}
+                onClick={() => routerPushToPage(ManageDomainPageInfo(domain))}
+              />
+            </RoleAccess>
+          </ButtonGroup>
+
+          {/* {mockedFeaturesEnabled && (
           <Box ml={2}>
             <InternalButtonLink
               routePath="/domains/[key]/resources/indexing_queue"
@@ -181,18 +203,10 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
               32 Pending Resources
             </InternalButtonLink>
           </Box>
-        )}
-      </Flex>
-      {domain && domain.description && (
-        <Box mb={2} fontWeight={250}>
-          {domain.description}
-        </Box>
-      )}
-      <Flex direction={{ base: 'column-reverse', md: 'row' }} mb="100px">
-        <Flex direction="column" flexShrink={0} minWidth="260px">
-          <DomainConceptList domain={domain} isLoading={loading} onConceptToggled={() => refetchLearningMaterials()} />
+        )} */}
         </Flex>
-
+      </Stack>
+      <Flex direction={{ base: 'column-reverse', md: 'row' }} mb="100px">
         <Flex direction="column" flexShrink={1} flexGrow={1}>
           <DomainRecommendedLearningMaterials
             domainKey={domainKey}
@@ -206,6 +220,30 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
           {/* <DomainLearningPaths domain={domain} /> */}
           {/* {mockedFeaturesEnabled && <DomainLearningPaths domain={domain} />} */}
         </Flex>
+        <Stack
+          spacing={4}
+          alignItems={{ base: 'start', md: 'stretch' }}
+          direction={{ base: 'row', md: 'column' }}
+          flexShrink={0}
+          ml={{ base: 0, md: 8 }}
+        >
+          <RoleAccess accessRule="loggedInUser">
+            {domain.learningMaterials && (
+              <DomainUserHistory
+                maxH={{ md: '210px' }}
+                domainKey={domainKey}
+                learningMaterials={domain.learningMaterials.items}
+              />
+            )}
+          </RoleAccess>
+          <DomainConceptList
+            minWidth="260px"
+            domain={domain}
+            isLoading={loading}
+            onConceptToggled={() => refetchLearningMaterials()}
+          />
+          {/* <DomainConceptList domain={domain} isLoading={loading} onConceptToggled={() => refetchResources()} /> */}
+        </Stack>
         {/* )} */}
         {/* {mockedFeaturesEnabled && (
           <Stack spacing={4} direction="column" ml={6} flexShrink={1}>

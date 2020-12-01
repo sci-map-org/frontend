@@ -8,13 +8,11 @@ import {
   LearningMaterialStarsRater,
   StarsRatingViewer,
 } from '../../components/learning_materials/LearningMaterialStarsRating';
-import {
-  LearningMaterialTagsEditor,
-  SelectedTagsViewer,
-} from '../../components/learning_materials/LearningMaterialTagsEditor';
+import { EditableLearningMaterialTags } from '../../components/learning_materials/LearningMaterialTagsEditor';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { InternalLink } from '../../components/navigation/InternalLink';
 import { DurationViewer } from '../../components/resources/elements/Duration';
+import { ResourceCompletedCheckbox } from '../../components/resources/elements/ResourceCompletedCheckbox';
 import { ResourceDescription } from '../../components/resources/elements/ResourceDescription';
 import { ResourceMediaTypeBadge } from '../../components/resources/elements/ResourceMediaType';
 import { ResourceTypeBadge } from '../../components/resources/elements/ResourceType';
@@ -105,8 +103,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
   if (error) return <Box>Resource not found !</Box>;
 
   const resource = data?.getResourceById || resourceDataPlaceholder;
-  const selectedTags = resource.tags || [];
-
+  const { currentUser } = useCurrentUser();
   return (
     <PageLayout
       title={resource.name}
@@ -151,6 +148,8 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
             <DurationViewer value={resource.durationSeconds} />
           </Stack>
           <Stack direction="row" spacing={2} alignItems="center">
+            <ResourceCompletedCheckbox resource={resource} size="sm" />
+
             <StarsRatingViewer value={resource.rating} />
             <RoleAccess accessRule="contributorOrAdmin">
               <LearningMaterialStarsRater learningMaterialId={resource._id} isDisabled={loading} />
@@ -165,17 +164,14 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
                 <ResourceTypeBadge type={resource.type} /> - <ResourceMediaTypeBadge mediaType={resource.mediaType} />{' '}
               </Skeleton>
             </Box>
-            <RoleAccess
-              accessRule="loggedInUser"
-              renderAccessDenied={() => <SelectedTagsViewer selectedTags={selectedTags} />}
-            >
-              <LearningMaterialTagsEditor
-                size="sm"
-                placeholder="Add tags"
+            <Box>
+              <EditableLearningMaterialTags
                 learningMaterial={resource}
-                isDisabled={loading}
+                isLoading={loading}
+                isDisabled={!currentUser}
+                placeholder="Add tags"
               />
-            </RoleAccess>
+            </Box>
             {resource.description && <ResourceDescription description={resource.description} />}
           </Stack>
 

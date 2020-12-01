@@ -19,7 +19,7 @@ export const DomainConceptGraph: React.FC<DomainConceptGraphProps> = ({ domain, 
   return (
     <Flex justifyContent="center" direction="column" alignItems="center" mt={2}>
       <Text fontSize="3xl" mb={3}>
-        Concept Dependencies
+        Concept Map
       </Text>
       <HorizontalConceptMappingVisualisation
         domainKey={domain.key}

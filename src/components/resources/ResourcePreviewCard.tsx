@@ -87,7 +87,7 @@ export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCar
         ref={ref}
         renderCenterLeft={
           <ResourceCompletedCheckbox
-            size="lg"
+            size="md"
             resource={resource}
             isLoading={isLoading}
             onResourceConsumed={onResourceConsumed}
@@ -195,7 +195,7 @@ const BottomBlock: React.FC<{
         {resource.coveredConceptsByDomain && (
           <Skeleton isLoaded={!isLoading}>
             <BoxBlockDefaultClickPropagation>
-              <LearningMaterialCardCoveredTopics learningMaterial={resource} domainKey={domainKey} />
+              <LearningMaterialCardCoveredTopics learningMaterial={resource} domainKey={domainKey} editable />
             </BoxBlockDefaultClickPropagation>
           </Skeleton>
         )}

@@ -1,4 +1,4 @@
-import { Flex, Text } from '@chakra-ui/react';
+import { Flex, FlexProps, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { useGetDomainLearningPathsQuery } from './DomainLearningPaths.generated';
@@ -18,7 +18,11 @@ export const getDomainLearningPaths = gql`
   }
   ${LearningPathPreviewCardData}
 `;
-export const DomainLearningPaths: React.FC<{ domain: DomainDataFragment }> = ({ domain }) => {
+interface DomainLearningPathsProps {
+  domain: DomainDataFragment;
+  h?: FlexProps['h'];
+}
+export const DomainLearningPaths: React.FC<DomainLearningPathsProps> = ({ domain, h }) => {
   const { data } = useGetDomainLearningPathsQuery({ variables: { domainKey: domain.key } });
   const learningPaths = data?.getDomainByKey.learningPaths?.items;
   if (!learningPaths) return null;
@@ -27,7 +31,7 @@ export const DomainLearningPaths: React.FC<{ domain: DomainDataFragment }> = ({ 
       <Text fontSize="xl" mb={2}>
         Curated Learning Paths
       </Text>
-      <LearningPathPreviewCardList h="300px" learningPaths={learningPaths} />
+      <LearningPathPreviewCardList h={h} learningPaths={learningPaths} />
     </Flex>
   );
 };

@@ -116,7 +116,7 @@ export const HorizontalConceptMappingVisualisation: React.FC<{
     <ConceptMappingVisualisation
       domainKey={domainKey}
       direction="LR"
-      width="1000px"
+      width="500px"
       height="400px"
       concepts={concepts}
       layoutNodeSep={40}

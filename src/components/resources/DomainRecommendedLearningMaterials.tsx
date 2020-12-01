@@ -1,3 +1,4 @@
+import { AddIcon } from '@chakra-ui/icons';
 import {
   Badge,
   Box,
@@ -9,18 +10,15 @@ import {
   Input,
   InputGroup,
   InputRightElement,
-  MenuOptionGroup,
   Select,
   Stack,
-  Switch,
   Tag,
   TagCloseButton,
   TagLabel,
   Text,
 } from '@chakra-ui/react';
-import { AddIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
-import { filter, values, without } from 'lodash';
+import { values, without } from 'lodash';
 import { DependencyList, useEffect, useMemo, useRef, useState } from 'react';
 import MultiSelect from 'react-multi-select-component';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
@@ -32,17 +30,13 @@ import {
   DomainLearningMaterialsFilterOptions,
   DomainLearningMaterialsOptions,
   DomainLearningMaterialsSortingType,
-  DomainResourcesOptions,
-  DomainResourcesSortingType,
   LearningMaterialType,
   ResourceType,
 } from '../../graphql/types';
 import { theme } from '../../theme/theme';
-import { RoleAccess } from '../auth/RoleAccess';
-import { ResourcePreviewCardList } from './ResourcePreviewCardList';
-import { ResourceTypeBadge, resourceTypeColorMapping, resourceTypeToLabel } from './elements/ResourceType';
 import { LearningPathPreviewCardData } from '../learning_paths/LearningPathPreviewCard';
 import { LearningPathPreviewCardDataFragment } from '../learning_paths/LearningPathPreviewCard.generated';
+import { ResourceTypeBadge, resourceTypeColorMapping, resourceTypeToLabel } from './elements/ResourceType';
 import { LearningMaterialPreviewCardList } from './LearningMaterialPreviewCardList';
 
 export const getDomainRecommendedLearningMaterials = gql`
@@ -82,29 +76,7 @@ export const DomainRecommendedLearningMaterials: React.FC<{
   return (
     <Flex direction="column" mb={4}>
       <Flex direction="row" justifyContent="space-between" alignItems="center" mb={2}>
-        <Text fontSize="2xl">Resources</Text>
-        <Box pr={3}>
-          <FormControl id="sort_by" display="flex" flexDir="row" alignItems="center">
-            <FormLabel mb={0} fontWeight={300}>
-              Sort by:
-            </FormLabel>
-            <Select
-              w="8rem"
-              size="sm"
-              variant="flushed"
-              onChange={(e) =>
-                setLearningMaterialsOptions({
-                  ...learningMaterialsOptions,
-                  sortingType: e.target.value as DomainLearningMaterialsSortingType,
-                })
-              }
-              value={learningMaterialsOptions.sortingType}
-            >
-              <option value={DomainLearningMaterialsSortingType.Recommended}>Most Relevant</option>
-              <option value={DomainLearningMaterialsSortingType.Newest}>Newest First</option>
-            </Select>
-          </FormControl>
-        </Box>
+        <Text fontSize="2xl">Recommended for You</Text>
       </Flex>
       <Flex
         direction={{ base: 'column', md: 'row' }}
@@ -132,24 +104,28 @@ export const DomainRecommendedLearningMaterials: React.FC<{
             }
           />
         </Stack>
-        <RoleAccess accessRule="loggedInUser">
-          <Box mr={{ base: '0px', md: '30px' }} mt={{ base: 2, md: 0 }}>
-            <FormControl id="show_completed" display="flex" flexDir="row" alignItems="center">
-              <FormLabel mb={0} fontWeight={300}>
-                Show completed
-              </FormLabel>
-              <Switch
-                colorScheme="brand"
-                onChange={(e) =>
-                  setLearningMaterialsOptions({
-                    ...learningMaterialsOptions,
-                    filter: { ...learningMaterialsOptions.filter, completedByUser: e.target.checked },
-                  })
-                }
-              />
-            </FormControl>
-          </Box>
-        </RoleAccess>
+        <Box pl={3}>
+          <FormControl id="sort_by" display="flex" flexDir="row" alignItems="center">
+            <FormLabel mb={0} fontWeight={300} flexShrink={0}>
+              Sort by:
+            </FormLabel>
+            <Select
+              w="8rem"
+              size="sm"
+              variant="flushed"
+              onChange={(e) =>
+                setLearningMaterialsOptions({
+                  ...learningMaterialsOptions,
+                  sortingType: e.target.value as DomainLearningMaterialsSortingType,
+                })
+              }
+              value={learningMaterialsOptions.sortingType}
+            >
+              <option value={DomainLearningMaterialsSortingType.Recommended}>Most Relevant</option>
+              <option value={DomainLearningMaterialsSortingType.Newest}>Newest First</option>
+            </Select>
+          </FormControl>
+        </Box>
       </Flex>
       <LearningMaterialPreviewCardList
         domainKey={domainKey}

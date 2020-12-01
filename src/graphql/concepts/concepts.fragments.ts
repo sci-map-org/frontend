@@ -7,7 +7,7 @@ export const ConceptLinkData = gql`
     key
     name
   }
-`
+`;
 
 export const ConceptData = gql`
   fragment ConceptData on Concept {
@@ -40,5 +40,5 @@ export const ConceptWithDependenciesData = gql`
 export const generateConceptData = (): ConceptDataFragment => ({
   _id: Math.random().toString(),
   key: Math.random().toString(),
-  name: 'Concept Name',
+  name: 'Oups ' + "you shouldn't see that...".substr(0, Math.round(Math.random() * 25)),
 });

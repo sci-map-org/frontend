@@ -60,7 +60,7 @@ export const LearningPathCompletion: React.FC<LearningPathCompletionProps> = ({
     <Skeleton isLoaded={!isLoading}>
       <Flex direction="column" alignItems="stretch" w={w}>
         <Center>
-          <LearningPathCircularCompletion size="lg" learningPath={learningPath} />
+          <LearningPathCircularCompletion size="2xl" learningPath={learningPath} />
         </Center>
         <Wrap spacing="9px" mt={3} justify="center">
           {resourceItems.map((resourceItem) => (
@@ -79,20 +79,20 @@ export const LearningPathCompletion: React.FC<LearningPathCompletionProps> = ({
 };
 
 const sizes: {
-  [key in 'sm' | 'lg']: {
+  [key in 'md' | '2xl']: {
     progressWidth: string | number;
     progressThickness: string;
     buttonHeight: string;
     iconSize: number;
   };
 } = {
-  sm: { progressWidth: '56px', progressThickness: '7px', buttonHeight: '50px', iconSize: 50 },
-  lg: { progressWidth: '90px', progressThickness: '9px', buttonHeight: '83px', iconSize: 83 },
+  md: { progressWidth: '46px', progressThickness: '7px', buttonHeight: '44px', iconSize: 44 },
+  '2xl': { progressWidth: '90px', progressThickness: '9px', buttonHeight: '83px', iconSize: 83 },
 };
 
 export const LearningPathCircularCompletion: React.FC<{
   learningPath: LearningPathCompletionDataFragment;
-  size: 'lg' | 'sm';
+  size: keyof typeof sizes;
   onStarted?: () => void;
 }> = ({ learningPath, size, onStarted }) => {
   const [startLearningPath] = useStartLearningPathMutation();

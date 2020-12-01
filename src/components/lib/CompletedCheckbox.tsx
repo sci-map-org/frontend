@@ -1,10 +1,12 @@
-import { IconButton, Tooltip, IconButtonProps } from '@chakra-ui/react';
-import { CheckCircleIcon } from '@chakra-ui/icons';
-
+import { IconButton, Tooltip, IconButtonProps, IconProps } from '@chakra-ui/react';
+// import { CheckCircleIcon } from '@chakra-ui/icons';
+// import { BiCheckCircle } from 'react-icons/bi';
+import { IoIosCheckmarkCircleOutline, IoIosCheckmarkCircle } from 'react-icons/io';
 const sizeMapping = {
-  sm: 4,
-  md: 5,
-  lg: 6,
+  xs: { iconSize: 24 },
+  sm: { iconSize: 34 },
+  md: { iconSize: 46 },
+  lg: { iconSize: 52 },
 };
 
 export interface CompletedCheckboxProps
@@ -27,6 +29,7 @@ export interface CompletedCheckboxProps
   onChange: (completedValue: boolean) => void;
   tooltipLabel?: string;
   tooltipDelay?: number;
+  uncheckedColor?: IconProps['color'];
 }
 
 export const CompletedCheckbox: React.FC<CompletedCheckboxProps> = ({
@@ -35,6 +38,7 @@ export const CompletedCheckbox: React.FC<CompletedCheckboxProps> = ({
   isChecked,
   tooltipLabel,
   tooltipDelay,
+  uncheckedColor = 'gray.300',
   ...iconButtonProps
 }) => {
   return (
@@ -48,21 +52,27 @@ export const CompletedCheckbox: React.FC<CompletedCheckboxProps> = ({
       <IconButton
         {...iconButtonProps}
         aria-label="mark as completed"
-        h={sizeMapping[size]}
-        minW={sizeMapping[size]}
+        minW={sizeMapping[size].iconSize + 'px'}
         variant="ghost"
         onClick={() => onChange(!isChecked)}
-        color={isChecked ? 'main' : 'white'}
-        backgroundColor={isChecked ? 'white' : 'gray.300'}
+        color={isChecked ? 'main' : uncheckedColor}
+        w={sizeMapping[size].iconSize + 'px'}
+        h={sizeMapping[size].iconSize + 'px'}
+        bgColor="transparent"
         _hover={{
-          backgroundColor: isChecked ? 'white' : 'main',
-          color: isChecked ? 'gray.300' : 'white',
+          color: isChecked ? uncheckedColor : 'main',
         }}
         _selected={{}}
         _active={{}}
         _focus={{}}
         isRound
-        icon={<CheckCircleIcon boxSize={isChecked ? sizeMapping[size] : sizeMapping[size] - 1} />}
+        icon={
+          isChecked ? (
+            <IoIosCheckmarkCircle size={sizeMapping[size].iconSize} />
+          ) : (
+            <IoIosCheckmarkCircleOutline size={sizeMapping[size].iconSize} />
+          )
+        }
       />
     </Tooltip>
   );
