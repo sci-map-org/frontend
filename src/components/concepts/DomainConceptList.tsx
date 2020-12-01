@@ -1,5 +1,5 @@
 import { AddIcon, MinusIcon } from '@chakra-ui/icons';
-import { Box, Collapse, Divider, Flex, IconButton, Skeleton, Stack, Text } from '@chakra-ui/react';
+import { Box, Collapse, Divider, Flex, FlexProps, IconButton, Skeleton, Stack, Text } from '@chakra-ui/react';
 import { remove } from 'lodash';
 import { useMemo, useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
@@ -23,7 +23,8 @@ export const DomainConceptList: React.FC<{
   domain: GetDomainByKeyDomainPageQuery['getDomainByKey'];
   isLoading?: boolean;
   onConceptToggled: (conceptId: string) => void;
-}> = ({ domain, isLoading, onConceptToggled }) => {
+  minWidth?: FlexProps['minWidth'];
+}> = ({ domain, isLoading, onConceptToggled, minWidth = '260px' }) => {
   // Transform data into suitable one, as little as possible
   const { currentUser } = useCurrentUser();
   const [setConceptKnown] = useSetConceptsKnownMutation();
@@ -102,10 +103,11 @@ export const DomainConceptList: React.FC<{
     onConceptToggled(concept._id);
   };
   if (!domainConceptItems) return null;
+  if (!isLoading && !domainConceptItems.length) return null;
   return (
-    <Flex direction="column" backgroundColor="gray.100" borderRadius={10} px={5} py={2}>
+    <Flex direction="column" backgroundColor="gray.100" borderRadius={5} px={5} pt={1} pb={2} minW={minWidth}>
       <Box>
-        <Text fontSize="xl" textAlign="center" fontWeight={600} color="gray.600" pb={1}>
+        <Text fontSize="xl" textAlign="center" fontWeight={600} color="gray.600" pb={2}>
           My Progress
         </Text>
       </Box>

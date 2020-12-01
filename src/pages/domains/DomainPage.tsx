@@ -7,11 +7,14 @@ import { useEffect, useState } from 'react';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { DomainConceptGraph } from '../../components/concepts/DomainConceptGraph';
 import { DomainConceptList } from '../../components/concepts/DomainConceptList';
+import { DomainUserHistory } from '../../components/domains/DomainUserHistory';
 import { PageLayout } from '../../components/layout/PageLayout';
+import { LearningPathMiniCardData } from '../../components/learning_paths/LearningPathMiniCard';
 import { LearningPathPreviewCardDataFragment } from '../../components/learning_paths/LearningPathPreviewCard.generated';
 import { InternalButtonLink, InternalLink } from '../../components/navigation/InternalLink';
 import { DomainRecommendedLearningMaterials } from '../../components/resources/DomainRecommendedLearningMaterials';
 import { useGetDomainRecommendedLearningMaterialsQuery } from '../../components/resources/DomainRecommendedLearningMaterials.generated';
+import { ResourceMiniCardData } from '../../components/resources/ResourceMiniCard';
 import { ConceptData, generateConceptData } from '../../graphql/concepts/concepts.fragments';
 import { DomainData, generateDomainData } from '../../graphql/domains/domains.fragments';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
@@ -54,36 +57,36 @@ export const getDomainByKeyDomainPage = gql`
           }
         }
       }
+      learningMaterials(options: { sortingType: newest, filter: { completedByUser: true } }) {
+        items {
+          ...ResourceMiniCardData
+          ...LearningPathMiniCardData
+        }
+      }
     }
   }
   ${DomainData}
   ${ConceptData}
+  ${ResourceMiniCardData}
+  ${LearningPathMiniCardData}
 `;
 
 const placeholderDomainData: GetDomainByKeyDomainPageQuery['getDomainByKey'] = {
   ...generateDomainData(),
   concepts: {
-    items: [
-      {
-        concept: generateConceptData(),
-        relationship: {
-          index: 0,
-        },
+    items: [...Array(12)].map(() => ({
+      concept: generateConceptData(),
+      relationship: {
+        index: 0,
       },
-      {
-        concept: generateConceptData(),
-        relationship: {
-          index: 0,
-        },
-      },
-    ],
+    })),
   },
 };
 
 export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
   const router = useRouter();
 
-  const { data, loading } = useGetDomainByKeyDomainPageQuery({
+  const { data, loading, error } = useGetDomainByKeyDomainPageQuery({
     variables: { key: domainKey },
   });
 
@@ -125,7 +128,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
   const domain = data?.getDomainByKey || placeholderDomainData;
 
   // const { mockedFeaturesEnabled } = useMockedFeaturesEnabled();
-
+  if (error) return null;
   return (
     <PageLayout marginSize="md">
       <Stack direction={{ base: 'column', md: 'row' }} alignItems="stretch" pb={5} spacing={5}>
@@ -217,10 +220,20 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
           {/* <DomainLearningPaths domain={domain} /> */}
           {/* {mockedFeaturesEnabled && <DomainLearningPaths domain={domain} />} */}
         </Flex>
-        <Flex direction="column" flexShrink={0} minWidth="260px" ml={{ base: 0, md: 8 }}>
-          <DomainConceptList domain={domain} isLoading={loading} onConceptToggled={() => refetchLearningMaterials()} />
+        <Stack spacing={4} direction="column" flexShrink={0} ml={{ base: 0, md: 8 }}>
+          <RoleAccess accessRule="loggedInUser">
+            {domain.learningMaterials && (
+              <DomainUserHistory domainKey={domainKey} learningMaterials={domain.learningMaterials.items} />
+            )}
+          </RoleAccess>
+          <DomainConceptList
+            minWidth="260px"
+            domain={domain}
+            isLoading={loading}
+            onConceptToggled={() => refetchLearningMaterials()}
+          />
           {/* <DomainConceptList domain={domain} isLoading={loading} onConceptToggled={() => refetchResources()} /> */}
-        </Flex>
+        </Stack>
         {/* )} */}
         {/* {mockedFeaturesEnabled && (
           <Stack spacing={4} direction="column" ml={6} flexShrink={1}>

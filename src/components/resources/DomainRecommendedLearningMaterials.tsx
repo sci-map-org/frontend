@@ -12,7 +12,6 @@ import {
   InputRightElement,
   Select,
   Stack,
-  Switch,
   Tag,
   TagCloseButton,
   TagLabel,
@@ -35,7 +34,6 @@ import {
   ResourceType,
 } from '../../graphql/types';
 import { theme } from '../../theme/theme';
-import { RoleAccess } from '../auth/RoleAccess';
 import { LearningPathPreviewCardData } from '../learning_paths/LearningPathPreviewCard';
 import { LearningPathPreviewCardDataFragment } from '../learning_paths/LearningPathPreviewCard.generated';
 import { ResourceTypeBadge, resourceTypeColorMapping, resourceTypeToLabel } from './elements/ResourceType';
@@ -79,28 +77,6 @@ export const DomainRecommendedLearningMaterials: React.FC<{
     <Flex direction="column" mb={4}>
       <Flex direction="row" justifyContent="space-between" alignItems="center" mb={2}>
         <Text fontSize="2xl">Recommended for You</Text>
-        <Box pr={3}>
-          <FormControl id="sort_by" display="flex" flexDir="row" alignItems="center">
-            <FormLabel mb={0} fontWeight={300}>
-              Sort by:
-            </FormLabel>
-            <Select
-              w="8rem"
-              size="sm"
-              variant="flushed"
-              onChange={(e) =>
-                setLearningMaterialsOptions({
-                  ...learningMaterialsOptions,
-                  sortingType: e.target.value as DomainLearningMaterialsSortingType,
-                })
-              }
-              value={learningMaterialsOptions.sortingType}
-            >
-              <option value={DomainLearningMaterialsSortingType.Recommended}>Most Relevant</option>
-              <option value={DomainLearningMaterialsSortingType.Newest}>Newest First</option>
-            </Select>
-          </FormControl>
-        </Box>
       </Flex>
       <Flex
         direction={{ base: 'column', md: 'row' }}
@@ -128,24 +104,28 @@ export const DomainRecommendedLearningMaterials: React.FC<{
             }
           />
         </Stack>
-        <RoleAccess accessRule="loggedInUser">
-          <Box mr={{ base: '0px', md: '30px' }} mt={{ base: 2, md: 0 }}>
-            <FormControl id="show_completed" display="flex" flexDir="row" alignItems="center">
-              <FormLabel mb={0} fontWeight={300}>
-                Show completed
-              </FormLabel>
-              <Switch
-                colorScheme="brand"
-                onChange={(e) =>
-                  setLearningMaterialsOptions({
-                    ...learningMaterialsOptions,
-                    filter: { ...learningMaterialsOptions.filter, completedByUser: e.target.checked },
-                  })
-                }
-              />
-            </FormControl>
-          </Box>
-        </RoleAccess>
+        <Box pr={3}>
+          <FormControl id="sort_by" display="flex" flexDir="row" alignItems="center">
+            <FormLabel mb={0} fontWeight={300} flexShrink={0}>
+              Sort by:
+            </FormLabel>
+            <Select
+              w="8rem"
+              size="sm"
+              variant="flushed"
+              onChange={(e) =>
+                setLearningMaterialsOptions({
+                  ...learningMaterialsOptions,
+                  sortingType: e.target.value as DomainLearningMaterialsSortingType,
+                })
+              }
+              value={learningMaterialsOptions.sortingType}
+            >
+              <option value={DomainLearningMaterialsSortingType.Recommended}>Most Relevant</option>
+              <option value={DomainLearningMaterialsSortingType.Newest}>Newest First</option>
+            </Select>
+          </FormControl>
+        </Box>
       </Flex>
       <LearningMaterialPreviewCardList
         domainKey={domainKey}
