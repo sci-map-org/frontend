@@ -1,4 +1,4 @@
-import { Box, Flex, Stack, Text } from '@chakra-ui/react';
+import { Box, Flex, FlexProps, Stack, Text } from '@chakra-ui/react';
 import { LearningPathMiniCard } from '../learning_paths/LearningPathMiniCard';
 import { LearningPathMiniCardDataFragment } from '../learning_paths/LearningPathMiniCard.generated';
 import { ResourceMiniCard } from '../resources/ResourceMiniCard';
@@ -28,9 +28,15 @@ interface DomainUserHistoryProps {
   domainKey: string;
   isLoading?: boolean;
   learningMaterials: (ResourceMiniCardDataFragment | LearningPathMiniCardDataFragment)[];
+  maxH?: FlexProps['maxH'];
 }
 
-export const DomainUserHistory: React.FC<DomainUserHistoryProps> = ({ domainKey, isLoading, learningMaterials }) => {
+export const DomainUserHistory: React.FC<DomainUserHistoryProps> = ({
+  domainKey,
+  isLoading,
+  learningMaterials,
+  maxH,
+}) => {
   // const { data, loading, error } = useGetDomainCompletedLearningMaterialsHistoryQuery({
   //   variables: {
   //     key: domainKey,
@@ -43,13 +49,13 @@ export const DomainUserHistory: React.FC<DomainUserHistoryProps> = ({ domainKey,
   // const learningMaterials = data?.getDomainByKey.learningMaterials?.items || [];
   if (!learningMaterials || !learningMaterials.length) return null;
   return (
-    <Flex direction="column" backgroundColor="gray.100" borderRadius={5} pt={1}>
+    <Flex direction="column" backgroundColor="gray.100" borderRadius={5} pt={1} maxH={maxH}>
       <Box>
         <Text fontSize="xl" textAlign="center" fontWeight={600} color="gray.600" pb={1}>
           Recently Completed
         </Text>
       </Box>
-      <Stack spacing={0} alignItems="stretch" direction="column" maxH="180px" overflow="hidden" overflowY="scroll">
+      <Stack spacing={0} alignItems="stretch" direction="column" overflow="hidden" overflowY="scroll">
         {learningMaterials.map((learningMaterial, idx) => {
           if (learningMaterial.__typename === 'LearningPath')
             return (

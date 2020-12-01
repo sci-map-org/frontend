@@ -104,7 +104,7 @@ export const DomainRecommendedLearningMaterials: React.FC<{
             }
           />
         </Stack>
-        <Box pr={3}>
+        <Box pl={3}>
           <FormControl id="sort_by" display="flex" flexDir="row" alignItems="center">
             <FormLabel mb={0} fontWeight={300} flexShrink={0}>
               Sort by:

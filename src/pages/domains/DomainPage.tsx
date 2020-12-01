@@ -220,10 +220,20 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
           {/* <DomainLearningPaths domain={domain} /> */}
           {/* {mockedFeaturesEnabled && <DomainLearningPaths domain={domain} />} */}
         </Flex>
-        <Stack spacing={4} direction="column" flexShrink={0} ml={{ base: 0, md: 8 }}>
+        <Stack
+          spacing={4}
+          alignItems={{ base: 'start', md: 'stretch' }}
+          direction={{ base: 'row', md: 'column' }}
+          flexShrink={0}
+          ml={{ base: 0, md: 8 }}
+        >
           <RoleAccess accessRule="loggedInUser">
             {domain.learningMaterials && (
-              <DomainUserHistory domainKey={domainKey} learningMaterials={domain.learningMaterials.items} />
+              <DomainUserHistory
+                maxH={{ md: '210px' }}
+                domainKey={domainKey}
+                learningMaterials={domain.learningMaterials.items}
+              />
             )}
           </RoleAccess>
           <DomainConceptList

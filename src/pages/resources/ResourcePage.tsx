@@ -1,5 +1,4 @@
-import { CheckCircleIcon, DownloadIcon } from '@chakra-ui/icons';
-import { Box, Button, Flex, IconButton, Skeleton, Stack, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Skeleton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import Router, { useRouter } from 'next/router';
 import { Access } from '../../components/auth/Access';
@@ -9,10 +8,7 @@ import {
   LearningMaterialStarsRater,
   StarsRatingViewer,
 } from '../../components/learning_materials/LearningMaterialStarsRating';
-import {
-  LearningMaterialTagsEditor,
-  SelectedTagsViewer,
-} from '../../components/learning_materials/LearningMaterialTagsEditor';
+import { EditableLearningMaterialTags } from '../../components/learning_materials/LearningMaterialTagsEditor';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { InternalLink } from '../../components/navigation/InternalLink';
 import { DurationViewer } from '../../components/resources/elements/Duration';
@@ -107,8 +103,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
   if (error) return <Box>Resource not found !</Box>;
 
   const resource = data?.getResourceById || resourceDataPlaceholder;
-  const selectedTags = resource.tags || [];
-
+  const { currentUser } = useCurrentUser();
   return (
     <PageLayout
       title={resource.name}
@@ -169,17 +164,14 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
                 <ResourceTypeBadge type={resource.type} /> - <ResourceMediaTypeBadge mediaType={resource.mediaType} />{' '}
               </Skeleton>
             </Box>
-            <RoleAccess
-              accessRule="loggedInUser"
-              renderAccessDenied={() => <SelectedTagsViewer selectedTags={selectedTags} />}
-            >
-              <LearningMaterialTagsEditor
-                size="sm"
-                placeholder="Add tags"
+            <Box>
+              <EditableLearningMaterialTags
                 learningMaterial={resource}
-                isDisabled={loading}
+                isLoading={loading}
+                isDisabled={!currentUser}
+                placeholder="Add tags"
               />
-            </RoleAccess>
+            </Box>
             {resource.description && <ResourceDescription description={resource.description} />}
           </Stack>
 
