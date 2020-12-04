@@ -13,12 +13,13 @@ export const ResourceDescription: React.FC<{
     </Skeleton>
   ) : null;
 };
-export const ResourceDescriptionInput: React.FC<{ value?: string; onChange: (value?: string) => void }> = ({
-  value,
-  onChange,
-}) => {
+export const ResourceDescriptionInput: React.FC<{
+  value?: string;
+  onChange: (value?: string) => void;
+  maxLength?: number;
+}> = ({ value, onChange, maxLength = 1000 }) => {
   return (
-    <FormControl isInvalid={!!value && value.length > 200}>
+    <FormControl isInvalid={!!value && value.length > maxLength}>
       <Textarea
         id="description"
         placeholder="Description (optional)"
@@ -27,7 +28,7 @@ export const ResourceDescriptionInput: React.FC<{ value?: string; onChange: (val
         onChange={(e) => onChange(e.target.value || undefined)}
       ></Textarea>
       <FormHelperText textAlign="right" id="description-helper-text">
-        {value ? value.length : 0}/200
+        {value ? value.length : 0}/{maxLength}
       </FormHelperText>
     </FormControl>
   );
