@@ -40,7 +40,6 @@ export const getResourceEditResourcePage = gql`
     }
   }
   ${ResourceData}
-  ${ConceptData}
 `;
 
 const EditResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) => {
