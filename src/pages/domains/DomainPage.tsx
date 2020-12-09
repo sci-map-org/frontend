@@ -179,6 +179,16 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
             >
               Add Learning Path
             </InternalButtonLink>
+            <InternalButtonLink
+              variant="outline"
+              colorScheme="grey"
+              routePath="/domains/[key]/goals/new"
+              asHref={router.asPath + '/goals/new'}
+              loggedInOnly
+              isDisabled={loading}
+            >
+              Add Goal
+            </InternalButtonLink>
             {/* ? would be expected to be there from the start maybe (attached + public). good to push for creation though */}
             <RoleAccess accessRule="contributorOrAdmin">
               <IconButton
