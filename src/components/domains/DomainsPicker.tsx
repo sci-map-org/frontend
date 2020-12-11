@@ -4,6 +4,7 @@ import { DomainDataFragment } from '../../graphql/domains/domains.fragments.gene
 import { useSearchDomainsLazyQuery } from '../../graphql/domains/domains.operations.generated';
 import { EntitySelector } from '../lib/selectors/EntitySelector';
 import { InternalLink } from '../navigation/InternalLink';
+import { DomainSelector } from './DomainSelector';
 
 interface DomainsPickerProps {
   title: string;
@@ -13,16 +14,9 @@ interface DomainsPickerProps {
 }
 
 export const DomainsPicker: React.FC<DomainsPickerProps> = ({ title, pickedDomainList, onSelect, onRemove }) => {
-  const [searchDomains, { data, loading }] = useSearchDomainsLazyQuery();
-
   return (
     <Stack direction="row" width="26rem" borderWidth="1px" borderRadius={5} p={3} spacing={5}>
-      <EntitySelector
-        placeholder="Search domains..."
-        entitySuggestions={data?.searchDomains.items || []}
-        fetchEntitySuggestions={(v) => searchDomains({ variables: { options: { pagination: {}, query: v } } })}
-        onSelect={onSelect}
-      />
+      <DomainSelector onSelect={onSelect} />
       <Stack>
         <Text fontWeight={700}>{title}</Text>
         <Box>
