@@ -5,6 +5,8 @@ import { SquareResourceCardDataFragment } from '../../components/resources/Squar
 import { UserAvatarDataFragment } from '../../components/users/UserAvatar.generated';
 import { LearningPathCompletionDataFragment } from '../../components/learning_paths/LearningPathCompletion.generated';
 import { LearningMaterialWithCoveredConceptsByDomainData_Resource_Fragment, LearningMaterialWithCoveredConceptsByDomainData_LearningPath_Fragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
+import { EditableLearningMaterialPrerequisitesData_Resource_Fragment, EditableLearningMaterialPrerequisitesData_LearningPath_Fragment } from '../../components/learning_materials/EditableLearningMaterialPrerequisites.generated';
+import { EditableLearningMaterialOutcomesData_Resource_Fragment, EditableLearningMaterialOutcomesData_LearningPath_Fragment } from '../../components/learning_materials/EditableLearningMaterialOutcomes.generated';
 import * as Operations from './LearningPathPage';
 import * as Apollo from '@apollo/client';
 export type GetLearningPathPageQueryVariables = Types.Exact<{
@@ -40,6 +42,8 @@ export type GetLearningPathPageQuery = (
     & LearningPathWithResourceItemsPreviewDataFragment
     & LearningPathCompletionDataFragment
     & LearningMaterialWithCoveredConceptsByDomainData_LearningPath_Fragment
+    & EditableLearningMaterialPrerequisitesData_LearningPath_Fragment
+    & EditableLearningMaterialOutcomesData_LearningPath_Fragment
   ) }
 );
 

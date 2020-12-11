@@ -26,6 +26,7 @@ export type Query = {
   getDomainConceptByKey: Concept;
   getLearningPath: LearningPath;
   getLearningPathByKey: LearningPath;
+  searchLearningGoals: SearchLearningGoalsResult;
   getLearningGoalByKey: LearningGoal;
   getDomainLearningGoalByKey: DomainAndLearningGoalResult;
 };
@@ -90,6 +91,11 @@ export type QueryGetLearningPathArgs = {
 
 export type QueryGetLearningPathByKeyArgs = {
   key: Scalars['String'];
+};
+
+
+export type QuerySearchLearningGoalsArgs = {
+  options: SearchLearningGoalsOptions;
 };
 
 
@@ -695,6 +701,16 @@ export type LearningPathCoveredConceptsArgs = {
 
 export type LearningPathStartedByArgs = {
   options: LearningPathStartedByOptions;
+};
+
+export type SearchLearningGoalsResult = {
+  __typename?: 'SearchLearningGoalsResult';
+  items: Array<LearningGoal>;
+};
+
+export type SearchLearningGoalsOptions = {
+  query?: Maybe<Scalars['String']>;
+  pagination: PaginationOptions;
 };
 
 export type LearningGoal = {

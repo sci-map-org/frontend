@@ -24,6 +24,14 @@ import { AiOutlineEye } from 'react-icons/ai';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
 import {
+  EditableLearningMaterialOutcomes,
+  EditableLearningMaterialOutcomesData,
+} from '../../components/learning_materials/EditableLearningMaterialOutcomes';
+import {
+  EditableLearningMaterialPrerequisites,
+  EditableLearningMaterialPrerequisitesData,
+} from '../../components/learning_materials/EditableLearningMaterialPrerequisites';
+import {
   LearningMaterialStarsRater,
   StarsRatingViewer,
 } from '../../components/learning_materials/LearningMaterialStarsRating';
@@ -90,6 +98,8 @@ export const getLearningPathPage = gql`
       }
       ...LearningPathCompletionData
       ...LearningMaterialWithCoveredConceptsByDomainData
+      ...EditableLearningMaterialPrerequisitesData
+      ...EditableLearningMaterialOutcomesData
     }
   }
   ${LearningMaterialWithCoveredConceptsByDomainData}
@@ -97,6 +107,8 @@ export const getLearningPathPage = gql`
   ${SquareResourceCardData}
   ${LearningPathCompletionData}
   ${UserAvatarData}
+  ${EditableLearningMaterialPrerequisitesData}
+  ${EditableLearningMaterialOutcomesData}
 `;
 
 const learningPathPlaceholder: GetLearningPathPageQuery['getLearningPathByKey'] = {
@@ -196,6 +208,12 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
         <Flex direction={{ base: 'column', md: 'row' }} alignItems="stretch">
           <Flex direction="column" justifyContent="space-between" alignItems="stretch" minWidth={{ md: '260px' }}>
             <Stack spacing={2} pb={2}>
+              <Center>
+                <EditableLearningMaterialPrerequisites editable={editMode} learningMaterial={learningPath} />
+              </Center>
+              <Center>
+                <EditableLearningMaterialOutcomes editable={editMode} learningMaterial={learningPath} />
+              </Center>
               <Center>
                 <EditableDuration
                   defaultValue={learningPath.durationSeconds}
