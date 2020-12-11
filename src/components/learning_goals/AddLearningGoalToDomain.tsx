@@ -1,32 +1,11 @@
 import { Button, ButtonGroup, Flex, Input, InputGroup, InputLeftAddon, Stack, Textarea } from '@chakra-ui/react';
-import gql from 'graphql-tag';
 import { useState } from 'react';
-import { DomainData } from '../../graphql/domains/domains.fragments';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
-import { LearningGoalData } from '../../graphql/learning_goals/learning_goals.fragments';
+import { useAddLearningGoalToDomainMutation } from '../../graphql/learning_goals/learning_goals.operations.generated';
 import { DomainLearningGoalPageInfo } from '../../pages/learning_goals/DomainLearningGoalPage';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { generateUrlKey } from '../../services/url.service';
-import { useAddLearningGoalToDomainMutation } from './AddLearningGoalToDomain.generated';
 
-export const addLearningGoalToDomain = gql`
-  mutation addLearningGoalToDomain($domainId: String!, $payload: AddLearningGoalToDomainPayload!) {
-    addLearningGoalToDomain(domainId: $domainId, payload: $payload) {
-      learningGoal {
-        ...LearningGoalData
-        domain {
-          domain {
-            ...DomainData
-          }
-          contextualKey
-          contextualName
-        }
-      }
-    }
-  }
-  ${DomainData}
-  ${LearningGoalData}
-`;
 export const AddLearningGoalToDomain: React.FC<{ domain: DomainDataFragment }> = ({ domain }) => {
   const [addLearningGoalToDomain] = useAddLearningGoalToDomainMutation();
   const [contextualName, setContextualName] = useState('');
