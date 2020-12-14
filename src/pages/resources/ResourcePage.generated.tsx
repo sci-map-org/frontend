@@ -4,6 +4,8 @@ import { ResourceDataFragment, ResourcePreviewDataFragment } from '../../graphql
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { SquareResourceCardDataFragment } from '../../components/resources/SquareResourceCard.generated';
+import { EditableLearningMaterialOutcomesData_Resource_Fragment, EditableLearningMaterialOutcomesData_LearningPath_Fragment } from '../../components/learning_materials/EditableLearningMaterialOutcomes.generated';
+import { EditableLearningMaterialPrerequisitesData_Resource_Fragment, EditableLearningMaterialPrerequisitesData_LearningPath_Fragment } from '../../components/learning_materials/EditableLearningMaterialPrerequisites.generated';
 import * as Operations from './ResourcePage';
 import * as Apollo from '@apollo/client';
 export type GetResourceResourcePageQueryVariables = Types.Exact<{
@@ -47,6 +49,8 @@ export type GetResourceResourcePageQuery = (
       & Pick<Types.Resource, '_id' | 'name'>
     )> }
     & ResourceDataFragment
+    & EditableLearningMaterialOutcomesData_Resource_Fragment
+    & EditableLearningMaterialPrerequisitesData_Resource_Fragment
   ) }
 );
 

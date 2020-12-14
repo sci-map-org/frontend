@@ -58,19 +58,21 @@ export const removeLearningMaterialPrerequisite = gql`
 export const EditableLearningMaterialPrerequisites: React.FC<{
   learningMaterial: EditableLearningMaterialPrerequisitesDataFragment;
   editable?: boolean;
-}> = ({ learningMaterial, editable }) => {
+  isLoading?: boolean;
+}> = ({ learningMaterial, editable, isLoading }) => {
   const [addLearningMaterialPrerequisiteMutation] = useAddLearningMaterialPrerequisiteMutation();
   const [removeLearningMaterialPrerequisiteMutation] = useRemoveLearningMaterialPrerequisiteMutation();
 
   return (
     <Stack direction="column" alignItems="center" spacing={1}>
       <Text fontWeight={600} color="gray.500">
-        Prerequisites
+        {learningMaterial.prerequisites && learningMaterial.prerequisites.length ? 'Prerequisites' : 'No Prerequisites'}
       </Text>
       {learningMaterial.prerequisites && (
         <EditableLearningGoals
           editable={editable}
           role="prerequisite"
+          isLoading={isLoading}
           learningGoals={learningMaterial.prerequisites.map((prerequisite) => prerequisite.learningGoal)}
           onAdded={(learningGoal) =>
             addLearningMaterialPrerequisiteMutation({

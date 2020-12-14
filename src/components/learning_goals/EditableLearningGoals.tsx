@@ -11,7 +11,9 @@ interface EditableLearningGoalsProps {
   onRemove: (learningGoalId: string) => void;
   onAdded: (learningGoal: LearningGoalDataFragment) => void;
   editable?: boolean;
-  role?: 'outcome' | 'prerequisite';
+  role: 'outcome' | 'prerequisite';
+  inputPlaceholder?: string;
+  isLoading?: boolean;
 }
 export const EditableLearningGoals: React.FC<EditableLearningGoalsProps> = ({
   learningGoals,
@@ -19,6 +21,8 @@ export const EditableLearningGoals: React.FC<EditableLearningGoalsProps> = ({
   onAdded,
   editable,
   role,
+  inputPlaceholder,
+  isLoading,
 }) => {
   const [editMode, setEditMode] = useState(false);
   const wrapperRef = useRef(null);
@@ -51,13 +55,16 @@ export const EditableLearningGoals: React.FC<EditableLearningGoalsProps> = ({
         ))}
       </Stack>
       {editMode && (
-        <LearningGoalSelector placeholder="Add prerequisites  " onSelect={(learningGoal) => onAdded(learningGoal)} />
+        <LearningGoalSelector
+          placeholder={inputPlaceholder || `Add ${role}...`}
+          onSelect={(learningGoal) => onAdded(learningGoal)}
+        />
       )}
       {editable && !editMode && (
-        <Tooltip hasArrow label={learningGoals.length ? 'Add or prerequisites' : 'Add prerequisites'}>
+        <Tooltip hasArrow label={learningGoals.length ? `Add or remove ${role}s` : `Add ${role}s`}>
           <IconButton
             alignSelf="center"
-            // isDisabled={isLoading}
+            isDisabled={isLoading}
             size="xs"
             variant="ghost"
             aria-label="add prerequisites"

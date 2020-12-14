@@ -55,18 +55,21 @@ export const removeLearningMaterialOutcome = gql`
 export const EditableLearningMaterialOutcomes: React.FC<{
   learningMaterial: EditableLearningMaterialOutcomesDataFragment;
   editable?: boolean;
-}> = ({ learningMaterial, editable }) => {
+  isLoading?: boolean;
+}> = ({ learningMaterial, editable, isLoading }) => {
   const [addLearningMaterialOutcomeMutation] = useAddLearningMaterialOutcomeMutation();
   const [removeLearningMaterialOutcomeMutation] = useRemoveLearningMaterialOutcomeMutation();
 
+  if (!editable && !learningMaterial.outcomes?.length) return null;
   return (
     <Stack direction="column" alignItems="center" spacing={1}>
       <Text fontWeight={600} color="gray.700">
-        Outcomes
+        What you'll get out of it
       </Text>
       {learningMaterial.outcomes && (
         <EditableLearningGoals
           editable={editable}
+          isLoading={isLoading}
           role="outcome"
           learningGoals={learningMaterial.outcomes.map((outcome) => outcome.learningGoal)}
           onAdded={(learningGoal) =>

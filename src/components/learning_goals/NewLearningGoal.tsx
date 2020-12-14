@@ -69,7 +69,7 @@ export const StatelessNewLearningGoal: React.FC<StatelessNewLearningGoalProps> =
       </Flex>
       <FormControl id="name">
         <FormLabel>Name</FormLabel>
-        <InputGroup>
+        <InputGroup size={size}>
           {domain && <InputLeftAddon px={2} children={`${domain.name} - `} />}
           <Input
             placeholder={`E.g. "Solving quadratic equations" or "Design - Basics"`}
@@ -89,6 +89,7 @@ export const StatelessNewLearningGoal: React.FC<StatelessNewLearningGoalProps> =
           placeholder="Learning Goal Url Key"
           variant="flushed"
           value={key}
+          size={size}
           onChange={(e) => setKey(e.target.value)}
         ></Input>
         {key && (
@@ -101,7 +102,7 @@ export const StatelessNewLearningGoal: React.FC<StatelessNewLearningGoalProps> =
           </FormHelperText>
         )}
       </FormControl>
-      <FormControl id="description">
+      <FormControl id="description" size={size}>
         <FormLabel>Description</FormLabel>
         <Textarea
           placeholder="Write something..."
@@ -112,12 +113,11 @@ export const StatelessNewLearningGoal: React.FC<StatelessNewLearningGoalProps> =
         ></Textarea>
       </FormControl>
       <Flex justifyContent="flex-end">
-        <ButtonGroup spacing={8}>
-          <Button size={size} variant="outline" onClick={() => onCancel()}>
+        <ButtonGroup size={size} spacing={8}>
+          <Button variant="outline" onClick={() => onCancel()}>
             Cancel
           </Button>
           <Button
-            size={size}
             // w="18rem"
             variant="solid"
             colorScheme="brand"
