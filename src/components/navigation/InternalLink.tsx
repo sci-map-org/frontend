@@ -1,13 +1,14 @@
 import { Link, Button, LinkProps, ButtonProps } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
+import { PageInfo } from '../../pages/PageInfo';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 
-export type InternalLinkProps = { routePath: string; asHref: string; isDisabled?: boolean } & LinkProps;
+export type InternalLinkProps = { asHref: string; routePath: string; isDisabled?: boolean } & LinkProps;
 
 export const InternalLink: React.FC<InternalLinkProps> = ({
-  routePath,
   asHref,
+  routePath,
   isDisabled,
   children,
   ...linkProps
@@ -17,6 +18,13 @@ export const InternalLink: React.FC<InternalLinkProps> = ({
       <Link {...linkProps}>{children}</Link>
     </NextLink>
   );
+};
+
+export const PageLink: React.FC<{ pageInfo: PageInfo; isDisabled?: boolean } & LinkProps> = ({
+  pageInfo,
+  ...props
+}) => {
+  return <InternalLink routePath={pageInfo.routePath} asHref={pageInfo.path} {...props} />;
 };
 
 export const InternalButtonLink: React.FC<

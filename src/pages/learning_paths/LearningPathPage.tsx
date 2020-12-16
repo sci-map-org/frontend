@@ -24,6 +24,14 @@ import { AiOutlineEye } from 'react-icons/ai';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
 import {
+  EditableLearningMaterialOutcomes,
+  EditableLearningMaterialOutcomesData,
+} from '../../components/learning_materials/EditableLearningMaterialOutcomes';
+import {
+  EditableLearningMaterialPrerequisites,
+  EditableLearningMaterialPrerequisitesData,
+} from '../../components/learning_materials/EditableLearningMaterialPrerequisites';
+import {
   LearningMaterialStarsRater,
   StarsRatingViewer,
 } from '../../components/learning_materials/LearningMaterialStarsRating';
@@ -90,6 +98,8 @@ export const getLearningPathPage = gql`
       }
       ...LearningPathCompletionData
       ...LearningMaterialWithCoveredConceptsByDomainData
+      ...EditableLearningMaterialPrerequisitesData
+      ...EditableLearningMaterialOutcomesData
     }
   }
   ${LearningMaterialWithCoveredConceptsByDomainData}
@@ -97,6 +107,8 @@ export const getLearningPathPage = gql`
   ${SquareResourceCardData}
   ${LearningPathCompletionData}
   ${UserAvatarData}
+  ${EditableLearningMaterialPrerequisitesData}
+  ${EditableLearningMaterialOutcomesData}
 `;
 
 const learningPathPlaceholder: GetLearningPathPageQuery['getLearningPathByKey'] = {
@@ -197,6 +209,24 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
           <Flex direction="column" justifyContent="space-between" alignItems="stretch" minWidth={{ md: '260px' }}>
             <Stack spacing={2} pb={2}>
               <Center>
+                <EditableLearningMaterialPrerequisites
+                  editable={editMode}
+                  learningMaterial={learningPath}
+                  isLoading={loading}
+                />
+              </Center>
+              <Center>
+                <EditableLearningMaterialOutcomes
+                  editable={editMode}
+                  learningMaterial={learningPath}
+                  isLoading={loading}
+                />
+              </Center>
+            </Stack>
+          </Flex>
+          <Stack flexGrow={1} px={4}>
+            <Center>
+              <Stack direction="row" spacing={4}>
                 <EditableDuration
                   defaultValue={learningPath.durationSeconds}
                   onSubmit={(newDuration) =>
@@ -209,8 +239,7 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
                   isDisabled={!editMode}
                   isLoading={loading}
                 />
-              </Center>
-              <Center>
+
                 <EditableLearningMaterialTags
                   justify="center"
                   learningMaterial={learningPath}
@@ -218,10 +247,8 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
                   isDisabled={!editMode}
                   placeholder="Add tags"
                 />
-              </Center>
-            </Stack>
-          </Flex>
-          <Stack flexGrow={1} px={4}>
+              </Stack>
+            </Center>
             <Stack direction="row" justifyContent="center" spacing={2} alignItems="center">
               <StarsRatingViewer value={learningPath.rating} isLoading={loading} />
               <RoleAccess accessRule="contributorOrAdmin">

@@ -49,7 +49,20 @@ export type GetDomainByKeyDomainPageQuery = (
         { __typename?: 'LearningPath' }
         & LearningPathMiniCardDataFragment
       )> }
-    )> }
+    )>, subDomains?: Types.Maybe<Array<(
+      { __typename?: 'DomainBelongsToDomainItem' }
+      & { domain: (
+        { __typename?: 'Domain' }
+        & DomainDataFragment
+      ) }
+    )>>, learningGoals?: Types.Maybe<Array<(
+      { __typename?: 'LearningGoalBelongsToDomain' }
+      & Pick<Types.LearningGoalBelongsToDomain, 'contextualKey' | 'contextualName'>
+      & { learningGoal: (
+        { __typename?: 'LearningGoal' }
+        & Pick<Types.LearningGoal, '_id'>
+      ) }
+    )>> }
     & DomainDataFragment
   ) }
 );

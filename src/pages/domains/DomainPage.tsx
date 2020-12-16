@@ -11,7 +11,7 @@ import { DomainUserHistory } from '../../components/domains/DomainUserHistory';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { LearningPathMiniCardData } from '../../components/learning_paths/LearningPathMiniCard';
 import { LearningPathPreviewCardDataFragment } from '../../components/learning_paths/LearningPathPreviewCard.generated';
-import { InternalButtonLink, InternalLink } from '../../components/navigation/InternalLink';
+import { InternalButtonLink, InternalLink, PageLink } from '../../components/navigation/InternalLink';
 import { DomainRecommendedLearningMaterials } from '../../components/resources/DomainRecommendedLearningMaterials';
 import { useGetDomainRecommendedLearningMaterialsQuery } from '../../components/resources/DomainRecommendedLearningMaterials.generated';
 import { ResourceMiniCardData } from '../../components/resources/ResourceMiniCard';
@@ -20,7 +20,7 @@ import { DomainData, generateDomainData } from '../../graphql/domains/domains.fr
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { DomainLearningMaterialsOptions, DomainLearningMaterialsSortingType } from '../../graphql/types';
-import { useMockedFeaturesEnabled } from '../../hooks/useMockedFeaturesEnabled';
+import { DomainLearningGoalPageInfo } from '../learning_goals/DomainLearningGoalPage';
 import { PageInfo, routerPushToPage } from '../PageInfo';
 import { GetDomainByKeyDomainPageQuery, useGetDomainByKeyDomainPageQuery } from './DomainPage.generated';
 import { ManageDomainPageInfo } from './ManageDomainPage';
@@ -61,6 +61,18 @@ export const getDomainByKeyDomainPage = gql`
         items {
           ...ResourceMiniCardData
           ...LearningPathMiniCardData
+        }
+      }
+      subDomains {
+        domain {
+          ...DomainData
+        }
+      }
+      learningGoals {
+        contextualKey
+        contextualName
+        learningGoal {
+          _id
         }
       }
     }
@@ -179,6 +191,16 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
             >
               Add Learning Path
             </InternalButtonLink>
+            <InternalButtonLink
+              variant="outline"
+              colorScheme="grey"
+              routePath="/domains/[key]/goals/new"
+              asHref={router.asPath + '/goals/new'}
+              loggedInOnly
+              isDisabled={loading}
+            >
+              Add Goal
+            </InternalButtonLink>
             {/* ? would be expected to be there from the start maybe (attached + public). good to push for creation though */}
             <RoleAccess accessRule="contributorOrAdmin">
               <IconButton
@@ -242,7 +264,42 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
             isLoading={loading}
             onConceptToggled={() => refetchLearningMaterials()}
           />
-          {/* <DomainConceptList domain={domain} isLoading={loading} onConceptToggled={() => refetchResources()} /> */}
+          {(domain.learningGoals?.length || domain.subDomains?.length) && (
+            <Flex
+              direction="column"
+              alignItems="stretch"
+              backgroundColor="gray.100"
+              borderRadius={5}
+              px={5}
+              pt={1}
+              pb={2}
+            >
+              <Text fontSize="xl" textAlign="center" fontWeight={600} color="gray.600" pb={2}>
+                SubTopics
+              </Text>
+              <Stack>
+                {(domain.subDomains || []).map(({ domain }) => (
+                  <Box>
+                    <InternalLink
+                      fontWeight={600}
+                      color="gray.700"
+                      routePath="/domains/[key]"
+                      asHref={`/domains/${domain.key}`}
+                    >
+                      {domain.name}
+                    </InternalLink>
+                  </Box>
+                ))}
+                {(domain.learningGoals || []).map((learningGoalItem) => (
+                  <Box>
+                    <PageLink pageInfo={DomainLearningGoalPageInfo(domain, learningGoalItem)}>
+                      {learningGoalItem.contextualName}
+                    </PageLink>
+                  </Box>
+                ))}
+              </Stack>
+            </Flex>
+          )}
         </Stack>
         {/* )} */}
         {/* {mockedFeaturesEnabled && (

@@ -26,6 +26,9 @@ export type Query = {
   getDomainConceptByKey: Concept;
   getLearningPath: LearningPath;
   getLearningPathByKey: LearningPath;
+  searchLearningGoals: SearchLearningGoalsResult;
+  getLearningGoalByKey: LearningGoal;
+  getDomainLearningGoalByKey: DomainAndLearningGoalResult;
 };
 
 
@@ -90,6 +93,22 @@ export type QueryGetLearningPathByKeyArgs = {
   key: Scalars['String'];
 };
 
+
+export type QuerySearchLearningGoalsArgs = {
+  options: SearchLearningGoalsOptions;
+};
+
+
+export type QueryGetLearningGoalByKeyArgs = {
+  key: Scalars['String'];
+};
+
+
+export type QueryGetDomainLearningGoalByKeyArgs = {
+  domainKey: Scalars['String'];
+  contextualLearningGoalKey: Scalars['String'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   login: LoginResponse;
@@ -111,6 +130,10 @@ export type Mutation = {
   attachLearningMaterialCoversConcepts: LearningMaterial;
   detachLearningMaterialCoversConcepts: LearningMaterial;
   rateLearningMaterial: LearningMaterial;
+  addLearningMaterialPrerequisite: LearningMaterial;
+  removeLearningMaterialPrerequisite: LearningMaterial;
+  addLearningMaterialOutcome: LearningMaterial;
+  removeLearningMaterialOutcome: LearningMaterial;
   createResource: Resource;
   updateResource: Resource;
   deleteResource: DeleteResourceResponse;
@@ -134,6 +157,10 @@ export type Mutation = {
   removeComplementaryResourceFromLearningPath: ComplementaryResourceUpdatedResult;
   startLearningPath: LearningPathStartedResult;
   completeLearningPath: LearningPathCompletedResult;
+  addLearningGoalToDomain: DomainAndLearningGoalResult;
+  createLearningGoal: LearningGoal;
+  updateLearningGoal: LearningGoal;
+  deleteLearningGoal: DeleteLearningGoalMutationResult;
   updateConceptBelongsToDomain: ConceptBelongsToDomain;
   addConceptBelongsToConcept: Concept;
   removeConceptBelongsToConcept: Concept;
@@ -248,6 +275,30 @@ export type MutationDetachLearningMaterialCoversConceptsArgs = {
 export type MutationRateLearningMaterialArgs = {
   learningMaterialId: Scalars['String'];
   value: Scalars['Float'];
+};
+
+
+export type MutationAddLearningMaterialPrerequisiteArgs = {
+  learningMaterialId: Scalars['String'];
+  prerequisiteLearningGoalId: Scalars['String'];
+};
+
+
+export type MutationRemoveLearningMaterialPrerequisiteArgs = {
+  learningMaterialId: Scalars['String'];
+  prerequisiteLearningGoalId: Scalars['String'];
+};
+
+
+export type MutationAddLearningMaterialOutcomeArgs = {
+  learningMaterialId: Scalars['String'];
+  outcomeLearningGoalId: Scalars['String'];
+};
+
+
+export type MutationRemoveLearningMaterialOutcomeArgs = {
+  learningMaterialId: Scalars['String'];
+  outcomeLearningGoalId: Scalars['String'];
 };
 
 
@@ -381,6 +432,28 @@ export type MutationCompleteLearningPathArgs = {
 };
 
 
+export type MutationAddLearningGoalToDomainArgs = {
+  domainId: Scalars['String'];
+  payload: AddLearningGoalToDomainPayload;
+};
+
+
+export type MutationCreateLearningGoalArgs = {
+  payload: CreateLearningGoalPayload;
+};
+
+
+export type MutationUpdateLearningGoalArgs = {
+  _id: Scalars['String'];
+  payload: UpdateLearningGoalPayload;
+};
+
+
+export type MutationDeleteLearningGoalArgs = {
+  _id: Scalars['String'];
+};
+
+
 export type MutationUpdateConceptBelongsToDomainArgs = {
   conceptId: Scalars['String'];
   domainId: Scalars['String'];
@@ -503,6 +576,7 @@ export type Domain = {
   learningMaterials?: Maybe<DomainLearningMaterialsResults>;
   subDomains?: Maybe<Array<DomainBelongsToDomainItem>>;
   parentDomains?: Maybe<Array<DomainBelongsToDomainItem>>;
+  learningGoals?: Maybe<Array<LearningGoalBelongsToDomain>>;
 };
 
 
@@ -568,6 +642,8 @@ export type Resource = LearningMaterial & {
   seriesParentResource?: Maybe<Resource>;
   nextResource?: Maybe<Resource>;
   previousResource?: Maybe<Resource>;
+  prerequisites?: Maybe<Array<LearningMaterialPrerequisiteItem>>;
+  outcomes?: Maybe<Array<LearningMaterialOutcomeItem>>;
 };
 
 
@@ -613,6 +689,8 @@ export type LearningPath = LearningMaterial & {
   started?: Maybe<LearningPathStarted>;
   createdBy?: Maybe<User>;
   startedBy?: Maybe<LearningPathStartedByResults>;
+  prerequisites?: Maybe<Array<LearningMaterialPrerequisiteItem>>;
+  outcomes?: Maybe<Array<LearningMaterialOutcomeItem>>;
 };
 
 
@@ -623,6 +701,31 @@ export type LearningPathCoveredConceptsArgs = {
 
 export type LearningPathStartedByArgs = {
   options: LearningPathStartedByOptions;
+};
+
+export type SearchLearningGoalsResult = {
+  __typename?: 'SearchLearningGoalsResult';
+  items: Array<LearningGoal>;
+};
+
+export type SearchLearningGoalsOptions = {
+  query?: Maybe<Scalars['String']>;
+  pagination: PaginationOptions;
+};
+
+export type LearningGoal = {
+  __typename?: 'LearningGoal';
+  _id: Scalars['String'];
+  key: Scalars['String'];
+  name: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  domain?: Maybe<LearningGoalBelongsToDomain>;
+};
+
+export type DomainAndLearningGoalResult = {
+  __typename?: 'DomainAndLearningGoalResult';
+  domain: Domain;
+  learningGoal: LearningGoal;
 };
 
 export type LoginResponse = {
@@ -705,6 +808,8 @@ export type LearningMaterial = {
   coveredConcepts?: Maybe<LearningMaterialCoveredConceptsResults>;
   coveredConceptsByDomain?: Maybe<Array<LearningMaterialCoveredConceptsByDomainItem>>;
   domains?: Maybe<Array<Domain>>;
+  prerequisites?: Maybe<Array<LearningMaterialPrerequisiteItem>>;
+  outcomes?: Maybe<Array<LearningMaterialOutcomeItem>>;
 };
 
 
@@ -823,6 +928,30 @@ export type LearningPathCompletedResult = {
   learningPath: LearningPath;
 };
 
+export type AddLearningGoalToDomainPayload = {
+  contextualName: Scalars['String'];
+  contextualKey?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+};
+
+export type CreateLearningGoalPayload = {
+  name: Scalars['String'];
+  key?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+};
+
+export type UpdateLearningGoalPayload = {
+  name?: Maybe<Scalars['String']>;
+  key?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+};
+
+export type DeleteLearningGoalMutationResult = {
+  __typename?: 'DeleteLearningGoalMutationResult';
+  _id: Scalars['String'];
+  success: Scalars['Boolean'];
+};
+
 export type ConceptBelongsToDomain = {
   __typename?: 'ConceptBelongsToDomain';
   index: Scalars['Float'];
@@ -914,6 +1043,14 @@ export type DomainBelongsToDomainItem = {
   relationship: DomainBelongsToDomain;
 };
 
+export type LearningGoalBelongsToDomain = {
+  __typename?: 'LearningGoalBelongsToDomain';
+  contextualName: Scalars['String'];
+  contextualKey: Scalars['String'];
+  domain: Domain;
+  learningGoal: LearningGoal;
+};
+
 export enum ResourceType {
   Article = 'article',
   ArticleSeries = 'article_series',
@@ -963,6 +1100,22 @@ export type LearningMaterialCoveredConceptsByDomainItem = {
   __typename?: 'LearningMaterialCoveredConceptsByDomainItem';
   domain: Domain;
   coveredConcepts: Array<Concept>;
+};
+
+export type LearningMaterialPrerequisiteItem = {
+  __typename?: 'LearningMaterialPrerequisiteItem';
+  learningGoal: LearningGoal;
+  strength: Scalars['Float'];
+  createdBy: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+};
+
+export type LearningMaterialOutcomeItem = {
+  __typename?: 'LearningMaterialOutcomeItem';
+  learningGoal: LearningGoal;
+  strength: Scalars['Float'];
+  createdBy: Scalars['String'];
+  createdAt: Scalars['DateTime'];
 };
 
 export type ConceptCoveredByResourcesResults = {

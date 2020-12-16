@@ -1,9 +1,17 @@
-import { Box, Button, Flex, Skeleton, Stack, Text } from '@chakra-ui/react';
+import { Box, Button, Center, Flex, Skeleton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import Router, { useRouter } from 'next/router';
 import { Access } from '../../components/auth/Access';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
+import {
+  EditableLearningMaterialOutcomes,
+  EditableLearningMaterialOutcomesData,
+} from '../../components/learning_materials/EditableLearningMaterialOutcomes';
+import {
+  EditableLearningMaterialPrerequisites,
+  EditableLearningMaterialPrerequisitesData,
+} from '../../components/learning_materials/EditableLearningMaterialPrerequisites';
 import {
   LearningMaterialStarsRater,
   StarsRatingViewer,
@@ -77,12 +85,16 @@ export const getResourceResourcePage = gql`
         _id
         name
       }
+      ...EditableLearningMaterialOutcomesData
+      ...EditableLearningMaterialPrerequisitesData
     }
   }
   ${SquareResourceCardData}
   ${DomainData}
   ${ResourceData}
   ${ConceptData}
+  ${EditableLearningMaterialOutcomesData}
+  ${EditableLearningMaterialPrerequisitesData}
 `;
 
 const domainDataPlaceholder = generateDomainData();
@@ -175,7 +187,23 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
             {resource.description && <ResourceDescription description={resource.description} />}
           </Stack>
 
-          <LearningMaterialCoveredTopics editMode="loggedInUser" isLoading={loading} learningMaterial={resource} />
+          <Stack spacing={3}>
+            <Center>
+              <EditableLearningMaterialPrerequisites
+                editable={!!currentUser}
+                learningMaterial={resource}
+                isLoading={loading}
+              />
+            </Center>
+            <LearningMaterialCoveredTopics editMode="loggedInUser" isLoading={loading} learningMaterial={resource} />
+            <Center>
+              <EditableLearningMaterialOutcomes
+                editable={!!currentUser}
+                learningMaterial={resource}
+                isLoading={loading}
+              />
+            </Center>
+          </Stack>
         </Flex>
         {(isResourceSeriesType(resource.type) || resource.subResourceSeries?.length) && (
           <SubResourceSeriesManager
