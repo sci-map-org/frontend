@@ -1,16 +1,11 @@
 import {
   Box,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   Popover,
+  PopoverArrow,
   PopoverBody,
   PopoverCloseButton,
   PopoverContent,
+  PopoverHeader,
   PopoverTrigger,
   useDisclosure,
 } from '@chakra-ui/react';
@@ -40,7 +35,8 @@ export const searchLearningGoals = gql`
 export const LearningGoalSelector: React.FC<{
   onSelect: (learningGoal: LearningGoalDataFragment) => void;
   placeholder?: string;
-}> = ({ onSelect, placeholder }) => {
+  popoverTitle?: string;
+}> = ({ onSelect, placeholder, popoverTitle }) => {
   const [searchResults, setSearchResults] = useState<LearningGoalDataFragment[]>([]);
 
   const [searchLearningGoalsLazyQuery, { data }] = useSearchLearningGoalsLazyQuery();
@@ -64,7 +60,7 @@ export const LearningGoalSelector: React.FC<{
             width="100%"
             acceptCreation
             onCreate={(newLg) => {
-              setCreateLGDefaultPayload({ name: newLg.name, key: generateUrlKey(newLg.name) });
+              setCreateLGDefaultPayload({ name: newLg.name, key: generateUrlKey(newLg.name) }); //TODO: proper validation
               onOpen();
             }}
             suggestionContainerWidth="300px"
@@ -78,8 +74,8 @@ export const LearningGoalSelector: React.FC<{
         </Box>
       </PopoverTrigger>
       <PopoverContent>
-        {/* <PopoverHeader fontWeight="semibold">Confirmation</PopoverHeader> */}
-        {/* <PopoverArrow /> */}
+        <PopoverHeader fontWeight="semibold">{popoverTitle || 'Create Learning Goal'}</PopoverHeader>
+        <PopoverArrow />
         <PopoverCloseButton />
         <PopoverBody>
           <NewLearningGoal

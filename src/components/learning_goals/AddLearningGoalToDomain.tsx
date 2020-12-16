@@ -1,4 +1,5 @@
 import { Button, ButtonGroup, Flex, Input, InputGroup, InputLeftAddon, Stack, Textarea } from '@chakra-ui/react';
+import Router from 'next/router';
 import { useState } from 'react';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { useAddLearningGoalToDomainMutation } from '../../graphql/learning_goals/learning_goals.operations.generated';
@@ -6,7 +7,10 @@ import { DomainLearningGoalPageInfo } from '../../pages/learning_goals/DomainLea
 import { routerPushToPage } from '../../pages/PageInfo';
 import { generateUrlKey } from '../../services/url.service';
 
-export const AddLearningGoalToDomain: React.FC<{ domain: DomainDataFragment }> = ({ domain }) => {
+export const AddLearningGoalToDomain: React.FC<{ domain: DomainDataFragment; onCancel?: () => void }> = ({
+  domain,
+  onCancel,
+}) => {
   const [addLearningGoalToDomain] = useAddLearningGoalToDomainMutation();
   const [contextualName, setContextualName] = useState('');
   const [contextualKey, setContextualKey] = useState('');
@@ -43,7 +47,7 @@ export const AddLearningGoalToDomain: React.FC<{ domain: DomainDataFragment }> =
       ></Textarea>
       <Flex justifyContent="flex-end">
         <ButtonGroup spacing={8}>
-          <Button size="lg" w="18rem" variant="outline" onClick={() => console.log('cancel')}>
+          <Button size="lg" w="18rem" variant="outline" onClick={() => (onCancel && onCancel()) || Router.back()}>
             Cancel
           </Button>
           <Button

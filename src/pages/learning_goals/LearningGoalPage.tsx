@@ -1,7 +1,16 @@
 import gql from 'graphql-tag';
 import { PageLayout } from '../../components/layout/PageLayout';
+import { LearningGoal } from '../../graphql/types';
+import { PageInfo } from '../PageInfo';
 import { useGetLearningGoalPageDataQuery } from './LearningGoalPage.generated';
 
+export const LearningGoalPageInfo = (learningGoal: Pick<LearningGoal, 'key' | 'name'>): PageInfo => {
+  return {
+    name: learningGoal.name,
+    path: '/goals/' + learningGoal.key,
+    routePath: '/goals/[learningGoalKey]',
+  };
+};
 export const getLearningGoalPageData = gql`
   query getLearningGoalPageData($learningGoalKey: String!) {
     getLearningGoalByKey(key: $learningGoalKey) {

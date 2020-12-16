@@ -23,6 +23,7 @@ type EntitySelectorProps<T extends EntityType> = {
   inputSize?: InputProps['size'];
   isDisabled?: boolean;
   suggestionContainerWidth?: number | string;
+  creationHelperText?: string;
 };
 
 export const EntitySelector = <T extends EntityType>({
@@ -36,6 +37,7 @@ export const EntitySelector = <T extends EntityType>({
   isDisabled,
   acceptCreation,
   onCreate,
+  creationHelperText,
 }: PropsWithChildren<EntitySelectorProps<T>>) => {
   const [value, setValue] = useState('');
   const inputProps = {
@@ -77,8 +79,8 @@ export const EntitySelector = <T extends EntityType>({
           <Flex direction="row" px={5} py={1} borderBottomWidth={1} w={width}>
             <Text fontWeight={500}>{suggestion.name}</Text>
             {'new' in suggestion && (
-              <Text fontWeight={400} color="gray.600">
-                (new)
+              <Text fontWeight={400} px={2} color="gray.600">
+                {creationHelperText || '(Create)'}
               </Text>
             )}
           </Flex>
