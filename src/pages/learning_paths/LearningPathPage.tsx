@@ -4,9 +4,6 @@ import {
   Badge,
   Box,
   Center,
-  Editable,
-  EditableInput,
-  EditablePreview,
   Flex,
   Heading,
   IconButton,
@@ -44,6 +41,7 @@ import {
 import { LearningPathResourceItemsManager } from '../../components/learning_paths/LearningPathResourceItems';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { EditableTextarea } from '../../components/lib/inputs/EditableTextarea';
+import { EditableTextInput } from '../../components/lib/inputs/EditableTextInput';
 import { EditableDuration } from '../../components/resources/elements/Duration';
 import { LearningMaterialCoveredTopics } from '../../components/resources/LearningMaterialCoveredTopics';
 import { SquareResourceCardData } from '../../components/resources/SquareResourceCard';
@@ -185,7 +183,7 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
       marginSize="md"
       centerChildren
       renderTopRight={
-        <LearningPageRightIcons
+        <LearningPathPageRightIcons
           learningPath={learningPath}
           currentUserIsOwner={currentUserIsOwner}
           isDisabled={loading}
@@ -196,8 +194,8 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
     >
       <Stack w="100%">
         <Center>
-          <LearningPathEditableName
-            name={learningPath.name}
+          <EditableTextInput
+            value={learningPath.name}
             isLoading={loading}
             onChange={(newName) =>
               updateLearningPath({ variables: { _id: learningPath._id, payload: { name: newName } } })
@@ -391,7 +389,7 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
   );
 };
 
-const LearningPageRightIcons: React.FC<{
+const LearningPathPageRightIcons: React.FC<{
   learningPath: LearningPathDataFragment;
   isDisabled?: boolean;
   currentUserIsOwner: boolean;
@@ -437,55 +435,4 @@ const LearningPageRightIcons: React.FC<{
       />
     </Stack>
   ) : null;
-};
-
-const LearningPathEditableName: React.FC<{
-  name: string;
-  isLoading?: boolean;
-  onChange: (newName: string) => void;
-  editMode?: boolean;
-}> = ({ name, isLoading, onChange, editMode }) => {
-  const [updatedName, setUpdatedName] = useState(name);
-  useEffect(() => {
-    setUpdatedName(name);
-  }, [name]);
-  return (
-    <Skeleton isLoaded={!isLoading}>
-      <Editable
-        value={updatedName}
-        onChange={setUpdatedName}
-        fontSize="5xl"
-        fontWeight={600}
-        color="gray.700"
-        isPreviewFocusable={false}
-        lineHeight="52px"
-        onSubmit={onChange}
-        textAlign="center"
-        variant="solid"
-        display="flex"
-        isDisabled={!editMode}
-      >
-        {(props: any) => (
-          <>
-            {!props.isEditing && editMode && (
-              <Box w="24px" /> // used to center the title properly. Change when changing the size of the edit icon button
-            )}
-            <EditablePreview />
-            {!props.isEditing && editMode && (
-              <IconButton
-                aria-label="t"
-                icon={<EditIcon />}
-                onClick={props.onEdit}
-                size="xs"
-                color="gray.700"
-                variant="ghost"
-                alignSelf="end"
-              />
-            )}
-            <EditableInput />
-          </>
-        )}
-      </Editable>
-    </Skeleton>
-  );
 };

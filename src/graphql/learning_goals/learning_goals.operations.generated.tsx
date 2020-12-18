@@ -42,6 +42,33 @@ export type AddLearningGoalToDomainMutation = (
   ) }
 );
 
+export type UpdateLearningGoalMutationVariables = Types.Exact<{
+  _id: Types.Scalars['String'];
+  payload: Types.UpdateLearningGoalPayload;
+}>;
+
+
+export type UpdateLearningGoalMutation = (
+  { __typename?: 'Mutation' }
+  & { updateLearningGoal: (
+    { __typename?: 'LearningGoal' }
+    & LearningGoalDataFragment
+  ) }
+);
+
+export type DeleteLearningGoalMutationVariables = Types.Exact<{
+  _id: Types.Scalars['String'];
+}>;
+
+
+export type DeleteLearningGoalMutation = (
+  { __typename?: 'Mutation' }
+  & { deleteLearningGoal: (
+    { __typename?: 'DeleteLearningGoalMutationResult' }
+    & Pick<Types.DeleteLearningGoalMutationResult, '_id' | 'success'>
+  ) }
+);
+
 
 export type CreateLearningGoalMutationFn = Apollo.MutationFunction<CreateLearningGoalMutation, CreateLearningGoalMutationVariables>;
 
@@ -94,3 +121,54 @@ export function useAddLearningGoalToDomainMutation(baseOptions?: Apollo.Mutation
 export type AddLearningGoalToDomainMutationHookResult = ReturnType<typeof useAddLearningGoalToDomainMutation>;
 export type AddLearningGoalToDomainMutationResult = Apollo.MutationResult<AddLearningGoalToDomainMutation>;
 export type AddLearningGoalToDomainMutationOptions = Apollo.BaseMutationOptions<AddLearningGoalToDomainMutation, AddLearningGoalToDomainMutationVariables>;
+export type UpdateLearningGoalMutationFn = Apollo.MutationFunction<UpdateLearningGoalMutation, UpdateLearningGoalMutationVariables>;
+
+/**
+ * __useUpdateLearningGoalMutation__
+ *
+ * To run a mutation, you first call `useUpdateLearningGoalMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateLearningGoalMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateLearningGoalMutation, { data, loading, error }] = useUpdateLearningGoalMutation({
+ *   variables: {
+ *      _id: // value for '_id'
+ *      payload: // value for 'payload'
+ *   },
+ * });
+ */
+export function useUpdateLearningGoalMutation(baseOptions?: Apollo.MutationHookOptions<UpdateLearningGoalMutation, UpdateLearningGoalMutationVariables>) {
+        return Apollo.useMutation<UpdateLearningGoalMutation, UpdateLearningGoalMutationVariables>(Operations.updateLearningGoal, baseOptions);
+      }
+export type UpdateLearningGoalMutationHookResult = ReturnType<typeof useUpdateLearningGoalMutation>;
+export type UpdateLearningGoalMutationResult = Apollo.MutationResult<UpdateLearningGoalMutation>;
+export type UpdateLearningGoalMutationOptions = Apollo.BaseMutationOptions<UpdateLearningGoalMutation, UpdateLearningGoalMutationVariables>;
+export type DeleteLearningGoalMutationFn = Apollo.MutationFunction<DeleteLearningGoalMutation, DeleteLearningGoalMutationVariables>;
+
+/**
+ * __useDeleteLearningGoalMutation__
+ *
+ * To run a mutation, you first call `useDeleteLearningGoalMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteLearningGoalMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteLearningGoalMutation, { data, loading, error }] = useDeleteLearningGoalMutation({
+ *   variables: {
+ *      _id: // value for '_id'
+ *   },
+ * });
+ */
+export function useDeleteLearningGoalMutation(baseOptions?: Apollo.MutationHookOptions<DeleteLearningGoalMutation, DeleteLearningGoalMutationVariables>) {
+        return Apollo.useMutation<DeleteLearningGoalMutation, DeleteLearningGoalMutationVariables>(Operations.deleteLearningGoal, baseOptions);
+      }
+export type DeleteLearningGoalMutationHookResult = ReturnType<typeof useDeleteLearningGoalMutation>;
+export type DeleteLearningGoalMutationResult = Apollo.MutationResult<DeleteLearningGoalMutation>;
+export type DeleteLearningGoalMutationOptions = Apollo.BaseMutationOptions<DeleteLearningGoalMutation, DeleteLearningGoalMutationVariables>;
