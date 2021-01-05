@@ -13,7 +13,7 @@ export const DomainsListPage: React.FC = () => {
   const { domains, refetch } = useSearchDomains();
   const [deleteDomainMutation] = useDeleteDomainMutation();
   return (
-    <PageLayout title="Domains" centerChildren>
+    <PageLayout title="Topics" centerChildren>
       <Stack spacing={8} direction="column" width="36rem">
         <Flex
           direction="column"

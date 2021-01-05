@@ -11,9 +11,9 @@ import {
 import { StarsRatingViewer } from '../learning_materials/LearningMaterialStarsRating';
 import { EditableLearningMaterialTags } from '../learning_materials/LearningMaterialTagsEditor';
 import { DurationViewer } from '../resources/elements/Duration';
-import { ResourceDescription, shortenDescription } from '../resources/elements/ResourceDescription';
+import { ResourceDescription } from '../resources/elements/ResourceDescription';
 import { BoxBlockDefaultClickPropagation } from '../resources/ResourcePreviewCard';
-import { UserAvatar, UserAvatarData } from '../users/UserAvatar';
+import { UserAvatarData } from '../users/UserAvatar';
 import { LearningPathCircularCompletion, LearningPathCompletionData } from './LearningPathCompletion';
 import { LearningPathPreviewCardDataFragment } from './LearningPathPreviewCard.generated';
 
