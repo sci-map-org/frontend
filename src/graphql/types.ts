@@ -738,6 +738,7 @@ export type LearningGoal = Topic & {
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
   topicType: TopicType;
+  createdBy?: Maybe<User>;
   domain?: Maybe<LearningGoalBelongsToDomain>;
   requiredInGoals?: Maybe<Array<RequiredInGoalItem>>;
   requiredSubGoals?: Maybe<Array<SubGoalItem>>;

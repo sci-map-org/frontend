@@ -1,6 +1,7 @@
 import * as Types from '../../graphql/types';
 
 import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
+import { SubGoalCardDataFragment } from '../../components/learning_goals/SubGoalCard.generated';
 import * as Operations from './LearningGoalPage';
 import * as Apollo from '@apollo/client';
 export type GetLearningGoalPageDataQueryVariables = Types.Exact<{
@@ -12,6 +13,13 @@ export type GetLearningGoalPageDataQuery = (
   { __typename?: 'Query' }
   & { getLearningGoalByKey: (
     { __typename?: 'LearningGoal' }
+    & { createdBy?: Types.Maybe<(
+      { __typename?: 'User' }
+      & Pick<Types.User, '_id'>
+    )>, requiredSubGoals?: Types.Maybe<Array<(
+      { __typename?: 'SubGoalItem' }
+      & SubGoalCardDataFragment
+    )>> }
     & LearningGoalDataFragment
   ) }
 );

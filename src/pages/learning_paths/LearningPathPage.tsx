@@ -195,6 +195,7 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
       <Stack w="100%">
         <Center>
           <EditableTextInput
+            centered
             value={learningPath.name}
             isLoading={loading}
             onChange={(newName) =>

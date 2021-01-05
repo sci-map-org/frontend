@@ -21,16 +21,16 @@ type DeleteButtonWithConfirmationProps = (
 ) & {
   modalBodyText: string;
   modalHeaderText: string;
+  confirmButtonText?: string;
   onConfirmation: () => void | Promise<any>;
   isDisabled?: boolean;
-  confirmButtonText?: string;
 };
 export const DeleteButtonWithConfirmation: React.FC<DeleteButtonWithConfirmationProps> = ({
   modalBodyText,
   modalHeaderText,
   onConfirmation,
   isDisabled,
-  confirmButtonText,
+  confirmButtonText = 'Delete',
   children,
   ...props
 }) => {
@@ -71,7 +71,7 @@ export const DeleteButtonWithConfirmation: React.FC<DeleteButtonWithConfirmation
                   onClose();
                 }}
               >
-                {confirmButtonText || 'Delete'}
+                {confirmButtonText}
               </Button>
             </ModalFooter>
           </ModalContent>

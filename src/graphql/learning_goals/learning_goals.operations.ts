@@ -1,4 +1,5 @@
 import gql from 'graphql-tag';
+import { SubGoalCardData } from '../../components/learning_goals/SubGoalCard';
 import { DomainData } from '../domains/domains.fragments';
 import { LearningGoalData } from './learning_goals.fragments';
 
@@ -46,4 +47,36 @@ export const deleteLearningGoal = gql`
       success
     }
   }
+`;
+
+export const attachLearningGoalRequiresSubGoal = gql`
+  mutation attachLearningGoalRequiresSubGoal(
+    $learningGoalId: String!
+    $subGoalId: String!
+    $payload: AttachLearningGoalRequiresSubGoalPayload!
+  ) {
+    attachLearningGoalRequiresSubGoal(learningGoalId: $learningGoalId, subGoalId: $subGoalId, payload: $payload) {
+      learningGoal {
+        _id
+        requiredSubGoals {
+          ...SubGoalCardData
+        }
+      }
+    }
+  }
+  ${SubGoalCardData}
+`;
+
+export const detachLearningGoalRequiresSubGoal = gql`
+  mutation detachLearningGoalRequiresSubGoal($learningGoalId: String!, $subGoalId: String!) {
+    detachLearningGoalRequiresSubGoal(learningGoalId: $learningGoalId, subGoalId: $subGoalId) {
+      learningGoal {
+        _id
+        requiredSubGoals {
+          ...SubGoalCardData
+        }
+      }
+    }
+  }
+  ${SubGoalCardData}
 `;
