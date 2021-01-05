@@ -94,27 +94,27 @@ export const LearningGoalPage: React.FC<{ learningGoalKey: string }> = ({ learni
             }
           />
         </Center>
-        <Skeleton isLoaded={!loading}>
-          <EditableTextarea
-            textAlign="center"
-            justifyContent="center"
-            backgroundColor="backgroundColor.0"
-            fontSize="lg"
-            fontWeight={300}
-            color="gray.700"
-            defaultValue={learningGoal.description || ''}
-            placeholder="Add a description..."
-            onSubmit={(newDescription: any) =>
-              updateLearningGoal({
-                variables: {
-                  _id: learningGoal._id,
-                  payload: { description: (newDescription as string) || null },
-                },
-              })
-            }
-            isDisabled={!editMode}
-          />
-        </Skeleton>
+        <EditableTextarea
+          textAlign="center"
+          isLoading={loading}
+          justifyContent="center"
+          backgroundColor="backgroundColor.0"
+          fontSize="lg"
+          fontWeight={300}
+          color="gray.700"
+          defaultValue={learningGoal.description || ''}
+          placeholder="Add a description..."
+          onSubmit={(newDescription: any) =>
+            updateLearningGoal({
+              variables: {
+                _id: learningGoal._id,
+                payload: { description: (newDescription as string) || null },
+              },
+            })
+          }
+          isDisabled={!editMode}
+        />
+
         {learningGoal.requiredSubGoals && (
           <Wrap spacing="30px" justify="center">
             {learningGoal.requiredSubGoals.map((requiredSubGoalItem, idx) => (
@@ -168,7 +168,7 @@ export const LearningGoalPage: React.FC<{ learningGoalKey: string }> = ({ learni
   );
 };
 
-const LearningGoalPageRightIcons: React.FC<{
+export const LearningGoalPageRightIcons: React.FC<{
   learningGoal: LearningGoalDataFragment;
   isDisabled?: boolean;
   currentUserIsOwner: boolean;
@@ -180,7 +180,7 @@ const LearningGoalPageRightIcons: React.FC<{
   return currentUser && (currentUser.role === UserRole.Admin || currentUserIsOwner) ? (
     <Stack direction="row" spacing={3}>
       <Stack direction="row" spacing={0}>
-        <Tooltip label="Preview Mode" aria-label="preview learning path">
+        <Tooltip label="Preview Mode" aria-label="preview learning goal">
           <IconButton
             aria-label="view mode"
             size="md"
@@ -192,7 +192,7 @@ const LearningGoalPageRightIcons: React.FC<{
           />
         </Tooltip>
 
-        <Tooltip label="Edit Mode" aria-label="edit learning path">
+        <Tooltip label="Edit Mode" aria-label="edit learning goal">
           <IconButton
             aria-label="edit mode"
             size="md"
