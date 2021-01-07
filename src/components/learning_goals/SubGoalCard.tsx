@@ -16,7 +16,12 @@ import {
 export const ConceptSubGoalCardData = gql`
   fragment ConceptSubGoalCardData on Concept {
     _id
+    key
     name
+    domain {
+      _id
+      key
+    }
   }
 `;
 
@@ -84,7 +89,14 @@ const LearningGoalSubGoalCard: React.FC<LearningGoalSubGoalCardProps> = ({ learn
   return (
     <Flex direction="column" alignItems="stretch" h="100%" w="100%">
       <Center position="relative" flexGrow={1}>
-        <InternalLink routePath="/goals/[learningGoalKey]" asHref={`/goals/${learningGoal.key}`} fontSize="xl" mt={2}>
+        <InternalLink
+          routePath="/goals/[learningGoalKey]"
+          asHref={`/goals/${learningGoal.key}`}
+          fontSize="xl"
+          mt={2}
+          px={2}
+          {...(editMode && { mr: 5 })}
+        >
           {learningGoal.name}
         </InternalLink>
         {editMode && onRemove && (
@@ -147,5 +159,12 @@ interface ConceptSubGoalCardProps extends SharedSubGoalCardProps {
   concept: ConceptSubGoalCardDataFragment;
 }
 export const ConceptSubGoalCard: React.FC<ConceptSubGoalCardProps> = ({ concept, editMode, onRemove }) => {
-  return <Flex>{concept.name}</Flex>;
+  const domain = concept.domain;
+  if (!domain) return null;
+  return (
+    <Center>
+      <InternalLink routePath="" asHref={`/domains/${domain.key}/concepts/${concept.key}`}></InternalLink>
+      {/* <PageLink pageInfo={ConceptPageInfo(concept.domain, concept)}>{concept.name}</PageLink> */}
+    </Center>
+  );
 };

@@ -1,27 +1,39 @@
 import { Button, ButtonGroup, Flex, Input, InputGroup, InputLeftAddon, Stack, Textarea } from '@chakra-ui/react';
-import Router from 'next/router';
 import { useState } from 'react';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
+import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
 import { useAddLearningGoalToDomainMutation } from '../../graphql/learning_goals/learning_goals.operations.generated';
-import { DomainLearningGoalPageInfo } from '../../pages/learning_goals/DomainLearningGoalPage';
-import { routerPushToPage } from '../../pages/PageInfo';
+import { AddLearningGoalToDomainPayload, LearningGoalBelongsToDomain } from '../../graphql/types';
 import { generateUrlKey } from '../../services/url.service';
 
-export const AddLearningGoalToDomain: React.FC<{ domain: DomainDataFragment; onCancel?: () => void }> = ({
+interface AddLearningGoalToDomainProps {
+  domain: DomainDataFragment;
+  onCreated?: (
+    learningGoal: LearningGoalDataFragment,
+    relationship: Omit<LearningGoalBelongsToDomain, 'learningGoal' | 'domain'>,
+    domain: DomainDataFragment
+  ) => void;
+  onCancel: () => void;
+  size?: 'sm' | 'md' | 'lg';
+  defaultPayload?: Partial<AddLearningGoalToDomainPayload>;
+}
+export const AddLearningGoalToDomain: React.FC<AddLearningGoalToDomainProps> = ({
   domain,
   onCancel,
+  onCreated,
+  size,
+  defaultPayload,
 }) => {
   const [addLearningGoalToDomain] = useAddLearningGoalToDomainMutation();
-  const [contextualName, setContextualName] = useState('');
-  const [contextualKey, setContextualKey] = useState('');
-  const [description, setDescription] = useState('');
+  const [contextualName, setContextualName] = useState(defaultPayload?.contextualName || '');
+  const [contextualKey, setContextualKey] = useState(defaultPayload?.contextualKey || '');
+  const [description, setDescription] = useState(defaultPayload?.description || undefined);
   return (
     <Stack spacing={4} direction="column" alignItems="stretch">
-      <InputGroup>
+      <InputGroup size={size}>
         <InputLeftAddon px={2} children={`${domain.name} - `} />
         <Input
           placeholder="Learning Goal Name"
-          size="md"
           pl={2}
           variant="flushed"
           value={contextualName}
@@ -33,30 +45,30 @@ export const AddLearningGoalToDomain: React.FC<{ domain: DomainDataFragment; onC
       </InputGroup>
       <Input
         placeholder="Learning Goal Url Key"
-        size="md"
+        size={size}
         variant="flushed"
         value={contextualKey}
         onChange={(e) => setContextualKey(e.target.value)}
       ></Input>
       <Textarea
         placeholder="Description"
-        size="md"
+        size={size}
         variant="flushed"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
       ></Textarea>
       <Flex justifyContent="flex-end">
         <ButtonGroup spacing={8}>
-          <Button size="lg" w="18rem" variant="outline" onClick={() => (onCancel && onCancel()) || Router.back()}>
+          <Button size={size} w="18rem" variant="outline" onClick={() => onCancel()}>
             Cancel
           </Button>
           <Button
-            size="lg"
+            size={size}
             w="18rem"
             variant="solid"
             colorScheme="brand"
-            onClick={() =>
-              addLearningGoalToDomain({
+            onClick={async () => {
+              const { data } = await addLearningGoalToDomain({
                 variables: {
                   domainId: domain._id,
                   payload: {
@@ -65,13 +77,12 @@ export const AddLearningGoalToDomain: React.FC<{ domain: DomainDataFragment; onC
                     description,
                   },
                 },
-              }).then(
-                ({ data }) =>
-                  data &&
-                  data.addLearningGoalToDomain.learningGoal.domain &&
-                  routerPushToPage(DomainLearningGoalPageInfo(domain, data.addLearningGoalToDomain.learningGoal.domain))
-              )
-            }
+              });
+              if (!data) throw new Error('no data returned');
+              const domainRel = data.addLearningGoalToDomain.learningGoal.domain;
+              if (!domainRel) throw new Error('domain seems to have failed to attach to lg');
+              !!onCreated && onCreated(data.addLearningGoalToDomain.learningGoal, domainRel, domainRel.domain);
+            }}
           >
             Add
           </Button>

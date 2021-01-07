@@ -31,13 +31,13 @@ interface NewLearningGoalData {
   key: string;
   description?: string;
 }
-interface StatelessNewLearningGoalProps {
+interface NewLearningGoalFormProps {
   onCreate: (payload: NewLearningGoalData) => void;
   onCancel: () => void;
   defaultPayload?: Partial<CreateLearningGoalPayload>;
   size?: 'md' | 'lg' | 'sm';
 }
-export const StatelessNewLearningGoal: React.FC<StatelessNewLearningGoalProps> = ({
+export const NewLearningGoalForm: React.FC<NewLearningGoalFormProps> = ({
   onCreate,
   onCancel,
   defaultPayload,
@@ -131,17 +131,15 @@ export const StatelessNewLearningGoal: React.FC<StatelessNewLearningGoalProps> =
   );
 };
 
-export const NewLearningGoal: React.FC<{
+interface NewLearningGoalProps extends Omit<NewLearningGoalFormProps, 'onCreate'> {
   onCreated?: (createdLearningGoal: LearningGoalDataFragment) => void;
-  onCancel?: () => void;
-  defaultPayload?: Partial<CreateLearningGoalPayload>;
-  size?: StatelessNewLearningGoalProps['size'];
-}> = ({ onCreated, onCancel, defaultPayload, size }) => {
+}
+export const NewLearningGoal: React.FC<NewLearningGoalProps> = ({ onCreated, onCancel, defaultPayload, size }) => {
   const [createLearningGoal] = useCreateLearningGoalMutation();
   const [addLearningGoalToDomain] = useAddLearningGoalToDomainMutation();
 
   return (
-    <StatelessNewLearningGoal
+    <NewLearningGoalForm
       size={size}
       defaultPayload={defaultPayload}
       onCreate={async ({ name, key, description, domain }) => {
@@ -164,7 +162,7 @@ export const NewLearningGoal: React.FC<{
         }
         onCreated && createdLearningGoal && onCreated(createdLearningGoal);
       }}
-      onCancel={() => onCancel && onCancel()}
+      onCancel={onCancel}
     />
   );
 };

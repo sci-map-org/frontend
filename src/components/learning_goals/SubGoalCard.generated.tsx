@@ -5,7 +5,11 @@ import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.g
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 export type ConceptSubGoalCardDataFragment = (
   { __typename?: 'Concept' }
-  & Pick<Types.Concept, '_id' | 'name'>
+  & Pick<Types.Concept, '_id' | 'key' | 'name'>
+  & { domain?: Types.Maybe<(
+    { __typename?: 'Domain' }
+    & Pick<Types.Domain, '_id' | 'key'>
+  )> }
 );
 
 export type LearningGoalSubGoalCardDataFragment = (

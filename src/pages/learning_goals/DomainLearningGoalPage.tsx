@@ -1,7 +1,9 @@
 import { Center, Flex, Stack, Wrap, WrapItem } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useMemo, useState } from 'react';
+import { SubTopicSelector } from '../../components/domains/SubTopicSelector';
 import { PageLayout } from '../../components/layout/PageLayout';
+import { SubGoalCard, SubGoalCardData } from '../../components/learning_goals/SubGoalCard';
 import { EditableTextarea } from '../../components/lib/inputs/EditableTextarea';
 import { EditableTextInput } from '../../components/lib/inputs/EditableTextInput';
 import { DomainData, generateDomainData } from '../../graphql/domains/domains.fragments';
@@ -12,18 +14,15 @@ import {
   useDetachLearningGoalRequiresSubGoalMutation,
   useUpdateLearningGoalMutation,
 } from '../../graphql/learning_goals/learning_goals.operations.generated';
-import { LearningGoalBelongsToDomain, UserRole } from '../../graphql/types';
+import { LearningGoalBelongsToDomain, TopicType, UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { DomainPageInfo } from '../domains/DomainPage';
 import { PageInfo } from '../PageInfo';
 import {
-  useGetLearningGoalDomainLearningGoalPageQuery,
   GetLearningGoalDomainLearningGoalPageQuery,
+  useGetLearningGoalDomainLearningGoalPageQuery,
 } from './DomainLearningGoalPage.generated';
 import { LearningGoalPageRightIcons } from './LearningGoalPage';
-import { DomainConceptsSelector } from '../../components/concepts/DomainConceptsSelector';
-import { ConceptData } from '../../graphql/concepts/concepts.fragments';
-import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 
 export const DomainLearningGoalPagePath = (domainKey: string, contextualLearningGoalKey: string) =>
   `/domains/${domainKey}/goals/${contextualLearningGoalKey}`;
@@ -49,18 +48,14 @@ export const getLearningGoalDomainLearningGoalPage = gql`
           _id
         }
         requiredSubGoals {
-          subGoal {
-            ... on Concept {
-              ...ConceptData
-            }
-          }
+          ...SubGoalCardData
         }
       }
     }
   }
   ${DomainData}
-  ${ConceptData}
   ${LearningGoalData}
+  ${SubGoalCardData}
 `;
 
 const placeholderData: GetLearningGoalDomainLearningGoalPageQuery['getDomainLearningGoalByKey'] = {
@@ -138,6 +133,27 @@ export const DomainLearningGoalPage: React.FC<{ domainKey: string; contextualLea
         />
         <Flex>
           <Wrap>
+            {learningGoal.requiredSubGoals &&
+              learningGoal.requiredSubGoals.map((requiredSubGoalItem) => (
+                <WrapItem
+                  borderWidth="1px"
+                  borderColor="gray.500"
+                  boxShadow="md"
+                  // w="45%"
+                  borderRadius={5}
+                  key={requiredSubGoalItem.subGoal._id}
+                >
+                  <SubGoalCard
+                    editMode={editMode}
+                    subGoalItem={requiredSubGoalItem}
+                    onRemove={(subGoalId) =>
+                      detachLearningGoalRequiresSubGoal({
+                        variables: { learningGoalId: learningGoal._id, subGoalId: subGoalId },
+                      })
+                    }
+                  />
+                </WrapItem>
+              ))}
             {editMode && (
               <WrapItem
               // w="45%"
@@ -150,32 +166,16 @@ export const DomainLearningGoalPage: React.FC<{ domainKey: string; contextualLea
               ></WrapItem>
             )}
           </Wrap>
-          {learningGoal.requiredSubGoals && (
-            <DomainConceptsSelector
-              placeholder="Add a SubGoal..."
-              domainKey={domain.key}
-              selectedConcepts={learningGoal.requiredSubGoals
-                .filter((item) => item.subGoal.__typename === 'Concept')
-                .map((item) => item.subGoal as ConceptDataFragment)} // Cleaner way ?
-              onRemove={(conceptToRemove) =>
-                detachLearningGoalRequiresSubGoal({
-                  variables: {
-                    learningGoalId: learningGoal._id,
-                    subGoalId: conceptToRemove._id,
-                  },
-                })
-              }
-              onSelect={(selected) =>
-                attachLearningGoalRequiresSubGoal({
-                  variables: {
-                    learningGoalId: learningGoal._id,
-                    subGoalId: selected._id,
-                    payload: {},
-                  },
-                })
-              }
-            />
-          )}
+          <SubTopicSelector
+            domain={domain}
+            onSelect={(selected) =>
+              attachLearningGoalRequiresSubGoal({
+                variables: { learningGoalId: learningGoal._id, subGoalId: selected._id, payload: {} },
+              })
+            }
+            placeholder="Select or Create SubGoals"
+            allowedSubTopicTypes={[TopicType.Concept, TopicType.LearningGoal]}
+          />
         </Flex>
       </Stack>
     </PageLayout>

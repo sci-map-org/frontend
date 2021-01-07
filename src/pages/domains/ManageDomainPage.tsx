@@ -6,15 +6,17 @@ import { DomainsPicker } from '../../components/domains/DomainsPicker';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { InternalLink } from '../../components/navigation/InternalLink';
 import { DomainData, generateDomainData } from '../../graphql/domains/domains.fragments';
+import {
+  useAddDomainBelongsToDomainMutation,
+  useRemoveDomainBelongsToDomainMutation,
+} from '../../graphql/domains/domains.operations.generated';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { PageInfo, routerPushToPage } from '../PageInfo';
 import { DomainPageInfo } from './DomainPage';
 import { EditDomainPageInfo } from './EditDomainPage';
 import {
   GetDomainByKeyManageDomainPageQuery,
-  useAddDomainBelongsToDomainMutation,
   useGetDomainByKeyManageDomainPageQuery,
-  useRemoveDomainBelongsToDomainMutation,
 } from './ManageDomainPage.generated';
 
 export const ManageDomainPagePath = (domainKey: string) => `/domains/${domainKey}/manage`;
@@ -37,32 +39,6 @@ export const getDomainByKeyManageDomainPage = gql`
     }
   }
   ${DomainData}
-`;
-
-export const addDomainBelongsToDomain = gql`
-  mutation addDomainBelongsToDomain($parentDomainId: String!, $subDomainId: String!) {
-    addDomainBelongsToDomain(parentDomainId: $parentDomainId, subDomainId: $subDomainId) {
-      _id
-      subDomains {
-        domain {
-          _id
-        }
-      }
-    }
-  }
-`;
-
-export const removeDomainBelongsToDomain = gql`
-  mutation removeDomainBelongsToDomain($parentDomainId: String!, $subDomainId: String!) {
-    removeDomainBelongsToDomain(parentDomainId: $parentDomainId, subDomainId: $subDomainId) {
-      _id
-      subDomains {
-        domain {
-          _id
-        }
-      }
-    }
-  }
 `;
 
 const placeholderDomainData: GetDomainByKeyManageDomainPageQuery['getDomainByKey'] = generateDomainData();

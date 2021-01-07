@@ -13,6 +13,8 @@ export type Scalars = {
 
 export type Query = {
   __typename?: 'Query';
+  searchTopics: SearchTopicsResult;
+  searchSubTopics: SearchTopicsResult;
   currentUser?: Maybe<CurrentUser>;
   getUser: User;
   getArticleByKey: Article;
@@ -29,6 +31,17 @@ export type Query = {
   searchLearningGoals: SearchLearningGoalsResult;
   getLearningGoalByKey: LearningGoal;
   getDomainLearningGoalByKey: DomainAndLearningGoalResult;
+};
+
+
+export type QuerySearchTopicsArgs = {
+  options: SearchTopicsOptions;
+};
+
+
+export type QuerySearchSubTopicsArgs = {
+  domainId: Scalars['String'];
+  options: SearchTopicsOptions;
 };
 
 
@@ -506,6 +519,17 @@ export type MutationRemoveDomainBelongsToDomainArgs = {
   subDomainId: Scalars['String'];
 };
 
+
+export type SearchTopicsResult = {
+  __typename?: 'SearchTopicsResult';
+  items: Array<Topic>;
+};
+
+export type SearchTopicsOptions = {
+  query: Scalars['String'];
+  pagination: PaginationOptions;
+  filter?: Maybe<SearchTopicsFilterOptions>;
+};
 
 export type CurrentUser = {
   __typename?: 'CurrentUser';
@@ -1003,6 +1027,23 @@ export type UpdateConceptBelongsToConceptPayload = {
   index?: Maybe<Scalars['Float']>;
 };
 
+export type Topic = {
+  _id: Scalars['String'];
+  name: Scalars['String'];
+  key: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  topicType: TopicType;
+};
+
+export type PaginationOptions = {
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+};
+
+export type SearchTopicsFilterOptions = {
+  topicTypeIn?: Maybe<Array<TopicType>>;
+};
+
 export enum UserRole {
   Admin = 'ADMIN',
   Contributor = 'CONTRIBUTOR',
@@ -1026,19 +1067,6 @@ export enum ArticleContentType {
 
 export type ListArticlesFilter = {
   contentType?: Maybe<ArticleContentType>;
-};
-
-export type PaginationOptions = {
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
-};
-
-export type Topic = {
-  _id: Scalars['String'];
-  name: Scalars['String'];
-  key: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-  topicType: TopicType;
 };
 
 export enum TopicType {
