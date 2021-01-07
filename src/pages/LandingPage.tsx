@@ -12,7 +12,7 @@ const Title: React.FC<{}> = () => {
         Sci-Map.org
       </Heading>
       <Heading fontSize="4xl" color="blackAlpha.500">
-        (closed audience release)
+        (Beta)
       </Heading>
     </Flex>
   );
@@ -45,9 +45,7 @@ const LandingHeader: React.FC<{ layoutProps: FlexProps }> = ({ layoutProps }) =>
             </Text>{' '}
             is a community-based, nonprofit project aiming to reshape online learning by providing a free and
             personalized learning experience for every topic. It allows you to explore knowledge intuitively, whether
-            you have a specific goal in mind or you simply are following your curiosity. <br />
-            <br />
-            As of November 2020, it is in a state of closed audience release.
+            you have a specific goal in mind or you simply are following your curiosity.
           </Text>
           <Stack direction="column" spacing={2} mb="15px">
             <Text>
@@ -167,8 +165,8 @@ const LandingFooter: React.FC<{ layoutProps: FlexProps }> = ({ layoutProps }) =>
       State of the project
     </Heading>
     <Text>
-      The project is currently in a closed audience release in order to gather feedback and enhance tne product
-      iteratively. It is open-source (checkout{' '}
+      The project is currently in a beta release in order to gather feedback and enhance tne product iteratively. It is
+      open-source (checkout our{' '}
       <Link color="blue.500" href="https://github.com/sci-map-org/">
         Github
       </Link>
@@ -242,12 +240,19 @@ export const LandingPage: React.FC = () => {
         title="An open, graph-based learning map"
         renderTextContent={
           <Text>
-            Find out what you don't know, what you need to learn next, take a deep dive, or explore seamlessly with an
-            open map of the knowledge space.
+            Find out what you don't know, what you need to learn next, take a deep dive, or explore seamlessly with an{' '}
+            <Text fontWeight={600} as="span">
+              open map
+            </Text>{' '}
+            of the knowledge space.
             <br />
             <br />
-            We leverage graph database technology to build an abstract and precise modeling of knowledge, locate
-            learning material in it, and serve it at the right time to the learner.
+            We leverage{' '}
+            <Text fontWeight={600} as="span">
+              graph database
+            </Text>{' '}
+            technology to build an abstract and precise modeling of knowledge, locate learning material in it, and serve
+            it at the right time to the learner.
           </Text>
         }
       />
@@ -258,20 +263,38 @@ export const LandingPage: React.FC = () => {
         title="An experience tailored to each learner"
         renderTextContent={
           <Text>
-            From what the learner already knows, his learning profile, his goals and interests, we will provide an
-            optimal and fully personalized experience.
+            From what the learner already knows, his learning profile, his goals and interests, we will provide an{' '}
+            <Text fontWeight={600} as="span">
+              optimal
+            </Text>{' '}
+            and{' '}
+            <Text fontWeight={600} as="span">
+              fully personalized
+            </Text>{' '}
+            experience.
             <br />
             <br />
             We plan to provide smart recommendations while enabling the learner to keep control over their path, for
-            instance by finding alternative pedagogical approaches in one click.
+            instance by finding{' '}
+            <Text fontWeight={600} as="span">
+              alternative pedagogical
+            </Text>{' '}
+            approaches in one click.
             <br />
             <br />
-            By providing personal learning management features, and building an increasingly precise leaning profile for
-            each user,{' '}
+            By providing{' '}
+            <Text fontWeight={600} as="span">
+              personal learning management
+            </Text>{' '}
+            features, and building an increasingly precise leaning profile for each user,{' '}
             <Text as="span" fontWeight={600} color="main">
               Sci-map.org
             </Text>{' '}
-            aims to be the perfect tool for continuous learning across a wide range of domains.
+            aims to be the perfect tool for{' '}
+            <Text fontWeight={600} as="span">
+              continuous learning
+            </Text>{' '}
+            across a wide range of domains.
           </Text>
         }
       />
@@ -283,11 +306,21 @@ export const LandingPage: React.FC = () => {
         title="Collaborative and community based"
         renderTextContent={
           <Text>
-            This project is community-based; we intend to build a modeling of the knowledge space, assess the content
-            quality, and improve upon it collaboratively. <br />
+            This project is{' '}
+            <Text fontWeight={600} as="span">
+              community-based
+            </Text>
+            ; we intend to build a modeling of the knowledge space, assess the content quality, and improve upon it{' '}
+            <Text fontWeight={600} as="span">
+              collaboratively
+            </Text>
+            . <br />
             <br />
-            We aim to enable new communities to form around different domains, foster learning with peers, receiving
-            support and feedback, and connecting people at the right time. <br />
+            We aim to enable new communities to form around different domains, foster{' '}
+            <Text fontWeight={600} as="span">
+              learning with peers
+            </Text>
+            , receiving support and feedback, and connecting people at the right time. <br />
             <br />
             By improving content collaboratively based on community feedback and data, we aim to reach a better quality
             than what an individual alone could achieve.
