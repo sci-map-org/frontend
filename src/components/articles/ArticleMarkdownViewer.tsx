@@ -1,4 +1,4 @@
-import { Flex, Heading, Image, Link, List, ListItem, Stack, Text } from '@chakra-ui/react';
+import { Flex, Heading, HeadingProps, Image, Link, List, ListItem, Stack, Text } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 import ReactMarkdown from 'react-markdown';
 import breaks from 'remark-breaks';
@@ -7,7 +7,7 @@ import { fonts } from '../../theme/theme';
 
 type HeadingConfig = {
   fontSize: string;
-  fontWeight: string;
+  fontWeight: HeadingProps['fontWeight'];
   asTag: React.ElementType;
   mt: string;
   mb: string;
@@ -16,44 +16,44 @@ type HeadingConfig = {
 const headingConfigMap: { [key in number]: HeadingConfig } = {
   1: {
     fontSize: '36px',
-    fontWeight: 'bold',
+    fontWeight: 500,
     asTag: 'h1',
-    mt: '20px',
-    mb: '10px',
+    mt: '18px',
+    mb: '8px',
   },
   2: {
-    fontSize: '32px',
-    fontWeight: 'bold',
+    fontSize: '30px',
+    fontWeight: 500,
     asTag: 'h2',
-    mt: '10px',
-    mb: '6px',
+    mt: '16px',
+    mb: '7px',
   },
   3: {
-    fontSize: '32px',
-    fontWeight: 'normal',
+    fontSize: '26px',
+    fontWeight: 500,
     asTag: 'h3',
-    mt: '10px',
+    mt: '14px',
     mb: '6px',
   },
   4: {
-    fontSize: '28px',
-    fontWeight: 'normal',
+    fontSize: '24px',
+    fontWeight: 400,
     asTag: 'h4',
-    mt: '10px',
+    mt: '14px',
     mb: '6px',
   },
   5: {
-    fontSize: '28px',
-    fontWeight: 'thin',
+    fontSize: '22px',
+    fontWeight: 300,
     asTag: 'h5',
-    mt: '10px',
-    mb: '6px',
+    mt: '14px',
+    mb: '7px',
   },
   6: {
-    fontSize: '24px',
-    fontWeight: 'thin',
+    fontSize: '19px',
+    fontWeight: 500,
     asTag: 'h6',
-    mt: '10px',
+    mt: '12px',
     mb: '6px',
   },
 };
@@ -66,11 +66,11 @@ export const ArticleMarkdownViewer: React.FC<{ content: string }> = ({ content }
       plugins={[breaks]}
       renderers={{
         root: ({ children }) => {
-          return <Stack>{children}</Stack>;
+          return <Flex direction="column">{children}</Flex>;
         },
         paragraph: ({ children }) => {
           return (
-            <Text fontFamily={fonts.article} fontSize="19px">
+            <Text fontFamily={fonts.article} fontSize="19px" mt={0}>
               {children}
             </Text>
           );
@@ -79,6 +79,7 @@ export const ArticleMarkdownViewer: React.FC<{ content: string }> = ({ content }
           return (
             <Heading
               fontSize={headingConfigMap[level].fontSize}
+              lineHeight={headingConfigMap[level].fontSize}
               fontWeight={headingConfigMap[level].fontWeight}
               as={headingConfigMap[level].asTag}
               mt={headingConfigMap[level].mt}

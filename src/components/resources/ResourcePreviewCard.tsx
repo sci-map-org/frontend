@@ -247,9 +247,9 @@ const RightBlock: React.FC<{
   const unauthentificatedModalDisclosure = useUnauthentificatedModal();
   return (
     <Flex direction="row">
-      <BoxBlockDefaultClickPropagation alignSelf="center" justifySelf="center" ml="32px" mr="4px">
+      {/* <BoxBlockDefaultClickPropagation alignSelf="center" justifySelf="center" ml="32px" mr="4px">
         <ResourceUpvoter resource={resource} isLoading={isLoading} />
-      </BoxBlockDefaultClickPropagation>
+      </BoxBlockDefaultClickPropagation> */}
       <BoxBlockDefaultClickPropagation>
         <IconButton
           m={1}
