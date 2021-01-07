@@ -29,6 +29,14 @@ export const LearningGoalBadgeData = gql`
     _id
     name
     key
+    domain {
+      contextualKey
+      contextualName
+      domain {
+        _id
+        key
+      }
+    }
   }
 `;
 
@@ -46,6 +54,7 @@ export const LearningGoalBadge: React.FC<LearningGoalBadgeProps> = ({
   role = 'outcome',
   clickable = true,
 }) => {
+  const domainRelationship = learningGoal.domain;
   return (
     <Tooltip label={learningGoal.name} aria-label={learningGoal.name} openDelay={500}>
       <Flex
@@ -63,7 +72,13 @@ export const LearningGoalBadge: React.FC<LearningGoalBadgeProps> = ({
             backgroundColor: roleStyleMapping[role].hoverBackgroundColor,
             cursor: 'pointer',
           },
-          onClick: () => Router.push('/goals/[learningGoalKey]', `/goals/${learningGoal.key}`),
+          onClick: () =>
+            Router.push(
+              domainRelationship ? '/domains/[key]/goals/[learningGoalKey]' : '/goals/[learningGoalKey]',
+              domainRelationship
+                ? `/domains/${domainRelationship.domain.key}/goals/${domainRelationship.contextualKey}`
+                : `/goals/${learningGoal.key}`
+            ),
         })}
       >
         {removable && <CloseButton float="left" as="span" size="sm" onClick={() => onRemove && onRemove()} />}

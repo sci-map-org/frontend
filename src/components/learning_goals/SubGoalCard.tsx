@@ -1,5 +1,6 @@
 import { CloseIcon } from '@chakra-ui/icons';
 import { Center, Flex, Wrap, WrapItem } from '@chakra-ui/react';
+import { Domain } from 'domain';
 import gql from 'graphql-tag';
 import { ConceptData } from '../../graphql/concepts/concepts.fragments';
 import { DomainData } from '../../graphql/domains/domains.fragments';
@@ -21,6 +22,7 @@ export const ConceptSubGoalCardData = gql`
     domain {
       _id
       key
+      name
     }
   }
 `;
@@ -31,6 +33,13 @@ export const LearningGoalSubGoalCardData = gql`
     name
     key
     description
+    domain {
+      contextualName
+      contextualKey
+      domain {
+        ...DomainData
+      }
+    }
     requiredSubGoals {
       strength
       subGoal {
@@ -86,12 +95,17 @@ interface LearningGoalSubGoalCardProps extends SharedSubGoalCardProps {
 }
 
 const LearningGoalSubGoalCard: React.FC<LearningGoalSubGoalCardProps> = ({ learningGoal, editMode, onRemove }) => {
+  const domainItem = learningGoal.domain;
   return (
     <Flex direction="column" alignItems="stretch" h="100%" w="100%">
       <Center position="relative" flexGrow={1}>
         <InternalLink
-          routePath="/goals/[learningGoalKey]"
-          asHref={`/goals/${learningGoal.key}`}
+          routePath={domainItem ? '/domains/[key]/goals/[learningGoalKey]' : '/goals/[learningGoalKey]'}
+          asHref={
+            domainItem
+              ? `/domains/${domainItem.domain.key}/goals/${domainItem.contextualKey}`
+              : `/goals/${learningGoal.key}`
+          }
           fontSize="xl"
           mt={2}
           px={2}
@@ -123,17 +137,19 @@ const LearningGoalSubGoalCard: React.FC<LearningGoalSubGoalCardProps> = ({ learn
 
       {learningGoal.requiredSubGoals && !!learningGoal.requiredSubGoals.length && (
         <Wrap px={2} pb={2}>
-          {learningGoal.requiredSubGoals.map((subSubGoal) => (
-            <WrapItem key={subSubGoal.subGoal._id}>
-              {subSubGoal.subGoal.__typename === 'LearningGoal' && (
-                <LearningGoalBadge learningGoal={subSubGoal.subGoal} />
+          {learningGoal.requiredSubGoals.map((subGoalItem) => (
+            <WrapItem key={subGoalItem.subGoal._id}>
+              {subGoalItem.subGoal.__typename === 'LearningGoal' && (
+                <LearningGoalBadge learningGoal={subGoalItem.subGoal} />
               )}
-              {subSubGoal.subGoal.__typename === 'Concept' && subSubGoal.subGoal.domain && (
+              {subGoalItem.subGoal.__typename === 'Concept' && subGoalItem.subGoal.domain && (
                 <Flex>
                   <InternalLink // Use PageLink with the pageinfo problem is fixed
                     routePath="/domains/[key]/concepts/[conceptKey]"
-                    asHref={`/domains/${subSubGoal.subGoal.domain.key}/concepts/${subSubGoal.subGoal.key}`}
-                  />
+                    asHref={`/domains/${subGoalItem.subGoal.domain.key}/concepts/${subGoalItem.subGoal.key}`}
+                  >
+                    {subGoalItem.subGoal.name}
+                  </InternalLink>
                 </Flex>
                 // <PageLink pageInfo={ConceptPageInfo(subSubGoal.subGoal.domain, subSubGoal.subGoal)} />
               )}
@@ -162,8 +178,34 @@ export const ConceptSubGoalCard: React.FC<ConceptSubGoalCardProps> = ({ concept,
   const domain = concept.domain;
   if (!domain) return null;
   return (
-    <Center>
-      <InternalLink routePath="" asHref={`/domains/${domain.key}/concepts/${concept.key}`}></InternalLink>
+    <Center h="100%" w="100%" direction="column" position="relative">
+      <InternalLink
+        mx={2}
+        py={1}
+        routePath="/domains/[key]/concepts/[conceptKey]"
+        asHref={`/domains/${domain.key}/concepts/${concept.key}`}
+        fontSize="lg"
+        fontWeight={500}
+        {...(editMode && { mr: 6 })}
+      >
+        {concept.name}
+      </InternalLink>
+      {editMode && onRemove && (
+        <DeleteButtonWithConfirmation
+          // Future: remove and removeAndDelete
+          position="absolute"
+          top={1}
+          right={1}
+          modalBodyText={`Do you confirm removing "${concept.name}" from this learning goal ?`}
+          modalHeaderText="Confirm removing this concept ?"
+          mode="iconButton"
+          onConfirmation={() => onRemove(concept._id)}
+          size="xs"
+          variant="ghost"
+          icon={<CloseIcon />}
+          confirmButtonText="Remove"
+        />
+      )}
       {/* <PageLink pageInfo={ConceptPageInfo(concept.domain, concept)}>{concept.name}</PageLink> */}
     </Center>
   );

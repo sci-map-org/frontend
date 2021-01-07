@@ -1,12 +1,12 @@
 import { EditIcon } from '@chakra-ui/icons';
-import { Center, IconButton, Skeleton, Stack, Tooltip, Wrap, WrapItem } from '@chakra-ui/react';
+import { Center, IconButton, Stack, Tooltip } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import Router from 'next/router';
 import { useMemo, useState } from 'react';
 import { AiOutlineEye } from 'react-icons/ai';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { LearningGoalSelector } from '../../components/learning_goals/LearningGoalSelector';
-import { SubGoalCard, SubGoalCardData } from '../../components/learning_goals/SubGoalCard';
+import { SubGoalsWrapper, SubGoalsWrapperData } from '../../components/learning_goals/SubGoalsWrapper';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { EditableTextarea } from '../../components/lib/inputs/EditableTextarea';
 import { EditableTextInput } from '../../components/lib/inputs/EditableTextInput';
@@ -15,7 +15,6 @@ import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_
 import {
   useAttachLearningGoalRequiresSubGoalMutation,
   useDeleteLearningGoalMutation,
-  useDetachLearningGoalRequiresSubGoalMutation,
   useUpdateLearningGoalMutation,
 } from '../../graphql/learning_goals/learning_goals.operations.generated';
 import { LearningGoal, UserRole } from '../../graphql/types';
@@ -37,13 +36,11 @@ export const getLearningGoalPageData = gql`
       createdBy {
         _id
       }
-      requiredSubGoals {
-        ...SubGoalCardData
-      }
+      ...SubGoalsWrapperData
     }
   }
   ${LearningGoalData}
-  ${SubGoalCardData}
+  ${SubGoalsWrapperData}
 `;
 
 const learningGoalPlaceholderData: GetLearningGoalPageDataQuery['getLearningGoalByKey'] = {
@@ -61,7 +58,6 @@ export const LearningGoalPage: React.FC<{ learningGoalKey: string }> = ({ learni
   );
   const [editMode, setEditMode] = useState(!!currentUser && currentUser.role === UserRole.Admin);
   const [attachLearningGoalRequiresSubGoal] = useAttachLearningGoalRequiresSubGoalMutation();
-  const [detachLearningGoalRequiresSubGoal] = useDetachLearningGoalRequiresSubGoalMutation();
   return (
     <PageLayout
       marginSize="md"
@@ -115,38 +111,12 @@ export const LearningGoalPage: React.FC<{ learningGoalKey: string }> = ({ learni
           isDisabled={!editMode}
         />
 
-        {learningGoal.requiredSubGoals && (
-          <Wrap spacing="30px" justify="center">
-            {learningGoal.requiredSubGoals.map((requiredSubGoalItem, idx) => (
-              <WrapItem
-                borderWidth="1px"
-                borderColor="gray.500"
-                boxShadow="md"
-                w="45%"
-                borderRadius={5}
-                key={requiredSubGoalItem.subGoal._id}
-              >
-                <SubGoalCard
-                  editMode={editMode}
-                  subGoalItem={requiredSubGoalItem}
-                  onRemove={(subGoalId) =>
-                    detachLearningGoalRequiresSubGoal({
-                      variables: { learningGoalId: learningGoal._id, subGoalId: subGoalId },
-                    })
-                  }
-                />
-              </WrapItem>
-            ))}
-            {editMode && (
-              <WrapItem
-                w="45%"
-                borderWidth="1px"
-                borderColor="gray.500"
-                justifyContent="center"
-                alignItems="center"
-                py={3}
-                borderRadius={5}
-              >
+        <SubGoalsWrapper
+          learningGoal={learningGoal}
+          editMode={editMode}
+          renderLastItem={
+            editMode && (
+              <Center py={2}>
                 <LearningGoalSelector
                   placeholder="Add a SubGoal..."
                   onSelect={(selected) =>
@@ -159,10 +129,10 @@ export const LearningGoalPage: React.FC<{ learningGoalKey: string }> = ({ learni
                     })
                   }
                 />
-              </WrapItem>
-            )}
-          </Wrap>
-        )}
+              </Center>
+            )
+          }
+        />
       </Stack>
     </PageLayout>
   );
