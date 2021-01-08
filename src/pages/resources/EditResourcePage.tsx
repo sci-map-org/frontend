@@ -3,7 +3,6 @@ import gql from 'graphql-tag';
 import Router from 'next/router';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { ResourceEditor } from '../../components/resources/ResourceEditor';
-import { ConceptData } from '../../graphql/concepts/concepts.fragments';
 import { ResourceData } from '../../graphql/resources/resources.fragments';
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { PageInfo } from '../PageInfo';
@@ -49,7 +48,7 @@ const EditResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) => {
   const { getResourceById: resource } = data;
   return (
     <PageLayout
-      mode="form"
+      marginSize="xl"
       breadCrumbsLinks={[ResourcePageInfo(resource), EditResourcePageInfo(resource)]}
       accessRule="loggedInUser"
     >

@@ -46,3 +46,29 @@ export const deleteDomain = gql`
     }
   }
 `;
+
+export const addDomainBelongsToDomain = gql`
+  mutation addDomainBelongsToDomain($parentDomainId: String!, $subDomainId: String!) {
+    addDomainBelongsToDomain(parentDomainId: $parentDomainId, subDomainId: $subDomainId) {
+      _id
+      subDomains {
+        domain {
+          _id
+        }
+      }
+    }
+  }
+`;
+
+export const removeDomainBelongsToDomain = gql`
+  mutation removeDomainBelongsToDomain($parentDomainId: String!, $subDomainId: String!) {
+    removeDomainBelongsToDomain(parentDomainId: $parentDomainId, subDomainId: $subDomainId) {
+      _id
+      subDomains {
+        domain {
+          _id
+        }
+      }
+    }
+  }
+`;

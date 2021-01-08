@@ -1,6 +1,4 @@
 import {
-  Button,
-  ButtonGroup,
   Flex,
   FormControl,
   FormLabel,
@@ -18,22 +16,23 @@ import gql from 'graphql-tag';
 import Router from 'next/router';
 import React, { ReactElement, useEffect, useState } from 'react';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
-import { ResourceData } from '../../graphql/resources/resources.fragments';
-import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import {
   useAttachLearningMaterialCoversConceptsMutation,
   useAttachLearningMaterialToDomainMutation,
 } from '../../graphql/learning_materials/learning_materials.operations.generated';
-import { CreateResourcePayload, ResourceMediaType, LearningMaterialTag, ResourceType } from '../../graphql/types';
+import { ResourceData } from '../../graphql/resources/resources.fragments';
+import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { CreateResourcePayload, LearningMaterialTag, ResourceMediaType, ResourceType } from '../../graphql/types';
 import { validateUrl } from '../../services/url.service';
 import { DomainAndConceptsSelector, DomainAndSelectedConcepts } from '../concepts/DomainAndConceptsSelector';
-import { useCreateResourceMutation } from './NewResource.generated';
-import { ResourceDescriptionInput } from './elements/ResourceDescription';
-import { DurationFormField } from './elements/Duration';
-import { ResourceMediaTypeSelector } from './elements/ResourceMediaType';
 import { LearningMaterialTagsStatelessEditor } from '../learning_materials/LearningMaterialTagsEditor';
+import { FormButtons } from '../lib/buttons/FormButtons';
+import { DurationFormField } from './elements/Duration';
+import { ResourceDescriptionInput } from './elements/ResourceDescription';
+import { ResourceMediaTypeSelector } from './elements/ResourceMediaType';
 import { ResourceTypeSelector } from './elements/ResourceType';
 import { ResourceUrlInput } from './elements/ResourceUrl';
+import { useCreateResourceMutation } from './NewResource.generated';
 
 interface NewResourceFormProps {
   createResource: (
@@ -89,40 +88,28 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
           setSelectedDomainsAndCoveredConcepts(domainsAndCoveredConceptsSelected)
         }
       />
-      <Flex justifyContent="flex-end">
-        <ButtonGroup spacing={8} w="40%" minWidth="25rem">
-          <Button size="lg" variant="outline" w="50%" onClick={() => (onCancel ? onCancel() : Router.back())}>
-            Cancel
-          </Button>
-          <Button
-            isLoading={isCreating}
-            w="50%"
-            size="lg"
-            colorScheme="brand"
-            variant="solid"
-            isDisabled={!isValid}
-            onClick={async () => {
-              setIsCreating(true);
-              const createdResource = await createResource(
-                {
-                  name,
-                  description,
-                  type,
-                  mediaType,
-                  url,
-                  durationSeconds,
-                  tags: selectedTags.map((t) => t.name),
-                },
-                selectedDomainsAndCoveredConcepts
-              );
-              setIsCreating(false);
-              onResourceCreated && onResourceCreated(createdResource);
-            }}
-          >
-            Create
-          </Button>
-        </ButtonGroup>
-      </Flex>
+      <FormButtons
+        isPrimaryDisabled={!isValid}
+        onCancel={() => (onCancel ? onCancel() : Router.back())}
+        size="lg"
+        onPrimaryClick={async () => {
+          setIsCreating(true);
+          const createdResource = await createResource(
+            {
+              name,
+              description,
+              type,
+              mediaType,
+              url,
+              durationSeconds,
+              tags: selectedTags.map((t) => t.name),
+            },
+            selectedDomainsAndCoveredConcepts
+          );
+          setIsCreating(false);
+          onResourceCreated && onResourceCreated(createdResource);
+        }}
+      />
     </Stack>
   );
 };

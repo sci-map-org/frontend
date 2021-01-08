@@ -28,7 +28,7 @@ export const LoginPage: React.FC = () => {
   if (currentUser && !discourseSSO) return null;
 
   return (
-    <PageLayout mode="form" title="Login" centerChildren>
+    <PageLayout marginSize="xl" title="Login" centerChildren>
       <Stack width="36rem">
         <LoginForm
           onSuccessfulLogin={({ redirectUrl }) => {

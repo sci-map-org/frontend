@@ -62,7 +62,7 @@ export const DomainsListPage: React.FC = () => {
         </Flex>
         <RoleAccess accessRule="contributorOrAdmin">
           <InternalButtonLink variant="outline" routePath="/domains/new" asHref="/domains/new">
-            + New Domain
+            + New Topic
           </InternalButtonLink>
         </RoleAccess>
       </Stack>

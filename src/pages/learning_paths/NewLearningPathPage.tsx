@@ -3,7 +3,7 @@ import { NewLearningPath } from '../../components/learning_paths/NewLearningPath
 
 export const NewLearningPathPage: React.FC<{}> = () => {
   return (
-    <PageLayout title="Create Learning Path" mode="form">
+    <PageLayout title="Create Learning Path" marginSize="xl">
       <NewLearningPath />
     </PageLayout>
   );

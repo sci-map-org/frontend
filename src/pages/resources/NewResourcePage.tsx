@@ -4,7 +4,7 @@ import { NewResource } from '../../components/resources/NewResource';
 
 export const NewResourcePage: React.FC<{}> = () => {
   return (
-    <PageLayout mode="form" title={`Create new Resource`}>
+    <PageLayout marginSize="xl" title={`Create new Resource`}>
       <NewResource onResourceCreated={(createdResource) => Router.push(`/resources/${createdResource._id}`)} />
     </PageLayout>
   );

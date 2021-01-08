@@ -1,5 +1,6 @@
 import { CloseButton, Flex, FlexProps, Tooltip } from '@chakra-ui/react';
 import gql from 'graphql-tag';
+import Router from 'next/router';
 import { LearningGoalBadgeDataFragment } from './LearningGoalBadge.generated';
 
 const roleStyleMapping: {
@@ -27,20 +28,33 @@ export const LearningGoalBadgeData = gql`
   fragment LearningGoalBadgeData on LearningGoal {
     _id
     name
+    key
+    domain {
+      contextualKey
+      contextualName
+      domain {
+        _id
+        key
+      }
+    }
   }
 `;
+
 interface LearningGoalBadgeProps {
   learningGoal: LearningGoalBadgeDataFragment;
   onRemove?: () => void;
   removable?: boolean;
   role?: 'prerequisite' | 'outcome';
+  clickable?: boolean;
 }
 export const LearningGoalBadge: React.FC<LearningGoalBadgeProps> = ({
   onRemove,
   learningGoal,
   removable,
   role = 'outcome',
+  clickable = true,
 }) => {
+  const domainRelationship = learningGoal.domain;
   return (
     <Tooltip label={learningGoal.name} aria-label={learningGoal.name} openDelay={500}>
       <Flex
@@ -53,10 +67,19 @@ export const LearningGoalBadge: React.FC<LearningGoalBadgeProps> = ({
         borderColor={roleStyleMapping[role].borderColor}
         textAlign="center"
         noOfLines={1}
-        // _hover={{
-        // backgroundColor: roleStyleMapping[role].hoverBackgroundColor,
-        // cursor: 'pointer',
-        // }}
+        {...(clickable && {
+          _hover: {
+            backgroundColor: roleStyleMapping[role].hoverBackgroundColor,
+            cursor: 'pointer',
+          },
+          onClick: () =>
+            Router.push(
+              domainRelationship ? '/domains/[key]/goals/[learningGoalKey]' : '/goals/[learningGoalKey]',
+              domainRelationship
+                ? `/domains/${domainRelationship.domain.key}/goals/${domainRelationship.contextualKey}`
+                : `/goals/${learningGoal.key}`
+            ),
+        })}
       >
         {removable && <CloseButton float="left" as="span" size="sm" onClick={() => onRemove && onRemove()} />}
         {learningGoal.name}

@@ -1,7 +1,5 @@
 import { CloseIcon } from '@chakra-ui/icons';
 import {
-  Button,
-  ButtonGroup,
   Flex,
   FormControl,
   FormHelperText,
@@ -23,7 +21,9 @@ import {
 } from '../../graphql/learning_goals/learning_goals.operations.generated';
 import { CreateLearningGoalPayload } from '../../graphql/types';
 import { generateUrlKey } from '../../services/url.service';
+import { getChakraRelativeSize } from '../../util/chakra.util';
 import { DomainSelector } from '../domains/DomainSelector';
+import { FormButtons } from '../lib/buttons/FormButtons';
 
 interface NewLearningGoalData {
   domain?: DomainDataFragment;
@@ -31,13 +31,13 @@ interface NewLearningGoalData {
   key: string;
   description?: string;
 }
-interface StatelessNewLearningGoalProps {
+interface NewLearningGoalFormProps {
   onCreate: (payload: NewLearningGoalData) => void;
   onCancel: () => void;
   defaultPayload?: Partial<CreateLearningGoalPayload>;
   size?: 'md' | 'lg' | 'sm';
 }
-export const StatelessNewLearningGoal: React.FC<StatelessNewLearningGoalProps> = ({
+export const NewLearningGoalForm: React.FC<NewLearningGoalFormProps> = ({
   onCreate,
   onCancel,
   defaultPayload,
@@ -112,36 +112,27 @@ export const StatelessNewLearningGoal: React.FC<StatelessNewLearningGoalProps> =
           onChange={(e) => setDescription(e.target.value)}
         ></Textarea>
       </FormControl>
-      <Flex justifyContent="flex-end">
-        <ButtonGroup size={size} spacing={8}>
-          <Button variant="outline" onClick={() => onCancel()}>
-            Cancel
-          </Button>
-          <Button
-            // w="18rem"
-            variant="solid"
-            colorScheme="brand"
-            onClick={() => onCreate({ name, key, description: description || undefined, domain: domain || undefined })}
-          >
-            Add
-          </Button>
-        </ButtonGroup>
-      </Flex>
+      <FormButtons
+        isPrimaryDisabled={!name || !key}
+        onCancel={() => onCancel()}
+        size={getChakraRelativeSize(size, 1)}
+        onPrimaryClick={() =>
+          onCreate({ name, key, description: description || undefined, domain: domain || undefined })
+        }
+      />
     </Stack>
   );
 };
 
-export const NewLearningGoal: React.FC<{
+interface NewLearningGoalProps extends Omit<NewLearningGoalFormProps, 'onCreate'> {
   onCreated?: (createdLearningGoal: LearningGoalDataFragment) => void;
-  onCancel?: () => void;
-  defaultPayload?: Partial<CreateLearningGoalPayload>;
-  size?: StatelessNewLearningGoalProps['size'];
-}> = ({ onCreated, onCancel, defaultPayload, size }) => {
+}
+export const NewLearningGoal: React.FC<NewLearningGoalProps> = ({ onCreated, onCancel, defaultPayload, size }) => {
   const [createLearningGoal] = useCreateLearningGoalMutation();
   const [addLearningGoalToDomain] = useAddLearningGoalToDomainMutation();
 
   return (
-    <StatelessNewLearningGoal
+    <NewLearningGoalForm
       size={size}
       defaultPayload={defaultPayload}
       onCreate={async ({ name, key, description, domain }) => {
@@ -164,7 +155,7 @@ export const NewLearningGoal: React.FC<{
         }
         onCreated && createdLearningGoal && onCreated(createdLearningGoal);
       }}
-      onCancel={() => onCancel && onCancel()}
+      onCancel={onCancel}
     />
   );
 };

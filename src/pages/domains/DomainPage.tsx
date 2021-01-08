@@ -279,7 +279,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
               </Text>
               <Stack>
                 {(domain.subDomains || []).map(({ domain }) => (
-                  <Box>
+                  <Box key={domain._id}>
                     <InternalLink
                       fontWeight={600}
                       color="gray.700"
@@ -291,7 +291,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
                   </Box>
                 ))}
                 {(domain.learningGoals || []).map((learningGoalItem) => (
-                  <Box>
+                  <Box key={learningGoalItem.learningGoal._id}>
                     <PageLink pageInfo={DomainLearningGoalPageInfo(domain, learningGoalItem)}>
                       {learningGoalItem.contextualName}
                     </PageLink>
