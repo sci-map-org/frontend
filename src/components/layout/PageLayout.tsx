@@ -72,7 +72,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
           ) : (
             <Box />
           )}
-          <Box>{renderTopRight}</Box>
+          <Box pr={6}>{renderTopRight}</Box>
         </Flex>
       )}
       {title && (
