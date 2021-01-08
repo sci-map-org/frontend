@@ -57,7 +57,6 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   return (
     <Flex
       direction="column"
-      px={marginSizesMapping[marginSize].px}
       pt="16px"
       pb="100px"
       justifyContent="flex-start"
@@ -65,7 +64,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
       maxWidth={{ base: '100%', md: '1800px' }}
     >
       {(breadCrumbsLinks || renderTopRight) && (
-        <Flex direction="row" justifyContent="space-between" pb="8px">
+        <Flex direction="row" justifyContent="space-between" pb="8px" pl={6}>
           {breadCrumbsLinks && breadCrumbsLinks.length ? (
             <Skeleton isLoaded={!isLoading}>
               <NavigationBreadcrumbs links={breadCrumbsLinks} />
@@ -89,7 +88,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
         {renderLeft && <Box>{renderLeft}</Box>}
         <Box
           flexGrow={1}
-          px={mode === 'form' ? '10rem' : '0px'}
+          px={marginSizesMapping[marginSize].px}
           {...(centerChildren && { display: 'flex', flexDirection: 'column', alignItems: 'center' })}
         >
           {children}
