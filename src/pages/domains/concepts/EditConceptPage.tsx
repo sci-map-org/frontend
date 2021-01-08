@@ -1,8 +1,9 @@
-import { Button, ButtonGroup, Flex, Input, Stack, Textarea } from '@chakra-ui/react';
+import { Input, Stack, Textarea } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import Router from 'next/router';
 import { useState } from 'react';
 import { PageLayout } from '../../../components/layout/PageLayout';
+import { FormButtons } from '../../../components/lib/buttons/FormButtons';
 import { ConceptData } from '../../../graphql/concepts/concepts.fragments';
 import { ConceptDataFragment } from '../../../graphql/concepts/concepts.fragments.generated';
 import { useUpdateConcept } from '../../../graphql/concepts/concepts.hooks';
@@ -52,7 +53,7 @@ export const EditConceptPage: React.FC<{ domainKey: string; conceptKey: string }
   const [description, setDescription] = useState(concept.description || '');
   return (
     <PageLayout
-      mode="form"
+      marginSize="xl"
       breadCrumbsLinks={[
         DomainPageInfo(domain),
         ConceptListPageInfo(domain),
@@ -85,26 +86,14 @@ export const EditConceptPage: React.FC<{ domainKey: string; conceptKey: string }
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         ></Textarea>
-        <Flex direction="row" justifyContent="flex-end">
-          <ButtonGroup spacing={8}>
-            <Button w="16rem" size="lg" variant="outline" onClick={() => Router.back()}>
-              Cancel
-            </Button>
-            <Button
-              w="16rem"
-              size="lg"
-              colorScheme="brand"
-              variant="solid"
-              onClick={() =>
-                updateConcept({ variables: { _id: concept._id, payload: { name, description } } }).then(() =>
-                  Router.back()
-                )
-              }
-            >
-              Update
-            </Button>
-          </ButtonGroup>
-        </Flex>
+        <FormButtons
+          isPrimaryDisabled={!name}
+          onCancel={() => Router.back()}
+          size="lg"
+          onPrimaryClick={() =>
+            updateConcept({ variables: { _id: concept._id, payload: { name, description } } }).then(() => Router.back())
+          }
+        />
       </Stack>
     </PageLayout>
   );

@@ -37,7 +37,7 @@ export const VerifyEmailPage: React.FC = () => {
   }, []);
 
   return (
-    <PageLayout mode="form" title="Register" centerChildren>
+    <PageLayout marginSize="xl" title="Register" centerChildren>
       <Box>
         {!token && <Box>No token !</Box>}
         {loading && <Spinner size="lg" />}

@@ -14,7 +14,7 @@ export const NewConceptPage: React.FC<{ domainKey: string }> = ({ domainKey }) =
   if (!domain) return <Box>Domain not found !</Box>;
   return (
     <PageLayout
-      mode="form"
+      marginSize="xl"
       title={`Add concept to ${domain.name}`}
       breadCrumbsLinks={[DomainPageInfo(domain), ConceptListPageInfo(domain)]}
       accessRule="contributorOrAdmin"

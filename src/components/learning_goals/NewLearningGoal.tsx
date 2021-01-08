@@ -1,7 +1,5 @@
 import { CloseIcon } from '@chakra-ui/icons';
 import {
-  Button,
-  ButtonGroup,
   Flex,
   FormControl,
   FormHelperText,
@@ -23,7 +21,9 @@ import {
 } from '../../graphql/learning_goals/learning_goals.operations.generated';
 import { CreateLearningGoalPayload } from '../../graphql/types';
 import { generateUrlKey } from '../../services/url.service';
+import { getChakraRelativeSize } from '../../util/chakra.util';
 import { DomainSelector } from '../domains/DomainSelector';
+import { FormButtons } from '../lib/buttons/FormButtons';
 
 interface NewLearningGoalData {
   domain?: DomainDataFragment;
@@ -112,21 +112,14 @@ export const NewLearningGoalForm: React.FC<NewLearningGoalFormProps> = ({
           onChange={(e) => setDescription(e.target.value)}
         ></Textarea>
       </FormControl>
-      <Flex justifyContent="flex-end">
-        <ButtonGroup size={size} spacing={8}>
-          <Button variant="outline" onClick={() => onCancel()}>
-            Cancel
-          </Button>
-          <Button
-            // w="18rem"
-            variant="solid"
-            colorScheme="brand"
-            onClick={() => onCreate({ name, key, description: description || undefined, domain: domain || undefined })}
-          >
-            Add
-          </Button>
-        </ButtonGroup>
-      </Flex>
+      <FormButtons
+        isPrimaryDisabled={!name || !key}
+        onCancel={() => onCancel()}
+        size={getChakraRelativeSize(size, 1)}
+        onPrimaryClick={() =>
+          onCreate({ name, key, description: description || undefined, domain: domain || undefined })
+        }
+      />
     </Stack>
   );
 };

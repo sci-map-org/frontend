@@ -1,12 +1,13 @@
-import { CloseIcon } from '@chakra-ui/icons';
-import { Button, ButtonGroup, Flex, IconButton, Input, Stack, Text, Textarea } from '@chakra-ui/react';
+import { Flex, Input, Stack, Text, Textarea } from '@chakra-ui/react';
 import { useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { useAddConceptToDomain } from '../../graphql/concepts/concepts.hooks';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { AddConceptToDomainPayload } from '../../graphql/types';
 import { generateUrlKey } from '../../services/url.service';
+import { getChakraRelativeSize } from '../../util/chakra.util';
 import { DomainSelector } from '../domains/DomainSelector';
+import { FormButtons } from '../lib/buttons/FormButtons';
 
 interface NewConceptFormProps {
   domain?: DomainDataFragment;
@@ -63,23 +64,12 @@ export const NewConceptForm: React.FC<NewConceptFormProps> = ({
         value={description}
         onChange={(e) => setDescription(e.target.value)}
       ></Textarea>
-      <Flex justifyContent="flex-end">
-        <ButtonGroup spacing={8}>
-          <Button size={size} w="18rem" variant="outline" onClick={() => onCancel()}>
-            Cancel
-          </Button>
-          <Button
-            isDisabled={!name || !selectedDomain}
-            size={size}
-            w="18rem"
-            variant="solid"
-            colorScheme="brand"
-            onClick={() => selectedDomain && onCreate(selectedDomain._id, { name, description, key })}
-          >
-            Add
-          </Button>
-        </ButtonGroup>
-      </Flex>
+      <FormButtons
+        isPrimaryDisabled={!name || !selectedDomain}
+        onCancel={() => onCancel()}
+        size={getChakraRelativeSize(size, 1)}
+        onPrimaryClick={() => selectedDomain && onCreate(selectedDomain._id, { name, description, key })}
+      />
     </Stack>
   );
 };

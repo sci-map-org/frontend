@@ -1,10 +1,12 @@
-import { Button, ButtonGroup, Flex, Input, InputGroup, InputLeftAddon, Stack, Textarea } from '@chakra-ui/react';
+import { Input, InputGroup, InputLeftAddon, Stack, Textarea } from '@chakra-ui/react';
 import { useState } from 'react';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
 import { useAddLearningGoalToDomainMutation } from '../../graphql/learning_goals/learning_goals.operations.generated';
 import { AddLearningGoalToDomainPayload, LearningGoalBelongsToDomain } from '../../graphql/types';
 import { generateUrlKey } from '../../services/url.service';
+import { getChakraRelativeSize } from '../../util/chakra.util';
+import { FormButtons } from '../lib/buttons/FormButtons';
 
 interface AddLearningGoalToDomainProps {
   domain: DomainDataFragment;
@@ -21,7 +23,7 @@ export const AddLearningGoalToDomain: React.FC<AddLearningGoalToDomainProps> = (
   domain,
   onCancel,
   onCreated,
-  size,
+  size = 'md',
   defaultPayload,
 }) => {
   const [addLearningGoalToDomain] = useAddLearningGoalToDomainMutation();
@@ -57,37 +59,27 @@ export const AddLearningGoalToDomain: React.FC<AddLearningGoalToDomainProps> = (
         value={description}
         onChange={(e) => setDescription(e.target.value)}
       ></Textarea>
-      <Flex justifyContent="flex-end">
-        <ButtonGroup spacing={8}>
-          <Button size={size} w="18rem" variant="outline" onClick={() => onCancel()}>
-            Cancel
-          </Button>
-          <Button
-            size={size}
-            w="18rem"
-            variant="solid"
-            colorScheme="brand"
-            onClick={async () => {
-              const { data } = await addLearningGoalToDomain({
-                variables: {
-                  domainId: domain._id,
-                  payload: {
-                    contextualName,
-                    contextualKey,
-                    description,
-                  },
-                },
-              });
-              if (!data) throw new Error('no data returned');
-              const domainRel = data.addLearningGoalToDomain.learningGoal.domain;
-              if (!domainRel) throw new Error('domain seems to have failed to attach to lg');
-              !!onCreated && onCreated(data.addLearningGoalToDomain.learningGoal, domainRel, domainRel.domain);
-            }}
-          >
-            Add
-          </Button>
-        </ButtonGroup>
-      </Flex>
+      <FormButtons
+        isPrimaryDisabled={!contextualName || !contextualKey}
+        onCancel={() => onCancel()}
+        size={getChakraRelativeSize(size, 1)}
+        onPrimaryClick={async () => {
+          const { data } = await addLearningGoalToDomain({
+            variables: {
+              domainId: domain._id,
+              payload: {
+                contextualName,
+                contextualKey,
+                description,
+              },
+            },
+          });
+          if (!data) throw new Error('no data returned');
+          const domainRel = data.addLearningGoalToDomain.learningGoal.domain;
+          if (!domainRel) throw new Error('domain seems to have failed to attach to lg');
+          !!onCreated && onCreated(data.addLearningGoalToDomain.learningGoal, domainRel, domainRel.domain);
+        }}
+      />
     </Stack>
   );
 };

@@ -15,7 +15,7 @@ const marginSizesMapping: { [key in 'sm' | 'md' | 'lg' | 'xl']: { px: FlexProps[
     px: { sm: '3%', md: '8%' },
   },
   xl: {
-    px: { sm: '5%', md: '12%' },
+    px: { sm: '5%', md: '16%' },
   },
 };
 
@@ -79,7 +79,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
       {title && (
         <Flex justifyContent="center" pb="20px">
           <Skeleton isLoaded={!isLoading}>
-            <Heading fontSize="4xl" fontWeight="light">
+            <Heading textAlign="center" fontSize="4xl" fontWeight="light">
               {title}
             </Heading>
           </Skeleton>

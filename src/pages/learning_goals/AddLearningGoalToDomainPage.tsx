@@ -10,7 +10,7 @@ export const AddLearningGoalToDomainPage: React.FC<{ domainKey: string }> = ({ d
   const domain = data?.getDomainByKey;
   if (!domain) return null;
   return (
-    <PageLayout title={`Add Learning Goal to ${domain.name}`} isLoading={loading} mode="form">
+    <PageLayout title={`Add Learning Goal to ${domain.name}`} isLoading={loading} marginSize="xl">
       <AddLearningGoalToDomain
         domain={domain}
         onCancel={() => Router.back()}

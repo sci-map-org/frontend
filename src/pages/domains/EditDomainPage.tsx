@@ -1,8 +1,9 @@
-import { Button, ButtonGroup, Flex, Input, Stack, Textarea } from '@chakra-ui/react';
+import { Input, Stack, Textarea } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import Router from 'next/router';
 import { useState } from 'react';
 import { PageLayout } from '../../components/layout/PageLayout';
+import { FormButtons } from '../../components/lib/buttons/FormButtons';
 import { DomainData, generateDomainData } from '../../graphql/domains/domains.fragments';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { useUpdateDomainMutation } from '../../graphql/domains/domains.operations.generated';
@@ -41,7 +42,7 @@ export const EditDomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) =
   return (
     <PageLayout
       title={`Edit ${domain.name}`}
-      mode="form"
+      marginSize="xl"
       isLoading={loading}
       breadCrumbsLinks={[DomainPageInfo(domain), ManageDomainPageInfo(domain), EditDomainPageInfo(domain)]}
       accessRule="contributorOrAdmin"
@@ -68,26 +69,16 @@ export const EditDomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) =
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         ></Textarea>
-        <Flex justifyContent="flex-end">
-          <ButtonGroup spacing={8}>
-            <Button size="lg" w="18rem" variant="outline" onClick={() => Router.back()}>
-              Cancel
-            </Button>
-            <Button
-              size="lg"
-              w="18rem"
-              variant="solid"
-              colorScheme="brand"
-              onClick={() =>
-                updateDomainMutation({ variables: { id: domain._id, payload: { name, description } } }).then(() =>
-                  Router.back()
-                )
-              }
-            >
-              Update
-            </Button>
-          </ButtonGroup>
-        </Flex>
+        <FormButtons
+          isPrimaryDisabled={!name}
+          onCancel={() => Router.back()}
+          size="lg"
+          onPrimaryClick={() =>
+            updateDomainMutation({ variables: { id: domain._id, payload: { name, description } } }).then(() =>
+              Router.back()
+            )
+          }
+        />
       </Stack>
     </PageLayout>
   );

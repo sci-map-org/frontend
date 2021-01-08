@@ -15,7 +15,7 @@ export const AddResourceToDomainPage: React.FC<{ domainKey: string }> = ({ domai
 
   return (
     <PageLayout
-      mode="form"
+      marginSize="xl"
       breadCrumbsLinks={[DomainPageInfo(domain), DomainResourceListPageInfo(domain)]}
       title={`Add resource  to ${domain.name}`}
       isLoading={loading}

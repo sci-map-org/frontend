@@ -6,7 +6,7 @@ import { LearningGoalPageInfo } from './LearningGoalPage';
 
 export const NewLearningGoalPage: React.FC<{}> = () => {
   return (
-    <PageLayout mode="form" title="Create a Learning Goal">
+    <PageLayout marginSize="xl" title="Create a Learning Goal">
       <NewLearningGoal
         onCancel={() => Router.back()}
         onCreated={(learningGoal) => routerPushToPage(LearningGoalPageInfo(learningGoal))}
