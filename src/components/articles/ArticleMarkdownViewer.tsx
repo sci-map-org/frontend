@@ -75,6 +75,13 @@ export const ArticleMarkdownViewer: React.FC<{ content: string }> = ({ content }
             </Text>
           );
         },
+        strong: ({ children }) => {
+          return (
+            <Text as="span" fontWeight={600}>
+              {children}
+            </Text>
+          );
+        },
         heading: ({ level, children }: { level: number; children: ReactNode }) => {
           return (
             <Heading
