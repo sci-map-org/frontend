@@ -58,7 +58,19 @@ export const getDomainRecommendedLearningMaterials = gql`
   ${LearningPathPreviewCardData}
 `;
 
+/**
+ * TODO ? could be nice, not 100% required
+ */
+// function getTitle(options: DomainLearningMaterialsOptions) {
+//   if(options.sortingType === DomainLearningMaterialsSortingType.Recommended){
+//     if(options.filter.resourceTypeIn?.length === 1)
+//     return 'Recommended for you'
+//   } else if(options.sortingType === DomainLearningMaterialsSortingType.Rating) {
+//     return `Best ${}`
+//   }
+// }
 export const DomainRecommendedLearningMaterials: React.FC<{
+  title: string;
   domainKey: string;
   learningMaterialsPreviews: (ResourcePreviewDataFragment | LearningPathPreviewCardDataFragment)[];
   isLoading: boolean;
@@ -66,6 +78,7 @@ export const DomainRecommendedLearningMaterials: React.FC<{
   setLearningMaterialsOptions: (learningMaterialsOptions: DomainLearningMaterialsOptions) => void;
   reloadRecommendedResources: () => void;
 }> = ({
+  title,
   domainKey,
   learningMaterialsPreviews,
   isLoading,
@@ -76,7 +89,7 @@ export const DomainRecommendedLearningMaterials: React.FC<{
   return (
     <Flex direction="column" mb={4}>
       <Flex direction="row" alignItems="baseline" mb={2}>
-        <Text fontSize="2xl">Recommended for You</Text>
+        <Text fontSize="2xl">{title}</Text>
         <Box pl={3}>
           <FormControl id="sort_by" display="flex" flexDir="row" alignItems="center">
             <FormLabel mb={0} fontWeight={300} flexShrink={0}>
@@ -95,6 +108,7 @@ export const DomainRecommendedLearningMaterials: React.FC<{
               value={learningMaterialsOptions.sortingType}
             >
               <option value={DomainLearningMaterialsSortingType.Recommended}>Most Relevant</option>
+              <option value={DomainLearningMaterialsSortingType.Rating}>Highest Rating</option>
               <option value={DomainLearningMaterialsSortingType.Newest}>Newest First</option>
             </Select>
           </FormControl>

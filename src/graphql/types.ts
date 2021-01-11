@@ -1315,6 +1315,7 @@ export type DomainLearningPathsSortingOptions = {
 
 export enum DomainLearningMaterialsSortingType {
   Recommended = 'recommended',
+  Rating = 'rating',
   Newest = 'newest'
 }
 
