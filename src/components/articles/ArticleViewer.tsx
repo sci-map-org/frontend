@@ -31,7 +31,7 @@ export const ArticleViewer: React.FC<ArticleViewerProps> = ({ article, setReader
       }
     >
       <Flex direction="column" pt={5} px={3}>
-        <Heading fontFamily={fonts.article} size="2xl" pb={2} fontWeight="thin">
+        <Heading fontFamily={fonts.article} size="2xl" pb={2} fontWeight={200}>
           {article.title}
         </Heading>
         <Divider borderColor="grayDivider.600" mb={5} />

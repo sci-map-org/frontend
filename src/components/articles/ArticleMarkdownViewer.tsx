@@ -37,14 +37,14 @@ const headingConfigMap: { [key in number]: HeadingConfig } = {
   },
   4: {
     fontSize: '24px',
-    fontWeight: 400,
+    fontWeight: 500,
     asTag: 'h4',
     mt: '14px',
     mb: '6px',
   },
   5: {
     fontSize: '22px',
-    fontWeight: 300,
+    fontWeight: 500,
     asTag: 'h5',
     mt: '14px',
     mb: '7px',

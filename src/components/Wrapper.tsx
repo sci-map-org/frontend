@@ -21,6 +21,8 @@ export const Wrapper: React.FC<WrapperProps> = ({ children, apolloClient }) => {
         </UnauthentificatedModalProvider>
         <style global jsx>
           {`
+            @import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+            @import url('http://fonts.cdnfonts.com/css/avenir-next-lt-pro');
             html,
             body,
             body > div:first-child,
