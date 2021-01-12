@@ -1,6 +1,7 @@
 import * as Types from '../../graphql/types';
 
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { LearningPathPreviewCardDataFragment } from '../../components/learning_paths/LearningPathPreviewCard.generated';
 import * as Operations from './BestXPage';
 import * as Apollo from '@apollo/client';
@@ -14,7 +15,7 @@ export type GetBestXPageDataQuery = (
   { __typename?: 'Query' }
   & { getDomainByKey: (
     { __typename?: 'Domain' }
-    & Pick<Types.Domain, '_id' | 'key' | 'name'>
+    & Pick<Types.Domain, '_id' | 'key' | 'name' | 'description'>
     & { learningMaterials?: Types.Maybe<(
       { __typename?: 'DomainLearningMaterialsResults' }
       & { items: Array<(
@@ -23,6 +24,31 @@ export type GetBestXPageDataQuery = (
       ) | (
         { __typename?: 'LearningPath' }
         & LearningPathPreviewCardDataFragment
+      )> }
+    )>, concepts?: Types.Maybe<(
+      { __typename?: 'DomainConceptsResults' }
+      & { items: Array<(
+        { __typename?: 'DomainConceptsItem' }
+        & { concept: (
+          { __typename?: 'Concept' }
+          & { referencedByConcepts?: Types.Maybe<Array<(
+            { __typename?: 'ConceptReferencesConceptItem' }
+            & { concept: (
+              { __typename?: 'Concept' }
+              & Pick<Types.Concept, '_id'>
+            ) }
+          )>>, subConcepts?: Types.Maybe<Array<(
+            { __typename?: 'ConceptBelongsToConceptItem' }
+            & { concept: (
+              { __typename?: 'Concept' }
+              & Pick<Types.Concept, '_id'>
+            ) }
+          )>> }
+          & ConceptDataFragment
+        ), relationship: (
+          { __typename?: 'ConceptBelongsToDomain' }
+          & Pick<Types.ConceptBelongsToDomain, 'index'>
+        ) }
       )> }
     )> }
   ) }

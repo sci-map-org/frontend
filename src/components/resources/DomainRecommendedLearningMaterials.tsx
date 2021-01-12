@@ -87,7 +87,7 @@ export const DomainRecommendedLearningMaterials: React.FC<{
   setLearningMaterialsOptions,
 }) => {
   return (
-    <Flex direction="column" mb={4}>
+    <Flex direction="column" mb={4} w="100%">
       <Flex direction="row" alignItems="baseline" mb={2}>
         <Text fontSize="2xl">{title}</Text>
         <Box pl={3}>

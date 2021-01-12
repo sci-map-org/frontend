@@ -19,10 +19,11 @@ type NestedConceptItem = {
   subConceptItems?: NestedConceptItem[];
 };
 
+// TODO: To Subtopics, add fragment here
 export const DomainConceptList: React.FC<{
   domain: GetDomainByKeyDomainPageQuery['getDomainByKey'];
   isLoading?: boolean;
-  onConceptToggled: (conceptId: string) => void;
+  onConceptToggled?: (conceptId: string) => void;
   minWidth?: FlexProps['minWidth'];
 }> = ({ domain, isLoading, onConceptToggled, minWidth = '260px' }) => {
   // Transform data into suitable one, as little as possible
@@ -100,7 +101,7 @@ export const DomainConceptList: React.FC<{
         },
       });
     }
-    onConceptToggled(concept._id);
+    !!onConceptToggled && onConceptToggled(concept._id);
   };
   if (!domainConceptItems) return null;
   if (!isLoading && !domainConceptItems.length) return null;
