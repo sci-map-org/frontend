@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { DomainConceptGraph } from '../../components/concepts/DomainConceptGraph';
 import { DomainConceptList } from '../../components/concepts/DomainConceptList';
+import { BestXPagesLinks } from '../../components/domains/BestXPagesLinks';
 import { DomainUserHistory } from '../../components/domains/DomainUserHistory';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { LearningPathMiniCardData } from '../../components/learning_paths/LearningPathMiniCard';
@@ -301,6 +302,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
               </Stack>
             </Flex>
           )}
+          <BestXPagesLinks domainKey={domain.key} />
         </Stack>
         {/* )} */}
         {/* {mockedFeaturesEnabled && (

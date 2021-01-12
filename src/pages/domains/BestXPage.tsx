@@ -1,8 +1,8 @@
-import { Box, Flex, Heading, Skeleton } from '@chakra-ui/react';
+import { Box, Flex, Heading, Stack } from '@chakra-ui/react';
 import gql from 'graphql-tag';
-import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { DomainConceptList } from '../../components/concepts/DomainConceptList';
+import { BestXPagesLinks } from '../../components/domains/BestXPagesLinks';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { LearningPathPreviewCardData } from '../../components/learning_paths/LearningPathPreviewCard';
 import { InternalButtonLink } from '../../components/navigation/InternalLink';
@@ -15,7 +15,7 @@ import {
   LearningMaterialType,
   ResourceType,
 } from '../../graphql/types';
-import { useGetBestXPageDataQuery, GetBestXPageDataQuery } from './BestXPage.generated';
+import { GetBestXPageDataQuery, useGetBestXPageDataQuery } from './BestXPage.generated';
 import { DomainPageInfo } from './DomainPage';
 
 export const getBestXPageData = gql`
@@ -109,7 +109,10 @@ export const BestXPage: React.FC<{ domainKey: string; x: ResourceType[] }> = ({ 
             setLearningMaterialsOptions={setLearningMaterialsOptions}
           />
         </Flex>
-        <DomainConceptList minWidth="260px" domain={domain} />
+        <Stack direction="column">
+          <DomainConceptList minWidth="260px" domain={domain} />
+          <BestXPagesLinks domainKey={domain.key} />
+        </Stack>
       </Flex>
     </PageLayout>
   );
