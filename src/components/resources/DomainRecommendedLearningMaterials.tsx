@@ -24,6 +24,7 @@ import MultiSelect from 'react-multi-select-component';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 import BeatLoader from 'react-spinners/BeatLoader';
 import { useDebounce } from 'use-debounce';
+import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import {
@@ -58,38 +59,79 @@ export const getDomainRecommendedLearningMaterials = gql`
   ${LearningPathPreviewCardData}
 `;
 
+function getLearningMaterialFilterString(types: LearningMaterialFilterType[], maxLength = 3): string {
+  if (types.length === 1)
+    return getLearningMaterialFilterTypeLabel(types[0]) + (types[0][types[0].length - 1] === 's' ? '' : 's');
+  if (types.length > maxLength)
+    return (
+      types
+        .map(getLearningMaterialFilterTypeLabel)
+        .map((t) => (t[t.length - 1] === 's' ? t : t + 's'))
+        .slice(0, maxLength)
+        .join(', ') + '...'
+    );
+  return types
+    .map(getLearningMaterialFilterTypeLabel)
+    .map((t) => (t[t.length - 1] === 's' ? t : t + 's'))
+    .join(', ');
+}
 /**
  * TODO ? could be nice, not 100% required
  */
-// function getTitle(options: DomainLearningMaterialsOptions) {
-//   if(options.sortingType === DomainLearningMaterialsSortingType.Recommended){
-//     if(options.filter.resourceTypeIn?.length === 1)
-//     return 'Recommended for you'
-//   } else if(options.sortingType === DomainLearningMaterialsSortingType.Rating) {
-//     return `Best ${}`
-//   }
-// }
+function getTitle(options: DomainLearningMaterialsOptions, domainName: string) {
+  let s1 = '';
+  let s2 = '';
+  let s3 = '';
+  const types = getFilterTypesFromFilterOptions(options.filter);
+  switch (options.sortingType) {
+    case DomainLearningMaterialsSortingType.Recommended:
+      s1 = 'Recommended';
+      s2 = types.length <= 3 ? getLearningMaterialFilterString(types, 2) : '';
+      s3 = 'For You';
+      break;
+    case DomainLearningMaterialsSortingType.Rating:
+      s1 = 'Best'; // 'Highest rated' | 'Best' |  'Highest Rating' | ?
+      s2 = types.length ? getLearningMaterialFilterString(types) : 'Learning Resources';
+      s3 = 'in ' + domainName;
+      break;
+    case DomainLearningMaterialsSortingType.Newest:
+      s1 = 'Recently added'; // 'Newest' | 'Latest' | ?
+      s2 = types.length ? getLearningMaterialFilterString(types) : 'Learning Resources';
+      s3 = 'in ' + domainName;
+      break;
+  }
+  return { s1, s2, s3 };
+}
 export const DomainRecommendedLearningMaterials: React.FC<{
-  title: string;
-  domainKey: string;
+  domain: DomainDataFragment;
   learningMaterialsPreviews: (ResourcePreviewDataFragment | LearningPathPreviewCardDataFragment)[];
   isLoading: boolean;
   learningMaterialsOptions: DomainLearningMaterialsOptions;
   setLearningMaterialsOptions: (learningMaterialsOptions: DomainLearningMaterialsOptions) => void;
   reloadRecommendedResources: () => void;
 }> = ({
-  title,
-  domainKey,
+  domain,
   learningMaterialsPreviews,
   isLoading,
   reloadRecommendedResources,
   learningMaterialsOptions,
   setLearningMaterialsOptions,
 }) => {
+  const { s1, s2, s3 } = useMemo(() => getTitle(learningMaterialsOptions, domain.name), [
+    domain,
+    learningMaterialsOptions.sortingType,
+    learningMaterialsOptions.filter,
+  ]);
   return (
     <Flex direction="column" mb={4} w="100%">
       <Flex direction="row" alignItems="baseline" mb={2}>
-        <Text fontSize="2xl">{title}</Text>
+        <Text fontSize="2xl">
+          {s1 + ' '}
+          <Text fontSize="2xl" as="span" {...(s2 !== 'Learning Resources' && { color: 'blue.800' })}>
+            {s2}
+          </Text>
+          {' ' + s3}
+        </Text>
         <Box pl={3}>
           <FormControl id="sort_by" display="flex" flexDir="row" alignItems="center">
             <FormLabel mb={0} fontWeight={300} flexShrink={0}>
@@ -142,7 +184,7 @@ export const DomainRecommendedLearningMaterials: React.FC<{
         </Stack>
       </Flex>
       <LearningMaterialPreviewCardList
-        domainKey={domainKey}
+        domainKey={domain.key}
         learningMaterialsPreviews={learningMaterialsPreviews}
         isLoading={isLoading}
         onResourceConsumed={() => reloadRecommendedResources()}
@@ -190,15 +232,14 @@ export const SearchResourcesInput: React.FC<{ onChange: (value: string) => void;
 
 type LearningMaterialFilterType = ResourceType | typeof LearningMaterialType.LearningPath;
 
-const learningPathOption = { value: LearningMaterialType.LearningPath, label: 'Learning Path' };
+function getLearningMaterialFilterTypeLabel(type: LearningMaterialFilterType): string {
+  return type === LearningMaterialType.LearningPath ? 'Learning Path' : resourceTypeToLabel(type);
+}
 
-const learningMaterialTypeToOption = (type: LearningMaterialFilterType) =>
-  type === LearningMaterialType.LearningPath
-    ? learningPathOption
-    : {
-        value: type,
-        label: resourceTypeToLabel(type),
-      };
+const learningMaterialTypeToOption = (type: LearningMaterialFilterType) => ({
+  value: type,
+  label: getLearningMaterialFilterTypeLabel(type),
+});
 
 const optionsValues: LearningMaterialFilterType[] = [LearningMaterialType.LearningPath, ...values(ResourceType)];
 
@@ -209,49 +250,60 @@ const learningMaterialFilterTypeColorMapping: { [key in LearningMaterialFilterTy
   [LearningMaterialType.LearningPath]: 'teal',
 };
 
+function getFilterTypesFromFilterOptions(
+  filterOptions: DomainLearningMaterialsFilterOptions
+): LearningMaterialFilterType[] {
+  const containsLearningPath =
+    (!filterOptions.learningMaterialTypeIn && filterOptions.resourceTypeIn) ||
+    (filterOptions.learningMaterialTypeIn &&
+      filterOptions.learningMaterialTypeIn.indexOf(LearningMaterialType.LearningPath) > -1);
+  const types: LearningMaterialFilterType[] = [];
+  if (containsLearningPath) types.push(LearningMaterialType.LearningPath);
+  if (filterOptions.resourceTypeIn) types.push(...filterOptions.resourceTypeIn);
+
+  return types;
+}
+
+function getFilterOptionsFromFilterTypes(
+  filterTypes: LearningMaterialFilterType[]
+): Pick<DomainLearningMaterialsFilterOptions, 'learningMaterialTypeIn' | 'resourceTypeIn'> {
+  if (!filterTypes.length)
+    return {
+      learningMaterialTypeIn: undefined,
+      resourceTypeIn: undefined,
+    };
+  if (filterTypes.length === 1 && filterTypes[0] === LearningMaterialType.LearningPath) {
+    return {
+      learningMaterialTypeIn: [LearningMaterialType.LearningPath],
+      resourceTypeIn: [],
+    };
+  }
+
+  const resourceTypes = filterTypes.filter((value) => value !== LearningMaterialType.LearningPath) as ResourceType[];
+  const containsLearningPath = filterTypes.indexOf(LearningMaterialType.LearningPath) > -1;
+  if (!containsLearningPath) {
+    return {
+      learningMaterialTypeIn: [LearningMaterialType.Resource],
+      resourceTypeIn: resourceTypes,
+    };
+  }
+  return {
+    learningMaterialTypeIn: undefined,
+    resourceTypeIn: resourceTypes,
+  };
+}
 const LearningMaterialTypeFilter: React.FC<{
   filterOptions: DomainLearningMaterialsFilterOptions;
   setFilterOptions: (filterOptions: DomainLearningMaterialsFilterOptions) => void;
 }> = ({ filterOptions, setFilterOptions }) => {
   const selectedTypes = useMemo<LearningMaterialFilterType[]>(() => {
-    const containsLearningPath =
-      (!filterOptions.learningMaterialTypeIn && filterOptions.resourceTypeIn) ||
-      (filterOptions.learningMaterialTypeIn &&
-        filterOptions.learningMaterialTypeIn.indexOf(LearningMaterialType.LearningPath) > -1);
-    const types: LearningMaterialFilterType[] = [];
-    if (containsLearningPath) types.push(LearningMaterialType.LearningPath);
-    if (filterOptions.resourceTypeIn) types.push(...filterOptions.resourceTypeIn);
-
-    return types;
+    return getFilterTypesFromFilterOptions(filterOptions);
   }, [filterOptions]);
 
   const onChange = (values: LearningMaterialFilterType[]) => {
-    if (!values.length)
-      return setFilterOptions({
-        ...filterOptions,
-        learningMaterialTypeIn: undefined,
-        resourceTypeIn: undefined,
-      });
-    if (values.length === 1 && values[0] === LearningMaterialType.LearningPath) {
-      return setFilterOptions({
-        ...filterOptions,
-        learningMaterialTypeIn: [LearningMaterialType.LearningPath],
-        resourceTypeIn: [],
-      });
-    }
-
-    const resourceTypes = values.filter((value) => value !== LearningMaterialType.LearningPath) as ResourceType[];
-    const containsLearningPath = values.indexOf(LearningMaterialType.LearningPath) > -1;
-    if (!containsLearningPath)
-      return setFilterOptions({
-        ...filterOptions,
-        learningMaterialTypeIn: [LearningMaterialType.Resource],
-        resourceTypeIn: resourceTypes,
-      });
-    setFilterOptions({
+    return setFilterOptions({
       ...filterOptions,
-      learningMaterialTypeIn: undefined,
-      resourceTypeIn: resourceTypes,
+      ...getFilterOptionsFromFilterTypes(values),
     });
   };
   return (

@@ -28,7 +28,7 @@ export const BestXPagesLinks: React.FC<{ domainKey: string }> = ({ domainKey }) 
   const router = useRouter();
 
   return (
-    <Stack direction="column" spacing={2}>
+    <Stack direction="column" spacing={2} backgroundColor="gray.100" borderRadius={5} pt={1} pb={3}>
       <Text fontSize="xl" textAlign="center" fontWeight={600} color="gray.600">
         Quick Links
       </Text>

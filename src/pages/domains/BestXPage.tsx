@@ -97,11 +97,10 @@ export const BestXPage: React.FC<{ domainKey: string; x: ResourceType[] }> = ({ 
         </Flex>
       </Flex>
       <Box my={8} />
-      <Flex direction="row">
+      <Stack spacing={10} direction="row">
         <Flex flexGrow={1}>
           <DomainRecommendedLearningMaterials
-            title={`Best X about ${domain.name}`}
-            domainKey={domainKey}
+            domain={domain}
             learningMaterialsPreviews={domain.learningMaterials?.items || []}
             isLoading={loading}
             reloadRecommendedResources={() => refetchLearningMaterials()}
@@ -109,11 +108,11 @@ export const BestXPage: React.FC<{ domainKey: string; x: ResourceType[] }> = ({ 
             setLearningMaterialsOptions={setLearningMaterialsOptions}
           />
         </Flex>
-        <Stack direction="column">
+        <Stack spacing={5} direction="column">
           <DomainConceptList minWidth="260px" domain={domain} />
           <BestXPagesLinks domainKey={domain.key} />
         </Stack>
-      </Flex>
+      </Stack>
     </PageLayout>
   );
 };

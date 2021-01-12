@@ -232,8 +232,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
       <Flex direction={{ base: 'column-reverse', md: 'row' }} mb="100px">
         <Flex direction="column" flexShrink={1} flexGrow={1}>
           <DomainRecommendedLearningMaterials
-            title="Recommended for You"
-            domainKey={domainKey}
+            domain={domain}
             learningMaterialsPreviews={learningMaterials}
             isLoading={resourcesLoading}
             reloadRecommendedResources={() => refetchLearningMaterials()}
