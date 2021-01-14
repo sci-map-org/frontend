@@ -42,6 +42,7 @@ export const ResourceTypeSelector: React.FC<{ value: ResourceType; onSelect: (ty
         id="type"
         placeholder="Select Type"
         value={value}
+        variant="filled"
         flexBasis="200px"
         onChange={(e) => onSelect(e.target.value as ResourceType)}
       >

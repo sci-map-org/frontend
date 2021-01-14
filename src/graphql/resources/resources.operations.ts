@@ -30,7 +30,6 @@ export const voteResource = gql`
   }
 `;
 
-
 export const deleteResource = gql`
   mutation deleteResource($_id: String!) {
     deleteResource(_id: $_id) {
@@ -47,6 +46,19 @@ export const setResourceConsumed = gql`
       consumed {
         openedAt
         consumedAt
+      }
+    }
+  }
+`;
+
+export const analyzeResourceUrl = gql`
+  query analyzeResourceUrl($url: String!) {
+    analyzeResourceUrl(url: $url) {
+      resourceData {
+        name
+        type
+        mediaType
+        description
       }
     }
   }

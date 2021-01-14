@@ -78,6 +78,22 @@ export type SetResourceConsumedMutation = (
   )> }
 );
 
+export type AnalyzeResourceUrlQueryVariables = Types.Exact<{
+  url: Types.Scalars['String'];
+}>;
+
+
+export type AnalyzeResourceUrlQuery = (
+  { __typename?: 'Query' }
+  & { analyzeResourceUrl: (
+    { __typename?: 'AnalyzeResourceUrlResult' }
+    & { resourceData?: Types.Maybe<(
+      { __typename?: 'ResourceData' }
+      & Pick<Types.ResourceData, 'name' | 'type' | 'mediaType' | 'description'>
+    )> }
+  ) }
+);
+
 
 
 /**
@@ -209,3 +225,29 @@ export function useSetResourceConsumedMutation(baseOptions?: Apollo.MutationHook
 export type SetResourceConsumedMutationHookResult = ReturnType<typeof useSetResourceConsumedMutation>;
 export type SetResourceConsumedMutationResult = Apollo.MutationResult<SetResourceConsumedMutation>;
 export type SetResourceConsumedMutationOptions = Apollo.BaseMutationOptions<SetResourceConsumedMutation, SetResourceConsumedMutationVariables>;
+
+/**
+ * __useAnalyzeResourceUrlQuery__
+ *
+ * To run a query within a React component, call `useAnalyzeResourceUrlQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAnalyzeResourceUrlQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAnalyzeResourceUrlQuery({
+ *   variables: {
+ *      url: // value for 'url'
+ *   },
+ * });
+ */
+export function useAnalyzeResourceUrlQuery(baseOptions: Apollo.QueryHookOptions<AnalyzeResourceUrlQuery, AnalyzeResourceUrlQueryVariables>) {
+        return Apollo.useQuery<AnalyzeResourceUrlQuery, AnalyzeResourceUrlQueryVariables>(Operations.analyzeResourceUrl, baseOptions);
+      }
+export function useAnalyzeResourceUrlLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AnalyzeResourceUrlQuery, AnalyzeResourceUrlQueryVariables>) {
+          return Apollo.useLazyQuery<AnalyzeResourceUrlQuery, AnalyzeResourceUrlQueryVariables>(Operations.analyzeResourceUrl, baseOptions);
+        }
+export type AnalyzeResourceUrlQueryHookResult = ReturnType<typeof useAnalyzeResourceUrlQuery>;
+export type AnalyzeResourceUrlLazyQueryHookResult = ReturnType<typeof useAnalyzeResourceUrlLazyQuery>;
+export type AnalyzeResourceUrlQueryResult = Apollo.QueryResult<AnalyzeResourceUrlQuery, AnalyzeResourceUrlQueryVariables>;

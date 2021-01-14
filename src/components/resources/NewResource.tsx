@@ -34,6 +34,23 @@ import { ResourceTypeSelector } from './elements/ResourceType';
 import { ResourceUrlInput } from './elements/ResourceUrl';
 import { useCreateResourceMutation } from './NewResource.generated';
 
+const typeToMediaTypeMapping: { [key in ResourceType]: ResourceMediaType | null } = {
+  [ResourceType.Article]: ResourceMediaType.Text,
+  [ResourceType.ArticleSeries]: ResourceMediaType.Text,
+  [ResourceType.Course]: ResourceMediaType.Video,
+  [ResourceType.Podcast]: ResourceMediaType.Audio,
+  [ResourceType.PodcastSeries]: ResourceMediaType.Audio,
+  [ResourceType.Other]: null,
+  [ResourceType.Book]: ResourceMediaType.Text,
+  [ResourceType.Documentary]: ResourceMediaType.Video,
+  [ResourceType.Tweet]: ResourceMediaType.Text,
+  [ResourceType.Talk]: ResourceMediaType.Video,
+  [ResourceType.Infographic]: null,
+  [ResourceType.Website]: null,
+  [ResourceType.YoutubeVideo]: ResourceMediaType.Video,
+  [ResourceType.YoutubeVideoSeries]: ResourceMediaType.Video,
+  [ResourceType.VideoGame]: ResourceMediaType.InteractiveContent,
+};
 interface NewResourceFormProps {
   createResource: (
     payload: CreateResourcePayload,
@@ -61,7 +78,6 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
   >([]);
   const [selectedTags, setSelectedTags] = useState<LearningMaterialTag[]>([]);
   const [isValid, setIsValid] = useState(false);
-  const [isCreating, setIsCreating] = useState(false);
 
   useEffect(() => {
     setIsValid(!!name && !!url && validateUrl(url));
@@ -72,9 +88,28 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
         <FormLabel htmlFor="title">Title</FormLabel>
         <Input placeholder="Title" size="md" id="title" value={name} onChange={(e) => setName(e.target.value)}></Input>
       </FormControl>
-      <ResourceUrlInput value={url} onChange={setUrl} />
+      <ResourceUrlInput
+        value={url}
+        onChange={setUrl}
+        analyze
+        onAnalyzed={({ resourceData }) => {
+          if (resourceData) {
+            resourceData.name && !name && setName(resourceData.name);
+            resourceData.type && setType(resourceData.type);
+            resourceData.mediaType && setMediaType(resourceData.mediaType);
+            resourceData.description && !description && setDescription(resourceData.description);
+          }
+        }}
+      />
       <Flex flexDirection="row" justifyContent="space-between">
-        <ResourceTypeSelector value={type} onSelect={(t) => setType(t)} />
+        <ResourceTypeSelector
+          value={type}
+          onSelect={(t) => {
+            setType(t);
+            const inferredMediaType = typeToMediaTypeMapping[t];
+            !!inferredMediaType && setMediaType(inferredMediaType);
+          }}
+        />
       </Flex>
       <LearningMaterialTagsStatelessEditor selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
       <Flex direction="row" alignItems="center" justifyContent="space-between">
@@ -93,7 +128,6 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
         onCancel={() => (onCancel ? onCancel() : Router.back())}
         size="lg"
         onPrimaryClick={async () => {
-          setIsCreating(true);
           const createdResource = await createResource(
             {
               name,
@@ -106,7 +140,6 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
             },
             selectedDomainsAndCoveredConcepts
           );
-          setIsCreating(false);
           onResourceCreated && onResourceCreated(createdResource);
         }}
       />

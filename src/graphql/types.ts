@@ -24,6 +24,7 @@ export type Query = {
   searchLearningMaterialTags: Array<LearningMaterialTagSearchResult>;
   searchResources: SearchResourcesResult;
   getResourceById: Resource;
+  analyzeResourceUrl: AnalyzeResourceUrlResult;
   getConcept: Concept;
   getDomainConceptByKey: Concept;
   getLearningPath: LearningPath;
@@ -83,6 +84,11 @@ export type QuerySearchResourcesArgs = {
 
 export type QueryGetResourceByIdArgs = {
   id: Scalars['String'];
+};
+
+
+export type QueryAnalyzeResourceUrlArgs = {
+  url: Scalars['String'];
 };
 
 
@@ -692,6 +698,11 @@ export type ResourceCoveredConceptsArgs = {
   options: LearningMaterialCoveredConceptsOptions;
 };
 
+export type AnalyzeResourceUrlResult = {
+  __typename?: 'AnalyzeResourceUrlResult';
+  resourceData?: Maybe<ResourceData>;
+};
+
 export type Concept = Topic & {
   __typename?: 'Concept';
   _id: Scalars['String'];
@@ -1205,6 +1216,14 @@ export type LearningMaterialOutcomeItem = {
   strength: Scalars['Float'];
   createdBy: Scalars['String'];
   createdAt: Scalars['DateTime'];
+};
+
+export type ResourceData = {
+  __typename?: 'ResourceData';
+  name?: Maybe<Scalars['String']>;
+  type?: Maybe<ResourceType>;
+  mediaType?: Maybe<ResourceMediaType>;
+  description?: Maybe<Scalars['String']>;
 };
 
 export type ConceptCoveredByResourcesResults = {

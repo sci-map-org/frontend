@@ -1,3 +1,4 @@
+import { ExternalLinkIcon } from '@chakra-ui/icons';
 import {
   FormControl,
   FormLabel,
@@ -8,11 +9,16 @@ import {
   Link,
   LinkProps,
   Skeleton,
+  Stack,
 } from '@chakra-ui/react';
-import { ExternalLinkIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
+import { useEffect } from 'react';
+import { BeatLoader } from 'react-spinners';
 import { ResourcePreviewDataFragment } from '../../../graphql/resources/resources.fragments.generated';
+import { useAnalyzeResourceUrlLazyQuery } from '../../../graphql/resources/resources.operations.generated';
+import { AnalyzeResourceUrlResult } from '../../../graphql/types';
 import { toUrlPreview, validateUrl } from '../../../services/url.service';
+import { theme } from '../../../theme/theme';
 import { useSetResourceOpenedMutation } from './ResourceUrl.generated';
 
 export const setResourceOpened = gql`
@@ -56,11 +62,25 @@ export const ResourceUrlLink: React.FC<
   );
 };
 
-export const ResourceUrlInput: React.FC<{ value: string; onChange: (value: string) => void }> = ({
-  value,
-  onChange,
-}) => {
+interface ResourceUrlInputProps {
+  value: string;
+  onChange: (value: string) => void;
+  analyze?: boolean;
+  onAnalyzed?: (resourceData: AnalyzeResourceUrlResult) => void;
+}
+export const ResourceUrlInput: React.FC<ResourceUrlInputProps> = ({ value, onChange, analyze, onAnalyzed }) => {
   const isValidUrl = validateUrl(value);
+
+  const [analyzeResourceUrl, { loading }] = useAnalyzeResourceUrlLazyQuery({
+    fetchPolicy: 'no-cache',
+    onCompleted(data) {
+      onAnalyzed && onAnalyzed(data.analyzeResourceUrl);
+    },
+  });
+
+  useEffect(() => {
+    if (!!value && analyze && isValidUrl) analyzeResourceUrl({ variables: { url: value } });
+  }, [value]);
   return (
     <FormControl isRequired>
       <FormLabel htmlFor="url">Url</FormLabel>
@@ -73,9 +93,11 @@ export const ResourceUrlInput: React.FC<{ value: string; onChange: (value: strin
           value={value}
           onChange={(e) => onChange(e.target.value)}
         ></Input>
-        <InputRightElement
-          children={
-            value && (
+        <InputRightElement w="auto">
+          <Stack direction="row" align="center">
+            {loading && <BeatLoader size={8} margin={2} color={theme.colors.main} />}
+
+            {value && (
               <Link
                 href={value}
                 isExternal
@@ -91,9 +113,9 @@ export const ResourceUrlInput: React.FC<{ value: string; onChange: (value: strin
                   icon={<ExternalLinkIcon />}
                 />
               </Link>
-            )
-          }
-        />
+            )}
+          </Stack>
+        </InputRightElement>
       </InputGroup>
     </FormControl>
   );

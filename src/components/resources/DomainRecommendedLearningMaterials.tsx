@@ -203,14 +203,22 @@ function useDidUpdateEffect(fn: () => void, inputs: DependencyList) {
   }, inputs);
 }
 
-export const SearchResourcesInput: React.FC<{ onChange: (value: string) => void; debounceDuration?: number }> = ({
-  onChange,
-  debounceDuration = 250,
-}) => {
+export const SearchResourcesInput: React.FC<{
+  onChange: (value: string) => void;
+  debounceDuration?: number;
+  minQueryLength?: number;
+}> = ({ onChange, debounceDuration = 250, minQueryLength = 3 }) => {
   const [query, setQuery] = useState('');
   const [value] = useDebounce(query, debounceDuration);
+
+  const shouldSearch = (newValue: string): boolean => {
+    return newValue.length >= minQueryLength || !newValue;
+  };
+
   useDidUpdateEffect(() => {
-    onChange(value);
+    if (shouldSearch(value)) {
+      onChange(value);
+    }
   }, [value]);
   return (
     <InputGroup>
@@ -221,8 +229,8 @@ export const SearchResourcesInput: React.FC<{ onChange: (value: string) => void;
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
-      {value !== query && (
-        <InputRightElement w="68px" display="flex" alignItems="center" justifyContent="center">
+      {value !== query && shouldSearch(query) && (
+        <InputRightElement w="auto">
           <BeatLoader size={8} margin={2} color={theme.colors.main} />
         </InputRightElement>
       )}
