@@ -17,18 +17,10 @@ import {
   useDeleteLearningGoalMutation,
   useUpdateLearningGoalMutation,
 } from '../../graphql/learning_goals/learning_goals.operations.generated';
-import { LearningGoal, UserRole } from '../../graphql/types';
+import { UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
-import { PageInfo } from '../PageInfo';
 import { GetLearningGoalPageDataQuery, useGetLearningGoalPageDataQuery } from './LearningGoalPage.generated';
 
-export const LearningGoalPageInfo = (learningGoal: Pick<LearningGoal, 'key' | 'name'>): PageInfo => {
-  return {
-    name: learningGoal.name,
-    path: '/goals/' + learningGoal.key,
-    routePath: '/goals/[learningGoalKey]',
-  };
-};
 export const getLearningGoalPageData = gql`
   query getLearningGoalPageData($learningGoalKey: String!) {
     getLearningGoalByKey(key: $learningGoalKey) {

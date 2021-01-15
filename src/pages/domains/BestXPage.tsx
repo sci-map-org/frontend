@@ -15,8 +15,8 @@ import {
   LearningMaterialType,
   ResourceType,
 } from '../../graphql/types';
+import { DomainPageInfo } from '../RoutesPageInfos';
 import { GetBestXPageDataQuery, useGetBestXPageDataQuery } from './BestXPage.generated';
-import { DomainPageInfo } from './DomainPage';
 
 export const getBestXPageData = gql`
   query getBestXPageData($key: String!, $learningMaterialsOptions: DomainLearningMaterialsOptions!) {

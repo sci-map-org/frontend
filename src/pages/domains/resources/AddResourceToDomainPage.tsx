@@ -3,9 +3,7 @@ import { NewResource } from '../../../components/resources/NewResource';
 import { generateDomainData } from '../../../graphql/domains/domains.fragments';
 import { useGetDomainByKey } from '../../../graphql/domains/domains.hooks';
 import { routerPushToPage } from '../../PageInfo';
-import { ResourcePageInfo } from '../../resources/ResourcePage';
-import { DomainPageInfo } from '../DomainPage';
-import { DomainResourceListPageInfo } from './DomainResourceListPage';
+import { DomainPageInfo, DomainResourceListPageInfo, ResourcePageInfo } from '../../RoutesPageInfos';
 
 const domainPlaceholderData = generateDomainData();
 

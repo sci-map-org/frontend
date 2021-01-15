@@ -3,9 +3,9 @@ import { MinusIcon } from '@chakra-ui/icons';
 import { take } from 'lodash';
 import { useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
-import { ConceptPagePath } from '../../pages/domains/concepts/ConceptPage';
 import { EntitySelector } from '../lib/selectors/EntitySelector';
 import { InternalLink } from '../navigation/InternalLink';
+import { ConceptPagePath } from '../../pages/RoutesPageInfos';
 
 const getConceptSuggestions = (entities: ConceptDataFragment[], value: string): ConceptDataFragment[] => {
   const inputValue = value.trim().toLowerCase();

@@ -3,11 +3,9 @@ import gql from 'graphql-tag';
 import { PageLayout } from '../../../components/layout/PageLayout';
 import { ResourceList } from '../../../components/resources/ResourceList';
 import { DomainData, generateDomainData } from '../../../graphql/domains/domains.fragments';
-import { DomainDataFragment } from '../../../graphql/domains/domains.fragments.generated';
 import { ResourceData } from '../../../graphql/resources/resources.fragments';
 import { DomainResourcesSortingType } from '../../../graphql/types';
-import { PageInfo } from '../../PageInfo';
-import { DomainPageInfo } from '../DomainPage';
+import { DomainPageInfo } from '../../RoutesPageInfos';
 import {
   GetResourcesDomainResourceListPageQuery,
   useGetResourcesDomainResourceListPageQuery,
@@ -27,14 +25,6 @@ export const getResourcesDomainResourceListPage = gql`
   ${DomainData}
   ${ResourceData}
 `;
-
-export const DomainResourceListPagePath = (domainKey: string) => `/domains/${domainKey}/resources`;
-
-export const DomainResourceListPageInfo = (domain: DomainDataFragment): PageInfo => ({
-  name: 'Resources',
-  path: DomainResourceListPagePath(domain.key),
-  routePath: DomainResourceListPagePath('[key]'),
-});
 
 const domainDataPlaceholder: GetResourcesDomainResourceListPageQuery['getDomainByKey'] = generateDomainData();
 

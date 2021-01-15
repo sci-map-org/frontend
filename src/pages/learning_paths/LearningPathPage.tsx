@@ -59,18 +59,8 @@ import { useUpdateLearningPathMutation } from '../../graphql/learning_paths/lear
 import { generateResourcePreviewData } from '../../graphql/resources/resources.fragments';
 import { UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
-import { PageInfo } from '../PageInfo';
 import { GetLearningPathPageQuery, useGetLearningPathPageQuery } from './LearningPathPage.generated';
 import { LearningPathPublishButton } from './LearningPathPublishButton';
-
-export const LearningPathPagePath = (learningPathKey: string = '[learningPathKey]') =>
-  `/learning_paths/${learningPathKey}`;
-
-export const LearningPathPageInfo = (learningPath: Pick<LearningPathDataFragment, 'key' | 'name'>): PageInfo => ({
-  name: learningPath.name,
-  path: LearningPathPagePath(learningPath.key),
-  routePath: LearningPathPagePath(),
-});
 
 export const getLearningPathPage = gql`
   query getLearningPathPage($key: String!) {

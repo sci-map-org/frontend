@@ -4,21 +4,11 @@ import Router from 'next/router';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { ResourceEditor } from '../../components/resources/ResourceEditor';
 import { ResourceData } from '../../graphql/resources/resources.fragments';
-import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
-import { PageInfo } from '../PageInfo';
+import { EditResourcePageInfo, ResourcePageInfo } from '../RoutesPageInfos';
 import {
   useGetResourceEditResourcePageQuery,
   useUpdateResourceResourcePageMutation,
 } from './EditResourcePage.generated';
-import { ResourcePageInfo } from './ResourcePage';
-
-export const EditResourcePagePath = (resourceId: string) => `/resources/${resourceId}/edit`;
-
-export const EditResourcePageInfo = (resource: ResourceDataFragment): PageInfo => ({
-  name: `Edit - ${resource.name}`,
-  path: EditResourcePagePath(resource._id),
-  routePath: EditResourcePagePath('[_id]'),
-});
 
 export const updateResourceResourcePage = gql`
   mutation updateResourceResourcePage($id: String!, $payload: UpdateResourcePayload!) {

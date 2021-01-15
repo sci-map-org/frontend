@@ -6,19 +6,9 @@ import { VerticalConceptMappingVisualisation } from '../../../components/concept
 import { PageLayout } from '../../../components/layout/PageLayout';
 import { InternalButtonLink } from '../../../components/navigation/InternalLink';
 import { ConceptWithDependenciesData } from '../../../graphql/concepts/concepts.fragments';
-import { DomainDataFragment } from '../../../graphql/domains/domains.fragments.generated';
 import { DomainConceptSortingEntities, DomainConceptSortingFields, SortingDirection } from '../../../graphql/types';
-import { PageInfo } from '../../PageInfo';
-import { DomainPageInfo } from '../DomainPage';
+import { ConceptListPageInfo, DomainPageInfo } from '../../RoutesPageInfos';
 import { useListConceptsConceptListPageQuery } from './ConceptListPage.generated';
-
-export const ConceptListPagePath = (domainKey: string) => `/domains/${domainKey}/concepts`;
-
-export const ConceptListPageInfo = (domain: DomainDataFragment): PageInfo => ({
-  name: 'Concepts',
-  path: ConceptListPagePath(domain.key),
-  routePath: ConceptListPagePath('[key]'),
-});
 
 export const listConceptsConceptListPage = gql`
   query listConceptsConceptListPage($domainKey: String!, $options: DomainConceptsOptions!) {

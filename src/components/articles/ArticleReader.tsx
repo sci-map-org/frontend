@@ -3,12 +3,8 @@ import { useState } from 'react';
 import { ArticleViewerDataFragment } from '../../graphql/articles/articles.fragments.generated';
 import { useGetArticleByKey } from '../../graphql/articles/articles.hooks';
 import { ArticleEditor } from './ArticleEditor';
+import { ArticleReaderMode } from './ArticleReaderMode';
 import { ArticleViewer } from './ArticleViewer';
-
-export enum ArticleReaderMode {
-  Viewer = 'viewer',
-  Editor = 'edit',
-}
 
 export interface ArticleReaderProps {
   defaultMode?: ArticleReaderMode;

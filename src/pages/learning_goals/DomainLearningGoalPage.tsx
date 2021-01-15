@@ -8,33 +8,19 @@ import { SubGoalsWrapper } from '../../components/learning_goals/SubGoalsWrapper
 import { EditableTextarea } from '../../components/lib/inputs/EditableTextarea';
 import { EditableTextInput } from '../../components/lib/inputs/EditableTextInput';
 import { DomainData, generateDomainData } from '../../graphql/domains/domains.fragments';
-import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { generateLearningGoalData, LearningGoalData } from '../../graphql/learning_goals/learning_goals.fragments';
 import {
   useAttachLearningGoalRequiresSubGoalMutation,
   useUpdateLearningGoalMutation,
 } from '../../graphql/learning_goals/learning_goals.operations.generated';
-import { LearningGoalBelongsToDomain, TopicType, UserRole } from '../../graphql/types';
+import { TopicType, UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
-import { DomainPageInfo } from '../domains/DomainPage';
-import { PageInfo } from '../PageInfo';
+import { DomainPageInfo } from '../RoutesPageInfos';
 import {
   GetLearningGoalDomainLearningGoalPageQuery,
   useGetLearningGoalDomainLearningGoalPageQuery,
 } from './DomainLearningGoalPage.generated';
 import { LearningGoalPageRightIcons } from './LearningGoalPage';
-
-export const DomainLearningGoalPagePath = (domainKey: string, contextualLearningGoalKey: string) =>
-  `/domains/${domainKey}/goals/${contextualLearningGoalKey}`;
-
-export const DomainLearningGoalPageInfo = (
-  domain: Pick<DomainDataFragment, 'key' | 'name'>,
-  { contextualKey, contextualName }: Pick<LearningGoalBelongsToDomain, 'contextualKey' | 'contextualName'>
-): PageInfo => ({
-  name: `${domain.name} - ${contextualName}`,
-  path: DomainLearningGoalPagePath(domain.key, contextualKey),
-  routePath: DomainLearningGoalPagePath('[key]', '[learningGoalKey]'),
-});
 
 export const getLearningGoalDomainLearningGoalPage = gql`
   query getLearningGoalDomainLearningGoalPage($domainKey: String!, $contextualLearningGoalKey: String!) {

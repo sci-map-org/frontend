@@ -10,23 +10,9 @@ import { useUpdateConcept } from '../../../graphql/concepts/concepts.hooks';
 import { DomainData } from '../../../graphql/domains/domains.fragments';
 import { DomainDataFragment } from '../../../graphql/domains/domains.fragments.generated';
 import { NotFoundPage } from '../../NotFoundPage';
-import { PageInfo } from '../../PageInfo';
-import { DomainPageInfo } from '../DomainPage';
-import { ConceptListPageInfo } from './ConceptListPage';
-import { ConceptPageInfo } from './ConceptPage';
+import { ConceptListPageInfo, ConceptPageInfo, DomainPageInfo, EditConceptPageInfo } from '../../RoutesPageInfos';
+
 import { useGetConceptEditConceptPageQuery } from './EditConceptPage.generated';
-
-export const EditConceptPagePath = (domainKey: string, conceptKey: string) =>
-  `/domains/${domainKey}/concepts/${conceptKey}/edit`;
-
-export const EditConceptPageInfo = (
-  domain: Pick<DomainDataFragment, 'name' | 'key'>,
-  concept: Pick<ConceptDataFragment, 'name' | 'key'>
-): PageInfo => ({
-  name: `Edit: ${domain.name} - ${concept.name}`,
-  path: EditConceptPagePath(domain.key, concept.key),
-  routePath: EditConceptPagePath('[key]', '[conceptKey]'),
-});
 
 export const getConceptEditConceptPage = gql`
   query getConceptEditConceptPage($domainKey: String!, $conceptKey: String!) {

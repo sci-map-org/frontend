@@ -1,8 +1,7 @@
-import { useRouter } from 'next/router';
-import { ArticleReaderContainer, ArticleReaderMode } from '../../components/articles/ArticleReader';
+import { ArticleReaderContainer } from '../../components/articles/ArticleReader';
+import { ArticleReaderMode } from '../../components/articles/ArticleReaderMode';
 
 export const ArticlePage: React.FC<{ articleKey: string }> = ({ articleKey }) => {
-  const router = useRouter();
   return (
     <ArticleReaderContainer articleKey={articleKey} defaultMode={ArticleReaderMode.Viewer}></ArticleReaderContainer>
   );

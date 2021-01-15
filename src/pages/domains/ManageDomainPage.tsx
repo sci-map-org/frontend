@@ -1,5 +1,5 @@
-import { Box, IconButton, Stack, Text } from '@chakra-ui/react';
 import { EditIcon, ExternalLinkIcon } from '@chakra-ui/icons';
+import { Box, IconButton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { DomainsPicker } from '../../components/domains/DomainsPicker';
@@ -10,22 +10,12 @@ import {
   useAddDomainBelongsToDomainMutation,
   useRemoveDomainBelongsToDomainMutation,
 } from '../../graphql/domains/domains.operations.generated';
-import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
-import { PageInfo, routerPushToPage } from '../PageInfo';
-import { DomainPageInfo } from './DomainPage';
-import { EditDomainPageInfo } from './EditDomainPage';
+import { routerPushToPage } from '../PageInfo';
+import { DomainPageInfo, EditDomainPageInfo, ManageDomainPageInfo } from '../RoutesPageInfos';
 import {
   GetDomainByKeyManageDomainPageQuery,
   useGetDomainByKeyManageDomainPageQuery,
 } from './ManageDomainPage.generated';
-
-export const ManageDomainPagePath = (domainKey: string) => `/domains/${domainKey}/manage`;
-
-export const ManageDomainPageInfo = (domain: DomainDataFragment): PageInfo => ({
-  name: 'Manage',
-  path: ManageDomainPagePath(domain.key),
-  routePath: ManageDomainPagePath('[key]'),
-});
 
 export const getDomainByKeyManageDomainPage = gql`
   query getDomainByKeyManageDomainPage($key: String!) {

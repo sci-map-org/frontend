@@ -37,16 +37,7 @@ import { useDeleteResourceMutation } from '../../graphql/resources/resources.ope
 import { UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { isResourceGroupType, isResourceSeriesType } from '../../services/resources.service';
-import { PageInfo } from '../PageInfo';
 import { GetResourceResourcePageQuery, useGetResourceResourcePageQuery } from './ResourcePage.generated';
-
-export const ResourcePagePath = (resourceId: string) => `/resources/${resourceId}`;
-
-export const ResourcePageInfo = (resource: Pick<ResourceDataFragment, '_id' | 'name'>): PageInfo => ({
-  name: `${resource.name}`,
-  path: ResourcePagePath(resource._id),
-  routePath: ResourcePagePath('[_id]'),
-});
 
 export const getResourceResourcePage = gql`
   query getResourceResourcePage($id: String!) {

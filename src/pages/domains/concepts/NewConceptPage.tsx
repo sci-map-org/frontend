@@ -4,9 +4,7 @@ import { NewConcept } from '../../../components/concepts/NewConcept';
 import { PageLayout } from '../../../components/layout/PageLayout';
 import { useGetDomainByKey } from '../../../graphql/domains/domains.hooks';
 import { routerPushToPage } from '../../PageInfo';
-import { DomainPageInfo } from '../DomainPage';
-import { ConceptListPageInfo } from './ConceptListPage';
-import { ConceptPageInfo } from './ConceptPage';
+import { ConceptListPageInfo, ConceptPageInfo, DomainPageInfo } from '../../RoutesPageInfos';
 
 export const NewConceptPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
   const { domain } = useGetDomainByKey(domainKey);

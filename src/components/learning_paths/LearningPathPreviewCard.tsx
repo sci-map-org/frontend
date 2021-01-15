@@ -2,17 +2,17 @@ import { Badge, Box, Flex, FlexProps, Skeleton, Stack, Text } from '@chakra-ui/r
 import gql from 'graphql-tag';
 import { LearningMaterialWithCoveredConceptsByDomainData } from '../../graphql/learning_materials/learning_materials.fragments';
 import { LearningPathData } from '../../graphql/learning_paths/learning_paths.fragments';
-import { LearningPathPageInfo } from '../../pages/learning_paths/LearningPathPage';
 import { routerPushToPage } from '../../pages/PageInfo';
+import { LearningPathPageInfo } from '../../pages/RoutesPageInfos';
 import {
   LearningMaterialCardContainer,
   LearningMaterialCardCoveredTopics,
 } from '../learning_materials/LearningMaterialCardContainer';
 import { StarsRatingViewer } from '../learning_materials/LearningMaterialStarsRating';
 import { EditableLearningMaterialTags } from '../learning_materials/LearningMaterialTagsEditor';
+import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { DurationViewer } from '../resources/elements/Duration';
 import { ResourceDescription } from '../resources/elements/ResourceDescription';
-import { BoxBlockDefaultClickPropagation } from '../resources/ResourcePreviewCard';
 import { UserAvatarData } from '../users/UserAvatar';
 import { LearningPathCircularCompletion, LearningPathCompletionData } from './LearningPathCompletion';
 import { LearningPathPreviewCardDataFragment } from './LearningPathPreviewCard.generated';

@@ -5,20 +5,9 @@ import { useState } from 'react';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { FormButtons } from '../../components/lib/buttons/FormButtons';
 import { DomainData, generateDomainData } from '../../graphql/domains/domains.fragments';
-import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { useUpdateDomainMutation } from '../../graphql/domains/domains.operations.generated';
-import { PageInfo } from '../PageInfo';
-import { DomainPageInfo } from './DomainPage';
+import { DomainPageInfo, EditDomainPageInfo, ManageDomainPageInfo } from '../RoutesPageInfos';
 import { GetDomainByKeyEditDomainPageQuery, useGetDomainByKeyEditDomainPageQuery } from './EditDomainPage.generated';
-import { ManageDomainPageInfo } from './ManageDomainPage';
-
-export const EditDomainPagePath = (domainKey: string) => `/domains/${domainKey}/edit`;
-
-export const EditDomainPageInfo = (domain: DomainDataFragment): PageInfo => ({
-  name: 'Edit',
-  path: EditDomainPagePath(domain.key),
-  routePath: EditDomainPagePath('[key]'),
-});
 
 export const getDomainByKeyEditDomainPage = gql`
   query getDomainByKeyEditDomainPage($key: String!) {

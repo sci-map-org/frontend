@@ -22,11 +22,11 @@ import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.g
 import { LearningMaterialWithCoveredConceptsByDomainDataFragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
+import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { InternalLink } from '../navigation/InternalLink';
 import { LearningMaterialDomainCoveredConceptsSelector } from '../resources/CoveredConceptsSelector';
 import { LearningMaterialCoveredConceptsByDomainViewer } from '../resources/LearningMaterialCoveredConceptsByDomainViewer';
 import { LearningMaterialDomainAndCoveredConceptsSelector } from '../resources/LearningMaterialDomainAndCoveredConceptsSelector';
-import { BoxBlockDefaultClickPropagation } from '../resources/ResourcePreviewCard';
 
 interface LearningMaterialCardContainerProps {
   renderCenterLeft: ReactNode;

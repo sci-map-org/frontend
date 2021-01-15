@@ -1,7 +1,7 @@
 import { Badge, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
-import { LearningPathPageInfo } from '../../pages/learning_paths/LearningPathPage';
 import { routerPushToPage } from '../../pages/PageInfo';
+import { LearningPathPageInfo } from '../../pages/RoutesPageInfos';
 import { LearningMaterialMiniCardContainer } from '../learning_materials/LearningMaterialMiniCardContainer';
 import { StarsRatingViewer } from '../learning_materials/LearningMaterialStarsRating';
 import { LearningPathMiniCardDataFragment } from './LearningPathMiniCard.generated';

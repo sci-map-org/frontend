@@ -6,7 +6,7 @@ import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { fonts } from '../../theme/theme';
 import { ArticleLayout } from './ArticleLayout';
 import { ArticleMarkdownViewer } from './ArticleMarkdownViewer';
-import { ArticleReaderMode } from './ArticleReader';
+import { ArticleReaderMode } from './ArticleReaderMode';
 
 interface ArticleViewerProps {
   article: ArticleViewerDataFragment;

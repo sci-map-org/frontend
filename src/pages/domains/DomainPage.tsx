@@ -18,21 +18,11 @@ import { useGetDomainRecommendedLearningMaterialsQuery } from '../../components/
 import { ResourceMiniCardData } from '../../components/resources/ResourceMiniCard';
 import { ConceptData, generateConceptData } from '../../graphql/concepts/concepts.fragments';
 import { DomainData, generateDomainData } from '../../graphql/domains/domains.fragments';
-import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { DomainLearningMaterialsOptions, DomainLearningMaterialsSortingType } from '../../graphql/types';
-import { DomainLearningGoalPageInfo } from '../learning_goals/DomainLearningGoalPage';
-import { PageInfo, routerPushToPage } from '../PageInfo';
+import { routerPushToPage } from '../PageInfo';
+import { DomainLearningGoalPageInfo, ManageDomainPageInfo } from '../RoutesPageInfos';
 import { GetDomainByKeyDomainPageQuery, useGetDomainByKeyDomainPageQuery } from './DomainPage.generated';
-import { ManageDomainPageInfo } from './ManageDomainPage';
-
-export const DomainPagePath = (domainKey: string) => `/domains/${domainKey}`;
-
-export const DomainPageInfo = (domain: DomainDataFragment): PageInfo => ({
-  name: domain.name,
-  path: DomainPagePath(domain.key),
-  routePath: DomainPagePath('[key]'),
-});
 
 export const getDomainByKeyDomainPage = gql`
   query getDomainByKeyDomainPage($key: String!) {

@@ -3,7 +3,7 @@ import { PageLayout } from '../../components/layout/PageLayout';
 import { AddLearningGoalToDomain } from '../../components/learning_goals/AddLearningGoalToDomain';
 import { useGetDomainByKeyQuery } from '../../graphql/domains/domains.operations.generated';
 import { routerPushToPage } from '../PageInfo';
-import { DomainLearningGoalPageInfo } from './DomainLearningGoalPage';
+import { DomainLearningGoalPageInfo } from '../RoutesPageInfos';
 
 export const AddLearningGoalToDomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
   const { data, loading } = useGetDomainByKeyQuery({ variables: { key: domainKey } });

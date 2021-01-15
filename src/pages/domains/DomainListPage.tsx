@@ -7,7 +7,7 @@ import { InternalButtonLink, InternalLink } from '../../components/navigation/In
 import { useSearchDomains } from '../../graphql/domains/domains.hooks';
 import { useDeleteDomainMutation } from '../../graphql/domains/domains.operations.generated';
 import { routerPushToPage } from '../PageInfo';
-import { ManageDomainPageInfo } from './ManageDomainPage';
+import { ManageDomainPageInfo } from '../RoutesPageInfos';
 
 export const DomainsListPage: React.FC = () => {
   const { domains, refetch } = useSearchDomains();

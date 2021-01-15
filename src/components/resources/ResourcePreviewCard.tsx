@@ -1,7 +1,6 @@
 import { EditIcon } from '@chakra-ui/icons';
 import {
   Box,
-  BoxProps,
   Button,
   Flex,
   FlexProps,
@@ -22,8 +21,7 @@ import React, { forwardRef, ReactElement } from 'react';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { routerPushToPage } from '../../pages/PageInfo';
-import { EditResourcePageInfo } from '../../pages/resources/EditResourcePage';
-import { ResourcePageInfo } from '../../pages/resources/ResourcePage';
+import { EditResourcePageInfo, ResourcePageInfo } from '../../pages/RoutesPageInfos';
 import { RoleAccess } from '../auth/RoleAccess';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import {
@@ -32,6 +30,7 @@ import {
 } from '../learning_materials/LearningMaterialCardContainer';
 import { LearningMaterialStarsRater, StarsRatingViewer } from '../learning_materials/LearningMaterialStarsRating';
 import { EditableLearningMaterialTags } from '../learning_materials/LearningMaterialTagsEditor';
+import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { ResourceGroupIcon } from '../lib/icons/ResourceGroupIcon';
 import { ResourceSeriesIcon } from '../lib/icons/ResourceSeriesIcon';
 import { InternalLink } from '../navigation/InternalLink';
@@ -39,23 +38,7 @@ import { DurationViewer } from './elements/Duration';
 import { ResourceCompletedCheckbox } from './elements/ResourceCompletedCheckbox';
 import { ResourceDescription } from './elements/ResourceDescription';
 import { ResourceTypeBadge } from './elements/ResourceType';
-import { ResourceUpvoter } from './elements/ResourceUpvoter';
 import { ResourceUrlLink } from './elements/ResourceUrl';
-
-export const BoxBlockDefaultClickPropagation: React.FC<BoxProps> = ({ children, ...props }) => {
-  return (
-    <Box
-      _hover={{ cursor: 'auto' }}
-      {...props}
-      onClick={(e) => {
-        e.stopPropagation();
-        props.onClick && props.onClick(e);
-      }}
-    >
-      {children}
-    </Box>
-  );
-};
 
 interface ResourcePreviewCardProps {
   domainKey?: string;

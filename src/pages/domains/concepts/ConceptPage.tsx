@@ -11,12 +11,9 @@ import { ConceptData, generateConceptData } from '../../../graphql/concepts/conc
 import { ConceptDataFragment } from '../../../graphql/concepts/concepts.fragments.generated';
 import { useDeleteConcept } from '../../../graphql/concepts/concepts.hooks';
 import { DomainData, generateDomainData } from '../../../graphql/domains/domains.fragments';
-import { DomainDataFragment } from '../../../graphql/domains/domains.fragments.generated';
 import { generateResourceData, ResourcePreviewData } from '../../../graphql/resources/resources.fragments';
 import { NotFoundPage } from '../../NotFoundPage';
-import { PageInfo } from '../../PageInfo';
-import { DomainPageInfo } from '../DomainPage';
-import { ConceptListPageInfo } from './ConceptListPage';
+import { ConceptListPageInfo, ConceptPageInfo, DomainPageInfo } from '../../RoutesPageInfos';
 import {
   GetConceptConceptPageQuery,
   useAddConceptBelongsToConceptMutation,
@@ -25,15 +22,6 @@ import {
   useRemoveConceptBelongsToConceptMutation,
   useRemoveConceptReferencesConceptMutation,
 } from './ConceptPage.generated';
-
-export const ConceptPagePath = (domainKey: string, conceptKey: string) =>
-  `/domains/${domainKey}/concepts/${conceptKey}`;
-
-export const ConceptPageInfo = (domain: DomainDataFragment, concept: ConceptDataFragment): PageInfo => ({
-  name: `${domain.name} - ${concept.name}`,
-  path: ConceptPagePath(domain.key, concept.key),
-  routePath: ConceptPagePath('[key]', '[conceptKey]'),
-});
 
 const ConceptPageRightIcons: React.FC<{ concept: ConceptDataFragment; isDisabled?: boolean }> = ({
   concept,

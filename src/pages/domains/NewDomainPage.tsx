@@ -4,7 +4,7 @@ import React from 'react';
 import { NewDomain } from '../../components/domains/NewDomain';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { routerPushToPage } from '../PageInfo';
-import { DomainPageInfo } from './DomainPage';
+import { DomainPageInfo } from '../RoutesPageInfos';
 
 export const NewDomainPage: NextPage = () => {
   return (

@@ -8,7 +8,7 @@ import { fonts } from '../../theme/theme';
 import { MarkdownInput } from '../lib/inputs/MarkdownInput';
 import { ArticleLayout } from './ArticleLayout';
 import { ArticleMarkdownViewer } from './ArticleMarkdownViewer';
-import { ArticleReaderMode } from './ArticleReader';
+import { ArticleReaderMode } from './ArticleReaderMode';
 
 export const ArticleEditor: React.FC<{
   article: ArticleViewerDataFragment;

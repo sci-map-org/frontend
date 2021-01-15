@@ -22,7 +22,7 @@ import getConfig from 'next/config';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useCurrentUser, useLogout } from '../../graphql/users/users.hooks';
-import { LearningPathPagePath } from '../../pages/learning_paths/LearningPathPage';
+import { LearningPathPagePath } from '../../pages/RoutesPageInfos';
 import { globalStyleVariables } from '../../theme/theme';
 import { RoleAccess } from '../auth/RoleAccess';
 import { InternalLink, InternalLinkProps } from '../navigation/InternalLink';

@@ -1,16 +1,14 @@
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Link, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
-import { LearningPathPageInfo } from '../../pages/learning_paths/LearningPathPage';
 import { routerPushToPage } from '../../pages/PageInfo';
-import { ResourcePageInfo } from '../../pages/resources/ResourcePage';
+import { ResourcePageInfo } from '../../pages/RoutesPageInfos';
 import { shortenString } from '../../util/utils';
 import { LearningMaterialMiniCardContainer } from '../learning_materials/LearningMaterialMiniCardContainer';
 import { StarsRatingViewer } from '../learning_materials/LearningMaterialStarsRating';
+import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { ResourceTypeBadge } from './elements/ResourceType';
-import { ResourceUrlLink } from './elements/ResourceUrl';
 import { ResourceMiniCardDataFragment } from './ResourceMiniCard.generated';
-import { BoxBlockDefaultClickPropagation } from './ResourcePreviewCard';
 
 export const ResourceMiniCardData = gql`
   fragment ResourceMiniCardData on Resource {
