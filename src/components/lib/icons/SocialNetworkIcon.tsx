@@ -1,6 +1,6 @@
 import { IconProps, Icon } from '@chakra-ui/react';
 
-export const SocialNetworkIcon = (props: IconProps) => (
+export const SocialNetworkIcon = (props: Omit<IconProps, 'css'>) => (
   <Icon viewBox="0 0 60 60" {...props}>
     <path
       fill="currentColor"

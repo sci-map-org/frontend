@@ -1,6 +1,8 @@
 import { IconProps, Icon } from '@chakra-ui/react';
 
-export const MapIcon = (props: IconProps) => (
+export const MapIcon = (
+  props: Omit<IconProps, 'css'> // ts bug with emotion, checkout https://github.com/emotion-js/emotion/issues/1640
+) => (
   <Icon viewBox="0 0 512 512" {...props}>
     <path
       fill="currentColor"
