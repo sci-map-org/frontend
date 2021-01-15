@@ -1224,6 +1224,7 @@ export type ResourceData = {
   type?: Maybe<ResourceType>;
   mediaType?: Maybe<ResourceMediaType>;
   description?: Maybe<Scalars['String']>;
+  durationSeconds?: Maybe<Scalars['Int']>;
 };
 
 export type ConceptCoveredByResourcesResults = {

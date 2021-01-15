@@ -98,6 +98,7 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
             resourceData.type && setType(resourceData.type);
             resourceData.mediaType && setMediaType(resourceData.mediaType);
             resourceData.description && !description && setDescription(resourceData.description);
+            resourceData.durationSeconds && setDurationSeconds(resourceData.durationSeconds);
           }
         }}
       />

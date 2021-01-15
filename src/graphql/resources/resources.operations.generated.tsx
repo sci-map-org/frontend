@@ -89,7 +89,7 @@ export type AnalyzeResourceUrlQuery = (
     { __typename?: 'AnalyzeResourceUrlResult' }
     & { resourceData?: Types.Maybe<(
       { __typename?: 'ResourceData' }
-      & Pick<Types.ResourceData, 'name' | 'type' | 'mediaType' | 'description'>
+      & Pick<Types.ResourceData, 'name' | 'type' | 'mediaType' | 'description' | 'durationSeconds'>
     )> }
   ) }
 );

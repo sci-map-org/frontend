@@ -59,6 +59,7 @@ export const analyzeResourceUrl = gql`
         type
         mediaType
         description
+        durationSeconds
       }
     }
   }
