@@ -82,7 +82,7 @@ export const Header: React.FC = () => {
 
       <Stack direction="row" spacing={4}>
         {!!currentUser && (
-          <Popover placement="auto">
+          <Popover placement="auto" isLazy>
             <PopoverTrigger>
               <Link {...HeaderLinkStyle}>My Learning Paths</Link>
             </PopoverTrigger>

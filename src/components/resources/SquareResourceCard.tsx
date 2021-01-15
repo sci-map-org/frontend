@@ -34,17 +34,19 @@ export const SquareResourceCard: React.FC<SquareResourceCardProps> = ({ resource
       onClick={() => routerPushToPage(ResourcePageInfo(resource))}
       renderTopRight={
         onRemove && (
-          <DeleteButtonWithConfirmation
-            mode="iconButton"
-            modalBodyText="Confirm removing this resource ? This will not delete the resource in itself."
-            modalHeaderText="Remove resource"
-            confirmButtonText="Remove"
-            justifySelf="start"
-            alignSelf="flex-end"
-            size="xs"
-            aria-label="remove sub resource"
-            onConfirmation={() => onRemove(resource)}
-          />
+          <BoxBlockDefaultClickPropagation>
+            <DeleteButtonWithConfirmation
+              mode="iconButton"
+              modalBodyText="Confirm removing this resource ? This will not delete the resource in itself."
+              modalHeaderText="Remove resource"
+              confirmButtonText="Remove"
+              justifySelf="start"
+              alignSelf="flex-end"
+              size="xs"
+              aria-label="remove sub resource"
+              onConfirmation={() => onRemove(resource)}
+            />
+          </BoxBlockDefaultClickPropagation>
         )
       }
       renderBottom={
