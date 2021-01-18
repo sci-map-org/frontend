@@ -1,15 +1,4 @@
-import {
-  Center,
-  CircularProgress,
-  CircularProgressLabel,
-  Flex,
-  FlexProps,
-  IconButton,
-  Skeleton,
-  Tooltip,
-  Wrap,
-  WrapItem,
-} from '@chakra-ui/react';
+import { Center, CircularProgress, CircularProgressLabel, FlexProps, IconButton, Tooltip } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useEffect, useMemo } from 'react';
 import { ImPlay2 } from 'react-icons/im';
@@ -44,37 +33,15 @@ export const LearningPathCompletionData = gql`
 
 interface LearningPathCompletionProps {
   learningPath: LearningPathCompletionDataFragment;
-  isLoading?: boolean;
   w?: FlexProps['w'];
 }
 
 // TODO find a good name. Badge / widget ? urgh
-export const LearningPathCompletion: React.FC<LearningPathCompletionProps> = ({
-  learningPath,
-  isLoading,
-  w = '100px',
-}) => {
-  const resourceItems = learningPath.resourceItems || [];
-
+export const LearningPathCompletion: React.FC<LearningPathCompletionProps> = ({ learningPath, w = '100px' }) => {
   return (
-    <Skeleton isLoaded={!isLoading}>
-      <Flex direction="column" alignItems="stretch" w={w}>
-        <Center>
-          <LearningPathCircularCompletion size="2xl" learningPath={learningPath} />
-        </Center>
-        <Wrap spacing="9px" mt={3} justify="center">
-          {resourceItems.map((resourceItem) => (
-            <WrapItem
-              key={resourceItem.resource._id}
-              borderRadius={1}
-              w="18px"
-              h="9px"
-              bgColor={resourceItem.resource.consumed?.consumedAt ? 'teal.400' : 'gray.200'}
-            />
-          ))}
-        </Wrap>
-      </Flex>
-    </Skeleton>
+    <Center w={w}>
+      <LearningPathCircularCompletion size="2xl" learningPath={learningPath} />
+    </Center>
   );
 };
 

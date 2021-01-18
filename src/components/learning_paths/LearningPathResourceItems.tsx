@@ -12,7 +12,7 @@ import { EditableTextarea } from '../lib/inputs/EditableTextarea';
 import { ResourcePreviewCard } from '../resources/ResourcePreviewCard';
 import { PreviewResourceSelectorModal } from '../resources/ResourceSelector';
 
-const completedCheckboxHeight = 24;
+const completedCheckboxHeight = 38;
 const checkboxMargin = 8;
 const borderWidth = 1;
 
@@ -93,9 +93,10 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
                     />
                   )}
                 </Flex>
-                <Flex pt={2} pb={1} flexGrow={1}>
+                <Flex pt={index === 0 ? 0 : 4} pb={3} flexGrow={1}>
                   <EditableTextarea
                     flexGrow={1}
+                    flexShrink={1}
                     backgroundColor="white"
                     fontSize="lg"
                     fontWeight={300}
