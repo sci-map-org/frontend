@@ -81,7 +81,8 @@ export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCar
         inCompactList={inCompactList}
         firstItemInCompactList={firstItemInCompactList}
         onClick={() => !isLoading && routerPushToPage(ResourcePageInfo(resource))}
-        renderRight={<RightBlock resource={resource} isLoading={isLoading} onResourceConsumed={onResourceConsumed} />}
+        renderRight={null}
+        // renderRight={<RightBlock resource={resource} isLoading={isLoading} onResourceConsumed={onResourceConsumed} />}
         renderBottom={<BottomBlock resource={resource} domainKey={domainKey} isLoading={isLoading} />}
       >
         <Flex direction="row" flexGrow={1} pt="4px">
