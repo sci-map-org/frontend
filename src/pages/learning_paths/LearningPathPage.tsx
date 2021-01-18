@@ -277,7 +277,7 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
         </Flex>
         <Flex justifyContent="space-between">
           {learningPath.resourceItems?.length ? (
-            <LearningPathCompletion w="100px" learningPath={learningPath} isLoading={loading} />
+            <LearningPathCompletion w="100px" learningPath={learningPath} />
           ) : (
             <Box />
           )}
