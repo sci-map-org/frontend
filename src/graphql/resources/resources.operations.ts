@@ -60,6 +60,14 @@ export const analyzeResourceUrl = gql`
         mediaType
         description
         durationSeconds
+        subResourceSeries {
+          name
+          url
+          type
+          mediaType
+          description
+          durationSeconds
+        }
       }
     }
   }

@@ -90,6 +90,10 @@ export type AnalyzeResourceUrlQuery = (
     & { resourceData?: Types.Maybe<(
       { __typename?: 'ResourceData' }
       & Pick<Types.ResourceData, 'name' | 'type' | 'mediaType' | 'description' | 'durationSeconds'>
+      & { subResourceSeries?: Types.Maybe<Array<(
+        { __typename?: 'SubResourceExtractedData' }
+        & Pick<Types.SubResourceExtractedData, 'name' | 'url' | 'type' | 'mediaType' | 'description' | 'durationSeconds'>
+      )>> }
     )> }
   ) }
 );

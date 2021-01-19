@@ -93,8 +93,8 @@ export const ResourceUrlInput: React.FC<ResourceUrlInputProps> = ({ value, onCha
           value={value}
           onChange={(e) => onChange(e.target.value)}
         ></Input>
-        <InputRightElement w="auto">
-          <Stack direction="row" align="center">
+        <InputRightElement w="auto" display="flex" justifyContent="center">
+          <Stack direction="row" align="center" mr={2}>
             {loading && <BeatLoader size={8} margin={2} color={theme.colors.main} />}
 
             {value && (

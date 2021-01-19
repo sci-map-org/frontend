@@ -1,38 +1,51 @@
+import { CloseIcon, EditIcon } from '@chakra-ui/icons';
 import {
+  Button,
   Flex,
   FormControl,
   FormLabel,
+  IconButton,
   Input,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
+  ModalFooter,
   ModalHeader,
   ModalOverlay,
   Stack,
+  Text,
   useDisclosure,
+  Wrap,
+  WrapItem,
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
+import { omit, pick } from 'lodash';
 import Router from 'next/router';
 import React, { ReactElement, useEffect, useState } from 'react';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
-import {
-  useAttachLearningMaterialCoversConceptsMutation,
-  useAttachLearningMaterialToDomainMutation,
-} from '../../graphql/learning_materials/learning_materials.operations.generated';
 import { ResourceData } from '../../graphql/resources/resources.fragments';
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
-import { CreateResourcePayload, LearningMaterialTag, ResourceMediaType, ResourceType } from '../../graphql/types';
+import {
+  CreateResourcePayload,
+  CreateSubResourcePayload,
+  LearningMaterialTag,
+  ResourceMediaType,
+  ResourceType,
+} from '../../graphql/types';
 import { validateUrl } from '../../services/url.service';
+import { ConceptBadge } from '../concepts/ConceptBadge';
 import { DomainAndConceptsSelector, DomainAndSelectedConcepts } from '../concepts/DomainAndConceptsSelector';
 import { LearningMaterialTagsStatelessEditor } from '../learning_materials/LearningMaterialTagsEditor';
+import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { FormButtons } from '../lib/buttons/FormButtons';
-import { DurationFormField } from './elements/Duration';
+import { DurationFormField, DurationViewer } from './elements/Duration';
 import { ResourceDescriptionInput } from './elements/ResourceDescription';
 import { ResourceMediaTypeSelector } from './elements/ResourceMediaType';
-import { ResourceTypeSelector } from './elements/ResourceType';
+import { ResourceTypeBadge, ResourceTypeSelector } from './elements/ResourceType';
 import { ResourceUrlInput } from './elements/ResourceUrl';
 import { useCreateResourceMutation } from './NewResource.generated';
+import { ResourceListBasicLayout } from './ResourceList';
 
 const typeToMediaTypeMapping: { [key in ResourceType]: ResourceMediaType | null } = {
   [ResourceType.Article]: ResourceMediaType.Text,
@@ -51,15 +64,122 @@ const typeToMediaTypeMapping: { [key in ResourceType]: ResourceMediaType | null 
   [ResourceType.YoutubeVideoSeries]: ResourceMediaType.Video,
   [ResourceType.VideoGame]: ResourceMediaType.InteractiveContent,
 };
+
+type SubResourceCreationData = Omit<
+  CreateResourcePayload,
+  'domainsAndCoveredConcepts' | 'tags' | 'subResourceSeries' | 'description'
+> & {
+  description?: string;
+  tags: LearningMaterialTag[];
+  domainsAndCoveredConcepts: DomainAndSelectedConcepts[];
+};
+
+type ResourceCreationData = SubResourceCreationData & {
+  subResourceSeries?: SubResourceCreationData[];
+};
+interface StatelessNewResourceFormProps {
+  resourceCreationData: SubResourceCreationData;
+  updateResourceCreationData: (data: Partial<ResourceCreationData>) => void;
+}
+
+const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
+  resourceCreationData,
+  updateResourceCreationData,
+}) => {
+  return (
+    <Stack spacing={4}>
+      <FormControl isRequired>
+        <FormLabel htmlFor="title">Title</FormLabel>
+        <Input
+          placeholder="Title"
+          size="md"
+          id="title"
+          value={resourceCreationData.name}
+          onChange={(e) => updateResourceCreationData({ name: e.target.value })}
+        ></Input>
+      </FormControl>
+      <ResourceUrlInput
+        value={resourceCreationData.url}
+        onChange={(url) => updateResourceCreationData({ url })}
+        analyze
+        onAnalyzed={({ resourceData: analyzedResourceData }) => {
+          if (analyzedResourceData) {
+            updateResourceCreationData({
+              ...(!!analyzedResourceData.name && !resourceCreationData.name && { name: analyzedResourceData.name }),
+              ...(!!analyzedResourceData.type && { type: analyzedResourceData.type }),
+              ...(!!analyzedResourceData.mediaType && { mediaType: analyzedResourceData.mediaType }),
+              ...(!!analyzedResourceData.description &&
+                !resourceCreationData.description && { description: analyzedResourceData.description }),
+              ...(!!analyzedResourceData.durationSeconds && { durationSeconds: analyzedResourceData.durationSeconds }),
+              ...(!!analyzedResourceData.subResourceSeries && {
+                subResourceSeries: analyzedResourceData.subResourceSeries.map((sub) => ({
+                  ...pick(sub, ['name', 'url', 'type', 'mediaType', 'durationSeconds']),
+                  tags: [],
+                  domainsAndCoveredConcepts: resourceCreationData.domainsAndCoveredConcepts.map((s) => ({
+                    domain: s.domain,
+                    selectedConcepts: [],
+                  })),
+                  description: sub.description || undefined,
+                })),
+              }),
+            });
+          }
+        }}
+      />
+      <Flex flexDirection="row" justifyContent="space-between">
+        <ResourceTypeSelector
+          value={resourceCreationData.type}
+          onSelect={(t) => {
+            const inferredMediaType = typeToMediaTypeMapping[t];
+            updateResourceCreationData({
+              type: t,
+              ...(!!inferredMediaType && { mediaType: inferredMediaType }),
+            });
+          }}
+        />
+      </Flex>
+      <LearningMaterialTagsStatelessEditor
+        selectedTags={resourceCreationData.tags}
+        setSelectedTags={(tags) => !!tags && updateResourceCreationData({ tags })}
+      />
+      <Flex direction="row" alignItems="center" justifyContent="space-between">
+        <ResourceMediaTypeSelector
+          value={resourceCreationData.mediaType}
+          onSelect={(t) => updateResourceCreationData({ mediaType: t })}
+        />
+        <DurationFormField
+          value={resourceCreationData.durationSeconds}
+          onChange={(durationSeconds) => updateResourceCreationData({ durationSeconds })}
+        />
+      </Flex>
+      <ResourceDescriptionInput
+        value={resourceCreationData.description}
+        onChange={(d) => updateResourceCreationData({ description: d })}
+      />
+      <DomainAndConceptsSelector
+        selectedDomainsAndConcepts={resourceCreationData.domainsAndCoveredConcepts}
+        onChange={(domainsAndCoveredConcepts) => updateResourceCreationData({ domainsAndCoveredConcepts })}
+      />
+    </Stack>
+  );
+};
+
 interface NewResourceFormProps {
-  createResource: (
-    payload: CreateResourcePayload,
-    selectedDomainsAndCoveredConcepts: DomainAndSelectedConcepts[]
-  ) => Promise<ResourceDataFragment>;
+  createResource: (payload: CreateResourcePayload) => Promise<ResourceDataFragment>;
   onResourceCreated?: (createdResource: ResourceDataFragment) => void;
   onCancel?: () => void;
   defaultAttachedDomains?: DomainDataFragment[];
 }
+
+const defaultResourceData: ResourceCreationData = {
+  name: '',
+  mediaType: ResourceMediaType.Text,
+  type: ResourceType.Article,
+  url: '',
+  durationSeconds: null,
+  tags: [],
+  domainsAndCoveredConcepts: [],
+};
 
 export const NewResourceForm: React.FC<NewResourceFormProps> = ({
   defaultAttachedDomains,
@@ -67,80 +187,143 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
   onResourceCreated,
   onCancel,
 }) => {
-  const [name, setName] = useState('');
-  const [mediaType, setMediaType] = useState<ResourceMediaType>(ResourceMediaType.Text);
-  const [type, setType] = useState<ResourceType>(ResourceType.Article);
-  const [url, setUrl] = useState('');
-  const [description, setDescription] = useState<string | undefined>(undefined);
-  const [durationSeconds, setDurationSeconds] = useState<number | null>();
-  const [selectedDomainsAndCoveredConcepts, setSelectedDomainsAndCoveredConcepts] = useState<
-    DomainAndSelectedConcepts[]
-  >([]);
-  const [selectedTags, setSelectedTags] = useState<LearningMaterialTag[]>([]);
   const [isValid, setIsValid] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [resourceCreationData, setResourceCreationData] = useState<ResourceCreationData>({
+    ...defaultResourceData,
+    ...(defaultAttachedDomains && {
+      domainsAndCoveredConcepts: defaultAttachedDomains.map((domain) => ({ domain, selectedConcepts: [] })),
+    }),
+  });
+  const [selectedSubResourceIndex, selectSubResourceIndex] = useState<number>();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
-    setIsValid(!!name && !!url && validateUrl(url));
-  }, [name, url]);
+    setIsValid(!!resourceCreationData.name && !!resourceCreationData.url && validateUrl(resourceCreationData.url));
+  }, [resourceCreationData.name, resourceCreationData.url]);
   return (
     <Stack spacing={4}>
-      <FormControl isRequired>
-        <FormLabel htmlFor="title">Title</FormLabel>
-        <Input placeholder="Title" size="md" id="title" value={name} onChange={(e) => setName(e.target.value)}></Input>
-      </FormControl>
-      <ResourceUrlInput
-        value={url}
-        onChange={setUrl}
-        analyze
-        onAnalyzed={({ resourceData }) => {
-          if (resourceData) {
-            resourceData.name && !name && setName(resourceData.name);
-            resourceData.type && setType(resourceData.type);
-            resourceData.mediaType && setMediaType(resourceData.mediaType);
-            resourceData.description && !description && setDescription(resourceData.description);
-            resourceData.durationSeconds && setDurationSeconds(resourceData.durationSeconds);
-          }
-        }}
-      />
-      <Flex flexDirection="row" justifyContent="space-between">
-        <ResourceTypeSelector
-          value={type}
-          onSelect={(t) => {
-            setType(t);
-            const inferredMediaType = typeToMediaTypeMapping[t];
-            !!inferredMediaType && setMediaType(inferredMediaType);
-          }}
-        />
-      </Flex>
-      <LearningMaterialTagsStatelessEditor selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
-      <Flex direction="row" alignItems="center" justifyContent="space-between">
-        <ResourceMediaTypeSelector value={mediaType} onSelect={(t) => setMediaType(t)} />
-        <DurationFormField value={durationSeconds} onChange={setDurationSeconds} />
-      </Flex>
-      <ResourceDescriptionInput value={description} onChange={(d) => setDescription(d)} />
-      <DomainAndConceptsSelector
-        defaultDomains={defaultAttachedDomains || []}
-        onChange={(domainsAndCoveredConceptsSelected) =>
-          setSelectedDomainsAndCoveredConcepts(domainsAndCoveredConceptsSelected)
+      <StatelessNewResourceForm
+        resourceCreationData={resourceCreationData}
+        updateResourceCreationData={(newData) =>
+          setResourceCreationData({
+            ...resourceCreationData,
+            ...newData,
+          })
         }
       />
+      {resourceCreationData.subResourceSeries && (
+        <>
+          <ResourceListBasicLayout
+            resources={resourceCreationData.subResourceSeries}
+            renderTop={(subResource, index) => (
+              <Stack direction="row" alignItems="center" spacing={2}>
+                <Text fontWeight={500}>{subResource.name}</Text>
+                <ResourceTypeBadge type={subResource.type} />
+                <DurationViewer value={subResource.durationSeconds} />
+              </Stack>
+            )}
+            renderBottom={(subResource) => (
+              <Wrap spacing={2}>
+                {subResource.domainsAndCoveredConcepts.map(({ selectedConcepts, domain }) =>
+                  selectedConcepts.map((concept) => (
+                    <WrapItem key={concept._id}>
+                      <ConceptBadge concept={concept} domainKey={domain.key} />
+                    </WrapItem>
+                  ))
+                )}
+              </Wrap>
+            )}
+            renderRight={(subResource, index) => (
+              <Stack direction="row" alignItems="center" spacing={2}>
+                <BoxBlockDefaultClickPropagation display="flex" justifyContent="center" alignItems="center">
+                  <IconButton
+                    size="xs"
+                    aria-label="remove resource"
+                    icon={<EditIcon />}
+                    onClick={() => {
+                      selectSubResourceIndex(index);
+                      onOpen();
+                    }}
+                  />
+                </BoxBlockDefaultClickPropagation>
+                <BoxBlockDefaultClickPropagation display="flex" justifyContent="center" alignItems="center">
+                  <IconButton
+                    size="xs"
+                    aria-label="remove resource"
+                    icon={<CloseIcon />}
+                    onClick={() => {
+                      const newSubResourceSeries = [
+                        ...(resourceCreationData.subResourceSeries as SubResourceCreationData[]),
+                      ];
+                      newSubResourceSeries.splice(index, 1);
+                      setResourceCreationData({ ...resourceCreationData, subResourceSeries: newSubResourceSeries });
+                    }}
+                  />
+                </BoxBlockDefaultClickPropagation>
+              </Stack>
+            )}
+          />
+          {typeof selectedSubResourceIndex !== 'undefined' && (
+            <Modal onClose={onClose} size="xl" isOpen={isOpen}>
+              <ModalOverlay>
+                <ModalContent>
+                  <ModalHeader>New SubResource</ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody pb={5}>
+                    <StatelessNewResourceForm
+                      resourceCreationData={resourceCreationData.subResourceSeries[selectedSubResourceIndex]}
+                      updateResourceCreationData={(newData) => {
+                        const newSubResourceSeries = [
+                          ...(resourceCreationData.subResourceSeries as SubResourceCreationData[]),
+                        ];
+                        newSubResourceSeries[selectedSubResourceIndex] = {
+                          ...newSubResourceSeries[selectedSubResourceIndex],
+                          ...newData,
+                        };
+                        setResourceCreationData({ ...resourceCreationData, subResourceSeries: newSubResourceSeries });
+                      }}
+                    />
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button variant="solid" colorScheme="blue" size="lg" onClick={onClose}>
+                      Close
+                    </Button>
+                  </ModalFooter>
+                </ModalContent>
+              </ModalOverlay>
+            </Modal>
+          )}
+        </>
+      )}
       <FormButtons
         isPrimaryDisabled={!isValid}
+        isPrimaryLoading={isCreating}
         onCancel={() => (onCancel ? onCancel() : Router.back())}
         size="lg"
         onPrimaryClick={async () => {
-          const createdResource = await createResource(
-            {
-              name,
-              description,
-              type,
-              mediaType,
-              url,
-              durationSeconds,
-              tags: selectedTags.map((t) => t.name),
-            },
-            selectedDomainsAndCoveredConcepts
+          const subResourceSeries: CreateSubResourcePayload[] | undefined = resourceCreationData.subResourceSeries?.map(
+            (subResource) => ({
+              ...omit(subResource, 'domainsAndCoveredConcepts'),
+              tags: resourceCreationData.tags.map((t) => t.name),
+              domainsAndCoveredConcepts: subResource.domainsAndCoveredConcepts.map(({ domain, selectedConcepts }) => ({
+                domainId: domain._id,
+                conceptsIds: selectedConcepts.map((s) => s._id),
+              })),
+            })
           );
+          setIsCreating(true);
+          const createdResource = await createResource({
+            ...resourceCreationData,
+            tags: resourceCreationData.tags.map((t) => t.name),
+            subResourceSeries,
+            domainsAndCoveredConcepts: resourceCreationData.domainsAndCoveredConcepts.map(
+              ({ domain, selectedConcepts }) => ({
+                domainId: domain._id,
+                conceptsIds: selectedConcepts.map((s) => s._id),
+              })
+            ),
+          });
           onResourceCreated && onResourceCreated(createdResource);
         }}
       />
@@ -157,35 +340,6 @@ export const createResource = gql`
   ${ResourceData}
 `;
 
-const useAddResourceToDomainsAndAddCoveredConcepts = () => {
-  const [attachLearningMaterialCoveredConcepts] = useAttachLearningMaterialCoversConceptsMutation();
-  const [attachLearningMaterialToDomain] = useAttachLearningMaterialToDomainMutation();
-  const [createResource] = useCreateResourceMutation();
-
-  const addResourceToDomainsAndAddCoveredConcepts = async (
-    resourcePayload: CreateResourcePayload,
-    domainsAndCoveredConcepts: DomainAndSelectedConcepts[]
-  ): Promise<ResourceDataFragment> => {
-    const resourceResults = await createResource({ variables: { payload: resourcePayload } });
-    if (!resourceResults.data) throw new Error('Resource Creation failed');
-    const createdResource = resourceResults.data.createResource;
-    await Promise.all(
-      domainsAndCoveredConcepts.map(async ({ domain, selectedConcepts }) => {
-        await attachLearningMaterialToDomain({
-          variables: { domainId: domain._id, learningMaterialId: createdResource._id },
-        });
-        if (selectedConcepts.length) {
-          await attachLearningMaterialCoveredConcepts({
-            variables: { learningMaterialId: createdResource._id, conceptIds: selectedConcepts.map((c) => c._id) },
-          });
-        }
-      })
-    );
-    return createdResource;
-  };
-  return [addResourceToDomainsAndAddCoveredConcepts];
-};
-
 interface NewResourceProps {
   onResourceCreated?: (createdResource: ResourceDataFragment) => void;
   onCancel?: () => void;
@@ -193,11 +347,15 @@ interface NewResourceProps {
 }
 
 export const NewResource: React.FC<NewResourceProps> = ({ onResourceCreated, onCancel, defaultAttachedDomains }) => {
-  const [addResourceToDomainsAndAddCoveredConcepts] = useAddResourceToDomainsAndAddCoveredConcepts();
+  const [createResource] = useCreateResourceMutation();
 
   return (
     <NewResourceForm
-      createResource={addResourceToDomainsAndAddCoveredConcepts}
+      createResource={async (payload) => {
+        const { data } = await createResource({ variables: { payload } });
+        if (!data) throw new Error('failed to create resource');
+        return data.createResource;
+      }}
       onResourceCreated={onResourceCreated}
       onCancel={onCancel}
       defaultAttachedDomains={defaultAttachedDomains}

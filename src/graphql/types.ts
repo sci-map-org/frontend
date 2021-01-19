@@ -156,7 +156,6 @@ export type Mutation = {
   createResource: Resource;
   updateResource: Resource;
   deleteResource: DeleteResourceResponse;
-  addResourceToDomain: Resource;
   setResourcesConsumed: Array<Resource>;
   voteResource: Resource;
   addSubResource: SubResourceCreatedResult;
@@ -336,12 +335,6 @@ export type MutationUpdateResourceArgs = {
 
 export type MutationDeleteResourceArgs = {
   _id: Scalars['String'];
-};
-
-
-export type MutationAddResourceToDomainArgs = {
-  domainId: Scalars['String'];
-  payload: CreateResourcePayload;
 };
 
 
@@ -882,6 +875,8 @@ export type CreateResourcePayload = {
   description?: Maybe<Scalars['String']>;
   durationSeconds?: Maybe<Scalars['Int']>;
   tags?: Maybe<Array<Scalars['String']>>;
+  domainsAndCoveredConcepts?: Maybe<Array<DomainAndCoveredConcepts>>;
+  subResourceSeries?: Maybe<Array<CreateSubResourcePayload>>;
 };
 
 export type UpdateResourcePayload = {
@@ -1225,6 +1220,7 @@ export type ResourceData = {
   mediaType?: Maybe<ResourceMediaType>;
   description?: Maybe<Scalars['String']>;
   durationSeconds?: Maybe<Scalars['Int']>;
+  subResourceSeries?: Maybe<Array<SubResourceExtractedData>>;
 };
 
 export type ConceptCoveredByResourcesResults = {
@@ -1288,6 +1284,22 @@ export type SubGoalItem = {
   strength: Scalars['Float'];
 };
 
+export type DomainAndCoveredConcepts = {
+  domainId: Scalars['String'];
+  conceptsIds: Array<Scalars['String']>;
+};
+
+export type CreateSubResourcePayload = {
+  name: Scalars['String'];
+  type: ResourceType;
+  mediaType: ResourceMediaType;
+  url: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  durationSeconds?: Maybe<Scalars['Int']>;
+  tags?: Maybe<Array<Scalars['String']>>;
+  domainsAndCoveredConcepts?: Maybe<Array<DomainAndCoveredConcepts>>;
+};
+
 export type SetResourcesConsumedPayloadResourcesField = {
   resourceId: Scalars['String'];
   consumed?: Maybe<Scalars['Boolean']>;
@@ -1348,6 +1360,16 @@ export type DomainLearningMaterialsFilterOptions = {
 export type DomainBelongsToDomain = {
   __typename?: 'DomainBelongsToDomain';
   index: Scalars['Float'];
+};
+
+export type SubResourceExtractedData = {
+  __typename?: 'SubResourceExtractedData';
+  name: Scalars['String'];
+  type: ResourceType;
+  mediaType: ResourceMediaType;
+  url: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  durationSeconds?: Maybe<Scalars['Int']>;
 };
 
 export type ConceptReferencesConcept = {
