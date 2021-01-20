@@ -47,7 +47,7 @@ export const LearningMaterialDomainAndCoveredConceptsSelector: React.FC<{
           </Stack>
           <Box pl={5}>
             <LearningMaterialDomainCoveredConceptsSelector
-              domainKey={domain.key}
+              domain={domain}
               learningMaterialId={learningMaterial._id}
               isLoading={isLoading}
               coveredConcepts={coveredConcepts}

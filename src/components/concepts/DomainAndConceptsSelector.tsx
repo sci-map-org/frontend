@@ -4,7 +4,9 @@ import { differenceBy } from 'lodash';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { useSearchDomainsLazyQuery } from '../../graphql/domains/domains.operations.generated';
+import { DomainPageInfo } from '../../pages/RoutesPageInfos';
 import { EntitySelector } from '../lib/selectors/EntitySelector';
+import { PageLink } from '../navigation/InternalLink';
 import { DomainConceptsSelector } from './DomainConceptsSelector';
 
 export type DomainAndSelectedConcepts = {
@@ -12,10 +14,17 @@ export type DomainAndSelectedConcepts = {
   selectedConcepts: ConceptDataFragment[];
 };
 
-export const DomainAndConceptsSelector: React.FC<{
+interface DomainAndConceptsSelectorProps {
   selectedDomainsAndConcepts: DomainAndSelectedConcepts[];
   onChange: (domainsAndSelectedConcepts: DomainAndSelectedConcepts[]) => void;
-}> = ({ selectedDomainsAndConcepts, onChange }) => {
+  allowConceptCreation?: boolean;
+}
+
+export const DomainAndConceptsSelector: React.FC<DomainAndConceptsSelectorProps> = ({
+  selectedDomainsAndConcepts,
+  onChange,
+  allowConceptCreation,
+}) => {
   const [searchDomains, { data }] = useSearchDomainsLazyQuery();
 
   const updateSelectedConcepts = (index: number, newSelectedConcepts: ConceptDataFragment[]) => {
@@ -39,11 +48,11 @@ export const DomainAndConceptsSelector: React.FC<{
               icon={<MinusIcon />}
               onClick={() => onChange(selectedDomainsAndConcepts.filter((s) => s.domain._id !== domain._id))}
             />
-            <Text>{domain.name}</Text>
+            <PageLink pageInfo={DomainPageInfo(domain)}>{domain.name}</PageLink>
           </Stack>
           <Box pl={5}>
             <DomainConceptsSelector
-              domainKey={domain.key}
+              domain={domain}
               onSelect={(c) => updateSelectedConcepts(index, [...selectedConcepts, c])}
               onRemove={(c) =>
                 updateSelectedConcepts(
@@ -54,6 +63,7 @@ export const DomainAndConceptsSelector: React.FC<{
                 )
               }
               selectedConcepts={selectedConcepts}
+              allowCreation={allowConceptCreation}
             />
           </Box>
         </Flex>

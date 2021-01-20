@@ -13,7 +13,7 @@ type NewEntity = {
 
 type EntitySelectorProps<T extends EntityType> = {
   entitySuggestions: T[];
-  acceptCreation?: boolean;
+  allowCreation?: boolean;
   onCreate?: (newEntity: NewEntity) => void;
   onSelect: (entity: T) => any;
   placeholder: string;
@@ -35,7 +35,7 @@ export const EntitySelector = <T extends EntityType>({
   inputSize = 'md',
   suggestionContainerWidth,
   isDisabled,
-  acceptCreation,
+  allowCreation,
   onCreate,
   creationHelperText,
 }: PropsWithChildren<EntitySelectorProps<T>>) => {
@@ -49,7 +49,7 @@ export const EntitySelector = <T extends EntityType>({
     },
   };
   const suggestions: (T | NewEntity)[] = [
-    ...(!!acceptCreation && !entitySuggestions.find((e) => e.name === value) && value.length
+    ...(!!allowCreation && !entitySuggestions.find((e) => e.name === value) && value.length
       ? [
           {
             name: value,
@@ -71,12 +71,21 @@ export const EntitySelector = <T extends EntityType>({
         onSuggestionsFetchRequested={({ value: v }) => fetchEntitySuggestions(v)}
         onSuggestionsClearRequested={() => fetchEntitySuggestions(value)}
         onSuggestionSelected={(e, { suggestion }) => {
+          e.preventDefault();
+
           if ('new' in suggestion) onCreate && onCreate(suggestion);
           else onSelect(suggestion);
           setValue('');
         }}
-        renderSuggestion={(suggestion) => (
-          <Flex direction="row" px={5} py={1} borderBottomWidth={1} w={width}>
+        renderSuggestion={(suggestion, { isHighlighted }) => (
+          <Flex
+            direction="row"
+            px={5}
+            py={1}
+            borderBottomWidth={1}
+            w={width}
+            {...(isHighlighted && { backgroundColor: 'gray.100' })}
+          >
             <Text fontWeight={500}>{suggestion.name}</Text>
             {'new' in suggestion && (
               <Text fontWeight={400} px={2} color="gray.600">

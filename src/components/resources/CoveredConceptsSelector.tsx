@@ -1,4 +1,5 @@
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
+import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import {
   useAttachLearningMaterialCoversConceptsMutation,
   useDetachLearningMaterialCoversConceptsMutation,
@@ -7,11 +8,11 @@ import { DomainConceptsSelector } from '../concepts/DomainConceptsSelector';
 
 export const LearningMaterialDomainCoveredConceptsSelector: React.FC<{
   learningMaterialId: string;
-  domainKey: string;
+  domain: DomainLinkDataFragment;
   coveredConcepts: ConceptDataFragment[];
   title?: string;
   isLoading?: boolean;
-}> = ({ learningMaterialId, domainKey, coveredConcepts, title, isLoading }) => {
+}> = ({ learningMaterialId, domain, coveredConcepts, title, isLoading }) => {
   const [attachLearningMaterialCoversConcepts] = useAttachLearningMaterialCoversConceptsMutation();
   const [detachLearningMaterialCoversConcepts] = useDetachLearningMaterialCoversConceptsMutation();
   const selectConcept = async (conceptId: string): Promise<void> => {
@@ -26,7 +27,7 @@ export const LearningMaterialDomainCoveredConceptsSelector: React.FC<{
   };
   return (
     <DomainConceptsSelector
-      domainKey={domainKey}
+      domain={domain}
       selectedConcepts={coveredConcepts}
       onSelect={(c) => selectConcept(c._id)}
       onRemove={(c) => removeConcept(c._id)}

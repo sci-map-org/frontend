@@ -1,7 +1,7 @@
 // Exist mostly because having pageinfos in Pages creates circular dependencies
 
 import { ConceptDataFragment } from '../graphql/concepts/concepts.fragments.generated';
-import { DomainDataFragment } from '../graphql/domains/domains.fragments.generated';
+import { DomainDataFragment, DomainLinkDataFragment } from '../graphql/domains/domains.fragments.generated';
 import { LearningPathDataFragment } from '../graphql/learning_paths/learning_paths.fragments.generated';
 import { ResourceDataFragment } from '../graphql/resources/resources.fragments.generated';
 import { LearningGoal, LearningGoalBelongsToDomain } from '../graphql/types';
@@ -10,7 +10,7 @@ import { PageInfo } from './PageInfo';
 // ====Domains====
 export const DomainPagePath = (domainKey: string) => `/domains/${domainKey}`;
 
-export const DomainPageInfo = (domain: DomainDataFragment): PageInfo => ({
+export const DomainPageInfo = (domain: DomainLinkDataFragment): PageInfo => ({
   name: domain.name,
   path: DomainPagePath(domain.key),
   routePath: DomainPagePath('[key]'),

@@ -159,6 +159,7 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
       <DomainAndConceptsSelector
         selectedDomainsAndConcepts={resourceCreationData.domainsAndCoveredConcepts}
         onChange={(domainsAndCoveredConcepts) => updateResourceCreationData({ domainsAndCoveredConcepts })}
+        allowConceptCreation
       />
     </Stack>
   );

@@ -1,8 +1,20 @@
-import { Flex, Input, Stack, Text, Textarea } from '@chakra-ui/react';
+import {
+  Flex,
+  Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
+  Stack,
+  Text,
+  Textarea
+} from '@chakra-ui/react';
 import { useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { useAddConceptToDomain } from '../../graphql/concepts/concepts.hooks';
-import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
+import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { AddConceptToDomainPayload } from '../../graphql/types';
 import { generateUrlKey } from '../../services/url.service';
 import { getChakraRelativeSize } from '../../util/chakra.util';
@@ -10,7 +22,7 @@ import { DomainSelector } from '../domains/DomainSelector';
 import { FormButtons } from '../lib/buttons/FormButtons';
 
 interface NewConceptFormProps {
-  domain?: DomainDataFragment;
+  domain?: DomainLinkDataFragment;
   defaultPayload?: Partial<AddConceptToDomainPayload>;
   size?: 'sm' | 'md' | 'lg';
   onCreate: (domainId: string, payload: AddConceptToDomainPayload) => void;
@@ -27,6 +39,7 @@ export const NewConceptForm: React.FC<NewConceptFormProps> = ({
   const [key, setKey] = useState(defaultPayload?.key || '');
   const [description, setDescription] = useState(defaultPayload?.description || undefined);
   const [selectedDomain, selectDomain] = useState(domain);
+
   return (
     <Stack spacing={4} direction="column" alignItems="stretch">
       {!domain && (
@@ -93,5 +106,35 @@ export const NewConcept: React.FC<NewConceptProps> = ({ onCreated, ...props }) =
       }}
       {...props}
     />
+  );
+};
+
+interface NewConceptModalProps extends NewConceptProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+export const NewConceptModal: React.FC<NewConceptModalProps> = ({ isOpen, onClose, onCreated, onCancel, ...props }) => {
+  return (
+    <Modal onClose={onClose} size="xl" isOpen={isOpen}>
+      <ModalOverlay>
+        <ModalContent>
+          <ModalHeader>{props.domain ? `Add Concept to ${props.domain.name}` : 'Create new Concept'}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={5}>
+            <NewConcept
+              onCreated={(createdConcept) => {
+                onClose();
+                onCreated && onCreated(createdConcept);
+              }}
+              onCancel={() => {
+                onClose();
+                onCancel && onCancel();
+              }}
+              {...props}
+            />
+          </ModalBody>
+        </ModalContent>
+      </ModalOverlay>
+    </Modal>
   );
 };
