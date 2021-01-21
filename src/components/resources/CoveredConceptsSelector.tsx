@@ -12,7 +12,8 @@ export const LearningMaterialDomainCoveredConceptsSelector: React.FC<{
   coveredConcepts: ConceptDataFragment[];
   title?: string;
   isLoading?: boolean;
-}> = ({ learningMaterialId, domain, coveredConcepts, title, isLoading }) => {
+  allowCreation?: boolean;
+}> = ({ learningMaterialId, domain, coveredConcepts, title, isLoading, allowCreation }) => {
   const [attachLearningMaterialCoversConcepts] = useAttachLearningMaterialCoversConceptsMutation();
   const [detachLearningMaterialCoversConcepts] = useDetachLearningMaterialCoversConceptsMutation();
   const selectConcept = async (conceptId: string): Promise<void> => {
@@ -33,6 +34,7 @@ export const LearningMaterialDomainCoveredConceptsSelector: React.FC<{
       onRemove={(c) => removeConcept(c._id)}
       title={title}
       isLoading={isLoading}
+      allowCreation={allowCreation}
     />
   );
 };
