@@ -70,7 +70,12 @@ const typeToMediaTypeMapping: { [key in ResourceType]: ResourceMediaType | null 
 
 type SubResourceCreationData = Omit<
   CreateResourcePayload,
-  'domainsAndCoveredConcepts' | 'tags' | 'subResourceSeries' | 'description'
+  | 'domainsAndCoveredConcepts'
+  | 'tags'
+  | 'subResourceSeries'
+  | 'description'
+  | 'outcomesLearningGoalsIds'
+  | 'prerequisitesLearningGoalsIds'
 > & {
   description?: string;
   tags: LearningMaterialTag[];
