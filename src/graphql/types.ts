@@ -876,6 +876,8 @@ export type CreateResourcePayload = {
   durationSeconds?: Maybe<Scalars['Int']>;
   tags?: Maybe<Array<Scalars['String']>>;
   domainsAndCoveredConcepts?: Maybe<Array<DomainAndCoveredConcepts>>;
+  prerequisitesLearningGoalsIds?: Maybe<Array<Scalars['String']>>;
+  outcomesLearningGoalsIds?: Maybe<Array<Scalars['String']>>;
   subResourceSeries?: Maybe<Array<CreateSubResourcePayload>>;
 };
 
@@ -1298,6 +1300,8 @@ export type CreateSubResourcePayload = {
   durationSeconds?: Maybe<Scalars['Int']>;
   tags?: Maybe<Array<Scalars['String']>>;
   domainsAndCoveredConcepts?: Maybe<Array<DomainAndCoveredConcepts>>;
+  prerequisitesLearningGoalsIds?: Maybe<Array<Scalars['String']>>;
+  outcomesLearningGoalsId?: Maybe<Array<Scalars['String']>>;
 };
 
 export type SetResourcesConsumedPayloadResourcesField = {

@@ -36,6 +36,9 @@ import {
 import { validateUrl } from '../../services/url.service';
 import { ConceptBadge } from '../concepts/ConceptBadge';
 import { DomainAndConceptsSelector, DomainAndSelectedConcepts } from '../concepts/DomainAndConceptsSelector';
+import { LearningGoalBadgeDataFragment } from '../learning_goals/LearningGoalBadge.generated';
+import { StatelessEditableLearningMaterialOutcomes } from '../learning_materials/EditableLearningMaterialOutcomes';
+import { StatelessEditableLearningMaterialPrerequisites } from '../learning_materials/EditableLearningMaterialPrerequisites';
 import { LearningMaterialTagsStatelessEditor } from '../learning_materials/LearningMaterialTagsEditor';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { FormButtons } from '../lib/buttons/FormButtons';
@@ -72,6 +75,8 @@ type SubResourceCreationData = Omit<
   description?: string;
   tags: LearningMaterialTag[];
   domainsAndCoveredConcepts: DomainAndSelectedConcepts[];
+  prerequisites: LearningGoalBadgeDataFragment[];
+  outcomes: LearningGoalBadgeDataFragment[];
 };
 
 type ResourceCreationData = SubResourceCreationData & {
@@ -120,6 +125,8 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
                     selectedConcepts: [],
                   })),
                   description: sub.description || undefined,
+                  prerequisites: [],
+                  outcomes: [],
                 })),
               }),
             });
@@ -156,11 +163,47 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
         value={resourceCreationData.description}
         onChange={(d) => updateResourceCreationData({ description: d })}
       />
-      <DomainAndConceptsSelector
-        selectedDomainsAndConcepts={resourceCreationData.domainsAndCoveredConcepts}
-        onChange={(domainsAndCoveredConcepts) => updateResourceCreationData({ domainsAndCoveredConcepts })}
-        allowConceptCreation
-      />
+      <Flex direction="row">
+        <Flex w="50%">
+          <DomainAndConceptsSelector
+            selectedDomainsAndConcepts={resourceCreationData.domainsAndCoveredConcepts}
+            onChange={(domainsAndCoveredConcepts) => updateResourceCreationData({ domainsAndCoveredConcepts })}
+            allowConceptCreation
+          />
+        </Flex>
+        <Stack spacing={4} w="50%">
+          <StatelessEditableLearningMaterialPrerequisites
+            editable={true}
+            learningGoalsPrerequisites={resourceCreationData.prerequisites}
+            onAdded={(learningGoal) =>
+              updateResourceCreationData({
+                prerequisites: [...resourceCreationData.prerequisites, learningGoal],
+              })
+            }
+            onRemove={(learningGoalId) => {
+              updateResourceCreationData({
+                prerequisites: resourceCreationData.prerequisites.filter(
+                  (prerequisite) => prerequisite._id !== learningGoalId
+                ),
+              });
+            }}
+          />
+          <StatelessEditableLearningMaterialOutcomes
+            editable={true}
+            learningGoalsOutcomes={resourceCreationData.outcomes}
+            onAdded={(learningGoal) =>
+              updateResourceCreationData({
+                outcomes: [...resourceCreationData.outcomes, learningGoal],
+              })
+            }
+            onRemove={(learningGoalId) => {
+              updateResourceCreationData({
+                outcomes: resourceCreationData.outcomes.filter((outcome) => outcome._id !== learningGoalId),
+              });
+            }}
+          />
+        </Stack>
+      </Flex>
     </Stack>
   );
 };
@@ -180,6 +223,8 @@ const defaultResourceData: ResourceCreationData = {
   durationSeconds: null,
   tags: [],
   domainsAndCoveredConcepts: [],
+  prerequisites: [],
+  outcomes: [],
 };
 
 export const NewResourceForm: React.FC<NewResourceFormProps> = ({
@@ -305,17 +350,19 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
         onPrimaryClick={async () => {
           const subResourceSeries: CreateSubResourcePayload[] | undefined = resourceCreationData.subResourceSeries?.map(
             (subResource) => ({
-              ...omit(subResource, 'domainsAndCoveredConcepts'),
+              ...omit(subResource, ['domainsAndCoveredConcepts', 'prerequisites', 'outcomes']),
               tags: resourceCreationData.tags.map((t) => t.name),
               domainsAndCoveredConcepts: subResource.domainsAndCoveredConcepts.map(({ domain, selectedConcepts }) => ({
                 domainId: domain._id,
                 conceptsIds: selectedConcepts.map((s) => s._id),
               })),
+              prerequisitesLearningGoalsIds: subResource.prerequisites.map(({ _id }) => _id),
+              outcomesLearningGoalsIds: subResource.outcomes.map(({ _id }) => _id),
             })
           );
           setIsCreating(true);
           const createdResource = await createResource({
-            ...resourceCreationData,
+            ...omit(resourceCreationData, ['prerequisites', 'outcomes']),
             tags: resourceCreationData.tags.map((t) => t.name),
             subResourceSeries,
             domainsAndCoveredConcepts: resourceCreationData.domainsAndCoveredConcepts.map(
@@ -324,6 +371,8 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
                 conceptsIds: selectedConcepts.map((s) => s._id),
               })
             ),
+            prerequisitesLearningGoalsIds: resourceCreationData.prerequisites.map(({ _id }) => _id),
+            outcomesLearningGoalsIds: resourceCreationData.outcomes.map(({ _id }) => _id),
           });
           onResourceCreated && onResourceCreated(createdResource);
         }}

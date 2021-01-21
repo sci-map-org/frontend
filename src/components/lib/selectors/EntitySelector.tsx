@@ -94,22 +94,25 @@ export const EntitySelector = <T extends EntityType>({
             )}
           </Flex>
         )}
-        renderSuggestionsContainer={({ containerProps, children }) => (
-          <Box
-            {...containerProps}
-            borderLeftWidth={1}
-            borderTopWidth={1}
-            zIndex={4000}
-            borderRightWidth={1}
-            position="absolute"
-            backgroundColor="white"
-            w={inputRef.current?.offsetWidth || undefined}
-            {...(!!suggestions.length &&
-              suggestionContainerWidth && { w: suggestionContainerWidth, borderTopWidth: 1 })}
-          >
-            {children}
-          </Box>
-        )}
+        renderSuggestionsContainer={({ containerProps, children }) =>
+          children && (
+            <Box
+              {...containerProps}
+              borderLeftWidth={1}
+              borderTopWidth={1}
+              borderRightWidth={1}
+              zIndex={4000}
+              position="absolute"
+              backgroundColor="white"
+              w={inputRef.current?.offsetWidth || undefined}
+              {...(!!suggestions.length &&
+                suggestionContainerWidth && { w: suggestionContainerWidth, borderTopWidth: 1 })}
+            >
+              {children}
+            </Box>
+          )
+        }
+        highlightFirstSuggestion={true}
         getSuggestionValue={(suggestion) => suggestion.name}
         renderInputComponent={(inputProps: any) => (
           <Input size={inputSize} variant="flushed" {...inputProps} w={width} />
