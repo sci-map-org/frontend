@@ -180,7 +180,7 @@ export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = 
         <RoleAccess accessRule="contributorOrAdmin">
           <Box mt={5}>
             <DomainConceptsPicker
-              domainKey={concept.domain.key}
+              domain={concept.domain}
               title="Referenced Concepts"
               pickableConceptList={differenceBy(domainConcepts, referencingConcepts, [concept], (concept) => {
                 return concept._id;
@@ -201,7 +201,7 @@ export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = 
           <Box mt={5}>
             <DomainConceptsPicker
               title="Sub Concepts"
-              domainKey={concept.domain.key}
+              domain={concept.domain}
               pickableConceptList={differenceBy(domainConcepts, subConcepts, [concept], (concept) => {
                 return concept._id;
               })}
