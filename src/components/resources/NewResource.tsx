@@ -87,6 +87,32 @@ type SubResourceCreationData = Omit<
 type ResourceCreationData = SubResourceCreationData & {
   subResourceSeries?: SubResourceCreationData[];
 };
+
+const resourceCreationDataToPayload = (resourceCreationData: ResourceCreationData): CreateResourcePayload => {
+  const subResourceSeries: CreateSubResourcePayload[] | undefined = resourceCreationData.subResourceSeries?.map(
+    (subResource) => ({
+      ...omit(subResource, ['domainsAndCoveredConcepts', 'prerequisites', 'outcomes']),
+      tags: resourceCreationData.tags.map((t) => t.name),
+      domainsAndCoveredConcepts: subResource.domainsAndCoveredConcepts.map(({ domain, selectedConcepts }) => ({
+        domainId: domain._id,
+        conceptsIds: selectedConcepts.map((s) => s._id),
+      })),
+      prerequisitesLearningGoalsIds: subResource.prerequisites.map(({ _id }) => _id),
+      outcomesLearningGoalsIds: subResource.outcomes.map(({ _id }) => _id),
+    })
+  );
+  return {
+    ...omit(resourceCreationData, ['prerequisites', 'outcomes']),
+    tags: resourceCreationData.tags.map((t) => t.name),
+    subResourceSeries,
+    domainsAndCoveredConcepts: resourceCreationData.domainsAndCoveredConcepts.map(({ domain, selectedConcepts }) => ({
+      domainId: domain._id,
+      conceptsIds: selectedConcepts.map((s) => s._id),
+    })),
+    prerequisitesLearningGoalsIds: resourceCreationData.prerequisites.map(({ _id }) => _id),
+    outcomesLearningGoalsIds: resourceCreationData.outcomes.map(({ _id }) => _id),
+  };
+};
 interface StatelessNewResourceFormProps {
   resourceCreationData: SubResourceCreationData;
   updateResourceCreationData: (data: Partial<ResourceCreationData>) => void;
@@ -353,32 +379,8 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
         onCancel={() => (onCancel ? onCancel() : Router.back())}
         size="lg"
         onPrimaryClick={async () => {
-          const subResourceSeries: CreateSubResourcePayload[] | undefined = resourceCreationData.subResourceSeries?.map(
-            (subResource) => ({
-              ...omit(subResource, ['domainsAndCoveredConcepts', 'prerequisites', 'outcomes']),
-              tags: resourceCreationData.tags.map((t) => t.name),
-              domainsAndCoveredConcepts: subResource.domainsAndCoveredConcepts.map(({ domain, selectedConcepts }) => ({
-                domainId: domain._id,
-                conceptsIds: selectedConcepts.map((s) => s._id),
-              })),
-              prerequisitesLearningGoalsIds: subResource.prerequisites.map(({ _id }) => _id),
-              outcomesLearningGoalsIds: subResource.outcomes.map(({ _id }) => _id),
-            })
-          );
           setIsCreating(true);
-          const createdResource = await createResource({
-            ...omit(resourceCreationData, ['prerequisites', 'outcomes']),
-            tags: resourceCreationData.tags.map((t) => t.name),
-            subResourceSeries,
-            domainsAndCoveredConcepts: resourceCreationData.domainsAndCoveredConcepts.map(
-              ({ domain, selectedConcepts }) => ({
-                domainId: domain._id,
-                conceptsIds: selectedConcepts.map((s) => s._id),
-              })
-            ),
-            prerequisitesLearningGoalsIds: resourceCreationData.prerequisites.map(({ _id }) => _id),
-            outcomesLearningGoalsIds: resourceCreationData.outcomes.map(({ _id }) => _id),
-          });
+          const createdResource = await createResource(resourceCreationDataToPayload(resourceCreationData));
           onResourceCreated && onResourceCreated(createdResource);
         }}
       />
