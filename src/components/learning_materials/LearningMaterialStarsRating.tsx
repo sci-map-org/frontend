@@ -1,3 +1,4 @@
+import { StarIcon } from '@chakra-ui/icons';
 import {
   Button,
   ButtonProps,
@@ -9,12 +10,15 @@ import {
   Skeleton,
   Stack,
   Text,
+  UsePopoverProps,
 } from '@chakra-ui/react';
-import { StarIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ReactStars from 'react-rating-stars-component';
-import { useRateLearningMaterialMutation } from './LearningMaterialStarsRating.generated';
+import {
+  LearningMaterialStarsRaterDataFragment,
+  useRateLearningMaterialMutation,
+} from './LearningMaterialStarsRating.generated';
 
 export const StarsRatingViewer: React.FC<{ value?: number | null; pxSize?: number; isLoading?: boolean }> = ({
   value,
@@ -36,26 +40,69 @@ export const StarsRatingViewer: React.FC<{ value?: number | null; pxSize?: numbe
   ) : null;
 };
 
+export const LearningMaterialStarsRaterData = gql`
+  fragment LearningMaterialStarsRaterData on LearningMaterial {
+    _id
+    ... on Resource {
+      consumed {
+        consumedAt
+        openedAt
+      }
+    }
+    ... on LearningPath {
+      started {
+        startedAt
+        completedAt
+      }
+    }
+  }
+`;
+
+const shouldShowRater = (learningMaterial: LearningMaterialStarsRaterDataFragment): boolean => {
+  return (
+    (learningMaterial.__typename === 'Resource' && !!learningMaterial.consumed?.consumedAt) ||
+    (learningMaterial.__typename === 'LearningPath' && !!learningMaterial.started?.completedAt)
+  );
+};
 /**
  * TODO: show user's own rating on button, show star as yellow then
  */
 export const LearningMaterialStarsRater: React.FC<
-  { learningMaterialId: string; buttonText?: string } & Omit<ButtonProps, 'onClick'>
-> = ({ learningMaterialId, buttonText = 'Rate this', ...props }) => {
+  {
+    learningMaterial: LearningMaterialStarsRaterDataFragment;
+    buttonText?: string;
+    popoverPlacement?: UsePopoverProps['placement'];
+  } & Omit<ButtonProps, 'onClick'>
+> = ({ learningMaterial, buttonText = 'Rate this', popoverPlacement = 'right', ...props }) => {
   const [isOpen, setIsOpen] = useState(false);
   const open = () => setIsOpen(!isOpen);
   const close = () => setIsOpen(false);
+
+  const [showRater, setShowRater] = useState(shouldShowRater(learningMaterial));
+  useEffect(() => {
+    const shouldShow = shouldShowRater(learningMaterial);
+    if (showRater !== shouldShow) setShowRater(shouldShow);
+  }, [learningMaterial]);
+  if (!showRater) return null;
   return (
-    <Popover isOpen={isOpen} onClose={close} returnFocusOnClose={false} placement="right" isLazy>
+    <Popover isOpen={isOpen} size="starRater" onClose={close} returnFocusOnClose={false} placement={popoverPlacement}>
       <PopoverTrigger>
-        <Button variant="outline" aria-label="rate-this" size="sm" leftIcon={<StarIcon />} onClick={open} {...props}>
+        <Button
+          variant="outline"
+          backgroundColor="white"
+          aria-label="rate-this"
+          size="sm"
+          leftIcon={<StarIcon />}
+          onClick={open}
+          {...props}
+        >
           {buttonText}
         </Button>
       </PopoverTrigger>
-      <PopoverContent w="146px" zIndex={4}>
+      <PopoverContent zIndex={4}>
         <PopoverArrow />
         <PopoverBody>
-          <LearningMaterialStarsRatingSelector learningMaterialId={learningMaterialId} onSelected={() => close()} />
+          <LearningMaterialStarsRatingSelector learningMaterialId={learningMaterial._id} onSelected={() => close()} />
         </PopoverBody>
       </PopoverContent>
     </Popover>

@@ -93,19 +93,16 @@ export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCar
               </Stack>
             </Skeleton>
             <Skeleton isLoaded={!isLoading}>
-              <Stack spacing={1} direction="row" alignItems="baseline" mr="10px">
-                <StarsRatingViewer value={resource.rating} pxSize={13} />
-                <ResourceTypeBadge type={resource.type} />
-                <DurationViewer value={resource.durationSeconds} />
-
-                <RoleAccess accessRule="contributorOrAdmin">
+              <Stack direction="row" spacing={1} alignItems="center" h="24px">
+                {/* 24px so that height doesn't change when rater appears */}
+                <Stack spacing={1} direction="row" alignItems="baseline">
+                  <StarsRatingViewer value={resource.rating} pxSize={15} />
+                  <ResourceTypeBadge type={resource.type} />
+                  <DurationViewer value={resource.durationSeconds} />
+                </Stack>
+                <RoleAccess accessRule="loggedInUser">
                   <BoxBlockDefaultClickPropagation>
-                    <LearningMaterialStarsRater
-                      learningMaterialId={resource._id}
-                      size="xs"
-                      color="gray.500"
-                      _hover={{ color: 'gray.900' }}
-                    />
+                    <LearningMaterialStarsRater learningMaterial={resource} size="xs" _hover={{ color: 'gray.900' }} />
                   </BoxBlockDefaultClickPropagation>
                 </RoleAccess>
               </Stack>

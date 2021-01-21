@@ -7,6 +7,7 @@ import { LearningPathCompletionDataFragment } from '../../components/learning_pa
 import { LearningMaterialWithCoveredConceptsByDomainData_Resource_Fragment, LearningMaterialWithCoveredConceptsByDomainData_LearningPath_Fragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
 import { EditableLearningMaterialPrerequisitesData_Resource_Fragment, EditableLearningMaterialPrerequisitesData_LearningPath_Fragment } from '../../components/learning_materials/EditableLearningMaterialPrerequisites.generated';
 import { EditableLearningMaterialOutcomesData_Resource_Fragment, EditableLearningMaterialOutcomesData_LearningPath_Fragment } from '../../components/learning_materials/EditableLearningMaterialOutcomes.generated';
+import { LearningMaterialStarsRaterData_Resource_Fragment, LearningMaterialStarsRaterData_LearningPath_Fragment } from '../../components/learning_materials/LearningMaterialStarsRating.generated';
 import * as Operations from './LearningPathPage';
 import * as Apollo from '@apollo/client';
 export type GetLearningPathPageQueryVariables = Types.Exact<{
@@ -44,6 +45,7 @@ export type GetLearningPathPageQuery = (
     & LearningMaterialWithCoveredConceptsByDomainData_LearningPath_Fragment
     & EditableLearningMaterialPrerequisitesData_LearningPath_Fragment
     & EditableLearningMaterialOutcomesData_LearningPath_Fragment
+    & LearningMaterialStarsRaterData_LearningPath_Fragment
   ) }
 );
 

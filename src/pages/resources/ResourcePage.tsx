@@ -14,6 +14,7 @@ import {
 } from '../../components/learning_materials/EditableLearningMaterialPrerequisites';
 import {
   LearningMaterialStarsRater,
+  LearningMaterialStarsRaterData,
   StarsRatingViewer,
 } from '../../components/learning_materials/LearningMaterialStarsRating';
 import { EditableLearningMaterialTags } from '../../components/learning_materials/LearningMaterialTagsEditor';
@@ -78,6 +79,7 @@ export const getResourceResourcePage = gql`
       }
       ...EditableLearningMaterialOutcomesData
       ...EditableLearningMaterialPrerequisitesData
+      ...LearningMaterialStarsRaterData
     }
   }
   ${SquareResourceCardData}
@@ -86,6 +88,7 @@ export const getResourceResourcePage = gql`
   ${ConceptData}
   ${EditableLearningMaterialOutcomesData}
   ${EditableLearningMaterialPrerequisitesData}
+  ${LearningMaterialStarsRaterData}
 `;
 
 const domainDataPlaceholder = generateDomainData();
@@ -104,7 +107,6 @@ const resourceDataPlaceholder: GetResourceResourcePageQuery['getResourceById'] =
 export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) => {
   const { data, loading, error } = useGetResourceResourcePageQuery({ variables: { id: resourceId } });
   if (error) return <Box>Resource not found !</Box>;
-
   const resource = data?.getResourceById || resourceDataPlaceholder;
   const { currentUser } = useCurrentUser();
   return (
@@ -151,12 +153,11 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
             <DurationViewer value={resource.durationSeconds} />
           </Stack>
           <Stack direction="row" spacing={2} alignItems="center">
-            <ResourceCompletedCheckbox resource={resource} size="sm" />
-
-            <StarsRatingViewer value={resource.rating} />
             <RoleAccess accessRule="contributorOrAdmin">
-              <LearningMaterialStarsRater learningMaterialId={resource._id} isDisabled={loading} />
+              <LearningMaterialStarsRater learningMaterial={resource} isDisabled={loading} />
             </RoleAccess>
+            <StarsRatingViewer value={resource.rating} />
+            <ResourceCompletedCheckbox resource={resource} size="sm" />
           </Stack>
         </Flex>
 

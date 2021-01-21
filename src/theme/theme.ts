@@ -113,6 +113,19 @@ export const theme = extendTheme({
     '5xl': '48px',
     '6xl': '64px',
   },
+  components: {
+    Popover: {
+      parts: ['popper'],
+      sizes: {
+        starRater: {
+          // checkout https://github.com/chakra-ui/chakra-ui/issues/2481 (what is described in first comments doesn't seem to work)
+          popper: {
+            w: '146px',
+          },
+        },
+      },
+    },
+  },
 });
 
 export const globalStyleVariables = {

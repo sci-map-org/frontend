@@ -1,11 +1,14 @@
-import { ExternalLinkIcon } from '@chakra-ui/icons';
-import { Link, Stack, Text } from '@chakra-ui/react';
+import { Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { ResourcePageInfo } from '../../pages/RoutesPageInfos';
 import { shortenString } from '../../util/utils';
 import { LearningMaterialMiniCardContainer } from '../learning_materials/LearningMaterialMiniCardContainer';
-import { StarsRatingViewer } from '../learning_materials/LearningMaterialStarsRating';
+import {
+  LearningMaterialStarsRater,
+  LearningMaterialStarsRaterData,
+  StarsRatingViewer,
+} from '../learning_materials/LearningMaterialStarsRating';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { ResourceTypeBadge } from './elements/ResourceType';
 import { ResourceMiniCardDataFragment } from './ResourceMiniCard.generated';
@@ -17,7 +20,9 @@ export const ResourceMiniCardData = gql`
     type
     url
     rating
+    ...LearningMaterialStarsRaterData
   }
+  ${LearningMaterialStarsRaterData}
 `;
 
 interface ResourceMiniCardProps {
@@ -36,26 +41,17 @@ export const ResourceMiniCard: React.FC<ResourceMiniCardProps> = ({
       inCompactList={inCompactList}
       firstItemInCompactList={firstItemInCompactList}
       renderFirstRow={
-        <BoxBlockDefaultClickPropagation>
-          <Link
-            display="flex"
-            alignItems="baseline"
-            flexDirection={{ base: 'column', md: 'row' }}
-            href={resource.url}
-            isExternal
-            textOverflow="ellipsis"
-          >
-            <Text as="span" fontSize="sm">
-              {shortenString(resource.name, 32)}
-            </Text>
-            <ExternalLinkIcon ml="3px" fontSize="xs" />
-          </Link>
-        </BoxBlockDefaultClickPropagation>
+        <Text fontSize="sm" textOverflow="ellipsis">
+          {shortenString(resource.name, 32)}
+        </Text>
       }
       renderSecondRow={
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row" spacing={1} alignItems="baseline">
           <ResourceTypeBadge fontSize="xs" type={resource.type} />
           <StarsRatingViewer pxSize={13} value={resource.rating} />
+          <BoxBlockDefaultClickPropagation>
+            <LearningMaterialStarsRater learningMaterial={resource} size="xs" />
+          </BoxBlockDefaultClickPropagation>
         </Stack>
       }
       onClick={() => routerPushToPage(ResourcePageInfo(resource))}

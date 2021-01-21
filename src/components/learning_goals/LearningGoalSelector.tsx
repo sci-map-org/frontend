@@ -73,7 +73,7 @@ export const LearningGoalSelector: React.FC<{
           />
         </Box>
       </PopoverTrigger>
-      <PopoverContent>
+      <PopoverContent zIndex={4}>
         <PopoverHeader fontWeight="semibold">{popoverTitle || 'Create Learning Goal'}</PopoverHeader>
         <PopoverArrow />
         <PopoverCloseButton />
