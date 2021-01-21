@@ -1,11 +1,12 @@
-import { Box, Flex, Heading, IconButton, Stack, Text } from '@chakra-ui/react';
 import { MinusIcon } from '@chakra-ui/icons';
+import { Box, Flex, Heading, IconButton, Stack, Text } from '@chakra-ui/react';
 import { differenceBy } from 'lodash';
-import { useEffect, useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { useSearchDomainsLazyQuery } from '../../graphql/domains/domains.operations.generated';
+import { DomainPageInfo } from '../../pages/RoutesPageInfos';
 import { EntitySelector } from '../lib/selectors/EntitySelector';
+import { PageLink } from '../navigation/InternalLink';
 import { DomainConceptsSelector } from './DomainConceptsSelector';
 
 export type DomainAndSelectedConcepts = {
@@ -13,19 +14,18 @@ export type DomainAndSelectedConcepts = {
   selectedConcepts: ConceptDataFragment[];
 };
 
-export const DomainAndConceptsSelector: React.FC<{
-  defaultDomains: DomainDataFragment[];
+interface DomainAndConceptsSelectorProps {
+  selectedDomainsAndConcepts: DomainAndSelectedConcepts[];
   onChange: (domainsAndSelectedConcepts: DomainAndSelectedConcepts[]) => void;
-}> = ({ defaultDomains, onChange }) => {
-  const [selectedDomainsAndConcepts, setSelectedDomainsAndConcepts] = useState<DomainAndSelectedConcepts[]>(
-    defaultDomains.map((domain) => ({ domain, selectedConcepts: [] }))
-  );
+  allowConceptCreation?: boolean;
+}
 
+export const DomainAndConceptsSelector: React.FC<DomainAndConceptsSelectorProps> = ({
+  selectedDomainsAndConcepts,
+  onChange,
+  allowConceptCreation,
+}) => {
   const [searchDomains, { data }] = useSearchDomainsLazyQuery();
-
-  useEffect(() => {
-    onChange(selectedDomainsAndConcepts);
-  }, [selectedDomainsAndConcepts]);
 
   const updateSelectedConcepts = (index: number, newSelectedConcepts: ConceptDataFragment[]) => {
     const newSelectedDomainsAndConcepts = [...selectedDomainsAndConcepts];
@@ -33,7 +33,7 @@ export const DomainAndConceptsSelector: React.FC<{
       ...newSelectedDomainsAndConcepts[index],
       selectedConcepts: newSelectedConcepts,
     };
-    setSelectedDomainsAndConcepts(newSelectedDomainsAndConcepts);
+    onChange(newSelectedDomainsAndConcepts);
   };
 
   return (
@@ -46,15 +46,13 @@ export const DomainAndConceptsSelector: React.FC<{
               aria-label="remove domain"
               size="xs"
               icon={<MinusIcon />}
-              onClick={() =>
-                setSelectedDomainsAndConcepts(selectedDomainsAndConcepts.filter((s) => s.domain._id !== domain._id))
-              }
+              onClick={() => onChange(selectedDomainsAndConcepts.filter((s) => s.domain._id !== domain._id))}
             />
-            <Text>{domain.name}</Text>
+            <PageLink pageInfo={DomainPageInfo(domain)}>{domain.name}</PageLink>
           </Stack>
           <Box pl={5}>
             <DomainConceptsSelector
-              domainKey={domain.key}
+              domain={domain}
               onSelect={(c) => updateSelectedConcepts(index, [...selectedConcepts, c])}
               onRemove={(c) =>
                 updateSelectedConcepts(
@@ -65,6 +63,7 @@ export const DomainAndConceptsSelector: React.FC<{
                 )
               }
               selectedConcepts={selectedConcepts}
+              allowCreation={allowConceptCreation}
             />
           </Box>
         </Flex>
@@ -77,9 +76,7 @@ export const DomainAndConceptsSelector: React.FC<{
           (d) => d._id
         )}
         fetchEntitySuggestions={(v) => searchDomains({ variables: { options: { pagination: {}, query: v } } })}
-        onSelect={(domain) =>
-          setSelectedDomainsAndConcepts([...selectedDomainsAndConcepts, { domain, selectedConcepts: [] }])
-        }
+        onSelect={(domain) => onChange([...selectedDomainsAndConcepts, { domain, selectedConcepts: [] }])}
       />
       ;
     </Stack>

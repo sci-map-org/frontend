@@ -14,7 +14,8 @@ import { LearningMaterialDomainCoveredConceptsSelector } from './CoveredConcepts
 export const LearningMaterialDomainAndCoveredConceptsSelector: React.FC<{
   learningMaterial: LearningMaterialWithCoveredConceptsByDomainDataFragment;
   isLoading?: boolean;
-}> = ({ learningMaterial, isLoading }) => {
+  allowConceptCreation?: boolean;
+}> = ({ learningMaterial, isLoading, allowConceptCreation }) => {
   const [searchDomains, { data }] = useSearchDomainsLazyQuery();
   const [attachLearningMaterialToDomain] = useAttachLearningMaterialToDomainMutation();
   const [detachLearningMaterialFromDomain] = useDetachLearningMaterialFromDomainMutation();
@@ -47,10 +48,11 @@ export const LearningMaterialDomainAndCoveredConceptsSelector: React.FC<{
           </Stack>
           <Box pl={5}>
             <LearningMaterialDomainCoveredConceptsSelector
-              domainKey={domain.key}
+              domain={domain}
               learningMaterialId={learningMaterial._id}
               isLoading={isLoading}
               coveredConcepts={coveredConcepts}
+              allowCreation={allowConceptCreation}
             />
           </Box>
         </Flex>

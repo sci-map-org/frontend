@@ -5,14 +5,14 @@ interface FormButtonsProps {
   size?: StandardChakraSize;
   onCancel: () => void;
   onPrimaryClick: () => void;
-  isLoading?: boolean;
+  isPrimaryLoading?: boolean;
   isPrimaryDisabled?: boolean;
 }
 export const FormButtons: React.FC<FormButtonsProps> = ({
   size = 'md',
   onCancel,
   onPrimaryClick,
-  isLoading,
+  isPrimaryLoading,
   isPrimaryDisabled,
 }) => {
   return (
@@ -22,7 +22,7 @@ export const FormButtons: React.FC<FormButtonsProps> = ({
           Cancel
         </Button>
         <Button
-          isLoading={isLoading}
+          isLoading={isPrimaryLoading}
           w="50%"
           size="lg"
           colorScheme="brand"

@@ -22,7 +22,11 @@ export const LearningMaterialCoveredTopics: React.FC<{
       }
     >
       <CoveredTopicsContainer w={w}>
-        <LearningMaterialDomainAndCoveredConceptsSelector learningMaterial={learningMaterial} isLoading={isLoading} />
+        <LearningMaterialDomainAndCoveredConceptsSelector
+          allowConceptCreation
+          learningMaterial={learningMaterial}
+          isLoading={isLoading}
+        />
       </CoveredTopicsContainer>
     </RoleAccess>
   );
