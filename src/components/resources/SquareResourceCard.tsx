@@ -6,7 +6,8 @@ import { ResourcePageInfo } from '../../pages/RoutesPageInfos';
 import { StarsRatingViewer } from '../learning_materials/LearningMaterialStarsRating';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
-import { ResourceTypeBadge } from './elements/ResourceType';
+import { DurationViewer } from './elements/Duration';
+import { ResourceTypeBadge, ResourceTypeIcon } from './elements/ResourceType';
 import { ResourceUrlLink } from './elements/ResourceUrl';
 import { SquareResourceCardDataFragment } from './SquareResourceCard.generated';
 
@@ -50,9 +51,9 @@ export const SquareResourceCard: React.FC<SquareResourceCardProps> = ({ resource
         )
       }
       renderBottom={
-        <Stack direction="row">
+        <Stack direction="row" alignItems="center">
           <StarsRatingViewer value={resource.rating} pxSize={13} />
-          <ResourceTypeBadge type={resource.type} />
+          <ResourceTypeIcon boxSize={4} resourceType={resource.type} />
         </Stack>
       }
     >

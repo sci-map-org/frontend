@@ -1,8 +1,10 @@
 import { Box, Stack } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { PageLayout } from '../../../components/layout/PageLayout';
+import { StarsRatingViewer } from '../../../components/learning_materials/LearningMaterialStarsRating';
 import { InternalLink } from '../../../components/navigation/InternalLink';
-import { ResourceTypeBadge } from '../../../components/resources/elements/ResourceType';
+import { DurationViewer } from '../../../components/resources/elements/Duration';
+import { ResourceTypeIcon } from '../../../components/resources/elements/ResourceType';
 import { ResourceListBasicLayout } from '../../../components/resources/ResourceList';
 import { DomainData, generateDomainData } from '../../../graphql/domains/domains.fragments';
 import { ResourceData } from '../../../graphql/resources/resources.fragments';
@@ -49,10 +51,15 @@ export const DomainResourceListPage: React.FC<{ domainKey: string }> = ({ domain
           resources={domain.resources?.items || []}
           renderTop={(resource) => (
             <Stack direction="row" alignItems="center" spacing={2}>
+              <ResourceTypeIcon resourceType={resource.type} boxSize={5} />
               <InternalLink routePath="/resources/[_id]" asHref={`/resources/${resource._id}`}>
                 {resource.name}
               </InternalLink>
-              <ResourceTypeBadge type={resource.type} />
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <StarsRatingViewer value={resource.rating} pxSize={14} />
+
+                <DurationViewer value={resource.durationSeconds} />
+              </Stack>
             </Stack>
           )}
         />

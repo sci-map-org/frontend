@@ -15,8 +15,9 @@ import {
   useCreateSubResourceSeriesMutation,
 } from './SubResourceSeriesManager.generated';
 import { DurationViewer } from './elements/Duration';
-import { ResourceTypeBadge } from './elements/ResourceType';
+import { ResourceTypeBadge, ResourceTypeIcon } from './elements/ResourceType';
 import { InternalLink } from '../navigation/InternalLink';
+import { StarsRatingViewer } from '../learning_materials/LearningMaterialStarsRating';
 
 interface StatelessSubResourceSeriesManagerProps {
   subResourceSeries?: ResourcePreviewDataFragment[];
@@ -58,11 +59,15 @@ export const StatelessSubResourceSeriesManager: React.FC<StatelessSubResourceSer
             renderTop={(resource) => (
               <Stack spacing={2}>
                 <Stack direction="row" alignItems="center" spacing={2}>
+                  <ResourceTypeIcon resourceType={resource.type} boxSize={5} />
                   <InternalLink routePath="/resources/[_id]" asHref={`/resources/${resource._id}`}>
                     {resource.name}
                   </InternalLink>
-                  <ResourceTypeBadge type={resource.type} />
-                  <DurationViewer value={resource.durationSeconds} />
+                  <Stack direction="row" alignItems="center" spacing={1}>
+                    <StarsRatingViewer value={resource.rating} pxSize={14} />
+
+                    <DurationViewer value={resource.durationSeconds} />
+                  </Stack>
                 </Stack>
               </Stack>
             )}
