@@ -1,28 +1,27 @@
-import { Badge, BadgeProps, FormControl, FormLabel, Select, Icon, Tooltip } from '@chakra-ui/react';
-import { upperFirst, values } from 'lodash';
 import {
-  RiArticleLine,
-  RiBookOpenLine,
-  RiFileTextLine,
-  RiGamepadLine,
-  RiTwitterLine,
-  RiVolumeDownFill,
-  RiYoutubeFill,
-  RiYoutubeLine,
-} from 'react-icons/ri';
-import { IoGlobeOutline } from 'react-icons/io5';
-import { CgWebsite } from 'react-icons/cg';
-import { GoBrowser } from 'react-icons/go';
+  Badge,
+  BadgeProps,
+  Center,
+  CenterProps,
+  FormControl,
+  FormLabel,
+  Icon,
+  Select,
+  Tooltip,
+} from '@chakra-ui/react';
+import { upperFirst, values } from 'lodash';
+import { useMemo } from 'react';
+import { BiHeadphone } from 'react-icons/bi';
 import { FaGraduationCap } from 'react-icons/fa';
 import { GiMicrophone } from 'react-icons/gi';
-import { IconType } from 'react-icons/lib';
-import { BiHeadphone } from 'react-icons/bi';
-import { ResourceType } from '../../../graphql/types';
+import { GoBrowser } from 'react-icons/go';
 import { ImFilm } from 'react-icons/im';
-import { YoutubePlaylistIcon } from '../../lib/icons/YoutubePlaylistIcon';
-import { useMemo } from 'react';
+import { IconType } from 'react-icons/lib';
+import { RiBookOpenLine, RiFileTextLine, RiGamepadLine, RiTwitterLine, RiYoutubeFill } from 'react-icons/ri';
+import { ResourceType } from '../../../graphql/types';
 import { InfographicIcon } from '../../lib/icons/InfographicIcon';
 import { OnlineBookIcon } from '../../lib/icons/OnlineBookIcon';
+import { YoutubePlaylistIcon } from '../../lib/icons/YoutubePlaylistIcon';
 
 export const resourceTypeColorMapping: { [key in ResourceType]: string } = {
   [ResourceType.Article]: 'green',
@@ -55,29 +54,30 @@ export const ResourceTypeBadge: React.FC<BadgeProps & { type: ResourceType }> = 
   );
 };
 
-export const resourceTypeIconMapping: { [key in ResourceType]: IconType | typeof Icon } = {
-  [ResourceType.Article]: RiFileTextLine, //RiArticleLine
+export const resourceTypeIconMapping: { [key in ResourceType]?: IconType | typeof Icon } = {
+  [ResourceType.Article]: RiFileTextLine, // RiArticleLine
   [ResourceType.ArticleSeries]: RiFileTextLine,
-  [ResourceType.Course]: FaGraduationCap, // Find better
+  [ResourceType.Course]: FaGraduationCap,
   [ResourceType.Podcast]: BiHeadphone, // or FaMicrophoneAlt (microphone) ?
   [ResourceType.PodcastEpisode]: BiHeadphone,
-  [ResourceType.Other]: RiVolumeDownFill, // Find better => nothing ?
+  // [ResourceType.Other]: , // Find better => nothing ?
   [ResourceType.OnlineBook]: OnlineBookIcon, // RiBookOpenLine,
   [ResourceType.Book]: RiBookOpenLine, // RiBookOpenLine,
   [ResourceType.ResearchPaper]: RiFileTextLine, // to improve
   [ResourceType.Documentary]: ImFilm,
   [ResourceType.Tweet]: RiTwitterLine,
-  [ResourceType.Talk]: GiMicrophone, // Find better
-  [ResourceType.Infographic]: InfographicIcon, // Find better RiImageLine
+  [ResourceType.Talk]: GiMicrophone,
+  [ResourceType.Infographic]: InfographicIcon, //  RiImageLine
   [ResourceType.Website]: GoBrowser, //  GoBrowser CgWebsite IoGlobeOutline
   [ResourceType.YoutubeVideo]: RiYoutubeFill, //RiYoutubeLine
   [ResourceType.YoutubePlaylist]: YoutubePlaylistIcon, // or RiPlayList2Line ?
   [ResourceType.VideoGame]: RiGamepadLine,
 };
 
-export const ResourceTypeIcon: React.FC<{ resourceType: ResourceType; boxSize?: string | number }> = ({
+export const ResourceTypeIcon: React.FC<{ resourceType: ResourceType; boxSize?: string | number } & CenterProps> = ({
   resourceType,
   boxSize,
+  ...centerProps
 }) => {
   const icon = useMemo(() => {
     return resourceTypeIconMapping[resourceType];
@@ -85,9 +85,9 @@ export const ResourceTypeIcon: React.FC<{ resourceType: ResourceType; boxSize?: 
   if (!icon) return null;
   return (
     <Tooltip label={resourceTypeToLabel(resourceType)} fontSize="sm">
-      <span>
+      <Center {...centerProps}>
         <Icon as={icon} boxSize={boxSize} />
-      </span>
+      </Center>
     </Tooltip>
   );
 };

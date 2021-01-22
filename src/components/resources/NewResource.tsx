@@ -63,7 +63,7 @@ const typeToMediaTypeMapping: { [key in ResourceType]: ResourceMediaType | null 
   [ResourceType.Documentary]: ResourceMediaType.Video,
   [ResourceType.Tweet]: ResourceMediaType.Text,
   [ResourceType.Talk]: ResourceMediaType.Video,
-  [ResourceType.Infographic]: null,
+  [ResourceType.Infographic]: ResourceMediaType.Image,
   [ResourceType.Website]: null,
   [ResourceType.YoutubeVideo]: ResourceMediaType.Video,
   [ResourceType.YoutubePlaylist]: ResourceMediaType.Video,

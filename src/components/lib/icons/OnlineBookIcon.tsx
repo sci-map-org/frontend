@@ -1,7 +1,7 @@
 import { IconProps, Icon } from '@chakra-ui/react';
 
 export const OnlineBookIcon: typeof Icon = (props: Omit<IconProps, 'css'>) => (
-  <Icon viewBox="-50 -5- 1100 1100" {...props}>
+  <Icon viewBox="0 0 1000 1000" {...props}>
     {/* enable-background="new 0 0 1000 1000" */}
     {/* <path
       fill="currentColor"

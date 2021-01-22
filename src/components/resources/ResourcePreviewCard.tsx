@@ -37,7 +37,7 @@ import { InternalLink } from '../navigation/InternalLink';
 import { DurationViewer } from './elements/Duration';
 import { ResourceCompletedCheckbox } from './elements/ResourceCompletedCheckbox';
 import { ResourceDescription } from './elements/ResourceDescription';
-import { ResourceTypeBadge } from './elements/ResourceType';
+import { ResourceTypeBadge, ResourceTypeIcon } from './elements/ResourceType';
 import { ResourceUrlLink } from './elements/ResourceUrl';
 
 interface ResourcePreviewCardProps {
@@ -93,16 +93,16 @@ export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCar
               </Stack>
             </Skeleton>
             <Skeleton isLoaded={!isLoading}>
-              <Stack direction="row" spacing={1} alignItems="center" h="24px">
+              <Stack direction="row" spacing={1} alignItems="center">
                 {/* 24px so that height doesn't change when rater appears */}
-                <Stack spacing={1} direction="row" alignItems="baseline">
+                <Stack spacing={1} direction="row" alignItems="center">
+                  <ResourceTypeIcon resourceType={resource.type} boxSize="20px" my="3px" />
                   <StarsRatingViewer value={resource.rating} pxSize={15} />
-                  <ResourceTypeBadge type={resource.type} />
                   <DurationViewer value={resource.durationSeconds} />
                 </Stack>
                 <RoleAccess accessRule="loggedInUser">
                   <BoxBlockDefaultClickPropagation>
-                    <LearningMaterialStarsRater learningMaterial={resource} size="xs" _hover={{ color: 'gray.900' }} />
+                    <LearningMaterialStarsRater learningMaterial={resource} size="xs" />
                   </BoxBlockDefaultClickPropagation>
                 </RoleAccess>
               </Stack>

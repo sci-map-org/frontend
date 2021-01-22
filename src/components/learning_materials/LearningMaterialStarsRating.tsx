@@ -29,7 +29,7 @@ export const StarsRatingViewer: React.FC<{ value?: number | null; pxSize?: numbe
     <Skeleton isLoaded={!isLoading}>
       <Stack direction="row" spacing="2px" alignItems="baseline" px="2px">
         <StarIcon boxSize={`${pxSize + 1}px`} color="rgb(255, 215, 0)" />
-        <Text fontSize={pxSize + 'px'} fontWeight={400}>
+        <Text fontSize={pxSize + 'px'} fontWeight={400} lineHeight={pxSize + 'px'}>
           {value}
           <Text as="span" fontSize={pxSize - 5 + 'px'} fontWeight={300}>
             /5
