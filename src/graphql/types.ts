@@ -1154,9 +1154,13 @@ export enum ResourceType {
   Course = 'course',
   Podcast = 'podcast',
   PodcastSeries = 'podcast_series',
+  PodcastEpisode = 'podcast_episode',
   YoutubeVideo = 'youtube_video',
   YoutubeVideoSeries = 'youtube_video_series',
+  YoutubePlaylist = 'youtube_playlist',
+  OnlineBook = 'online_book',
   Book = 'book',
+  ResearchPaper = 'research_paper',
   Talk = 'talk',
   Documentary = 'documentary',
   Website = 'website',
@@ -1170,6 +1174,7 @@ export enum ResourceMediaType {
   Video = 'video',
   Text = 'text',
   Audio = 'audio',
+  Image = 'image',
   InteractiveContent = 'interactive_content'
 }
 

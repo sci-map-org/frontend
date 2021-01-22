@@ -55,9 +55,12 @@ const typeToMediaTypeMapping: { [key in ResourceType]: ResourceMediaType | null 
   [ResourceType.ArticleSeries]: ResourceMediaType.Text,
   [ResourceType.Course]: ResourceMediaType.Video,
   [ResourceType.Podcast]: ResourceMediaType.Audio,
+  [ResourceType.PodcastEpisode]: ResourceMediaType.Audio,
   [ResourceType.PodcastSeries]: ResourceMediaType.Audio,
   [ResourceType.Other]: null,
+  [ResourceType.OnlineBook]: ResourceMediaType.Text,
   [ResourceType.Book]: ResourceMediaType.Text,
+  [ResourceType.ResearchPaper]: ResourceMediaType.Text,
   [ResourceType.Documentary]: ResourceMediaType.Video,
   [ResourceType.Tweet]: ResourceMediaType.Text,
   [ResourceType.Talk]: ResourceMediaType.Video,
@@ -65,6 +68,7 @@ const typeToMediaTypeMapping: { [key in ResourceType]: ResourceMediaType | null 
   [ResourceType.Website]: null,
   [ResourceType.YoutubeVideo]: ResourceMediaType.Video,
   [ResourceType.YoutubeVideoSeries]: ResourceMediaType.Video,
+  [ResourceType.YoutubePlaylist]: ResourceMediaType.Video,
   [ResourceType.VideoGame]: ResourceMediaType.InteractiveContent,
 };
 
