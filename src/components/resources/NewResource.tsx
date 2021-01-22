@@ -56,7 +56,6 @@ const typeToMediaTypeMapping: { [key in ResourceType]: ResourceMediaType | null 
   [ResourceType.Course]: ResourceMediaType.Video,
   [ResourceType.Podcast]: ResourceMediaType.Audio,
   [ResourceType.PodcastEpisode]: ResourceMediaType.Audio,
-  [ResourceType.PodcastSeries]: ResourceMediaType.Audio,
   [ResourceType.Other]: null,
   [ResourceType.OnlineBook]: ResourceMediaType.Text,
   [ResourceType.Book]: ResourceMediaType.Text,
@@ -67,7 +66,6 @@ const typeToMediaTypeMapping: { [key in ResourceType]: ResourceMediaType | null 
   [ResourceType.Infographic]: null,
   [ResourceType.Website]: null,
   [ResourceType.YoutubeVideo]: ResourceMediaType.Video,
-  [ResourceType.YoutubeVideoSeries]: ResourceMediaType.Video,
   [ResourceType.YoutubePlaylist]: ResourceMediaType.Video,
   [ResourceType.VideoGame]: ResourceMediaType.InteractiveContent,
 };

@@ -30,7 +30,6 @@ export const resourceTypeColorMapping: { [key in ResourceType]: string } = {
   [ResourceType.Course]: 'red',
   [ResourceType.Podcast]: 'yellow',
   [ResourceType.PodcastEpisode]: 'yellow',
-  [ResourceType.PodcastSeries]: 'yellow', //to remove
   [ResourceType.Other]: 'gray',
   [ResourceType.OnlineBook]: 'red',
   [ResourceType.Book]: 'red',
@@ -42,7 +41,6 @@ export const resourceTypeColorMapping: { [key in ResourceType]: string } = {
   [ResourceType.Website]: 'blue',
   [ResourceType.YoutubeVideo]: 'red',
   [ResourceType.YoutubePlaylist]: 'red',
-  [ResourceType.YoutubeVideoSeries]: 'red', // to remove
   [ResourceType.VideoGame]: 'yellow',
 };
 
@@ -62,7 +60,6 @@ export const resourceTypeIconMapping: { [key in ResourceType]: IconType | typeof
   [ResourceType.ArticleSeries]: RiFileTextLine,
   [ResourceType.Course]: FaGraduationCap, // Find better
   [ResourceType.Podcast]: BiHeadphone, // or FaMicrophoneAlt (microphone) ?
-  [ResourceType.PodcastSeries]: BiHeadphone, // to remove
   [ResourceType.PodcastEpisode]: BiHeadphone,
   [ResourceType.Other]: RiVolumeDownFill, // Find better => nothing ?
   [ResourceType.OnlineBook]: OnlineBookIcon, // RiBookOpenLine,
@@ -75,7 +72,6 @@ export const resourceTypeIconMapping: { [key in ResourceType]: IconType | typeof
   [ResourceType.Website]: GoBrowser, //  GoBrowser CgWebsite IoGlobeOutline
   [ResourceType.YoutubeVideo]: RiYoutubeFill, //RiYoutubeLine
   [ResourceType.YoutubePlaylist]: YoutubePlaylistIcon, // or RiPlayList2Line ?
-  [ResourceType.YoutubeVideoSeries]: YoutubePlaylistIcon, // tp remove
   [ResourceType.VideoGame]: RiGamepadLine,
 };
 
