@@ -16,9 +16,11 @@ import {
   Skeleton,
   Stack,
   Text,
+  useDisclosure,
 } from '@chakra-ui/react';
 import React, { forwardRef, ReactElement } from 'react';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { ResourceType } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { EditResourcePageInfo, ResourcePageInfo } from '../../pages/RoutesPageInfos';
@@ -33,11 +35,12 @@ import { EditableLearningMaterialTags } from '../learning_materials/LearningMate
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { ResourceGroupIcon } from '../lib/icons/ResourceGroupIcon';
 import { ResourceSeriesIcon } from '../lib/icons/ResourceSeriesIcon';
+import { YoutubePlayer } from '../lib/YoutubePlayer';
 import { InternalLink } from '../navigation/InternalLink';
 import { DurationViewer } from './elements/Duration';
 import { ResourceCompletedCheckbox } from './elements/ResourceCompletedCheckbox';
 import { ResourceDescription } from './elements/ResourceDescription';
-import { ResourceTypeBadge, ResourceTypeIcon } from './elements/ResourceType';
+import { ResourceTypeIcon } from './elements/ResourceType';
 import { ResourceUrlLink } from './elements/ResourceUrl';
 
 interface ResourcePreviewCardProps {
@@ -49,6 +52,7 @@ interface ResourcePreviewCardProps {
   firstItemInCompactList?: boolean;
   showCompletedNotificationToast?: boolean;
   leftBlockWidth?: FlexProps['w'];
+  expandByDefault?: boolean;
 }
 
 export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCardProps>(
@@ -62,6 +66,7 @@ export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCar
       firstItemInCompactList,
       showCompletedNotificationToast,
       leftBlockWidth = '100px',
+      expandByDefault,
     },
     ref
   ) => {
@@ -107,17 +112,56 @@ export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCar
                 </RoleAccess>
               </Stack>
             </Skeleton>
-            {((resource.tags && resource.tags.length > 0) || resource.description) && (
-              <Box>
-                <ResourceDescription description={resource.description} noOfLines={2} isLoading={isLoading} />
-              </Box>
-            )}
+            <MainContentBlock expandByDefault={expandByDefault} resource={resource} isLoading={isLoading} />
           </Flex>
         </Flex>
       </LearningMaterialCardContainer>
     );
   }
 );
+
+const MainContentBlock: React.FC<{
+  resource: ResourcePreviewDataFragment;
+  isLoading?: boolean;
+  expandByDefault?: boolean;
+}> = ({ resource, isLoading, expandByDefault }) => {
+  const { isOpen, onOpen, onClose, onToggle } = useDisclosure();
+  const showPlayer = isOpen || expandByDefault;
+  const thumbnailHeight = 80;
+  return (
+    <Flex
+      direction={showPlayer ? 'column-reverse' : 'row'}
+      justifyContent={showPlayer ? 'start' : 'space-between'}
+      alignItems="stretch"
+    >
+      <Box>
+        <ResourceDescription
+          description={resource.description}
+          noOfLines={showPlayer ? undefined : 2}
+          isLoading={isLoading}
+        />
+      </Box>
+      {(resource.type === ResourceType.YoutubeVideo || resource.type === ResourceType.YoutubePlaylist) && (
+        <Box display="flex" justifyContent="center">
+          <BoxBlockDefaultClickPropagation
+            mt={showPlayer ? 0 : '-26px'}
+            {...(!showPlayer && { h: thumbnailHeight + 'px' })}
+            onClick={onOpen}
+            mx={showPlayer ? 0 : 4}
+            mb={showPlayer ? 3 : 0}
+          >
+            <YoutubePlayer
+              resource={resource}
+              playing={isOpen}
+              skipThumbnail={expandByDefault}
+              {...(!showPlayer && { h: thumbnailHeight + 'px', w: (16 / 9) * thumbnailHeight + 'px' })}
+            />
+          </BoxBlockDefaultClickPropagation>
+        </Box>
+      )}
+    </Flex>
+  );
+};
 
 const TitleLink: React.FC<{ resource: ResourcePreviewDataFragment; isLoading?: boolean }> = ({
   resource,
