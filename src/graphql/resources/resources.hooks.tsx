@@ -1,6 +1,10 @@
 import { Alert, AlertDescription, AlertIcon, Box, Button, CloseButton, useToast } from '@chakra-ui/react';
 import { flatten } from 'lodash';
 import { ReactText } from 'react';
+import {
+  getDomainCompletedLearningMaterialsHistory,
+  getDomainCompletedLearningMaterialsHistoryQueryVariables,
+} from '../../components/domains/DomainUserHistory';
 import { useSetConceptsKnownMutation } from '../concepts/concepts.operations.generated';
 import { ResourceWithCoveredConceptsByDomainDataFragment } from './resources.fragments.generated';
 import { useSetResourceConsumedMutation } from './resources.operations.generated';
@@ -75,6 +79,10 @@ export const useSetResourceConsumed = ({
             },
           ],
         },
+        refetchQueries: resource.coveredConceptsByDomain?.map(({ domain }) => ({
+          query: getDomainCompletedLearningMaterialsHistory,
+          variables: getDomainCompletedLearningMaterialsHistoryQueryVariables(domain.key),
+        })),
       }),
       resource.coveredConceptsByDomain && consumed
         ? setConceptKnown({

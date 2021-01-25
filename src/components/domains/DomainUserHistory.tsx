@@ -1,52 +1,49 @@
 import { Box, Flex, FlexProps, Stack, Text } from '@chakra-ui/react';
-import { LearningPathMiniCard } from '../learning_paths/LearningPathMiniCard';
-import { LearningPathMiniCardDataFragment } from '../learning_paths/LearningPathMiniCard.generated';
-import { ResourceMiniCard } from '../resources/ResourceMiniCard';
-import { ResourceMiniCardDataFragment } from '../resources/ResourceMiniCard.generated';
+import gql from 'graphql-tag';
+import { DomainLearningMaterialsSortingType } from '../../graphql/types';
+import { LearningPathMiniCard, LearningPathMiniCardData } from '../learning_paths/LearningPathMiniCard';
+import { ResourceMiniCard, ResourceMiniCardData } from '../resources/ResourceMiniCard';
+import { useGetDomainCompletedLearningMaterialsHistoryQuery } from './DomainUserHistory.generated';
 
 // Reuse when adding last "opened" + show completed filter
-// export const getDomainCompletedLearningMaterialsHistory = gql`
-//   query getDomainCompletedLearningMaterialsHistory(
-//     $key: String!
-//     $learningMaterialsOptions: DomainLearningMaterialsOptions!
-//   ) {
-//     getDomainByKey(key: $key) {
-//       _id
-//       learningMaterials(options: $learningMaterialsOptions) {
-//         items {
-//           ...ResourceMiniCardData
-//           ...LearningPathMiniCardData
-//         }
-//       }
-//     }
-//   }
-//   ${ResourceMiniCardData}
-//   ${LearningPathMiniCardData}
-// `;
+export const getDomainCompletedLearningMaterialsHistory = gql`
+  query getDomainCompletedLearningMaterialsHistory(
+    $key: String!
+    $learningMaterialsOptions: DomainLearningMaterialsOptions!
+  ) {
+    getDomainByKey(key: $key) {
+      _id
+      learningMaterials(options: $learningMaterialsOptions) {
+        items {
+          ...ResourceMiniCardData
+          ...LearningPathMiniCardData
+        }
+      }
+    }
+  }
+  ${ResourceMiniCardData}
+  ${LearningPathMiniCardData}
+`;
+
+export const getDomainCompletedLearningMaterialsHistoryQueryVariables = (domainKey: string) => ({
+  key: domainKey,
+  learningMaterialsOptions: {
+    sortingType: DomainLearningMaterialsSortingType.Newest,
+    filter: { completedByUser: true },
+  },
+});
 
 interface DomainUserHistoryProps {
   domainKey: string;
   isLoading?: boolean;
-  learningMaterials: (ResourceMiniCardDataFragment | LearningPathMiniCardDataFragment)[];
   maxH?: FlexProps['maxH'];
 }
 
-export const DomainUserHistory: React.FC<DomainUserHistoryProps> = ({
-  domainKey,
-  isLoading,
-  learningMaterials,
-  maxH,
-}) => {
-  // const { data, loading, error } = useGetDomainCompletedLearningMaterialsHistoryQuery({
-  //   variables: {
-  //     key: domainKey,
-  //     learningMaterialsOptions: {
-  //       sortingType: DomainLearningMaterialsSortingType.Newest,
-  //       filter: { completedByUser: true },
-  //     },
-  //   },
-  // });
-  // const learningMaterials = data?.getDomainByKey.learningMaterials?.items || [];
+export const DomainUserHistory: React.FC<DomainUserHistoryProps> = ({ domainKey, maxH }) => {
+  const { data } = useGetDomainCompletedLearningMaterialsHistoryQuery({
+    variables: getDomainCompletedLearningMaterialsHistoryQueryVariables(domainKey),
+  });
+  const learningMaterials = data?.getDomainByKey.learningMaterials?.items || [];
   if (!learningMaterials || !learningMaterials.length) return null;
   return (
     <Flex direction="column" backgroundColor="gray.100" borderRadius={5} pt={1} maxH={maxH}>
