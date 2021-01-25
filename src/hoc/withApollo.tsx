@@ -140,7 +140,7 @@ function createApolloClient(config: CreateApolloClientConfig): ApolloClient<Norm
   });
 
   const authLink = setContext((_request, { headers }) => {
-    const token = config.getToken(); // Why async ?
+    const token = config.getToken();
     return {
       headers: {
         ...headers,

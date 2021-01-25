@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
+    "dev:ext": "parcel web_extension/index.html --out-dir web_extension/build/debug",
+    "build:ext": "parcel build web_extension/index.html -d web_extension/build/release --no-minify",
     "dist": "sh scripts/dist.sh",
     "start": "next start",
     "codegen": "graphql-codegen --config codegen.yml",
@@ -64,6 +66,7 @@
     "use-debounce": "^5.1.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.12.10",
     "@graphql-codegen/cli": "1.19.1",
     "@graphql-codegen/introspection": "1.18.0",
     "@graphql-codegen/near-operation-file-preset": "^1.17.12",
@@ -85,8 +88,10 @@
     "@types/sprintf-js": "^1.1.2",
     "@typescript-eslint/parser": "^4.7.0",
     "babel-plugin-styled-components": "^1.11.1",
+    "browserslist": "^4.16.1",
     "eslint": "^7.13.0",
     "eslint-plugin-graphql": "^4.0.0",
+    "parcel-bundler": "^1.12.4",
     "prettier": "^2.1.2",
     "typescript": "^4.0.5",
     "webpack": "4"
