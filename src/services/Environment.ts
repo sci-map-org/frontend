@@ -1,13 +1,13 @@
 import getConfig from 'next/config';
 
 type Env = {
-  NODE_ENV: string; //'development' | 'production';
-  API_URL: string; // # http://sci-map-api.eu-central-1.elasticbeanstalk.com/graphql
-  GOOGLE_CLIENT_ID: string; //390325140829-njk2aup9efs7tprmpmqmke93886q602i.apps.googleusercontent.com
-  DISCOURSE_FORUM_URL: string; //https://forum.sci-map.org
-  AWS_ACCESS_KEY_ID: string; //='AKIASZYYXGWID7FCLFG2'
-  AWS_SECRET_KEY: string; //='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'
-  AWS_REGION: string; //'eu-central-1'
+  NODE_ENV: string;
+  API_URL: string;
+  GOOGLE_CLIENT_ID: string;
+  DISCOURSE_FORUM_URL: string;
+  AWS_ACCESS_KEY_ID: string;
+  AWS_SECRET_KEY: string;
+  AWS_REGION: string;
 };
 export class Environment {
   private envVars: Env;
