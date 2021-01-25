@@ -166,8 +166,6 @@ export type Mutation = {
   deleteConcept: DeleteConceptResult;
   setConceptsKnown: Array<Concept>;
   setConceptsUnknown: Array<Concept>;
-  addConceptReferencesConcept: Concept;
-  removeConceptReferencesConcept: Concept;
   createLearningPath: LearningPath;
   updateLearningPath: LearningPath;
   deleteLearningPath: DeleteLearningPathResult;
@@ -182,11 +180,12 @@ export type Mutation = {
   attachLearningGoalRequiresSubGoal: AttachLearningGoalRequiresSubGoalResult;
   detachLearningGoalRequiresSubGoal: DetachLearningGoalRequiresSubGoalResult;
   updateConceptBelongsToDomain: ConceptBelongsToDomain;
-  addConceptBelongsToConcept: Concept;
-  removeConceptBelongsToConcept: Concept;
-  updateConceptBelongsToConcept: Concept;
+  addConceptBelongsToConcept: UpdateConceptBelongsToConceptResult;
+  removeConceptBelongsToConcept: UpdateConceptBelongsToConceptResult;
   addDomainBelongsToDomain: Domain;
   removeDomainBelongsToDomain: Domain;
+  addConceptReferencesConcept: UpdateConceptReferencesConceptResult;
+  removeConceptReferencesConcept: UpdateConceptReferencesConceptResult;
 };
 
 
@@ -395,18 +394,6 @@ export type MutationSetConceptsUnknownArgs = {
 };
 
 
-export type MutationAddConceptReferencesConceptArgs = {
-  conceptId: Scalars['String'];
-  referencedConceptId: Scalars['String'];
-};
-
-
-export type MutationRemoveConceptReferencesConceptArgs = {
-  conceptId: Scalars['String'];
-  referencedConceptId: Scalars['String'];
-};
-
-
 export type MutationCreateLearningPathArgs = {
   payload: CreateLearningPathPayload;
 };
@@ -500,13 +487,6 @@ export type MutationRemoveConceptBelongsToConceptArgs = {
 };
 
 
-export type MutationUpdateConceptBelongsToConceptArgs = {
-  parentConceptId: Scalars['String'];
-  subConceptId: Scalars['String'];
-  payload: UpdateConceptBelongsToConceptPayload;
-};
-
-
 export type MutationAddDomainBelongsToDomainArgs = {
   parentDomainId: Scalars['String'];
   subDomainId: Scalars['String'];
@@ -516,6 +496,18 @@ export type MutationAddDomainBelongsToDomainArgs = {
 export type MutationRemoveDomainBelongsToDomainArgs = {
   parentDomainId: Scalars['String'];
   subDomainId: Scalars['String'];
+};
+
+
+export type MutationAddConceptReferencesConceptArgs = {
+  conceptId: Scalars['String'];
+  referencedConceptId: Scalars['String'];
+};
+
+
+export type MutationRemoveConceptReferencesConceptArgs = {
+  conceptId: Scalars['String'];
+  referencedConceptId: Scalars['String'];
 };
 
 
@@ -934,6 +926,7 @@ export type DeleteConceptResult = {
   __typename?: 'DeleteConceptResult';
   success: Scalars['Boolean'];
   _id: Scalars['String'];
+  domain?: Maybe<Domain>;
 };
 
 export type SetConceptKnownPayload = {
@@ -1031,8 +1024,16 @@ export type UpdateConceptBelongsToDomainPayload = {
   index?: Maybe<Scalars['Float']>;
 };
 
-export type UpdateConceptBelongsToConceptPayload = {
-  index?: Maybe<Scalars['Float']>;
+export type UpdateConceptBelongsToConceptResult = {
+  __typename?: 'UpdateConceptBelongsToConceptResult';
+  parentConcept: Concept;
+  subConcept: Concept;
+};
+
+export type UpdateConceptReferencesConceptResult = {
+  __typename?: 'UpdateConceptReferencesConceptResult';
+  concept: Concept;
+  referencedConcept: Concept;
 };
 
 export type Topic = {

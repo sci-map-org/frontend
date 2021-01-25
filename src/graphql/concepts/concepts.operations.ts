@@ -6,6 +6,19 @@ export const addConceptToDomain = gql`
   mutation addConceptToDomain($domainId: String!, $payload: AddConceptToDomainPayload!) {
     addConceptToDomain(domainId: $domainId, payload: $payload) {
       ...ConceptData
+      domain {
+        _id
+        concepts(options: { sorting: { entity: relationship, field: index, direction: ASC } }) {
+          items {
+            concept {
+              _id
+            }
+            relationship {
+              index
+            }
+          }
+        }
+      }
     }
   }
   ${ConceptData}

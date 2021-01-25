@@ -86,10 +86,20 @@ export const getConceptConceptPage = gql`
 export const addConceptReferencesConcept = gql`
   mutation addConceptReferencesConcept($conceptId: String!, $referencedConceptId: String!) {
     addConceptReferencesConcept(conceptId: $conceptId, referencedConceptId: $referencedConceptId) {
-      _id
-      referencingConcepts {
-        concept {
-          _id
+      concept {
+        _id
+        referencingConcepts {
+          concept {
+            _id
+          }
+        }
+      }
+      referencedConcept {
+        _id
+        referencedByConcepts {
+          concept {
+            _id
+          }
         }
       }
     }
@@ -99,10 +109,20 @@ export const addConceptReferencesConcept = gql`
 export const removeConceptReferencesConcept = gql`
   mutation removeConceptReferencesConcept($conceptId: String!, $referencedConceptId: String!) {
     removeConceptReferencesConcept(conceptId: $conceptId, referencedConceptId: $referencedConceptId) {
-      _id
-      referencingConcepts {
-        concept {
-          _id
+      concept {
+        _id
+        referencingConcepts {
+          concept {
+            _id
+          }
+        }
+      }
+      referencedConcept {
+        _id
+        referencedByConcepts {
+          concept {
+            _id
+          }
         }
       }
     }
@@ -112,10 +132,20 @@ export const removeConceptReferencesConcept = gql`
 export const addConceptBelongsToConcept = gql`
   mutation addConceptBelongsToConcept($parentConceptId: String!, $subConceptId: String!) {
     addConceptBelongsToConcept(parentConceptId: $parentConceptId, subConceptId: $subConceptId) {
-      _id
-      subConcepts {
-        concept {
-          _id
+      parentConcept {
+        _id
+        subConcepts {
+          concept {
+            _id
+          }
+        }
+      }
+      subConcept {
+        _id
+        parentConcepts {
+          concept {
+            _id
+          }
         }
       }
     }
@@ -125,10 +155,20 @@ export const addConceptBelongsToConcept = gql`
 export const removeConceptBelongsToConcept = gql`
   mutation removeConceptBelongsToConcept($parentConceptId: String!, $subConceptId: String!) {
     removeConceptBelongsToConcept(parentConceptId: $parentConceptId, subConceptId: $subConceptId) {
-      _id
-      subConcepts {
-        concept {
-          _id
+      parentConcept {
+        _id
+        subConcepts {
+          concept {
+            _id
+          }
+        }
+      }
+      subConcept {
+        _id
+        parentConcepts {
+          concept {
+            _id
+          }
         }
       }
     }
