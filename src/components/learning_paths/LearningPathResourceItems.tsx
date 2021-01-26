@@ -48,6 +48,10 @@ interface StatelessLearningPathResourceItemsProps {
   onResourceConsumed?: (resourceId: string, consumed: boolean) => void;
 }
 
+export const ItemTypes = {
+  Resource: 'resource',
+};
+
 export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearningPathResourceItemsProps> = ({
   resourceItems,
   updateDescription,
@@ -74,81 +78,7 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
       <Flex direction="column">
         <Flex direction="column" alignItems="stretch" backgroundColor="backgroundColor.0">
           {resourceItems.map(({ resource, description }, index) => (
-            <Flex key={resource._id} direction="column" justifyContent="stretch">
-              <Flex direction="row" py={0} position="relative">
-                <Flex w="100px" borderLeft="1px solid transparent" flexShrink={0} justifyContent="center">
-                  {!hideProgressArrow && (
-                    <ProgressArrow
-                      pxWidth={8}
-                      position="absolute"
-                      top={getArrowTopPosition(index, previewCardsHeight)}
-                      color={
-                        !isLoading &&
-                        !!currentUserStartedPath &&
-                        (index === 0 || resourceItems[index - 1].resource.consumed?.consumedAt)
-                          ? 'teal.400'
-                          : 'gray.300'
-                      }
-                      h={getArrowHeight(index, previewCardsHeight)}
-                    />
-                  )}
-                </Flex>
-                <Flex pt={index === 0 ? 0 : 4} pb={3} flexGrow={1}>
-                  <EditableTextarea
-                    flexGrow={1}
-                    flexShrink={1}
-                    backgroundColor="white"
-                    fontSize="lg"
-                    fontWeight={300}
-                    color="gray.700"
-                    defaultValue={description || ''}
-                    placeholder="Write something..."
-                    onSubmit={(newDescription: any) => updateDescription(resource._id, newDescription as string)}
-                    isDisabled={!editMode}
-                    isLoading={isLoading}
-                  />
-                </Flex>
-                <Box flexBasis="60px" flexGrow={0} flexShrink={0} />
-              </Flex>
-              <Flex direction="row">
-                <Box flexGrow={1}>
-                  <ResourcePreviewCard
-                    isLoading={isLoading}
-                    ref={(el) => (previewCardsRefs.current[index] = el)}
-                    resource={resource}
-                    onResourceConsumed={onResourceConsumed}
-                    expandByDefault
-                  />
-                </Box>
-                {editMode && (
-                  <Flex
-                    flexBasis="60px"
-                    flexShrink={0}
-                    direction="column"
-                    alignItems="center"
-                    justifyContent="space-around"
-                  >
-                    {confirmDeletion ? (
-                      <DeleteButtonWithConfirmation
-                        variant="ghost"
-                        modalBodyText={`Remove the resource ${resource.name} from the learning path ?`}
-                        modalHeaderText="Remove Resource"
-                        onConfirmation={() => removeResourceItem(resource)}
-                        isDisabled={isLoading}
-                      />
-                    ) : (
-                      <IconButton
-                        aria-label="remove resource from learning path"
-                        size="xs"
-                        icon={<DeleteIcon />}
-                        onClick={() => removeResourceItem(resource)}
-                        isDisabled={isLoading}
-                      />
-                    )}
-                  </Flex>
-                )}
-              </Flex>
-            </Flex>
+            <LearningPathResourceItem />
           ))}
         </Flex>
         {editMode && (
@@ -175,6 +105,92 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
     </Flex>
   );
 };
+
+interface LearningPathResourceItemProps {
+  resource: ResourcePreviewDataFragment;
+  isLoading?: boolean;
+  hideProgressArrow?: boolean;
+  index: number;
+}
+const LearningPathResourceItem: React.FC<LearningPathResourceItemProps> = ({
+  resource,
+  isLoading,
+  hideProgressArrow,
+  index,
+}) => {
+  return (
+    <Flex key={resource._id} direction="column" justifyContent="stretch">
+      <Flex direction="row" py={0} position="relative">
+        <Flex w="100px" borderLeft="1px solid transparent" flexShrink={0} justifyContent="center">
+          {!hideProgressArrow && (
+            <ProgressArrow
+              pxWidth={8}
+              position="absolute"
+              top={getArrowTopPosition(index, previewCardsHeight)}
+              color={
+                !isLoading &&
+                !!currentUserStartedPath &&
+                (index === 0 || resourceItems[index - 1].resource.consumed?.consumedAt)
+                  ? 'teal.400'
+                  : 'gray.300'
+              }
+              h={getArrowHeight(index, previewCardsHeight)}
+            />
+          )}
+        </Flex>
+        <Flex pt={index === 0 ? 0 : 4} pb={3} flexGrow={1}>
+          <EditableTextarea
+            flexGrow={1}
+            flexShrink={1}
+            backgroundColor="white"
+            fontSize="lg"
+            fontWeight={300}
+            color="gray.700"
+            defaultValue={description || ''}
+            placeholder="Write something..."
+            onSubmit={(newDescription: any) => updateDescription(resource._id, newDescription as string)}
+            isDisabled={!editMode}
+            isLoading={isLoading}
+          />
+        </Flex>
+        <Box flexBasis="60px" flexGrow={0} flexShrink={0} />
+      </Flex>
+      <Flex direction="row">
+        <Box flexGrow={1}>
+          <ResourcePreviewCard
+            isLoading={isLoading}
+            ref={(el) => (previewCardsRefs.current[index] = el)}
+            resource={resource}
+            onResourceConsumed={onResourceConsumed}
+            expandByDefault
+          />
+        </Box>
+        {editMode && (
+          <Flex flexBasis="60px" flexShrink={0} direction="column" alignItems="center" justifyContent="space-around">
+            {confirmDeletion ? (
+              <DeleteButtonWithConfirmation
+                variant="ghost"
+                modalBodyText={`Remove the resource ${resource.name} from the learning path ?`}
+                modalHeaderText="Remove Resource"
+                onConfirmation={() => removeResourceItem(resource)}
+                isDisabled={isLoading}
+              />
+            ) : (
+              <IconButton
+                aria-label="remove resource from learning path"
+                size="xs"
+                icon={<DeleteIcon />}
+                onClick={() => removeResourceItem(resource)}
+                isDisabled={isLoading}
+              />
+            )}
+          </Flex>
+        )}
+      </Flex>
+    </Flex>
+  );
+};
+
 interface LearningPathResourceItemsProps {
   learningPath: LearningPathWithResourceItemsPreviewDataFragment;
   editMode?: boolean;

@@ -42,7 +42,7 @@ export const EditableLearningGoals: React.FC<EditableLearningGoalsProps> = ({
   };
   useOutsideAlerter(wrapperRef);
   return (
-    <Flex ref={wrapperRef} direction="column" alignItems="center">
+    <Flex ref={wrapperRef} direction="column" alignItems="center" maxW="300px">
       <Stack direction="column" alignItems="center" spacing={1}>
         {learningGoals.map((learningGoal) => (
           <LearningGoalBadge
