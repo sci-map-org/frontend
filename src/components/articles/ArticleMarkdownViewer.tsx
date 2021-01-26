@@ -70,7 +70,7 @@ export const ArticleMarkdownViewer: React.FC<{ content: string }> = ({ content }
         },
         paragraph: ({ children }) => {
           return (
-            <Text fontFamily={fonts.article} fontSize="19px" mt={0}>
+            <Text fontFamily={fonts.article} fontSize="19px" fontWeight={300} mt={0}>
               {children}
             </Text>
           );
@@ -105,7 +105,7 @@ export const ArticleMarkdownViewer: React.FC<{ content: string }> = ({ content }
         },
         listItem: (a) => {
           return (
-            <ListItem fontFamily={fonts.article} fontSize="19px">
+            <ListItem fontFamily={fonts.article} fontWeight={300} fontSize="19px">
               {a.children}
             </ListItem>
           );

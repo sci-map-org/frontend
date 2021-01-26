@@ -3,7 +3,7 @@ import { extendTheme } from '@chakra-ui/react';
 export const fonts = {
   main: 'Helvetica Neue,Helvetica,Arial,sans-serif', // menu, titles, etc.
   mono: '"europa",sans-serif',
-  article: 'Avenir Next, Avenir, Lato, Georgia, Cambria, "Times New Roman", Times, serif', // article (serif, to read)
+  article: 'Nunito Sans, Nunito, Avenir Next, Lato, Georgia, Cambria, "Times New Roman", Times, serif', // article (serif, to read)
 };
 
 export const theme = extendTheme({
@@ -53,6 +53,7 @@ export const theme = extendTheme({
       500: 'rgba(0, 0, 0, 0.36)',
       600: 'rgba(0, 0, 0, 0.48)',
       700: 'rgba(0, 0, 0, 0.64)',
+      750: 'rgba(0, 0, 0, 0.70)',
       800: 'rgba(0, 0, 0, 0.80)',
       900: 'rgba(0, 0, 0, 0.92)',
     },
