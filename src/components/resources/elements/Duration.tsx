@@ -18,7 +18,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 export const DurationViewer: React.FC<{ value?: number | null }> = ({ value }) => {
   return value ? (
     <Text fontSize="sm" color="gray.400" mb={0}>
-      {humanizeDuration(value * 1000, { largest: 2 })}
+      {humanizeDuration(value * 1000, { largest: 2, units: ['h', 'm'], round: true })}
     </Text>
   ) : null;
 };

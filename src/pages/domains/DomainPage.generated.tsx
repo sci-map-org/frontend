@@ -2,8 +2,6 @@ import * as Types from '../../graphql/types';
 
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
-import { ResourceMiniCardDataFragment } from '../../components/resources/ResourceMiniCard.generated';
-import { LearningPathMiniCardDataFragment } from '../../components/learning_paths/LearningPathMiniCard.generated';
 import * as Operations from './DomainPage';
 import * as Apollo from '@apollo/client';
 export type GetDomainByKeyDomainPageQueryVariables = Types.Exact<{
@@ -39,15 +37,6 @@ export type GetDomainByKeyDomainPageQuery = (
           { __typename?: 'ConceptBelongsToDomain' }
           & Pick<Types.ConceptBelongsToDomain, 'index'>
         ) }
-      )> }
-    )>, learningMaterials?: Types.Maybe<(
-      { __typename?: 'DomainLearningMaterialsResults' }
-      & { items: Array<(
-        { __typename?: 'Resource' }
-        & ResourceMiniCardDataFragment
-      ) | (
-        { __typename?: 'LearningPath' }
-        & LearningPathMiniCardDataFragment
       )> }
     )>, subDomains?: Types.Maybe<Array<(
       { __typename?: 'DomainBelongsToDomainItem' }

@@ -32,7 +32,7 @@ export const BestXPagesLinks: React.FC<{ domainKey: string }> = ({ domainKey }) 
       <Text fontSize="xl" textAlign="center" fontWeight={600} color="gray.600">
         Quick Links
       </Text>
-      <Stack spacing={1} pl={5}>
+      <Stack spacing={1} pl={5} pr={5}>
         {links.map((link) =>
           router.route === '/domains/[key]/' + link.url_suffix ? (
             <Text key={link.url_suffix} fontWeight={500} color="blue.800">

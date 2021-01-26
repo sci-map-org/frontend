@@ -1,4 +1,4 @@
-import { CloseButton, Flex, FlexProps, Tooltip } from '@chakra-ui/react';
+import { CloseButton, FlexProps, Stack, Text, Tooltip } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import Router from 'next/router';
 import { LearningGoalBadgeDataFragment } from './LearningGoalBadge.generated';
@@ -57,16 +57,14 @@ export const LearningGoalBadge: React.FC<LearningGoalBadgeProps> = ({
   const domainRelationship = learningGoal.domain;
   return (
     <Tooltip label={learningGoal.name} aria-label={learningGoal.name} openDelay={500}>
-      <Flex
+      <Stack
         direction="row"
+        spacing={1}
         borderRadius={10}
         px="6px"
         backgroundColor={roleStyleMapping[role].backgroundColor}
-        color={roleStyleMapping[role].fontColor}
         borderWidth="1px"
         borderColor={roleStyleMapping[role].borderColor}
-        textAlign="center"
-        noOfLines={1}
         {...(clickable && {
           _hover: {
             backgroundColor: roleStyleMapping[role].hoverBackgroundColor,
@@ -81,9 +79,20 @@ export const LearningGoalBadge: React.FC<LearningGoalBadgeProps> = ({
             ),
         })}
       >
-        {removable && <CloseButton float="left" as="span" size="sm" onClick={() => onRemove && onRemove()} />}
-        {learningGoal.name}
-      </Flex>
+        {removable && (
+          <CloseButton
+            size="sm"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onRemove && onRemove();
+            }}
+          />
+        )}
+        <Text textAlign="center" color={roleStyleMapping[role].fontColor} noOfLines={1}>
+          {learningGoal.name}
+        </Text>
+      </Stack>
     </Tooltip>
   );
 };

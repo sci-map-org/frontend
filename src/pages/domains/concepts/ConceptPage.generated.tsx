@@ -60,15 +60,28 @@ export type AddConceptReferencesConceptMutationVariables = Types.Exact<{
 export type AddConceptReferencesConceptMutation = (
   { __typename?: 'Mutation' }
   & { addConceptReferencesConcept: (
-    { __typename?: 'Concept' }
-    & Pick<Types.Concept, '_id'>
-    & { referencingConcepts?: Types.Maybe<Array<(
-      { __typename?: 'ConceptReferencesConceptItem' }
-      & { concept: (
-        { __typename?: 'Concept' }
-        & Pick<Types.Concept, '_id'>
-      ) }
-    )>> }
+    { __typename?: 'UpdateConceptReferencesConceptResult' }
+    & { concept: (
+      { __typename?: 'Concept' }
+      & Pick<Types.Concept, '_id'>
+      & { referencingConcepts?: Types.Maybe<Array<(
+        { __typename?: 'ConceptReferencesConceptItem' }
+        & { concept: (
+          { __typename?: 'Concept' }
+          & Pick<Types.Concept, '_id'>
+        ) }
+      )>> }
+    ), referencedConcept: (
+      { __typename?: 'Concept' }
+      & Pick<Types.Concept, '_id'>
+      & { referencedByConcepts?: Types.Maybe<Array<(
+        { __typename?: 'ConceptReferencesConceptItem' }
+        & { concept: (
+          { __typename?: 'Concept' }
+          & Pick<Types.Concept, '_id'>
+        ) }
+      )>> }
+    ) }
   ) }
 );
 
@@ -81,15 +94,28 @@ export type RemoveConceptReferencesConceptMutationVariables = Types.Exact<{
 export type RemoveConceptReferencesConceptMutation = (
   { __typename?: 'Mutation' }
   & { removeConceptReferencesConcept: (
-    { __typename?: 'Concept' }
-    & Pick<Types.Concept, '_id'>
-    & { referencingConcepts?: Types.Maybe<Array<(
-      { __typename?: 'ConceptReferencesConceptItem' }
-      & { concept: (
-        { __typename?: 'Concept' }
-        & Pick<Types.Concept, '_id'>
-      ) }
-    )>> }
+    { __typename?: 'UpdateConceptReferencesConceptResult' }
+    & { concept: (
+      { __typename?: 'Concept' }
+      & Pick<Types.Concept, '_id'>
+      & { referencingConcepts?: Types.Maybe<Array<(
+        { __typename?: 'ConceptReferencesConceptItem' }
+        & { concept: (
+          { __typename?: 'Concept' }
+          & Pick<Types.Concept, '_id'>
+        ) }
+      )>> }
+    ), referencedConcept: (
+      { __typename?: 'Concept' }
+      & Pick<Types.Concept, '_id'>
+      & { referencedByConcepts?: Types.Maybe<Array<(
+        { __typename?: 'ConceptReferencesConceptItem' }
+        & { concept: (
+          { __typename?: 'Concept' }
+          & Pick<Types.Concept, '_id'>
+        ) }
+      )>> }
+    ) }
   ) }
 );
 
@@ -102,15 +128,28 @@ export type AddConceptBelongsToConceptMutationVariables = Types.Exact<{
 export type AddConceptBelongsToConceptMutation = (
   { __typename?: 'Mutation' }
   & { addConceptBelongsToConcept: (
-    { __typename?: 'Concept' }
-    & Pick<Types.Concept, '_id'>
-    & { subConcepts?: Types.Maybe<Array<(
-      { __typename?: 'ConceptBelongsToConceptItem' }
-      & { concept: (
-        { __typename?: 'Concept' }
-        & Pick<Types.Concept, '_id'>
-      ) }
-    )>> }
+    { __typename?: 'UpdateConceptBelongsToConceptResult' }
+    & { parentConcept: (
+      { __typename?: 'Concept' }
+      & Pick<Types.Concept, '_id'>
+      & { subConcepts?: Types.Maybe<Array<(
+        { __typename?: 'ConceptBelongsToConceptItem' }
+        & { concept: (
+          { __typename?: 'Concept' }
+          & Pick<Types.Concept, '_id'>
+        ) }
+      )>> }
+    ), subConcept: (
+      { __typename?: 'Concept' }
+      & Pick<Types.Concept, '_id'>
+      & { parentConcepts?: Types.Maybe<Array<(
+        { __typename?: 'ConceptBelongsToConceptItem' }
+        & { concept: (
+          { __typename?: 'Concept' }
+          & Pick<Types.Concept, '_id'>
+        ) }
+      )>> }
+    ) }
   ) }
 );
 
@@ -123,15 +162,28 @@ export type RemoveConceptBelongsToConceptMutationVariables = Types.Exact<{
 export type RemoveConceptBelongsToConceptMutation = (
   { __typename?: 'Mutation' }
   & { removeConceptBelongsToConcept: (
-    { __typename?: 'Concept' }
-    & Pick<Types.Concept, '_id'>
-    & { subConcepts?: Types.Maybe<Array<(
-      { __typename?: 'ConceptBelongsToConceptItem' }
-      & { concept: (
-        { __typename?: 'Concept' }
-        & Pick<Types.Concept, '_id'>
-      ) }
-    )>> }
+    { __typename?: 'UpdateConceptBelongsToConceptResult' }
+    & { parentConcept: (
+      { __typename?: 'Concept' }
+      & Pick<Types.Concept, '_id'>
+      & { subConcepts?: Types.Maybe<Array<(
+        { __typename?: 'ConceptBelongsToConceptItem' }
+        & { concept: (
+          { __typename?: 'Concept' }
+          & Pick<Types.Concept, '_id'>
+        ) }
+      )>> }
+    ), subConcept: (
+      { __typename?: 'Concept' }
+      & Pick<Types.Concept, '_id'>
+      & { parentConcepts?: Types.Maybe<Array<(
+        { __typename?: 'ConceptBelongsToConceptItem' }
+        & { concept: (
+          { __typename?: 'Concept' }
+          & Pick<Types.Concept, '_id'>
+        ) }
+      )>> }
+    ) }
   ) }
 );
 

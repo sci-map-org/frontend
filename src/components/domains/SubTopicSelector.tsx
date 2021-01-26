@@ -79,7 +79,7 @@ export const SubTopicSelector: React.FC<SubTopicSelectorProps> = ({
       <Box>
         <EntitySelector
           width="100%"
-          acceptCreation
+          allowCreation
           onCreate={(newLg) => {
             setCreateSubTopicDefaultPayload({ name: newLg.name, key: generateUrlKey(newLg.name) }); //TODO: proper validation
             onOpen();

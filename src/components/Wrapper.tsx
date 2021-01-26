@@ -21,8 +21,6 @@ export const Wrapper: React.FC<WrapperProps> = ({ children, apolloClient }) => {
         </UnauthentificatedModalProvider>
         <style global jsx>
           {`
-            @import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
-            @import url('http://fonts.cdnfonts.com/css/avenir-next-lt-pro');
             html,
             body,
             body > div:first-child,
@@ -38,6 +36,21 @@ export const Wrapper: React.FC<WrapperProps> = ({ children, apolloClient }) => {
           `}
         </style>
         <script async defer data-domain="sci-map.org" src="https://analytics.sci-map.org/js/plausible.js"></script>
+        {/* <link
+          href="http://fonts.googleapis.com/css?family=Lato:100,300,400,700&subset=latin,latin-ext"
+          rel="stylesheet"
+          type="text/css"
+        ></link> */}
+        <link
+          href="https://fonts.googleapis.com/css?family=Nunito Sans:300,400,600&subset=latin,latin-ext"
+          rel="stylesheet"
+          type="text/css"
+        ></link>
+        {/* <link
+          href="http://fonts.googleapis.com/css?family=Nunito:300,400,600&subset=latin,latin-ext"
+          rel="stylesheet"
+          type="text/css"
+        ></link> */}
       </ChakraProvider>
     </ApolloProvider>
   );

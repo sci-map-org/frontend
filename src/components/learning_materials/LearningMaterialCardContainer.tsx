@@ -157,7 +157,7 @@ export const LearningMaterialCardCoveredTopics: React.FC<{
           {coveredConceptsEditorMode ? (
             domainCoveredConcepts.length === 1 ? (
               <LearningMaterialDomainCoveredConceptsSelector
-                domainKey={domainCoveredConcepts[0].domain.key}
+                domain={domainCoveredConcepts[0].domain}
                 learningMaterialId={learningMaterial._id}
                 coveredConcepts={domainCoveredConcepts[0].coveredConcepts}
               />

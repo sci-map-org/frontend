@@ -14,6 +14,23 @@ export type AddConceptToDomainMutation = (
   { __typename?: 'Mutation' }
   & { addConceptToDomain: (
     { __typename?: 'Concept' }
+    & { domain?: Types.Maybe<(
+      { __typename?: 'Domain' }
+      & Pick<Types.Domain, '_id'>
+      & { concepts?: Types.Maybe<(
+        { __typename?: 'DomainConceptsResults' }
+        & { items: Array<(
+          { __typename?: 'DomainConceptsItem' }
+          & { concept: (
+            { __typename?: 'Concept' }
+            & Pick<Types.Concept, '_id'>
+          ), relationship: (
+            { __typename?: 'ConceptBelongsToDomain' }
+            & Pick<Types.ConceptBelongsToDomain, 'index'>
+          ) }
+        )> }
+      )> }
+    )> }
     & ConceptDataFragment
   ) }
 );

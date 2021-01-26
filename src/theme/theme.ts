@@ -3,7 +3,7 @@ import { extendTheme } from '@chakra-ui/react';
 export const fonts = {
   main: 'Helvetica Neue,Helvetica,Arial,sans-serif', // menu, titles, etc.
   mono: '"europa",sans-serif',
-  article: 'Avenir Next, Avenir, Lato, Georgia, Cambria, "Times New Roman", Times, serif', // article (serif, to read)
+  article: 'Nunito Sans, Nunito, Avenir Next, Lato, Georgia, Cambria, "Times New Roman", Times, serif', // article (serif, to read)
 };
 
 export const theme = extendTheme({
@@ -53,6 +53,7 @@ export const theme = extendTheme({
       500: 'rgba(0, 0, 0, 0.36)',
       600: 'rgba(0, 0, 0, 0.48)',
       700: 'rgba(0, 0, 0, 0.64)',
+      750: 'rgba(0, 0, 0, 0.70)',
       800: 'rgba(0, 0, 0, 0.80)',
       900: 'rgba(0, 0, 0, 0.92)',
     },
@@ -112,6 +113,19 @@ export const theme = extendTheme({
     '4xl': '36px',
     '5xl': '48px',
     '6xl': '64px',
+  },
+  components: {
+    Popover: {
+      parts: ['popper'],
+      sizes: {
+        starRater: {
+          // checkout https://github.com/chakra-ui/chakra-ui/issues/2481 (what is described in first comments doesn't seem to work)
+          popper: {
+            w: '146px',
+          },
+        },
+      },
+    },
   },
 });
 

@@ -156,7 +156,6 @@ export type Mutation = {
   createResource: Resource;
   updateResource: Resource;
   deleteResource: DeleteResourceResponse;
-  addResourceToDomain: Resource;
   setResourcesConsumed: Array<Resource>;
   voteResource: Resource;
   addSubResource: SubResourceCreatedResult;
@@ -167,8 +166,6 @@ export type Mutation = {
   deleteConcept: DeleteConceptResult;
   setConceptsKnown: Array<Concept>;
   setConceptsUnknown: Array<Concept>;
-  addConceptReferencesConcept: Concept;
-  removeConceptReferencesConcept: Concept;
   createLearningPath: LearningPath;
   updateLearningPath: LearningPath;
   deleteLearningPath: DeleteLearningPathResult;
@@ -183,11 +180,12 @@ export type Mutation = {
   attachLearningGoalRequiresSubGoal: AttachLearningGoalRequiresSubGoalResult;
   detachLearningGoalRequiresSubGoal: DetachLearningGoalRequiresSubGoalResult;
   updateConceptBelongsToDomain: ConceptBelongsToDomain;
-  addConceptBelongsToConcept: Concept;
-  removeConceptBelongsToConcept: Concept;
-  updateConceptBelongsToConcept: Concept;
+  addConceptBelongsToConcept: UpdateConceptBelongsToConceptResult;
+  removeConceptBelongsToConcept: UpdateConceptBelongsToConceptResult;
   addDomainBelongsToDomain: Domain;
   removeDomainBelongsToDomain: Domain;
+  addConceptReferencesConcept: UpdateConceptReferencesConceptResult;
+  removeConceptReferencesConcept: UpdateConceptReferencesConceptResult;
 };
 
 
@@ -339,12 +337,6 @@ export type MutationDeleteResourceArgs = {
 };
 
 
-export type MutationAddResourceToDomainArgs = {
-  domainId: Scalars['String'];
-  payload: CreateResourcePayload;
-};
-
-
 export type MutationSetResourcesConsumedArgs = {
   payload: SetResourcesConsumedPayload;
 };
@@ -399,18 +391,6 @@ export type MutationSetConceptsKnownArgs = {
 
 export type MutationSetConceptsUnknownArgs = {
   conceptIds: Array<Scalars['String']>;
-};
-
-
-export type MutationAddConceptReferencesConceptArgs = {
-  conceptId: Scalars['String'];
-  referencedConceptId: Scalars['String'];
-};
-
-
-export type MutationRemoveConceptReferencesConceptArgs = {
-  conceptId: Scalars['String'];
-  referencedConceptId: Scalars['String'];
 };
 
 
@@ -507,13 +487,6 @@ export type MutationRemoveConceptBelongsToConceptArgs = {
 };
 
 
-export type MutationUpdateConceptBelongsToConceptArgs = {
-  parentConceptId: Scalars['String'];
-  subConceptId: Scalars['String'];
-  payload: UpdateConceptBelongsToConceptPayload;
-};
-
-
 export type MutationAddDomainBelongsToDomainArgs = {
   parentDomainId: Scalars['String'];
   subDomainId: Scalars['String'];
@@ -523,6 +496,18 @@ export type MutationAddDomainBelongsToDomainArgs = {
 export type MutationRemoveDomainBelongsToDomainArgs = {
   parentDomainId: Scalars['String'];
   subDomainId: Scalars['String'];
+};
+
+
+export type MutationAddConceptReferencesConceptArgs = {
+  conceptId: Scalars['String'];
+  referencedConceptId: Scalars['String'];
+};
+
+
+export type MutationRemoveConceptReferencesConceptArgs = {
+  conceptId: Scalars['String'];
+  referencedConceptId: Scalars['String'];
 };
 
 
@@ -882,6 +867,10 @@ export type CreateResourcePayload = {
   description?: Maybe<Scalars['String']>;
   durationSeconds?: Maybe<Scalars['Int']>;
   tags?: Maybe<Array<Scalars['String']>>;
+  domainsAndCoveredConcepts?: Maybe<Array<DomainAndCoveredConcepts>>;
+  prerequisitesLearningGoalsIds?: Maybe<Array<Scalars['String']>>;
+  outcomesLearningGoalsIds?: Maybe<Array<Scalars['String']>>;
+  subResourceSeries?: Maybe<Array<CreateSubResourcePayload>>;
 };
 
 export type UpdateResourcePayload = {
@@ -937,6 +926,7 @@ export type DeleteConceptResult = {
   __typename?: 'DeleteConceptResult';
   success: Scalars['Boolean'];
   _id: Scalars['String'];
+  domain?: Maybe<Domain>;
 };
 
 export type SetConceptKnownPayload = {
@@ -1034,8 +1024,16 @@ export type UpdateConceptBelongsToDomainPayload = {
   index?: Maybe<Scalars['Float']>;
 };
 
-export type UpdateConceptBelongsToConceptPayload = {
-  index?: Maybe<Scalars['Float']>;
+export type UpdateConceptBelongsToConceptResult = {
+  __typename?: 'UpdateConceptBelongsToConceptResult';
+  parentConcept: Concept;
+  subConcept: Concept;
+};
+
+export type UpdateConceptReferencesConceptResult = {
+  __typename?: 'UpdateConceptReferencesConceptResult';
+  concept: Concept;
+  referencedConcept: Concept;
 };
 
 export type Topic = {
@@ -1156,10 +1154,12 @@ export enum ResourceType {
   ArticleSeries = 'article_series',
   Course = 'course',
   Podcast = 'podcast',
-  PodcastSeries = 'podcast_series',
+  PodcastEpisode = 'podcast_episode',
   YoutubeVideo = 'youtube_video',
-  YoutubeVideoSeries = 'youtube_video_series',
+  YoutubePlaylist = 'youtube_playlist',
+  OnlineBook = 'online_book',
   Book = 'book',
+  ResearchPaper = 'research_paper',
   Talk = 'talk',
   Documentary = 'documentary',
   Website = 'website',
@@ -1173,6 +1173,7 @@ export enum ResourceMediaType {
   Video = 'video',
   Text = 'text',
   Audio = 'audio',
+  Image = 'image',
   InteractiveContent = 'interactive_content'
 }
 
@@ -1225,6 +1226,7 @@ export type ResourceData = {
   mediaType?: Maybe<ResourceMediaType>;
   description?: Maybe<Scalars['String']>;
   durationSeconds?: Maybe<Scalars['Int']>;
+  subResourceSeries?: Maybe<Array<SubResourceExtractedData>>;
 };
 
 export type ConceptCoveredByResourcesResults = {
@@ -1288,6 +1290,24 @@ export type SubGoalItem = {
   strength: Scalars['Float'];
 };
 
+export type DomainAndCoveredConcepts = {
+  domainId: Scalars['String'];
+  conceptsIds: Array<Scalars['String']>;
+};
+
+export type CreateSubResourcePayload = {
+  name: Scalars['String'];
+  type: ResourceType;
+  mediaType: ResourceMediaType;
+  url: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  durationSeconds?: Maybe<Scalars['Int']>;
+  tags?: Maybe<Array<Scalars['String']>>;
+  domainsAndCoveredConcepts?: Maybe<Array<DomainAndCoveredConcepts>>;
+  prerequisitesLearningGoalsIds?: Maybe<Array<Scalars['String']>>;
+  outcomesLearningGoalsIds?: Maybe<Array<Scalars['String']>>;
+};
+
 export type SetResourcesConsumedPayloadResourcesField = {
   resourceId: Scalars['String'];
   consumed?: Maybe<Scalars['Boolean']>;
@@ -1348,6 +1368,16 @@ export type DomainLearningMaterialsFilterOptions = {
 export type DomainBelongsToDomain = {
   __typename?: 'DomainBelongsToDomain';
   index: Scalars['Float'];
+};
+
+export type SubResourceExtractedData = {
+  __typename?: 'SubResourceExtractedData';
+  name: Scalars['String'];
+  type: ResourceType;
+  mediaType: ResourceMediaType;
+  url: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  durationSeconds?: Maybe<Scalars['Int']>;
 };
 
 export type ConceptReferencesConcept = {

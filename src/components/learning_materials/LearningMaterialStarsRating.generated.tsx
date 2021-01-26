@@ -2,6 +2,26 @@ import * as Types from '../../graphql/types';
 
 import * as Operations from './LearningMaterialStarsRating';
 import * as Apollo from '@apollo/client';
+export type LearningMaterialStarsRaterData_Resource_Fragment = (
+  { __typename?: 'Resource' }
+  & Pick<Types.Resource, '_id'>
+  & { consumed?: Types.Maybe<(
+    { __typename?: 'ConsumedResource' }
+    & Pick<Types.ConsumedResource, 'consumedAt' | 'openedAt'>
+  )> }
+);
+
+export type LearningMaterialStarsRaterData_LearningPath_Fragment = (
+  { __typename?: 'LearningPath' }
+  & Pick<Types.LearningPath, '_id'>
+  & { started?: Types.Maybe<(
+    { __typename?: 'LearningPathStarted' }
+    & Pick<Types.LearningPathStarted, 'startedAt' | 'completedAt'>
+  )> }
+);
+
+export type LearningMaterialStarsRaterDataFragment = LearningMaterialStarsRaterData_Resource_Fragment | LearningMaterialStarsRaterData_LearningPath_Fragment;
+
 export type RateLearningMaterialMutationVariables = Types.Exact<{
   learningMaterialId: Types.Scalars['String'];
   value: Types.Scalars['Float'];

@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, Skeleton, Stack, Text } from '@chakra-ui/react';
+import { Box, Button, IconButton, Skeleton, Stack, Text, useDisclosure } from '@chakra-ui/react';
 import { MinusIcon } from '@chakra-ui/icons';
 import { take } from 'lodash';
 import { useState } from 'react';
@@ -6,6 +6,10 @@ import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.g
 import { EntitySelector } from '../lib/selectors/EntitySelector';
 import { InternalLink } from '../navigation/InternalLink';
 import { ConceptPagePath } from '../../pages/RoutesPageInfos';
+import { NewConceptModal } from './NewConcept';
+import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
+import { AddConceptToDomainPayload } from '../../graphql/types';
+import { generateUrlKey } from '../../services/url.service';
 
 const getConceptSuggestions = (entities: ConceptDataFragment[], value: string): ConceptDataFragment[] => {
   const inputValue = value.trim().toLowerCase();
@@ -24,8 +28,9 @@ interface DomainConceptsPickerProps {
   onSelect: (concept: ConceptDataFragment) => void;
   onRemove: (concept: ConceptDataFragment) => void;
   maxNbConceptsShown?: number;
-  domainKey: string;
+  domain: DomainLinkDataFragment;
   isLoading?: boolean;
+  allowCreation?: boolean;
 }
 
 export const DomainConceptsPicker: React.FC<DomainConceptsPickerProps> = ({
@@ -36,11 +41,16 @@ export const DomainConceptsPicker: React.FC<DomainConceptsPickerProps> = ({
   maxNbConceptsShown = 5,
   onSelect,
   onRemove,
-  domainKey,
+  domain,
   isLoading,
+  allowCreation,
 }) => {
   const [conceptSuggestions, setConceptSuggestions] = useState<ConceptDataFragment[]>([]);
   const [showAll, setShowAll] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [createConceptDefaultPayload, setCreateConceptDefaultPayload] = useState<Partial<AddConceptToDomainPayload>>(
+    {}
+  );
   return (
     <Stack direction="column" spacing={0} alignItems="start">
       {title && <Text fontWeight={700}>{title}</Text>}
@@ -59,7 +69,7 @@ export const DomainConceptsPicker: React.FC<DomainConceptsPickerProps> = ({
               <Skeleton isLoaded={!isLoading} as="span">
                 <InternalLink
                   routePath="/domains/[key]/concepts/[conceptKey]"
-                  asHref={ConceptPagePath(domainKey, pickedConcept.key)}
+                  asHref={ConceptPagePath(domain.key, pickedConcept.key)}
                 >
                   {pickedConcept.name}
                 </InternalLink>
@@ -87,6 +97,22 @@ export const DomainConceptsPicker: React.FC<DomainConceptsPickerProps> = ({
           fetchEntitySuggestions={(v: string) => setConceptSuggestions(getConceptSuggestions(pickableConceptList, v))}
           onSelect={onSelect}
           isDisabled={isLoading}
+          allowCreation={allowCreation}
+          onCreate={({ name }) => {
+            setCreateConceptDefaultPayload({
+              name,
+              key: generateUrlKey(name),
+            });
+            onOpen();
+          }}
+        />
+        <NewConceptModal
+          isOpen={isOpen}
+          defaultPayload={createConceptDefaultPayload}
+          onClose={onClose}
+          domain={domain}
+          onCreated={(createdConcept) => onSelect(createdConcept)}
+          onCancel={onClose}
         />
       </Box>
     </Stack>

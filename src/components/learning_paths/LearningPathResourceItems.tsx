@@ -117,6 +117,7 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
                     ref={(el) => (previewCardsRefs.current[index] = el)}
                     resource={resource}
                     onResourceConsumed={onResourceConsumed}
+                    expandByDefault
                   />
                 </Box>
                 {editMode && (

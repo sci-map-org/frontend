@@ -5,26 +5,25 @@ interface FormButtonsProps {
   size?: StandardChakraSize;
   onCancel: () => void;
   onPrimaryClick: () => void;
-  isLoading?: boolean;
+  isPrimaryLoading?: boolean;
   isPrimaryDisabled?: boolean;
 }
 export const FormButtons: React.FC<FormButtonsProps> = ({
   size = 'md',
   onCancel,
   onPrimaryClick,
-  isLoading,
+  isPrimaryLoading,
   isPrimaryDisabled,
 }) => {
   return (
     <Flex justifyContent="flex-end">
-      <ButtonGroup size={size} spacing={8} w="60%" minWidth="25rem">
+      <ButtonGroup size={size} spacing={8} w="60%" minWidth="18rem">
         <Button variant="outline" w="50%" onClick={onCancel}>
           Cancel
         </Button>
         <Button
-          isLoading={isLoading}
+          isLoading={isPrimaryLoading}
           w="50%"
-          size="lg"
           colorScheme="brand"
           variant="solid"
           isDisabled={isPrimaryDisabled}

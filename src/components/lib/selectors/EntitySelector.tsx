@@ -13,7 +13,7 @@ type NewEntity = {
 
 type EntitySelectorProps<T extends EntityType> = {
   entitySuggestions: T[];
-  acceptCreation?: boolean;
+  allowCreation?: boolean;
   onCreate?: (newEntity: NewEntity) => void;
   onSelect: (entity: T) => any;
   placeholder: string;
@@ -35,7 +35,7 @@ export const EntitySelector = <T extends EntityType>({
   inputSize = 'md',
   suggestionContainerWidth,
   isDisabled,
-  acceptCreation,
+  allowCreation,
   onCreate,
   creationHelperText,
 }: PropsWithChildren<EntitySelectorProps<T>>) => {
@@ -49,7 +49,7 @@ export const EntitySelector = <T extends EntityType>({
     },
   };
   const suggestions: (T | NewEntity)[] = [
-    ...(!!acceptCreation && !entitySuggestions.find((e) => e.name === value) && value.length
+    ...(!!allowCreation && !entitySuggestions.find((e) => e.name === value) && value.length
       ? [
           {
             name: value,
@@ -71,12 +71,21 @@ export const EntitySelector = <T extends EntityType>({
         onSuggestionsFetchRequested={({ value: v }) => fetchEntitySuggestions(v)}
         onSuggestionsClearRequested={() => fetchEntitySuggestions(value)}
         onSuggestionSelected={(e, { suggestion }) => {
+          e.preventDefault();
+
           if ('new' in suggestion) onCreate && onCreate(suggestion);
           else onSelect(suggestion);
           setValue('');
         }}
-        renderSuggestion={(suggestion) => (
-          <Flex direction="row" px={5} py={1} borderBottomWidth={1} w={width}>
+        renderSuggestion={(suggestion, { isHighlighted }) => (
+          <Flex
+            direction="row"
+            px={5}
+            py={1}
+            borderBottomWidth={1}
+            w={width}
+            {...(isHighlighted && { backgroundColor: 'gray.100' })}
+          >
             <Text fontWeight={500}>{suggestion.name}</Text>
             {'new' in suggestion && (
               <Text fontWeight={400} px={2} color="gray.600">
@@ -85,22 +94,25 @@ export const EntitySelector = <T extends EntityType>({
             )}
           </Flex>
         )}
-        renderSuggestionsContainer={({ containerProps, children }) => (
-          <Box
-            {...containerProps}
-            borderLeftWidth={1}
-            borderTopWidth={1}
-            zIndex={4000}
-            borderRightWidth={1}
-            position="absolute"
-            backgroundColor="white"
-            w={inputRef.current?.offsetWidth || undefined}
-            {...(!!suggestions.length &&
-              suggestionContainerWidth && { w: suggestionContainerWidth, borderTopWidth: 1 })}
-          >
-            {children}
-          </Box>
-        )}
+        renderSuggestionsContainer={({ containerProps, children }) =>
+          children && (
+            <Box
+              {...containerProps}
+              borderLeftWidth={1}
+              borderTopWidth={1}
+              borderRightWidth={1}
+              zIndex={4000}
+              position="absolute"
+              backgroundColor="white"
+              w={inputRef.current?.offsetWidth || undefined}
+              {...(!!suggestions.length &&
+                suggestionContainerWidth && { w: suggestionContainerWidth, borderTopWidth: 1 })}
+            >
+              {children}
+            </Box>
+          )
+        }
+        highlightFirstSuggestion={true}
         getSuggestionValue={(suggestion) => suggestion.name}
         renderInputComponent={(inputProps: any) => (
           <Input size={inputSize} variant="flushed" {...inputProps} w={width} />

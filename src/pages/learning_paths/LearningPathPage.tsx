@@ -30,6 +30,7 @@ import {
 } from '../../components/learning_materials/EditableLearningMaterialPrerequisites';
 import {
   LearningMaterialStarsRater,
+  LearningMaterialStarsRaterData,
   StarsRatingViewer,
 } from '../../components/learning_materials/LearningMaterialStarsRating';
 import { EditableLearningMaterialTags } from '../../components/learning_materials/LearningMaterialTagsEditor';
@@ -88,6 +89,7 @@ export const getLearningPathPage = gql`
       ...LearningMaterialWithCoveredConceptsByDomainData
       ...EditableLearningMaterialPrerequisitesData
       ...EditableLearningMaterialOutcomesData
+      ...LearningMaterialStarsRaterData
     }
   }
   ${LearningMaterialWithCoveredConceptsByDomainData}
@@ -97,6 +99,7 @@ export const getLearningPathPage = gql`
   ${UserAvatarData}
   ${EditableLearningMaterialPrerequisitesData}
   ${EditableLearningMaterialOutcomesData}
+  ${LearningMaterialStarsRaterData}
 `;
 
 const learningPathPlaceholder: GetLearningPathPageQuery['getLearningPathByKey'] = {
@@ -241,7 +244,7 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
             <Stack direction="row" justifyContent="center" spacing={2} alignItems="center">
               <StarsRatingViewer value={learningPath.rating} isLoading={loading} />
               <RoleAccess accessRule="contributorOrAdmin">
-                <LearningMaterialStarsRater learningMaterialId={learningPath._id} isDisabled={loading} />
+                <LearningMaterialStarsRater learningMaterial={learningPath} isDisabled={loading} />
               </RoleAccess>
             </Stack>
             <Skeleton isLoaded={!loading}>
@@ -277,7 +280,7 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
         </Flex>
         <Flex justifyContent="space-between">
           {learningPath.resourceItems?.length ? (
-            <LearningPathCompletion w="100px" learningPath={learningPath} isLoading={loading} />
+            <LearningPathCompletion w="100px" learningPath={learningPath} />
           ) : (
             <Box />
           )}
@@ -352,7 +355,7 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
                         <StarsRatingViewer value={learningPath.rating} isLoading={loading} />
                         <LearningMaterialStarsRater
                           buttonText="Rate this path"
-                          learningMaterialId={learningPath._id}
+                          learningMaterial={learningPath}
                           isDisabled={loading}
                           size="md"
                         />

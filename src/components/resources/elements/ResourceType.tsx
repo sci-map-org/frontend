@@ -1,22 +1,45 @@
-import { Badge, BadgeProps, FormControl, FormLabel, Select } from '@chakra-ui/react';
+import {
+  Badge,
+  BadgeProps,
+  Center,
+  CenterProps,
+  FormControl,
+  FormLabel,
+  Icon,
+  Select,
+  Tooltip,
+} from '@chakra-ui/react';
 import { upperFirst, values } from 'lodash';
+import { useMemo } from 'react';
+import { BiHeadphone } from 'react-icons/bi';
+import { FaGraduationCap } from 'react-icons/fa';
+import { GiMicrophone } from 'react-icons/gi';
+import { GoBrowser } from 'react-icons/go';
+import { ImFilm } from 'react-icons/im';
+import { IconType } from 'react-icons/lib';
+import { RiBookOpenLine, RiFileTextLine, RiGamepadLine, RiTwitterLine, RiYoutubeFill } from 'react-icons/ri';
 import { ResourceType } from '../../../graphql/types';
+import { InfographicIcon } from '../../lib/icons/InfographicIcon';
+import { OnlineBookIcon } from '../../lib/icons/OnlineBookIcon';
+import { YoutubePlaylistIcon } from '../../lib/icons/YoutubePlaylistIcon';
 
 export const resourceTypeColorMapping: { [key in ResourceType]: string } = {
   [ResourceType.Article]: 'green',
   [ResourceType.ArticleSeries]: 'green',
   [ResourceType.Course]: 'red',
   [ResourceType.Podcast]: 'yellow',
-  [ResourceType.PodcastSeries]: 'yellow',
+  [ResourceType.PodcastEpisode]: 'yellow',
   [ResourceType.Other]: 'gray',
+  [ResourceType.OnlineBook]: 'red',
   [ResourceType.Book]: 'red',
+  [ResourceType.ResearchPaper]: 'blue',
   [ResourceType.Documentary]: 'blue',
   [ResourceType.Tweet]: 'blue',
   [ResourceType.Talk]: 'orange',
   [ResourceType.Infographic]: 'yellow',
   [ResourceType.Website]: 'blue',
   [ResourceType.YoutubeVideo]: 'red',
-  [ResourceType.YoutubeVideoSeries]: 'red',
+  [ResourceType.YoutubePlaylist]: 'red',
   [ResourceType.VideoGame]: 'yellow',
 };
 
@@ -28,6 +51,44 @@ export const ResourceTypeBadge: React.FC<BadgeProps & { type: ResourceType }> = 
     <Badge colorScheme={resourceTypeColorMapping[type]} {...badgeProps}>
       {resourceTypeToLabel(type)}
     </Badge>
+  );
+};
+
+export const resourceTypeIconMapping: { [key in ResourceType]?: IconType | typeof Icon } = {
+  [ResourceType.Article]: RiFileTextLine, // RiArticleLine
+  [ResourceType.ArticleSeries]: RiFileTextLine,
+  [ResourceType.Course]: FaGraduationCap,
+  [ResourceType.Podcast]: BiHeadphone, // or FaMicrophoneAlt (microphone) ?
+  [ResourceType.PodcastEpisode]: BiHeadphone,
+  // [ResourceType.Other]: , // Find better => nothing ?
+  [ResourceType.OnlineBook]: OnlineBookIcon, // RiBookOpenLine,
+  [ResourceType.Book]: RiBookOpenLine, // RiBookOpenLine,
+  [ResourceType.ResearchPaper]: RiFileTextLine, // to improve
+  [ResourceType.Documentary]: ImFilm,
+  [ResourceType.Tweet]: RiTwitterLine,
+  [ResourceType.Talk]: GiMicrophone,
+  [ResourceType.Infographic]: InfographicIcon, //  RiImageLine
+  [ResourceType.Website]: GoBrowser, //  GoBrowser CgWebsite IoGlobeOutline
+  [ResourceType.YoutubeVideo]: RiYoutubeFill, //RiYoutubeLine
+  [ResourceType.YoutubePlaylist]: YoutubePlaylistIcon, // or RiPlayList2Line ?
+  [ResourceType.VideoGame]: RiGamepadLine,
+};
+
+export const ResourceTypeIcon: React.FC<{ resourceType: ResourceType; boxSize?: string | number } & CenterProps> = ({
+  resourceType,
+  boxSize,
+  ...centerProps
+}) => {
+  const icon = useMemo(() => {
+    return resourceTypeIconMapping[resourceType];
+  }, [resourceType]);
+  if (!icon) return null;
+  return (
+    <Tooltip label={resourceTypeToLabel(resourceType)} fontSize="sm">
+      <Center {...centerProps}>
+        <Icon as={icon} boxSize={boxSize} />
+      </Center>
+    </Tooltip>
   );
 };
 

@@ -10,12 +10,10 @@ import { DomainConceptList } from '../../components/concepts/DomainConceptList';
 import { BestXPagesLinks } from '../../components/domains/BestXPagesLinks';
 import { DomainUserHistory } from '../../components/domains/DomainUserHistory';
 import { PageLayout } from '../../components/layout/PageLayout';
-import { LearningPathMiniCardData } from '../../components/learning_paths/LearningPathMiniCard';
 import { LearningPathPreviewCardDataFragment } from '../../components/learning_paths/LearningPathPreviewCard.generated';
 import { InternalButtonLink, InternalLink, PageLink } from '../../components/navigation/InternalLink';
 import { DomainRecommendedLearningMaterials } from '../../components/resources/DomainRecommendedLearningMaterials';
 import { useGetDomainRecommendedLearningMaterialsQuery } from '../../components/resources/DomainRecommendedLearningMaterials.generated';
-import { ResourceMiniCardData } from '../../components/resources/ResourceMiniCard';
 import { ConceptData, generateConceptData } from '../../graphql/concepts/concepts.fragments';
 import { DomainData, generateDomainData } from '../../graphql/domains/domains.fragments';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
@@ -48,12 +46,6 @@ export const getDomainByKeyDomainPage = gql`
           }
         }
       }
-      learningMaterials(options: { sortingType: newest, filter: { completedByUser: true } }) {
-        items {
-          ...ResourceMiniCardData
-          ...LearningPathMiniCardData
-        }
-      }
       subDomains {
         domain {
           ...DomainData
@@ -68,8 +60,6 @@ export const getDomainByKeyDomainPage = gql`
       }
     }
   }
-  ${ResourceMiniCardData}
-  ${LearningPathMiniCardData}
   ${DomainData}
   ${ConceptData}
 `;
@@ -241,13 +231,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
           ml={{ base: 0, md: 8 }}
         >
           <RoleAccess accessRule="loggedInUser">
-            {domain.learningMaterials && (
-              <DomainUserHistory
-                maxH={{ md: '210px' }}
-                domainKey={domainKey}
-                learningMaterials={domain.learningMaterials.items}
-              />
-            )}
+            <DomainUserHistory maxH={{ md: '210px' }} domainKey={domainKey} />
           </RoleAccess>
           <DomainConceptList
             minWidth="260px"

@@ -1,6 +1,7 @@
 import { Box, Button, Center, Flex, Skeleton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import Router, { useRouter } from 'next/router';
+import ReactPlayer from 'react-player';
 import { Access } from '../../components/auth/Access';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
@@ -14,10 +15,12 @@ import {
 } from '../../components/learning_materials/EditableLearningMaterialPrerequisites';
 import {
   LearningMaterialStarsRater,
+  LearningMaterialStarsRaterData,
   StarsRatingViewer,
 } from '../../components/learning_materials/LearningMaterialStarsRating';
 import { EditableLearningMaterialTags } from '../../components/learning_materials/LearningMaterialTagsEditor';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
+import { YoutubePlayer } from '../../components/lib/YoutubePlayer';
 import { InternalLink } from '../../components/navigation/InternalLink';
 import { DurationViewer } from '../../components/resources/elements/Duration';
 import { ResourceCompletedCheckbox } from '../../components/resources/elements/ResourceCompletedCheckbox';
@@ -34,7 +37,7 @@ import { DomainData, generateDomainData } from '../../graphql/domains/domains.fr
 import { generateResourceData, ResourceData } from '../../graphql/resources/resources.fragments';
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { useDeleteResourceMutation } from '../../graphql/resources/resources.operations.generated';
-import { UserRole } from '../../graphql/types';
+import { ResourceType, UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { isResourceGroupType, isResourceSeriesType } from '../../services/resources.service';
 import { GetResourceResourcePageQuery, useGetResourceResourcePageQuery } from './ResourcePage.generated';
@@ -78,6 +81,7 @@ export const getResourceResourcePage = gql`
       }
       ...EditableLearningMaterialOutcomesData
       ...EditableLearningMaterialPrerequisitesData
+      ...LearningMaterialStarsRaterData
     }
   }
   ${SquareResourceCardData}
@@ -86,6 +90,7 @@ export const getResourceResourcePage = gql`
   ${ConceptData}
   ${EditableLearningMaterialOutcomesData}
   ${EditableLearningMaterialPrerequisitesData}
+  ${LearningMaterialStarsRaterData}
 `;
 
 const domainDataPlaceholder = generateDomainData();
@@ -104,7 +109,6 @@ const resourceDataPlaceholder: GetResourceResourcePageQuery['getResourceById'] =
 export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) => {
   const { data, loading, error } = useGetResourceResourcePageQuery({ variables: { id: resourceId } });
   if (error) return <Box>Resource not found !</Box>;
-
   const resource = data?.getResourceById || resourceDataPlaceholder;
   const { currentUser } = useCurrentUser();
   return (
@@ -151,12 +155,11 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
             <DurationViewer value={resource.durationSeconds} />
           </Stack>
           <Stack direction="row" spacing={2} alignItems="center">
-            <ResourceCompletedCheckbox resource={resource} size="sm" />
-
-            <StarsRatingViewer value={resource.rating} />
             <RoleAccess accessRule="contributorOrAdmin">
-              <LearningMaterialStarsRater learningMaterialId={resource._id} isDisabled={loading} />
+              <LearningMaterialStarsRater learningMaterial={resource} isDisabled={loading} />
             </RoleAccess>
+            <StarsRatingViewer value={resource.rating} />
+            <ResourceCompletedCheckbox resource={resource} size="sm" />
           </Stack>
         </Flex>
 
@@ -176,6 +179,11 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
               />
             </Box>
             {resource.description && <ResourceDescription description={resource.description} />}
+            {(resource.type === ResourceType.YoutubeVideo || resource.type === ResourceType.YoutubePlaylist) && (
+              <Center mr={4}>
+                <YoutubePlayer resource={resource} skipThumbnail />
+              </Center>
+            )}
           </Stack>
 
           <Stack spacing={3}>
@@ -196,6 +204,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
             </Center>
           </Stack>
         </Flex>
+
         {(isResourceSeriesType(resource.type) || resource.subResourceSeries?.length) && (
           <SubResourceSeriesManager
             resourceId={resourceId}

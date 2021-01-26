@@ -10,7 +10,7 @@ const Page: React.FC<{}> = () => {
   return (
     <BestXPage
       domainKey={key}
-      x={[ResourceType.YoutubeVideo, ResourceType.YoutubeVideoSeries, ResourceType.Talk, ResourceType.Documentary]}
+      x={[ResourceType.YoutubeVideo, ResourceType.YoutubePlaylist, ResourceType.Talk, ResourceType.Documentary]}
     />
   );
 };

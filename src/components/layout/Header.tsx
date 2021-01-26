@@ -16,6 +16,7 @@ import {
   PopoverTrigger,
   Divider,
   Flex,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { omit } from 'lodash';
 import getConfig from 'next/config';
@@ -54,7 +55,7 @@ export const Header: React.FC = () => {
   const { currentUser } = useCurrentUser();
   const router = useRouter();
   const { logout } = useLogout();
-
+  const { onOpen: openOpenLP, onClose: onCloseLP, isOpen: isOpenLp } = useDisclosure();
   return (
     <Box
       py={3}
@@ -82,7 +83,7 @@ export const Header: React.FC = () => {
 
       <Stack direction="row" spacing={4}>
         {!!currentUser && (
-          <Popover placement="auto" isLazy>
+          <Popover placement="bottom" isOpen={isOpenLp} onClose={onCloseLP} onOpen={openOpenLP} isLazy>
             <PopoverTrigger>
               <Link {...HeaderLinkStyle}>My Learning Paths</Link>
             </PopoverTrigger>
@@ -92,10 +93,14 @@ export const Header: React.FC = () => {
               backgroundColor="backgroundColor.0"
               borderRadius={6}
               _focus={{ outline: 'none' }}
-              borderWidth={1}
-              borderColor="gray.300"
+              {...(isOpenLp
+                ? {
+                    borderWidth: 1,
+                    borderColor: 'gray.300',
+                  }
+                : { borderWidth: 0 })} // To fix an issue where a line can me seen for a few ms when closing the popover
             >
-              <PopoverArrow />
+              <PopoverArrow zIndex={5} />
               <PopoverBody pt={1}>
                 <Flex direction="column" alignItems="stretch" spacing={0}>
                   {!!currentUser.startedLearningPaths && !!currentUser.startedLearningPaths.length && (

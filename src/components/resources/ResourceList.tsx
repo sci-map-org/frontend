@@ -1,39 +1,53 @@
-import { Box, Flex, Stack } from '@chakra-ui/react';
-import { ReactElement } from 'react';
-import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
-import { InternalLink } from '../navigation/InternalLink';
-import { ResourceTypeBadge } from './elements/ResourceType';
+import { Flex } from '@chakra-ui/react';
+import { PropsWithChildren, ReactElement } from 'react';
+import { Resource } from '../../graphql/types';
 
-interface ResourceListProps {
-  resources: ResourceDataFragment[];
-  renderRightItem?: (resource: ResourceDataFragment) => ReactElement;
-}
+type BaseResource = Pick<Resource, 'name' | 'url'>;
 
-export const ResourceList: React.FC<ResourceListProps> = ({ resources }) => {
+type ResourceListProps<T extends BaseResource> = {
+  resources: T[];
+  renderItem: (resource: T, index: number) => ReactElement;
+};
+
+export const ResourceList = <T extends BaseResource>({
+  resources,
+  renderItem,
+}: PropsWithChildren<ResourceListProps<T>>) => {
   return (
     <Flex direction="column" alignItems="stretch" borderWidth="1px 1px 0px 1px" borderColor="gray.200" width="100%">
-      {resources.map((resource) => (
-        <ResourceListItem key={resource._id} resource={resource} />
+      {resources.map((resource, index) => (
+        <Flex key={resource.url} direction="row" borderBottomWidth="1px" borderColor="gray.200">
+          {renderItem(resource, index)}
+        </Flex>
       ))}
     </Flex>
   );
 };
 
-interface ResourceListItemProps {
-  resource: ResourceDataFragment;
-  renderRight?: (resource: ResourceDataFragment) => ReactElement;
-}
-export const ResourceListItem: React.FC<ResourceListItemProps> = ({ resource, renderRight }) => {
+type ResourceListBasicLayoutProps<T extends BaseResource> = {
+  resources: T[];
+  renderTop: (resource: T, index: number) => ReactElement;
+  renderBottom?: (resource: T, index: number) => ReactElement;
+  renderRight?: (resource: T, index: number) => ReactElement;
+};
+export const ResourceListBasicLayout = <T extends BaseResource>({
+  resources,
+  renderTop,
+  renderBottom,
+  renderRight,
+}: PropsWithChildren<ResourceListBasicLayoutProps<T>>) => {
   return (
-    <Flex p={2} direction="row" borderBottomWidth="1px" borderColor="gray.200">
-      <Stack direction="row" alignItems="center" spacing={2}>
-        <InternalLink routePath="/resources/[_id]" asHref={`/resources/${resource._id}`}>
-          {resource.name}
-        </InternalLink>
-        <ResourceTypeBadge type={resource.type} />
-      </Stack>
-      <Box flexGrow={1}></Box>
-      {renderRight && <Box>{renderRight(resource)}</Box>}
-    </Flex>
+    <ResourceList
+      resources={resources}
+      renderItem={(resource, index) => (
+        <Flex direction="row" w="100%" alignItems="stretch" justifyContent="space-between" pt={2} pb={2} px={2}>
+          <Flex direction="column">
+            {renderTop(resource, index)}
+            {renderBottom && renderBottom(resource, index)}
+          </Flex>
+          {renderRight && renderRight(resource, index)}
+        </Flex>
+      )}
+    />
   );
 };

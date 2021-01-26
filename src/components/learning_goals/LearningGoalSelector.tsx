@@ -58,7 +58,7 @@ export const LearningGoalSelector: React.FC<{
         <Box>
           <EntitySelector
             width="100%"
-            acceptCreation
+            allowCreation
             onCreate={(newLg) => {
               setCreateLGDefaultPayload({ name: newLg.name, key: generateUrlKey(newLg.name) }); //TODO: proper validation
               onOpen();
@@ -73,7 +73,7 @@ export const LearningGoalSelector: React.FC<{
           />
         </Box>
       </PopoverTrigger>
-      <PopoverContent>
+      <PopoverContent zIndex={4}>
         <PopoverHeader fontWeight="semibold">{popoverTitle || 'Create Learning Goal'}</PopoverHeader>
         <PopoverArrow />
         <PopoverCloseButton />

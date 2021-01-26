@@ -7,7 +7,7 @@ const Page: React.FC<{}> = () => {
 
   const { key } = router.query;
   if (typeof key !== 'string') return null;
-  return <BestXPage domainKey={key} x={[ResourceType.Book]} />;
+  return <BestXPage domainKey={key} x={[ResourceType.Book, ResourceType.OnlineBook]} />;
 };
 
 export default Page;
