@@ -1,12 +1,10 @@
-import { ApolloProvider, useApolloClient } from '@apollo/client';
-import { ChakraProvider } from '@chakra-ui/react';
-import { LoginForm } from '../components/auth/LoginForm';
-import { DurationViewer } from '../components/resources/elements/Duration';
+import { ApolloProvider } from '@apollo/client';
+import { Center, ChakraProvider, Flex, Heading, Link, Spinner, Stack, Text } from '@chakra-ui/react';
+import { env } from '../env';
 import { useCurrentUser } from '../graphql/users/users.hooks';
 import { theme } from '../theme/theme';
+import { AddCurrentResource } from './AddCurrentResource';
 import { client } from './apolloClient';
-import getConfig from 'next/config';
-import { environment } from '../services/Environment';
 
 export const WebExtension: React.FC<{}> = () => {
   return (
@@ -18,17 +16,40 @@ export const WebExtension: React.FC<{}> = () => {
   );
 };
 
-// const { publicRuntimeConfig } = getConfig();
-
 const App: React.FC<{}> = () => {
-  const client = useApolloClient();
-  const { currentUser } = useCurrentUser();
-  console.log(environment);
-  //   console.log(getConfig());
+  const { currentUser, loading } = useCurrentUser();
+
   return (
-    <div>
-      TGest
-      <DurationViewer value={3600} />
-    </div>
+    <Stack w="600px" minH="500px" p={5}>
+      <Stack direction="row" alignItems="baseline">
+        <Link href={env.FRONTEND_URL} isExternal>
+          <Heading color="mainDarker" size="lg">
+            Sci-Map{env.NODE_ENV === 'development' && ' Dev'}
+          </Heading>
+        </Link>
+        {!!currentUser && (
+          <Text fontSize="md" fontWeight={500} color="gray.600">
+            Welcome {currentUser.displayName}
+          </Text>
+        )}
+      </Stack>
+      {loading ? (
+        <Center py="200px">
+          <Spinner size="xl" />
+        </Center>
+      ) : !!currentUser ? (
+        <AddCurrentResource />
+      ) : (
+        <Flex py={10}>
+          <Heading size="md">
+            Please{' '}
+            <Link href={env.FRONTEND_URL + '/login'} isExternal color="blue">
+              login to Sci-Map
+            </Link>{' '}
+            to use the extension
+          </Heading>
+        </Flex>
+      )}
+    </Stack>
   );
 };

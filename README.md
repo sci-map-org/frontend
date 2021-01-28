@@ -41,6 +41,19 @@ AWS is only used for cloudwatch metrics, you can keep the dummy values
     yarn start
 ```
 
+## Extension setup
+
+```
+yarn dev:ext
+```
+
+```
+yarn build:ext
+```
+
+In Chrome, go to Extensions, enable developer mode then load unpacked => pick production build or development build
+env vars are taken from .env.production.local or .env.development.local, so pick env vars accordingly (dev should point to localhost, prod to sci-map.org)
+
 ## Contributing
 
 Please check out our [Contribution guide](https://sci-map.org/about/contributing).

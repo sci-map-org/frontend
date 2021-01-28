@@ -3,7 +3,7 @@ import { StandardChakraSize } from '../../../util/chakra.util';
 
 interface FormButtonsProps {
   size?: StandardChakraSize;
-  onCancel: () => void;
+  onCancel?: () => void;
   onPrimaryClick: () => void;
   isPrimaryLoading?: boolean;
   isPrimaryDisabled?: boolean;
@@ -18,9 +18,11 @@ export const FormButtons: React.FC<FormButtonsProps> = ({
   return (
     <Flex justifyContent="flex-end">
       <ButtonGroup size={size} spacing={8} w="60%" minWidth="18rem">
-        <Button variant="outline" w="50%" onClick={onCancel}>
-          Cancel
-        </Button>
+        {!!onCancel && (
+          <Button variant="outline" w="50%" onClick={onCancel}>
+            Cancel
+          </Button>
+        )}
         <Button
           isLoading={isPrimaryLoading}
           w="50%"
