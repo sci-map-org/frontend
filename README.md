@@ -18,7 +18,9 @@ Using @react-icons/all-files as parcel seems to have issues with tree shaking it
 Create a `.env.local` file with
 
 ```
-API_URL="http://localhost:8000/graphql"
+NODE_ENV=development or production
+FRONTEND_URL=http://localhost:3000 or https://sci-map.org
+API_URL="http://localhost:8000/graphql" or "https://api.sci-map.org/graphql"
 GOOGLE_CLIENT_ID=390325140829-njk2aup9efs7tprmpmqmke93886q602i.apps.googleusercontent.com
 DISCOURSE_FORUM_URL=https://forum.sci-map.org
 AWS_ACCESS_KEY_ID=key
