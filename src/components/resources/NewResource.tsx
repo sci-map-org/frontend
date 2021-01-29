@@ -270,9 +270,6 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
   const [resourceCreationData, setResourceCreationData] = useState<ResourceCreationData>({
     ...defaultResourceData,
     ...defaultResourceCreationData,
-    // ...(defaultAttachedDomains && {
-    //   domainsAndCoveredConcepts: ,
-    // }),
   });
   const [selectedSubResourceIndex, selectSubResourceIndex] = useState<number>();
   const { isOpen, onOpen, onClose } = useDisclosure();
