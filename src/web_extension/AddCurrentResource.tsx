@@ -9,6 +9,7 @@ import { shortenString } from '../util/utils';
 export const AddCurrentResource: React.FC<{}> = () => {
   const [currentUrl, setCurrentUrl] = useState<string>();
   useEffect(() => {
+    /** @ts-ignore */
     chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
       let url = tabs[0].url;
       setCurrentUrl(url);
