@@ -4,11 +4,10 @@ import cookie from 'cookie';
 import { IncomingMessage } from 'http';
 import fetch from 'isomorphic-unfetch';
 import NextApp, { AppContext as NextAppContext, AppProps as NextAppProps } from 'next/app';
-import getConfig from 'next/config';
 import Head from 'next/head';
 import React from 'react';
+import { env } from '../env';
 
-const { publicRuntimeConfig } = getConfig();
 const getInitialState = (req?: IncomingMessage): NormalizedCacheObject => {
   // If no token on the request, we directly cache the currentUser query to null
   // (avoid spamming server)
@@ -134,13 +133,13 @@ interface CreateApolloClientConfig {
 }
 function createApolloClient(config: CreateApolloClientConfig): ApolloClient<NormalizedCacheObject> {
   const httpLink = new HttpLink({
-    uri: publicRuntimeConfig.apiUrl, // Server URL (must be absolute)
+    uri: env.API_URL, // Server URL (must be absolute)
     credentials: 'same-origin',
     fetch,
   });
 
   const authLink = setContext((_request, { headers }) => {
-    const token = config.getToken(); // Why async ?
+    const token = config.getToken();
     return {
       headers: {
         ...headers,

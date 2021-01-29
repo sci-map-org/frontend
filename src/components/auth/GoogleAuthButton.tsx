@@ -1,10 +1,8 @@
-import getConfig from 'next/config';
 import GoogleLogin, { GoogleLoginResponse } from 'react-google-login';
+import { env } from '../../env';
 import { DiscourseSso } from '../../graphql/types';
 import { LoginResponseDataFragment } from '../../graphql/users/users.fragments.generated';
 import { useLoginGoogle } from '../../graphql/users/users.hooks';
-
-const { publicRuntimeConfig } = getConfig();
 
 export const GoogleAuthButton: React.FC<{
   buttonText: string;
@@ -20,7 +18,7 @@ export const GoogleAuthButton: React.FC<{
   });
   return (
     <GoogleLogin
-      clientId={publicRuntimeConfig.googleClientId || 'oups'}
+      clientId={env.GOOGLE_CLIENT_ID || 'oups'}
       buttonText={buttonText}
       onSuccess={async (googleUser) => {
         googleUser = googleUser as GoogleLoginResponse;

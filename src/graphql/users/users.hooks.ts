@@ -1,6 +1,7 @@
 import { useApolloClient } from '@apollo/client';
 import Cookies from 'js-cookie';
 import { get } from 'lodash';
+import { env } from '../../env';
 import { getCurrentUser } from './users.operations';
 import { useGetCurrentUserQuery, useLoginGoogleMutation, useLoginMutation } from './users.operations.generated';
 
@@ -12,9 +13,11 @@ export const useCurrentUser = () => {
       if (gqlErrors) {
         gqlErrors.forEach((gqlErr) => {
           if (get(gqlErr, ['extensions', 'code']) === 'UNAUTHENTICATED') {
-            console.log('Invalid token, removing it from cookies');
-            Cookies.remove('jwt_token');
-            window.location.reload();
+            if (env.APP === 'frontend') {
+              console.log('Invalid token, removing it from cookies');
+              Cookies.remove('jwt_token');
+              window.location.reload();
+            }
           }
         });
       }

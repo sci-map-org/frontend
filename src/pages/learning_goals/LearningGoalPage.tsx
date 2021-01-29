@@ -1,9 +1,9 @@
 import { EditIcon } from '@chakra-ui/icons';
 import { Center, IconButton, Stack, Tooltip } from '@chakra-ui/react';
+import { AiOutlineEye } from '@react-icons/all-files/ai/AiOutlineEye';
 import gql from 'graphql-tag';
 import Router from 'next/router';
 import { useMemo, useState } from 'react';
-import { AiOutlineEye } from 'react-icons/ai';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { LearningGoalSelector } from '../../components/learning_goals/LearningGoalSelector';
 import { SubGoalsWrapper, SubGoalsWrapperData } from '../../components/learning_goals/SubGoalsWrapper';

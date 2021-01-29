@@ -2,6 +2,8 @@ import {
   Avatar,
   AvatarBadge,
   Box,
+  Divider,
+  Flex,
   Link,
   LinkProps,
   Menu,
@@ -10,25 +12,21 @@ import {
   MenuList,
   Popover,
   PopoverArrow,
-  PopoverContent,
   PopoverBody,
-  Stack,
+  PopoverContent,
   PopoverTrigger,
-  Divider,
-  Flex,
+  Stack,
   useDisclosure,
 } from '@chakra-ui/react';
 import { omit } from 'lodash';
-import getConfig from 'next/config';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
+import { env } from '../../env';
 import { useCurrentUser, useLogout } from '../../graphql/users/users.hooks';
 import { LearningPathPagePath } from '../../pages/RoutesPageInfos';
 import { globalStyleVariables } from '../../theme/theme';
 import { RoleAccess } from '../auth/RoleAccess';
 import { InternalLink, InternalLinkProps } from '../navigation/InternalLink';
-
-const { publicRuntimeConfig } = getConfig();
 
 const HeaderLinkStyle: LinkProps = {
   fontWeight: 'light',
@@ -142,7 +140,7 @@ export const Header: React.FC = () => {
         <HeaderLink routePath="/about/[key]" asHref="/about/introduction">
           About
         </HeaderLink>
-        <HeaderLink href={publicRuntimeConfig.discourseForumUrl} external>
+        <HeaderLink href={env.DISCOURSE_FORUM_URL} external>
           Forum
         </HeaderLink>
         {!!currentUser ? (

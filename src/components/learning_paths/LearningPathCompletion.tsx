@@ -1,7 +1,7 @@
 import { Center, CircularProgress, CircularProgressLabel, FlexProps, IconButton, Tooltip } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useEffect, useMemo } from 'react';
-import { ImPlay2 } from 'react-icons/im';
+import { ImPlay2 } from '@react-icons/all-files/im/ImPlay2';
 import {
   useCompleteLearningPathMutation,
   useStartLearningPathMutation,

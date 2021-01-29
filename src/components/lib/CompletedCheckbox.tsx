@@ -1,7 +1,7 @@
-import { IconButton, Tooltip, IconButtonProps, IconProps } from '@chakra-ui/react';
-// import { CheckCircleIcon } from '@chakra-ui/icons';
-// import { BiCheckCircle } from 'react-icons/bi';
-import { IoIosCheckmarkCircleOutline, IoIosCheckmarkCircle } from 'react-icons/io';
+import { IconButton, IconButtonProps, IconProps, Tooltip } from '@chakra-ui/react';
+import { IoIosCheckmarkCircle } from '@react-icons/all-files/io/IoIosCheckmarkCircle';
+import { IoIosCheckmarkCircleOutline } from '@react-icons/all-files/io/IoIosCheckmarkCircleOutline';
+
 const sizeMapping = {
   xs: { iconSize: 24 },
   sm: { iconSize: 34 },
