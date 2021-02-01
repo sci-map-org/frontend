@@ -394,7 +394,7 @@ const LearningPathPageRightIcons: React.FC<{
   const { currentUser } = useCurrentUser();
   return currentUser && (currentUserIsOwner || currentUser.role === UserRole.Admin) ? (
     <Stack direction="row" spacing={3}>
-      <Stack direction="row" spacing={0}>
+      <Stack direction="row" spacing={1}>
         <Tooltip label="Preview Mode" aria-label="preview learning path">
           <IconButton
             aria-label="view mode"

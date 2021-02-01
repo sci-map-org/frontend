@@ -187,6 +187,13 @@ const NewLearningPathSecondStep: React.FC<NewLearningPathSecondStepProps> = ({ r
         removeResourceItem={(resource) =>
           setResourceItems(resourceItems.filter((i) => i.resource._id !== resource._id))
         }
+        reorderResourceItems={(originIndex: number, destinationIndex: number) => {
+          const newResourceItems = [...resourceItems];
+          const t = newResourceItems[destinationIndex];
+          newResourceItems[destinationIndex] = newResourceItems[originIndex];
+          newResourceItems[originIndex] = t;
+          setResourceItems(newResourceItems);
+        }}
         resourceItems={resourceItems}
         editMode
         resourceSelectorButtonColorScheme="blue"

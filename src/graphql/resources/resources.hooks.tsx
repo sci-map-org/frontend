@@ -60,6 +60,9 @@ export const useSetResourceConsumed = ({
   const [setResourceConsumedMutation] = useSetResourceConsumedMutation();
   const [setConceptKnown] = useSetConceptsKnownMutation();
   const setResourceConsumed = async (resource: ResourceWithCoveredConceptsByDomainDataFragment, consumed: boolean) => {
+    const coveredConcepts = flatten(
+      (resource.coveredConceptsByDomain || []).map(({ coveredConcepts }) => coveredConcepts)
+    );
     await Promise.all([
       setResourceConsumedMutation({
         variables: {
@@ -84,13 +87,11 @@ export const useSetResourceConsumed = ({
           variables: getDomainCompletedLearningMaterialsHistoryQueryVariables(domain.key),
         })),
       }),
-      resource.coveredConceptsByDomain && consumed
+      coveredConcepts.length && consumed
         ? setConceptKnown({
             variables: {
               payload: {
-                concepts: flatten(
-                  resource.coveredConceptsByDomain.map(({ coveredConcepts }) => coveredConcepts)
-                ).map(({ _id }) => ({ conceptId: _id })),
+                concepts: coveredConcepts.map(({ _id }) => ({ conceptId: _id })),
               },
             },
           })
