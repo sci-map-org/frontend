@@ -52,7 +52,6 @@ export function withApollo(AppComponent: typeof NextApp) {
     if (typeof window !== 'undefined') {
       return {};
     }
-
     const { ctx } = appCtx;
 
     // When redirecting, the response is finished.

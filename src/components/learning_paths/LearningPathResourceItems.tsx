@@ -1,6 +1,7 @@
-import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
-import { Box, BoxProps, ButtonProps, Flex, FlexProps, IconButton } from '@chakra-ui/react';
+import { AddIcon, DeleteIcon, DragHandleIcon } from '@chakra-ui/icons';
+import { Box, BoxProps, ButtonProps, Flex, FlexProps, IconButton, Stack } from '@chakra-ui/react';
 import { ReactNode, useEffect, useRef, useState } from 'react';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { LearningPathWithResourceItemsPreviewDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
 import { useUpdateLearningPathMutation } from '../../graphql/learning_paths/learning_paths.operations.generated';
 import {
@@ -39,6 +40,7 @@ interface StatelessLearningPathResourceItemsProps {
   updateDescription: (resourceId: string, description: string) => void;
   addResourceItem: (resource: ResourcePreviewDataFragment) => void;
   removeResourceItem: (resource: ResourcePreviewDataFragment) => void;
+  reorderResourceItems: (originIndex: number, destinationIndex: number) => void;
   confirmDeletion?: boolean;
   editMode?: boolean;
   isLoading?: boolean;
@@ -49,7 +51,7 @@ interface StatelessLearningPathResourceItemsProps {
 }
 
 export const ItemTypes = {
-  Resource: 'resource',
+  ResourceItem: 'ResourceItem',
 };
 
 export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearningPathResourceItemsProps> = ({
@@ -57,6 +59,7 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
   updateDescription,
   addResourceItem,
   removeResourceItem,
+  reorderResourceItems,
   confirmDeletion,
   editMode,
   isLoading,
@@ -74,62 +77,95 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
   }, [resourceItems]);
 
   return (
-    <Flex direction="column" alignItems="stretch">
-      <Flex direction="column">
-        <Flex direction="column" alignItems="stretch" backgroundColor="backgroundColor.0">
-          {resourceItems.map((resourceItem, index) => (
-            <LearningPathResourceItem
-              resourceItem={resourceItem}
-              updateDescription={(description) => updateDescription(resourceItem.resource._id, description)}
-              onResourceConsumed={onResourceConsumed}
-              editMode={editMode}
-              isLoading={isLoading}
-              index={index}
-              confirmRemove={confirmDeletion}
-              onRemove={() => removeResourceItem(resourceItem.resource)}
-              setPreviewCardRef={(el) => (previewCardsRefs.current[index] = el)}
-              renderProgressArrow={
-                !hideProgressArrow && (
-                  <ProgressArrow
-                    pxWidth={8}
-                    position="absolute"
-                    top={getArrowTopPosition(index, previewCardsHeight)}
-                    color={
-                      !isLoading &&
-                      !!currentUserStartedPath &&
-                      (index === 0 || resourceItems[index - 1].resource.consumed?.consumedAt)
-                        ? 'teal.400'
-                        : 'gray.300'
-                    }
-                    h={getArrowHeight(index, previewCardsHeight)}
+    <DragDropContext
+      onDragEnd={(result, provided) => {
+        if (!result.destination) {
+          return;
+        }
+
+        reorderResourceItems(result.source.index, result.destination.index);
+      }}
+    >
+      <Flex direction="column" alignItems="stretch">
+        <Flex direction="column">
+          <Droppable droppableId="droppable">
+            {(dropProvided, dropSnapshot) => (
+              <Flex
+                {...dropProvided.droppableProps}
+                ref={dropProvided.innerRef}
+                direction="column"
+                alignItems="stretch"
+                backgroundColor="backgroundColor.0"
+              >
+                {resourceItems.map((resourceItem, index) => (
+                  <Draggable key={resourceItem.resource._id} draggableId={resourceItem.resource._id} index={index}>
+                    {(provided, snapshot) => (
+                      <Box
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        opacity={snapshot.isDragging ? 0.5 : 1}
+                        // style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
+                      >
+                        <LearningPathResourceItem
+                          resourceItem={resourceItem}
+                          updateDescription={(description) => updateDescription(resourceItem.resource._id, description)}
+                          onResourceConsumed={onResourceConsumed}
+                          editMode={editMode}
+                          isLoading={isLoading}
+                          index={index}
+                          confirmRemove={confirmDeletion}
+                          onRemove={() => removeResourceItem(resourceItem.resource)}
+                          setPreviewCardRef={(el) => (previewCardsRefs.current[index] = el)}
+                          renderProgressArrow={
+                            !hideProgressArrow &&
+                            !dropSnapshot.isDraggingOver && (
+                              <ProgressArrow
+                                pxWidth={8}
+                                position="absolute"
+                                top={getArrowTopPosition(index, previewCardsHeight)}
+                                color={
+                                  !isLoading &&
+                                  !!currentUserStartedPath &&
+                                  (index === 0 || resourceItems[index - 1].resource.consumed?.consumedAt)
+                                    ? 'teal.400'
+                                    : 'gray.300'
+                                }
+                                h={getArrowHeight(index, previewCardsHeight)}
+                              />
+                            )
+                          }
+                        />
+                      </Box>
+                    )}
+                  </Draggable>
+                ))}
+              </Flex>
+            )}
+          </Droppable>
+          {editMode && (
+            <Flex direction="row" justifyContent="center" mt={2}>
+              <PreviewResourceSelectorModal
+                onSelect={(selectedResource) => addResourceItem(selectedResource)}
+                renderTrigger={({ openModal }) => (
+                  <IconButton
+                    m={2}
+                    size="lg"
+                    variant="outline"
+                    colorScheme={resourceSelectorButtonColorScheme}
+                    isRound
+                    icon={<AddIcon />}
+                    aria-label="Add resource to learning path"
+                    onClick={() => openModal()}
+                    isDisabled={isLoading}
                   />
-                )
-              }
-            />
-          ))}
+                )}
+              />
+            </Flex>
+          )}
         </Flex>
-        {editMode && (
-          <Flex direction="row" justifyContent="center" mt={2}>
-            <PreviewResourceSelectorModal
-              onSelect={(selectedResource) => addResourceItem(selectedResource)}
-              renderTrigger={({ openModal }) => (
-                <IconButton
-                  m={2}
-                  size="lg"
-                  variant="outline"
-                  colorScheme={resourceSelectorButtonColorScheme}
-                  isRound
-                  icon={<AddIcon />}
-                  aria-label="Add resource to learning path"
-                  onClick={() => openModal()}
-                  isDisabled={isLoading}
-                />
-              )}
-            />
-          </Flex>
-        )}
       </Flex>
-    </Flex>
+    </DragDropContext>
   );
 };
 
@@ -138,7 +174,6 @@ interface LearningPathResourceItemProps {
   updateDescription: (description: string) => void;
   onResourceConsumed?: (resourceId: string, consumed: boolean) => void;
   isLoading?: boolean;
-  hideProgressArrow?: boolean;
   index: number;
   editMode?: boolean;
   confirmRemove?: boolean;
@@ -152,13 +187,25 @@ const LearningPathResourceItem: React.FC<LearningPathResourceItemProps> = ({
   onResourceConsumed,
   isLoading,
   editMode,
-  hideProgressArrow,
   index,
   confirmRemove,
   onRemove,
   setPreviewCardRef,
   renderProgressArrow,
 }) => {
+  // const [{ opacity }, drag, preview] = useDrag({
+  //   item: { type: ItemTypes.ResourceItem },
+  //   previewOptions: {
+  //     captureDraggingState: true,
+  //     // anchorX: 0,
+  //     // offsetX: 0,
+  //     // offsetY: 0,
+  //   },
+  //   collect: (monitor) => ({
+  //     opacity: monitor.isDragging() ? 0.4 : 1,
+  //   }),
+  // });
+
   return (
     <Flex key={resource._id} direction="column" justifyContent="stretch">
       <Flex direction="row" py={0} position="relative">
@@ -187,7 +234,9 @@ const LearningPathResourceItem: React.FC<LearningPathResourceItemProps> = ({
           <ResourcePreviewCard
             isLoading={isLoading}
             // ref={(el) => (previewCardsRefs.current[index] = el)}
-            ref={setPreviewCardRef}
+            ref={(el) => {
+              setPreviewCardRef(el);
+            }}
             resource={resource}
             onResourceConsumed={onResourceConsumed}
             expandByDefault
@@ -195,23 +244,28 @@ const LearningPathResourceItem: React.FC<LearningPathResourceItemProps> = ({
         </Box>
         {editMode && (
           <Flex flexBasis="60px" flexShrink={0} direction="column" alignItems="center" justifyContent="space-around">
-            {confirmRemove ? (
-              <DeleteButtonWithConfirmation
-                variant="ghost"
-                modalBodyText={`Remove the resource ${resource.name} from the learning path ?`}
-                modalHeaderText="Remove Resource"
-                onConfirmation={onRemove}
-                isDisabled={isLoading}
-              />
-            ) : (
-              <IconButton
-                aria-label="remove resource from learning path"
-                size="xs"
-                icon={<DeleteIcon />}
-                onClick={onRemove}
-                isDisabled={isLoading}
-              />
-            )}
+            <Stack alignItems="center">
+              <Box>
+                <DragHandleIcon size="lg" _hover={{ cursor: 'move' }} />
+              </Box>
+              {confirmRemove ? (
+                <DeleteButtonWithConfirmation
+                  variant="ghost"
+                  modalBodyText={`Remove the resource ${resource.name} from the learning path ?`}
+                  modalHeaderText="Remove Resource"
+                  onConfirmation={onRemove}
+                  isDisabled={isLoading}
+                />
+              ) : (
+                <IconButton
+                  aria-label="remove resource from learning path"
+                  size="xs"
+                  icon={<DeleteIcon />}
+                  onClick={onRemove}
+                  isDisabled={isLoading}
+                />
+              )}
+            </Stack>
           </Flex>
         )}
       </Flex>
@@ -282,12 +336,40 @@ export const LearningPathResourceItemsManager: React.FC<LearningPathResourceItem
       },
     });
   };
+
+  const reorderResourceItems = (originIndex: number, destinationIndex: number) => {
+    if (!learningPath.resourceItems) return;
+    const updatedResourceItems = Array.from(learningPath.resourceItems);
+    const [removed] = updatedResourceItems.splice(originIndex, 1);
+    updatedResourceItems.splice(destinationIndex, 0, removed);
+
+    updateLearningPath({
+      variables: {
+        _id: learningPath._id,
+        payload: {
+          resourceItems: updatedResourceItems.map(({ description, resource }) => ({
+            resourceId: resource._id,
+            description,
+          })),
+        },
+      },
+      optimisticResponse: {
+        __typename: 'Mutation',
+        updateLearningPath: {
+          ...learningPath,
+          resourceItems: updatedResourceItems,
+        },
+      },
+    });
+  };
   if (!learningPath.resourceItems) return null;
+
   return (
     <StatelessLearningPathResourceItemsManager
       updateDescription={updateDescription}
       addResourceItem={addResourceItem}
       removeResourceItem={removeResourceItem}
+      reorderResourceItems={reorderResourceItems}
       resourceItems={learningPath.resourceItems}
       confirmDeletion
       editMode={editMode}
