@@ -25,7 +25,6 @@ export const EditableTextInput: React.FC<{
         isPreviewFocusable={false}
         onSubmit={onChange}
         {...(centered && { textAlign: 'center' })}
-        whiteSpace="nowrap"
         variant="solid"
         display="flex"
         isDisabled={!editMode}
