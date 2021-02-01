@@ -1,6 +1,6 @@
 import { AddIcon, DeleteIcon, DragHandleIcon } from '@chakra-ui/icons';
 import { Box, BoxProps, ButtonProps, Flex, FlexProps, IconButton, Stack } from '@chakra-ui/react';
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { LearningPathWithResourceItemsPreviewDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
 import { useUpdateLearningPathMutation } from '../../graphql/learning_paths/learning_paths.operations.generated';
@@ -70,6 +70,14 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
 }) => {
   const previewCardsRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [previewCardsHeight, setPreviewCardsHeight] = useState<number[]>([]);
+  const allConsumedBeforeIndex = useMemo(() => {
+    let i = 0;
+
+    while (i < resourceItems.length && resourceItems[i].resource.consumed?.consumedAt) {
+      i++;
+    }
+    return i;
+  }, [resourceItems]);
 
   useEffect(() => {
     previewCardsRefs.current && setPreviewCardsHeight(previewCardsRefs.current.map((c) => c?.offsetHeight as number));
@@ -96,9 +104,15 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
                 direction="column"
                 alignItems="stretch"
                 backgroundColor="backgroundColor.0"
+                style={dropSnapshot.isDraggingOver ? { backgroundColor: 'gray.200' } : { backgroundColor: 'gray.300' }}
               >
                 {resourceItems.map((resourceItem, index) => (
-                  <Draggable key={resourceItem.resource._id} draggableId={resourceItem.resource._id} index={index}>
+                  <Draggable
+                    key={resourceItem.resource._id}
+                    draggableId={resourceItem.resource._id}
+                    index={index}
+                    isDragDisabled={!editMode}
+                  >
                     {(provided, snapshot) => (
                       <Box
                         ref={provided.innerRef}
@@ -125,9 +139,7 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
                                 position="absolute"
                                 top={getArrowTopPosition(index, previewCardsHeight)}
                                 color={
-                                  !isLoading &&
-                                  !!currentUserStartedPath &&
-                                  (index === 0 || resourceItems[index - 1].resource.consumed?.consumedAt)
+                                  !isLoading && !!currentUserStartedPath && index < allConsumedBeforeIndex
                                     ? 'teal.400'
                                     : 'gray.300'
                                 }
@@ -140,6 +152,7 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
                     )}
                   </Draggable>
                 ))}
+                {dropProvided.placeholder}
               </Flex>
             )}
           </Droppable>
@@ -193,19 +206,6 @@ const LearningPathResourceItem: React.FC<LearningPathResourceItemProps> = ({
   setPreviewCardRef,
   renderProgressArrow,
 }) => {
-  // const [{ opacity }, drag, preview] = useDrag({
-  //   item: { type: ItemTypes.ResourceItem },
-  //   previewOptions: {
-  //     captureDraggingState: true,
-  //     // anchorX: 0,
-  //     // offsetX: 0,
-  //     // offsetY: 0,
-  //   },
-  //   collect: (monitor) => ({
-  //     opacity: monitor.isDragging() ? 0.4 : 1,
-  //   }),
-  // });
-
   return (
     <Flex key={resource._id} direction="column" justifyContent="stretch">
       <Flex direction="row" py={0} position="relative">
@@ -233,39 +233,41 @@ const LearningPathResourceItem: React.FC<LearningPathResourceItemProps> = ({
         <Box flexGrow={1}>
           <ResourcePreviewCard
             isLoading={isLoading}
-            // ref={(el) => (previewCardsRefs.current[index] = el)}
-            ref={(el) => {
-              setPreviewCardRef(el);
-            }}
+            ref={setPreviewCardRef}
             resource={resource}
             onResourceConsumed={onResourceConsumed}
             expandByDefault
           />
         </Box>
         {editMode && (
-          <Flex flexBasis="60px" flexShrink={0} direction="column" alignItems="center" justifyContent="space-around">
-            <Stack alignItems="center">
-              <Box>
-                <DragHandleIcon size="lg" _hover={{ cursor: 'move' }} />
-              </Box>
-              {confirmRemove ? (
-                <DeleteButtonWithConfirmation
-                  variant="ghost"
-                  modalBodyText={`Remove the resource ${resource.name} from the learning path ?`}
-                  modalHeaderText="Remove Resource"
-                  onConfirmation={onRemove}
-                  isDisabled={isLoading}
-                />
-              ) : (
-                <IconButton
-                  aria-label="remove resource from learning path"
-                  size="xs"
-                  icon={<DeleteIcon />}
-                  onClick={onRemove}
-                  isDisabled={isLoading}
-                />
-              )}
-            </Stack>
+          <Flex
+            flexBasis="60px"
+            flexShrink={0}
+            direction="column"
+            alignItems="center"
+            justifyContent="space-between"
+            p={1}
+          >
+            <Box>
+              <DragHandleIcon size="lg" _hover={{ cursor: 'move' }} />
+            </Box>
+            {confirmRemove ? (
+              <DeleteButtonWithConfirmation
+                variant="ghost"
+                modalBodyText={`Remove the resource ${resource.name} from the learning path ?`}
+                modalHeaderText="Remove Resource"
+                onConfirmation={onRemove}
+                isDisabled={isLoading}
+              />
+            ) : (
+              <IconButton
+                aria-label="remove resource from learning path"
+                variant="ghost"
+                icon={<DeleteIcon />}
+                onClick={onRemove}
+                isDisabled={isLoading}
+              />
+            )}
           </Flex>
         )}
       </Flex>
