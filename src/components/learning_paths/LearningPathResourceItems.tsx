@@ -86,7 +86,7 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
 
   return (
     <DragDropContext
-      onDragEnd={(result, provided) => {
+      onDragEnd={(result) => {
         if (!result.destination) {
           return;
         }
@@ -104,7 +104,6 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
                 direction="column"
                 alignItems="stretch"
                 backgroundColor="backgroundColor.0"
-                style={dropSnapshot.isDraggingOver ? { backgroundColor: 'gray.200' } : { backgroundColor: 'gray.300' }}
               >
                 {resourceItems.map((resourceItem, index) => (
                   <Draggable
@@ -119,7 +118,6 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                         opacity={snapshot.isDragging ? 0.5 : 1}
-                        // style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
                       >
                         <LearningPathResourceItem
                           resourceItem={resourceItem}
