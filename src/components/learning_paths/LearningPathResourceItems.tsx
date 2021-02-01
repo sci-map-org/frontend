@@ -50,10 +50,6 @@ interface StatelessLearningPathResourceItemsProps {
   onResourceConsumed?: (resourceId: string, consumed: boolean) => void;
 }
 
-export const ItemTypes = {
-  ResourceItem: 'ResourceItem',
-};
-
 export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearningPathResourceItemsProps> = ({
   resourceItems,
   updateDescription,
