@@ -14,7 +14,7 @@ import {
 import gql from 'graphql-tag';
 import { uniqBy } from 'lodash';
 import { ReactNode, useEffect, useRef, useState } from 'react';
-import { AiTwotoneTags } from 'react-icons/ai';
+import { AiTwotoneTags } from '@react-icons/all-files/ai/AiTwotoneTags';
 import { LearningMaterial, LearningMaterialTag } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';

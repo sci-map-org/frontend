@@ -1,6 +1,6 @@
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import { Box, BoxProps, ButtonProps, Flex, FlexProps, IconButton } from '@chakra-ui/react';
-import { useEffect, useRef, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import { LearningPathWithResourceItemsPreviewDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
 import { useUpdateLearningPathMutation } from '../../graphql/learning_paths/learning_paths.operations.generated';
 import {
@@ -77,8 +77,35 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
     <Flex direction="column" alignItems="stretch">
       <Flex direction="column">
         <Flex direction="column" alignItems="stretch" backgroundColor="backgroundColor.0">
-          {resourceItems.map(({ resource, description }, index) => (
-            <LearningPathResourceItem />
+          {resourceItems.map((resourceItem, index) => (
+            <LearningPathResourceItem
+              resourceItem={resourceItem}
+              updateDescription={(description) => updateDescription(resourceItem.resource._id, description)}
+              onResourceConsumed={onResourceConsumed}
+              editMode={editMode}
+              isLoading={isLoading}
+              index={index}
+              confirmRemove={confirmDeletion}
+              onRemove={() => removeResourceItem(resourceItem.resource)}
+              setPreviewCardRef={(el) => (previewCardsRefs.current[index] = el)}
+              renderProgressArrow={
+                !hideProgressArrow && (
+                  <ProgressArrow
+                    pxWidth={8}
+                    position="absolute"
+                    top={getArrowTopPosition(index, previewCardsHeight)}
+                    color={
+                      !isLoading &&
+                      !!currentUserStartedPath &&
+                      (index === 0 || resourceItems[index - 1].resource.consumed?.consumedAt)
+                        ? 'teal.400'
+                        : 'gray.300'
+                    }
+                    h={getArrowHeight(index, previewCardsHeight)}
+                  />
+                )
+              }
+            />
           ))}
         </Flex>
         {editMode && (
@@ -107,36 +134,36 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
 };
 
 interface LearningPathResourceItemProps {
-  resource: ResourcePreviewDataFragment;
+  resourceItem: { description?: string | null; resource: ResourcePreviewDataFragment };
+  updateDescription: (description: string) => void;
+  onResourceConsumed?: (resourceId: string, consumed: boolean) => void;
   isLoading?: boolean;
   hideProgressArrow?: boolean;
   index: number;
+  editMode?: boolean;
+  confirmRemove?: boolean;
+  onRemove: () => void;
+  setPreviewCardRef: (el: HTMLDivElement | null) => void;
+  renderProgressArrow: ReactNode;
 }
 const LearningPathResourceItem: React.FC<LearningPathResourceItemProps> = ({
-  resource,
+  resourceItem: { resource, description },
+  updateDescription,
+  onResourceConsumed,
   isLoading,
+  editMode,
   hideProgressArrow,
   index,
+  confirmRemove,
+  onRemove,
+  setPreviewCardRef,
+  renderProgressArrow,
 }) => {
   return (
     <Flex key={resource._id} direction="column" justifyContent="stretch">
       <Flex direction="row" py={0} position="relative">
         <Flex w="100px" borderLeft="1px solid transparent" flexShrink={0} justifyContent="center">
-          {!hideProgressArrow && (
-            <ProgressArrow
-              pxWidth={8}
-              position="absolute"
-              top={getArrowTopPosition(index, previewCardsHeight)}
-              color={
-                !isLoading &&
-                !!currentUserStartedPath &&
-                (index === 0 || resourceItems[index - 1].resource.consumed?.consumedAt)
-                  ? 'teal.400'
-                  : 'gray.300'
-              }
-              h={getArrowHeight(index, previewCardsHeight)}
-            />
-          )}
+          {renderProgressArrow}
         </Flex>
         <Flex pt={index === 0 ? 0 : 4} pb={3} flexGrow={1}>
           <EditableTextarea
@@ -148,7 +175,7 @@ const LearningPathResourceItem: React.FC<LearningPathResourceItemProps> = ({
             color="gray.700"
             defaultValue={description || ''}
             placeholder="Write something..."
-            onSubmit={(newDescription: any) => updateDescription(resource._id, newDescription as string)}
+            onSubmit={(newDescription: any) => updateDescription(newDescription as string)}
             isDisabled={!editMode}
             isLoading={isLoading}
           />
@@ -159,7 +186,8 @@ const LearningPathResourceItem: React.FC<LearningPathResourceItemProps> = ({
         <Box flexGrow={1}>
           <ResourcePreviewCard
             isLoading={isLoading}
-            ref={(el) => (previewCardsRefs.current[index] = el)}
+            // ref={(el) => (previewCardsRefs.current[index] = el)}
+            ref={setPreviewCardRef}
             resource={resource}
             onResourceConsumed={onResourceConsumed}
             expandByDefault
@@ -167,12 +195,12 @@ const LearningPathResourceItem: React.FC<LearningPathResourceItemProps> = ({
         </Box>
         {editMode && (
           <Flex flexBasis="60px" flexShrink={0} direction="column" alignItems="center" justifyContent="space-around">
-            {confirmDeletion ? (
+            {confirmRemove ? (
               <DeleteButtonWithConfirmation
                 variant="ghost"
                 modalBodyText={`Remove the resource ${resource.name} from the learning path ?`}
                 modalHeaderText="Remove Resource"
-                onConfirmation={() => removeResourceItem(resource)}
+                onConfirmation={onRemove}
                 isDisabled={isLoading}
               />
             ) : (
@@ -180,7 +208,7 @@ const LearningPathResourceItem: React.FC<LearningPathResourceItemProps> = ({
                 aria-label="remove resource from learning path"
                 size="xs"
                 icon={<DeleteIcon />}
-                onClick={() => removeResourceItem(resource)}
+                onClick={onRemove}
                 isDisabled={isLoading}
               />
             )}

@@ -1,3 +1,4 @@
+import Router from 'next/router';
 import { PageLayout } from '../../../components/layout/PageLayout';
 import { NewResource } from '../../../components/resources/NewResource';
 import { generateDomainData } from '../../../graphql/domains/domains.fragments';
@@ -20,7 +21,8 @@ export const AddResourceToDomainPage: React.FC<{ domainKey: string }> = ({ domai
     >
       {!loading && (
         <NewResource
-          defaultAttachedDomains={[domain]}
+          onCancel={() => Router.back()}
+          defaultResourceCreationData={{ domainsAndCoveredConcepts: [{ domain, selectedConcepts: [] }] }}
           onResourceCreated={(resource) => routerPushToPage(ResourcePageInfo(resource))}
         />
       )}

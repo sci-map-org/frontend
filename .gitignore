@@ -28,3 +28,8 @@ schema.graphql
 .env.local
 
 sci-map-frontend.zip
+
+#web extension
+.cache
+web_extension/build
+web_extension/deploy

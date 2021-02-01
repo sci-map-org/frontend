@@ -21,7 +21,6 @@ import {
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { omit, pick } from 'lodash';
-import Router from 'next/router';
 import React, { ReactElement, useEffect, useState } from 'react';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { ResourceData } from '../../graphql/resources/resources.fragments';
@@ -245,7 +244,7 @@ interface NewResourceFormProps {
   createResource: (payload: CreateResourcePayload) => Promise<ResourceDataFragment>;
   onResourceCreated?: (createdResource: ResourceDataFragment) => void;
   onCancel?: () => void;
-  defaultAttachedDomains?: DomainDataFragment[];
+  defaultResourceCreationData?: Partial<ResourceCreationData>;
 }
 
 const defaultResourceData: ResourceCreationData = {
@@ -261,7 +260,7 @@ const defaultResourceData: ResourceCreationData = {
 };
 
 export const NewResourceForm: React.FC<NewResourceFormProps> = ({
-  defaultAttachedDomains,
+  defaultResourceCreationData,
   createResource,
   onResourceCreated,
   onCancel,
@@ -270,9 +269,7 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
   const [isCreating, setIsCreating] = useState(false);
   const [resourceCreationData, setResourceCreationData] = useState<ResourceCreationData>({
     ...defaultResourceData,
-    ...(defaultAttachedDomains && {
-      domainsAndCoveredConcepts: defaultAttachedDomains.map((domain) => ({ domain, selectedConcepts: [] })),
-    }),
+    ...defaultResourceCreationData,
   });
   const [selectedSubResourceIndex, selectSubResourceIndex] = useState<number>();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -378,11 +375,12 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
       <FormButtons
         isPrimaryDisabled={!isValid}
         isPrimaryLoading={isCreating}
-        onCancel={() => (onCancel ? onCancel() : Router.back())}
+        onCancel={onCancel}
         size="lg"
         onPrimaryClick={async () => {
           setIsCreating(true);
           const createdResource = await createResource(resourceCreationDataToPayload(resourceCreationData));
+          setIsCreating(false);
           onResourceCreated && onResourceCreated(createdResource);
         }}
       />
@@ -402,10 +400,14 @@ export const createResource = gql`
 interface NewResourceProps {
   onResourceCreated?: (createdResource: ResourceDataFragment) => void;
   onCancel?: () => void;
-  defaultAttachedDomains?: DomainDataFragment[];
+  defaultResourceCreationData?: Partial<ResourceCreationData>;
 }
 
-export const NewResource: React.FC<NewResourceProps> = ({ onResourceCreated, onCancel, defaultAttachedDomains }) => {
+export const NewResource: React.FC<NewResourceProps> = ({
+  onResourceCreated,
+  onCancel,
+  defaultResourceCreationData,
+}) => {
   const [createResource] = useCreateResourceMutation();
 
   return (
@@ -417,13 +419,13 @@ export const NewResource: React.FC<NewResourceProps> = ({ onResourceCreated, onC
       }}
       onResourceCreated={onResourceCreated}
       onCancel={onCancel}
-      defaultAttachedDomains={defaultAttachedDomains}
+      defaultResourceCreationData={defaultResourceCreationData}
     />
   );
 };
 
 export const NewResourceModal: React.FC<{ renderButton: (onClick: () => void) => ReactElement } & NewResourceProps> = ({
-  defaultAttachedDomains,
+  defaultResourceCreationData,
   onResourceCreated,
   renderButton,
   onCancel,
@@ -439,7 +441,7 @@ export const NewResourceModal: React.FC<{ renderButton: (onClick: () => void) =>
             <ModalCloseButton />
             <ModalBody pb={5}>
               <NewResource
-                defaultAttachedDomains={defaultAttachedDomains}
+                defaultResourceCreationData={defaultResourceCreationData}
                 onResourceCreated={(resourceCreated) => {
                   onClose();
                   onResourceCreated && onResourceCreated(resourceCreated);

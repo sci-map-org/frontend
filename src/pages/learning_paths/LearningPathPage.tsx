@@ -17,7 +17,7 @@ import {
 import gql from 'graphql-tag';
 import Router from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
-import { AiOutlineEye } from 'react-icons/ai';
+import { AiOutlineEye } from '@react-icons/all-files/ai/AiOutlineEye';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
 import {

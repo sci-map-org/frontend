@@ -11,13 +11,16 @@ React, Next.js, Apollo Client, Chakra UI
 Using avatar triggers a useless request all the time -> https://github.com/chakra-ui/chakra-ui/issues/149
 Do not use local storage (next.js...)
 Codegen: use same name for the export as the graphql query/mutation name -> c.f. ResourcePage (https://github.com/dotansimha/graphql-code-generator/issues/3244)
+Using @react-icons/all-files as parcel seems to have issues with tree shaking it properly
 
 ## Setup
 
 Create a `.env.local` file with
 
 ```
-API_URL="http://localhost:8000/graphql"
+NODE_ENV=development or production
+FRONTEND_URL=http://localhost:3000 or https://sci-map.org
+API_URL="http://localhost:8000/graphql" or "https://api.sci-map.org/graphql"
 GOOGLE_CLIENT_ID=390325140829-njk2aup9efs7tprmpmqmke93886q602i.apps.googleusercontent.com
 DISCOURSE_FORUM_URL=https://forum.sci-map.org
 AWS_ACCESS_KEY_ID=key
@@ -40,6 +43,19 @@ AWS is only used for cloudwatch metrics, you can keep the dummy values
     yarn build
     yarn start
 ```
+
+## Extension setup
+
+```
+yarn dev:ext
+```
+
+```
+yarn build:ext
+```
+
+In Chrome, go to Extensions, enable developer mode then load unpacked => pick production build or development build
+env vars are taken from .env.production.local or .env.development.local, so pick env vars accordingly (dev should point to localhost, prod to sci-map.org)
 
 ## Contributing
 

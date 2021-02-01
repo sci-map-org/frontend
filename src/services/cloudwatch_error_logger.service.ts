@@ -1,14 +1,13 @@
-import getConfig from 'next/config';
+import { env } from '../env';
 import { Logger } from './Logger';
-const { publicRuntimeConfig } = getConfig();
 
 /**
  * Catches uncaught errors and console.error() calls and send them to cloudwatch
  */
-if (typeof window !== 'undefined' && publicRuntimeConfig.nodeEnv === 'production') {
-  const accessKeyId = publicRuntimeConfig.awsAccessKeyId;
-  const secretAccessKey = publicRuntimeConfig.awsSecretKey;
-  const region = publicRuntimeConfig.awsRegion;
+if (typeof window !== 'undefined' && env.NODE_ENV === 'production') {
+  const accessKeyId = env.AWS_ACCESS_KEY_ID;
+  const secretAccessKey = env.AWS_SECRET_KEY;
+  const region = env.AWS_REGION;
 
   const logGroupName = 'sci-map-frontend';
 
@@ -16,7 +15,7 @@ if (typeof window !== 'undefined' && publicRuntimeConfig.nodeEnv === 'production
   logger.install({
     async messageFormatter(e, info = { type: 'unknown' }) {
       if (!e.message) {
-        return null
+        return null;
       }
 
       return JSON.stringify({
@@ -24,7 +23,7 @@ if (typeof window !== 'undefined' && publicRuntimeConfig.nodeEnv === 'production
         timestamp: new Date().getTime(),
         userAgent: window.navigator.userAgent,
         ...info,
-      })
+      });
     },
   });
 }

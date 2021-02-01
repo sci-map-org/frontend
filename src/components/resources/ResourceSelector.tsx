@@ -54,7 +54,9 @@ export function GenericResourceSelector<ResourceFragmentType>({
             renderButton={(onClick) => (
               <IconButton aria-label="Create resource" icon={<AddIcon />} size="lg" isRound mb={3} onClick={onClick} />
             )}
-            defaultAttachedDomains={defaultAttachedDomains}
+            defaultResourceCreationData={{
+              domainsAndCoveredConcepts: defaultAttachedDomains?.map((domain) => ({ domain, selectedConcepts: [] })),
+            }}
             onResourceCreated={async (resourceData) => onSelect(await increaseResourceType(resourceData))}
           />
         </Stack>
