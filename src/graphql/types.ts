@@ -7,8 +7,8 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
-  DateTime: any;
+  /** Date scalar serialized as ISO UTC string, parsed from JS Date time (ms since Unix epoch, from Date.now() or new Date().getTime() */
+  Date: string;
 };
 
 export type Query = {
@@ -758,6 +758,7 @@ export type LearningGoal = Topic & {
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
   topicType: TopicType;
+  publishedAt?: Maybe<Scalars['Date']>;
   createdBy?: Maybe<User>;
   domain?: Maybe<LearningGoalBelongsToDomain>;
   requiredInGoals?: Maybe<Array<RequiredInGoalItem>>;
@@ -979,18 +980,21 @@ export type AddLearningGoalToDomainPayload = {
   contextualName: Scalars['String'];
   contextualKey?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  public?: Maybe<Scalars['Boolean']>;
 };
 
 export type CreateLearningGoalPayload = {
   name: Scalars['String'];
   key?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  public?: Maybe<Scalars['Boolean']>;
 };
 
 export type UpdateLearningGoalPayload = {
   name?: Maybe<Scalars['String']>;
   key?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  public?: Maybe<Scalars['Boolean']>;
 };
 
 export type DeleteLearningGoalMutationResult = {
@@ -1066,8 +1070,8 @@ export type UserLearningPathsOptions = {
 export type LearningPathStartedItem = {
   __typename?: 'LearningPathStartedItem';
   learningPath: LearningPath;
-  startedAt: Scalars['DateTime'];
-  completedAt?: Maybe<Scalars['DateTime']>;
+  startedAt: Scalars['Date'];
+  completedAt?: Maybe<Scalars['Date']>;
 };
 
 export enum ArticleContentType {
@@ -1184,8 +1188,8 @@ export type LearningMaterialTag = {
 
 export type ConsumedResource = {
   __typename?: 'ConsumedResource';
-  openedAt?: Maybe<Scalars['DateTime']>;
-  consumedAt?: Maybe<Scalars['DateTime']>;
+  openedAt?: Maybe<Scalars['Date']>;
+  consumedAt?: Maybe<Scalars['Date']>;
 };
 
 export type LearningMaterialCoveredConceptsResults = {
@@ -1208,7 +1212,7 @@ export type LearningMaterialPrerequisiteItem = {
   learningGoal: LearningGoal;
   strength: Scalars['Float'];
   createdBy: Scalars['String'];
-  createdAt: Scalars['DateTime'];
+  createdAt: Scalars['Date'];
 };
 
 export type LearningMaterialOutcomeItem = {
@@ -1216,7 +1220,7 @@ export type LearningMaterialOutcomeItem = {
   learningGoal: LearningGoal;
   strength: Scalars['Float'];
   createdBy: Scalars['String'];
-  createdAt: Scalars['DateTime'];
+  createdAt: Scalars['Date'];
 };
 
 export type ResourceData = {
@@ -1264,8 +1268,8 @@ export type LearningPathResourceItem = {
 
 export type LearningPathStarted = {
   __typename?: 'LearningPathStarted';
-  startedAt: Scalars['DateTime'];
-  completedAt?: Maybe<Scalars['DateTime']>;
+  startedAt: Scalars['Date'];
+  completedAt?: Maybe<Scalars['Date']>;
 };
 
 export type LearningPathStartedByResults = {
@@ -1393,8 +1397,8 @@ export type ConceptBelongsToConcept = {
 export type LearningPathStartedByItem = {
   __typename?: 'LearningPathStartedByItem';
   user: User;
-  startedAt: Scalars['DateTime'];
-  completedAt?: Maybe<Scalars['DateTime']>;
+  startedAt: Scalars['Date'];
+  completedAt?: Maybe<Scalars['Date']>;
 };
 
 export enum DomainConceptSortingEntities {

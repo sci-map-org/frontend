@@ -150,7 +150,9 @@ export const NewLearningGoal: React.FC<NewLearningGoalProps> = ({ onCreated, onC
           });
           if (data) createdLearningGoal = data.addLearningGoalToDomain.learningGoal;
         } else {
-          const { data } = await createLearningGoal({ variables: { payload: { name, key, description } } });
+          const { data } = await createLearningGoal({
+            variables: { payload: { name, key, description, public: true } },
+          });
           if (data) createdLearningGoal = data.createLearningGoal;
         }
         onCreated && createdLearningGoal && onCreated(createdLearningGoal);

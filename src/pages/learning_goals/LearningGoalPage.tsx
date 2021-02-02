@@ -19,6 +19,7 @@ import {
 } from '../../graphql/learning_goals/learning_goals.operations.generated';
 import { UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
+import { NotFoundPage } from '../NotFoundPage';
 import { GetLearningGoalPageDataQuery, useGetLearningGoalPageDataQuery } from './LearningGoalPage.generated';
 
 export const getLearningGoalPageData = gql`
@@ -50,6 +51,7 @@ export const LearningGoalPage: React.FC<{ learningGoalKey: string }> = ({ learni
   );
   const [editMode, setEditMode] = useState(!!currentUser && currentUser.role === UserRole.Admin);
   const [attachLearningGoalRequiresSubGoal] = useAttachLearningGoalRequiresSubGoalMutation();
+  if (!loading && !data) return <NotFoundPage />;
   return (
     <PageLayout
       marginSize="md"

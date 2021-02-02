@@ -15,6 +15,7 @@ import {
 } from '../../graphql/learning_goals/learning_goals.operations.generated';
 import { TopicType, UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
+import { NotFoundPage } from '../NotFoundPage';
 import { DomainPageInfo } from '../RoutesPageInfos';
 import {
   GetLearningGoalDomainLearningGoalPageQuery,
@@ -70,6 +71,7 @@ export const DomainLearningGoalPage: React.FC<{ domainKey: string; contextualLea
   );
   const [editMode, setEditMode] = useState(!!currentUser && currentUser.role === UserRole.Admin);
   const [attachLearningGoalRequiresSubGoal] = useAttachLearningGoalRequiresSubGoalMutation();
+  if (!loading && !data) return <NotFoundPage />;
   return (
     <PageLayout
       breadCrumbsLinks={[DomainPageInfo(domain)]}

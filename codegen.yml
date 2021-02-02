@@ -9,7 +9,11 @@ generates:
     config:
       commentDescriptions: true
   src/graphql/types.ts:
-    - typescript
+    plugins:
+      - typescript
+    config:
+      scalars:
+        Date: string
   src/:
     preset: near-operation-file
     presetConfig:
