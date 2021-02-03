@@ -7,7 +7,7 @@ export const ResourceDescription: React.FC<{
 }> = ({ description, noOfLines, isLoading }) => {
   return description ? (
     <Skeleton isLoaded={!isLoading}>
-      <Text fontWeight={300} noOfLines={noOfLines}>
+      <Text fontWeight={300} noOfLines={noOfLines} whiteSpace="pre-wrap">
         {description}
       </Text>
     </Skeleton>

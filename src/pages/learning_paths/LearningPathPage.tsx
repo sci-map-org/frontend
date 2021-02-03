@@ -244,6 +244,7 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
             <Skeleton isLoaded={!loading}>
               <EditableTextarea
                 textAlign="center"
+                minRows={3}
                 justifyContent="center"
                 backgroundColor="backgroundColor.0"
                 fontSize="lg"

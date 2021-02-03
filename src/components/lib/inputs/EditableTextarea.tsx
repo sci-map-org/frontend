@@ -2,12 +2,13 @@ import { EditIcon } from '@chakra-ui/icons';
 import { Flex, FlexProps, IconButton, Skeleton, Text, Textarea, useEditable, UseEditableProps } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 
-const estimateNbRows = (value?: string) => Math.ceil((value?.length || 1) / 128);
+const estimateNbRows = (value?: string) =>
+  value ? Math.ceil(value.length / 128) + value.split(/\r\n|\r|\n/).length : 1;
 
 export const EditableTextarea: React.FC<
   Pick<UseEditableProps, 'onSubmit' | 'placeholder' | 'isDisabled'> &
-    FlexProps & { rows?: number; defaultValue?: string; isLoading?: boolean }
-> = ({ defaultValue, onSubmit, isDisabled, placeholder, rows, isLoading, ...flexProps }) => {
+    FlexProps & { minRows?: number; rows?: number; defaultValue?: string; isLoading?: boolean }
+> = ({ defaultValue, onSubmit, isDisabled, placeholder, rows, minRows, isLoading, ...flexProps }) => {
   const [updatedValue, setUpdatedValue] = useState(defaultValue);
   useEffect(() => {
     setUpdatedValue(defaultValue);
@@ -25,13 +26,12 @@ export const EditableTextarea: React.FC<
     <Flex {...flexProps}>
       <Textarea
         {...getInputProps()}
-        //onKeyDown: undefined => cancel submitting on pressing Enter. Can't render line breaks without <br />,
-        // so in the future just use markdown editor.
-        rows={rows || estimateNbRows(defaultValue)}
+        onKeyDown={(e) => undefined}
+        rows={rows || (!minRows || estimateNbRows(defaultValue) > minRows ? estimateNbRows(defaultValue) : minRows)}
       ></Textarea>
       <Skeleton isLoaded={!isLoading}>
         {(!isDisabled || defaultValue) && (
-          <Text {...getPreviewProps()} {...(!defaultValue && { color: 'gray.500' })}>
+          <Text {...getPreviewProps()} {...(!defaultValue && { color: 'gray.500' })} whiteSpace="pre-wrap">
             <>
               {!isEditing && !isDisabled && (
                 <IconButton
