@@ -22,7 +22,11 @@ import {
   useGetLearningGoalDomainLearningGoalPageQuery,
 } from './DomainLearningGoalPage.generated';
 import { LearningGoalPageRightIcons } from './LearningGoalPage';
-import { StartLearningGoalButton, StartLearningGoalButtonData } from './StartLearningGoalButton';
+import {
+  StartLearningGoalButton,
+  StartLearningGoalButtonData,
+} from '../../components/learning_goals/StartLearningGoalButton';
+import { OtherLearnersViewer, OtherLearnersViewerUserData } from '../../components/lib/OtherLearnersViewer';
 
 export const getLearningGoalDomainLearningGoalPage = gql`
   query getLearningGoalDomainLearningGoalPage($domainKey: String!, $contextualLearningGoalKey: String!) {
@@ -36,6 +40,14 @@ export const getLearningGoalDomainLearningGoalPage = gql`
         createdBy {
           _id
         }
+        startedBy(options: {}) {
+          items {
+            user {
+              ...OtherLearnersViewerUserData
+            }
+          }
+          count
+        }
         requiredSubGoals {
           ...SubGoalCardData
         }
@@ -47,6 +59,7 @@ export const getLearningGoalDomainLearningGoalPage = gql`
   ${LearningGoalData}
   ${SubGoalCardData}
   ${StartLearningGoalButtonData}
+  ${OtherLearnersViewerUserData}
 `;
 
 const placeholderData: GetLearningGoalDomainLearningGoalPageQuery['getDomainLearningGoalByKey'] = {
@@ -69,6 +82,7 @@ export const DomainLearningGoalPage: React.FC<{ domainKey: string; contextualLea
     () => !!learningGoal.createdBy && !!currentUser && learningGoal.createdBy._id === currentUser._id,
     [learningGoal, currentUser]
   );
+  const currentUserStartedGoal = useMemo(() => !!learningGoal.started, [learningGoal]);
   const [editMode, setEditMode] = useState(!!currentUser && currentUser.role === UserRole.Admin);
   const [attachLearningGoalRequiresSubGoal] = useAttachLearningGoalRequiresSubGoalMutation();
   if (!loading && !data) return <NotFoundPage />;
@@ -123,6 +137,17 @@ export const DomainLearningGoalPage: React.FC<{ domainKey: string; contextualLea
           }
           isDisabled={!editMode}
         />
+        {learningGoal.startedBy && (
+          <Center>
+            <OtherLearnersViewer
+              title={() => `Learning now`}
+              users={learningGoal.startedBy.items.map(({ user }) => user)}
+              totalCount={learningGoal.startedBy.count}
+              currentUserIsLearner={currentUserStartedGoal}
+              minUsers={currentUserIsOwner ? 1 : 4}
+            />
+          </Center>
+        )}
         <SubGoalsWrapper
           learningGoal={learningGoal}
           editMode={editMode}

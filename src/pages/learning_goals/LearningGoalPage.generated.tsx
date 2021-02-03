@@ -1,8 +1,9 @@
 import * as Types from '../../graphql/types';
 
 import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
+import { OtherLearnersViewerUserDataFragment } from '../../components/lib/OtherLearnersViewer.generated';
 import { SubGoalsWrapperDataFragment } from '../../components/learning_goals/SubGoalsWrapper.generated';
-import { StartLearningGoalButtonDataFragment } from './StartLearningGoalButton.generated';
+import { StartLearningGoalButtonDataFragment } from '../../components/learning_goals/StartLearningGoalButton.generated';
 import * as Operations from './LearningGoalPage';
 import * as Apollo from '@apollo/client';
 export type GetLearningGoalPageDataQueryVariables = Types.Exact<{
@@ -17,6 +18,16 @@ export type GetLearningGoalPageDataQuery = (
     & { createdBy?: Types.Maybe<(
       { __typename?: 'User' }
       & Pick<Types.User, '_id'>
+    )>, startedBy?: Types.Maybe<(
+      { __typename?: 'LearningGoalStartedByResults' }
+      & Pick<Types.LearningGoalStartedByResults, 'count'>
+      & { items: Array<(
+        { __typename?: 'LearningGoalStartedByItem' }
+        & { user: (
+          { __typename?: 'User' }
+          & OtherLearnersViewerUserDataFragment
+        ) }
+      )> }
     )> }
     & LearningGoalDataFragment
     & SubGoalsWrapperDataFragment

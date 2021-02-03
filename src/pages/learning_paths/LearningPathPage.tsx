@@ -61,7 +61,8 @@ import { generateResourcePreviewData } from '../../graphql/resources/resources.f
 import { UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { GetLearningPathPageQuery, useGetLearningPathPageQuery } from './LearningPathPage.generated';
-import { LearningPathPublishButton } from './LearningPathPublishButton';
+import { LearningPathPublishButton } from '../../components/learning_paths/LearningPathPublishButton';
+import { OtherLearnersViewer } from '../../components/lib/OtherLearnersViewer';
 
 export const getLearningPathPage = gql`
   query getLearningPathPage($key: String!) {
@@ -152,7 +153,7 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
     setEditMode(currentUserIsOwner);
   }, [learningPath._id]);
 
-  const currentUserStartedPath = useMemo(() => !!learningPath.started, [learningPath]); // always true ?
+  const currentUserStartedPath = useMemo(() => !!learningPath.started, [learningPath]);
 
   const currentUserCompletedPath = useMemo(
     () =>
@@ -160,13 +161,6 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
       !!learningPath.resourceItems?.length &&
       learningPath.resourceItems.every(({ resource }) => resource.consumed?.consumedAt),
     [currentUserStartedPath, learningPath.resourceItems]
-  );
-  const otherUsersInPath = useMemo(
-    () =>
-      learningPath.startedBy && currentUser
-        ? learningPath.startedBy.items.filter(({ user }) => user._id !== currentUser._id)
-        : [],
-    [currentUser, learningPath.startedBy]
   );
 
   if (error) return null;
@@ -309,19 +303,16 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
                   )}
                 </Center>
               )}
-              {otherUsersInPath.length && (currentUserIsOwner || otherUsersInPath.length > 4) && (
-                <Center>
-                  <Stack spacing={1}>
-                    <Text fontWeight={300}>
-                      Path taken by {otherUsersInPath.length} {otherUsersInPath.length === 1 ? 'user' : 'users'}
-                    </Text>
-                    <AvatarGroup alignSelf="center" spacing={-3} size="sm" max={3}>
-                      {otherUsersInPath.map(({ user }) => (
-                        <UserAvatar key={user._id} user={user} />
-                      ))}
-                    </AvatarGroup>
-                  </Stack>
-                </Center>
+              {learningPath.startedBy && (
+                <OtherLearnersViewer
+                  users={learningPath.startedBy.items.map(({ user }) => user)}
+                  totalCount={learningPath.startedBy.count}
+                  currentUserIsLearner={currentUserStartedPath}
+                  minUsers={currentUserIsOwner ? 1 : 4}
+                  title={(otherLearnersCount) =>
+                    `Path taken by ${otherLearnersCount} ${otherLearnersCount === 1 ? 'user' : 'users'}`
+                  }
+                />
               )}
             </Stack>
           </Center>

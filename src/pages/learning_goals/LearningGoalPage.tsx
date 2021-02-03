@@ -6,10 +6,15 @@ import Router from 'next/router';
 import { useMemo, useState } from 'react';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { LearningGoalSelector } from '../../components/learning_goals/LearningGoalSelector';
+import {
+  StartLearningGoalButton,
+  StartLearningGoalButtonData,
+} from '../../components/learning_goals/StartLearningGoalButton';
 import { SubGoalsWrapper, SubGoalsWrapperData } from '../../components/learning_goals/SubGoalsWrapper';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { EditableTextarea } from '../../components/lib/inputs/EditableTextarea';
 import { EditableTextInput } from '../../components/lib/inputs/EditableTextInput';
+import { OtherLearnersViewer, OtherLearnersViewerUserData } from '../../components/lib/OtherLearnersViewer';
 import { generateLearningGoalData, LearningGoalData } from '../../graphql/learning_goals/learning_goals.fragments';
 import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
 import {
@@ -21,7 +26,6 @@ import { UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { NotFoundPage } from '../NotFoundPage';
 import { GetLearningGoalPageDataQuery, useGetLearningGoalPageDataQuery } from './LearningGoalPage.generated';
-import { StartLearningGoalButton, StartLearningGoalButtonData } from './StartLearningGoalButton';
 
 export const getLearningGoalPageData = gql`
   query getLearningGoalPageData($learningGoalKey: String!) {
@@ -30,6 +34,14 @@ export const getLearningGoalPageData = gql`
       createdBy {
         _id
       }
+      startedBy(options: {}) {
+        items {
+          user {
+            ...OtherLearnersViewerUserData
+          }
+        }
+        count
+      }
       ...SubGoalsWrapperData
       ...StartLearningGoalButtonData
     }
@@ -37,6 +49,7 @@ export const getLearningGoalPageData = gql`
   ${LearningGoalData}
   ${SubGoalsWrapperData}
   ${StartLearningGoalButtonData}
+  ${OtherLearnersViewerUserData}
 `;
 
 const learningGoalPlaceholderData: GetLearningGoalPageDataQuery['getLearningGoalByKey'] = {
@@ -52,6 +65,7 @@ export const LearningGoalPage: React.FC<{ learningGoalKey: string }> = ({ learni
     () => !!learningGoal.createdBy && !!currentUser && learningGoal.createdBy._id === currentUser._id,
     [learningGoal, currentUser]
   );
+  const currentUserStartedGoal = useMemo(() => !!learningGoal.started, [learningGoal]);
   const [editMode, setEditMode] = useState(!!currentUser && currentUser.role === UserRole.Admin);
   const [attachLearningGoalRequiresSubGoal] = useAttachLearningGoalRequiresSubGoalMutation();
   if (!loading && !data) return <NotFoundPage />;
@@ -108,6 +122,17 @@ export const LearningGoalPage: React.FC<{ learningGoalKey: string }> = ({ learni
           }
           isDisabled={!editMode}
         />
+        {learningGoal.startedBy && (
+          <Center>
+            <OtherLearnersViewer
+              title={() => `Learning now`}
+              users={learningGoal.startedBy.items.map(({ user }) => user)}
+              totalCount={learningGoal.startedBy.count}
+              currentUserIsLearner={currentUserStartedGoal}
+              minUsers={currentUserIsOwner ? 1 : 4}
+            />
+          </Center>
+        )}
 
         <SubGoalsWrapper
           learningGoal={learningGoal}
