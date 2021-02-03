@@ -179,6 +179,7 @@ export type Mutation = {
   deleteLearningGoal: DeleteLearningGoalMutationResult;
   attachLearningGoalRequiresSubGoal: AttachLearningGoalRequiresSubGoalResult;
   detachLearningGoalRequiresSubGoal: DetachLearningGoalRequiresSubGoalResult;
+  startLearningGoal: LearningGoalStartedResult;
   updateConceptBelongsToDomain: ConceptBelongsToDomain;
   addConceptBelongsToConcept: UpdateConceptBelongsToConceptResult;
   removeConceptBelongsToConcept: UpdateConceptBelongsToConceptResult;
@@ -468,6 +469,11 @@ export type MutationDetachLearningGoalRequiresSubGoalArgs = {
 };
 
 
+export type MutationStartLearningGoalArgs = {
+  learningGoalId: Scalars['String'];
+};
+
+
 export type MutationUpdateConceptBelongsToDomainArgs = {
   conceptId: Scalars['String'];
   domainId: Scalars['String'];
@@ -532,6 +538,7 @@ export type CurrentUser = {
   articles?: Maybe<ListArticlesResult>;
   createdLearningPaths?: Maybe<Array<LearningPath>>;
   startedLearningPaths?: Maybe<Array<LearningPathStartedItem>>;
+  startedLearningGoals?: Maybe<Array<LearningGoalStartedItem>>;
 };
 
 
@@ -547,6 +554,11 @@ export type CurrentUserCreatedLearningPathsArgs = {
 
 export type CurrentUserStartedLearningPathsArgs = {
   options: UserLearningPathsOptions;
+};
+
+
+export type CurrentUserStartedLearningGoalsArgs = {
+  options: UserLearningGoalsOptions;
 };
 
 export type User = {
@@ -763,6 +775,13 @@ export type LearningGoal = Topic & {
   domain?: Maybe<LearningGoalBelongsToDomain>;
   requiredInGoals?: Maybe<Array<RequiredInGoalItem>>;
   requiredSubGoals?: Maybe<Array<SubGoalItem>>;
+  started?: Maybe<LearningGoalStarted>;
+  startedBy?: Maybe<LearningGoalStartedByResults>;
+};
+
+
+export type LearningGoalStartedByArgs = {
+  options: LearningGoalStartedByOptions;
 };
 
 export type DomainAndLearningGoalResult = {
@@ -1019,6 +1038,12 @@ export type DetachLearningGoalRequiresSubGoalResult = {
   subGoal: SubGoal;
 };
 
+export type LearningGoalStartedResult = {
+  __typename?: 'LearningGoalStartedResult';
+  currentUser: CurrentUser;
+  learningGoal: LearningGoal;
+};
+
 export type ConceptBelongsToDomain = {
   __typename?: 'ConceptBelongsToDomain';
   index: Scalars['Float'];
@@ -1072,6 +1097,16 @@ export type LearningPathStartedItem = {
   learningPath: LearningPath;
   startedAt: Scalars['Date'];
   completedAt?: Maybe<Scalars['Date']>;
+};
+
+export type LearningGoalStartedItem = {
+  __typename?: 'LearningGoalStartedItem';
+  learningGoal: LearningGoal;
+  startedAt: Scalars['Date'];
+};
+
+export type UserLearningGoalsOptions = {
+  pagination?: Maybe<PaginationOptions>;
 };
 
 export enum ArticleContentType {
@@ -1294,6 +1329,21 @@ export type SubGoalItem = {
   strength: Scalars['Float'];
 };
 
+export type LearningGoalStarted = {
+  __typename?: 'LearningGoalStarted';
+  startedAt: Scalars['Date'];
+};
+
+export type LearningGoalStartedByResults = {
+  __typename?: 'LearningGoalStartedByResults';
+  items: Array<LearningGoalStartedByItem>;
+  count: Scalars['Int'];
+};
+
+export type LearningGoalStartedByOptions = {
+  pagination?: Maybe<PaginationOptions>;
+};
+
 export type DomainAndCoveredConcepts = {
   domainId: Scalars['String'];
   conceptsIds: Array<Scalars['String']>;
@@ -1399,6 +1449,12 @@ export type LearningPathStartedByItem = {
   user: User;
   startedAt: Scalars['Date'];
   completedAt?: Maybe<Scalars['Date']>;
+};
+
+export type LearningGoalStartedByItem = {
+  __typename?: 'LearningGoalStartedByItem';
+  startedAt: Scalars['Date'];
+  user: User;
 };
 
 export enum DomainConceptSortingEntities {

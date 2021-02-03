@@ -22,6 +22,7 @@ import {
   useGetLearningGoalDomainLearningGoalPageQuery,
 } from './DomainLearningGoalPage.generated';
 import { LearningGoalPageRightIcons } from './LearningGoalPage';
+import { StartLearningGoalButton, StartLearningGoalButtonData } from './StartLearningGoalButton';
 
 export const getLearningGoalDomainLearningGoalPage = gql`
   query getLearningGoalDomainLearningGoalPage($domainKey: String!, $contextualLearningGoalKey: String!) {
@@ -35,18 +36,17 @@ export const getLearningGoalDomainLearningGoalPage = gql`
         createdBy {
           _id
         }
-        createdBy {
-          _id
-        }
         requiredSubGoals {
           ...SubGoalCardData
         }
+        ...StartLearningGoalButtonData
       }
     }
   }
   ${DomainData}
   ${LearningGoalData}
   ${SubGoalCardData}
+  ${StartLearningGoalButtonData}
 `;
 
 const placeholderData: GetLearningGoalDomainLearningGoalPageQuery['getDomainLearningGoalByKey'] = {
@@ -86,7 +86,7 @@ export const DomainLearningGoalPage: React.FC<{ domainKey: string; contextualLea
       }
     >
       <Stack w="100%">
-        <Center>
+        <Stack direction="row" spacing={3} alignItems="center">
           <EditableTextInput
             value={learningGoal.name}
             centered
@@ -101,7 +101,8 @@ export const DomainLearningGoalPage: React.FC<{ domainKey: string; contextualLea
               })
             }
           />
-        </Center>
+          <StartLearningGoalButton learningGoal={learningGoal} />
+        </Stack>
         <EditableTextarea
           textAlign="center"
           isLoading={loading}

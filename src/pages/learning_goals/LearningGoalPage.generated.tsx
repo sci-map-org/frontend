@@ -2,6 +2,7 @@ import * as Types from '../../graphql/types';
 
 import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
 import { SubGoalsWrapperDataFragment } from '../../components/learning_goals/SubGoalsWrapper.generated';
+import { StartLearningGoalButtonDataFragment } from './StartLearningGoalButton.generated';
 import * as Operations from './LearningGoalPage';
 import * as Apollo from '@apollo/client';
 export type GetLearningGoalPageDataQueryVariables = Types.Exact<{
@@ -19,6 +20,7 @@ export type GetLearningGoalPageDataQuery = (
     )> }
     & LearningGoalDataFragment
     & SubGoalsWrapperDataFragment
+    & StartLearningGoalButtonDataFragment
   ) }
 );
 

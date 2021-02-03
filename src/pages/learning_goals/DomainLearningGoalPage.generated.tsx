@@ -3,6 +3,7 @@ import * as Types from '../../graphql/types';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
 import { SubGoalCardDataFragment } from '../../components/learning_goals/SubGoalCard.generated';
+import { StartLearningGoalButtonDataFragment } from './StartLearningGoalButton.generated';
 import * as Operations from './DomainLearningGoalPage';
 import * as Apollo from '@apollo/client';
 export type GetLearningGoalDomainLearningGoalPageQueryVariables = Types.Exact<{
@@ -28,6 +29,7 @@ export type GetLearningGoalDomainLearningGoalPageQuery = (
         & SubGoalCardDataFragment
       )>> }
       & LearningGoalDataFragment
+      & StartLearningGoalButtonDataFragment
     ) }
   ) }
 );

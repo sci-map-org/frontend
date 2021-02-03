@@ -21,6 +21,7 @@ import { UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { NotFoundPage } from '../NotFoundPage';
 import { GetLearningGoalPageDataQuery, useGetLearningGoalPageDataQuery } from './LearningGoalPage.generated';
+import { StartLearningGoalButton, StartLearningGoalButtonData } from './StartLearningGoalButton';
 
 export const getLearningGoalPageData = gql`
   query getLearningGoalPageData($learningGoalKey: String!) {
@@ -30,10 +31,12 @@ export const getLearningGoalPageData = gql`
         _id
       }
       ...SubGoalsWrapperData
+      ...StartLearningGoalButtonData
     }
   }
   ${LearningGoalData}
   ${SubGoalsWrapperData}
+  ${StartLearningGoalButtonData}
 `;
 
 const learningGoalPlaceholderData: GetLearningGoalPageDataQuery['getLearningGoalByKey'] = {
@@ -68,7 +71,7 @@ export const LearningGoalPage: React.FC<{ learningGoalKey: string }> = ({ learni
       }
     >
       <Stack w="100%">
-        <Center>
+        <Stack direction="row" spacing={3} alignItems="center">
           <EditableTextInput
             value={learningGoal.name}
             centered
@@ -83,7 +86,8 @@ export const LearningGoalPage: React.FC<{ learningGoalKey: string }> = ({ learni
               })
             }
           />
-        </Center>
+          <StartLearningGoalButton learningGoal={learningGoal} />
+        </Stack>
         <EditableTextarea
           textAlign="center"
           isLoading={loading}
