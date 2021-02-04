@@ -1,8 +1,9 @@
 import { Badge, Button } from '@chakra-ui/react';
 import gql from 'graphql-tag';
+import { useStartLearningGoalMutation } from '../../graphql/learning_goals/learning_goals.operations.generated';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
-import { StartLearningGoalButtonDataFragment, useStartLearningGoalMutation } from './StartLearningGoalButton.generated';
+import { StartLearningGoalButtonDataFragment } from './StartLearningGoalButton.generated';
 
 export const StartLearningGoalButtonData = gql`
   fragment StartLearningGoalButtonData on LearningGoal {
@@ -11,25 +12,6 @@ export const StartLearningGoalButtonData = gql`
       startedAt
     }
   }
-`;
-
-export const startLearningGoal = gql`
-  mutation startLearningGoal($learningGoalId: String!) {
-    startLearningGoal(learningGoalId: $learningGoalId) {
-      learningGoal {
-        ...StartLearningGoalButtonData
-      }
-      currentUser {
-        startedLearningGoals(options: {}) {
-          startedAt
-          learningGoal {
-            _id
-          }
-        }
-      }
-    }
-  }
-  ${StartLearningGoalButtonData}
 `;
 
 interface StartLearningGoalButtonProps {
