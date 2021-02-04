@@ -4,6 +4,7 @@ export const LearningGoalData = gql`
   fragment LearningGoalData on LearningGoal {
     _id
     name
+    type
     description
     key
   }
