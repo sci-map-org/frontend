@@ -80,3 +80,24 @@ export const detachLearningGoalRequiresSubGoal = gql`
   }
   ${SubGoalCardData}
 `;
+
+export const startLearningGoal = gql`
+  mutation startLearningGoal($learningGoalId: String!) {
+    startLearningGoal(learningGoalId: $learningGoalId) {
+      learningGoal {
+        _id
+        started {
+          startedAt
+        }
+      }
+      currentUser {
+        startedLearningGoals(options: {}) {
+          startedAt
+          learningGoal {
+            _id
+          }
+        }
+      }
+    }
+  }
+`;
