@@ -34,9 +34,10 @@ export const searchLearningGoals = gql`
 
 export const LearningGoalSelector: React.FC<{
   onSelect: (learningGoal: LearningGoalDataFragment) => void;
+  createLGDefaultPayload?: Partial<CreateLearningGoalPayload>;
   placeholder?: string;
   popoverTitle?: string;
-}> = ({ onSelect, placeholder, popoverTitle }) => {
+}> = ({ onSelect, placeholder, popoverTitle, createLGDefaultPayload: parentCreateLGDefaultPayload = {} }) => {
   const [searchResults, setSearchResults] = useState<LearningGoalDataFragment[]>([]);
 
   const [searchLearningGoalsLazyQuery, { data }] = useSearchLearningGoalsLazyQuery();
@@ -50,7 +51,9 @@ export const LearningGoalSelector: React.FC<{
     if (!!data?.searchLearningGoals.items) setSearchResults(data.searchLearningGoals.items);
   }, [data]);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [createLGDefaultPayload, setCreateLGDefaultPayload] = useState<Partial<CreateLearningGoalPayload>>({});
+  const [createLGDefaultPayload, setCreateLGDefaultPayload] = useState<Partial<CreateLearningGoalPayload>>(
+    parentCreateLGDefaultPayload
+  );
 
   return (
     <Popover returnFocusOnClose={false} isOpen={isOpen} onClose={onClose} placement="bottom" closeOnBlur={false} isLazy>

@@ -1,9 +1,9 @@
-import { Input, InputGroup, InputLeftAddon, Stack, Textarea } from '@chakra-ui/react';
+import { Button, ButtonGroup, Center, Input, InputGroup, InputLeftAddon, Stack, Textarea } from '@chakra-ui/react';
 import { useState } from 'react';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
 import { useAddLearningGoalToDomainMutation } from '../../graphql/learning_goals/learning_goals.operations.generated';
-import { AddLearningGoalToDomainPayload, LearningGoalBelongsToDomain } from '../../graphql/types';
+import { AddLearningGoalToDomainPayload, LearningGoalBelongsToDomain, LearningGoalType } from '../../graphql/types';
 import { generateUrlKey } from '../../services/url.service';
 import { getChakraRelativeSize } from '../../util/chakra.util';
 import { FormButtons } from '../lib/buttons/FormButtons';
@@ -30,8 +30,30 @@ export const AddLearningGoalToDomain: React.FC<AddLearningGoalToDomainProps> = (
   const [contextualName, setContextualName] = useState(defaultPayload?.contextualName || '');
   const [contextualKey, setContextualKey] = useState(defaultPayload?.contextualKey || '');
   const [description, setDescription] = useState(defaultPayload?.description || undefined);
+  const [type, setType] = useState(defaultPayload?.type || LearningGoalType.Roadmap);
   return (
     <Stack spacing={4} direction="column" alignItems="stretch">
+      <Center>
+        <Stack direction="row">
+          <ButtonGroup size="sm" isAttached variant="outline">
+            <Button
+              mr="-px"
+              isActive={type === LearningGoalType.Roadmap}
+              _focus={{}}
+              onClick={() => setType(LearningGoalType.Roadmap)}
+            >
+              Roadmap
+            </Button>
+            <Button
+              _focus={{}}
+              isActive={type === LearningGoalType.SubGoal}
+              onClick={() => setType(LearningGoalType.SubGoal)}
+            >
+              Concept Group
+            </Button>
+          </ButtonGroup>
+        </Stack>
+      </Center>
       <InputGroup size={size}>
         <InputLeftAddon px={2} children={`${domain.name} - `} />
         <Input
@@ -72,6 +94,7 @@ export const AddLearningGoalToDomain: React.FC<AddLearningGoalToDomainProps> = (
                 contextualKey,
                 description,
                 public: true,
+                type,
               },
             },
           });

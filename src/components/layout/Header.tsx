@@ -156,6 +156,11 @@ export const Header: React.FC = () => {
                   <Link>Profile</Link>
                 </MenuItem>
               </NextLink>
+              <NextLink href="/profile/goals" as={`/profile/goals`} passHref>
+                <MenuItem>
+                  <Link>My Goals</Link>
+                </MenuItem>
+              </NextLink>
               <RoleAccess accessRule="admin">
                 <NextLink href="/articles/new" as="/articles/new" passHref>
                   <MenuItem>

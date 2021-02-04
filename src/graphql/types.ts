@@ -767,10 +767,12 @@ export type LearningGoal = Topic & {
   __typename?: 'LearningGoal';
   _id: Scalars['String'];
   key: Scalars['String'];
+  type: LearningGoalType;
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
   topicType: TopicType;
   publishedAt?: Maybe<Scalars['Date']>;
+  progress?: Maybe<Scalars['Float']>;
   createdBy?: Maybe<User>;
   domain?: Maybe<LearningGoalBelongsToDomain>;
   requiredInGoals?: Maybe<Array<RequiredInGoalItem>>;
@@ -998,12 +1000,14 @@ export type LearningPathCompletedResult = {
 export type AddLearningGoalToDomainPayload = {
   contextualName: Scalars['String'];
   contextualKey?: Maybe<Scalars['String']>;
+  type: LearningGoalType;
   description?: Maybe<Scalars['String']>;
   public?: Maybe<Scalars['Boolean']>;
 };
 
 export type CreateLearningGoalPayload = {
   name: Scalars['String'];
+  type: LearningGoalType;
   key?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   public?: Maybe<Scalars['Boolean']>;
@@ -1012,6 +1016,7 @@ export type CreateLearningGoalPayload = {
 export type UpdateLearningGoalPayload = {
   name?: Maybe<Scalars['String']>;
   key?: Maybe<Scalars['String']>;
+  type?: Maybe<LearningGoalType>;
   description?: Maybe<Scalars['String']>;
   public?: Maybe<Scalars['Boolean']>;
 };
@@ -1316,6 +1321,11 @@ export type LearningPathStartedByResults = {
 export type LearningPathStartedByOptions = {
   pagination?: Maybe<PaginationOptions>;
 };
+
+export enum LearningGoalType {
+  Roadmap = 'Roadmap',
+  SubGoal = 'SubGoal'
+}
 
 export type RequiredInGoalItem = {
   __typename?: 'RequiredInGoalItem';

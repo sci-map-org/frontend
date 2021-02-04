@@ -11,15 +11,23 @@ import {
   Stack,
   Text,
   Textarea,
+  useDisclosure,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { ReactElement, useState } from 'react';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
 import {
   useAddLearningGoalToDomainMutation,
   useCreateLearningGoalMutation,
 } from '../../graphql/learning_goals/learning_goals.operations.generated';
-import { CreateLearningGoalPayload } from '../../graphql/types';
+import { CreateLearningGoalPayload, LearningGoalType } from '../../graphql/types';
 import { generateUrlKey } from '../../services/url.service';
 import { getChakraRelativeSize } from '../../util/chakra.util';
 import { DomainSelector } from '../domains/DomainSelector';
@@ -29,6 +37,7 @@ interface NewLearningGoalData {
   domain?: DomainDataFragment;
   name: string;
   key: string;
+  type: LearningGoalType;
   description?: string;
 }
 interface NewLearningGoalFormProps {
@@ -47,6 +56,7 @@ export const NewLearningGoalForm: React.FC<NewLearningGoalFormProps> = ({
   const [name, setName] = useState(defaultPayload?.name || '');
   const [key, setKey] = useState(defaultPayload?.key || '');
   const [description, setDescription] = useState(defaultPayload?.description || '');
+  const [type, setType] = useState(defaultPayload?.type || LearningGoalType.Roadmap);
   return (
     <Stack spacing={4} direction="column" alignItems="stretch">
       <Flex direction="column">
@@ -117,7 +127,7 @@ export const NewLearningGoalForm: React.FC<NewLearningGoalFormProps> = ({
         onCancel={() => onCancel()}
         size={getChakraRelativeSize(size, 1)}
         onPrimaryClick={() =>
-          onCreate({ name, key, description: description || undefined, domain: domain || undefined })
+          onCreate({ name, key, description: description || undefined, domain: domain || undefined, type })
         }
       />
     </Stack>
@@ -135,7 +145,7 @@ export const NewLearningGoal: React.FC<NewLearningGoalProps> = ({ onCreated, onC
     <NewLearningGoalForm
       size={size}
       defaultPayload={defaultPayload}
-      onCreate={async ({ name, key, description, domain }) => {
+      onCreate={async ({ name, key, description, domain, type }) => {
         let createdLearningGoal: LearningGoalDataFragment | undefined = undefined;
         if (domain) {
           const { data } = await addLearningGoalToDomain({
@@ -145,13 +155,15 @@ export const NewLearningGoal: React.FC<NewLearningGoalProps> = ({ onCreated, onC
                 contextualName: name,
                 contextualKey: key,
                 description: description,
+                type,
+                public: true,
               },
             },
           });
           if (data) createdLearningGoal = data.addLearningGoalToDomain.learningGoal;
         } else {
           const { data } = await createLearningGoal({
-            variables: { payload: { name, key, description, public: true } },
+            variables: { payload: { name, key, description, public: true, type } },
           });
           if (data) createdLearningGoal = data.createLearningGoal;
         }
@@ -159,5 +171,40 @@ export const NewLearningGoal: React.FC<NewLearningGoalProps> = ({ onCreated, onC
       }}
       onCancel={onCancel}
     />
+  );
+};
+
+export const NewLearningGoalModal: React.FC<
+  { renderButton: (onClick: () => void) => ReactElement; onCancel?: () => void } & Omit<
+    NewLearningGoalProps,
+    'onCancel'
+  >
+> = ({ defaultPayload, onCreated, renderButton, onCancel }) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  return (
+    <>
+      {renderButton(onOpen)}
+      <Modal onClose={onClose} size="xl" isOpen={isOpen}>
+        <ModalOverlay>
+          <ModalContent>
+            <ModalHeader>Create new Learning Goal</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody pb={5}>
+              <NewLearningGoal
+                defaultPayload={defaultPayload}
+                onCreated={(learningGoalCreated) => {
+                  onClose();
+                  onCreated && onCreated(learningGoalCreated);
+                }}
+                onCancel={() => {
+                  onClose();
+                  onCancel && onCancel();
+                }}
+              />
+            </ModalBody>
+          </ModalContent>
+        </ModalOverlay>
+      </Modal>
+    </>
   );
 };
