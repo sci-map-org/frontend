@@ -1,28 +1,20 @@
 import { EditIcon } from '@chakra-ui/icons';
-import { Center, IconButton, Stack, Tooltip } from '@chakra-ui/react';
+import { IconButton, Stack, Tooltip } from '@chakra-ui/react';
 import { AiOutlineEye } from '@react-icons/all-files/ai/AiOutlineEye';
 import gql from 'graphql-tag';
 import Router from 'next/router';
 import { useMemo, useState } from 'react';
 import { PageLayout } from '../../components/layout/PageLayout';
-import { LearningGoalSelector } from '../../components/learning_goals/LearningGoalSelector';
 import {
-  StartLearningGoalButton,
-  StartLearningGoalButtonData,
-} from '../../components/learning_goals/StartLearningGoalButton';
-import { SubGoalsWrapper, SubGoalsWrapperData } from '../../components/learning_goals/SubGoalsWrapper';
+  ConceptGroupLearningGoal,
+  ConceptGroupLearningGoalData,
+} from '../../components/learning_goals/ConceptGroupLearningGoal';
+import { RoadmapLearningGoal, RoadmapLearningGoalData } from '../../components/learning_goals/RoadmapLearningGoal';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
-import { EditableTextarea } from '../../components/lib/inputs/EditableTextarea';
-import { EditableTextInput } from '../../components/lib/inputs/EditableTextInput';
-import { OtherLearnersViewer, OtherLearnersViewerUserData } from '../../components/lib/OtherLearnersViewer';
-import { generateLearningGoalData, LearningGoalData } from '../../graphql/learning_goals/learning_goals.fragments';
+import { generateLearningGoalData } from '../../graphql/learning_goals/learning_goals.fragments';
 import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
-import {
-  useAttachLearningGoalRequiresSubGoalMutation,
-  useDeleteLearningGoalMutation,
-  useUpdateLearningGoalMutation,
-} from '../../graphql/learning_goals/learning_goals.operations.generated';
-import { UserRole } from '../../graphql/types';
+import { useDeleteLearningGoalMutation } from '../../graphql/learning_goals/learning_goals.operations.generated';
+import { LearningGoalType, UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { NotFoundPage } from '../NotFoundPage';
 import { GetLearningGoalPageDataQuery, useGetLearningGoalPageDataQuery } from './LearningGoalPage.generated';
@@ -30,26 +22,12 @@ import { GetLearningGoalPageDataQuery, useGetLearningGoalPageDataQuery } from '.
 export const getLearningGoalPageData = gql`
   query getLearningGoalPageData($learningGoalKey: String!) {
     getLearningGoalByKey(key: $learningGoalKey) {
-      ...LearningGoalData
-      createdBy {
-        _id
-      }
-      startedBy(options: {}) {
-        items {
-          user {
-            ...OtherLearnersViewerUserData
-          }
-        }
-        count
-      }
-      ...SubGoalsWrapperData
-      ...StartLearningGoalButtonData
+      ...RoadmapLearningGoalData
+      ...ConceptGroupLearningGoalData
     }
   }
-  ${LearningGoalData}
-  ${SubGoalsWrapperData}
-  ${StartLearningGoalButtonData}
-  ${OtherLearnersViewerUserData}
+  ${RoadmapLearningGoalData}
+  ${ConceptGroupLearningGoalData}
 `;
 
 const learningGoalPlaceholderData: GetLearningGoalPageDataQuery['getLearningGoalByKey'] = {
@@ -59,15 +37,12 @@ const learningGoalPlaceholderData: GetLearningGoalPageDataQuery['getLearningGoal
 export const LearningGoalPage: React.FC<{ learningGoalKey: string }> = ({ learningGoalKey }) => {
   const { data, loading } = useGetLearningGoalPageDataQuery({ variables: { learningGoalKey } });
   const learningGoal = data?.getLearningGoalByKey || learningGoalPlaceholderData;
-  const [updateLearningGoal] = useUpdateLearningGoalMutation();
   const { currentUser } = useCurrentUser();
   const currentUserIsOwner = useMemo(
     () => !!learningGoal.createdBy && !!currentUser && learningGoal.createdBy._id === currentUser._id,
     [learningGoal, currentUser]
   );
-  const currentUserStartedGoal = useMemo(() => !!learningGoal.started, [learningGoal]);
   const [editMode, setEditMode] = useState(!!currentUser && currentUser.role === UserRole.Admin);
-  const [attachLearningGoalRequiresSubGoal] = useAttachLearningGoalRequiresSubGoalMutation();
   if (!loading && !data) return <NotFoundPage />;
   return (
     <PageLayout
@@ -84,7 +59,13 @@ export const LearningGoalPage: React.FC<{ learningGoalKey: string }> = ({ learni
         />
       }
     >
-      <Stack w="100%">
+      {learningGoal.type === LearningGoalType.Roadmap && (
+        <RoadmapLearningGoal learningGoal={learningGoal} isLoading={loading} editMode={editMode} />
+      )}
+      {learningGoal.type === LearningGoalType.SubGoal && (
+        <ConceptGroupLearningGoal learningGoal={learningGoal} isLoading={loading} editMode={editMode} />
+      )}
+      {/* <Stack w="100%">
         <Stack direction="row" spacing={3} alignItems="center">
           <EditableTextInput
             value={learningGoal.name}
@@ -142,6 +123,7 @@ export const LearningGoalPage: React.FC<{ learningGoalKey: string }> = ({ learni
               <Center py={2}>
                 <LearningGoalSelector
                   placeholder="Add a SubGoal..."
+                  createLGDefaultPayload={{ type: LearningGoalType.SubGoal }}
                   onSelect={(selected) =>
                     attachLearningGoalRequiresSubGoal({
                       variables: {
@@ -156,7 +138,7 @@ export const LearningGoalPage: React.FC<{ learningGoalKey: string }> = ({ learni
             )
           }
         />
-      </Stack>
+      </Stack> */}
     </PageLayout>
   );
 };

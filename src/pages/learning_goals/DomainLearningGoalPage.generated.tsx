@@ -1,10 +1,8 @@
 import * as Types from '../../graphql/types';
 
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
-import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
-import { OtherLearnersViewerUserDataFragment } from '../../components/lib/OtherLearnersViewer.generated';
-import { SubGoalCardDataFragment } from '../../components/learning_goals/SubGoalCard.generated';
-import { StartLearningGoalButtonDataFragment } from '../../components/learning_goals/StartLearningGoalButton.generated';
+import { RoadmapLearningGoalDataFragment } from '../../components/learning_goals/RoadmapLearningGoal.generated';
+import { ConceptGroupLearningGoalDataFragment } from '../../components/learning_goals/ConceptGroupLearningGoal.generated';
 import * as Operations from './DomainLearningGoalPage';
 import * as Apollo from '@apollo/client';
 export type GetLearningGoalDomainLearningGoalPageQueryVariables = Types.Exact<{
@@ -22,25 +20,8 @@ export type GetLearningGoalDomainLearningGoalPageQuery = (
       & DomainDataFragment
     ), learningGoal: (
       { __typename?: 'LearningGoal' }
-      & { createdBy?: Types.Maybe<(
-        { __typename?: 'User' }
-        & Pick<Types.User, '_id'>
-      )>, startedBy?: Types.Maybe<(
-        { __typename?: 'LearningGoalStartedByResults' }
-        & Pick<Types.LearningGoalStartedByResults, 'count'>
-        & { items: Array<(
-          { __typename?: 'LearningGoalStartedByItem' }
-          & { user: (
-            { __typename?: 'User' }
-            & OtherLearnersViewerUserDataFragment
-          ) }
-        )> }
-      )>, requiredSubGoals?: Types.Maybe<Array<(
-        { __typename?: 'SubGoalItem' }
-        & SubGoalCardDataFragment
-      )>> }
-      & LearningGoalDataFragment
-      & StartLearningGoalButtonDataFragment
+      & RoadmapLearningGoalDataFragment
+      & ConceptGroupLearningGoalDataFragment
     ) }
   ) }
 );

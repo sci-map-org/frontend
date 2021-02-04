@@ -174,7 +174,12 @@ const LearningGoalSubGoalCard: React.FC<LearningGoalSubGoalCardProps> = ({ learn
 interface ConceptSubGoalCardProps extends SharedSubGoalCardProps {
   concept: ConceptSubGoalCardDataFragment;
 }
+
+/**
+ * Deprecated as roadmaps don't have concept children anymore
+ */
 export const ConceptSubGoalCard: React.FC<ConceptSubGoalCardProps> = ({ concept, editMode, onRemove }) => {
+  console.error('Should never be used now');
   const domain = concept.domain;
   if (!domain) return null;
   return (

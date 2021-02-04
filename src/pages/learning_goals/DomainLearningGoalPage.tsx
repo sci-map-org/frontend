@@ -1,19 +1,14 @@
-import { Center, Stack } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useMemo, useState } from 'react';
-import { SubTopicSelector } from '../../components/domains/SubTopicSelector';
 import { PageLayout } from '../../components/layout/PageLayout';
-import { SubGoalCardData } from '../../components/learning_goals/SubGoalCard';
-import { SubGoalsWrapper } from '../../components/learning_goals/SubGoalsWrapper';
-import { EditableTextarea } from '../../components/lib/inputs/EditableTextarea';
-import { EditableTextInput } from '../../components/lib/inputs/EditableTextInput';
-import { DomainData, generateDomainData } from '../../graphql/domains/domains.fragments';
-import { generateLearningGoalData, LearningGoalData } from '../../graphql/learning_goals/learning_goals.fragments';
 import {
-  useAttachLearningGoalRequiresSubGoalMutation,
-  useUpdateLearningGoalMutation,
-} from '../../graphql/learning_goals/learning_goals.operations.generated';
-import { TopicType, UserRole } from '../../graphql/types';
+  ConceptGroupLearningGoal,
+  ConceptGroupLearningGoalData,
+} from '../../components/learning_goals/ConceptGroupLearningGoal';
+import { RoadmapLearningGoal, RoadmapLearningGoalData } from '../../components/learning_goals/RoadmapLearningGoal';
+import { DomainData, generateDomainData } from '../../graphql/domains/domains.fragments';
+import { generateLearningGoalData } from '../../graphql/learning_goals/learning_goals.fragments';
+import { LearningGoalType, UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { NotFoundPage } from '../NotFoundPage';
 import { DomainPageInfo } from '../RoutesPageInfos';
@@ -22,11 +17,6 @@ import {
   useGetLearningGoalDomainLearningGoalPageQuery,
 } from './DomainLearningGoalPage.generated';
 import { LearningGoalPageRightIcons } from './LearningGoalPage';
-import {
-  StartLearningGoalButton,
-  StartLearningGoalButtonData,
-} from '../../components/learning_goals/StartLearningGoalButton';
-import { OtherLearnersViewer, OtherLearnersViewerUserData } from '../../components/lib/OtherLearnersViewer';
 
 export const getLearningGoalDomainLearningGoalPage = gql`
   query getLearningGoalDomainLearningGoalPage($domainKey: String!, $contextualLearningGoalKey: String!) {
@@ -36,30 +26,14 @@ export const getLearningGoalDomainLearningGoalPage = gql`
       }
 
       learningGoal {
-        ...LearningGoalData
-        createdBy {
-          _id
-        }
-        startedBy(options: {}) {
-          items {
-            user {
-              ...OtherLearnersViewerUserData
-            }
-          }
-          count
-        }
-        requiredSubGoals {
-          ...SubGoalCardData
-        }
-        ...StartLearningGoalButtonData
+        ...RoadmapLearningGoalData
+        ...ConceptGroupLearningGoalData
       }
     }
   }
   ${DomainData}
-  ${LearningGoalData}
-  ${SubGoalCardData}
-  ${StartLearningGoalButtonData}
-  ${OtherLearnersViewerUserData}
+  ${RoadmapLearningGoalData}
+  ${ConceptGroupLearningGoalData}
 `;
 
 const placeholderData: GetLearningGoalDomainLearningGoalPageQuery['getDomainLearningGoalByKey'] = {
@@ -76,15 +50,14 @@ export const DomainLearningGoalPage: React.FC<{ domainKey: string; contextualLea
   });
   const learningGoal = data?.getDomainLearningGoalByKey.learningGoal || placeholderData.learningGoal;
   const domain = data?.getDomainLearningGoalByKey.domain || placeholderData.domain;
-  const [updateLearningGoal] = useUpdateLearningGoalMutation();
   const { currentUser } = useCurrentUser();
   const currentUserIsOwner = useMemo(
     () => !!learningGoal.createdBy && !!currentUser && learningGoal.createdBy._id === currentUser._id,
     [learningGoal, currentUser]
   );
-  const currentUserStartedGoal = useMemo(() => !!learningGoal.started, [learningGoal]);
+
   const [editMode, setEditMode] = useState(!!currentUser && currentUser.role === UserRole.Admin);
-  const [attachLearningGoalRequiresSubGoal] = useAttachLearningGoalRequiresSubGoalMutation();
+
   if (!loading && !data) return <NotFoundPage />;
   return (
     <PageLayout
@@ -99,7 +72,13 @@ export const DomainLearningGoalPage: React.FC<{ domainKey: string; contextualLea
         />
       }
     >
-      <Stack w="100%">
+      {learningGoal.type === LearningGoalType.Roadmap && (
+        <RoadmapLearningGoal learningGoal={learningGoal} isLoading={loading} editMode={editMode} />
+      )}
+      {learningGoal.type === LearningGoalType.SubGoal && (
+        <ConceptGroupLearningGoal learningGoal={learningGoal} isLoading={loading} editMode={editMode} />
+      )}
+      {/* <Stack w="100%">
         <Stack direction="row" spacing={3} alignItems="center">
           <EditableTextInput
             value={learningGoal.name}
@@ -148,7 +127,7 @@ export const DomainLearningGoalPage: React.FC<{ domainKey: string; contextualLea
             />
           </Center>
         )}
-        <SubGoalsWrapper
+        <RoadmapSubGoalsWrapper
           learningGoal={learningGoal}
           editMode={editMode}
           renderLastItem={
@@ -168,7 +147,7 @@ export const DomainLearningGoalPage: React.FC<{ domainKey: string; contextualLea
             )
           }
         />
-      </Stack>
+      </Stack> */}
     </PageLayout>
   );
 };
