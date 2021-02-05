@@ -34,25 +34,23 @@ export const AddLearningGoalToDomain: React.FC<AddLearningGoalToDomainProps> = (
   return (
     <Stack spacing={4} direction="column" alignItems="stretch">
       <Center>
-        <Stack direction="row">
-          <ButtonGroup size="sm" isAttached variant="outline">
-            <Button
-              mr="-px"
-              isActive={type === LearningGoalType.Roadmap}
-              _focus={{}}
-              onClick={() => setType(LearningGoalType.Roadmap)}
-            >
-              Roadmap
-            </Button>
-            <Button
-              _focus={{}}
-              isActive={type === LearningGoalType.SubGoal}
-              onClick={() => setType(LearningGoalType.SubGoal)}
-            >
-              Concept Group
-            </Button>
-          </ButtonGroup>
-        </Stack>
+        <ButtonGroup size="sm" isAttached variant="outline">
+          <Button
+            mr="-px"
+            isActive={type === LearningGoalType.Roadmap}
+            _focus={{}}
+            onClick={() => setType(LearningGoalType.Roadmap)}
+          >
+            Roadmap
+          </Button>
+          <Button
+            _focus={{}}
+            isActive={type === LearningGoalType.SubGoal}
+            onClick={() => setType(LearningGoalType.SubGoal)}
+          >
+            Concept Group
+          </Button>
+        </ButtonGroup>
       </Center>
       <InputGroup size={size}>
         <InputLeftAddon px={2} children={`${domain.name} - `} />

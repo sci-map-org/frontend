@@ -19,6 +19,14 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Center,
+  ButtonGroup,
+  Button,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+  CloseButton,
 } from '@chakra-ui/react';
 import { ReactElement, useState } from 'react';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
@@ -59,24 +67,52 @@ export const NewLearningGoalForm: React.FC<NewLearningGoalFormProps> = ({
   const [type, setType] = useState(defaultPayload?.type || LearningGoalType.Roadmap);
   return (
     <Stack spacing={4} direction="column" alignItems="stretch">
-      <Flex direction="column">
-        <Text fontWeight={600}>
-          In:{' '}
-          <Text as="span" color="gray.600">
-            {domain && domain.name}
+      <Stack>
+        <Flex direction="column">
+          <Text fontWeight={600}>
+            In:{' '}
+            <Text as="span" color="gray.600">
+              {domain && domain.name}
+            </Text>
+            {domain && (
+              <IconButton
+                size="xs"
+                variant="ghost"
+                aria-label="remove selected domain"
+                onClick={() => setDomain(null)}
+                icon={<CloseIcon />}
+              />
+            )}
           </Text>
-          {domain && (
-            <IconButton
-              size="xs"
-              variant="ghost"
-              aria-label="remove selected domain"
-              onClick={() => setDomain(null)}
-              icon={<CloseIcon />}
-            />
-          )}
-        </Text>
-        <DomainSelector onSelect={(selectedDomain) => setDomain(selectedDomain)} />
-      </Flex>
+          <DomainSelector onSelect={(selectedDomain) => setDomain(selectedDomain)} />
+        </Flex>
+        {type === LearningGoalType.SubGoal && !domain && (
+          <Alert status="error">
+            <AlertIcon />
+            <AlertTitle mr={2}>No domain selected</AlertTitle>
+            <AlertDescription>You must select a domain to create a Concept Group</AlertDescription>
+          </Alert>
+        )}
+      </Stack>
+      <Center>
+        <ButtonGroup size="sm" isAttached variant="outline">
+          <Button
+            mr="-px"
+            isActive={type === LearningGoalType.Roadmap}
+            _focus={{}}
+            onClick={() => setType(LearningGoalType.Roadmap)}
+          >
+            Roadmap
+          </Button>
+          <Button
+            _focus={{}}
+            isActive={type === LearningGoalType.SubGoal}
+            onClick={() => setType(LearningGoalType.SubGoal)}
+          >
+            Concept Group
+          </Button>
+        </ButtonGroup>
+      </Center>
       <FormControl id="name">
         <FormLabel>Name</FormLabel>
         <InputGroup size={size}>
