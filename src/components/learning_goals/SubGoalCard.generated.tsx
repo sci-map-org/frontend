@@ -1,5 +1,6 @@
 import * as Types from '../../graphql/types';
 
+import { LearningGoalCircularProgressDataFragment } from './LearningGoalCircularProgress.generated';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { LearningGoalBadgeDataFragment } from './LearningGoalBadge.generated';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
@@ -37,6 +38,7 @@ export type LearningGoalSubGoalCardDataFragment = (
       & ConceptDataFragment
     ) }
   )>> }
+  & LearningGoalCircularProgressDataFragment
 );
 
 export type SubGoalCardDataFragment = (

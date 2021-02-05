@@ -9,6 +9,7 @@ import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithCon
 import { InternalLink } from '../navigation/InternalLink';
 import { ResourceDescription } from '../resources/elements/ResourceDescription';
 import { LearningGoalBadge, LearningGoalBadgeData } from './LearningGoalBadge';
+import { LearningGoalCircularProgress, LearningGoalCircularProgressData } from './LearningGoalCircularProgress';
 import {
   ConceptSubGoalCardDataFragment,
   LearningGoalSubGoalCardDataFragment,
@@ -34,6 +35,7 @@ export const LearningGoalSubGoalCardData = gql`
     name
     key
     description
+    ...LearningGoalCircularProgressData
     domain {
       contextualName
       contextualKey
@@ -59,6 +61,7 @@ export const LearningGoalSubGoalCardData = gql`
   ${ConceptData}
   ${DomainData}
   ${LearningGoalBadgeData}
+  ${LearningGoalCircularProgressData}
 `;
 
 export const SubGoalCardData = gql`
@@ -108,7 +111,7 @@ const LearningGoalSubGoalCard: React.FC<LearningGoalSubGoalCardProps> = ({ learn
       justifyContent="space-between"
       h="100%"
       w="100%"
-      bgColor={mouseHover ? 'gray.300' : 'gray.100'}
+      bgColor={learningGoal.progress === 100 ? 'green.100' : mouseHover ? 'gray.300' : 'gray.100'}
       pl={3}
       pr={1}
       onMouseOver={(event) => {
@@ -160,6 +163,7 @@ const LearningGoalSubGoalCard: React.FC<LearningGoalSubGoalCardProps> = ({ learn
         <Flex pt={1}>
           {learningGoal.description && <ResourceDescription description={learningGoal.description} noOfLines={2} />}
         </Flex>
+        <LearningGoalCircularProgress learningGoal={learningGoal} />
       </Flex>
       {mouseHover && learningGoal.requiredSubGoals && !!learningGoal.requiredSubGoals.length && (
         <Wrap pt={2} pb={3} justifySelf="end">
