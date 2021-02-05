@@ -1,30 +1,31 @@
 import { Link, Button, LinkProps, ButtonProps } from '@chakra-ui/react';
 import NextLink from 'next/link';
+import { forwardRef } from 'react';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { PageInfo } from '../../pages/PageInfo';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 
 export type InternalLinkProps = { asHref: string; routePath: string; isDisabled?: boolean } & LinkProps;
 
-export const InternalLink: React.FC<InternalLinkProps> = ({
-  asHref,
-  routePath,
-  isDisabled,
-  children,
-  ...linkProps
-}) => {
-  return (
-    <NextLink href={routePath} as={asHref} passHref>
-      <Link {...linkProps}>{children}</Link>
-    </NextLink>
-  );
-};
+export const InternalLink: React.FC<InternalLinkProps> = forwardRef<HTMLAnchorElement, InternalLinkProps>(
+  ({ asHref, routePath, isDisabled, children, ...linkProps }, ref) => {
+    return (
+      <NextLink href={routePath} as={asHref} passHref>
+        <Link ref={ref} {...linkProps}>
+          {children}
+        </Link>
+      </NextLink>
+    );
+  }
+);
 
 export const PageLink: React.FC<{ pageInfo: PageInfo; isDisabled?: boolean } & LinkProps> = ({
   pageInfo,
   ...props
 }) => {
-  return <InternalLink routePath={pageInfo.routePath} asHref={pageInfo.path} {...props} />;
+  return (
+    <InternalLink routePath={pageInfo.routePath} asHref={pageInfo.path} {...pageInfo.breadcrumbLinkProps} {...props} />
+  );
 };
 
 export const InternalButtonLink: React.FC<

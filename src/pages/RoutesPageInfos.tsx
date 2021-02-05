@@ -1,5 +1,6 @@
 // Exist mostly because having pageinfos in Pages creates circular dependencies
 
+import { domainLinkStyleProps } from '../components/domains/DomainLink';
 import { ConceptDataFragment } from '../graphql/concepts/concepts.fragments.generated';
 import { DomainDataFragment, DomainLinkDataFragment } from '../graphql/domains/domains.fragments.generated';
 import { LearningPathDataFragment } from '../graphql/learning_paths/learning_paths.fragments.generated';
@@ -14,6 +15,7 @@ export const DomainPageInfo = (domain: DomainLinkDataFragment): PageInfo => ({
   name: domain.name,
   path: DomainPagePath(domain.key),
   routePath: DomainPagePath('[key]'),
+  breadcrumbLinkProps: domainLinkStyleProps,
 });
 
 export const EditDomainPagePath = (domainKey: string) => `/domains/${domainKey}/edit`;

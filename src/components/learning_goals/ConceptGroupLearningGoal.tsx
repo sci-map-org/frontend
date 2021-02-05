@@ -12,7 +12,7 @@ import {
 } from '../../graphql/learning_goals/learning_goals.operations.generated';
 import { TopicType } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
-import { ConceptBadge } from '../concepts/ConceptBadge';
+import { ConceptBadge, ConceptBadgeData } from '../concepts/ConceptBadge';
 import { SubTopicSelector } from '../domains/SubTopicSelector';
 import { EditableTextarea } from '../lib/inputs/EditableTextarea';
 import { EditableTextInput } from '../lib/inputs/EditableTextInput';
@@ -39,10 +39,7 @@ export const ConceptGroupLearningGoalData = gql`
     requiredSubGoals {
       subGoal {
         ... on Concept {
-          ...ConceptData
-          domain {
-            key
-          }
+          ...ConceptBadgeData
         }
         ... on LearningGoal {
           ...LearningGoalBadgeData
@@ -54,7 +51,7 @@ export const ConceptGroupLearningGoalData = gql`
   ${LearningGoalData}
   ${StartLearningGoalButtonData}
   ${OtherLearnersViewerUserData}
-  ${ConceptData}
+  ${ConceptBadgeData}
   ${LearningGoalBadgeData}
   ${DomainData}
 `;
@@ -133,16 +130,24 @@ export const ConceptGroupLearningGoal: React.FC<ConceptGroupLearningGoalProps> =
           />
         </Center>
       )} */}
-      <Stack bgColor="gray.100" pb={3}>
+      <Stack bgColor="gray.100" pb={5}>
         <Center fontSize="lg" fontWeight={700} color="gray.700">
           <Text my={2}>Topics Covered</Text>
         </Center>
         <Stack spacing={0}>
           <Wrap justify="center" align="center" px={4}>
             {(learningGoal.requiredSubGoals || []).map(({ subGoal }) => (
-              <WrapItem>
+              <WrapItem key={subGoal._id}>
                 {subGoal.__typename === 'Concept' && subGoal.domain && (
-                  <ConceptBadge concept={subGoal} domainKey={subGoal.domain.key} />
+                  <ConceptBadge
+                    concept={subGoal}
+                    removable={editMode}
+                    onRemove={() =>
+                      detachLearningGoalRequiresSubGoal({
+                        variables: { learningGoalId: learningGoal._id, subGoalId: subGoal._id },
+                      })
+                    }
+                  />
                 )}
                 {subGoal.__typename === 'LearningGoal' && subGoal.domain && (
                   <LearningGoalBadge

@@ -1,6 +1,7 @@
 import { CloseButton, FlexProps, Stack, Text, Tooltip } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import Router from 'next/router';
+import { InternalLink } from '../navigation/InternalLink';
 import { LearningGoalBadgeDataFragment } from './LearningGoalBadge.generated';
 
 const roleStyleMapping: {
@@ -46,6 +47,7 @@ interface LearningGoalBadgeProps {
   removable?: boolean;
   role?: 'prerequisite' | 'outcome';
   clickable?: boolean;
+  size?: 'md' | 'sm';
 }
 export const LearningGoalBadge: React.FC<LearningGoalBadgeProps> = ({
   onRemove,
@@ -53,46 +55,49 @@ export const LearningGoalBadge: React.FC<LearningGoalBadgeProps> = ({
   removable,
   role = 'outcome',
   clickable = true,
+  size = 'md',
 }) => {
   const domainRelationship = learningGoal.domain;
   return (
     <Tooltip label={learningGoal.name} aria-label={learningGoal.name} openDelay={500}>
-      <Stack
-        direction="row"
-        spacing={1}
+      <InternalLink
         borderRadius={10}
         px="6px"
         backgroundColor={roleStyleMapping[role].backgroundColor}
         borderWidth="1px"
+        fontSize={size}
         borderColor={roleStyleMapping[role].borderColor}
+        isDisabled={!clickable}
+        routePath={domainRelationship ? '/domains/[key]/goals/[learningGoalKey]' : '/goals/[learningGoalKey]'}
+        asHref={
+          domainRelationship
+            ? `/domains/${domainRelationship.domain.key}/goals/${domainRelationship.contextualKey}`
+            : `/goals/${learningGoal.key}`
+        }
         {...(clickable && {
           _hover: {
             backgroundColor: roleStyleMapping[role].hoverBackgroundColor,
             cursor: 'pointer',
           },
-          onClick: () =>
-            Router.push(
-              domainRelationship ? '/domains/[key]/goals/[learningGoalKey]' : '/goals/[learningGoalKey]',
-              domainRelationship
-                ? `/domains/${domainRelationship.domain.key}/goals/${domainRelationship.contextualKey}`
-                : `/goals/${learningGoal.key}`
-            ),
         })}
       >
-        {removable && (
-          <CloseButton
-            size="sm"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              onRemove && onRemove();
-            }}
-          />
-        )}
-        <Text textAlign="center" color={roleStyleMapping[role].fontColor} noOfLines={1}>
-          {learningGoal.name}
-        </Text>
-      </Stack>
+        <Stack direction="row" spacing={1}>
+          {removable && (
+            <CloseButton
+              size={size}
+              boxSize={{ sm: '20px', md: '24px' }[size]}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onRemove && onRemove();
+              }}
+            />
+          )}
+          <Text textAlign="center" color={roleStyleMapping[role].fontColor} noOfLines={1}>
+            {learningGoal.name}
+          </Text>
+        </Stack>
+      </InternalLink>
     </Tooltip>
   );
 };

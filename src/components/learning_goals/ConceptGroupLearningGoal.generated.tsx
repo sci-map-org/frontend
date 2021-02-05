@@ -2,7 +2,7 @@ import * as Types from '../../graphql/types';
 
 import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
 import { OtherLearnersViewerUserDataFragment } from '../lib/OtherLearnersViewer.generated';
-import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
+import { ConceptBadgeDataFragment } from '../concepts/ConceptBadge.generated';
 import { LearningGoalBadgeDataFragment } from './LearningGoalBadge.generated';
 import { StartLearningGoalButtonDataFragment } from './StartLearningGoalButton.generated';
 export type ConceptGroupLearningGoalDataFragment = (
@@ -28,11 +28,7 @@ export type ConceptGroupLearningGoalDataFragment = (
       & LearningGoalBadgeDataFragment
     ) | (
       { __typename?: 'Concept' }
-      & { domain?: Types.Maybe<(
-        { __typename?: 'Domain' }
-        & Pick<Types.Domain, 'key'>
-      )> }
-      & ConceptDataFragment
+      & ConceptBadgeDataFragment
     ) }
   )>> }
   & LearningGoalDataFragment
