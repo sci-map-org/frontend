@@ -4,6 +4,7 @@ import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_
 import { OtherLearnersViewerUserDataFragment } from '../lib/OtherLearnersViewer.generated';
 import { RoadmapSubGoalsWrapperDataFragment } from './RoadmapSubGoalsWrapper.generated';
 import { StartLearningGoalButtonDataFragment } from './StartLearningGoalButton.generated';
+import { LearningGoalLinearProgressDataFragment } from './LearningGoalLinearProgress.generated';
 export type RoadmapLearningGoalDataFragment = (
   { __typename?: 'LearningGoal' }
   & Pick<Types.LearningGoal, '_id'>
@@ -24,4 +25,5 @@ export type RoadmapLearningGoalDataFragment = (
   & LearningGoalDataFragment
   & RoadmapSubGoalsWrapperDataFragment
   & StartLearningGoalButtonDataFragment
+  & LearningGoalLinearProgressDataFragment
 );

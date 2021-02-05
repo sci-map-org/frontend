@@ -1,4 +1,4 @@
-import { Center, Stack } from '@chakra-ui/react';
+import { Box, Center, Stack } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useMemo } from 'react';
 import { LearningGoalData } from '../../graphql/learning_goals/learning_goals.fragments';
@@ -11,6 +11,7 @@ import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { EditableTextarea } from '../lib/inputs/EditableTextarea';
 import { EditableTextInput } from '../lib/inputs/EditableTextInput';
 import { OtherLearnersViewer, OtherLearnersViewerUserData } from '../lib/OtherLearnersViewer';
+import { LearningGoalLinearProgress, LearningGoalLinearProgressData } from './LearningGoalLinearProgress';
 import { LearningGoalSelector } from './LearningGoalSelector';
 import { RoadmapLearningGoalDataFragment } from './RoadmapLearningGoal.generated';
 import { RoadmapSubGoalsWrapper, RoadmapSubGoalsWrapperData } from './RoadmapSubGoalsWrapper';
@@ -33,11 +34,13 @@ export const RoadmapLearningGoalData = gql`
     }
     ...RoadmapSubGoalsWrapperData
     ...StartLearningGoalButtonData
+    ...LearningGoalLinearProgressData
   }
   ${LearningGoalData}
   ${RoadmapSubGoalsWrapperData}
   ${StartLearningGoalButtonData}
   ${OtherLearnersViewerUserData}
+  ${LearningGoalLinearProgressData}
 `;
 
 interface RoadmapLearningGoalProps {
@@ -105,7 +108,9 @@ export const RoadmapLearningGoal: React.FC<RoadmapLearningGoalProps> = ({ learni
           />
         </Center>
       )}
-
+      <Box w="50%" py={3}>
+        <LearningGoalLinearProgress learningGoal={learningGoal} size="lg" />
+      </Box>
       <RoadmapSubGoalsWrapper
         learningGoal={learningGoal}
         editMode={editMode}

@@ -2,7 +2,7 @@ import { Icon } from '@chakra-ui/icons';
 import { CircularProgress } from '@chakra-ui/react';
 import { IoIosCheckmarkCircle } from '@react-icons/all-files/io/IoIosCheckmarkCircle';
 import gql from 'graphql-tag';
-import { LearningGoalProgressDataFragment } from './LearningGoalProgress.generated';
+import { LearningGoalCircularProgressDataFragment } from './LearningGoalCircularProgress.generated';
 
 export const LearningGoalCircularProgressData = gql`
   fragment LearningGoalCircularProgressData on LearningGoal {
@@ -12,7 +12,7 @@ export const LearningGoalCircularProgressData = gql`
 `;
 
 interface LearningGoalCircularProgressProps {
-  learningGoal: LearningGoalProgressDataFragment;
+  learningGoal: LearningGoalCircularProgressDataFragment;
   pxSize?: number;
 }
 
