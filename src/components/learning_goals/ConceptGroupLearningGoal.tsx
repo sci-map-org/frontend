@@ -1,22 +1,24 @@
-import { Center, Flex, Stack, Wrap } from '@chakra-ui/react';
+import { Center, Stack, Text, Wrap, WrapItem } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useMemo } from 'react';
 import { ConceptData } from '../../graphql/concepts/concepts.fragments';
+import { DomainData } from '../../graphql/domains/domains.fragments';
+import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { LearningGoalData } from '../../graphql/learning_goals/learning_goals.fragments';
 import {
   useAttachLearningGoalRequiresSubGoalMutation,
+  useDetachLearningGoalRequiresSubGoalMutation,
   useUpdateLearningGoalMutation,
 } from '../../graphql/learning_goals/learning_goals.operations.generated';
-import { LearningGoalType } from '../../graphql/types';
+import { TopicType } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { ConceptBadge } from '../concepts/ConceptBadge';
+import { SubTopicSelector } from '../domains/SubTopicSelector';
 import { EditableTextarea } from '../lib/inputs/EditableTextarea';
 import { EditableTextInput } from '../lib/inputs/EditableTextInput';
 import { OtherLearnersViewer, OtherLearnersViewerUserData } from '../lib/OtherLearnersViewer';
 import { ConceptGroupLearningGoalDataFragment } from './ConceptGroupLearningGoal.generated';
-import { LearningGoalSelector } from './LearningGoalSelector';
-import { RoadmapLearningGoalDataFragment } from './RoadmapLearningGoal.generated';
-import { RoadmapSubGoalsWrapper, RoadmapSubGoalsWrapperData } from './RoadmapSubGoalsWrapper';
+import { LearningGoalBadge, LearningGoalBadgeData } from './LearningGoalBadge';
 import { StartLearningGoalButton, StartLearningGoalButtonData } from './StartLearningGoalButton';
 
 export const ConceptGroupLearningGoalData = gql`
@@ -42,6 +44,9 @@ export const ConceptGroupLearningGoalData = gql`
             key
           }
         }
+        ... on LearningGoal {
+          ...LearningGoalBadgeData
+        }
       }
     }
     ...StartLearningGoalButtonData
@@ -50,15 +55,19 @@ export const ConceptGroupLearningGoalData = gql`
   ${StartLearningGoalButtonData}
   ${OtherLearnersViewerUserData}
   ${ConceptData}
+  ${LearningGoalBadgeData}
+  ${DomainData}
 `;
 
 interface ConceptGroupLearningGoalProps {
   learningGoal: ConceptGroupLearningGoalDataFragment;
+  domain: DomainDataFragment;
   editMode?: boolean;
   isLoading?: boolean;
 }
 export const ConceptGroupLearningGoal: React.FC<ConceptGroupLearningGoalProps> = ({
   learningGoal,
+  domain,
   editMode,
   isLoading,
 }) => {
@@ -70,10 +79,11 @@ export const ConceptGroupLearningGoal: React.FC<ConceptGroupLearningGoalProps> =
   );
   const currentUserStartedGoal = useMemo(() => !!learningGoal.started, [learningGoal]);
   const [attachLearningGoalRequiresSubGoal] = useAttachLearningGoalRequiresSubGoalMutation();
+  const [detachLearningGoalRequiresSubGoal] = useDetachLearningGoalRequiresSubGoalMutation();
 
   return (
-    <Stack w="100%">
-      <Stack direction="row" spacing={3} alignItems="center">
+    <Stack spacing={3} w="100%">
+      <Center>
         <EditableTextInput
           value={learningGoal.name}
           centered
@@ -88,8 +98,10 @@ export const ConceptGroupLearningGoal: React.FC<ConceptGroupLearningGoalProps> =
             })
           }
         />
+      </Center>
+      <Center>
         <StartLearningGoalButton learningGoal={learningGoal} />
-      </Stack>
+      </Center>
       <EditableTextarea
         textAlign="center"
         isLoading={isLoading}
@@ -110,7 +122,7 @@ export const ConceptGroupLearningGoal: React.FC<ConceptGroupLearningGoalProps> =
         }
         isDisabled={!editMode}
       />
-      {learningGoal.startedBy && (
+      {/* {learningGoal.startedBy && (
         <Center>
           <OtherLearnersViewer
             title={() => `Learning now`}
@@ -120,14 +132,53 @@ export const ConceptGroupLearningGoal: React.FC<ConceptGroupLearningGoalProps> =
             minUsers={currentUserIsOwner ? 1 : 4}
           />
         </Center>
-      )}
-      <Wrap>
-        {(learningGoal.requiredSubGoals || []).map(({ subGoal }) =>
-          subGoal.__typename === 'Concept' && subGoal.domain ? (
-            <ConceptBadge concept={subGoal} domainKey={subGoal.domain.key} />
-          ) : null
-        )}
-      </Wrap>
+      )} */}
+      <Stack bgColor="gray.100" pb={3}>
+        <Center fontSize="lg" fontWeight={700} color="gray.700">
+          <Text my={2}>Topics Covered</Text>
+        </Center>
+        <Stack spacing={0}>
+          <Wrap justify="center" align="center" px={4}>
+            {(learningGoal.requiredSubGoals || []).map(({ subGoal }) => (
+              <WrapItem>
+                {subGoal.__typename === 'Concept' && subGoal.domain && (
+                  <ConceptBadge concept={subGoal} domainKey={subGoal.domain.key} />
+                )}
+                {subGoal.__typename === 'LearningGoal' && subGoal.domain && (
+                  <LearningGoalBadge
+                    learningGoal={subGoal}
+                    removable={editMode}
+                    onRemove={() =>
+                      detachLearningGoalRequiresSubGoal({
+                        variables: { learningGoalId: learningGoal._id, subGoalId: subGoal._id },
+                      })
+                    }
+                  />
+                )}
+              </WrapItem>
+            ))}
+          </Wrap>
+          {editMode && (
+            <Center>
+              <SubTopicSelector
+                domain={domain}
+                onSelect={(selected) =>
+                  attachLearningGoalRequiresSubGoal({
+                    variables: {
+                      learningGoalId: learningGoal._id,
+                      subGoalId: selected._id,
+                      payload: { strength: 100 },
+                    },
+                  })
+                }
+                placeholder="Add new Topic"
+                popoverTitle="Add new Topic"
+                allowedSubTopicTypes={[TopicType.Concept, TopicType.LearningGoal]}
+              />
+            </Center>
+          )}
+        </Stack>
+      </Stack>
     </Stack>
   );
 };

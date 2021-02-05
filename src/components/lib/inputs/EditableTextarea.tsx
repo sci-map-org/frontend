@@ -43,7 +43,7 @@ export const EditableTextarea: React.FC<
                   variant="ghost"
                   float="right"
                   ml={2}
-                  mb={2}
+                  // mb={2} Check if breaks other stuff. necessary in ConceptGroup (edit/non edit height)
                 />
               )}
               {getPreviewProps().children}

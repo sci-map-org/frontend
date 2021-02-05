@@ -9,6 +9,7 @@ export const ConceptBadge: React.FC<{ concept: ConceptLinkDataFragment; domainKe
     <InternalLink
       borderRadius={11}
       px="6px"
+      bgColor="white"
       color="gray.800"
       fontWeight={400}
       borderWidth="1px"
