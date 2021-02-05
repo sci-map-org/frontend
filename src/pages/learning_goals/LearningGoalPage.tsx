@@ -64,7 +64,7 @@ export const LearningGoalPage: React.FC<{ learningGoalKey: string }> = ({ learni
   if (!loading && !data) return <NotFoundPage />;
   return (
     <PageLayout
-      marginSize="md"
+      marginSize="sm"
       centerChildren
       isLoading={loading}
       renderTopRight={

@@ -1,7 +1,6 @@
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbLinkProps } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
-import { ReactNode } from 'react';
 import { shortenString } from '../../util/utils';
 
 export interface BreadcrumbLink {

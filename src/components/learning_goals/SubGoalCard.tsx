@@ -1,9 +1,10 @@
 import { CloseIcon } from '@chakra-ui/icons';
 import { Center, Flex, Wrap, WrapItem } from '@chakra-ui/react';
-import { Domain } from 'domain';
 import gql from 'graphql-tag';
+import { useRef, useState } from 'react';
 import { ConceptData } from '../../graphql/concepts/concepts.fragments';
 import { DomainData } from '../../graphql/domains/domains.fragments';
+import { ConceptBadge } from '../concepts/ConceptBadge';
 import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
 import { InternalLink } from '../navigation/InternalLink';
 import { ResourceDescription } from '../resources/elements/ResourceDescription';
@@ -96,77 +97,84 @@ interface LearningGoalSubGoalCardProps extends SharedSubGoalCardProps {
 
 const LearningGoalSubGoalCard: React.FC<LearningGoalSubGoalCardProps> = ({ learningGoal, editMode, onRemove }) => {
   const domainItem = learningGoal.domain;
+  const [mouseHover, setMouseHover] = useState(false);
+  const ref = useRef<any>(null);
   return (
-    <Flex direction="column" alignItems="stretch" h="100%" w="100%">
-      <Center position="relative" flexGrow={1}>
-        <InternalLink
-          routePath={domainItem ? '/domains/[key]/goals/[learningGoalKey]' : '/goals/[learningGoalKey]'}
-          asHref={
-            domainItem
-              ? `/domains/${domainItem.domain.key}/goals/${domainItem.contextualKey}`
-              : `/goals/${learningGoal.key}`
-          }
-          fontSize="xl"
-          mt={2}
-          px={2}
-          {...(editMode && { mr: 5 })}
-        >
-          {learningGoal.name}
-        </InternalLink>
-        {editMode && onRemove && (
-          <DeleteButtonWithConfirmation
-            // Future: remove and removeAndDelete
-            position="absolute"
-            top={1}
-            right={1}
-            modalBodyText={`Do you confirm removing "${learningGoal.name}" from this learning goal ?`}
-            modalHeaderText="Confirm removing SubGoal ?"
-            mode="iconButton"
-            onConfirmation={() => onRemove(learningGoal._id)}
-            size="xs"
-            variant="ghost"
-            icon={<CloseIcon />}
-            confirmButtonText="Remove"
-          />
-        )}
-      </Center>
+    <Flex
+      ref={ref}
+      id={learningGoal._id}
+      direction="column"
+      alignItems="stretch"
+      justifyContent="space-between"
+      h="100%"
+      w="100%"
+      bgColor={mouseHover ? 'gray.300' : 'gray.100'}
+      pl={3}
+      pr={1}
+      onMouseOver={(event) => {
+        !mouseHover && setMouseHover(true);
+      }}
+      onMouseOut={(event) => {
+        if (!mouseHover) return;
+        const current = ref.current;
+        if (current && !current.contains(event.relatedTarget)) {
+          setMouseHover(false);
+        }
+      }}
+    >
+      <Flex direction="column" alignItems="stretch">
+        <Flex direction="row" position="relative">
+          <InternalLink
+            routePath={domainItem ? '/domains/[key]/goals/[learningGoalKey]' : '/goals/[learningGoalKey]'}
+            asHref={
+              domainItem
+                ? `/domains/${domainItem.domain.key}/goals/${domainItem.contextualKey}`
+                : `/goals/${learningGoal.key}`
+            }
+            fontSize="lg"
+            fontWeight={500}
+            mt={3}
+            overflowWrap="break-word"
+            {...(editMode && { mr: 5 })}
+          >
+            {learningGoal.name}
+          </InternalLink>
+          {editMode && onRemove && (
+            <DeleteButtonWithConfirmation
+              // Future: remove and removeAndDelete
+              position="absolute"
+              top={1}
+              right={1}
+              modalBodyText={`Do you confirm removing "${learningGoal.name}" from this learning goal ?`}
+              modalHeaderText="Confirm removing SubGoal ?"
+              mode="iconButton"
+              onConfirmation={() => onRemove(learningGoal._id)}
+              size="xs"
+              variant="ghost"
+              icon={<CloseIcon />}
+              confirmButtonText="Remove"
+            />
+          )}
+        </Flex>
 
-      <Flex px={2} pb={2}>
-        {learningGoal.description && <ResourceDescription description={learningGoal.description} noOfLines={2} />}
+        <Flex pt={1}>
+          {learningGoal.description && <ResourceDescription description={learningGoal.description} noOfLines={2} />}
+        </Flex>
       </Flex>
-
-      {learningGoal.requiredSubGoals && !!learningGoal.requiredSubGoals.length && (
-        <Wrap px={2} pb={2}>
+      {mouseHover && learningGoal.requiredSubGoals && !!learningGoal.requiredSubGoals.length && (
+        <Wrap pt={2} pb={3} justifySelf="end">
           {learningGoal.requiredSubGoals.map((subGoalItem) => (
             <WrapItem key={subGoalItem.subGoal._id}>
               {subGoalItem.subGoal.__typename === 'LearningGoal' && (
                 <LearningGoalBadge learningGoal={subGoalItem.subGoal} />
               )}
               {subGoalItem.subGoal.__typename === 'Concept' && subGoalItem.subGoal.domain && (
-                <Flex>
-                  <InternalLink // Use PageLink with the pageinfo problem is fixed
-                    routePath="/domains/[key]/concepts/[conceptKey]"
-                    asHref={`/domains/${subGoalItem.subGoal.domain.key}/concepts/${subGoalItem.subGoal.key}`}
-                  >
-                    {subGoalItem.subGoal.name}
-                  </InternalLink>
-                </Flex>
-                // <PageLink pageInfo={ConceptPageInfo(subSubGoal.subGoal.domain, subSubGoal.subGoal)} />
+                <ConceptBadge concept={subGoalItem.subGoal} />
               )}
             </WrapItem>
           ))}
         </Wrap>
       )}
-      {/* <Flex>
-          <LearningGoalSelector
-            placeholder="Add SubGoal"
-            onSelect={(selected) =>
-              attachLearningGoalRequiresSubGoal({
-                variables: { learningGoalId: learningGoal._id, subGoalId: selected._id, payload: {} },
-              })
-            }
-          />
-        </Flex> */}
     </Flex>
   );
 };
