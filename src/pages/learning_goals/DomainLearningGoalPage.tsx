@@ -6,7 +6,7 @@ import {
   ConceptGroupLearningGoalData,
 } from '../../components/learning_goals/ConceptGroupLearningGoal';
 import { RoadmapLearningGoal, RoadmapLearningGoalData } from '../../components/learning_goals/RoadmapLearningGoal';
-import { DomainData, generateDomainData } from '../../graphql/domains/domains.fragments';
+import { DomainData, DomainLinkData, generateDomainData } from '../../graphql/domains/domains.fragments';
 import { generateLearningGoalData } from '../../graphql/learning_goals/learning_goals.fragments';
 import { LearningGoalType, UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
@@ -21,24 +21,26 @@ import { LearningGoalPageRightIcons } from './LearningGoalPage';
 export const getLearningGoalDomainLearningGoalPage = gql`
   query getLearningGoalDomainLearningGoalPage($domainKey: String!, $contextualLearningGoalKey: String!) {
     getDomainLearningGoalByKey(domainKey: $domainKey, contextualLearningGoalKey: $contextualLearningGoalKey) {
-      domain {
-        ...DomainData
-      }
-
       learningGoal {
         ...RoadmapLearningGoalData
         ...ConceptGroupLearningGoalData
+        domain {
+          domain {
+            ...DomainLinkData
+          }
+          contextualKey
+          contextualName
+        }
       }
     }
   }
-  ${DomainData}
+  ${DomainLinkData}
   ${RoadmapLearningGoalData}
   ${ConceptGroupLearningGoalData}
 `;
 
 const placeholderData: GetLearningGoalDomainLearningGoalPageQuery['getDomainLearningGoalByKey'] = {
   learningGoal: generateLearningGoalData(),
-  domain: generateDomainData(),
 };
 
 export const DomainLearningGoalPage: React.FC<{ domainKey: string; contextualLearningGoalKey: string }> = ({
@@ -49,19 +51,19 @@ export const DomainLearningGoalPage: React.FC<{ domainKey: string; contextualLea
     variables: { domainKey, contextualLearningGoalKey },
   });
   const learningGoal = data?.getDomainLearningGoalByKey.learningGoal || placeholderData.learningGoal;
-  const domain = data?.getDomainLearningGoalByKey.domain || placeholderData.domain;
+  const domainItem = data?.getDomainLearningGoalByKey.learningGoal.domain || placeholderData.learningGoal.domain;
   const { currentUser } = useCurrentUser();
   const currentUserIsOwner = useMemo(
     () => !!learningGoal.createdBy && !!currentUser && learningGoal.createdBy._id === currentUser._id,
     [learningGoal, currentUser]
   );
-
+  if (data && !domainItem) throw new Error('no domain found');
   const [editMode, setEditMode] = useState(!!currentUser && currentUser.role === UserRole.Admin);
 
   if (!loading && !data) return <NotFoundPage />;
   return (
     <PageLayout
-      breadCrumbsLinks={[DomainPageInfo(domain)]}
+      breadCrumbsLinks={domainItem ? [DomainPageInfo(domainItem.domain)] : undefined}
       renderTopRight={
         <LearningGoalPageRightIcons
           learningGoal={learningGoal}
@@ -75,8 +77,13 @@ export const DomainLearningGoalPage: React.FC<{ domainKey: string; contextualLea
       {learningGoal.type === LearningGoalType.Roadmap && (
         <RoadmapLearningGoal learningGoal={learningGoal} isLoading={loading} editMode={editMode} />
       )}
-      {learningGoal.type === LearningGoalType.SubGoal && (
-        <ConceptGroupLearningGoal learningGoal={learningGoal} isLoading={loading} editMode={editMode} />
+      {learningGoal.type === LearningGoalType.SubGoal && domainItem && (
+        <ConceptGroupLearningGoal
+          domain={domainItem.domain}
+          learningGoal={learningGoal}
+          isLoading={loading}
+          editMode={editMode}
+        />
       )}
       {/* <Stack w="100%">
         <Stack direction="row" spacing={3} alignItems="center">

@@ -1,8 +1,8 @@
 import * as Types from '../../graphql/types';
 
-import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { RoadmapLearningGoalDataFragment } from '../../components/learning_goals/RoadmapLearningGoal.generated';
 import { ConceptGroupLearningGoalDataFragment } from '../../components/learning_goals/ConceptGroupLearningGoal.generated';
+import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import * as Operations from './DomainLearningGoalPage';
 import * as Apollo from '@apollo/client';
 export type GetLearningGoalDomainLearningGoalPageQueryVariables = Types.Exact<{
@@ -15,11 +15,16 @@ export type GetLearningGoalDomainLearningGoalPageQuery = (
   { __typename?: 'Query' }
   & { getDomainLearningGoalByKey: (
     { __typename?: 'DomainAndLearningGoalResult' }
-    & { domain: (
-      { __typename?: 'Domain' }
-      & DomainDataFragment
-    ), learningGoal: (
+    & { learningGoal: (
       { __typename?: 'LearningGoal' }
+      & { domain?: Types.Maybe<(
+        { __typename?: 'LearningGoalBelongsToDomain' }
+        & Pick<Types.LearningGoalBelongsToDomain, 'contextualKey' | 'contextualName'>
+        & { domain: (
+          { __typename?: 'Domain' }
+          & DomainLinkDataFragment
+        ) }
+      )> }
       & RoadmapLearningGoalDataFragment
       & ConceptGroupLearningGoalDataFragment
     ) }

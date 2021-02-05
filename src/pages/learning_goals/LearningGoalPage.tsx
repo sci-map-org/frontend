@@ -3,20 +3,20 @@ import { IconButton, Stack, Tooltip } from '@chakra-ui/react';
 import { AiOutlineEye } from '@react-icons/all-files/ai/AiOutlineEye';
 import gql from 'graphql-tag';
 import Router from 'next/router';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { PageLayout } from '../../components/layout/PageLayout';
-import {
-  ConceptGroupLearningGoal,
-  ConceptGroupLearningGoalData,
-} from '../../components/learning_goals/ConceptGroupLearningGoal';
+import { ConceptGroupLearningGoalData } from '../../components/learning_goals/ConceptGroupLearningGoal';
 import { RoadmapLearningGoal, RoadmapLearningGoalData } from '../../components/learning_goals/RoadmapLearningGoal';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
+import { DomainLinkData } from '../../graphql/domains/domains.fragments';
 import { generateLearningGoalData } from '../../graphql/learning_goals/learning_goals.fragments';
 import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
 import { useDeleteLearningGoalMutation } from '../../graphql/learning_goals/learning_goals.operations.generated';
 import { LearningGoalType, UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { NotFoundPage } from '../NotFoundPage';
+import { routerPushToPage } from '../PageInfo';
+import { DomainLearningGoalPageInfo } from '../RoutesPageInfos';
 import { GetLearningGoalPageDataQuery, useGetLearningGoalPageDataQuery } from './LearningGoalPage.generated';
 
 export const getLearningGoalPageData = gql`
@@ -24,8 +24,16 @@ export const getLearningGoalPageData = gql`
     getLearningGoalByKey(key: $learningGoalKey) {
       ...RoadmapLearningGoalData
       ...ConceptGroupLearningGoalData
+      domain {
+        domain {
+          ...DomainLinkData
+        }
+        contextualKey
+        contextualName
+      }
     }
   }
+  ${DomainLinkData}
   ${RoadmapLearningGoalData}
   ${ConceptGroupLearningGoalData}
 `;
@@ -43,6 +51,16 @@ export const LearningGoalPage: React.FC<{ learningGoalKey: string }> = ({ learni
     [learningGoal, currentUser]
   );
   const [editMode, setEditMode] = useState(!!currentUser && currentUser.role === UserRole.Admin);
+  useEffect(() => {
+    if (learningGoal.type === LearningGoalType.SubGoal) {
+      if (learningGoal.domain) {
+        routerPushToPage(DomainLearningGoalPageInfo(learningGoal.domain.domain, learningGoal.domain));
+      } else {
+        throw new Error('SubGoal ' + learningGoal._id + ' has no domain attached');
+      }
+    }
+  }, []);
+
   if (!loading && !data) return <NotFoundPage />;
   return (
     <PageLayout
@@ -61,9 +79,6 @@ export const LearningGoalPage: React.FC<{ learningGoalKey: string }> = ({ learni
     >
       {learningGoal.type === LearningGoalType.Roadmap && (
         <RoadmapLearningGoal learningGoal={learningGoal} isLoading={loading} editMode={editMode} />
-      )}
-      {learningGoal.type === LearningGoalType.SubGoal && (
-        <ConceptGroupLearningGoal learningGoal={learningGoal} isLoading={loading} editMode={editMode} />
       )}
       {/* <Stack w="100%">
         <Stack direction="row" spacing={3} alignItems="center">
