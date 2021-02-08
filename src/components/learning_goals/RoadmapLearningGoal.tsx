@@ -63,7 +63,6 @@ export const RoadmapLearningGoal: React.FC<RoadmapLearningGoalProps> = ({ learni
       <Stack direction="row" spacing={3} alignItems="center">
         <EditableTextInput
           value={learningGoal.name}
-          centered
           editMode={editMode}
           isLoading={isLoading}
           onChange={(newName) =>
@@ -78,9 +77,7 @@ export const RoadmapLearningGoal: React.FC<RoadmapLearningGoalProps> = ({ learni
         <StartLearningGoalButton learningGoal={learningGoal} />
       </Stack>
       <EditableTextarea
-        textAlign="center"
         isLoading={isLoading}
-        justifyContent="center"
         backgroundColor="backgroundColor.0"
         fontSize="lg"
         fontWeight={300}
@@ -108,9 +105,11 @@ export const RoadmapLearningGoal: React.FC<RoadmapLearningGoalProps> = ({ learni
           />
         </Center>
       )}
-      <Box w="50%" py={3}>
-        <LearningGoalLinearProgress learningGoal={learningGoal} size="lg" />
-      </Box>
+      {currentUserStartedGoal && (
+        <Box w="60%" pt={3} pb={5}>
+          <LearningGoalLinearProgress learningGoal={learningGoal} size="lg" />
+        </Box>
+      )}
       <RoadmapSubGoalsWrapper
         learningGoal={learningGoal}
         editMode={editMode}

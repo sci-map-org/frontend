@@ -7,7 +7,9 @@ import { LearningGoalCircularProgressDataFragment } from './LearningGoalCircular
 export const LearningGoalCircularProgressData = gql`
   fragment LearningGoalCircularProgressData on LearningGoal {
     _id
-    progress
+    progress {
+      level
+    }
   }
 `;
 
@@ -21,8 +23,14 @@ export const LearningGoalCircularProgress: React.FC<LearningGoalCircularProgress
   pxSize = 30,
 }) => {
   if (!learningGoal.progress) return null;
-  if (learningGoal.progress === 100) return <Icon as={IoIosCheckmarkCircle} boxSize={pxSize + 8 + 'px'} />;
+  if (learningGoal.progress.level === 100) return <Icon as={IoIosCheckmarkCircle} boxSize={pxSize + 8 + 'px'} />;
   return (
-    <CircularProgress thickness="10px" capIsRound value={learningGoal.progress} size={pxSize + 'px'} color="main" />
+    <CircularProgress
+      thickness="10px"
+      capIsRound
+      value={learningGoal.progress.level}
+      size={pxSize + 'px'}
+      color="main"
+    />
   );
 };

@@ -5,7 +5,9 @@ import { LearningGoalLinearProgressDataFragment } from './LearningGoalLinearProg
 export const LearningGoalLinearProgressData = gql`
   fragment LearningGoalLinearProgressData on LearningGoal {
     _id
-    progress
+    progress {
+      level
+    }
   }
 `;
 
@@ -17,5 +19,5 @@ interface LearningGoalLinearProgressProps {
 export const LearningGoalLinearProgress: React.FC<LearningGoalLinearProgressProps> = ({ learningGoal, size }) => {
   if (!learningGoal.progress) return null;
 
-  return <Progress hasStripe value={learningGoal.progress} colorScheme="teal" size={size} />;
+  return <Progress hasStripe value={learningGoal.progress.level} colorScheme="teal" size={size} />;
 };

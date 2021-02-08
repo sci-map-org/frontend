@@ -772,7 +772,7 @@ export type LearningGoal = Topic & {
   description?: Maybe<Scalars['String']>;
   topicType: TopicType;
   publishedAt?: Maybe<Scalars['Date']>;
-  progress?: Maybe<Scalars['Float']>;
+  progress?: Maybe<LearningGoalProgress>;
   createdBy?: Maybe<User>;
   domain?: Maybe<LearningGoalBelongsToDomain>;
   requiredInGoals?: Maybe<Array<RequiredInGoalItem>>;
@@ -1326,6 +1326,11 @@ export enum LearningGoalType {
   Roadmap = 'Roadmap',
   SubGoal = 'SubGoal'
 }
+
+export type LearningGoalProgress = {
+  __typename?: 'LearningGoalProgress';
+  level: Scalars['Float'];
+};
 
 export type RequiredInGoalItem = {
   __typename?: 'RequiredInGoalItem';
