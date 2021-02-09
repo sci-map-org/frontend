@@ -1,17 +1,24 @@
-import { Box, Button, Heading, Stack, Text } from '@chakra-ui/react';
+import { Box, Button, Center, Heading, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { differenceBy } from 'lodash';
 import Router from 'next/router';
 import { RoleAccess } from '../../../components/auth/RoleAccess';
+import { useUnauthentificatedModal } from '../../../components/auth/UnauthentificatedModal';
 import { DomainConceptsPicker } from '../../../components/concepts/DomainConceptsPicker';
 import { PageLayout } from '../../../components/layout/PageLayout';
 import { DeleteButtonWithConfirmation } from '../../../components/lib/buttons/DeleteButtonWithConfirmation';
+import { CompletedCheckbox } from '../../../components/lib/CompletedCheckbox';
 import { ResourcePreviewCardList } from '../../../components/resources/ResourcePreviewCardList';
 import { ConceptData, generateConceptData } from '../../../graphql/concepts/concepts.fragments';
 import { ConceptDataFragment } from '../../../graphql/concepts/concepts.fragments.generated';
 import { useDeleteConcept } from '../../../graphql/concepts/concepts.hooks';
+import {
+  useSetConceptsKnownMutation,
+  useSetConceptsUnknownMutation,
+} from '../../../graphql/concepts/concepts.operations.generated';
 import { DomainData, generateDomainData } from '../../../graphql/domains/domains.fragments';
 import { generateResourceData, ResourcePreviewData } from '../../../graphql/resources/resources.fragments';
+import { useCurrentUser } from '../../../graphql/users/users.hooks';
 import { NotFoundPage } from '../../NotFoundPage';
 import { ConceptListPageInfo, ConceptPageInfo, DomainPageInfo } from '../../RoutesPageInfos';
 import {
@@ -193,6 +200,51 @@ export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = 
   const [removeConceptReferencesConcept] = useRemoveConceptReferencesConceptMutation();
   const [addConceptBelongsToConceptMutation] = useAddConceptBelongsToConceptMutation();
   const [removeConceptBelongsToConceptMutation] = useRemoveConceptBelongsToConceptMutation();
+  const { currentUser } = useCurrentUser();
+  const [setConceptKnown] = useSetConceptsKnownMutation();
+  const [setConceptUnknown] = useSetConceptsUnknownMutation();
+  const unauthentificatedModalDisclosure = useUnauthentificatedModal();
+  const toggleConceptKnown = async (concept: ConceptDataFragment) => {
+    if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
+    if (!concept.known) {
+      await setConceptKnown({
+        variables: {
+          payload: {
+            concepts: [
+              {
+                conceptId: concept._id,
+              },
+            ],
+          },
+        },
+        optimisticResponse: {
+          __typename: 'Mutation',
+          setConceptsKnown: [
+            {
+              ...concept,
+              known: {
+                __typename: 'KnownConcept',
+                level: 100,
+              },
+            },
+          ],
+        },
+      });
+    } else {
+      await setConceptUnknown({
+        variables: { conceptIds: [concept._id] },
+        optimisticResponse: {
+          __typename: 'Mutation',
+          setConceptsUnknown: [
+            {
+              ...concept,
+              known: null,
+            },
+          ],
+        },
+      });
+    }
+  };
   if (error) return <NotFoundPage />;
   if (!concept.domain) throw new Error('Concept has no domain');
   return (
@@ -207,6 +259,19 @@ export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = 
       isLoading={loading}
     >
       <Box>
+        <Center>
+          <CompletedCheckbox
+            ml={2}
+            size="lg"
+            uncheckedColor="gray.400"
+            tooltipLabel={!!concept.known ? 'Mark this concept as unknown' : 'Mark this concept as known'}
+            tooltipDelay={500}
+            onChange={() => {
+              toggleConceptKnown(concept);
+            }}
+            isChecked={!!concept.known}
+          />
+        </Center>
         <Text pb={5}>{concept.description}</Text>
         <Heading fontWeight="light" fontSize="2xl" mb={2}>
           Covered by
