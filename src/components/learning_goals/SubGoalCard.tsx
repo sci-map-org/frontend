@@ -4,7 +4,10 @@ import gql from 'graphql-tag';
 import { useRef, useState } from 'react';
 import { ConceptData } from '../../graphql/concepts/concepts.fragments';
 import { DomainData } from '../../graphql/domains/domains.fragments';
+import { routerPushToPage } from '../../pages/PageInfo';
+import { LearningGoalPageInfo } from '../../pages/RoutesPageInfos';
 import { ConceptBadge } from '../concepts/ConceptBadge';
+import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
 import { InternalLink } from '../navigation/InternalLink';
 import { ResourceDescription } from '../resources/elements/ResourceDescription';
@@ -107,11 +110,12 @@ const LearningGoalSubGoalCard: React.FC<LearningGoalSubGoalCardProps> = ({ learn
       ref={ref}
       id={learningGoal._id}
       direction="column"
+      overflow="hidden"
       alignItems="stretch"
       justifyContent="space-between"
       h="100%"
       w="100%"
-      bgColor={learningGoal.progress === 100 ? 'green.100' : mouseHover ? 'gray.300' : 'gray.100'}
+      bgColor={learningGoal.progress?.level === 100 ? 'green.100' : mouseHover ? 'gray.300' : 'gray.100'}
       pl={3}
       pr={1}
       onMouseOver={(event) => {
@@ -124,30 +128,30 @@ const LearningGoalSubGoalCard: React.FC<LearningGoalSubGoalCardProps> = ({ learn
           setMouseHover(false);
         }
       }}
+      _hover={{ cursor: 'pointer' }}
+      onClick={() => routerPushToPage(LearningGoalPageInfo(learningGoal))}
     >
-      <Flex direction="column" alignItems="stretch">
-        <Flex direction="row" position="relative">
-          <InternalLink
-            routePath={domainItem ? '/domains/[key]/goals/[learningGoalKey]' : '/goals/[learningGoalKey]'}
-            asHref={
-              domainItem
-                ? `/domains/${domainItem.domain.key}/goals/${domainItem.contextualKey}`
-                : `/goals/${learningGoal.key}`
-            }
-            fontSize="lg"
-            fontWeight={500}
-            mt={3}
-            overflowWrap="break-word"
-            {...(editMode && { mr: 5 })}
-          >
-            {learningGoal.name}
-          </InternalLink>
-          {editMode && onRemove && (
+      <Flex direction="row" position="relative">
+        <InternalLink
+          routePath={domainItem ? '/domains/[key]/goals/[learningGoalKey]' : '/goals/[learningGoalKey]'}
+          asHref={
+            domainItem
+              ? `/domains/${domainItem.domain.key}/goals/${domainItem.contextualKey}`
+              : `/goals/${learningGoal.key}`
+          }
+          fontSize="lg"
+          fontWeight={500}
+          mt={3}
+          overflowWrap="break-word"
+          {...(editMode && { mr: 5 })}
+        >
+          {learningGoal.name}
+        </InternalLink>
+        {editMode && onRemove && (
+          <BoxBlockDefaultClickPropagation position="absolute" top={1} right={1}>
             <DeleteButtonWithConfirmation
               // Future: remove and removeAndDelete
-              position="absolute"
-              top={1}
-              right={1}
+
               modalBodyText={`Do you confirm removing "${learningGoal.name}" from this learning goal ?`}
               modalHeaderText="Confirm removing SubGoal ?"
               mode="iconButton"
@@ -157,28 +161,36 @@ const LearningGoalSubGoalCard: React.FC<LearningGoalSubGoalCardProps> = ({ learn
               icon={<CloseIcon />}
               confirmButtonText="Remove"
             />
-          )}
-        </Flex>
-
-        <Flex pt={1}>
-          {learningGoal.description && <ResourceDescription description={learningGoal.description} noOfLines={2} />}
-        </Flex>
-        <LearningGoalCircularProgress learningGoal={learningGoal} />
+          </BoxBlockDefaultClickPropagation>
+        )}
       </Flex>
-      {mouseHover && learningGoal.requiredSubGoals && !!learningGoal.requiredSubGoals.length && (
-        <Wrap pt={2} pb={3} justifySelf="end">
-          {learningGoal.requiredSubGoals.map((subGoalItem) => (
-            <WrapItem key={subGoalItem.subGoal._id}>
-              {subGoalItem.subGoal.__typename === 'LearningGoal' && (
-                <LearningGoalBadge learningGoal={subGoalItem.subGoal} />
-              )}
-              {subGoalItem.subGoal.__typename === 'Concept' && subGoalItem.subGoal.domain && (
-                <ConceptBadge concept={subGoalItem.subGoal} />
-              )}
-            </WrapItem>
-          ))}
-        </Wrap>
-      )}
+
+      <Flex pt={1} flexGrow={1} position="relative" direction="column">
+        {!mouseHover && learningGoal.description && (
+          <ResourceDescription description={learningGoal.description} noOfLines={2} />
+        )}
+        {!mouseHover && (
+          <Center position="absolute" bottom={3} right={3}>
+            <LearningGoalCircularProgress learningGoal={learningGoal} />
+          </Center>
+        )}
+        {mouseHover && learningGoal.requiredSubGoals && !!learningGoal.requiredSubGoals.length && (
+          <Wrap pt={2} pb={3} justifySelf="end">
+            {learningGoal.requiredSubGoals.map((subGoalItem) => (
+              <BoxBlockDefaultClickPropagation key={subGoalItem.subGoal._id}>
+                <WrapItem>
+                  {subGoalItem.subGoal.__typename === 'LearningGoal' && (
+                    <LearningGoalBadge size="sm" learningGoal={subGoalItem.subGoal} />
+                  )}
+                  {subGoalItem.subGoal.__typename === 'Concept' && subGoalItem.subGoal.domain && (
+                    <ConceptBadge size="sm" concept={subGoalItem.subGoal} />
+                  )}
+                </WrapItem>
+              </BoxBlockDefaultClickPropagation>
+            ))}
+          </Wrap>
+        )}
+      </Flex>
     </Flex>
   );
 };

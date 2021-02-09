@@ -83,12 +83,20 @@ export const DomainResourceListPageInfo = (domain: DomainDataFragment): PageInfo
 
 //====Learning Goals====
 export const LearningGoalPagePath = (learningGoalKey: string) => '/goals/' + learningGoalKey;
-export const LearningGoalPageInfo = (learningGoal: Pick<LearningGoal, 'key' | 'name'>): PageInfo => {
-  return {
-    name: learningGoal.name,
-    path: LearningGoalPagePath(learningGoal.key),
-    routePath: LearningGoalPagePath('[learningGoalKey]'),
-  };
+export const LearningGoalPageInfo = (
+  learningGoal: Pick<LearningGoal, 'key' | 'name'> & {
+    domain?:
+      | (Pick<LearningGoalBelongsToDomain, 'contextualKey' | 'contextualName'> & { domain: DomainLinkDataFragment })
+      | null;
+  }
+): PageInfo => {
+  return learningGoal.domain
+    ? DomainLearningGoalPageInfo(learningGoal.domain.domain, learningGoal.domain)
+    : {
+        name: learningGoal.name,
+        path: LearningGoalPagePath(learningGoal.key),
+        routePath: LearningGoalPagePath('[learningGoalKey]'),
+      };
 };
 
 export const DomainLearningGoalPagePath = (domainKey: string, contextualLearningGoalKey: string) =>
