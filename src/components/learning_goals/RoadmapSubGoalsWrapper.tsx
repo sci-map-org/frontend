@@ -34,7 +34,7 @@ export const RoadmapSubGoalsWrapper: React.FC<RoadmapSubGoalsWrapperProps> = ({
   );
   if (!learningGoal.requiredSubGoals) return null;
   return (
-    <Wrap spacing={spacing} justify="center">
+    <Wrap spacing={spacing} justify="start">
       {subGoalItems.map((requiredSubGoalItem, idx) =>
         requiredSubGoalItem.subGoal.__typename === 'LearningGoal' ? (
           <WrapItem
@@ -67,15 +67,19 @@ export const RoadmapSubGoalsWrapper: React.FC<RoadmapSubGoalsWrapperProps> = ({
       )}
       {renderLastItem && (
         <WrapItem
-          borderWidth="1px"
-          borderColor="gray.500"
-          boxShadow="md"
-          w="45%"
-          borderRadius={5}
-          display="flex"
-          flexDirection="column"
-          justifyContent="stretch"
-          alignItems="stretch"
+          maxW={{
+            sm: `calc(50% - ${spacing})`,
+            md: `calc(33% - ${spacing})`,
+            lg: `calc(25% - ${spacing})`,
+            xl: `calc(25% - ${spacing})`,
+          }}
+          minW={{
+            sm: `calc(50% - ${spacing})`,
+            md: `calc(33% - ${spacing})`,
+            lg: `calc(25% - ${spacing})`,
+            xl: `calc(25% - ${spacing})`,
+          }}
+          h="160px"
         >
           {renderLastItem}
         </WrapItem>

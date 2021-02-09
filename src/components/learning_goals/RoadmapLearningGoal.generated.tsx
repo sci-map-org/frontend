@@ -2,6 +2,7 @@ import * as Types from '../../graphql/types';
 
 import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
 import { OtherLearnersViewerUserDataFragment } from '../lib/OtherLearnersViewer.generated';
+import { LearningGoalPublishButtonDataFragment } from './LearningGoalPublishButton.generated';
 import { RoadmapSubGoalsWrapperDataFragment } from './RoadmapSubGoalsWrapper.generated';
 import { StartLearningGoalButtonDataFragment } from './StartLearningGoalButton.generated';
 import { LearningGoalLinearProgressDataFragment } from './LearningGoalLinearProgress.generated';
@@ -23,6 +24,7 @@ export type RoadmapLearningGoalDataFragment = (
     )> }
   )> }
   & LearningGoalDataFragment
+  & LearningGoalPublishButtonDataFragment
   & RoadmapSubGoalsWrapperDataFragment
   & StartLearningGoalButtonDataFragment
   & LearningGoalLinearProgressDataFragment

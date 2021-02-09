@@ -8,6 +8,7 @@ export const LearningGoalData = gql`
     type
     description
     key
+    publishedAt
   }
 `;
 

@@ -1,4 +1,4 @@
-import { Box, Center, Stack } from '@chakra-ui/react';
+import { Badge, Box, Center, Flex, Stack } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useMemo } from 'react';
 import { LearningGoalData } from '../../graphql/learning_goals/learning_goals.fragments';
@@ -12,6 +12,7 @@ import { EditableTextarea } from '../lib/inputs/EditableTextarea';
 import { EditableTextInput } from '../lib/inputs/EditableTextInput';
 import { OtherLearnersViewer, OtherLearnersViewerUserData } from '../lib/OtherLearnersViewer';
 import { LearningGoalLinearProgress, LearningGoalLinearProgressData } from './LearningGoalLinearProgress';
+import { LearningGoalPublishButton, LearningGoalPublishButtonData } from './LearningGoalPublishButton';
 import { LearningGoalSelector } from './LearningGoalSelector';
 import { RoadmapLearningGoalDataFragment } from './RoadmapLearningGoal.generated';
 import { RoadmapSubGoalsWrapper, RoadmapSubGoalsWrapperData } from './RoadmapSubGoalsWrapper';
@@ -32,11 +33,13 @@ export const RoadmapLearningGoalData = gql`
       }
       count
     }
+    ...LearningGoalPublishButtonData
     ...RoadmapSubGoalsWrapperData
     ...StartLearningGoalButtonData
     ...LearningGoalLinearProgressData
   }
   ${LearningGoalData}
+  ${LearningGoalPublishButtonData}
   ${RoadmapSubGoalsWrapperData}
   ${StartLearningGoalButtonData}
   ${OtherLearnersViewerUserData}
@@ -105,17 +108,30 @@ export const RoadmapLearningGoal: React.FC<RoadmapLearningGoalProps> = ({ learni
           />
         </Center>
       )}
-      {currentUserStartedGoal && (
-        <Box w="60%" pt={3} pb={5}>
-          <LearningGoalLinearProgress learningGoal={learningGoal} size="lg" />
+
+      <Flex direction="row" justifyContent="space-between" alignItems="center" pt={3} pb={5}>
+        <Box w="60%">
+          {(currentUserStartedGoal || (learningGoal.progress && learningGoal.progress.level > 0)) && (
+            <LearningGoalLinearProgress learningGoal={learningGoal} size="lg" />
+          )}
         </Box>
-      )}
+
+        {currentUserIsOwner &&
+          (learningGoal.publishedAt ? (
+            <Badge colorScheme="green" fontSize="lg">
+              PUBLIC
+            </Badge>
+          ) : (
+            <LearningGoalPublishButton learningGoal={learningGoal} />
+          ))}
+      </Flex>
+
       <RoadmapSubGoalsWrapper
         learningGoal={learningGoal}
         editMode={editMode}
         renderLastItem={
           editMode && (
-            <Center py={2}>
+            <Center w="100%" h="100%" py={2} borderWidth={1}>
               <LearningGoalSelector
                 placeholder="Add a SubGoal..."
                 createLGDefaultPayload={{ type: LearningGoalType.SubGoal }}
