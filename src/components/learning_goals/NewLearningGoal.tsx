@@ -49,16 +49,18 @@ interface NewLearningGoalData {
   description?: string;
 }
 interface NewLearningGoalFormProps {
-  onCreate: (payload: NewLearningGoalData) => void;
+  onCreate: (payload: NewLearningGoalData, options: { isPublic?: boolean }) => void;
   onCancel: () => void;
   defaultPayload?: Partial<CreateLearningGoalPayload>;
   size?: 'md' | 'lg' | 'sm';
+  publicByDefault?: boolean;
 }
 export const NewLearningGoalForm: React.FC<NewLearningGoalFormProps> = ({
   onCreate,
   onCancel,
   defaultPayload,
   size = 'md',
+  publicByDefault,
 }) => {
   const [domain, setDomain] = useState<DomainDataFragment | null>(null);
   const [name, setName] = useState(defaultPayload?.name || '');
@@ -163,7 +165,10 @@ export const NewLearningGoalForm: React.FC<NewLearningGoalFormProps> = ({
         onCancel={() => onCancel()}
         size={getChakraRelativeSize(size, 1)}
         onPrimaryClick={() =>
-          onCreate({ name, key, description: description || undefined, domain: domain || undefined, type })
+          onCreate(
+            { name, key, description: description || undefined, domain: domain || undefined, type },
+            { isPublic: publicByDefault }
+          )
         }
       />
     </Stack>
@@ -181,7 +186,7 @@ export const NewLearningGoal: React.FC<NewLearningGoalProps> = ({ onCreated, onC
     <NewLearningGoalForm
       size={size}
       defaultPayload={defaultPayload}
-      onCreate={async ({ name, key, description, domain, type }) => {
+      onCreate={async ({ name, key, description, domain, type }, { isPublic }) => {
         let createdLearningGoal: LearningGoalDataFragment | undefined = undefined;
         if (domain) {
           const { data } = await addLearningGoalToDomain({
@@ -192,14 +197,16 @@ export const NewLearningGoal: React.FC<NewLearningGoalProps> = ({ onCreated, onC
                 contextualKey: key,
                 description: description,
                 type,
-                public: true,
+              },
+              options: {
+                public: isPublic,
               },
             },
           });
           if (data) createdLearningGoal = data.addLearningGoalToDomain.learningGoal;
         } else {
           const { data } = await createLearningGoal({
-            variables: { payload: { name, key, description, public: true, type } },
+            variables: { payload: { name, key, description, type }, options: { public: isPublic } },
           });
           if (data) createdLearningGoal = data.createLearningGoal;
         }

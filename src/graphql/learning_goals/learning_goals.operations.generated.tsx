@@ -7,6 +7,7 @@ import * as Operations from './learning_goals.operations';
 import * as Apollo from '@apollo/client';
 export type CreateLearningGoalMutationVariables = Types.Exact<{
   payload: Types.CreateLearningGoalPayload;
+  options?: Types.Maybe<Types.CreateLearningGoalOptions>;
 }>;
 
 
@@ -21,6 +22,7 @@ export type CreateLearningGoalMutation = (
 export type AddLearningGoalToDomainMutationVariables = Types.Exact<{
   domainId: Types.Scalars['String'];
   payload: Types.AddLearningGoalToDomainPayload;
+  options?: Types.Maybe<Types.AddLearningGoalToDomainOptions>;
 }>;
 
 
@@ -143,6 +145,29 @@ export type StartLearningGoalMutation = (
   ) }
 );
 
+export type PublishLearningGoalMutationVariables = Types.Exact<{
+  learningGoalId: Types.Scalars['String'];
+}>;
+
+
+export type PublishLearningGoalMutation = (
+  { __typename?: 'Mutation' }
+  & { publishLearningGoal: (
+    { __typename?: 'LearningGoalPublishedResult' }
+    & { learningGoal: (
+      { __typename?: 'LearningGoal' }
+      & Pick<Types.LearningGoal, '_id' | 'publishedAt' | 'hidden'>
+      & { requiredSubGoals?: Types.Maybe<Array<(
+        { __typename?: 'SubGoalItem' }
+        & { subGoal: (
+          { __typename?: 'LearningGoal' }
+          & Pick<Types.LearningGoal, '_id' | 'publishedAt' | 'hidden'>
+        ) | { __typename?: 'Concept' } }
+      )>> }
+    ) }
+  ) }
+);
+
 
 export type CreateLearningGoalMutationFn = Apollo.MutationFunction<CreateLearningGoalMutation, CreateLearningGoalMutationVariables>;
 
@@ -160,6 +185,7 @@ export type CreateLearningGoalMutationFn = Apollo.MutationFunction<CreateLearnin
  * const [createLearningGoalMutation, { data, loading, error }] = useCreateLearningGoalMutation({
  *   variables: {
  *      payload: // value for 'payload'
+ *      options: // value for 'options'
  *   },
  * });
  */
@@ -186,6 +212,7 @@ export type AddLearningGoalToDomainMutationFn = Apollo.MutationFunction<AddLearn
  *   variables: {
  *      domainId: // value for 'domainId'
  *      payload: // value for 'payload'
+ *      options: // value for 'options'
  *   },
  * });
  */
@@ -324,3 +351,28 @@ export function useStartLearningGoalMutation(baseOptions?: Apollo.MutationHookOp
 export type StartLearningGoalMutationHookResult = ReturnType<typeof useStartLearningGoalMutation>;
 export type StartLearningGoalMutationResult = Apollo.MutationResult<StartLearningGoalMutation>;
 export type StartLearningGoalMutationOptions = Apollo.BaseMutationOptions<StartLearningGoalMutation, StartLearningGoalMutationVariables>;
+export type PublishLearningGoalMutationFn = Apollo.MutationFunction<PublishLearningGoalMutation, PublishLearningGoalMutationVariables>;
+
+/**
+ * __usePublishLearningGoalMutation__
+ *
+ * To run a mutation, you first call `usePublishLearningGoalMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `usePublishLearningGoalMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [publishLearningGoalMutation, { data, loading, error }] = usePublishLearningGoalMutation({
+ *   variables: {
+ *      learningGoalId: // value for 'learningGoalId'
+ *   },
+ * });
+ */
+export function usePublishLearningGoalMutation(baseOptions?: Apollo.MutationHookOptions<PublishLearningGoalMutation, PublishLearningGoalMutationVariables>) {
+        return Apollo.useMutation<PublishLearningGoalMutation, PublishLearningGoalMutationVariables>(Operations.publishLearningGoal, baseOptions);
+      }
+export type PublishLearningGoalMutationHookResult = ReturnType<typeof usePublishLearningGoalMutation>;
+export type PublishLearningGoalMutationResult = Apollo.MutationResult<PublishLearningGoalMutation>;
+export type PublishLearningGoalMutationOptions = Apollo.BaseMutationOptions<PublishLearningGoalMutation, PublishLearningGoalMutationVariables>;

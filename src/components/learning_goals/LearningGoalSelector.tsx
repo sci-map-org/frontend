@@ -89,6 +89,7 @@ export const LearningGoalSelector: React.FC<{
             }}
             onCancel={() => onClose()}
             size="sm"
+            publicByDefault
           />
         </PopoverBody>
       </PopoverContent>

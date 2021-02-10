@@ -1,7 +1,6 @@
-import { Center, Stack, Text, Wrap, WrapItem } from '@chakra-ui/react';
+import { Badge, Center, Stack, Text, Wrap, WrapItem } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useMemo } from 'react';
-import { ConceptData } from '../../graphql/concepts/concepts.fragments';
 import { DomainData } from '../../graphql/domains/domains.fragments';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { LearningGoalData } from '../../graphql/learning_goals/learning_goals.fragments';
@@ -16,9 +15,10 @@ import { ConceptBadge, ConceptBadgeData } from '../concepts/ConceptBadge';
 import { SubTopicSelector } from '../domains/SubTopicSelector';
 import { EditableTextarea } from '../lib/inputs/EditableTextarea';
 import { EditableTextInput } from '../lib/inputs/EditableTextInput';
-import { OtherLearnersViewer, OtherLearnersViewerUserData } from '../lib/OtherLearnersViewer';
+import { OtherLearnersViewerUserData } from '../lib/OtherLearnersViewer';
 import { ConceptGroupLearningGoalDataFragment } from './ConceptGroupLearningGoal.generated';
 import { LearningGoalBadge, LearningGoalBadgeData } from './LearningGoalBadge';
+import { LearningGoalPublishButton, LearningGoalPublishButtonData } from './LearningGoalPublishButton';
 import { StartLearningGoalButton, StartLearningGoalButtonData } from './StartLearningGoalButton';
 
 export const ConceptGroupLearningGoalData = gql`
@@ -47,9 +47,11 @@ export const ConceptGroupLearningGoalData = gql`
       }
     }
     ...StartLearningGoalButtonData
+    ...LearningGoalPublishButtonData
   }
   ${LearningGoalData}
   ${StartLearningGoalButtonData}
+  ${LearningGoalPublishButtonData}
   ${OtherLearnersViewerUserData}
   ${ConceptBadgeData}
   ${LearningGoalBadgeData}
@@ -97,7 +99,17 @@ export const ConceptGroupLearningGoal: React.FC<ConceptGroupLearningGoalProps> =
         />
       </Center>
       <Center>
-        <StartLearningGoalButton learningGoal={learningGoal} />
+        <Stack direction="row" alignItems="center">
+          <StartLearningGoalButton learningGoal={learningGoal} />
+          {currentUserIsOwner &&
+            (learningGoal.publishedAt ? (
+              <Badge colorScheme="green" fontSize="lg">
+                PUBLIC
+              </Badge>
+            ) : (
+              <LearningGoalPublishButton learningGoal={learningGoal} />
+            ))}
+        </Stack>
       </Center>
       <EditableTextarea
         textAlign="center"

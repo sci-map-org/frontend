@@ -180,6 +180,7 @@ export type Mutation = {
   attachLearningGoalRequiresSubGoal: AttachLearningGoalRequiresSubGoalResult;
   detachLearningGoalRequiresSubGoal: DetachLearningGoalRequiresSubGoalResult;
   startLearningGoal: LearningGoalStartedResult;
+  publishLearningGoal: LearningGoalPublishedResult;
   updateConceptBelongsToDomain: ConceptBelongsToDomain;
   addConceptBelongsToConcept: UpdateConceptBelongsToConceptResult;
   removeConceptBelongsToConcept: UpdateConceptBelongsToConceptResult;
@@ -437,11 +438,13 @@ export type MutationCompleteLearningPathArgs = {
 export type MutationAddLearningGoalToDomainArgs = {
   domainId: Scalars['String'];
   payload: AddLearningGoalToDomainPayload;
+  options?: Maybe<AddLearningGoalToDomainOptions>;
 };
 
 
 export type MutationCreateLearningGoalArgs = {
   payload: CreateLearningGoalPayload;
+  options?: Maybe<CreateLearningGoalOptions>;
 };
 
 
@@ -470,6 +473,11 @@ export type MutationDetachLearningGoalRequiresSubGoalArgs = {
 
 
 export type MutationStartLearningGoalArgs = {
+  learningGoalId: Scalars['String'];
+};
+
+
+export type MutationPublishLearningGoalArgs = {
   learningGoalId: Scalars['String'];
 };
 
@@ -772,6 +780,7 @@ export type LearningGoal = Topic & {
   description?: Maybe<Scalars['String']>;
   topicType: TopicType;
   publishedAt?: Maybe<Scalars['Date']>;
+  hidden?: Maybe<Scalars['Boolean']>;
   progress?: Maybe<LearningGoalProgress>;
   createdBy?: Maybe<User>;
   domain?: Maybe<LearningGoalBelongsToDomain>;
@@ -1002,6 +1011,9 @@ export type AddLearningGoalToDomainPayload = {
   contextualKey?: Maybe<Scalars['String']>;
   type: LearningGoalType;
   description?: Maybe<Scalars['String']>;
+};
+
+export type AddLearningGoalToDomainOptions = {
   public?: Maybe<Scalars['Boolean']>;
 };
 
@@ -1010,6 +1022,9 @@ export type CreateLearningGoalPayload = {
   type: LearningGoalType;
   key?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+};
+
+export type CreateLearningGoalOptions = {
   public?: Maybe<Scalars['Boolean']>;
 };
 
@@ -1018,7 +1033,6 @@ export type UpdateLearningGoalPayload = {
   key?: Maybe<Scalars['String']>;
   type?: Maybe<LearningGoalType>;
   description?: Maybe<Scalars['String']>;
-  public?: Maybe<Scalars['Boolean']>;
 };
 
 export type DeleteLearningGoalMutationResult = {
@@ -1046,6 +1060,11 @@ export type DetachLearningGoalRequiresSubGoalResult = {
 export type LearningGoalStartedResult = {
   __typename?: 'LearningGoalStartedResult';
   currentUser: CurrentUser;
+  learningGoal: LearningGoal;
+};
+
+export type LearningGoalPublishedResult = {
+  __typename?: 'LearningGoalPublishedResult';
   learningGoal: LearningGoal;
 };
 

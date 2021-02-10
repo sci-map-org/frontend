@@ -16,7 +16,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { LearningGoalPublishButtonDataFragment } from './LearningGoalPublishButton.generated';
-import { useUpdateLearningGoalMutation } from '../../graphql/learning_goals/learning_goals.operations.generated';
+import { usePublishLearningGoalMutation } from '../../graphql/learning_goals/learning_goals.operations.generated';
 import { shortenString } from '../../util/utils';
 
 export const LearningGoalPublishButtonData = gql`
@@ -31,7 +31,7 @@ interface LearningGoalPublishButtonProps {
   learningGoal: LearningGoalPublishButtonDataFragment;
 }
 export const LearningGoalPublishButton: React.FC<LearningGoalPublishButtonProps> = ({ learningGoal, size = 'md' }) => {
-  const [updateLearningGoal] = useUpdateLearningGoalMutation();
+  const [publishLearningGoal] = usePublishLearningGoalMutation();
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
@@ -64,12 +64,14 @@ export const LearningGoalPublishButton: React.FC<LearningGoalPublishButtonProps>
 
                 {/* TODO */}
                 <ListItem>
-                  Make sure to precisely enter the <b>sub goals</b> and to select in which domain it should be displayed
+                  Make sure to precisely enter the <b>sub goals</b> and to select in which domain it should be
+                  displayed. The sub goals will also be published but won't be directly accessible (e.g. not appear in
+                  search results) except from this learning goal.
                 </ListItem>
-                <ListItem>
+                {/* <ListItem>
                   Add a <b>description</b>, the <b>estimated duration</b> and some <b>tags</b> for people to easily know
                   if it fits them
-                </ListItem>
+                </ListItem> */}
               </UnorderedList>
             </ModalBody>
 
@@ -81,7 +83,7 @@ export const LearningGoalPublishButton: React.FC<LearningGoalPublishButtonProps>
                 <Button
                   colorScheme="blue"
                   onClick={async () => {
-                    await updateLearningGoal({ variables: { _id: learningGoal._id, payload: { public: true } } });
+                    await publishLearningGoal({ variables: { learningGoalId: learningGoal._id } });
                     onClose();
                   }}
                 >

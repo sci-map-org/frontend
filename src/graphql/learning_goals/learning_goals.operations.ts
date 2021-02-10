@@ -4,8 +4,8 @@ import { DomainData } from '../domains/domains.fragments';
 import { LearningGoalData } from './learning_goals.fragments';
 
 export const createLearningGoal = gql`
-  mutation createLearningGoal($payload: CreateLearningGoalPayload!) {
-    createLearningGoal(payload: $payload) {
+  mutation createLearningGoal($payload: CreateLearningGoalPayload!, $options: CreateLearningGoalOptions) {
+    createLearningGoal(payload: $payload, options: $options) {
       ...LearningGoalData
     }
   }
@@ -13,8 +13,12 @@ export const createLearningGoal = gql`
 `;
 
 export const addLearningGoalToDomain = gql`
-  mutation addLearningGoalToDomain($domainId: String!, $payload: AddLearningGoalToDomainPayload!) {
-    addLearningGoalToDomain(domainId: $domainId, payload: $payload) {
+  mutation addLearningGoalToDomain(
+    $domainId: String!
+    $payload: AddLearningGoalToDomainPayload!
+    $options: AddLearningGoalToDomainOptions
+  ) {
+    addLearningGoalToDomain(domainId: $domainId, payload: $payload, options: $options) {
       learningGoal {
         ...LearningGoalData
         domain {
@@ -95,6 +99,27 @@ export const startLearningGoal = gql`
           startedAt
           learningGoal {
             _id
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const publishLearningGoal = gql`
+  mutation publishLearningGoal($learningGoalId: String!) {
+    publishLearningGoal(learningGoalId: $learningGoalId) {
+      learningGoal {
+        _id
+        publishedAt
+        hidden
+        requiredSubGoals {
+          subGoal {
+            ... on LearningGoal {
+              _id
+              publishedAt
+              hidden
+            }
           }
         }
       }
