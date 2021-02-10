@@ -22,16 +22,16 @@ interface DomainLearningPathsProps {
   domain: DomainDataFragment;
   h?: FlexProps['h'];
 }
-export const DomainLearningPaths: React.FC<DomainLearningPathsProps> = ({ domain, h }) => {
-  const { data } = useGetDomainLearningPathsQuery({ variables: { domainKey: domain.key } });
-  const learningPaths = data?.getDomainByKey.learningPaths?.items;
-  if (!learningPaths) return null;
-  return (
-    <Flex direction="column">
-      <Text fontSize="xl" mb={2}>
-        Curated Learning Paths
-      </Text>
-      <LearningPathPreviewCardList h={h} learningPaths={learningPaths} />
-    </Flex>
-  );
-};
+// export const DomainLearningPaths: React.FC<DomainLearningPathsProps> = ({ domain, h }) => {
+//   const { data } = useGetDomainLearningPathsQuery({ variables: { domainKey: domain.key } });
+//   const learningPaths = data?.getDomainByKey.learningPaths?.items;
+//   if (!learningPaths) return null;
+//   return (
+//     <Flex direction="column">
+//       <Text fontSize="xl" mb={2}>
+//         Curated Learning Paths
+//       </Text>
+//       <LearningPathPreviewCardList h={h} learningPaths={learningPaths} />
+//     </Flex>
+//   );
+// };

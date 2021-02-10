@@ -1,5 +1,6 @@
 import * as Types from '../../../graphql/types';
 
+import { LearningGoalCardDataFragment } from '../../../components/learning_goals/cards/LearningGoalCard.generated';
 import * as Operations from './CurrentUserLearningGoalsPage';
 import * as Apollo from '@apollo/client';
 export type GetCurrentUserLearningGoalsPageQueryVariables = Types.Exact<{ [key: string]: never; }>;
@@ -15,7 +16,7 @@ export type GetCurrentUserLearningGoalsPageQuery = (
       & Pick<Types.LearningGoalStartedItem, 'startedAt'>
       & { learningGoal: (
         { __typename?: 'LearningGoal' }
-        & Pick<Types.LearningGoal, '_id' | 'name' | 'key'>
+        & LearningGoalCardDataFragment
       ) }
     )>> }
   )> }

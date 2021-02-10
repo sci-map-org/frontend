@@ -2,6 +2,7 @@ import * as Types from '../../graphql/types';
 
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
+import { LearningGoalCardDataFragment } from '../../components/learning_goals/cards/LearningGoalCard.generated';
 import * as Operations from './DomainPage';
 import * as Apollo from '@apollo/client';
 export type GetDomainByKeyDomainPageQueryVariables = Types.Exact<{
@@ -49,7 +50,7 @@ export type GetDomainByKeyDomainPageQuery = (
       & Pick<Types.LearningGoalBelongsToDomain, 'contextualKey' | 'contextualName'>
       & { learningGoal: (
         { __typename?: 'LearningGoal' }
-        & Pick<Types.LearningGoal, '_id'>
+        & LearningGoalCardDataFragment
       ) }
     )>> }
     & DomainDataFragment

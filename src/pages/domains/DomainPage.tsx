@@ -8,8 +8,10 @@ import { RoleAccess } from '../../components/auth/RoleAccess';
 import { DomainConceptGraph } from '../../components/concepts/DomainConceptGraph';
 import { DomainConceptList } from '../../components/concepts/DomainConceptList';
 import { BestXPagesLinks } from '../../components/domains/BestXPagesLinks';
+import { DomainLearningGoals } from '../../components/domains/DomainLearningGoals';
 import { DomainUserHistory } from '../../components/domains/DomainUserHistory';
 import { PageLayout } from '../../components/layout/PageLayout';
+import { LearningGoalCardData } from '../../components/learning_goals/cards/LearningGoalCard';
 import { LearningPathPreviewCardDataFragment } from '../../components/learning_paths/LearningPathPreviewCard.generated';
 import { InternalButtonLink, InternalLink, PageLink } from '../../components/navigation/InternalLink';
 import { DomainRecommendedLearningMaterials } from '../../components/resources/DomainRecommendedLearningMaterials';
@@ -55,13 +57,14 @@ export const getDomainByKeyDomainPage = gql`
         contextualKey
         contextualName
         learningGoal {
-          _id
+          ...LearningGoalCardData
         }
       }
     }
   }
   ${DomainData}
   ${ConceptData}
+  ${LearningGoalCardData}
 `;
 
 const placeholderDomainData: GetDomainByKeyDomainPageQuery['getDomainByKey'] = {
@@ -149,6 +152,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
             </Skeleton>
           )}
         </Flex>
+
         <Flex direction="column" alignItems={{ base: 'flex-start', md: 'flex-end' }}>
           <ButtonGroup spacing={2}>
             <InternalButtonLink
@@ -209,6 +213,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
         )} */}
         </Flex>
       </Stack>
+      {domain.learningGoals && <DomainLearningGoals learningGoalItems={domain.learningGoals} />}
       <Flex direction={{ base: 'column-reverse', md: 'row' }} mb="100px">
         <Flex direction="column" flexShrink={1} flexGrow={1}>
           <DomainRecommendedLearningMaterials
