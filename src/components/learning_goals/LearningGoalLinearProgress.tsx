@@ -11,13 +11,12 @@ export const LearningGoalLinearProgressData = gql`
   }
 `;
 
-interface LearningGoalLinearProgressProps {
+interface LearningGoalLinearProgressProps extends ProgressProps {
   learningGoal: LearningGoalLinearProgressDataFragment;
-  size?: ProgressProps['size'];
 }
 
-export const LearningGoalLinearProgress: React.FC<LearningGoalLinearProgressProps> = ({ learningGoal, size }) => {
+export const LearningGoalLinearProgress: React.FC<LearningGoalLinearProgressProps> = ({ learningGoal, ...props }) => {
   if (!learningGoal.progress) return null;
 
-  return <Progress hasStripe value={learningGoal.progress.level} colorScheme="teal" size={size} />;
+  return <Progress value={learningGoal.progress.level} colorScheme="teal" {...props} />;
 };
