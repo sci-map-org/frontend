@@ -91,7 +91,6 @@ export const AddLearningGoalToDomain: React.FC<AddLearningGoalToDomainProps> = (
                 contextualName,
                 contextualKey,
                 description,
-                public: true,
                 type,
               },
             },

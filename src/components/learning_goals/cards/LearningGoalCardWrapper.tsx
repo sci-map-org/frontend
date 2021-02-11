@@ -1,4 +1,4 @@
-import { Box, Stack, useBreakpointValue, Wrap, WrapItem, WrapProps } from '@chakra-ui/react';
+import { Box, Stack, Wrap, WrapItem, WrapProps } from '@chakra-ui/react';
 import { PropsWithChildren, ReactNode } from 'react';
 import { LearningGoal } from '../../../graphql/types';
 import { LearningGoalCardContainer } from './LearningGoalCardContainer';
@@ -34,9 +34,7 @@ export const LearningGoalCardWrapper = <T extends { learningGoal: Pick<LearningG
   spacing = '30px',
   oneLine,
 }: PropsWithChildren<LearningGoalCardWrapperProps<T>>) => {
-  const nbCardsPerRow = useBreakpointValue(nbItemsResponsiveMapping);
-
-  if (oneLine && nbCardsPerRow && learningGoalItems.length > nbCardsPerRow)
+  if (oneLine)
     return (
       <Stack direction="row" overflowX="scroll" spacing={spacing}>
         {learningGoalItems.map((learningGoalItem) => (

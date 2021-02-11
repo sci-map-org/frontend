@@ -16,7 +16,7 @@ export const DomainLearningGoals: React.FC<DomainLearningGoalsProps> = ({ learni
   return (
     <Flex direction="column" pb={5}>
       <Stack direction="row" alignItems="center" mb={2}>
-        <LearningGoalIcon boxSize={6} />
+        <LearningGoalIcon boxSize="22px" />
         <Text fontSize="2xl">Learning Goals</Text>
       </Stack>
       <LearningGoalCardWrapper

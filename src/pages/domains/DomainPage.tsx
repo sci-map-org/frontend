@@ -213,7 +213,9 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
         )} */}
         </Flex>
       </Stack>
-      {domain.learningGoals && <DomainLearningGoals learningGoalItems={domain.learningGoals} />}
+      {domain.learningGoals && !!domain.learningGoals.length && (
+        <DomainLearningGoals learningGoalItems={domain.learningGoals} />
+      )}
       <Flex direction={{ base: 'column-reverse', md: 'row' }} mb="100px">
         <Flex direction="column" flexShrink={1} flexGrow={1}>
           <DomainRecommendedLearningMaterials
@@ -244,7 +246,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
             isLoading={loading}
             onConceptToggled={() => refetchLearningMaterials()}
           />
-          {(domain.learningGoals?.length || domain.subDomains?.length) && (
+          {domain.subDomains?.length && (
             <Flex
               direction="column"
               alignItems="stretch"
@@ -270,13 +272,13 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
                     </InternalLink>
                   </Box>
                 ))}
-                {(domain.learningGoals || []).map((learningGoalItem) => (
+                {/* {(domain.learningGoals || []).map((learningGoalItem) => (
                   <Box key={learningGoalItem.learningGoal._id}>
                     <PageLink pageInfo={DomainLearningGoalPageInfo(domain, learningGoalItem)}>
                       {learningGoalItem.contextualName}
                     </PageLink>
                   </Box>
-                ))}
+                ))} */}
               </Stack>
             </Flex>
           )}

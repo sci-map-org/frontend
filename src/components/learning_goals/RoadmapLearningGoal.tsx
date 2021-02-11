@@ -112,7 +112,7 @@ export const RoadmapLearningGoal: React.FC<RoadmapLearningGoalProps> = ({ learni
       <Flex direction="row" justifyContent="space-between" alignItems="center" pt={3} pb={5}>
         <Box w="60%">
           {(currentUserStartedGoal || (learningGoal.progress && learningGoal.progress.level > 0)) && (
-            <LearningGoalLinearProgress learningGoal={learningGoal} size="lg" />
+            <LearningGoalLinearProgress learningGoal={learningGoal} size="lg" hasStripe />
           )}
         </Box>
 
