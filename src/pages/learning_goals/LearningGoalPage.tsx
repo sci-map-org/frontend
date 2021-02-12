@@ -50,12 +50,10 @@ export const LearningGoalPage: React.FC<{ learningGoalKey: string }> = ({ learni
   );
   const [editMode, setEditMode] = useState(!!currentUser && currentUser.role === UserRole.Admin);
   useEffect(() => {
-    if (learningGoal.type === LearningGoalType.SubGoal) {
-      if (learningGoal.domain) {
-        routerPushToPage(DomainLearningGoalPageInfo(learningGoal.domain.domain, learningGoal));
-      } else {
-        throw new Error('SubGoal ' + learningGoal._id + ' has no domain attached');
-      }
+    if (learningGoal.domain) {
+      routerPushToPage(DomainLearningGoalPageInfo(learningGoal.domain.domain, learningGoal));
+    } else {
+      throw new Error('SubGoal ' + learningGoal._id + ' has no domain attached');
     }
   }, []);
 

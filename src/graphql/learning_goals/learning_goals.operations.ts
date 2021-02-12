@@ -137,14 +137,15 @@ export const detachLearningGoalFromDomain = gql`
     detachLearningGoalFromDomain(learningGoalId: $learningGoalId, domainId: $domainId) {
       learningGoal {
         _id
-        domain {
-          index
-          domain {
-            ...DomainData
-          }
-        }
+        # ===> Ignore this as else it creates an error on a DLG page during domain change => domain doesn't exists anymore
+        # ===> Just switch domain instantly
+        # domain {
+        #   index
+        #   domain {
+        #     ...DomainData
+        #   }
+        # }
       }
     }
   }
-  ${DomainData}
 `;

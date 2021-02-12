@@ -189,14 +189,6 @@ export type DetachLearningGoalFromDomainMutation = (
     & { learningGoal: (
       { __typename?: 'LearningGoal' }
       & Pick<Types.LearningGoal, '_id'>
-      & { domain?: Types.Maybe<(
-        { __typename?: 'LearningGoalBelongsToDomain' }
-        & Pick<Types.LearningGoalBelongsToDomain, 'index'>
-        & { domain: (
-          { __typename?: 'Domain' }
-          & DomainDataFragment
-        ) }
-      )> }
     ) }
   ) }
 );

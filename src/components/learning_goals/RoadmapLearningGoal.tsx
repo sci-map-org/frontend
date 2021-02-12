@@ -11,6 +11,8 @@ import {
 } from '../../graphql/learning_goals/learning_goals.operations.generated';
 import { LearningGoalType } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
+import { routerPushToPage } from '../../pages/PageInfo';
+import { DomainLearningGoalPageInfo } from '../../pages/RoutesPageInfos';
 import { DomainLink } from '../domains/DomainLink';
 import { DomainSelector } from '../domains/DomainSelector';
 import { EditableTextarea } from '../lib/inputs/EditableTextarea';
@@ -239,6 +241,7 @@ const LearningGoalDomainEditor: React.FC<LearningGoalDomainEditorProps> = ({ lea
                 variables: { learningGoalId: learningGoal._id, domainId: selectedDomain._id, payload: {} },
               });
               setSelectedDomain(undefined);
+              routerPushToPage(DomainLearningGoalPageInfo(selectedDomain, learningGoal));
             }}
           >
             Confirm change
