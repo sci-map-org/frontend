@@ -37,7 +37,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { ReactElement, useEffect, useState } from 'react';
-import { useDebounce } from 'use-debounce/lib';
+import { useDebounce } from 'use-debounce';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
 import { useCreateLearningGoalMutation } from '../../graphql/learning_goals/learning_goals.operations.generated';

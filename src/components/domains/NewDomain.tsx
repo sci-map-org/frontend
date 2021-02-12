@@ -12,7 +12,7 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { useDebounce } from 'use-debounce/lib';
+import { useDebounce } from 'use-debounce';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { useCreateDomain } from '../../graphql/domains/domains.hooks';
 import { useAddDomainBelongsToDomainMutation } from '../../graphql/domains/domains.operations.generated';
