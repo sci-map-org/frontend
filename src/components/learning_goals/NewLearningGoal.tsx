@@ -1,5 +1,12 @@
 import { CloseIcon } from '@chakra-ui/icons';
 import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
+  Button,
+  ButtonGroup,
+  Center,
   Flex,
   FormControl,
   FormHelperText,
@@ -8,33 +15,21 @@ import {
   Input,
   InputGroup,
   InputLeftAddon,
-  Stack,
-  Text,
-  Textarea,
-  useDisclosure,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Center,
-  ButtonGroup,
-  Button,
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
-  CloseButton,
+  Stack,
+  Text,
+  Textarea,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { ReactElement, useState } from 'react';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
-import {
-  useAddLearningGoalToDomainMutation,
-  useCreateLearningGoalMutation,
-} from '../../graphql/learning_goals/learning_goals.operations.generated';
+import { useCreateLearningGoalMutation } from '../../graphql/learning_goals/learning_goals.operations.generated';
 import { CreateLearningGoalPayload, LearningGoalType } from '../../graphql/types';
 import { generateUrlKey } from '../../services/url.service';
 import { getChakraRelativeSize } from '../../util/chakra.util';
@@ -42,16 +37,17 @@ import { DomainSelector } from '../domains/DomainSelector';
 import { FormButtons } from '../lib/buttons/FormButtons';
 
 interface NewLearningGoalData {
-  domain?: DomainDataFragment;
   name: string;
   key: string;
   type: LearningGoalType;
   description?: string;
 }
 interface NewLearningGoalFormProps {
-  onCreate: (payload: NewLearningGoalData, options: { isPublic?: boolean }) => void;
+  onCreate: (payload: NewLearningGoalData, options: { isPublic?: boolean; domainId?: string }) => void;
   onCancel: () => void;
   defaultPayload?: Partial<CreateLearningGoalPayload>;
+  defaultDomain?: DomainDataFragment;
+  allowDomainChange?: boolean;
   size?: 'md' | 'lg' | 'sm';
   publicByDefault?: boolean;
 }
@@ -59,10 +55,12 @@ export const NewLearningGoalForm: React.FC<NewLearningGoalFormProps> = ({
   onCreate,
   onCancel,
   defaultPayload,
+  defaultDomain,
+  allowDomainChange,
   size = 'md',
   publicByDefault,
 }) => {
-  const [domain, setDomain] = useState<DomainDataFragment | null>(null);
+  const [domain, setDomain] = useState<DomainDataFragment | undefined>(defaultDomain);
   const [name, setName] = useState(defaultPayload?.name || '');
   const [key, setKey] = useState(defaultPayload?.key || '');
   const [description, setDescription] = useState(defaultPayload?.description || '');
@@ -76,17 +74,17 @@ export const NewLearningGoalForm: React.FC<NewLearningGoalFormProps> = ({
             <Text as="span" color="gray.600">
               {domain && domain.name}
             </Text>
-            {domain && (
+            {domain && allowDomainChange && (
               <IconButton
                 size="xs"
                 variant="ghost"
                 aria-label="remove selected domain"
-                onClick={() => setDomain(null)}
+                onClick={() => setDomain(undefined)}
                 icon={<CloseIcon />}
               />
             )}
           </Text>
-          <DomainSelector onSelect={(selectedDomain) => setDomain(selectedDomain)} />
+          {allowDomainChange && <DomainSelector onSelect={(selectedDomain) => setDomain(selectedDomain)} />}
         </Flex>
         {type === LearningGoalType.SubGoal && !domain && (
           <Alert status="error">
@@ -111,14 +109,14 @@ export const NewLearningGoalForm: React.FC<NewLearningGoalFormProps> = ({
             isActive={type === LearningGoalType.SubGoal}
             onClick={() => setType(LearningGoalType.SubGoal)}
           >
-            Concept Group
+            Module
           </Button>
         </ButtonGroup>
       </Center>
       <FormControl id="name">
         <FormLabel>Name</FormLabel>
         <InputGroup size={size}>
-          {domain && <InputLeftAddon px={2} children={`${domain.name} - `} />}
+          {/* {domain && <InputLeftAddon px={2} children={`${domain.name} - `} />} */}
           <Input
             placeholder={`E.g. "Solving quadratic equations" or "Design - Basics"`}
             size={size}
@@ -166,8 +164,8 @@ export const NewLearningGoalForm: React.FC<NewLearningGoalFormProps> = ({
         size={getChakraRelativeSize(size, 1)}
         onPrimaryClick={() =>
           onCreate(
-            { name, key, description: description || undefined, domain: domain || undefined, type },
-            { isPublic: publicByDefault }
+            { name, key, description: description || undefined, type },
+            { isPublic: publicByDefault, domainId: domain?._id }
           )
         }
       />
@@ -178,41 +176,26 @@ export const NewLearningGoalForm: React.FC<NewLearningGoalFormProps> = ({
 interface NewLearningGoalProps extends Omit<NewLearningGoalFormProps, 'onCreate'> {
   onCreated?: (createdLearningGoal: LearningGoalDataFragment) => void;
 }
-export const NewLearningGoal: React.FC<NewLearningGoalProps> = ({ onCreated, onCancel, defaultPayload, size }) => {
+export const NewLearningGoal: React.FC<NewLearningGoalProps> = ({ onCreated, ...props }) => {
   const [createLearningGoal] = useCreateLearningGoalMutation();
-  const [addLearningGoalToDomain] = useAddLearningGoalToDomainMutation();
 
   return (
     <NewLearningGoalForm
-      size={size}
-      defaultPayload={defaultPayload}
-      onCreate={async ({ name, key, description, domain, type }, { isPublic }) => {
-        let createdLearningGoal: LearningGoalDataFragment | undefined = undefined;
-        if (domain) {
-          const { data } = await addLearningGoalToDomain({
-            variables: {
-              domainId: domain._id,
-              payload: {
-                contextualName: name,
-                contextualKey: key,
-                description: description,
-                type,
-              },
-              options: {
-                public: isPublic,
-              },
-            },
-          });
-          if (data) createdLearningGoal = data.addLearningGoalToDomain.learningGoal;
+      onCreate={async ({ name, key, description, type }, { isPublic, domainId }) => {
+        const { data } = await createLearningGoal({
+          variables: {
+            payload: { name, key, description, type },
+            options: { public: isPublic, domainId },
+          },
+        });
+        if (data) {
+          const createdLearningGoal = data.createLearningGoal;
+          onCreated && createdLearningGoal && onCreated(createdLearningGoal);
         } else {
-          const { data } = await createLearningGoal({
-            variables: { payload: { name, key, description, type }, options: { public: isPublic } },
-          });
-          if (data) createdLearningGoal = data.createLearningGoal;
+          throw new Error('no data returned, createLearningGoal');
         }
-        onCreated && createdLearningGoal && onCreated(createdLearningGoal);
       }}
-      onCancel={onCancel}
+      {...props}
     />
   );
 };

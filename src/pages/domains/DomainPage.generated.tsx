@@ -47,7 +47,7 @@ export type GetDomainByKeyDomainPageQuery = (
       ) }
     )>>, learningGoals?: Types.Maybe<Array<(
       { __typename?: 'LearningGoalBelongsToDomain' }
-      & Pick<Types.LearningGoalBelongsToDomain, 'contextualKey' | 'contextualName'>
+      & Pick<Types.LearningGoalBelongsToDomain, 'index'>
       & { learningGoal: (
         { __typename?: 'LearningGoal' }
         & LearningGoalCardDataFragment

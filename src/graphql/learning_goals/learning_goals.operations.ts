@@ -1,38 +1,22 @@
 import gql from 'graphql-tag';
 import { SubGoalCardData } from '../../components/learning_goals/SubGoalCard';
-import { DomainData } from '../domains/domains.fragments';
+import { DomainLinkData } from '../domains/domains.fragments';
 import { LearningGoalData } from './learning_goals.fragments';
 
 export const createLearningGoal = gql`
   mutation createLearningGoal($payload: CreateLearningGoalPayload!, $options: CreateLearningGoalOptions) {
     createLearningGoal(payload: $payload, options: $options) {
       ...LearningGoalData
-    }
-  }
-  ${LearningGoalData}
-`;
-
-export const addLearningGoalToDomain = gql`
-  mutation addLearningGoalToDomain(
-    $domainId: String!
-    $payload: AddLearningGoalToDomainPayload!
-    $options: AddLearningGoalToDomainOptions
-  ) {
-    addLearningGoalToDomain(domainId: $domainId, payload: $payload, options: $options) {
-      learningGoal {
-        ...LearningGoalData
+      domain {
+        index
         domain {
-          domain {
-            ...DomainData
-          }
-          contextualKey
-          contextualName
+          ...DomainLinkData
         }
       }
     }
   }
-  ${DomainData}
   ${LearningGoalData}
+  ${DomainLinkData}
 `;
 
 export const updateLearningGoal = gql`

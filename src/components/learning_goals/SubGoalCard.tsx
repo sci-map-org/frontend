@@ -4,12 +4,13 @@ import gql from 'graphql-tag';
 import { useRef, useState } from 'react';
 import { ConceptData } from '../../graphql/concepts/concepts.fragments';
 import { DomainData } from '../../graphql/domains/domains.fragments';
+import { LearningGoalLinkData } from '../../graphql/learning_goals/learning_goals.fragments';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { LearningGoalPageInfo } from '../../pages/RoutesPageInfos';
 import { ConceptBadge } from '../concepts/ConceptBadge';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
-import { InternalLink } from '../navigation/InternalLink';
+import { InternalLink, PageLink } from '../navigation/InternalLink';
 import { ResourceDescription } from '../resources/elements/ResourceDescription';
 import { LearningGoalBadge, LearningGoalBadgeData } from './LearningGoalBadge';
 import { LearningGoalCircularProgress, LearningGoalCircularProgressData } from './LearningGoalCircularProgress';
@@ -34,18 +35,9 @@ export const ConceptSubGoalCardData = gql`
 
 export const LearningGoalSubGoalCardData = gql`
   fragment LearningGoalSubGoalCardData on LearningGoal {
-    _id
-    name
-    key
+    ...LearningGoalLinkData
     description
     ...LearningGoalCircularProgressData
-    domain {
-      contextualName
-      contextualKey
-      domain {
-        ...DomainData
-      }
-    }
     requiredSubGoals {
       strength
       subGoal {
@@ -63,6 +55,7 @@ export const LearningGoalSubGoalCardData = gql`
   }
   ${ConceptData}
   ${DomainData}
+  ${LearningGoalLinkData}
   ${LearningGoalBadgeData}
   ${LearningGoalCircularProgressData}
 `;
@@ -132,13 +125,8 @@ const LearningGoalSubGoalCard: React.FC<LearningGoalSubGoalCardProps> = ({ learn
       onClick={() => routerPushToPage(LearningGoalPageInfo(learningGoal))}
     >
       <Flex direction="row" position="relative">
-        <InternalLink
-          routePath={domainItem ? '/domains/[key]/goals/[learningGoalKey]' : '/goals/[learningGoalKey]'}
-          asHref={
-            domainItem
-              ? `/domains/${domainItem.domain.key}/goals/${domainItem.contextualKey}`
-              : `/goals/${learningGoal.key}`
-          }
+        <PageLink
+          pageInfo={LearningGoalPageInfo(learningGoal)}
           fontSize="lg"
           fontWeight={500}
           mt={3}
@@ -146,7 +134,7 @@ const LearningGoalSubGoalCard: React.FC<LearningGoalSubGoalCardProps> = ({ learn
           {...(editMode && { mr: 5 })}
         >
           {learningGoal.name}
-        </InternalLink>
+        </PageLink>
         {editMode && onRemove && (
           <BoxBlockDefaultClickPropagation position="absolute" top={1} right={1}>
             <DeleteButtonWithConfirmation

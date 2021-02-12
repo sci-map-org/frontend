@@ -28,8 +28,6 @@ export const getLearningGoalPageData = gql`
         domain {
           ...DomainLinkData
         }
-        contextualKey
-        contextualName
       }
     }
   }
@@ -54,7 +52,7 @@ export const LearningGoalPage: React.FC<{ learningGoalKey: string }> = ({ learni
   useEffect(() => {
     if (learningGoal.type === LearningGoalType.SubGoal) {
       if (learningGoal.domain) {
-        routerPushToPage(DomainLearningGoalPageInfo(learningGoal.domain.domain, learningGoal.domain));
+        routerPushToPage(DomainLearningGoalPageInfo(learningGoal.domain.domain, learningGoal));
       } else {
         throw new Error('SubGoal ' + learningGoal._id + ' has no domain attached');
       }
@@ -80,80 +78,6 @@ export const LearningGoalPage: React.FC<{ learningGoalKey: string }> = ({ learni
       {learningGoal.type === LearningGoalType.Roadmap && (
         <RoadmapLearningGoal learningGoal={learningGoal} isLoading={loading} editMode={editMode} />
       )}
-      {/* <Stack w="100%">
-        <Stack direction="row" spacing={3} alignItems="center">
-          <EditableTextInput
-            value={learningGoal.name}
-            centered
-            editMode={editMode}
-            isLoading={loading}
-            onChange={(newName) =>
-              updateLearningGoal({
-                variables: {
-                  _id: learningGoal._id,
-                  payload: { name: (newName as string) || null },
-                },
-              })
-            }
-          />
-          <StartLearningGoalButton learningGoal={learningGoal} />
-        </Stack>
-        <EditableTextarea
-          textAlign="center"
-          isLoading={loading}
-          justifyContent="center"
-          backgroundColor="backgroundColor.0"
-          fontSize="lg"
-          fontWeight={300}
-          color="gray.700"
-          defaultValue={learningGoal.description || ''}
-          placeholder="Add a description..."
-          onSubmit={(newDescription: any) =>
-            updateLearningGoal({
-              variables: {
-                _id: learningGoal._id,
-                payload: { description: (newDescription as string) || null },
-              },
-            })
-          }
-          isDisabled={!editMode}
-        />
-        {learningGoal.startedBy && (
-          <Center>
-            <OtherLearnersViewer
-              title={() => `Learning now`}
-              users={learningGoal.startedBy.items.map(({ user }) => user)}
-              totalCount={learningGoal.startedBy.count}
-              currentUserIsLearner={currentUserStartedGoal}
-              minUsers={currentUserIsOwner ? 1 : 4}
-            />
-          </Center>
-        )}
-
-        <SubGoalsWrapper
-          learningGoal={learningGoal}
-          editMode={editMode}
-          renderLastItem={
-            editMode && (
-              <Center py={2}>
-                <LearningGoalSelector
-                  placeholder="Add a SubGoal..."
-                  createLGDefaultPayload={{ type: LearningGoalType.SubGoal }}
-                  onSelect={(selected) =>
-                    attachLearningGoalRequiresSubGoal({
-                      variables: {
-                        learningGoalId: learningGoal._id,
-                        subGoalId: selected._id,
-                        payload: {},
-                      },
-                    })
-                  }
-                />
-              </Center>
-            )
-          }
-        />
-      </Stack> */}
     </PageLayout>
   );
 };

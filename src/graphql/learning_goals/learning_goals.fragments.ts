@@ -1,15 +1,31 @@
 import gql from 'graphql-tag';
+import { DomainLinkData } from '../domains/domains.fragments';
 import { LearningGoalType } from '../types';
 
 export const LearningGoalData = gql`
   fragment LearningGoalData on LearningGoal {
     _id
+    key
     name
     type
     description
-    key
     publishedAt
   }
+`;
+
+export const LearningGoalLinkData = gql`
+  fragment LearningGoalLinkData on LearningGoal {
+    _id
+    key
+    name
+    type
+    domain {
+      domain {
+        ...DomainLinkData
+      }
+    }
+  }
+  ${DomainLinkData}
 `;
 
 export const generateLearningGoalData = () => ({

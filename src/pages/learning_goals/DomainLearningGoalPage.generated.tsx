@@ -1,13 +1,13 @@
 import * as Types from '../../graphql/types';
 
 import { RoadmapLearningGoalDataFragment } from '../../components/learning_goals/RoadmapLearningGoal.generated';
-import { ConceptGroupLearningGoalDataFragment } from '../../components/learning_goals/ConceptGroupLearningGoal.generated';
 import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
+import { ConceptGroupLearningGoalDataFragment } from '../../components/learning_goals/ConceptGroupLearningGoal.generated';
 import * as Operations from './DomainLearningGoalPage';
 import * as Apollo from '@apollo/client';
 export type GetLearningGoalDomainLearningGoalPageQueryVariables = Types.Exact<{
   domainKey: Types.Scalars['String'];
-  contextualLearningGoalKey: Types.Scalars['String'];
+  learningGoalKey: Types.Scalars['String'];
 }>;
 
 
@@ -19,7 +19,6 @@ export type GetLearningGoalDomainLearningGoalPageQuery = (
       { __typename?: 'LearningGoal' }
       & { domain?: Types.Maybe<(
         { __typename?: 'LearningGoalBelongsToDomain' }
-        & Pick<Types.LearningGoalBelongsToDomain, 'contextualKey' | 'contextualName'>
         & { domain: (
           { __typename?: 'Domain' }
           & DomainLinkDataFragment
@@ -46,7 +45,7 @@ export type GetLearningGoalDomainLearningGoalPageQuery = (
  * const { data, loading, error } = useGetLearningGoalDomainLearningGoalPageQuery({
  *   variables: {
  *      domainKey: // value for 'domainKey'
- *      contextualLearningGoalKey: // value for 'contextualLearningGoalKey'
+ *      learningGoalKey: // value for 'learningGoalKey'
  *   },
  * });
  */

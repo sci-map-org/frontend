@@ -3,9 +3,9 @@
 import { domainLinkStyleProps } from '../components/domains/DomainLink';
 import { ConceptDataFragment } from '../graphql/concepts/concepts.fragments.generated';
 import { DomainDataFragment, DomainLinkDataFragment } from '../graphql/domains/domains.fragments.generated';
+import { LearningGoalLinkDataFragment } from '../graphql/learning_goals/learning_goals.fragments.generated';
 import { LearningPathDataFragment } from '../graphql/learning_paths/learning_paths.fragments.generated';
 import { ResourceDataFragment } from '../graphql/resources/resources.fragments.generated';
-import { LearningGoal, LearningGoalBelongsToDomain } from '../graphql/types';
 import { PageInfo } from './PageInfo';
 
 // ====Domains====
@@ -83,15 +83,9 @@ export const DomainResourceListPageInfo = (domain: DomainDataFragment): PageInfo
 
 //====Learning Goals====
 export const LearningGoalPagePath = (learningGoalKey: string) => '/goals/' + learningGoalKey;
-export const LearningGoalPageInfo = (
-  learningGoal: Pick<LearningGoal, 'key' | 'name'> & {
-    domain?:
-      | (Pick<LearningGoalBelongsToDomain, 'contextualKey' | 'contextualName'> & { domain: DomainLinkDataFragment })
-      | null;
-  }
-): PageInfo => {
+export const LearningGoalPageInfo = (learningGoal: LearningGoalLinkDataFragment): PageInfo => {
   return learningGoal.domain
-    ? DomainLearningGoalPageInfo(learningGoal.domain.domain, learningGoal.domain)
+    ? DomainLearningGoalPageInfo(learningGoal.domain.domain, learningGoal)
     : {
         name: learningGoal.name,
         path: LearningGoalPagePath(learningGoal.key),
@@ -99,14 +93,14 @@ export const LearningGoalPageInfo = (
       };
 };
 
-export const DomainLearningGoalPagePath = (domainKey: string, contextualLearningGoalKey: string) =>
-  `/domains/${domainKey}/goals/${contextualLearningGoalKey}`;
+export const DomainLearningGoalPagePath = (domainKey: string, learningGoalKey: string) =>
+  `/domains/${domainKey}/goals/${learningGoalKey}`;
 export const DomainLearningGoalPageInfo = (
-  domain: Pick<DomainDataFragment, 'key' | 'name'>,
-  { contextualKey, contextualName }: Pick<LearningGoalBelongsToDomain, 'contextualKey' | 'contextualName'>
+  domain: DomainLinkDataFragment,
+  learningGoal: LearningGoalLinkDataFragment
 ): PageInfo => ({
-  name: `${domain.name} - ${contextualName}`,
-  path: DomainLearningGoalPagePath(domain.key, contextualKey),
+  name: `${domain.name} - ${learningGoal.name}`,
+  path: DomainLearningGoalPagePath(domain.key, learningGoal.key),
   routePath: DomainLearningGoalPagePath('[key]', '[learningGoalKey]'),
 });
 

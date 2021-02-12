@@ -54,7 +54,6 @@ export const LearningGoalSelector: React.FC<{
   const [createLGDefaultPayload, setCreateLGDefaultPayload] = useState<Partial<CreateLearningGoalPayload>>(
     parentCreateLGDefaultPayload
   );
-
   return (
     <Popover returnFocusOnClose={false} isOpen={isOpen} onClose={onClose} placement="bottom" closeOnBlur={false} isLazy>
       <PopoverTrigger>
@@ -63,7 +62,11 @@ export const LearningGoalSelector: React.FC<{
             width="100%"
             allowCreation
             onCreate={(newLg) => {
-              setCreateLGDefaultPayload({ name: newLg.name, key: generateUrlKey(newLg.name) }); //TODO: proper validation
+              setCreateLGDefaultPayload({
+                ...createLGDefaultPayload,
+                name: newLg.name,
+                key: generateUrlKey(newLg.name),
+              }); //TODO: proper validation
               onOpen();
             }}
             suggestionContainerWidth="300px"
@@ -87,6 +90,7 @@ export const LearningGoalSelector: React.FC<{
               onSelect(createdLearningGoal);
               onClose();
             }}
+            allowDomainChange
             onCancel={() => onClose()}
             size="sm"
             publicByDefault

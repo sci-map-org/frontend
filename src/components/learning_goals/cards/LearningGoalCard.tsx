@@ -6,22 +6,14 @@ import { PageLink } from '../../navigation/InternalLink';
 import { LearningGoalCardDataFragment } from './LearningGoalCard.generated';
 import { LearningGoalLinearProgress, LearningGoalLinearProgressData } from '../LearningGoalLinearProgress';
 import { routerPushToPage } from '../../../pages/PageInfo';
+import { LearningGoalLinkData } from '../../../graphql/learning_goals/learning_goals.fragments';
 
 export const LearningGoalCardData = gql`
   fragment LearningGoalCardData on LearningGoal {
-    _id
-    key
-    name
-    domain {
-      domain {
-        ...DomainLinkData
-      }
-      contextualKey
-      contextualName
-    }
+    ...LearningGoalLinkData
     ...LearningGoalLinearProgressData
   }
-  ${DomainLinkData}
+  ${LearningGoalLinkData}
   ${LearningGoalLinearProgressData}
 `;
 interface LearningGoalCardProps {

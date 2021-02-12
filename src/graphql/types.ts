@@ -125,7 +125,7 @@ export type QueryGetLearningGoalByKeyArgs = {
 
 export type QueryGetDomainLearningGoalByKeyArgs = {
   domainKey: Scalars['String'];
-  contextualLearningGoalKey: Scalars['String'];
+  learningGoalKey: Scalars['String'];
 };
 
 export type Mutation = {
@@ -173,8 +173,9 @@ export type Mutation = {
   removeComplementaryResourceFromLearningPath: ComplementaryResourceUpdatedResult;
   startLearningPath: LearningPathStartedResult;
   completeLearningPath: LearningPathCompletedResult;
-  addLearningGoalToDomain: DomainAndLearningGoalResult;
   createLearningGoal: LearningGoal;
+  attachLearningGoalToDomain: DomainAndLearningGoalResult;
+  detachLearningGoalFromDomain: DomainAndLearningGoalResult;
   updateLearningGoal: LearningGoal;
   deleteLearningGoal: DeleteLearningGoalMutationResult;
   attachLearningGoalRequiresSubGoal: AttachLearningGoalRequiresSubGoalResult;
@@ -435,16 +436,22 @@ export type MutationCompleteLearningPathArgs = {
 };
 
 
-export type MutationAddLearningGoalToDomainArgs = {
-  domainId: Scalars['String'];
-  payload: AddLearningGoalToDomainPayload;
-  options?: Maybe<AddLearningGoalToDomainOptions>;
-};
-
-
 export type MutationCreateLearningGoalArgs = {
   payload: CreateLearningGoalPayload;
   options?: Maybe<CreateLearningGoalOptions>;
+};
+
+
+export type MutationAttachLearningGoalToDomainArgs = {
+  learningGoalId: Scalars['String'];
+  domainId: Scalars['String'];
+  payload: AttachLearningGoalToDomainPayload;
+};
+
+
+export type MutationDetachLearningGoalFromDomainArgs = {
+  learningGoalId: Scalars['String'];
+  domainId: Scalars['String'];
 };
 
 
@@ -1006,17 +1013,6 @@ export type LearningPathCompletedResult = {
   learningPath: LearningPath;
 };
 
-export type AddLearningGoalToDomainPayload = {
-  contextualName: Scalars['String'];
-  contextualKey?: Maybe<Scalars['String']>;
-  type: LearningGoalType;
-  description?: Maybe<Scalars['String']>;
-};
-
-export type AddLearningGoalToDomainOptions = {
-  public?: Maybe<Scalars['Boolean']>;
-};
-
 export type CreateLearningGoalPayload = {
   name: Scalars['String'];
   type: LearningGoalType;
@@ -1026,6 +1022,11 @@ export type CreateLearningGoalPayload = {
 
 export type CreateLearningGoalOptions = {
   public?: Maybe<Scalars['Boolean']>;
+  domainId?: Maybe<Scalars['String']>;
+};
+
+export type AttachLearningGoalToDomainPayload = {
+  index?: Maybe<Scalars['Float']>;
 };
 
 export type UpdateLearningGoalPayload = {
@@ -1197,8 +1198,7 @@ export type DomainBelongsToDomainItem = {
 
 export type LearningGoalBelongsToDomain = {
   __typename?: 'LearningGoalBelongsToDomain';
-  contextualName: Scalars['String'];
-  contextualKey: Scalars['String'];
+  index: Scalars['Float'];
   domain: Domain;
   learningGoal: LearningGoal;
 };
@@ -1206,8 +1206,6 @@ export type LearningGoalBelongsToDomain = {
 export type TopicBelongsToDomain = {
   __typename?: 'TopicBelongsToDomain';
   index: Scalars['Float'];
-  contextualKey?: Maybe<Scalars['String']>;
-  contextualName?: Maybe<Scalars['String']>;
   topic: Topic;
   domain: Domain;
 };

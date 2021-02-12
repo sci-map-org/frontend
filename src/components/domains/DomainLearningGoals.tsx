@@ -7,7 +7,7 @@ import { LearningGoalIcon } from '../lib/icons/LearningGoalIcon';
 
 interface DomainLearningGoalsProps {
   learningGoalItems: Array<
-    Pick<LearningGoalBelongsToDomain, 'contextualKey' | 'contextualName'> & {
+    Pick<LearningGoalBelongsToDomain, 'index'> & {
       learningGoal: LearningGoalCardDataFragment;
     }
   >;

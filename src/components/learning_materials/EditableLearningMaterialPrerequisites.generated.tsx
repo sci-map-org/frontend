@@ -10,7 +10,7 @@ export type EditableLearningMaterialPrerequisitesData_Resource_Fragment = (
     { __typename?: 'LearningMaterialPrerequisiteItem' }
     & { learningGoal: (
       { __typename?: 'LearningGoal' }
-      & Pick<Types.LearningGoal, '_id' | 'name' | 'key'>
+      & LearningGoalBadgeDataFragment
     ) }
   )>> }
 );
@@ -22,7 +22,7 @@ export type EditableLearningMaterialPrerequisitesData_LearningPath_Fragment = (
     { __typename?: 'LearningMaterialPrerequisiteItem' }
     & { learningGoal: (
       { __typename?: 'LearningGoal' }
-      & Pick<Types.LearningGoal, '_id' | 'name' | 'key'>
+      & LearningGoalBadgeDataFragment
     ) }
   )>> }
 );

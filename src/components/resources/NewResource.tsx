@@ -304,7 +304,7 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
                 {subResource.domainsAndCoveredConcepts.map(({ selectedConcepts, domain }) =>
                   selectedConcepts.map((concept) => (
                     <WrapItem key={concept._id}>
-                      <ConceptBadge concept={concept} domainKey={domain.key} />
+                      <ConceptBadge concept={concept} domain={domain} />
                     </WrapItem>
                   ))
                 )}

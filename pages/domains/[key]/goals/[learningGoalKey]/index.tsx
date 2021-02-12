@@ -9,7 +9,7 @@ const Page: React.FC = () => {
   if (typeof learningGoalKey !== 'string') return null;
   if (typeof key !== 'string') return null;
 
-  return <DomainLearningGoalPage domainKey={key} contextualLearningGoalKey={learningGoalKey} />;
+  return <DomainLearningGoalPage domainKey={key} learningGoalKey={learningGoalKey} />;
 };
 
 export default Page;

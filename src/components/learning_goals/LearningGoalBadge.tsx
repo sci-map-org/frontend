@@ -1,7 +1,8 @@
 import { CloseButton, FlexProps, Stack, Text, Tooltip } from '@chakra-ui/react';
 import gql from 'graphql-tag';
-import Router from 'next/router';
-import { InternalLink } from '../navigation/InternalLink';
+import { LearningGoalLinkData } from '../../graphql/learning_goals/learning_goals.fragments';
+import { LearningGoalPageInfo } from '../../pages/RoutesPageInfos';
+import { PageLink } from '../navigation/InternalLink';
 import { LearningGoalBadgeDataFragment } from './LearningGoalBadge.generated';
 
 const roleStyleMapping: {
@@ -27,18 +28,9 @@ const roleStyleMapping: {
 };
 export const LearningGoalBadgeData = gql`
   fragment LearningGoalBadgeData on LearningGoal {
-    _id
-    name
-    key
-    domain {
-      contextualKey
-      contextualName
-      domain {
-        _id
-        key
-      }
-    }
+    ...LearningGoalLinkData
   }
+  ${LearningGoalLinkData}
 `;
 
 interface LearningGoalBadgeProps {
@@ -57,10 +49,9 @@ export const LearningGoalBadge: React.FC<LearningGoalBadgeProps> = ({
   clickable = true,
   size = 'md',
 }) => {
-  const domainRelationship = learningGoal.domain;
   return (
     <Tooltip label={learningGoal.name} aria-label={learningGoal.name} openDelay={500}>
-      <InternalLink
+      <PageLink
         borderRadius={10}
         px="6px"
         backgroundColor={roleStyleMapping[role].backgroundColor}
@@ -68,12 +59,7 @@ export const LearningGoalBadge: React.FC<LearningGoalBadgeProps> = ({
         fontSize={size}
         borderColor={roleStyleMapping[role].borderColor}
         isDisabled={!clickable}
-        routePath={domainRelationship ? '/domains/[key]/goals/[learningGoalKey]' : '/goals/[learningGoalKey]'}
-        asHref={
-          domainRelationship
-            ? `/domains/${domainRelationship.domain.key}/goals/${domainRelationship.contextualKey}`
-            : `/goals/${learningGoal.key}`
-        }
+        pageInfo={LearningGoalPageInfo(learningGoal)}
         {...(clickable && {
           _hover: {
             backgroundColor: roleStyleMapping[role].hoverBackgroundColor,
@@ -97,7 +83,7 @@ export const LearningGoalBadge: React.FC<LearningGoalBadgeProps> = ({
             {learningGoal.name}
           </Text>
         </Stack>
-      </InternalLink>
+      </PageLink>
     </Tooltip>
   );
 };

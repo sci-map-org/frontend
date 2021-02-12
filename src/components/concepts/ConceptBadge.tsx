@@ -1,5 +1,6 @@
 import { CloseButton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
+import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { InternalLink } from '../navigation/InternalLink';
 import { ConceptBadgeDataFragment } from './ConceptBadge.generated';
 
@@ -21,11 +22,18 @@ export const ConceptBadgeData = gql`
 interface ConceptBadgeProps {
   size?: 'md' | 'sm';
   concept: ConceptBadgeDataFragment;
+  domain?: DomainLinkDataFragment;
   onRemove?: () => void;
   removable?: boolean;
 }
-export const ConceptBadge: React.FC<ConceptBadgeProps> = ({ concept, removable, onRemove, size = 'md' }) => {
-  const domain = concept.domain;
+export const ConceptBadge: React.FC<ConceptBadgeProps> = ({
+  concept,
+  domain: domainProp,
+  removable,
+  onRemove,
+  size = 'md',
+}) => {
+  const domain = concept.domain || domainProp;
   if (!domain) {
     throw new Error(`Concept ${concept._id} does not have a domain`);
   }

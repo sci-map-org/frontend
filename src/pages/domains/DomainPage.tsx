@@ -54,11 +54,10 @@ export const getDomainByKeyDomainPage = gql`
         }
       }
       learningGoals {
-        contextualKey
-        contextualName
         learningGoal {
           ...LearningGoalCardData
         }
+        index
       }
     }
   }
@@ -272,51 +271,11 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
                     </InternalLink>
                   </Box>
                 ))}
-                {/* {(domain.learningGoals || []).map((learningGoalItem) => (
-                  <Box key={learningGoalItem.learningGoal._id}>
-                    <PageLink pageInfo={DomainLearningGoalPageInfo(domain, learningGoalItem)}>
-                      {learningGoalItem.contextualName}
-                    </PageLink>
-                  </Box>
-                ))} */}
               </Stack>
             </Flex>
           )}
           <BestXPagesLinks domainKey={domain.key} />
         </Stack>
-        {/* )} */}
-        {/* {mockedFeaturesEnabled && (
-          <Stack spacing={4} direction="column" ml={6} flexShrink={1}>
-            <Box>
-              <Text fontSize="2xl">Sub domains</Text>
-              <Stack direction="column" spacing={1}>
-                {[
-                  { _id: 1, name: 'Elixir' },
-                  { _id: 2, name: 'Clojure' },
-                  { _id: 3, name: 'Haskell' },
-                  { _id: 4, name: 'JavaScript Functional Programming' },
-                ].map((domain) => (
-                  <Link key={domain._id}>{domain.name}</Link>
-                ))}
-              </Stack>
-            </Box>
-            <Box>
-              <Text fontSize="2xl">Related domains</Text>
-              <Stack direction="column" spacing={1}>
-                {[
-                  { _id: 1, name: 'Category Theory' },
-                  { _id: 2, name: 'Object Oriented Programming' },
-                ].map((domain) => (
-                  <Link key={domain._id}>{domain.name}</Link>
-                ))}
-              </Stack>
-            </Box>
-            <Box>
-              <Text fontSize="2xl">Links</Text>
-              <Stack direction="column"></Stack>
-            </Box>
-          </Stack>
-        )} */}
       </Flex>
     </PageLayout>
   );
