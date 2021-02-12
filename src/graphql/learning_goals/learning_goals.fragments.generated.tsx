@@ -1,6 +1,6 @@
 import * as Types from '../types';
 
-import { DomainLinkDataFragment } from '../domains/domains.fragments.generated';
+import { DomainLinkDataFragment, DomainDataFragment } from '../domains/domains.fragments.generated';
 export type LearningGoalDataFragment = (
   { __typename?: 'LearningGoal' }
   & Pick<Types.LearningGoal, '_id' | 'key' | 'name' | 'type' | 'description' | 'publishedAt'>

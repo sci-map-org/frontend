@@ -1,7 +1,7 @@
 import * as Types from '../types';
 
 import { LearningGoalDataFragment } from './learning_goals.fragments.generated';
-import { DomainLinkDataFragment } from '../domains/domains.fragments.generated';
+import { DomainLinkDataFragment, DomainDataFragment } from '../domains/domains.fragments.generated';
 import { SubGoalCardDataFragment } from '../../components/learning_goals/SubGoalCard.generated';
 import * as Operations from './learning_goals.operations';
 import * as Apollo from '@apollo/client';
@@ -146,6 +146,57 @@ export type PublishLearningGoalMutation = (
           & Pick<Types.LearningGoal, '_id' | 'publishedAt' | 'hidden'>
         ) | { __typename?: 'Concept' } }
       )>> }
+    ) }
+  ) }
+);
+
+export type AttachLearningGoalToDomainMutationVariables = Types.Exact<{
+  learningGoalId: Types.Scalars['String'];
+  domainId: Types.Scalars['String'];
+  payload: Types.AttachLearningGoalToDomainPayload;
+}>;
+
+
+export type AttachLearningGoalToDomainMutation = (
+  { __typename?: 'Mutation' }
+  & { attachLearningGoalToDomain: (
+    { __typename?: 'DomainAndLearningGoalResult' }
+    & { learningGoal: (
+      { __typename?: 'LearningGoal' }
+      & Pick<Types.LearningGoal, '_id'>
+      & { domain?: Types.Maybe<(
+        { __typename?: 'LearningGoalBelongsToDomain' }
+        & Pick<Types.LearningGoalBelongsToDomain, 'index'>
+        & { domain: (
+          { __typename?: 'Domain' }
+          & DomainDataFragment
+        ) }
+      )> }
+    ) }
+  ) }
+);
+
+export type DetachLearningGoalFromDomainMutationVariables = Types.Exact<{
+  learningGoalId: Types.Scalars['String'];
+  domainId: Types.Scalars['String'];
+}>;
+
+
+export type DetachLearningGoalFromDomainMutation = (
+  { __typename?: 'Mutation' }
+  & { detachLearningGoalFromDomain: (
+    { __typename?: 'DomainAndLearningGoalResult' }
+    & { learningGoal: (
+      { __typename?: 'LearningGoal' }
+      & Pick<Types.LearningGoal, '_id'>
+      & { domain?: Types.Maybe<(
+        { __typename?: 'LearningGoalBelongsToDomain' }
+        & Pick<Types.LearningGoalBelongsToDomain, 'index'>
+        & { domain: (
+          { __typename?: 'Domain' }
+          & DomainDataFragment
+        ) }
+      )> }
     ) }
   ) }
 );
@@ -331,3 +382,56 @@ export function usePublishLearningGoalMutation(baseOptions?: Apollo.MutationHook
 export type PublishLearningGoalMutationHookResult = ReturnType<typeof usePublishLearningGoalMutation>;
 export type PublishLearningGoalMutationResult = Apollo.MutationResult<PublishLearningGoalMutation>;
 export type PublishLearningGoalMutationOptions = Apollo.BaseMutationOptions<PublishLearningGoalMutation, PublishLearningGoalMutationVariables>;
+export type AttachLearningGoalToDomainMutationFn = Apollo.MutationFunction<AttachLearningGoalToDomainMutation, AttachLearningGoalToDomainMutationVariables>;
+
+/**
+ * __useAttachLearningGoalToDomainMutation__
+ *
+ * To run a mutation, you first call `useAttachLearningGoalToDomainMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAttachLearningGoalToDomainMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [attachLearningGoalToDomainMutation, { data, loading, error }] = useAttachLearningGoalToDomainMutation({
+ *   variables: {
+ *      learningGoalId: // value for 'learningGoalId'
+ *      domainId: // value for 'domainId'
+ *      payload: // value for 'payload'
+ *   },
+ * });
+ */
+export function useAttachLearningGoalToDomainMutation(baseOptions?: Apollo.MutationHookOptions<AttachLearningGoalToDomainMutation, AttachLearningGoalToDomainMutationVariables>) {
+        return Apollo.useMutation<AttachLearningGoalToDomainMutation, AttachLearningGoalToDomainMutationVariables>(Operations.attachLearningGoalToDomain, baseOptions);
+      }
+export type AttachLearningGoalToDomainMutationHookResult = ReturnType<typeof useAttachLearningGoalToDomainMutation>;
+export type AttachLearningGoalToDomainMutationResult = Apollo.MutationResult<AttachLearningGoalToDomainMutation>;
+export type AttachLearningGoalToDomainMutationOptions = Apollo.BaseMutationOptions<AttachLearningGoalToDomainMutation, AttachLearningGoalToDomainMutationVariables>;
+export type DetachLearningGoalFromDomainMutationFn = Apollo.MutationFunction<DetachLearningGoalFromDomainMutation, DetachLearningGoalFromDomainMutationVariables>;
+
+/**
+ * __useDetachLearningGoalFromDomainMutation__
+ *
+ * To run a mutation, you first call `useDetachLearningGoalFromDomainMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDetachLearningGoalFromDomainMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [detachLearningGoalFromDomainMutation, { data, loading, error }] = useDetachLearningGoalFromDomainMutation({
+ *   variables: {
+ *      learningGoalId: // value for 'learningGoalId'
+ *      domainId: // value for 'domainId'
+ *   },
+ * });
+ */
+export function useDetachLearningGoalFromDomainMutation(baseOptions?: Apollo.MutationHookOptions<DetachLearningGoalFromDomainMutation, DetachLearningGoalFromDomainMutationVariables>) {
+        return Apollo.useMutation<DetachLearningGoalFromDomainMutation, DetachLearningGoalFromDomainMutationVariables>(Operations.detachLearningGoalFromDomain, baseOptions);
+      }
+export type DetachLearningGoalFromDomainMutationHookResult = ReturnType<typeof useDetachLearningGoalFromDomainMutation>;
+export type DetachLearningGoalFromDomainMutationResult = Apollo.MutationResult<DetachLearningGoalFromDomainMutation>;
+export type DetachLearningGoalFromDomainMutationOptions = Apollo.BaseMutationOptions<DetachLearningGoalFromDomainMutation, DetachLearningGoalFromDomainMutationVariables>;

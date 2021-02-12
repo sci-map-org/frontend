@@ -18,6 +18,13 @@ export type GetCurrentUserLearningGoalsPageQuery = (
         { __typename?: 'LearningGoal' }
         & LearningGoalCardDataFragment
       ) }
+    )>>, createdLearningGoals?: Types.Maybe<Array<(
+      { __typename?: 'LearningGoalCreatedItem' }
+      & Pick<Types.LearningGoalCreatedItem, 'createdAt'>
+      & { learningGoal: (
+        { __typename?: 'LearningGoal' }
+        & LearningGoalCardDataFragment
+      ) }
     )>> }
   )> }
 );

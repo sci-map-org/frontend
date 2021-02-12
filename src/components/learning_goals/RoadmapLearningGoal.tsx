@@ -1,16 +1,22 @@
-import { Badge, Box, Center, Flex, Stack } from '@chakra-ui/react';
+import { Badge, Box, Button, Center, Flex, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { LearningGoalData } from '../../graphql/learning_goals/learning_goals.fragments';
 import {
   useAttachLearningGoalRequiresSubGoalMutation,
   useUpdateLearningGoalMutation,
+  useAttachLearningGoalToDomainMutation,
+  useDetachLearningGoalFromDomainMutation,
 } from '../../graphql/learning_goals/learning_goals.operations.generated';
 import { LearningGoalType } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
+import { DomainLink } from '../domains/DomainLink';
+import { DomainSelector } from '../domains/DomainSelector';
 import { EditableTextarea } from '../lib/inputs/EditableTextarea';
 import { EditableTextInput } from '../lib/inputs/EditableTextInput';
 import { OtherLearnersViewer, OtherLearnersViewerUserData } from '../lib/OtherLearnersViewer';
+import { UserAvatar, UserAvatarData } from '../users/UserAvatar';
 import { LearningGoalLinearProgress, LearningGoalLinearProgressData } from './LearningGoalLinearProgress';
 import { LearningGoalPublishButton, LearningGoalPublishButtonData } from './LearningGoalPublishButton';
 import { LearningGoalSelector } from './LearningGoalSelector';
@@ -23,7 +29,7 @@ export const RoadmapLearningGoalData = gql`
     _id
     ...LearningGoalData
     createdBy {
-      _id
+      ...UserAvatarData
     }
     startedBy(options: {}) {
       items {
@@ -32,6 +38,11 @@ export const RoadmapLearningGoalData = gql`
         }
       }
       count
+    }
+    domain {
+      domain {
+        ...DomainLinkData
+      }
     }
     ...LearningGoalPublishButtonData
     ...RoadmapSubGoalsWrapperData
@@ -44,6 +55,7 @@ export const RoadmapLearningGoalData = gql`
   ${StartLearningGoalButtonData}
   ${OtherLearnersViewerUserData}
   ${LearningGoalLinearProgressData}
+  ${UserAvatarData}
 `;
 
 interface RoadmapLearningGoalProps {
@@ -62,10 +74,11 @@ export const RoadmapLearningGoal: React.FC<RoadmapLearningGoalProps> = ({ learni
   const [attachLearningGoalRequiresSubGoal] = useAttachLearningGoalRequiresSubGoalMutation();
 
   return (
-    <Stack w="100%">
-      <Stack direction="row" spacing={3} alignItems="center">
+    <Flex direction="column" w="100%" alignItems="stretch">
+      <Stack direction="row" alignItems="center">
         <EditableTextInput
           value={learningGoal.name}
+          fontSize="4xl"
           editMode={editMode}
           isLoading={isLoading}
           onChange={(newName) =>
@@ -79,24 +92,51 @@ export const RoadmapLearningGoal: React.FC<RoadmapLearningGoalProps> = ({ learni
         />
         <StartLearningGoalButton learningGoal={learningGoal} />
       </Stack>
-      <EditableTextarea
-        isLoading={isLoading}
-        backgroundColor="backgroundColor.0"
-        fontSize="lg"
-        fontWeight={300}
-        color="gray.700"
-        defaultValue={learningGoal.description || ''}
-        placeholder="Add a description..."
-        onSubmit={(newDescription: any) =>
-          updateLearningGoal({
-            variables: {
-              _id: learningGoal._id,
-              payload: { description: (newDescription as string) || null },
-            },
-          })
-        }
-        isDisabled={!editMode}
-      />
+      <Stack direction="row">
+        {learningGoal.createdBy && (
+          <Center>
+            {currentUserIsOwner ? (
+              <Stack direction="column" alignItems="center">
+                <Text fontWeight={300} color="gray.500">
+                  You are the owner
+                </Text>
+              </Stack>
+            ) : (
+              <Stack spacing={1} direction="row">
+                <Center>
+                  <UserAvatar size="xs" user={learningGoal.createdBy} />
+                </Center>
+                <Text fontWeight={300} color="gray.500">
+                  Created By{' '}
+                  <Text as="span" fontWeight={500}>
+                    @{learningGoal.createdBy.key}
+                  </Text>
+                </Text>
+              </Stack>
+            )}
+          </Center>
+        )}
+      </Stack>
+      <Box mt={3}>
+        <EditableTextarea
+          isLoading={isLoading}
+          backgroundColor="backgroundColor.0"
+          fontSize="lg"
+          fontWeight={300}
+          color="gray.700"
+          defaultValue={learningGoal.description || ''}
+          placeholder="Add a description..."
+          onSubmit={(newDescription: any) =>
+            updateLearningGoal({
+              variables: {
+                _id: learningGoal._id,
+                payload: { description: (newDescription as string) || null },
+              },
+            })
+          }
+          isDisabled={!editMode}
+        />
+      </Box>
       {learningGoal.startedBy && (
         <Center>
           <OtherLearnersViewer
@@ -109,13 +149,12 @@ export const RoadmapLearningGoal: React.FC<RoadmapLearningGoalProps> = ({ learni
         </Center>
       )}
 
-      <Flex direction="row" justifyContent="space-between" alignItems="center" pt={3} pb={5}>
-        <Box w="60%">
-          {(currentUserStartedGoal || (learningGoal.progress && learningGoal.progress.level > 0)) && (
+      <Flex direction="row" justifyContent="space-between" alignItems="center" mt={5} mb={5}>
+        {(currentUserStartedGoal || (learningGoal.progress && learningGoal.progress.level > 0)) && (
+          <Box w="60%" mt={5} mb={5}>
             <LearningGoalLinearProgress learningGoal={learningGoal} size="lg" hasStripe />
-          )}
-        </Box>
-
+          </Box>
+        )}
         {currentUserIsOwner &&
           (learningGoal.publishedAt ? (
             <Badge colorScheme="green" fontSize="lg">
@@ -149,6 +188,63 @@ export const RoadmapLearningGoal: React.FC<RoadmapLearningGoalProps> = ({ learni
           )
         }
       />
+      {editMode && <LearningGoalDomainEditor learningGoal={learningGoal} />}
+    </Flex>
+  );
+};
+
+interface LearningGoalDomainEditorProps {
+  learningGoal: RoadmapLearningGoalDataFragment;
+}
+const LearningGoalDomainEditor: React.FC<LearningGoalDomainEditorProps> = ({ learningGoal }) => {
+  const [selectedDomain, setSelectedDomain] = useState<DomainDataFragment>();
+  const [attachLearningGoalToDomain] = useAttachLearningGoalToDomainMutation();
+  const [detachLearningGoalFromDomain] = useDetachLearningGoalFromDomainMutation();
+  return (
+    <Stack mt={10}>
+      <Text fontSize="lg" fontWeight={600}>
+        Change domain:{' '}
+      </Text>
+      <Stack direction="row">
+        {learningGoal.domain ? (
+          <>
+            <Text>Current domain: </Text>
+            <DomainLink domain={learningGoal.domain.domain} />
+          </>
+        ) : (
+          `No domain selected`
+        )}
+      </Stack>
+      <Stack direction="row" alignItems="baseline">
+        <DomainSelector onSelect={(domain) => setSelectedDomain(domain)} />
+        {selectedDomain && (
+          <>
+            <Text>Selected: </Text>
+            <DomainLink domain={selectedDomain} />
+          </>
+        )}
+      </Stack>
+      {selectedDomain && (
+        <Box py={2}>
+          <Button
+            colorScheme="blue"
+            size="sm"
+            onClick={async () => {
+              if (learningGoal.domain) {
+                await detachLearningGoalFromDomain({
+                  variables: { learningGoalId: learningGoal._id, domainId: learningGoal.domain?.domain._id },
+                });
+              }
+              await attachLearningGoalToDomain({
+                variables: { learningGoalId: learningGoal._id, domainId: selectedDomain._id, payload: {} },
+              });
+              setSelectedDomain(undefined);
+            }}
+          >
+            Confirm change
+          </Button>
+        </Box>
+      )}
     </Stack>
   );
 };

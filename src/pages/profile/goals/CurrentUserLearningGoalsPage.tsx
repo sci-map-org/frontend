@@ -1,4 +1,4 @@
-import { Center } from '@chakra-ui/react';
+import { Box, Center, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { PageLayout } from '../../../components/layout/PageLayout';
 import { LearningGoalCard, LearningGoalCardData } from '../../../components/learning_goals/cards/LearningGoalCard';
@@ -15,6 +15,12 @@ export const getCurrentUserLearningGoalsPage = gql`
       _id
       startedLearningGoals(options: {}) {
         startedAt
+        learningGoal {
+          ...LearningGoalCardData
+        }
+      }
+      createdLearningGoals(options: {}) {
+        createdAt
         learningGoal {
           ...LearningGoalCardData
         }
@@ -39,9 +45,26 @@ export const CurrentUserLearningGoalsPage: React.FC<{}> = () => {
 
   return (
     <PageLayout title="My Learning Goals" marginSize="md" isLoading={loading} centerChildren>
+      <Text fontSize="3xl" mt={5}>
+        Started Goals
+      </Text>
+
       {currentUser && currentUser.startedLearningGoals && (
         <LearningGoalCardWrapper
           learningGoalItems={currentUser.startedLearningGoals}
+          renderCard={({ learningGoal }, mouseHover) => (
+            <LearningGoalCard learningGoal={learningGoal} mouseHover={mouseHover} />
+          )}
+        />
+      )}
+
+      <Text fontSize="3xl" mt={12} color="gray.700">
+        Created Goals
+      </Text>
+
+      {currentUser && currentUser.createdLearningGoals && (
+        <LearningGoalCardWrapper
+          learningGoalItems={currentUser.createdLearningGoals}
           renderCard={({ learningGoal }, mouseHover) => (
             <LearningGoalCard learningGoal={learningGoal} mouseHover={mouseHover} />
           )}

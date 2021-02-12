@@ -573,6 +573,7 @@ export type CurrentUser = {
   articles?: Maybe<ListArticlesResult>;
   createdLearningPaths?: Maybe<Array<LearningPath>>;
   startedLearningPaths?: Maybe<Array<LearningPathStartedItem>>;
+  createdLearningGoals?: Maybe<Array<LearningGoalCreatedItem>>;
   startedLearningGoals?: Maybe<Array<LearningGoalStartedItem>>;
 };
 
@@ -589,6 +590,11 @@ export type CurrentUserCreatedLearningPathsArgs = {
 
 export type CurrentUserStartedLearningPathsArgs = {
   options: UserLearningPathsOptions;
+};
+
+
+export type CurrentUserCreatedLearningGoalsArgs = {
+  options: UserLearningGoalsOptions;
 };
 
 
@@ -1144,14 +1150,20 @@ export type LearningPathStartedItem = {
   completedAt?: Maybe<Scalars['Date']>;
 };
 
-export type LearningGoalStartedItem = {
-  __typename?: 'LearningGoalStartedItem';
+export type LearningGoalCreatedItem = {
+  __typename?: 'LearningGoalCreatedItem';
   learningGoal: LearningGoal;
-  startedAt: Scalars['Date'];
+  createdAt: Scalars['Date'];
 };
 
 export type UserLearningGoalsOptions = {
   pagination?: Maybe<PaginationOptions>;
+};
+
+export type LearningGoalStartedItem = {
+  __typename?: 'LearningGoalStartedItem';
+  learningGoal: LearningGoal;
+  startedAt: Scalars['Date'];
 };
 
 export enum ArticleContentType {
