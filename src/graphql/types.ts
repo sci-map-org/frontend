@@ -15,6 +15,7 @@ export type Query = {
   __typename?: 'Query';
   searchTopics: SearchTopicsResult;
   searchSubTopics: SearchTopicsResult;
+  checkTopicKeyAvailability: CheckTopicKeyAvailabilityResult;
   currentUser?: Maybe<CurrentUser>;
   getUser: User;
   getArticleByKey: Article;
@@ -43,6 +44,13 @@ export type QuerySearchTopicsArgs = {
 export type QuerySearchSubTopicsArgs = {
   domainId: Scalars['String'];
   options: SearchTopicsOptions;
+};
+
+
+export type QueryCheckTopicKeyAvailabilityArgs = {
+  key: Scalars['String'];
+  topicType: TopicType;
+  domainKey?: Maybe<Scalars['String']>;
 };
 
 
@@ -542,6 +550,18 @@ export type SearchTopicsOptions = {
   pagination: PaginationOptions;
   filter?: Maybe<SearchTopicsFilterOptions>;
 };
+
+export type CheckTopicKeyAvailabilityResult = {
+  __typename?: 'CheckTopicKeyAvailabilityResult';
+  available: Scalars['Boolean'];
+  existingTopic?: Maybe<Topic>;
+};
+
+export enum TopicType {
+  Domain = 'Domain',
+  Concept = 'Concept',
+  LearningGoal = 'LearningGoal'
+}
 
 export type CurrentUser = {
   __typename?: 'CurrentUser';
@@ -1141,12 +1161,6 @@ export enum ArticleContentType {
 export type ListArticlesFilter = {
   contentType?: Maybe<ArticleContentType>;
 };
-
-export enum TopicType {
-  Domain = 'Domain',
-  Concept = 'Concept',
-  LearningGoal = 'LearningGoal'
-}
 
 export type DomainConceptsResults = {
   __typename?: 'DomainConceptsResults';

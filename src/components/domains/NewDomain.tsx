@@ -1,9 +1,23 @@
-import { Input, Stack, Textarea } from '@chakra-ui/react';
-import { useState } from 'react';
+import { CheckIcon, NotAllowedIcon } from '@chakra-ui/icons';
+import {
+  FormControl,
+  FormHelperText,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Spinner,
+  Stack,
+  Text,
+  Textarea,
+  Tooltip,
+} from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
+import { useDebounce } from 'use-debounce/lib';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { useCreateDomain } from '../../graphql/domains/domains.hooks';
 import { useAddDomainBelongsToDomainMutation } from '../../graphql/domains/domains.operations.generated';
-import { CreateDomainPayload } from '../../graphql/types';
+import { useCheckTopicKeyAvailabilityLazyQuery } from '../../graphql/topics/topics.operations.generated';
+import { CreateDomainPayload, TopicType } from '../../graphql/types';
 import { generateUrlKey } from '../../services/url.service';
 import { getChakraRelativeSize } from '../../util/chakra.util';
 import { FormButtons } from '../lib/buttons/FormButtons';
@@ -18,6 +32,16 @@ const NewDomainForm: React.FC<NewDomainFormProps> = ({ defaultPayload, size = 'm
   const [name, setName] = useState(defaultPayload?.name || '');
   const [key, setKey] = useState(defaultPayload?.key || '');
 
+  const [checkTopicKeyAvailability, { loading, data }] = useCheckTopicKeyAvailabilityLazyQuery({
+    errorPolicy: 'ignore',
+  });
+
+  const [keyValueToCheck] = useDebounce(key, 300);
+
+  useEffect(() => {
+    checkTopicKeyAvailability({ variables: { topicType: TopicType.Domain, key: keyValueToCheck } });
+  }, [keyValueToCheck]);
+
   const [description, setDescription] = useState(defaultPayload?.description || undefined);
   return (
     <Stack spacing={4} w="100%">
@@ -31,13 +55,47 @@ const NewDomainForm: React.FC<NewDomainFormProps> = ({ defaultPayload, size = 'm
           setName(e.target.value);
         }}
       ></Input>
-      <Input
-        placeholder="Key"
-        size={size}
-        variant="flushed"
-        value={key}
-        onChange={(e) => setKey(e.target.value)}
-      ></Input>
+      <FormControl id="key" size={size}>
+        <InputGroup>
+          <Input
+            placeholder="Domain Url Key"
+            variant="flushed"
+            value={key}
+            size={size}
+            onChange={(e) => setKey(e.target.value)}
+          />
+          {key && (
+            <InputRightElement
+              children={
+                !!loading ? (
+                  <Spinner size="sm" />
+                ) : data?.checkTopicKeyAvailability.available ? (
+                  <CheckIcon color="green.500" />
+                ) : (
+                  <Tooltip
+                    hasArrow
+                    aria-label="Key already in use"
+                    label="Domain already in use"
+                    placement="top"
+                    bg="red.600"
+                  >
+                    <NotAllowedIcon color="red.500" />
+                  </Tooltip>
+                )
+              }
+            />
+          )}
+        </InputGroup>
+        {key && (
+          <FormHelperText fontSize="xs">
+            Url will look like{' '}
+            <Text as="span" fontWeight={500}>
+              /domains/{key}
+            </Text>
+          </FormHelperText>
+        )}
+      </FormControl>
+
       <Textarea
         placeholder="Description"
         size={size}
@@ -47,7 +105,7 @@ const NewDomainForm: React.FC<NewDomainFormProps> = ({ defaultPayload, size = 'm
       ></Textarea>
 
       <FormButtons
-        isPrimaryDisabled={!name}
+        isPrimaryDisabled={!name || !key || !data?.checkTopicKeyAvailability.available}
         onCancel={() => onCancel()}
         size={getChakraRelativeSize(size, 1)}
         onPrimaryClick={() => onCreate({ name, key, description })}

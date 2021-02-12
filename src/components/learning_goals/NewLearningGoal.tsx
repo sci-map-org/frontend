@@ -1,12 +1,19 @@
-import { CloseIcon } from '@chakra-ui/icons';
+import { CheckIcon, CloseIcon, NotAllowedIcon } from '@chakra-ui/icons';
 import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
   Alert,
   AlertDescription,
   AlertIcon,
   AlertTitle,
+  Box,
   Button,
   ButtonGroup,
   Center,
+  Collapse,
   Flex,
   FormControl,
   FormHelperText,
@@ -15,24 +22,30 @@ import {
   Input,
   InputGroup,
   InputLeftAddon,
+  InputRightElement,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  Spinner,
   Stack,
   Text,
   Textarea,
+  Tooltip,
   useDisclosure,
 } from '@chakra-ui/react';
-import { ReactElement, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
+import { useDebounce } from 'use-debounce/lib';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
 import { useCreateLearningGoalMutation } from '../../graphql/learning_goals/learning_goals.operations.generated';
-import { CreateLearningGoalPayload, LearningGoalType } from '../../graphql/types';
+import { useCheckTopicKeyAvailabilityLazyQuery } from '../../graphql/topics/topics.operations.generated';
+import { CreateLearningGoalPayload, LearningGoalType, TopicType } from '../../graphql/types';
 import { generateUrlKey } from '../../services/url.service';
 import { getChakraRelativeSize } from '../../util/chakra.util';
+import { RoleAccess } from '../auth/RoleAccess';
 import { DomainSelector } from '../domains/DomainSelector';
 import { FormButtons } from '../lib/buttons/FormButtons';
 
@@ -65,6 +78,13 @@ export const NewLearningGoalForm: React.FC<NewLearningGoalFormProps> = ({
   const [key, setKey] = useState(defaultPayload?.key || '');
   const [description, setDescription] = useState(defaultPayload?.description || '');
   const [type, setType] = useState(defaultPayload?.type || LearningGoalType.Roadmap);
+  const [checkTopicKeyAvailability, { loading, data }] = useCheckTopicKeyAvailabilityLazyQuery({
+    errorPolicy: 'ignore',
+  });
+  const [keyValueToCheck] = useDebounce(key, 300);
+  useEffect(() => {
+    checkTopicKeyAvailability({ variables: { topicType: TopicType.LearningGoal, key: keyValueToCheck } });
+  }, [keyValueToCheck]);
   return (
     <Stack spacing={4} direction="column" alignItems="stretch">
       <Stack>
@@ -113,10 +133,10 @@ export const NewLearningGoalForm: React.FC<NewLearningGoalFormProps> = ({
           </Button>
         </ButtonGroup>
       </Center>
+
       <FormControl id="name">
         <FormLabel>Name</FormLabel>
         <InputGroup size={size}>
-          {/* {domain && <InputLeftAddon px={2} children={`${domain.name} - `} />} */}
           <Input
             placeholder={`E.g. "Solving quadratic equations" or "Design - Basics"`}
             size={size}
@@ -129,25 +149,7 @@ export const NewLearningGoalForm: React.FC<NewLearningGoalFormProps> = ({
           />
         </InputGroup>
       </FormControl>
-      <FormControl id="key" size={size}>
-        <FormLabel>Key</FormLabel>
-        <Input
-          placeholder="Learning Goal Url Key"
-          variant="flushed"
-          value={key}
-          size={size}
-          onChange={(e) => setKey(e.target.value)}
-        ></Input>
-        {key && (
-          <FormHelperText fontSize="xs">
-            Url will look like{' '}
-            <Text as="span" fontWeight={500}>
-              {domain && `/domains/${domain.key}`}/goals/{!domain && 'XXXXXX_'}
-              {key}
-            </Text>
-          </FormHelperText>
-        )}
-      </FormControl>
+
       <FormControl id="description" size={size}>
         <FormLabel>Description</FormLabel>
         <Textarea
@@ -158,16 +160,72 @@ export const NewLearningGoalForm: React.FC<NewLearningGoalFormProps> = ({
           onChange={(e) => setDescription(e.target.value)}
         ></Textarea>
       </FormControl>
+      <RoleAccess accessRule="contributorOrAdmin">
+        <Accordion allowToggle py={5} w="50%">
+          <AccordionItem>
+            <AccordionButton>
+              <Box flex="1" textAlign="left">
+                Customize Url
+              </Box>
+              <AccordionIcon />
+            </AccordionButton>
+
+            <AccordionPanel>
+              <FormControl id="key" size={size}>
+                <FormLabel>Key</FormLabel>
+                <InputGroup>
+                  <Input
+                    placeholder="Learning Goal Url Key"
+                    variant="flushed"
+                    value={key}
+                    size={size}
+                    onChange={(e) => setKey(e.target.value)}
+                  />
+                  {key && (
+                    <InputRightElement
+                      children={
+                        !!loading ? (
+                          <Spinner size="sm" />
+                        ) : data?.checkTopicKeyAvailability.available ? (
+                          <CheckIcon color="green.500" />
+                        ) : (
+                          <Tooltip
+                            hasArrow
+                            aria-label="Key already in use"
+                            label="Learning Goal key already in use"
+                            placement="top"
+                            bg="red.600"
+                          >
+                            <NotAllowedIcon color="red.500" />
+                          </Tooltip>
+                        )
+                      }
+                    />
+                  )}
+                </InputGroup>
+                {key && (
+                  <FormHelperText fontSize="xs">
+                    Url will look like{' '}
+                    <Text as="span" fontWeight={500}>
+                      {domain && `/domains/${domain.key}`}/goals/{key}
+                    </Text>
+                  </FormHelperText>
+                )}
+              </FormControl>
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
+      </RoleAccess>
       <FormButtons
-        isPrimaryDisabled={!name || !key}
+        isPrimaryDisabled={!name || (!!key && !data?.checkTopicKeyAvailability.available)}
         onCancel={() => onCancel()}
         size={getChakraRelativeSize(size, 1)}
-        onPrimaryClick={() =>
+        onPrimaryClick={() => {
           onCreate(
             { name, key, description: description || undefined, type },
             { isPublic: publicByDefault, domainId: domain?._id }
-          )
-        }
+          );
+        }}
       />
     </Stack>
   );
