@@ -13,6 +13,7 @@ import { LearningGoalType } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { DomainLearningGoalPageInfo } from '../../pages/RoutesPageInfos';
+import { RoleAccess } from '../auth/RoleAccess';
 import { DomainLink } from '../domains/DomainLink';
 import { DomainSelector } from '../domains/DomainSelector';
 import { EditableTextarea } from '../lib/inputs/EditableTextarea';
@@ -22,6 +23,11 @@ import { UserAvatar, UserAvatarData } from '../users/UserAvatar';
 import { LearningGoalLinearProgress, LearningGoalLinearProgressData } from './LearningGoalLinearProgress';
 import { LearningGoalPublishButton, LearningGoalPublishButtonData } from './LearningGoalPublishButton';
 import { LearningGoalSelector } from './LearningGoalSelector';
+import { LearningGoalTypeEditor } from './LearningGoalTypeEditor';
+import {
+  ParentLearningGoalsNavigationBlock,
+  ParentLearningGoalsNavigationBlockData,
+} from './ParentLearningGoalsNavigationBlock';
 import { RoadmapLearningGoalDataFragment } from './RoadmapLearningGoal.generated';
 import { RoadmapSubGoalsWrapper, RoadmapSubGoalsWrapperData } from './RoadmapSubGoalsWrapper';
 import { StartLearningGoalButton, StartLearningGoalButtonData } from './StartLearningGoalButton';
@@ -50,6 +56,7 @@ export const RoadmapLearningGoalData = gql`
     ...RoadmapSubGoalsWrapperData
     ...StartLearningGoalButtonData
     ...LearningGoalLinearProgressData
+    ...ParentLearningGoalsNavigationBlockData
   }
   ${LearningGoalData}
   ${LearningGoalPublishButtonData}
@@ -58,6 +65,7 @@ export const RoadmapLearningGoalData = gql`
   ${OtherLearnersViewerUserData}
   ${LearningGoalLinearProgressData}
   ${UserAvatarData}
+  ${ParentLearningGoalsNavigationBlockData}
 `;
 
 interface RoadmapLearningGoalProps {
@@ -77,6 +85,7 @@ export const RoadmapLearningGoal: React.FC<RoadmapLearningGoalProps> = ({ learni
 
   return (
     <Flex direction="column" w="100%" alignItems="stretch">
+      <ParentLearningGoalsNavigationBlock learningGoal={learningGoal} />
       <Stack direction="row" alignItems="center">
         <EditableTextInput
           value={learningGoal.name}
@@ -191,6 +200,13 @@ export const RoadmapLearningGoal: React.FC<RoadmapLearningGoalProps> = ({ learni
         }
       />
       {editMode && <LearningGoalDomainEditor learningGoal={learningGoal} />}
+      {editMode && learningGoal.domain && (
+        <Box py={5}>
+          <RoleAccess accessRule="contributorOrAdmin">
+            <LearningGoalTypeEditor learningGoal={learningGoal} />
+          </RoleAccess>
+        </Box>
+      )}
     </Flex>
   );
 };

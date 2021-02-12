@@ -31,6 +31,7 @@ export const LearningGoalCircularProgress: React.FC<LearningGoalCircularProgress
       value={learningGoal.progress.level}
       size={pxSize + 'px'}
       color="main"
+      trackColor="gray.300"
     />
   );
 };

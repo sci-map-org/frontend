@@ -1,4 +1,4 @@
-import { Badge, Center, Stack, Text, Wrap, WrapItem } from '@chakra-ui/react';
+import { Badge, Box, Center, Stack, Text, Wrap, WrapItem } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useMemo } from 'react';
 import { DomainData } from '../../graphql/domains/domains.fragments';
@@ -11,6 +11,7 @@ import {
 } from '../../graphql/learning_goals/learning_goals.operations.generated';
 import { TopicType } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
+import { RoleAccess } from '../auth/RoleAccess';
 import { ConceptBadge, ConceptBadgeData } from '../concepts/ConceptBadge';
 import { SubTopicSelector } from '../domains/SubTopicSelector';
 import { EditableTextarea } from '../lib/inputs/EditableTextarea';
@@ -19,6 +20,7 @@ import { OtherLearnersViewerUserData } from '../lib/OtherLearnersViewer';
 import { ConceptGroupLearningGoalDataFragment } from './ConceptGroupLearningGoal.generated';
 import { LearningGoalBadge, LearningGoalBadgeData } from './LearningGoalBadge';
 import { LearningGoalPublishButton, LearningGoalPublishButtonData } from './LearningGoalPublishButton';
+import { LearningGoalTypeEditor } from './LearningGoalTypeEditor';
 import { StartLearningGoalButton, StartLearningGoalButtonData } from './StartLearningGoalButton';
 
 export const ConceptGroupLearningGoalData = gql`
@@ -196,6 +198,13 @@ export const ConceptGroupLearningGoal: React.FC<ConceptGroupLearningGoalProps> =
           )}
         </Stack>
       </Stack>
+      {editMode && domain && (
+        <Box py={5}>
+          <RoleAccess accessRule="contributorOrAdmin">
+            <LearningGoalTypeEditor learningGoal={learningGoal} />
+          </RoleAccess>
+        </Box>
+      )}
     </Stack>
   );
 };

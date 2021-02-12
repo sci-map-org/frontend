@@ -19,14 +19,18 @@ export const InternalLink: React.FC<InternalLinkProps> = forwardRef<HTMLAnchorEl
   }
 );
 
-export const PageLink: React.FC<{ pageInfo: PageInfo; isDisabled?: boolean } & LinkProps> = ({
-  pageInfo,
-  ...props
-}) => {
-  return (
-    <InternalLink routePath={pageInfo.routePath} asHref={pageInfo.path} {...pageInfo.breadcrumbLinkProps} {...props} />
-  );
-};
+export const PageLink = forwardRef<HTMLAnchorElement, { pageInfo: PageInfo; isDisabled?: boolean } & LinkProps>(
+  ({ pageInfo, ...props }, ref) => {
+    return (
+      <InternalLink
+        routePath={pageInfo.routePath}
+        asHref={pageInfo.path}
+        {...pageInfo.breadcrumbLinkProps}
+        {...props}
+      />
+    );
+  }
+);
 
 export const InternalButtonLink: React.FC<
   { routePath: string; asHref: string; loggedInOnly?: boolean } & ButtonProps
