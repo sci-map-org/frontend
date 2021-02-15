@@ -6,6 +6,7 @@ import { ConceptBadgeDataFragment } from '../concepts/ConceptBadge.generated';
 import { LearningGoalBadgeDataFragment } from './LearningGoalBadge.generated';
 import { StartLearningGoalButtonDataFragment } from './StartLearningGoalButton.generated';
 import { LearningGoalPublishButtonDataFragment } from './LearningGoalPublishButton.generated';
+import { ParentLearningGoalsNavigationBlockDataFragment } from './ParentLearningGoalsNavigationBlock.generated';
 export type ConceptGroupLearningGoalDataFragment = (
   { __typename?: 'LearningGoal' }
   & Pick<Types.LearningGoal, '_id'>
@@ -35,4 +36,5 @@ export type ConceptGroupLearningGoalDataFragment = (
   & LearningGoalDataFragment
   & StartLearningGoalButtonDataFragment
   & LearningGoalPublishButtonDataFragment
+  & ParentLearningGoalsNavigationBlockDataFragment
 );

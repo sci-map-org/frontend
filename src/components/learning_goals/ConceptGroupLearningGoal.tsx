@@ -22,6 +22,10 @@ import { LearningGoalBadge, LearningGoalBadgeData } from './LearningGoalBadge';
 import { LearningGoalPublishButtonData } from './LearningGoalPublishButton';
 import { LearningGoalPublishStatusBar } from './LearningGoalPublishStatusBar';
 import { LearningGoalTypeEditor } from './LearningGoalTypeEditor';
+import {
+  ParentLearningGoalsNavigationBlock,
+  ParentLearningGoalsNavigationBlockData,
+} from './ParentLearningGoalsNavigationBlock';
 import { StartLearningGoalButton, StartLearningGoalButtonData } from './StartLearningGoalButton';
 
 export const ConceptGroupLearningGoalData = gql`
@@ -51,6 +55,7 @@ export const ConceptGroupLearningGoalData = gql`
     }
     ...StartLearningGoalButtonData
     ...LearningGoalPublishButtonData
+    ...ParentLearningGoalsNavigationBlockData
   }
   ${LearningGoalData}
   ${StartLearningGoalButtonData}
@@ -59,6 +64,7 @@ export const ConceptGroupLearningGoalData = gql`
   ${ConceptBadgeData}
   ${LearningGoalBadgeData}
   ${DomainData}
+  ${ParentLearningGoalsNavigationBlockData}
 `;
 
 interface ConceptGroupLearningGoalProps {
@@ -85,6 +91,9 @@ export const ConceptGroupLearningGoal: React.FC<ConceptGroupLearningGoalProps> =
 
   return (
     <Stack spacing={3} w="100%">
+      <Box>
+        <ParentLearningGoalsNavigationBlock learningGoal={learningGoal} />
+      </Box>
       <Center>
         <EditableTextInput
           value={learningGoal.name}
