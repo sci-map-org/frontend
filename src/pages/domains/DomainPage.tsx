@@ -8,8 +8,10 @@ import { RoleAccess } from '../../components/auth/RoleAccess';
 import { DomainConceptGraph } from '../../components/concepts/DomainConceptGraph';
 import { DomainConceptList } from '../../components/concepts/DomainConceptList';
 import { BestXPagesLinks } from '../../components/domains/BestXPagesLinks';
+import { DomainLearningGoals } from '../../components/domains/DomainLearningGoals';
 import { DomainUserHistory } from '../../components/domains/DomainUserHistory';
 import { PageLayout } from '../../components/layout/PageLayout';
+import { LearningGoalCardData } from '../../components/learning_goals/cards/LearningGoalCard';
 import { LearningPathPreviewCardDataFragment } from '../../components/learning_paths/LearningPathPreviewCard.generated';
 import { InternalButtonLink, InternalLink, PageLink } from '../../components/navigation/InternalLink';
 import { DomainRecommendedLearningMaterials } from '../../components/resources/DomainRecommendedLearningMaterials';
@@ -52,16 +54,16 @@ export const getDomainByKeyDomainPage = gql`
         }
       }
       learningGoals {
-        contextualKey
-        contextualName
         learningGoal {
-          _id
+          ...LearningGoalCardData
         }
+        index
       }
     }
   }
   ${DomainData}
   ${ConceptData}
+  ${LearningGoalCardData}
 `;
 
 const placeholderDomainData: GetDomainByKeyDomainPageQuery['getDomainByKey'] = {
@@ -149,6 +151,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
             </Skeleton>
           )}
         </Flex>
+
         <Flex direction="column" alignItems={{ base: 'flex-start', md: 'flex-end' }}>
           <ButtonGroup spacing={2}>
             <InternalButtonLink
@@ -209,6 +212,9 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
         )} */}
         </Flex>
       </Stack>
+      {domain.learningGoals && !!domain.learningGoals.length && (
+        <DomainLearningGoals learningGoalItems={domain.learningGoals} />
+      )}
       <Flex direction={{ base: 'column-reverse', md: 'row' }} mb="100px">
         <Flex direction="column" flexShrink={1} flexGrow={1}>
           <DomainRecommendedLearningMaterials
@@ -239,7 +245,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
             isLoading={loading}
             onConceptToggled={() => refetchLearningMaterials()}
           />
-          {(domain.learningGoals?.length || domain.subDomains?.length) && (
+          {domain.subDomains?.length && (
             <Flex
               direction="column"
               alignItems="stretch"
@@ -265,51 +271,11 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
                     </InternalLink>
                   </Box>
                 ))}
-                {(domain.learningGoals || []).map((learningGoalItem) => (
-                  <Box key={learningGoalItem.learningGoal._id}>
-                    <PageLink pageInfo={DomainLearningGoalPageInfo(domain, learningGoalItem)}>
-                      {learningGoalItem.contextualName}
-                    </PageLink>
-                  </Box>
-                ))}
               </Stack>
             </Flex>
           )}
           <BestXPagesLinks domainKey={domain.key} />
         </Stack>
-        {/* )} */}
-        {/* {mockedFeaturesEnabled && (
-          <Stack spacing={4} direction="column" ml={6} flexShrink={1}>
-            <Box>
-              <Text fontSize="2xl">Sub domains</Text>
-              <Stack direction="column" spacing={1}>
-                {[
-                  { _id: 1, name: 'Elixir' },
-                  { _id: 2, name: 'Clojure' },
-                  { _id: 3, name: 'Haskell' },
-                  { _id: 4, name: 'JavaScript Functional Programming' },
-                ].map((domain) => (
-                  <Link key={domain._id}>{domain.name}</Link>
-                ))}
-              </Stack>
-            </Box>
-            <Box>
-              <Text fontSize="2xl">Related domains</Text>
-              <Stack direction="column" spacing={1}>
-                {[
-                  { _id: 1, name: 'Category Theory' },
-                  { _id: 2, name: 'Object Oriented Programming' },
-                ].map((domain) => (
-                  <Link key={domain._id}>{domain.name}</Link>
-                ))}
-              </Stack>
-            </Box>
-            <Box>
-              <Text fontSize="2xl">Links</Text>
-              <Stack direction="column"></Stack>
-            </Box>
-          </Stack>
-        )} */}
       </Flex>
     </PageLayout>
   );

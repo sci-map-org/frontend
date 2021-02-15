@@ -1,20 +1,17 @@
-import { Center, Stack } from '@chakra-ui/react';
 import gql from 'graphql-tag';
+import { useRouter } from 'next/router';
 import { useMemo, useState } from 'react';
-import { SubTopicSelector } from '../../components/domains/SubTopicSelector';
 import { PageLayout } from '../../components/layout/PageLayout';
-import { SubGoalCardData } from '../../components/learning_goals/SubGoalCard';
-import { SubGoalsWrapper } from '../../components/learning_goals/SubGoalsWrapper';
-import { EditableTextarea } from '../../components/lib/inputs/EditableTextarea';
-import { EditableTextInput } from '../../components/lib/inputs/EditableTextInput';
-import { DomainData, generateDomainData } from '../../graphql/domains/domains.fragments';
-import { generateLearningGoalData, LearningGoalData } from '../../graphql/learning_goals/learning_goals.fragments';
 import {
-  useAttachLearningGoalRequiresSubGoalMutation,
-  useUpdateLearningGoalMutation,
-} from '../../graphql/learning_goals/learning_goals.operations.generated';
-import { TopicType, UserRole } from '../../graphql/types';
+  ConceptGroupLearningGoal,
+  ConceptGroupLearningGoalData,
+} from '../../components/learning_goals/ConceptGroupLearningGoal';
+import { RoadmapLearningGoal, RoadmapLearningGoalData } from '../../components/learning_goals/RoadmapLearningGoal';
+import { DomainLinkData } from '../../graphql/domains/domains.fragments';
+import { generateLearningGoalData } from '../../graphql/learning_goals/learning_goals.fragments';
+import { LearningGoalType, UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
+import { NotFoundPage } from '../NotFoundPage';
 import { DomainPageInfo } from '../RoutesPageInfos';
 import {
   GetLearningGoalDomainLearningGoalPageQuery,
@@ -23,56 +20,50 @@ import {
 import { LearningGoalPageRightIcons } from './LearningGoalPage';
 
 export const getLearningGoalDomainLearningGoalPage = gql`
-  query getLearningGoalDomainLearningGoalPage($domainKey: String!, $contextualLearningGoalKey: String!) {
-    getDomainLearningGoalByKey(domainKey: $domainKey, contextualLearningGoalKey: $contextualLearningGoalKey) {
-      domain {
-        ...DomainData
-      }
-
+  query getLearningGoalDomainLearningGoalPage($domainKey: String!, $learningGoalKey: String!) {
+    getDomainLearningGoalByKey(domainKey: $domainKey, learningGoalKey: $learningGoalKey) {
       learningGoal {
-        ...LearningGoalData
-        createdBy {
-          _id
-        }
-        createdBy {
-          _id
-        }
-        requiredSubGoals {
-          ...SubGoalCardData
+        ...RoadmapLearningGoalData
+        ...ConceptGroupLearningGoalData
+        domain {
+          domain {
+            ...DomainLinkData
+          }
         }
       }
     }
   }
-  ${DomainData}
-  ${LearningGoalData}
-  ${SubGoalCardData}
+  ${DomainLinkData}
+  ${RoadmapLearningGoalData}
+  ${ConceptGroupLearningGoalData}
 `;
 
 const placeholderData: GetLearningGoalDomainLearningGoalPageQuery['getDomainLearningGoalByKey'] = {
   learningGoal: generateLearningGoalData(),
-  domain: generateDomainData(),
 };
 
-export const DomainLearningGoalPage: React.FC<{ domainKey: string; contextualLearningGoalKey: string }> = ({
-  contextualLearningGoalKey,
+export const DomainLearningGoalPage: React.FC<{ domainKey: string; learningGoalKey: string }> = ({
+  learningGoalKey,
   domainKey,
 }) => {
   const { data, loading } = useGetLearningGoalDomainLearningGoalPageQuery({
-    variables: { domainKey, contextualLearningGoalKey },
+    variables: { domainKey, learningGoalKey },
   });
   const learningGoal = data?.getDomainLearningGoalByKey.learningGoal || placeholderData.learningGoal;
-  const domain = data?.getDomainLearningGoalByKey.domain || placeholderData.domain;
-  const [updateLearningGoal] = useUpdateLearningGoalMutation();
+  const domainItem = data?.getDomainLearningGoalByKey.learningGoal.domain || placeholderData.learningGoal.domain;
   const { currentUser } = useCurrentUser();
   const currentUserIsOwner = useMemo(
     () => !!learningGoal.createdBy && !!currentUser && learningGoal.createdBy._id === currentUser._id,
     [learningGoal, currentUser]
   );
-  const [editMode, setEditMode] = useState(!!currentUser && currentUser.role === UserRole.Admin);
-  const [attachLearningGoalRequiresSubGoal] = useAttachLearningGoalRequiresSubGoalMutation();
+  if (data && !domainItem) throw new Error('no domain found');
+  const router = useRouter();
+  const [editMode, setEditMode] = useState(router.query.editMode === 'true');
+
+  if (!loading && !data) return <NotFoundPage />;
   return (
     <PageLayout
-      breadCrumbsLinks={[DomainPageInfo(domain)]}
+      breadCrumbsLinks={domainItem ? [DomainPageInfo(domainItem.domain)] : undefined}
       renderTopRight={
         <LearningGoalPageRightIcons
           learningGoal={learningGoal}
@@ -83,64 +74,17 @@ export const DomainLearningGoalPage: React.FC<{ domainKey: string; contextualLea
         />
       }
     >
-      <Stack w="100%">
-        <Center>
-          <EditableTextInput
-            value={learningGoal.name}
-            centered
-            editMode={false} // ? If overriding, the contextualName won't work anymore :/
-            isLoading={loading}
-            onChange={(newName) =>
-              updateLearningGoal({
-                variables: {
-                  _id: learningGoal._id,
-                  payload: { name: (newName as string) || null },
-                },
-              })
-            }
-          />
-        </Center>
-        <EditableTextarea
-          textAlign="center"
-          isLoading={loading}
-          justifyContent="center"
-          backgroundColor="backgroundColor.0"
-          fontSize="lg"
-          fontWeight={300}
-          color="gray.700"
-          defaultValue={learningGoal.description || ''}
-          placeholder="Add a description..."
-          onSubmit={(newDescription: any) =>
-            updateLearningGoal({
-              variables: {
-                _id: learningGoal._id,
-                payload: { description: (newDescription as string) || null },
-              },
-            })
-          }
-          isDisabled={!editMode}
-        />
-        <SubGoalsWrapper
+      {learningGoal.type === LearningGoalType.Roadmap && (
+        <RoadmapLearningGoal learningGoal={learningGoal} isLoading={loading} editMode={editMode} />
+      )}
+      {learningGoal.type === LearningGoalType.SubGoal && domainItem && (
+        <ConceptGroupLearningGoal
+          domain={domainItem.domain}
           learningGoal={learningGoal}
+          isLoading={loading}
           editMode={editMode}
-          renderLastItem={
-            editMode && (
-              <Center py={2}>
-                <SubTopicSelector
-                  domain={domain}
-                  onSelect={(selected) =>
-                    attachLearningGoalRequiresSubGoal({
-                      variables: { learningGoalId: learningGoal._id, subGoalId: selected._id, payload: {} },
-                    })
-                  }
-                  placeholder="Select or Create SubGoals"
-                  allowedSubTopicTypes={[TopicType.Concept, TopicType.LearningGoal]}
-                />
-              </Center>
-            )
-          }
         />
-      </Stack>
+      )}
     </PageLayout>
   );
 };

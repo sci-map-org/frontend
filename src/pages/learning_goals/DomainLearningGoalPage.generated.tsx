@@ -1,13 +1,13 @@
 import * as Types from '../../graphql/types';
 
-import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
-import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
-import { SubGoalCardDataFragment } from '../../components/learning_goals/SubGoalCard.generated';
+import { RoadmapLearningGoalDataFragment } from '../../components/learning_goals/RoadmapLearningGoal.generated';
+import { DomainLinkDataFragment, DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
+import { ConceptGroupLearningGoalDataFragment } from '../../components/learning_goals/ConceptGroupLearningGoal.generated';
 import * as Operations from './DomainLearningGoalPage';
 import * as Apollo from '@apollo/client';
 export type GetLearningGoalDomainLearningGoalPageQueryVariables = Types.Exact<{
   domainKey: Types.Scalars['String'];
-  contextualLearningGoalKey: Types.Scalars['String'];
+  learningGoalKey: Types.Scalars['String'];
 }>;
 
 
@@ -15,19 +15,17 @@ export type GetLearningGoalDomainLearningGoalPageQuery = (
   { __typename?: 'Query' }
   & { getDomainLearningGoalByKey: (
     { __typename?: 'DomainAndLearningGoalResult' }
-    & { domain: (
-      { __typename?: 'Domain' }
-      & DomainDataFragment
-    ), learningGoal: (
+    & { learningGoal: (
       { __typename?: 'LearningGoal' }
-      & { createdBy?: Types.Maybe<(
-        { __typename?: 'User' }
-        & Pick<Types.User, '_id'>
-      )>, requiredSubGoals?: Types.Maybe<Array<(
-        { __typename?: 'SubGoalItem' }
-        & SubGoalCardDataFragment
-      )>> }
-      & LearningGoalDataFragment
+      & { domain?: Types.Maybe<(
+        { __typename?: 'LearningGoalBelongsToDomain' }
+        & { domain: (
+          { __typename?: 'Domain' }
+          & DomainLinkDataFragment
+        ) }
+      )> }
+      & RoadmapLearningGoalDataFragment
+      & ConceptGroupLearningGoalDataFragment
     ) }
   ) }
 );
@@ -47,7 +45,7 @@ export type GetLearningGoalDomainLearningGoalPageQuery = (
  * const { data, loading, error } = useGetLearningGoalDomainLearningGoalPageQuery({
  *   variables: {
  *      domainKey: // value for 'domainKey'
- *      contextualLearningGoalKey: // value for 'contextualLearningGoalKey'
+ *      learningGoalKey: // value for 'learningGoalKey'
  *   },
  * });
  */

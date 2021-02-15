@@ -1,6 +1,6 @@
 import * as Types from '../types';
 
-import { DomainLinkDataFragment } from '../domains/domains.fragments.generated';
+import { DomainLinkDataFragment, DomainDataFragment } from '../domains/domains.fragments.generated';
 import { ConceptLinkDataFragment } from '../concepts/concepts.fragments.generated';
 export type LearningMaterialWithCoveredConceptsByDomainData_Resource_Fragment = (
   { __typename?: 'Resource' }

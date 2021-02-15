@@ -1,14 +1,5 @@
-import * as Types from '../../graphql/types';
-
+import { LearningGoalLinkDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
 export type LearningGoalBadgeDataFragment = (
   { __typename?: 'LearningGoal' }
-  & Pick<Types.LearningGoal, '_id' | 'name' | 'key'>
-  & { domain?: Types.Maybe<(
-    { __typename?: 'LearningGoalBelongsToDomain' }
-    & Pick<Types.LearningGoalBelongsToDomain, 'contextualKey' | 'contextualName'>
-    & { domain: (
-      { __typename?: 'Domain' }
-      & Pick<Types.Domain, '_id' | 'key'>
-    ) }
-  )> }
+  & LearningGoalLinkDataFragment
 );

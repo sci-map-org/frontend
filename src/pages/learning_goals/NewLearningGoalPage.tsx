@@ -9,6 +9,7 @@ export const NewLearningGoalPage: React.FC<{}> = () => {
     <PageLayout marginSize="xl" title="Create a Learning Goal">
       <NewLearningGoal
         onCancel={() => Router.back()}
+        allowDomainChange
         onCreated={(learningGoal) => routerPushToPage(LearningGoalPageInfo(learningGoal))}
       />
     </PageLayout>

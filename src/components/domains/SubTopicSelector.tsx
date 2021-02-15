@@ -88,7 +88,7 @@ export const SubTopicSelector: React.FC<SubTopicSelectorProps> = ({
           placeholder={placeholder || 'Search learning goal...'}
           entitySuggestions={searchResults}
           fetchEntitySuggestions={(query) =>
-            query.length >= 3 ? debouncedSearchResourcesLazyQuery.callback(query) : setSearchResults([])
+            query.length >= 1 ? debouncedSearchResourcesLazyQuery.callback(query) : setSearchResults([])
           }
           onSelect={onSelect}
         />

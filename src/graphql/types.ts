@@ -7,14 +7,15 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
-  DateTime: any;
+  /** Date scalar serialized as ISO UTC string, parsed from JS Date time (ms since Unix epoch, from Date.now() or new Date().getTime() */
+  Date: string;
 };
 
 export type Query = {
   __typename?: 'Query';
   searchTopics: SearchTopicsResult;
   searchSubTopics: SearchTopicsResult;
+  checkTopicKeyAvailability: CheckTopicKeyAvailabilityResult;
   currentUser?: Maybe<CurrentUser>;
   getUser: User;
   getArticleByKey: Article;
@@ -43,6 +44,13 @@ export type QuerySearchTopicsArgs = {
 export type QuerySearchSubTopicsArgs = {
   domainId: Scalars['String'];
   options: SearchTopicsOptions;
+};
+
+
+export type QueryCheckTopicKeyAvailabilityArgs = {
+  key: Scalars['String'];
+  topicType: TopicType;
+  domainKey?: Maybe<Scalars['String']>;
 };
 
 
@@ -125,7 +133,7 @@ export type QueryGetLearningGoalByKeyArgs = {
 
 export type QueryGetDomainLearningGoalByKeyArgs = {
   domainKey: Scalars['String'];
-  contextualLearningGoalKey: Scalars['String'];
+  learningGoalKey: Scalars['String'];
 };
 
 export type Mutation = {
@@ -173,12 +181,16 @@ export type Mutation = {
   removeComplementaryResourceFromLearningPath: ComplementaryResourceUpdatedResult;
   startLearningPath: LearningPathStartedResult;
   completeLearningPath: LearningPathCompletedResult;
-  addLearningGoalToDomain: DomainAndLearningGoalResult;
   createLearningGoal: LearningGoal;
+  attachLearningGoalToDomain: DomainAndLearningGoalResult;
+  detachLearningGoalFromDomain: DomainAndLearningGoalResult;
   updateLearningGoal: LearningGoal;
   deleteLearningGoal: DeleteLearningGoalMutationResult;
   attachLearningGoalRequiresSubGoal: AttachLearningGoalRequiresSubGoalResult;
   detachLearningGoalRequiresSubGoal: DetachLearningGoalRequiresSubGoalResult;
+  startLearningGoal: LearningGoalStartedResult;
+  publishLearningGoal: LearningGoalPublishedResult;
+  indexLearningGoal: LearningGoalIndexedResult;
   updateConceptBelongsToDomain: ConceptBelongsToDomain;
   addConceptBelongsToConcept: UpdateConceptBelongsToConceptResult;
   removeConceptBelongsToConcept: UpdateConceptBelongsToConceptResult;
@@ -433,14 +445,22 @@ export type MutationCompleteLearningPathArgs = {
 };
 
 
-export type MutationAddLearningGoalToDomainArgs = {
-  domainId: Scalars['String'];
-  payload: AddLearningGoalToDomainPayload;
+export type MutationCreateLearningGoalArgs = {
+  payload: CreateLearningGoalPayload;
+  options?: Maybe<CreateLearningGoalOptions>;
 };
 
 
-export type MutationCreateLearningGoalArgs = {
-  payload: CreateLearningGoalPayload;
+export type MutationAttachLearningGoalToDomainArgs = {
+  learningGoalId: Scalars['String'];
+  domainId: Scalars['String'];
+  payload: AttachLearningGoalToDomainPayload;
+};
+
+
+export type MutationDetachLearningGoalFromDomainArgs = {
+  learningGoalId: Scalars['String'];
+  domainId: Scalars['String'];
 };
 
 
@@ -465,6 +485,21 @@ export type MutationAttachLearningGoalRequiresSubGoalArgs = {
 export type MutationDetachLearningGoalRequiresSubGoalArgs = {
   learningGoalId: Scalars['String'];
   subGoalId: Scalars['String'];
+};
+
+
+export type MutationStartLearningGoalArgs = {
+  learningGoalId: Scalars['String'];
+};
+
+
+export type MutationPublishLearningGoalArgs = {
+  learningGoalId: Scalars['String'];
+};
+
+
+export type MutationIndexLearningGoalArgs = {
+  learningGoalId: Scalars['String'];
 };
 
 
@@ -522,6 +557,18 @@ export type SearchTopicsOptions = {
   filter?: Maybe<SearchTopicsFilterOptions>;
 };
 
+export type CheckTopicKeyAvailabilityResult = {
+  __typename?: 'CheckTopicKeyAvailabilityResult';
+  available: Scalars['Boolean'];
+  existingTopic?: Maybe<Topic>;
+};
+
+export enum TopicType {
+  Domain = 'Domain',
+  Concept = 'Concept',
+  LearningGoal = 'LearningGoal'
+}
+
 export type CurrentUser = {
   __typename?: 'CurrentUser';
   _id: Scalars['String'];
@@ -532,6 +579,8 @@ export type CurrentUser = {
   articles?: Maybe<ListArticlesResult>;
   createdLearningPaths?: Maybe<Array<LearningPath>>;
   startedLearningPaths?: Maybe<Array<LearningPathStartedItem>>;
+  createdLearningGoals?: Maybe<Array<LearningGoalCreatedItem>>;
+  startedLearningGoals?: Maybe<Array<LearningGoalStartedItem>>;
 };
 
 
@@ -547,6 +596,16 @@ export type CurrentUserCreatedLearningPathsArgs = {
 
 export type CurrentUserStartedLearningPathsArgs = {
   options: UserLearningPathsOptions;
+};
+
+
+export type CurrentUserCreatedLearningGoalsArgs = {
+  options: UserLearningGoalsOptions;
+};
+
+
+export type CurrentUserStartedLearningGoalsArgs = {
+  options: UserLearningGoalsOptions;
 };
 
 export type User = {
@@ -755,13 +814,24 @@ export type LearningGoal = Topic & {
   __typename?: 'LearningGoal';
   _id: Scalars['String'];
   key: Scalars['String'];
+  type: LearningGoalType;
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
   topicType: TopicType;
+  publishedAt?: Maybe<Scalars['Date']>;
+  hidden: Scalars['Boolean'];
+  progress?: Maybe<LearningGoalProgress>;
   createdBy?: Maybe<User>;
   domain?: Maybe<LearningGoalBelongsToDomain>;
   requiredInGoals?: Maybe<Array<RequiredInGoalItem>>;
   requiredSubGoals?: Maybe<Array<SubGoalItem>>;
+  started?: Maybe<LearningGoalStarted>;
+  startedBy?: Maybe<LearningGoalStartedByResults>;
+};
+
+
+export type LearningGoalStartedByArgs = {
+  options: LearningGoalStartedByOptions;
 };
 
 export type DomainAndLearningGoalResult = {
@@ -975,21 +1045,26 @@ export type LearningPathCompletedResult = {
   learningPath: LearningPath;
 };
 
-export type AddLearningGoalToDomainPayload = {
-  contextualName: Scalars['String'];
-  contextualKey?: Maybe<Scalars['String']>;
+export type CreateLearningGoalPayload = {
+  name: Scalars['String'];
+  type: LearningGoalType;
+  key?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
 };
 
-export type CreateLearningGoalPayload = {
-  name: Scalars['String'];
-  key?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
+export type CreateLearningGoalOptions = {
+  public?: Maybe<Scalars['Boolean']>;
+  domainId?: Maybe<Scalars['String']>;
+};
+
+export type AttachLearningGoalToDomainPayload = {
+  index?: Maybe<Scalars['Float']>;
 };
 
 export type UpdateLearningGoalPayload = {
   name?: Maybe<Scalars['String']>;
   key?: Maybe<Scalars['String']>;
+  type?: Maybe<LearningGoalType>;
   description?: Maybe<Scalars['String']>;
 };
 
@@ -1013,6 +1088,22 @@ export type DetachLearningGoalRequiresSubGoalResult = {
   __typename?: 'DetachLearningGoalRequiresSubGoalResult';
   learningGoal: LearningGoal;
   subGoal: SubGoal;
+};
+
+export type LearningGoalStartedResult = {
+  __typename?: 'LearningGoalStartedResult';
+  currentUser: CurrentUser;
+  learningGoal: LearningGoal;
+};
+
+export type LearningGoalPublishedResult = {
+  __typename?: 'LearningGoalPublishedResult';
+  learningGoal: LearningGoal;
+};
+
+export type LearningGoalIndexedResult = {
+  __typename?: 'LearningGoalIndexedResult';
+  learningGoal: LearningGoal;
 };
 
 export type ConceptBelongsToDomain = {
@@ -1066,8 +1157,24 @@ export type UserLearningPathsOptions = {
 export type LearningPathStartedItem = {
   __typename?: 'LearningPathStartedItem';
   learningPath: LearningPath;
-  startedAt: Scalars['DateTime'];
-  completedAt?: Maybe<Scalars['DateTime']>;
+  startedAt: Scalars['Date'];
+  completedAt?: Maybe<Scalars['Date']>;
+};
+
+export type LearningGoalCreatedItem = {
+  __typename?: 'LearningGoalCreatedItem';
+  learningGoal: LearningGoal;
+  createdAt: Scalars['Date'];
+};
+
+export type UserLearningGoalsOptions = {
+  pagination?: Maybe<PaginationOptions>;
+};
+
+export type LearningGoalStartedItem = {
+  __typename?: 'LearningGoalStartedItem';
+  learningGoal: LearningGoal;
+  startedAt: Scalars['Date'];
 };
 
 export enum ArticleContentType {
@@ -1077,12 +1184,6 @@ export enum ArticleContentType {
 export type ListArticlesFilter = {
   contentType?: Maybe<ArticleContentType>;
 };
-
-export enum TopicType {
-  Domain = 'Domain',
-  Concept = 'Concept',
-  LearningGoal = 'LearningGoal'
-}
 
 export type DomainConceptsResults = {
   __typename?: 'DomainConceptsResults';
@@ -1134,8 +1235,7 @@ export type DomainBelongsToDomainItem = {
 
 export type LearningGoalBelongsToDomain = {
   __typename?: 'LearningGoalBelongsToDomain';
-  contextualName: Scalars['String'];
-  contextualKey: Scalars['String'];
+  index: Scalars['Float'];
   domain: Domain;
   learningGoal: LearningGoal;
 };
@@ -1143,8 +1243,6 @@ export type LearningGoalBelongsToDomain = {
 export type TopicBelongsToDomain = {
   __typename?: 'TopicBelongsToDomain';
   index: Scalars['Float'];
-  contextualKey?: Maybe<Scalars['String']>;
-  contextualName?: Maybe<Scalars['String']>;
   topic: Topic;
   domain: Domain;
 };
@@ -1184,8 +1282,8 @@ export type LearningMaterialTag = {
 
 export type ConsumedResource = {
   __typename?: 'ConsumedResource';
-  openedAt?: Maybe<Scalars['DateTime']>;
-  consumedAt?: Maybe<Scalars['DateTime']>;
+  openedAt?: Maybe<Scalars['Date']>;
+  consumedAt?: Maybe<Scalars['Date']>;
 };
 
 export type LearningMaterialCoveredConceptsResults = {
@@ -1208,7 +1306,7 @@ export type LearningMaterialPrerequisiteItem = {
   learningGoal: LearningGoal;
   strength: Scalars['Float'];
   createdBy: Scalars['String'];
-  createdAt: Scalars['DateTime'];
+  createdAt: Scalars['Date'];
 };
 
 export type LearningMaterialOutcomeItem = {
@@ -1216,7 +1314,7 @@ export type LearningMaterialOutcomeItem = {
   learningGoal: LearningGoal;
   strength: Scalars['Float'];
   createdBy: Scalars['String'];
-  createdAt: Scalars['DateTime'];
+  createdAt: Scalars['Date'];
 };
 
 export type ResourceData = {
@@ -1264,8 +1362,8 @@ export type LearningPathResourceItem = {
 
 export type LearningPathStarted = {
   __typename?: 'LearningPathStarted';
-  startedAt: Scalars['DateTime'];
-  completedAt?: Maybe<Scalars['DateTime']>;
+  startedAt: Scalars['Date'];
+  completedAt?: Maybe<Scalars['Date']>;
 };
 
 export type LearningPathStartedByResults = {
@@ -1278,6 +1376,16 @@ export type LearningPathStartedByOptions = {
   pagination?: Maybe<PaginationOptions>;
 };
 
+export enum LearningGoalType {
+  Roadmap = 'Roadmap',
+  SubGoal = 'SubGoal'
+}
+
+export type LearningGoalProgress = {
+  __typename?: 'LearningGoalProgress';
+  level: Scalars['Float'];
+};
+
 export type RequiredInGoalItem = {
   __typename?: 'RequiredInGoalItem';
   goal: LearningGoal;
@@ -1288,6 +1396,21 @@ export type SubGoalItem = {
   __typename?: 'SubGoalItem';
   subGoal: SubGoal;
   strength: Scalars['Float'];
+};
+
+export type LearningGoalStarted = {
+  __typename?: 'LearningGoalStarted';
+  startedAt: Scalars['Date'];
+};
+
+export type LearningGoalStartedByResults = {
+  __typename?: 'LearningGoalStartedByResults';
+  items: Array<LearningGoalStartedByItem>;
+  count: Scalars['Int'];
+};
+
+export type LearningGoalStartedByOptions = {
+  pagination?: Maybe<PaginationOptions>;
 };
 
 export type DomainAndCoveredConcepts = {
@@ -1393,8 +1516,14 @@ export type ConceptBelongsToConcept = {
 export type LearningPathStartedByItem = {
   __typename?: 'LearningPathStartedByItem';
   user: User;
-  startedAt: Scalars['DateTime'];
-  completedAt?: Maybe<Scalars['DateTime']>;
+  startedAt: Scalars['Date'];
+  completedAt?: Maybe<Scalars['Date']>;
+};
+
+export type LearningGoalStartedByItem = {
+  __typename?: 'LearningGoalStartedByItem';
+  startedAt: Scalars['Date'];
+  user: User;
 };
 
 export enum DomainConceptSortingEntities {

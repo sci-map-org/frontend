@@ -15,12 +15,11 @@ export const EditableLearningMaterialOutcomesData = gql`
     _id
     outcomes {
       learningGoal {
-        _id
-        name
-        key
+        ...LearningGoalBadgeData
       }
     }
   }
+  ${LearningGoalBadgeData}
 `;
 
 interface StatelessEditableLearningMaterialOutcomesProps {

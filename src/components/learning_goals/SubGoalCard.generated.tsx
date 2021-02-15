@@ -1,8 +1,10 @@
 import * as Types from '../../graphql/types';
 
-import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
+import { LearningGoalLinkDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
+import { LearningGoalCircularProgressDataFragment } from './LearningGoalCircularProgress.generated';
 import { LearningGoalBadgeDataFragment } from './LearningGoalBadge.generated';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
+import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 export type ConceptSubGoalCardDataFragment = (
   { __typename?: 'Concept' }
   & Pick<Types.Concept, '_id' | 'key' | 'name'>
@@ -14,15 +16,8 @@ export type ConceptSubGoalCardDataFragment = (
 
 export type LearningGoalSubGoalCardDataFragment = (
   { __typename?: 'LearningGoal' }
-  & Pick<Types.LearningGoal, '_id' | 'name' | 'key' | 'description'>
-  & { domain?: Types.Maybe<(
-    { __typename?: 'LearningGoalBelongsToDomain' }
-    & Pick<Types.LearningGoalBelongsToDomain, 'contextualName' | 'contextualKey'>
-    & { domain: (
-      { __typename?: 'Domain' }
-      & DomainDataFragment
-    ) }
-  )>, requiredSubGoals?: Types.Maybe<Array<(
+  & Pick<Types.LearningGoal, 'description'>
+  & { requiredSubGoals?: Types.Maybe<Array<(
     { __typename?: 'SubGoalItem' }
     & Pick<Types.SubGoalItem, 'strength'>
     & { subGoal: (
@@ -37,6 +32,8 @@ export type LearningGoalSubGoalCardDataFragment = (
       & ConceptDataFragment
     ) }
   )>> }
+  & LearningGoalLinkDataFragment
+  & LearningGoalCircularProgressDataFragment
 );
 
 export type SubGoalCardDataFragment = (

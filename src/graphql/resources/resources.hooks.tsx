@@ -76,7 +76,7 @@ export const useSetResourceConsumed = ({
               ...resource,
               consumed: {
                 __typename: 'ConsumedResource',
-                consumedAt: consumed ? new Date() : null,
+                consumedAt: consumed ? new Date().toISOString() : null,
                 openedAt: null,
               },
             },

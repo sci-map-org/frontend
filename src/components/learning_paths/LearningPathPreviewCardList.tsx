@@ -8,6 +8,7 @@ interface LearningPathPreviewCardListProps {
   h?: FlexProps['h'];
 }
 
+/**Deprecated */
 export const LearningPathPreviewCardList: React.FC<LearningPathPreviewCardListProps> = ({
   learningPaths,
   isLoading,

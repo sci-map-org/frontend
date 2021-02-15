@@ -15,12 +15,11 @@ export const EditableLearningMaterialPrerequisitesData = gql`
     _id
     prerequisites {
       learningGoal {
-        _id
-        name
-        key
+        ...LearningGoalBadgeData
       }
     }
   }
+  ${LearningGoalBadgeData}
 `;
 
 interface StatelessEditableLearningMaterialPrerequisitesProps {

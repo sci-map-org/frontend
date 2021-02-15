@@ -7,7 +7,6 @@ import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_
 import { TopicType } from '../../graphql/types';
 import { NewConcept } from '../concepts/NewConcept';
 import { NewDomain } from '../domains/NewDomain';
-import { AddLearningGoalToDomain } from '../learning_goals/AddLearningGoalToDomain';
 import { NewLearningGoal } from '../learning_goals/NewLearningGoal';
 
 interface NewTopicProps {
@@ -58,24 +57,14 @@ export const NewTopic: React.FC<NewTopicProps> = ({
               size={size}
             />
           )}
-          {topicType === TopicType.LearningGoal &&
-            (parentDomain ? (
-              <AddLearningGoalToDomain
-                defaultPayload={{ contextualName: defaultPayload?.name, contextualKey: defaultPayload?.key }}
-                onCreated={(createdLG) => !!onCreated && onCreated(createdLG, TopicType.LearningGoal)}
-                onCancel={onCancel}
-                domain={parentDomain}
-                size={size}
-              />
-            ) : (
-              <NewLearningGoal
-                defaultPayload={defaultPayload}
-                onCancel={onCancel}
-                onCreated={(createdLG) => !!onCreated && onCreated(createdLG, TopicType.LearningGoal)}
-                size={size}
-              />
-            ))}
-          <NewLearningGoal onCancel={onCancel} />
+          {topicType === TopicType.LearningGoal && (
+            <NewLearningGoal
+              defaultData={{ ...defaultPayload, domain: parentDomain }}
+              onCancel={onCancel}
+              onCreated={(createdLG) => !!onCreated && onCreated(createdLG, TopicType.LearningGoal)}
+              size={size}
+            />
+          )}
         </Stack>
       ) : (
         <Stack>
