@@ -1,4 +1,4 @@
-import { Badge, Box, Center, Stack, Text, Wrap, WrapItem } from '@chakra-ui/react';
+import { Box, Center, Stack, Text, Wrap, WrapItem } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useMemo } from 'react';
 import { DomainData } from '../../graphql/domains/domains.fragments';
@@ -19,7 +19,8 @@ import { EditableTextInput } from '../lib/inputs/EditableTextInput';
 import { OtherLearnersViewerUserData } from '../lib/OtherLearnersViewer';
 import { ConceptGroupLearningGoalDataFragment } from './ConceptGroupLearningGoal.generated';
 import { LearningGoalBadge, LearningGoalBadgeData } from './LearningGoalBadge';
-import { LearningGoalPublishButton, LearningGoalPublishButtonData } from './LearningGoalPublishButton';
+import { LearningGoalPublishButtonData } from './LearningGoalPublishButton';
+import { LearningGoalPublishStatusBar } from './LearningGoalPublishStatusBar';
 import { LearningGoalTypeEditor } from './LearningGoalTypeEditor';
 import { StartLearningGoalButton, StartLearningGoalButtonData } from './StartLearningGoalButton';
 
@@ -103,14 +104,7 @@ export const ConceptGroupLearningGoal: React.FC<ConceptGroupLearningGoalProps> =
       <Center>
         <Stack direction="row" alignItems="center">
           <StartLearningGoalButton learningGoal={learningGoal} />
-          {currentUserIsOwner &&
-            (learningGoal.publishedAt ? (
-              <Badge colorScheme="green" fontSize="lg">
-                PUBLIC
-              </Badge>
-            ) : (
-              <LearningGoalPublishButton learningGoal={learningGoal} />
-            ))}
+          {currentUserIsOwner && <LearningGoalPublishStatusBar learningGoal={learningGoal} />}
         </Stack>
       </Center>
       <EditableTextarea

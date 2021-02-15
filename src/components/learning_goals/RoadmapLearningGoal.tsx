@@ -1,13 +1,13 @@
-import { Badge, Box, Button, Center, Flex, Stack, Text } from '@chakra-ui/react';
+import { Box, Button, Center, Flex, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useMemo, useState } from 'react';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { LearningGoalData } from '../../graphql/learning_goals/learning_goals.fragments';
 import {
   useAttachLearningGoalRequiresSubGoalMutation,
-  useUpdateLearningGoalMutation,
   useAttachLearningGoalToDomainMutation,
   useDetachLearningGoalFromDomainMutation,
+  useUpdateLearningGoalMutation,
 } from '../../graphql/learning_goals/learning_goals.operations.generated';
 import { LearningGoalType } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
@@ -21,7 +21,8 @@ import { EditableTextInput } from '../lib/inputs/EditableTextInput';
 import { OtherLearnersViewer, OtherLearnersViewerUserData } from '../lib/OtherLearnersViewer';
 import { UserAvatar, UserAvatarData } from '../users/UserAvatar';
 import { LearningGoalLinearProgress, LearningGoalLinearProgressData } from './LearningGoalLinearProgress';
-import { LearningGoalPublishButton, LearningGoalPublishButtonData } from './LearningGoalPublishButton';
+import { LearningGoalPublishButtonData } from './LearningGoalPublishButton';
+import { LearningGoalPublishStatusBar } from './LearningGoalPublishStatusBar';
 import { LearningGoalSelector } from './LearningGoalSelector';
 import { LearningGoalTypeEditor } from './LearningGoalTypeEditor';
 import {
@@ -174,14 +175,7 @@ export const RoadmapLearningGoal: React.FC<RoadmapLearningGoalProps> = ({ learni
             <LearningGoalLinearProgress learningGoal={learningGoal} size="lg" hasStripe />
           </Box>
         )}
-        {currentUserIsOwner &&
-          (learningGoal.publishedAt ? (
-            <Badge colorScheme="green" fontSize="lg">
-              PUBLIC
-            </Badge>
-          ) : (
-            <LearningGoalPublishButton learningGoal={learningGoal} />
-          ))}
+        {currentUserIsOwner && <LearningGoalPublishStatusBar learningGoal={learningGoal} />}
       </Flex>
 
       <RoadmapSubGoalsWrapper
@@ -192,7 +186,7 @@ export const RoadmapLearningGoal: React.FC<RoadmapLearningGoalProps> = ({ learni
             <Center w="100%" h="100%" py={2} borderWidth={1}>
               <LearningGoalSelector
                 placeholder="Add a SubGoal..."
-                createLGDefaultPayload={{ type: LearningGoalType.SubGoal }}
+                createLGDefaultData={{ type: LearningGoalType.SubGoal, public: false }}
                 onSelect={(selected) =>
                   attachLearningGoalRequiresSubGoal({
                     variables: {
