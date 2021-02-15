@@ -75,16 +75,6 @@ export const CurrentUserLearningGoalsPage: React.FC<{}> = () => {
         <InternalButtonLink routePath="/goals/new" asHref="/goals/new" colorScheme="blue">
           Create New Goal
         </InternalButtonLink>
-        {/* <NewLearningGoalModal
-              renderButton={(onClick) => (
-                <Button size="lg" colorScheme="blue" onClick={onClick}>
-                  Create New Goal
-                </Button>
-              )}
-              // onCreated={(createdLearningGoal) =>
-              //   startLearningGoal({ variables: { learningGoalId: createdLearningGoal._id } })
-              // }
-            /> */}
       </Center>
     </PageLayout>
   );
