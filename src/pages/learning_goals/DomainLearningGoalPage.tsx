@@ -1,4 +1,5 @@
 import gql from 'graphql-tag';
+import { useRouter } from 'next/router';
 import { useMemo, useState } from 'react';
 import { PageLayout } from '../../components/layout/PageLayout';
 import {
@@ -56,7 +57,8 @@ export const DomainLearningGoalPage: React.FC<{ domainKey: string; learningGoalK
     [learningGoal, currentUser]
   );
   if (data && !domainItem) throw new Error('no domain found');
-  const [editMode, setEditMode] = useState(!!currentUser && currentUser.role === UserRole.Admin);
+  const router = useRouter();
+  const [editMode, setEditMode] = useState(router.query.editMode === 'true');
 
   if (!loading && !data) return <NotFoundPage />;
   return (

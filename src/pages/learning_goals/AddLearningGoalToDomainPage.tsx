@@ -12,7 +12,7 @@ export const AddLearningGoalToDomainPage: React.FC<{ domainKey: string }> = ({ d
   return (
     <PageLayout title={`Add Learning Goal to ${domain.name}`} isLoading={loading} marginSize="xl">
       <NewLearningGoal
-        defaultDomain={domain}
+        defaultData={{ domain }}
         onCreated={(createdLearningGoal) => routerPushToPage(LearningGoalPageInfo(createdLearningGoal))}
         onCancel={() => Router.back()}
       />

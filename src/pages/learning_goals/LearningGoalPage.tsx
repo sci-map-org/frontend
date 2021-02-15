@@ -2,7 +2,7 @@ import { EditIcon } from '@chakra-ui/icons';
 import { IconButton, Stack, Tooltip } from '@chakra-ui/react';
 import { AiOutlineEye } from '@react-icons/all-files/ai/AiOutlineEye';
 import gql from 'graphql-tag';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { ConceptGroupLearningGoalData } from '../../components/learning_goals/ConceptGroupLearningGoal';
@@ -48,7 +48,10 @@ export const LearningGoalPage: React.FC<{ learningGoalKey: string }> = ({ learni
     () => !!learningGoal.createdBy && !!currentUser && learningGoal.createdBy._id === currentUser._id,
     [learningGoal, currentUser]
   );
-  const [editMode, setEditMode] = useState(!!currentUser && currentUser.role === UserRole.Admin);
+  const router = useRouter();
+
+  const [editMode, setEditMode] = useState(router.query.editMode === 'true');
+
   useEffect(() => {
     if (!loading && learningGoal.domain) {
       routerPushToPage(DomainLearningGoalPageInfo(learningGoal.domain.domain, learningGoal));

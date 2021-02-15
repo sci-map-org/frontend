@@ -54,30 +54,28 @@ interface NewLearningGoalData {
   key: string;
   type: LearningGoalType;
   description?: string;
+  domain?: DomainDataFragment;
+  public?: boolean;
 }
 interface NewLearningGoalFormProps {
-  onCreate: (payload: NewLearningGoalData, options: { isPublic?: boolean; domainId?: string }) => void;
+  onCreate: (payload: NewLearningGoalData) => void;
   onCancel: () => void;
-  defaultPayload?: Partial<CreateLearningGoalPayload>;
-  defaultDomain?: DomainDataFragment;
+  defaultData?: Partial<NewLearningGoalData>;
   allowDomainChange?: boolean;
   size?: 'md' | 'lg' | 'sm';
-  publicByDefault?: boolean;
 }
 export const NewLearningGoalForm: React.FC<NewLearningGoalFormProps> = ({
   onCreate,
   onCancel,
-  defaultPayload,
-  defaultDomain,
+  defaultData,
   allowDomainChange,
   size = 'md',
-  publicByDefault,
 }) => {
-  const [domain, setDomain] = useState<DomainDataFragment | undefined>(defaultDomain);
-  const [name, setName] = useState(defaultPayload?.name || '');
-  const [key, setKey] = useState(defaultPayload?.key || '');
-  const [description, setDescription] = useState(defaultPayload?.description || '');
-  const [type, setType] = useState(defaultPayload?.type || LearningGoalType.Roadmap);
+  const [domain, setDomain] = useState<DomainDataFragment | undefined>(defaultData?.domain);
+  const [name, setName] = useState(defaultData?.name || '');
+  const [key, setKey] = useState(defaultData?.key || '');
+  const [description, setDescription] = useState(defaultData?.description || '');
+  const [type, setType] = useState(defaultData?.type || LearningGoalType.Roadmap);
   const [checkTopicKeyAvailability, { loading, data }] = useCheckTopicKeyAvailabilityLazyQuery({
     errorPolicy: 'ignore',
   });
@@ -161,7 +159,7 @@ export const NewLearningGoalForm: React.FC<NewLearningGoalFormProps> = ({
         ></Textarea>
       </FormControl>
       <RoleAccess accessRule="contributorOrAdmin">
-        <Accordion allowToggle py={5} w="50%">
+        <Accordion allowToggle py={5} w={{ base: '100%', md: '50%' }}>
           <AccordionItem>
             <AccordionButton>
               <Box flex="1" textAlign="left">
@@ -221,17 +219,13 @@ export const NewLearningGoalForm: React.FC<NewLearningGoalFormProps> = ({
         onCancel={() => onCancel()}
         size={getChakraRelativeSize(size, 1)}
         onPrimaryClick={() => {
-          onCreate(
-            { name, key, description: description || undefined, type },
-            { isPublic: publicByDefault, domainId: domain?._id }
-          );
+          onCreate({ name, key, description: description || undefined, type, public: defaultData?.public, domain });
         }}
       />
     </Stack>
   );
 };
-
-interface NewLearningGoalProps extends Omit<NewLearningGoalFormProps, 'onCreate'> {
+export interface NewLearningGoalProps extends Omit<NewLearningGoalFormProps, 'onCreate'> {
   onCreated?: (createdLearningGoal: LearningGoalDataFragment) => void;
 }
 export const NewLearningGoal: React.FC<NewLearningGoalProps> = ({ onCreated, ...props }) => {
@@ -239,11 +233,11 @@ export const NewLearningGoal: React.FC<NewLearningGoalProps> = ({ onCreated, ...
 
   return (
     <NewLearningGoalForm
-      onCreate={async ({ name, key, description, type }, { isPublic, domainId }) => {
+      onCreate={async ({ name, key, description, type, public: isPublic, domain }) => {
         const { data } = await createLearningGoal({
           variables: {
             payload: { name, key, description, type },
-            options: { public: isPublic, domainId },
+            options: { public: !!isPublic, domainId: domain?._id },
           },
         });
         if (data) {
@@ -263,7 +257,7 @@ export const NewLearningGoalModal: React.FC<
     NewLearningGoalProps,
     'onCancel'
   >
-> = ({ defaultPayload, onCreated, renderButton, onCancel }) => {
+> = ({ defaultData, onCreated, renderButton, onCancel }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
@@ -275,7 +269,7 @@ export const NewLearningGoalModal: React.FC<
             <ModalCloseButton />
             <ModalBody pb={5}>
               <NewLearningGoal
-                defaultPayload={defaultPayload}
+                defaultData={defaultData}
                 onCreated={(learningGoalCreated) => {
                   onClose();
                   onCreated && onCreated(learningGoalCreated);

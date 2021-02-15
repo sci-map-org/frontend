@@ -10,7 +10,7 @@ interface LearningGoalTypeEditorProps {
 export const LearningGoalTypeEditor: React.FC<LearningGoalTypeEditorProps> = ({ learningGoal }) => {
   const [selectedType, setSelectedType] = useState(learningGoal.type);
   const [updateLearningGoal] = useUpdateLearningGoalMutation();
-  console.log(selectedType, learningGoal.type, learningGoal.type === selectedType);
+
   return (
     <Stack>
       <Text fontSize="lg" fontWeight={600}>

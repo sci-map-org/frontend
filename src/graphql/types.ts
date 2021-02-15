@@ -190,6 +190,7 @@ export type Mutation = {
   detachLearningGoalRequiresSubGoal: DetachLearningGoalRequiresSubGoalResult;
   startLearningGoal: LearningGoalStartedResult;
   publishLearningGoal: LearningGoalPublishedResult;
+  indexLearningGoal: LearningGoalIndexedResult;
   updateConceptBelongsToDomain: ConceptBelongsToDomain;
   addConceptBelongsToConcept: UpdateConceptBelongsToConceptResult;
   removeConceptBelongsToConcept: UpdateConceptBelongsToConceptResult;
@@ -493,6 +494,11 @@ export type MutationStartLearningGoalArgs = {
 
 
 export type MutationPublishLearningGoalArgs = {
+  learningGoalId: Scalars['String'];
+};
+
+
+export type MutationIndexLearningGoalArgs = {
   learningGoalId: Scalars['String'];
 };
 
@@ -813,7 +819,7 @@ export type LearningGoal = Topic & {
   description?: Maybe<Scalars['String']>;
   topicType: TopicType;
   publishedAt?: Maybe<Scalars['Date']>;
-  hidden?: Maybe<Scalars['Boolean']>;
+  hidden: Scalars['Boolean'];
   progress?: Maybe<LearningGoalProgress>;
   createdBy?: Maybe<User>;
   domain?: Maybe<LearningGoalBelongsToDomain>;
@@ -1092,6 +1098,11 @@ export type LearningGoalStartedResult = {
 
 export type LearningGoalPublishedResult = {
   __typename?: 'LearningGoalPublishedResult';
+  learningGoal: LearningGoal;
+};
+
+export type LearningGoalIndexedResult = {
+  __typename?: 'LearningGoalIndexedResult';
   learningGoal: LearningGoal;
 };
 

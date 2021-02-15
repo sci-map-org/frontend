@@ -122,7 +122,9 @@ const LearningGoalSubGoalCard: React.FC<LearningGoalSubGoalCardProps> = ({ learn
         }
       }}
       _hover={{ cursor: 'pointer' }}
-      onClick={() => routerPushToPage(LearningGoalPageInfo(learningGoal))}
+      onClick={() =>
+        routerPushToPage(LearningGoalPageInfo(learningGoal), { query: { editMode: (!!editMode).toString() } })
+      }
     >
       <Flex direction="row" position="relative">
         <PageLink

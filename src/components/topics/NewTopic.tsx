@@ -59,8 +59,7 @@ export const NewTopic: React.FC<NewTopicProps> = ({
           )}
           {topicType === TopicType.LearningGoal && (
             <NewLearningGoal
-              defaultPayload={defaultPayload}
-              defaultDomain={parentDomain}
+              defaultData={{ ...defaultPayload, domain: parentDomain }}
               onCancel={onCancel}
               onCreated={(createdLG) => !!onCreated && onCreated(createdLG, TopicType.LearningGoal)}
               size={size}

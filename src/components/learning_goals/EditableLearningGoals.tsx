@@ -5,6 +5,7 @@ import { LearningGoalBadge } from './LearningGoalBadge';
 import { EditIcon } from '@chakra-ui/icons';
 import { LearningGoalSelector } from './LearningGoalSelector';
 import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
+import { LearningGoalType } from '../../graphql/types';
 
 interface EditableLearningGoalsProps {
   learningGoals: LearningGoalBadgeDataFragment[];
@@ -56,6 +57,7 @@ export const EditableLearningGoals: React.FC<EditableLearningGoalsProps> = ({
       </Stack>
       {editMode && (
         <LearningGoalSelector
+          createLGDefaultData={{ type: LearningGoalType.SubGoal, public: true }}
           placeholder={inputPlaceholder || `Add ${role}...`}
           onSelect={(learningGoal) => onAdded(learningGoal)}
         />

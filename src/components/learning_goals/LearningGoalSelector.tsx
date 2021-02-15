@@ -14,11 +14,10 @@ import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { LearningGoalData } from '../../graphql/learning_goals/learning_goals.fragments';
 import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
-import { CreateLearningGoalPayload } from '../../graphql/types';
 import { generateUrlKey } from '../../services/url.service';
 import { EntitySelector } from '../lib/selectors/EntitySelector';
 import { useSearchLearningGoalsLazyQuery } from './LearningGoalSelector.generated';
-import { NewLearningGoal } from './NewLearningGoal';
+import { NewLearningGoal, NewLearningGoalProps } from './NewLearningGoal';
 
 export const searchLearningGoals = gql`
   query searchLearningGoals($options: SearchLearningGoalsOptions!) {
@@ -34,10 +33,10 @@ export const searchLearningGoals = gql`
 
 export const LearningGoalSelector: React.FC<{
   onSelect: (learningGoal: LearningGoalDataFragment) => void;
-  createLGDefaultPayload?: Partial<CreateLearningGoalPayload>;
+  createLGDefaultData?: NewLearningGoalProps['defaultData'];
   placeholder?: string;
   popoverTitle?: string;
-}> = ({ onSelect, placeholder, popoverTitle, createLGDefaultPayload: parentCreateLGDefaultPayload = {} }) => {
+}> = ({ onSelect, placeholder, popoverTitle, createLGDefaultData: parentCreateLGDefaultPayload = {} }) => {
   const [searchResults, setSearchResults] = useState<LearningGoalDataFragment[]>([]);
 
   const [searchLearningGoalsLazyQuery, { data }] = useSearchLearningGoalsLazyQuery();
@@ -51,7 +50,7 @@ export const LearningGoalSelector: React.FC<{
     if (!!data?.searchLearningGoals.items) setSearchResults(data.searchLearningGoals.items);
   }, [data]);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [createLGDefaultPayload, setCreateLGDefaultPayload] = useState<Partial<CreateLearningGoalPayload>>(
+  const [createLGDefaultData, setCreateLGDefaultData] = useState<NewLearningGoalProps['defaultData']>(
     parentCreateLGDefaultPayload
   );
   return (
@@ -62,8 +61,8 @@ export const LearningGoalSelector: React.FC<{
             width="100%"
             allowCreation
             onCreate={(newLg) => {
-              setCreateLGDefaultPayload({
-                ...createLGDefaultPayload,
+              setCreateLGDefaultData({
+                ...createLGDefaultData,
                 name: newLg.name,
                 key: generateUrlKey(newLg.name),
               }); //TODO: proper validation
@@ -85,7 +84,7 @@ export const LearningGoalSelector: React.FC<{
         <PopoverCloseButton />
         <PopoverBody>
           <NewLearningGoal
-            defaultPayload={createLGDefaultPayload}
+            defaultData={createLGDefaultData}
             onCreated={(createdLearningGoal) => {
               onSelect(createdLearningGoal);
               onClose();
@@ -93,7 +92,6 @@ export const LearningGoalSelector: React.FC<{
             allowDomainChange
             onCancel={() => onClose()}
             size="sm"
-            publicByDefault
           />
         </PopoverBody>
       </PopoverContent>
