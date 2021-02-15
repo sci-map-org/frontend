@@ -30,7 +30,7 @@ export const EditableTextarea: React.FC<
         rows={rows || (!minRows || estimateNbRows(defaultValue) > minRows ? estimateNbRows(defaultValue) : minRows)}
       ></Textarea>
       <Skeleton isLoaded={!isLoading}>
-        {(!isDisabled || defaultValue) && (
+        {!(isDisabled && !defaultValue) && (
           <Text {...getPreviewProps()} {...(!defaultValue && { color: 'gray.500' })} whiteSpace="pre-wrap">
             <>
               {!isEditing && !isDisabled && (
