@@ -1,4 +1,4 @@
-import { Box, Center, Stack, Text, Wrap, WrapItem } from '@chakra-ui/react';
+import { Box, Center, Flex, Stack, Text, Wrap, WrapItem } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useMemo } from 'react';
 import { DomainData } from '../../graphql/domains/domains.fragments';
@@ -91,9 +91,9 @@ export const ConceptGroupLearningGoal: React.FC<ConceptGroupLearningGoalProps> =
 
   return (
     <Stack spacing={3} w="100%">
-      <Box>
+      <Flex direction="row-reverse">
         <ParentLearningGoalsNavigationBlock learningGoal={learningGoal} />
-      </Box>
+      </Flex>
       <Center>
         <EditableTextInput
           value={learningGoal.name}

@@ -7,15 +7,17 @@ interface LearningGoalPublishStatusBarProps {
 }
 export const LearningGoalPublishStatusBar: React.FC<LearningGoalPublishStatusBarProps> = ({ learningGoal }) => {
   return (
-    <Stack direction="row">
+    <Stack direction="row" alignItems="center">
       {learningGoal.publishedAt ? (
         <Badge colorScheme="green" fontSize="lg">
           PUBLIC
         </Badge>
       ) : (
-        <LearningGoalPublishButton learningGoal={learningGoal} />
+        <LearningGoalPublishButton size="sm" learningGoal={learningGoal} />
       )}
-      {learningGoal.publishedAt && learningGoal.hidden && <LearningGoalIndexButton learningGoal={learningGoal} />}
+      {learningGoal.publishedAt && learningGoal.hidden && (
+        <LearningGoalIndexButton size="sm" learningGoal={learningGoal} />
+      )}
     </Stack>
   );
 };

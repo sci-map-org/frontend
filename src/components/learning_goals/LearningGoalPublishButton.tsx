@@ -1,6 +1,7 @@
 import {
   Button,
   ButtonGroup,
+  ButtonProps,
   ListItem,
   Modal,
   ModalBody,
@@ -102,13 +103,13 @@ export const LearningGoalPublishButton: React.FC<LearningGoalPublishButtonProps>
   );
 };
 
-interface LearningGoalIndexButtonProps {
+interface LearningGoalIndexButtonProps extends ButtonProps {
   learningGoal: LearningGoalPublishButtonDataFragment;
 }
-export const LearningGoalIndexButton: React.FC<LearningGoalIndexButtonProps> = ({ learningGoal }) => {
+export const LearningGoalIndexButton: React.FC<LearningGoalIndexButtonProps> = ({ learningGoal, ...buttonProps }) => {
   const [indexLearningGoal] = useIndexLearningGoalMutation();
   return (
-    <Button onClick={() => indexLearningGoal({ variables: { learningGoalId: learningGoal._id } })}>
+    <Button {...buttonProps} onClick={() => indexLearningGoal({ variables: { learningGoalId: learningGoal._id } })}>
       Share with community
     </Button>
   );
