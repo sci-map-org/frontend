@@ -111,6 +111,27 @@ export const publishLearningGoal = gql`
   }
 `;
 
+export const indexLearningGoal = gql`
+  mutation indexLearningGoal($learningGoalId: String!) {
+    indexLearningGoal(learningGoalId: $learningGoalId) {
+      learningGoal {
+        _id
+        hidden
+        domain {
+          domain {
+            learningGoals {
+              learningGoal {
+                _id
+              }
+              index
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const attachLearningGoalToDomain = gql`
   mutation attachLearningGoalToDomain(
     $learningGoalId: String!

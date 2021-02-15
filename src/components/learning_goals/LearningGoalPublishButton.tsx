@@ -1,8 +1,6 @@
-import gql from 'graphql-tag';
 import {
   Button,
   ButtonGroup,
-  ButtonProps,
   ListItem,
   Modal,
   ModalBody,
@@ -15,15 +13,20 @@ import {
   UnorderedList,
   useDisclosure,
 } from '@chakra-ui/react';
-import { LearningGoalPublishButtonDataFragment } from './LearningGoalPublishButton.generated';
-import { usePublishLearningGoalMutation } from '../../graphql/learning_goals/learning_goals.operations.generated';
+import gql from 'graphql-tag';
+import {
+  useIndexLearningGoalMutation,
+  usePublishLearningGoalMutation,
+} from '../../graphql/learning_goals/learning_goals.operations.generated';
 import { shortenString } from '../../util/utils';
+import { LearningGoalPublishButtonDataFragment } from './LearningGoalPublishButton.generated';
 
 export const LearningGoalPublishButtonData = gql`
   fragment LearningGoalPublishButtonData on LearningGoal {
     _id
     name
     publishedAt
+    hidden
   }
 `;
 interface LearningGoalPublishButtonProps {
@@ -38,6 +41,7 @@ export const LearningGoalPublishButton: React.FC<LearningGoalPublishButtonProps>
       <Button size={size} colorScheme="blue" onClick={onOpen}>
         Publish
       </Button>
+
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay>
           <ModalContent>
@@ -95,5 +99,17 @@ export const LearningGoalPublishButton: React.FC<LearningGoalPublishButtonProps>
         </ModalOverlay>
       </Modal>
     </>
+  );
+};
+
+interface LearningGoalIndexButtonProps {
+  learningGoal: LearningGoalPublishButtonDataFragment;
+}
+export const LearningGoalIndexButton: React.FC<LearningGoalIndexButtonProps> = ({ learningGoal }) => {
+  const [indexLearningGoal] = useIndexLearningGoalMutation();
+  return (
+    <Button onClick={() => indexLearningGoal({ variables: { learningGoalId: learningGoal._id } })}>
+      Share with community
+    </Button>
   );
 };

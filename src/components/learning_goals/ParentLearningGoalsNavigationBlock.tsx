@@ -33,7 +33,7 @@ export const ParentLearningGoalsNavigationBlock: React.FC<ParentLearningGoalsNav
       </Text>
       <Stack direction="column" spacing={1} pl={8}>
         {learningGoal.requiredInGoals.map((parentGoal) => (
-          <PageLink fontSize="sm" pageInfo={LearningGoalPageInfo(parentGoal.goal)}>
+          <PageLink key={parentGoal.goal._id} fontSize="sm" pageInfo={LearningGoalPageInfo(parentGoal.goal)}>
             {parentGoal.goal.name}
           </PageLink>
         ))}

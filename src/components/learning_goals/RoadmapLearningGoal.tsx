@@ -85,80 +85,88 @@ export const RoadmapLearningGoal: React.FC<RoadmapLearningGoalProps> = ({ learni
 
   return (
     <Flex direction="column" w="100%" alignItems="stretch">
-      <ParentLearningGoalsNavigationBlock learningGoal={learningGoal} />
-      <Stack direction="row" alignItems="center">
-        <EditableTextInput
-          value={learningGoal.name}
-          fontSize="4xl"
-          editMode={editMode}
-          isLoading={isLoading}
-          onChange={(newName) =>
-            updateLearningGoal({
-              variables: {
-                _id: learningGoal._id,
-                payload: { name: (newName as string) || null },
-              },
-            })
-          }
-        />
-        <StartLearningGoalButton learningGoal={learningGoal} />
-      </Stack>
-      <Stack direction="row">
-        {learningGoal.createdBy && (
-          <Center>
-            {currentUserIsOwner ? (
-              <Stack direction="column" alignItems="center">
-                <Text fontWeight={300} color="gray.500">
-                  You are the owner
-                </Text>
-              </Stack>
-            ) : (
-              <Stack spacing={1} direction="row">
-                <Center>
-                  <UserAvatar size="xs" user={learningGoal.createdBy} />
-                </Center>
-                <Text fontWeight={300} color="gray.500">
-                  Created By{' '}
-                  <Text as="span" fontWeight={500}>
-                    @{learningGoal.createdBy.key}
-                  </Text>
-                </Text>
-              </Stack>
+      <Flex direction="row">
+        <Flex direction="column" alignItems="stretch" flexGrow={1}>
+          <Stack direction="row" alignItems="center">
+            <EditableTextInput
+              value={learningGoal.name}
+              fontSize="4xl"
+              editMode={editMode}
+              isLoading={isLoading}
+              onChange={(newName) =>
+                updateLearningGoal({
+                  variables: {
+                    _id: learningGoal._id,
+                    payload: { name: (newName as string) || null },
+                  },
+                })
+              }
+            />
+            <StartLearningGoalButton learningGoal={learningGoal} />
+          </Stack>
+          <Stack direction="row">
+            {learningGoal.createdBy && (
+              <Center>
+                {currentUserIsOwner ? (
+                  <Stack direction="column" alignItems="center">
+                    <Text fontWeight={300} color="gray.500">
+                      You are the owner
+                    </Text>
+                  </Stack>
+                ) : (
+                  <Stack spacing={1} direction="row">
+                    <Center>
+                      <UserAvatar size="xs" user={learningGoal.createdBy} />
+                    </Center>
+                    <Text fontWeight={300} color="gray.500">
+                      Created By{' '}
+                      <Text as="span" fontWeight={500}>
+                        @{learningGoal.createdBy.key}
+                      </Text>
+                    </Text>
+                  </Stack>
+                )}
+              </Center>
             )}
-          </Center>
-        )}
-      </Stack>
-      <Box mt={3}>
-        <EditableTextarea
-          isLoading={isLoading}
-          backgroundColor="backgroundColor.0"
-          fontSize="lg"
-          fontWeight={300}
-          color="gray.700"
-          defaultValue={learningGoal.description || ''}
-          placeholder="Add a description..."
-          onSubmit={(newDescription: any) =>
-            updateLearningGoal({
-              variables: {
-                _id: learningGoal._id,
-                payload: { description: (newDescription as string) || null },
-              },
-            })
-          }
-          isDisabled={!editMode}
-        />
-      </Box>
-      {learningGoal.startedBy && (
-        <Center>
-          <OtherLearnersViewer
-            title={() => `Learning now`}
-            users={learningGoal.startedBy.items.map(({ user }) => user)}
-            totalCount={learningGoal.startedBy.count}
-            currentUserIsLearner={currentUserStartedGoal}
-            minUsers={currentUserIsOwner ? 1 : 4}
-          />
-        </Center>
-      )}
+          </Stack>
+          <Box mt={3}>
+            <EditableTextarea
+              isLoading={isLoading}
+              backgroundColor="backgroundColor.0"
+              fontSize="lg"
+              fontWeight={300}
+              color="gray.700"
+              defaultValue={learningGoal.description || ''}
+              placeholder="Add a description..."
+              onSubmit={(newDescription: any) =>
+                updateLearningGoal({
+                  variables: {
+                    _id: learningGoal._id,
+                    payload: { description: (newDescription as string) || null },
+                  },
+                })
+              }
+              isDisabled={!editMode}
+            />
+          </Box>
+        </Flex>
+        <Flex direction="row-reverse" flexGrow={1}>
+          <Stack>
+            <ParentLearningGoalsNavigationBlock learningGoal={learningGoal} />
+            {learningGoal.startedBy && (
+              <Center>
+                <OtherLearnersViewer
+                  title={() => `Learning now`}
+                  users={learningGoal.startedBy.items.map(({ user }) => user)}
+                  totalCount={learningGoal.startedBy.count}
+                  currentUserIsLearner={currentUserStartedGoal}
+                  minUsers={currentUserIsOwner ? 1 : 4}
+                />
+              </Center>
+            )}
+          </Stack>
+        </Flex>
+      </Flex>
 
       <Flex direction="row" justifyContent="space-between" alignItems="center" mt={5} mb={5}>
         {(currentUserStartedGoal || (learningGoal.progress && learningGoal.progress.level > 0)) && (

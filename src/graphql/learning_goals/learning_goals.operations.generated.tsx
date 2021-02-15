@@ -150,6 +150,36 @@ export type PublishLearningGoalMutation = (
   ) }
 );
 
+export type IndexLearningGoalMutationVariables = Types.Exact<{
+  learningGoalId: Types.Scalars['String'];
+}>;
+
+
+export type IndexLearningGoalMutation = (
+  { __typename?: 'Mutation' }
+  & { indexLearningGoal: (
+    { __typename?: 'LearningGoalIndexedResult' }
+    & { learningGoal: (
+      { __typename?: 'LearningGoal' }
+      & Pick<Types.LearningGoal, '_id' | 'hidden'>
+      & { domain?: Types.Maybe<(
+        { __typename?: 'LearningGoalBelongsToDomain' }
+        & { domain: (
+          { __typename?: 'Domain' }
+          & { learningGoals?: Types.Maybe<Array<(
+            { __typename?: 'LearningGoalBelongsToDomain' }
+            & Pick<Types.LearningGoalBelongsToDomain, 'index'>
+            & { learningGoal: (
+              { __typename?: 'LearningGoal' }
+              & Pick<Types.LearningGoal, '_id'>
+            ) }
+          )>> }
+        ) }
+      )> }
+    ) }
+  ) }
+);
+
 export type AttachLearningGoalToDomainMutationVariables = Types.Exact<{
   learningGoalId: Types.Scalars['String'];
   domainId: Types.Scalars['String'];
@@ -374,6 +404,31 @@ export function usePublishLearningGoalMutation(baseOptions?: Apollo.MutationHook
 export type PublishLearningGoalMutationHookResult = ReturnType<typeof usePublishLearningGoalMutation>;
 export type PublishLearningGoalMutationResult = Apollo.MutationResult<PublishLearningGoalMutation>;
 export type PublishLearningGoalMutationOptions = Apollo.BaseMutationOptions<PublishLearningGoalMutation, PublishLearningGoalMutationVariables>;
+export type IndexLearningGoalMutationFn = Apollo.MutationFunction<IndexLearningGoalMutation, IndexLearningGoalMutationVariables>;
+
+/**
+ * __useIndexLearningGoalMutation__
+ *
+ * To run a mutation, you first call `useIndexLearningGoalMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useIndexLearningGoalMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [indexLearningGoalMutation, { data, loading, error }] = useIndexLearningGoalMutation({
+ *   variables: {
+ *      learningGoalId: // value for 'learningGoalId'
+ *   },
+ * });
+ */
+export function useIndexLearningGoalMutation(baseOptions?: Apollo.MutationHookOptions<IndexLearningGoalMutation, IndexLearningGoalMutationVariables>) {
+        return Apollo.useMutation<IndexLearningGoalMutation, IndexLearningGoalMutationVariables>(Operations.indexLearningGoal, baseOptions);
+      }
+export type IndexLearningGoalMutationHookResult = ReturnType<typeof useIndexLearningGoalMutation>;
+export type IndexLearningGoalMutationResult = Apollo.MutationResult<IndexLearningGoalMutation>;
+export type IndexLearningGoalMutationOptions = Apollo.BaseMutationOptions<IndexLearningGoalMutation, IndexLearningGoalMutationVariables>;
 export type AttachLearningGoalToDomainMutationFn = Apollo.MutationFunction<AttachLearningGoalToDomainMutation, AttachLearningGoalToDomainMutationVariables>;
 
 /**
