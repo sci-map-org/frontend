@@ -171,7 +171,7 @@ export const Header: React.FC = () => {
               <RoleAccess accessRule="admin">
                 <NextLink href="/profile/[key]/articles" as={`/profile/${currentUser.key}/articles`} passHref>
                   <MenuItem>
-                    <Link>My articles</Link>
+                    <Link>My Articles</Link>
                   </MenuItem>
                 </NextLink>
               </RoleAccess>
