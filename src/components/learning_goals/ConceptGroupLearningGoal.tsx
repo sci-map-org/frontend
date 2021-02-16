@@ -21,6 +21,10 @@ import { ConceptGroupLearningGoalDataFragment } from './ConceptGroupLearningGoal
 import { LearningGoalBadge, LearningGoalBadgeData } from './LearningGoalBadge';
 import { LearningGoalPublishButtonData } from './LearningGoalPublishButton';
 import { LearningGoalPublishStatusBar } from './LearningGoalPublishStatusBar';
+import {
+  LearningGoalRelevantLearningMaterials,
+  LearningGoalRelevantLearningMaterialsData,
+} from './LearningGoalRelevantLearningMaterials';
 import { LearningGoalTypeEditor } from './LearningGoalTypeEditor';
 import {
   ParentLearningGoalsNavigationBlock,
@@ -56,6 +60,7 @@ export const ConceptGroupLearningGoalData = gql`
     ...StartLearningGoalButtonData
     ...LearningGoalPublishButtonData
     ...ParentLearningGoalsNavigationBlockData
+    ...LearningGoalRelevantLearningMaterialsData
   }
   ${LearningGoalData}
   ${StartLearningGoalButtonData}
@@ -65,6 +70,7 @@ export const ConceptGroupLearningGoalData = gql`
   ${LearningGoalBadgeData}
   ${DomainData}
   ${ParentLearningGoalsNavigationBlockData}
+  ${LearningGoalRelevantLearningMaterialsData}
 `;
 
 interface ConceptGroupLearningGoalProps {
@@ -203,6 +209,8 @@ export const ConceptGroupLearningGoal: React.FC<ConceptGroupLearningGoalProps> =
           </Stack>
         </Stack>
       )}
+      <Box py={6} />
+      <LearningGoalRelevantLearningMaterials learningGoal={learningGoal} isLoading={isLoading} />
       {editMode && domain && (
         <Box py={5}>
           <RoleAccess accessRule="contributorOrAdmin">

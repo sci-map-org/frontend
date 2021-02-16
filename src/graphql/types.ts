@@ -827,11 +827,17 @@ export type LearningGoal = Topic & {
   requiredSubGoals?: Maybe<Array<SubGoalItem>>;
   started?: Maybe<LearningGoalStarted>;
   startedBy?: Maybe<LearningGoalStartedByResults>;
+  relevantLearningMaterials?: Maybe<LearningGoalRelevantLearningMaterialsResults>;
 };
 
 
 export type LearningGoalStartedByArgs = {
   options: LearningGoalStartedByOptions;
+};
+
+
+export type LearningGoalRelevantLearningMaterialsArgs = {
+  options: LearningGoalRelevantLearningMaterialsOptions;
 };
 
 export type DomainAndLearningGoalResult = {
@@ -1413,6 +1419,16 @@ export type LearningGoalStartedByOptions = {
   pagination?: Maybe<PaginationOptions>;
 };
 
+export type LearningGoalRelevantLearningMaterialsResults = {
+  __typename?: 'LearningGoalRelevantLearningMaterialsResults';
+  items: Array<LearningGoalRelevantLearningMaterialsItem>;
+  count: Scalars['Int'];
+};
+
+export type LearningGoalRelevantLearningMaterialsOptions = {
+  pagination?: Maybe<PaginationOptions>;
+};
+
 export type DomainAndCoveredConcepts = {
   domainId: Scalars['String'];
   conceptsIds: Array<Scalars['String']>;
@@ -1524,6 +1540,12 @@ export type LearningGoalStartedByItem = {
   __typename?: 'LearningGoalStartedByItem';
   startedAt: Scalars['Date'];
   user: User;
+};
+
+export type LearningGoalRelevantLearningMaterialsItem = {
+  __typename?: 'LearningGoalRelevantLearningMaterialsItem';
+  learningMaterial: LearningMaterial;
+  coverage?: Maybe<Scalars['Float']>;
 };
 
 export enum DomainConceptSortingEntities {
