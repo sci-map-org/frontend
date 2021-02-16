@@ -7,7 +7,7 @@ import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 
 export type InternalLinkProps = { asHref: string; routePath: string; isDisabled?: boolean } & LinkProps;
 
-export const InternalLink: React.FC<InternalLinkProps> = forwardRef<HTMLAnchorElement, InternalLinkProps>(
+export const InternalLink = forwardRef<HTMLAnchorElement, InternalLinkProps>(
   ({ asHref, routePath, isDisabled, children, ...linkProps }, ref) => {
     return (
       <NextLink href={routePath} as={asHref} passHref>
@@ -23,6 +23,7 @@ export const PageLink = forwardRef<HTMLAnchorElement, { pageInfo: PageInfo; isDi
   ({ pageInfo, ...props }, ref) => {
     return (
       <InternalLink
+        ref={ref}
         routePath={pageInfo.routePath}
         asHref={pageInfo.path}
         {...pageInfo.breadcrumbLinkProps}
