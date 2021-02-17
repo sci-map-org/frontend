@@ -50,7 +50,12 @@ export const LearningGoalBadge: React.FC<LearningGoalBadgeProps> = ({
   size = 'md',
 }) => {
   return (
-    <Tooltip label={learningGoal.name} aria-label={learningGoal.name} openDelay={500}>
+    <Tooltip
+      label={learningGoal.name}
+      aria-label={learningGoal.name}
+      openDelay={500}
+      isDisabled={learningGoal.name.length < 25}
+    >
       <PageLink
         borderRadius={10}
         px="6px"

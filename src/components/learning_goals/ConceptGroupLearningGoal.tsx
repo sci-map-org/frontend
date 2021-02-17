@@ -210,6 +210,7 @@ export const ConceptGroupLearningGoal: React.FC<ConceptGroupLearningGoalProps> =
         </Stack>
       )}
       <Box py={6} />
+
       <LearningGoalRelevantLearningMaterials learningGoal={learningGoal} isLoading={isLoading} />
       {editMode && domain && (
         <Box py={5}>
