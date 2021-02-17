@@ -170,7 +170,7 @@ export const LearningMaterialCardCoveredTopics: React.FC<{
                 <Box key={concept._id}>
                   <InternalLink
                     routePath="/domains/[key]/concepts/[conceptKey]"
-                    asHref={`/domains/${domainKey}/concepts/${concept.key}`}
+                    asHref={`/domains/${domainCoveredConcepts[0].domain.key}/concepts/${concept.key}`}
                   >
                     {concept.name}
                   </InternalLink>
