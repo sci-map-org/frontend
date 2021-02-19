@@ -1,8 +1,9 @@
 import { Flex } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
-import { LearningPathPreviewCardData } from '../learning_paths/LearningPathPreviewCard';
+import { LearningPathPreviewCard, LearningPathPreviewCardData } from '../learning_paths/LearningPathPreviewCard';
 import { LearningMaterialPreviewCardList } from '../resources/LearningMaterialPreviewCardList';
+import { ResourcePreviewCard } from '../resources/ResourcePreviewCard';
 import { LearningGoalRelevantLearningMaterialsDataFragment } from './LearningGoalRelevantLearningMaterials.generated';
 
 export const LearningGoalRelevantLearningMaterialsData = gql`
@@ -30,11 +31,31 @@ export const LearningGoalRelevantLearningMaterials: React.FC<LearningGoalRelevan
   isLoading,
 }) => {
   return (
-    <Flex>
+    <Flex direction="column" w="100%" justifyContent="stretch" alignItems="stretch">
       <LearningMaterialPreviewCardList
-        learningMaterialsPreviews={(learningGoal.relevantLearningMaterials?.items || []).map(
-          ({ learningMaterial }) => learningMaterial
-        )}
+        learningMaterialsPreviewItems={learningGoal.relevantLearningMaterials?.items || []}
+        renderCard={({ learningMaterial, coverage }, idx) => {
+          if (learningMaterial.__typename === 'Resource')
+            return (
+              <ResourcePreviewCard
+                key={learningMaterial._id}
+                resource={learningMaterial}
+                leftBlockWidth="120px"
+                inCompactList
+                firstItemInCompactList={idx === 0}
+              />
+            );
+          if (learningMaterial.__typename === 'LearningPath')
+            return (
+              <LearningPathPreviewCard
+                learningPath={learningMaterial}
+                key={learningMaterial._id}
+                leftBlockWidth="120px"
+                inCompactList
+                firstItemInCompactList={idx === 0}
+              />
+            );
+        }}
         isLoading={isLoading}
       />
     </Flex>

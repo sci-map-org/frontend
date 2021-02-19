@@ -1,17 +1,25 @@
 import { Flex, Spinner, Text } from '@chakra-ui/react';
+import { PropsWithChildren, ReactNode } from 'react';
 import { LearningPathDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
-import { LearningPathPreviewCard } from '../learning_paths/LearningPathPreviewCard';
-import { ResourcePreviewCard } from './ResourcePreviewCard';
 
-export const LearningMaterialPreviewCardList: React.FC<{
-  domainKey?: string;
-  learningMaterialsPreviews: (ResourcePreviewDataFragment | LearningPathDataFragment)[];
+interface LearningMaterialPreviewCardListProps<
+  T extends { learningMaterial: ResourcePreviewDataFragment | LearningPathDataFragment }
+> {
+  learningMaterialsPreviewItems: T[];
   isLoading?: boolean;
-  onResourceConsumed?: (resourceId: string, consumed: boolean) => void;
-  showCompletedNotificationToast?: boolean;
-}> = ({ learningMaterialsPreviews, domainKey, isLoading, onResourceConsumed, showCompletedNotificationToast }) => {
-  if (!isLoading && !learningMaterialsPreviews.length)
+  renderCard: (cardItem: T, idx: number) => ReactNode;
+}
+
+export const LearningMaterialPreviewCardList = <
+  T extends { learningMaterial: ResourcePreviewDataFragment | LearningPathDataFragment }
+>({
+  learningMaterialsPreviewItems,
+  renderCard,
+
+  isLoading,
+}: PropsWithChildren<LearningMaterialPreviewCardListProps<T>>) => {
+  if (!isLoading && !learningMaterialsPreviewItems.length)
     return (
       <Flex
         alignItems="center"
@@ -42,31 +50,7 @@ export const LearningMaterialPreviewCardList: React.FC<{
           <Text fontStyle="italic">Finding the most adapted learning resources...</Text>
         </Flex>
       ) : (
-        learningMaterialsPreviews.map((preview, idx) => {
-          if (preview.__typename === 'Resource')
-            return (
-              <ResourcePreviewCard
-                key={preview._id}
-                domainKey={domainKey}
-                resource={preview}
-                onResourceConsumed={onResourceConsumed}
-                showCompletedNotificationToast={showCompletedNotificationToast}
-                leftBlockWidth="120px"
-                inCompactList
-                firstItemInCompactList={idx === 0}
-              />
-            );
-          if (preview.__typename === 'LearningPath')
-            return (
-              <LearningPathPreviewCard
-                learningPath={preview}
-                key={preview._id}
-                leftBlockWidth="120px"
-                inCompactList
-                firstItemInCompactList={idx === 0}
-              />
-            );
-        })
+        learningMaterialsPreviewItems.map((item, idx) => renderCard(item, idx))
       )}
     </Flex>
   );
