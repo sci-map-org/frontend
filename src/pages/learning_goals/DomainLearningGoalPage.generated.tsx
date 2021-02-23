@@ -1,6 +1,6 @@
 import * as Types from '../../graphql/types';
 
-import { RoadmapLearningGoalDataFragment } from '../../components/learning_goals/RoadmapLearningGoal.generated';
+import { LearningGoalRoadmapDataFragment } from '../../components/learning_goals/LearningGoalRoadmap.generated';
 import { DomainLinkDataFragment, DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { ConceptGroupLearningGoalDataFragment } from '../../components/learning_goals/ConceptGroupLearningGoal.generated';
 import * as Operations from './DomainLearningGoalPage';
@@ -24,7 +24,7 @@ export type GetLearningGoalDomainLearningGoalPageQuery = (
           & DomainLinkDataFragment
         ) }
       )> }
-      & RoadmapLearningGoalDataFragment
+      & LearningGoalRoadmapDataFragment
       & ConceptGroupLearningGoalDataFragment
     ) }
   ) }

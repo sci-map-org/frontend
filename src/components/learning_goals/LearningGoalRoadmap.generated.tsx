@@ -9,7 +9,7 @@ import { RoadmapSubGoalsWrapperDataFragment } from './RoadmapSubGoalsWrapper.gen
 import { StartLearningGoalButtonDataFragment } from './StartLearningGoalButton.generated';
 import { LearningGoalLinearProgressDataFragment } from './LearningGoalLinearProgress.generated';
 import { ParentLearningGoalsNavigationBlockDataFragment } from './ParentLearningGoalsNavigationBlock.generated';
-export type RoadmapLearningGoalDataFragment = (
+export type LearningGoalRoadmapDataFragment = (
   { __typename?: 'LearningGoal' }
   & Pick<Types.LearningGoal, '_id'>
   & { createdBy?: Types.Maybe<(

@@ -29,12 +29,12 @@ import {
   ParentLearningGoalsNavigationBlock,
   ParentLearningGoalsNavigationBlockData,
 } from './ParentLearningGoalsNavigationBlock';
-import { RoadmapLearningGoalDataFragment } from './RoadmapLearningGoal.generated';
+import { LearningGoalRoadmapDataFragment } from './LearningGoalRoadmap.generated';
 import { RoadmapSubGoalsWrapper, RoadmapSubGoalsWrapperData } from './RoadmapSubGoalsWrapper';
 import { StartLearningGoalButton, StartLearningGoalButtonData } from './StartLearningGoalButton';
 
-export const RoadmapLearningGoalData = gql`
-  fragment RoadmapLearningGoalData on LearningGoal {
+export const LearningGoalRoadmapData = gql`
+  fragment LearningGoalRoadmapData on LearningGoal {
     _id
     ...LearningGoalData
     createdBy {
@@ -69,12 +69,12 @@ export const RoadmapLearningGoalData = gql`
   ${ParentLearningGoalsNavigationBlockData}
 `;
 
-interface RoadmapLearningGoalProps {
-  learningGoal: RoadmapLearningGoalDataFragment;
+interface LearningGoalRoadmapProps {
+  learningGoal: LearningGoalRoadmapDataFragment;
   editMode?: boolean;
   isLoading?: boolean;
 }
-export const RoadmapLearningGoal: React.FC<RoadmapLearningGoalProps> = ({ learningGoal, editMode, isLoading }) => {
+export const LearningGoalRoadmap: React.FC<LearningGoalRoadmapProps> = ({ learningGoal, editMode, isLoading }) => {
   const [updateLearningGoal] = useUpdateLearningGoalMutation();
   const { currentUser } = useCurrentUser();
   const currentUserIsOwner = useMemo(
@@ -214,7 +214,7 @@ export const RoadmapLearningGoal: React.FC<RoadmapLearningGoalProps> = ({ learni
 };
 
 interface LearningGoalDomainEditorProps {
-  learningGoal: RoadmapLearningGoalDataFragment;
+  learningGoal: LearningGoalRoadmapDataFragment;
 }
 const LearningGoalDomainEditor: React.FC<LearningGoalDomainEditorProps> = ({ learningGoal }) => {
   const [selectedDomain, setSelectedDomain] = useState<DomainDataFragment>();

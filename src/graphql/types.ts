@@ -188,6 +188,8 @@ export type Mutation = {
   deleteLearningGoal: DeleteLearningGoalMutationResult;
   attachLearningGoalRequiresSubGoal: AttachLearningGoalRequiresSubGoalResult;
   detachLearningGoalRequiresSubGoal: DetachLearningGoalRequiresSubGoalResult;
+  attachLearningGoalDependency: UpdateLearningGoalDependenciesResult;
+  detachLearningGoalDependency: UpdateLearningGoalDependenciesResult;
   startLearningGoal: LearningGoalStartedResult;
   publishLearningGoal: LearningGoalPublishedResult;
   indexLearningGoal: LearningGoalIndexedResult;
@@ -485,6 +487,20 @@ export type MutationAttachLearningGoalRequiresSubGoalArgs = {
 export type MutationDetachLearningGoalRequiresSubGoalArgs = {
   learningGoalId: Scalars['String'];
   subGoalId: Scalars['String'];
+};
+
+
+export type MutationAttachLearningGoalDependencyArgs = {
+  parentLearningGoalId: Scalars['String'];
+  learningGoalId: Scalars['String'];
+  learningGoalDependencyId: Scalars['String'];
+};
+
+
+export type MutationDetachLearningGoalDependencyArgs = {
+  parentLearningGoalId: Scalars['String'];
+  learningGoalId: Scalars['String'];
+  learningGoalDependencyId: Scalars['String'];
 };
 
 
@@ -825,9 +841,21 @@ export type LearningGoal = Topic & {
   domain?: Maybe<LearningGoalBelongsToDomain>;
   requiredInGoals?: Maybe<Array<RequiredInGoalItem>>;
   requiredSubGoals?: Maybe<Array<SubGoalItem>>;
+  dependsOnLearningGoals?: Maybe<Array<DependsOnGoalItem>>;
+  dependantLearningGoals?: Maybe<Array<DependsOnGoalItem>>;
   started?: Maybe<LearningGoalStarted>;
   startedBy?: Maybe<LearningGoalStartedByResults>;
   relevantLearningMaterials?: Maybe<LearningGoalRelevantLearningMaterialsResults>;
+};
+
+
+export type LearningGoalDependsOnLearningGoalsArgs = {
+  parentLearningGoalIdIn?: Maybe<Array<Scalars['String']>>;
+};
+
+
+export type LearningGoalDependantLearningGoalsArgs = {
+  parentLearningGoalIdIn?: Maybe<Array<Scalars['String']>>;
 };
 
 
@@ -1094,6 +1122,13 @@ export type DetachLearningGoalRequiresSubGoalResult = {
   __typename?: 'DetachLearningGoalRequiresSubGoalResult';
   learningGoal: LearningGoal;
   subGoal: SubGoal;
+};
+
+export type UpdateLearningGoalDependenciesResult = {
+  __typename?: 'UpdateLearningGoalDependenciesResult';
+  parentLearningGoal: LearningGoal;
+  learningGoal: LearningGoal;
+  learningGoalDependency: LearningGoal;
 };
 
 export type LearningGoalStartedResult = {
@@ -1402,6 +1437,12 @@ export type SubGoalItem = {
   __typename?: 'SubGoalItem';
   subGoal: SubGoal;
   strength: Scalars['Float'];
+};
+
+export type DependsOnGoalItem = {
+  __typename?: 'DependsOnGoalItem';
+  learningGoal: LearningGoal;
+  parentLearningGoalId: Scalars['String'];
 };
 
 export type LearningGoalStarted = {
