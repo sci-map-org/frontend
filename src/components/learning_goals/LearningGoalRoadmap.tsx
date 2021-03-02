@@ -32,6 +32,8 @@ import {
 import { LearningGoalRoadmapDataFragment } from './LearningGoalRoadmap.generated';
 import { RoadmapSubGoalsWrapper, RoadmapSubGoalsWrapperData } from './RoadmapSubGoalsWrapper';
 import { StartLearningGoalButton, StartLearningGoalButtonData } from './StartLearningGoalButton';
+import { RoadmapDagViewer } from './RoadmapDagViewer';
+import { RoadmapDagEditor } from './RoadmapDagEditor';
 
 export const LearningGoalRoadmapData = gql`
   fragment LearningGoalRoadmapData on LearningGoal {
@@ -178,7 +180,7 @@ export const LearningGoalRoadmap: React.FC<LearningGoalRoadmapProps> = ({ learni
         {currentUserIsOwner && <LearningGoalPublishStatusBar learningGoal={learningGoal} />}
       </Flex>
 
-      <RoadmapSubGoalsWrapper
+      {/* <RoadmapSubGoalsWrapper
         learningGoal={learningGoal}
         editMode={editMode}
         renderLastItem={
@@ -200,7 +202,13 @@ export const LearningGoalRoadmap: React.FC<LearningGoalRoadmapProps> = ({ learni
             </Center>
           )
         }
-      />
+      /> */}
+      {learningGoal.requiredSubGoals &&
+        (editMode ? (
+          <RoadmapDagEditor subGoalsItems={learningGoal.requiredSubGoals} learningGoalId={learningGoal._id} />
+        ) : (
+          <RoadmapDagViewer subGoalsItems={learningGoal.requiredSubGoals} />
+        ))}
       {editMode && <LearningGoalDomainEditor learningGoal={learningGoal} />}
       {editMode && learningGoal.domain && (
         <Box py={5}>
@@ -221,7 +229,7 @@ const LearningGoalDomainEditor: React.FC<LearningGoalDomainEditorProps> = ({ lea
   const [attachLearningGoalToDomain] = useAttachLearningGoalToDomainMutation();
   const [detachLearningGoalFromDomain] = useDetachLearningGoalFromDomainMutation();
   return (
-    <Stack mt={10}>
+    <Stack mt={10} zIndex={100}>
       <Text fontSize="lg" fontWeight={600}>
         Change domain:{' '}
       </Text>

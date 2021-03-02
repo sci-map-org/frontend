@@ -31,6 +31,13 @@ export type LearningGoalSubGoalCardDataFragment = (
       )> }
       & ConceptDataFragment
     ) }
+  )>>, dependsOnLearningGoals?: Types.Maybe<Array<(
+    { __typename?: 'DependsOnGoalItem' }
+    & Pick<Types.DependsOnGoalItem, 'parentLearningGoalId'>
+    & { learningGoal: (
+      { __typename?: 'LearningGoal' }
+      & Pick<Types.LearningGoal, '_id'>
+    ) }
   )>> }
   & LearningGoalLinkDataFragment
   & LearningGoalCircularProgressDataFragment

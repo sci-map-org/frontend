@@ -2,7 +2,7 @@ import { Wrap, WrapItem } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { ReactNode, useMemo } from 'react';
 import { useDetachLearningGoalRequiresSubGoalMutation } from '../../graphql/learning_goals/learning_goals.operations.generated';
-import { SubGoalCard, SubGoalCardData } from './SubGoalCard';
+import { SubGoalCardData } from './SubGoalCard';
 import { SubGoalsWrapperDataFragment } from './SubGoalsWrapper.generated';
 
 export const RoadmapSubGoalsWrapperData = gql`
@@ -53,7 +53,7 @@ export const RoadmapSubGoalsWrapper: React.FC<RoadmapSubGoalsWrapperProps> = ({
             h="160px"
             key={requiredSubGoalItem.subGoal._id}
           >
-            <SubGoalCard
+            {/* <SubGoalCard
               editMode={editMode}
               subGoalItem={requiredSubGoalItem}
               onRemove={(subGoalId) =>
@@ -61,7 +61,7 @@ export const RoadmapSubGoalsWrapper: React.FC<RoadmapSubGoalsWrapperProps> = ({
                   variables: { learningGoalId: learningGoal._id, subGoalId: subGoalId },
                 })
               }
-            />
+            /> */}
           </WrapItem>
         ) : null
       )}

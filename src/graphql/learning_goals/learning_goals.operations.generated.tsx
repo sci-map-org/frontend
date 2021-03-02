@@ -223,6 +223,80 @@ export type DetachLearningGoalFromDomainMutation = (
   ) }
 );
 
+export type AttachLearningGoalDependencyMutationVariables = Types.Exact<{
+  parentLearningGoalId: Types.Scalars['String'];
+  learningGoalId: Types.Scalars['String'];
+  learningGoalDependencyId: Types.Scalars['String'];
+}>;
+
+
+export type AttachLearningGoalDependencyMutation = (
+  { __typename?: 'Mutation' }
+  & { attachLearningGoalDependency: (
+    { __typename?: 'UpdateLearningGoalDependenciesResult' }
+    & { learningGoal: (
+      { __typename?: 'LearningGoal' }
+      & Pick<Types.LearningGoal, '_id'>
+      & { dependsOnLearningGoals?: Types.Maybe<Array<(
+        { __typename?: 'DependsOnGoalItem' }
+        & Pick<Types.DependsOnGoalItem, 'parentLearningGoalId'>
+        & { learningGoal: (
+          { __typename?: 'LearningGoal' }
+          & Pick<Types.LearningGoal, '_id'>
+        ) }
+      )>> }
+    ), learningGoalDependency: (
+      { __typename?: 'LearningGoal' }
+      & Pick<Types.LearningGoal, '_id'>
+      & { dependantLearningGoals?: Types.Maybe<Array<(
+        { __typename?: 'DependsOnGoalItem' }
+        & Pick<Types.DependsOnGoalItem, 'parentLearningGoalId'>
+        & { learningGoal: (
+          { __typename?: 'LearningGoal' }
+          & Pick<Types.LearningGoal, '_id'>
+        ) }
+      )>> }
+    ) }
+  ) }
+);
+
+export type DetachLearningGoalDependencyMutationVariables = Types.Exact<{
+  parentLearningGoalId: Types.Scalars['String'];
+  learningGoalId: Types.Scalars['String'];
+  learningGoalDependencyId: Types.Scalars['String'];
+}>;
+
+
+export type DetachLearningGoalDependencyMutation = (
+  { __typename?: 'Mutation' }
+  & { detachLearningGoalDependency: (
+    { __typename?: 'UpdateLearningGoalDependenciesResult' }
+    & { learningGoal: (
+      { __typename?: 'LearningGoal' }
+      & Pick<Types.LearningGoal, '_id'>
+      & { dependsOnLearningGoals?: Types.Maybe<Array<(
+        { __typename?: 'DependsOnGoalItem' }
+        & Pick<Types.DependsOnGoalItem, 'parentLearningGoalId'>
+        & { learningGoal: (
+          { __typename?: 'LearningGoal' }
+          & Pick<Types.LearningGoal, '_id'>
+        ) }
+      )>> }
+    ), learningGoalDependency: (
+      { __typename?: 'LearningGoal' }
+      & Pick<Types.LearningGoal, '_id'>
+      & { dependantLearningGoals?: Types.Maybe<Array<(
+        { __typename?: 'DependsOnGoalItem' }
+        & Pick<Types.DependsOnGoalItem, 'parentLearningGoalId'>
+        & { learningGoal: (
+          { __typename?: 'LearningGoal' }
+          & Pick<Types.LearningGoal, '_id'>
+        ) }
+      )>> }
+    ) }
+  ) }
+);
+
 
 export type CreateLearningGoalMutationFn = Apollo.MutationFunction<CreateLearningGoalMutation, CreateLearningGoalMutationVariables>;
 
@@ -482,3 +556,57 @@ export function useDetachLearningGoalFromDomainMutation(baseOptions?: Apollo.Mut
 export type DetachLearningGoalFromDomainMutationHookResult = ReturnType<typeof useDetachLearningGoalFromDomainMutation>;
 export type DetachLearningGoalFromDomainMutationResult = Apollo.MutationResult<DetachLearningGoalFromDomainMutation>;
 export type DetachLearningGoalFromDomainMutationOptions = Apollo.BaseMutationOptions<DetachLearningGoalFromDomainMutation, DetachLearningGoalFromDomainMutationVariables>;
+export type AttachLearningGoalDependencyMutationFn = Apollo.MutationFunction<AttachLearningGoalDependencyMutation, AttachLearningGoalDependencyMutationVariables>;
+
+/**
+ * __useAttachLearningGoalDependencyMutation__
+ *
+ * To run a mutation, you first call `useAttachLearningGoalDependencyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAttachLearningGoalDependencyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [attachLearningGoalDependencyMutation, { data, loading, error }] = useAttachLearningGoalDependencyMutation({
+ *   variables: {
+ *      parentLearningGoalId: // value for 'parentLearningGoalId'
+ *      learningGoalId: // value for 'learningGoalId'
+ *      learningGoalDependencyId: // value for 'learningGoalDependencyId'
+ *   },
+ * });
+ */
+export function useAttachLearningGoalDependencyMutation(baseOptions?: Apollo.MutationHookOptions<AttachLearningGoalDependencyMutation, AttachLearningGoalDependencyMutationVariables>) {
+        return Apollo.useMutation<AttachLearningGoalDependencyMutation, AttachLearningGoalDependencyMutationVariables>(Operations.attachLearningGoalDependency, baseOptions);
+      }
+export type AttachLearningGoalDependencyMutationHookResult = ReturnType<typeof useAttachLearningGoalDependencyMutation>;
+export type AttachLearningGoalDependencyMutationResult = Apollo.MutationResult<AttachLearningGoalDependencyMutation>;
+export type AttachLearningGoalDependencyMutationOptions = Apollo.BaseMutationOptions<AttachLearningGoalDependencyMutation, AttachLearningGoalDependencyMutationVariables>;
+export type DetachLearningGoalDependencyMutationFn = Apollo.MutationFunction<DetachLearningGoalDependencyMutation, DetachLearningGoalDependencyMutationVariables>;
+
+/**
+ * __useDetachLearningGoalDependencyMutation__
+ *
+ * To run a mutation, you first call `useDetachLearningGoalDependencyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDetachLearningGoalDependencyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [detachLearningGoalDependencyMutation, { data, loading, error }] = useDetachLearningGoalDependencyMutation({
+ *   variables: {
+ *      parentLearningGoalId: // value for 'parentLearningGoalId'
+ *      learningGoalId: // value for 'learningGoalId'
+ *      learningGoalDependencyId: // value for 'learningGoalDependencyId'
+ *   },
+ * });
+ */
+export function useDetachLearningGoalDependencyMutation(baseOptions?: Apollo.MutationHookOptions<DetachLearningGoalDependencyMutation, DetachLearningGoalDependencyMutationVariables>) {
+        return Apollo.useMutation<DetachLearningGoalDependencyMutation, DetachLearningGoalDependencyMutationVariables>(Operations.detachLearningGoalDependency, baseOptions);
+      }
+export type DetachLearningGoalDependencyMutationHookResult = ReturnType<typeof useDetachLearningGoalDependencyMutation>;
+export type DetachLearningGoalDependencyMutationResult = Apollo.MutationResult<DetachLearningGoalDependencyMutation>;
+export type DetachLearningGoalDependencyMutationOptions = Apollo.BaseMutationOptions<DetachLearningGoalDependencyMutation, DetachLearningGoalDependencyMutationVariables>;
