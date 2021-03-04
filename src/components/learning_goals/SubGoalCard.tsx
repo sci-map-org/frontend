@@ -97,7 +97,7 @@ export const LearningGoalSubGoalCardContainer: React.FC<{
 }> = ({ children, learningGoal, editMode, status }) => {
   const [mouseHover, setMouseHover] = useState(false);
   const ref = useRef<any>(null);
-  const pageInfo = useMemo(() => LearningGoalPageInfo(learningGoal), [learningGoal]);
+
   return (
     <Flex
       ref={ref}
