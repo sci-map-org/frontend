@@ -1,16 +1,22 @@
 import { Link, Button, LinkProps, ButtonProps } from '@chakra-ui/react';
 import NextLink from 'next/link';
+import { ParsedUrlQuery } from 'querystring';
 import { forwardRef } from 'react';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { PageInfo } from '../../pages/PageInfo';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 
-export type InternalLinkProps = { asHref: string; routePath: string; isDisabled?: boolean } & LinkProps;
+export type InternalLinkProps = {
+  asHref: string;
+  routePath: string;
+  query?: ParsedUrlQuery;
+  isDisabled?: boolean;
+} & LinkProps;
 
-export const InternalLink: React.FC<InternalLinkProps> = forwardRef<HTMLAnchorElement, InternalLinkProps>(
-  ({ asHref, routePath, isDisabled, children, ...linkProps }, ref) => {
+export const InternalLink = forwardRef<HTMLAnchorElement, InternalLinkProps>(
+  ({ asHref, routePath, isDisabled, children, query, ...linkProps }, ref) => {
     return (
-      <NextLink href={routePath} as={asHref} passHref>
+      <NextLink href={{ pathname: routePath, query }} as={asHref} passHref>
         <Link ref={ref} {...linkProps}>
           {children}
         </Link>
