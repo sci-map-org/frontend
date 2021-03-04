@@ -84,7 +84,6 @@ export const LearningGoalRoadmap: React.FC<LearningGoalRoadmapProps> = ({ learni
     [learningGoal, currentUser]
   );
   const currentUserStartedGoal = useMemo(() => !!learningGoal.started, [learningGoal]);
-  const [attachLearningGoalRequiresSubGoal] = useAttachLearningGoalRequiresSubGoalMutation();
 
   return (
     <Flex direction="column" w="100%" alignItems="stretch">
@@ -229,7 +228,7 @@ const LearningGoalDomainEditor: React.FC<LearningGoalDomainEditorProps> = ({ lea
   const [attachLearningGoalToDomain] = useAttachLearningGoalToDomainMutation();
   const [detachLearningGoalFromDomain] = useDetachLearningGoalFromDomainMutation();
   return (
-    <Stack mt={10} zIndex={100}>
+    <Stack mt={10}>
       <Text fontSize="lg" fontWeight={600}>
         Change domain:{' '}
       </Text>
