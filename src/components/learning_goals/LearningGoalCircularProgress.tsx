@@ -39,7 +39,7 @@ export const LearningGoalCircularProgress: React.FC<LearningGoalCircularProgress
       capIsRound
       value={learningGoal.progress.level}
       size={pxSize + 'px'}
-      color="main"
+      color="teal.500"
       trackColor="gray.300"
     />
   );
