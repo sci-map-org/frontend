@@ -1,4 +1,4 @@
-import { Box, Button, Center, Flex, Stack, Text } from '@chakra-ui/react';
+import { Box, Button, Center, Flex, Skeleton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useMemo, useState } from 'react';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
@@ -109,25 +109,27 @@ export const LearningGoalRoadmap: React.FC<LearningGoalRoadmapProps> = ({ learni
           <Stack direction="row">
             {learningGoal.createdBy && (
               <Center>
-                {currentUserIsOwner ? (
-                  <Stack direction="column" alignItems="center">
-                    <Text fontWeight={300} color="gray.500">
-                      You are the owner
-                    </Text>
-                  </Stack>
-                ) : (
-                  <Stack spacing={1} direction="row">
-                    <Center>
-                      <UserAvatar size="xs" user={learningGoal.createdBy} />
-                    </Center>
-                    <Text fontWeight={300} color="gray.500">
-                      Created By{' '}
-                      <Text as="span" fontWeight={500}>
-                        @{learningGoal.createdBy.key}
+                <Skeleton isLoaded={!isLoading}>
+                  {currentUserIsOwner ? (
+                    <Stack direction="column" alignItems="center">
+                      <Text fontWeight={300} color="gray.500">
+                        You are the owner
                       </Text>
-                    </Text>
-                  </Stack>
-                )}
+                    </Stack>
+                  ) : (
+                    <Stack spacing={1} direction="row">
+                      <Center>
+                        <UserAvatar size="xs" user={learningGoal.createdBy} />
+                      </Center>
+                      <Text fontWeight={300} color="gray.500">
+                        Created By{' '}
+                        <Text as="span" fontWeight={500}>
+                          @{learningGoal.createdBy.key}
+                        </Text>
+                      </Text>
+                    </Stack>
+                  )}
+                </Skeleton>
               </Center>
             )}
 

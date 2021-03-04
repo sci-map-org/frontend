@@ -91,7 +91,7 @@ export const ConceptGroupLearningGoal: React.FC<ConceptGroupLearningGoalProps> =
     () => !!learningGoal.createdBy && !!currentUser && learningGoal.createdBy._id === currentUser._id,
     [learningGoal, currentUser]
   );
-  const currentUserStartedGoal = useMemo(() => !!learningGoal.started, [learningGoal]);
+
   const [attachLearningGoalRequiresSubGoal] = useAttachLearningGoalRequiresSubGoalMutation();
   const [detachLearningGoalRequiresSubGoal] = useDetachLearningGoalRequiresSubGoalMutation();
 
