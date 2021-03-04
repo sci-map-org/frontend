@@ -18,7 +18,7 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
-import React, { forwardRef, ReactElement } from 'react';
+import React, { forwardRef, ReactElement, ReactNode } from 'react';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { ResourceType } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
@@ -31,11 +31,11 @@ import {
   LearningMaterialCardCoveredTopics,
 } from '../learning_materials/LearningMaterialCardContainer';
 import { LearningMaterialStarsRater } from '../learning_materials/LearningMaterialStarsRating';
-import { StarsRatingViewer } from '../lib/StarsRating';
 import { EditableLearningMaterialTags } from '../learning_materials/LearningMaterialTagsEditor';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { ResourceGroupIcon } from '../lib/icons/ResourceGroupIcon';
 import { ResourceSeriesIcon } from '../lib/icons/ResourceSeriesIcon';
+import { StarsRatingViewer } from '../lib/StarsRating';
 import { YoutubePlayer } from '../lib/YoutubePlayer';
 import { InternalLink } from '../navigation/InternalLink';
 import { DurationViewer } from './elements/Duration';
@@ -54,6 +54,7 @@ interface ResourcePreviewCardProps {
   showCompletedNotificationToast?: boolean;
   leftBlockWidth?: FlexProps['w'];
   expandByDefault?: boolean;
+  renderTopRight?: ReactNode;
 }
 
 export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCardProps>(
@@ -68,6 +69,7 @@ export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCar
       showCompletedNotificationToast,
       leftBlockWidth = '100px',
       expandByDefault,
+      renderTopRight = null,
     },
     ref
   ) => {
@@ -93,11 +95,12 @@ export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCar
       >
         <Flex direction="row" flexGrow={1} pt="4px">
           <Flex direction="column" flexGrow={1} justifyContent="center">
-            <Skeleton isLoaded={!isLoading}>
-              <Stack spacing={2} direction="row" alignItems="baseline" mr="10px">
+            <Flex direction={{ base: 'column', md: 'row' }} justifyContent={{ base: 'normal', md: 'space-between' }}>
+              <Skeleton isLoaded={!isLoading}>
                 <TitleLink resource={resource} isLoading={isLoading} />
-              </Stack>
-            </Skeleton>
+              </Skeleton>
+              {renderTopRight}
+            </Flex>
             <Skeleton isLoaded={!isLoading}>
               <Stack direction="row" spacing={1} alignItems="center">
                 {/* 24px so that height doesn't change when rater appears */}
