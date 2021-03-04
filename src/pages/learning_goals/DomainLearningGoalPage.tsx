@@ -58,9 +58,7 @@ export const DomainLearningGoalPage: React.FC<{ domainKey: string; learningGoalK
   );
   if (data && !domainItem) throw new Error('no domain found');
   const router = useRouter();
-  const [editMode, setEditMode] = useState(
-    router.query.editMode === 'true' || (currentUserIsOwner && router.query.editMode !== 'false')
-  );
+  const [editMode, setEditMode] = useState(router.query.editMode === 'true');
 
   if (!loading && !data) return <NotFoundPage />;
   return (
