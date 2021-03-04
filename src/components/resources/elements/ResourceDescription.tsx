@@ -1,13 +1,14 @@
-import { FormControl, FormHelperText, Skeleton, Text, Textarea } from '@chakra-ui/react';
+import { FormControl, FormHelperText, Skeleton, Text, Textarea, TextProps } from '@chakra-ui/react';
 
-export const ResourceDescription: React.FC<{
-  description?: string | null;
-  noOfLines?: number;
-  isLoading?: boolean;
-}> = ({ description, noOfLines, isLoading }) => {
+export const ResourceDescription: React.FC<
+  {
+    description?: string | null;
+    isLoading?: boolean;
+  } & Pick<TextProps, 'fontSize' | 'noOfLines' | 'color'>
+> = ({ description, isLoading, fontSize = 'md', ...props }) => {
   return description ? (
     <Skeleton isLoaded={!isLoading}>
-      <Text fontWeight={300} noOfLines={noOfLines} whiteSpace="pre-wrap">
+      <Text fontWeight={300} fontSize={fontSize} {...props} whiteSpace="pre-wrap">
         {description}
       </Text>
     </Skeleton>
