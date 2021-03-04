@@ -4,12 +4,10 @@ import { useMemo, useState } from 'react';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { LearningGoalData } from '../../graphql/learning_goals/learning_goals.fragments';
 import {
-  useAttachLearningGoalRequiresSubGoalMutation,
   useAttachLearningGoalToDomainMutation,
   useDetachLearningGoalFromDomainMutation,
   useUpdateLearningGoalMutation,
 } from '../../graphql/learning_goals/learning_goals.operations.generated';
-import { LearningGoalType } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { DomainLearningGoalPageInfo } from '../../pages/RoutesPageInfos';
@@ -23,17 +21,16 @@ import { UserAvatar, UserAvatarData } from '../users/UserAvatar';
 import { LearningGoalLinearProgress, LearningGoalLinearProgressData } from './LearningGoalLinearProgress';
 import { LearningGoalPublishButtonData } from './LearningGoalPublishButton';
 import { LearningGoalPublishStatusBar } from './LearningGoalPublishStatusBar';
-import { LearningGoalSelector } from './LearningGoalSelector';
+import { LearningGoalRoadmapDataFragment } from './LearningGoalRoadmap.generated';
 import { LearningGoalTypeEditor } from './LearningGoalTypeEditor';
 import {
   ParentLearningGoalsNavigationBlock,
   ParentLearningGoalsNavigationBlockData,
 } from './ParentLearningGoalsNavigationBlock';
-import { LearningGoalRoadmapDataFragment } from './LearningGoalRoadmap.generated';
-import { RoadmapSubGoalsWrapper, RoadmapSubGoalsWrapperData } from './RoadmapSubGoalsWrapper';
+import { RoadmapDagEditor } from './roadmaps/RoadmapDagEditor';
+import { RoadmapDagViewer } from './roadmaps/RoadmapDagViewer';
+import { RoadmapSubGoalsWrapperData } from './RoadmapSubGoalsWrapper';
 import { StartLearningGoalButton, StartLearningGoalButtonData } from './StartLearningGoalButton';
-import { RoadmapDagViewer } from './RoadmapDagViewer';
-import { RoadmapDagEditor } from './RoadmapDagEditor';
 
 export const LearningGoalRoadmapData = gql`
   fragment LearningGoalRoadmapData on LearningGoal {

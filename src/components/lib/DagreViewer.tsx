@@ -1,3 +1,4 @@
+import { Box } from '@chakra-ui/react';
 //@ts-ignore
 import circleCorners from 'd3-curve-circlecorners';
 import * as d3 from 'd3-shape';
@@ -13,101 +14,183 @@ import {
   Size,
   ValueCache,
 } from 'dagre-reactjs';
-import { PropsWithChildren, useState } from 'react';
+import { PropsWithChildren, SVGAttributes, useEffect, useMemo, useState } from 'react';
 
-type NodeData<T> = Partial<NodeOptions> & {
+export enum SubGoalStatus {
+  Completed = 'Completed',
+  Available = 'Available',
+  Locked = 'Locked',
+}
+
+export type NodeData<T> = Partial<NodeOptions> & {
+  meta: { data: T; status: SubGoalStatus };
+};
+
+export type EdgeData<T> = Partial<EdgeOptions> & {
   meta: { data: T };
 };
 
-type EdgeData<T> = Partial<EdgeOptions> & {
-  meta: { data: T };
-};
-
-type DagreViewerProps<N, E> = {
-  renderNode: (nodeData: NodeData<N>) => React.ReactElement<any>;
+export type DagreViewerProps<N, E> = {
+  renderNode: (nodeData: NodeData<N>, sizing: { nodePxWidth: number; nodePxHeight: number }) => React.ReactElement<any>;
   nodes: NodeData<N>[];
   edges: EdgeData<E>[];
+  renderingStage?: number;
+  minNodeWidth?: number;
+  maxNodeWidth?: number;
+  nodeHeight: (nodePxWidth: number) => number;
+  overflow?: SVGAttributes<SVGSVGElement>['overflow'];
+  horizontalSpacing?: number; // maybe function of something later ?
+  verticalSpacing?: number;
+  width?: string;
 };
 
-export const DagreViewer = <N, E>({ renderNode, nodes, edges }: PropsWithChildren<DagreViewerProps<N, E>>) => {
-  const [width, setWidth] = useState(1000);
-  const [height, setHeight] = useState(1000);
+export const DagreViewer = <N, E>({
+  renderNode,
+  nodes,
+  edges,
+  renderingStage,
+  nodeHeight,
+  minNodeWidth,
+  maxNodeWidth,
+  overflow = 'visible',
+  horizontalSpacing = 10,
+  verticalSpacing = 10,
+  width = '100%',
+}: PropsWithChildren<DagreViewerProps<N, E>>) => {
+  const [localStage, setLocalStage] = useState(0);
+  const [showRealDag, setShowRealDag] = useState(false);
+  const stage = useMemo(() => {
+    return 100 * localStage + (renderingStage || 0);
+  }, [localStage, renderingStage]);
+  const [height, setHeight] = useState<number>();
+  const [nodePxWidth, setNodePxWidth] = useState<number>();
+  const [maxNodesPerRows, setMaxNodesPerRows] = useState<number>();
+  const dagreSize = useDagreSize('dagre-container');
+
+  const getNodeWidth = (dagreWidth: number, maxNodesPerRows: number, horizontalSpacing: number) => {
+    const fittedNodeWidth = (dagreWidth - (maxNodesPerRows - 1) * horizontalSpacing) / maxNodesPerRows;
+    if (maxNodeWidth && fittedNodeWidth > maxNodeWidth) return maxNodeWidth;
+    if (minNodeWidth && fittedNodeWidth < minNodeWidth) return minNodeWidth;
+    return fittedNodeWidth;
+  };
+
+  useEffect(() => {
+    setShowRealDag(false);
+    dagreSize && maxNodesPerRows && setNodePxWidth(getNodeWidth(dagreSize.width, maxNodesPerRows, horizontalSpacing));
+
+    //TODO: remove once https://github.com/bobthekingofegypt/dagre-reactjs/issues/8 is solved (should avoid hiding the rebuilding)
+    // then use setLocalStage(localStage + 1); instead
+
+    setTimeout(() => {
+      setShowRealDag(true);
+    }, 0);
+  }, [dagreSize]);
+
+  useEffect(() => {
+    if (!maxNodesPerRows) return;
+    dagreSize && setNodePxWidth(getNodeWidth(dagreSize.width, maxNodesPerRows, horizontalSpacing));
+
+    setShowRealDag(true);
+  }, [maxNodesPerRows]);
+
   return (
-    <svg id="dagre" width={width} height={height} overflow="visible">
-      <DagreReact
-        nodes={nodes}
-        edges={edges}
-        renderNode={(node: NodeOptions, reportSize: ReportSize, valueCache: ValueCache) => {
-          return (
-            <Node key={node.id} node={node} reportSize={reportSize} valueCache={valueCache} html={true}>
-              {{
-                shape: (innerSize: Size) => <Rect node={node} innerSize={innerSize} />,
-                label: () => renderNode(node as NodeData<N>),
-              }}
-            </Node>
-          );
-        }}
-        customPathGenerators={{ d3curve: generatePathD3Curve }}
-        customMarkerComponents={{
-          circle: CircleMarker,
-        }}
-        defaultNodeConfig={{
-          styles: {
-            shape: { styles: { borderWidth: 0, stroke: 'unset' } },
-            // label: { styles: { fill: 'white', fillOpacity: 1 } },
-          },
-        }}
-        defaultEdgeConfig={{
-          pathType: 'd3curve',
-          labelPos: 'c',
-          markerType: 'circle',
-          styles: {
-            marker: {
+    <Box id="dagre-container" height={height}>
+      {showRealDag && nodePxWidth && (
+        <svg id="dagre" overflow={overflow} height="100%">
+          <DagreReact
+            nodes={nodes}
+            edges={edges}
+            renderNode={(node: NodeOptions, reportSize: ReportSize, valueCache: ValueCache) => {
+              return (
+                <Node key={node.id} node={node} reportSize={reportSize} valueCache={valueCache} html={true}>
+                  {{
+                    shape: (innerSize: Size) => <Rect node={node} innerSize={innerSize} />,
+                    label: () =>
+                      renderNode(node as NodeData<N>, { nodePxWidth, nodePxHeight: nodeHeight(nodePxWidth) }),
+                  }}
+                </Node>
+              );
+            }}
+            customPathGenerators={{ d3curve: generatePathD3Curve(nodePxWidth, nodeHeight(nodePxWidth)) }}
+            customMarkerComponents={{
+              circle: CircleMarker,
+            }}
+            defaultNodeConfig={{
               styles: {
-                // strokeWidth: "1px",
-                fill: '#276749',
+                shape: { styles: { borderWidth: 0, stroke: 'unset' } },
               },
-            },
-            edge: {
+            }}
+            defaultEdgeConfig={{
+              pathType: 'd3curve',
+              labelPos: 'c',
+              markerType: 'circle',
               styles: {
-                strokeWidth: '2px',
-                fill: '#ffffffff',
-                stroke: '#276749', //"#8a0000",
+                edge: {
+                  styles: {
+                    strokeWidth: '2px',
+                    fill: '#ffffffff',
+                  },
+                },
               },
-            },
-          },
-        }}
-        graphLayoutComplete={(w, h) => {
-          w && setWidth(w);
-          h && setHeight(h);
-        }}
-        graphOptions={{
-          rankdir: 'TB',
-          align: 'UL',
-          nodesep: 20,
-          edgeSep: 0,
-          // ranker: "network-simplex",
-          // ranker: "longest-path",
-          ranker: 'tight-tree',
-          marginx: 0,
-          marginy: 0,
-        }}
-      />
-    </svg>
+            }}
+            graphLayoutComplete={async (w, h) => {
+              h && setHeight(h);
+            }}
+            graphOptions={{
+              rankdir: 'TB',
+              align: 'UL',
+              nodesep: horizontalSpacing,
+              edgeSep: verticalSpacing,
+              ranker: 'tight-tree',
+              marginx: 0,
+              marginy: 0,
+            }}
+            stage={stage}
+          />
+        </svg>
+      )}
+      {!showRealDag && (
+        <svg id="fake_dagre" visibility="hidden">
+          <DagreReact
+            nodes={JSON.parse(JSON.stringify(nodes))}
+            edges={JSON.parse(JSON.stringify(edges))}
+            renderNode={(node: NodeOptions, reportSize: ReportSize, valueCache: ValueCache) => {
+              return (
+                <Node key={node.id} node={node} reportSize={reportSize} valueCache={valueCache} html={true}>
+                  {{
+                    shape: (innerSize: Size) => <Rect node={node} innerSize={innerSize} />,
+                    label: () => <Box w="1px" h="1px" />,
+                  }}
+                </Node>
+              );
+            }}
+            graphLayoutComplete={async (w, h) => {
+              if (w) {
+                setMaxNodesPerRows(w);
+              }
+            }}
+            graphOptions={{
+              rankdir: 'TB',
+              align: 'UL',
+              nodesep: 0,
+              edgeSep: 0,
+              ranker: 'network-simplex', //'tight-tree',
+              marginx: 0,
+              marginy: 0,
+            }}
+            stage={stage}
+          />
+        </svg>
+      )}
+    </Box>
   );
 };
-const width = 300;
-const height = 160;
+
 const getOrigin = (points: Point[], width: number): Point => {
   const [p1, p2] = points;
   const theta = Math.atan((p2.y - p1.y) / (p2.x - p1.x));
 
-  if (
-    theta >
-    Math.PI / 4
-    // (theta > Math.PI / 4 && theta < Math.PI / 2) ||
-    // (theta < 0 && -theta > -Math.PI / 4)
-  ) {
+  if (theta > Math.PI / 4) {
     return { x: 0, y: 0 };
   }
   return {
@@ -121,7 +204,6 @@ const getDestination = (points: Point[], width: number): Point => {
   const theta = Math.atan((p2.y - p1.y) / (p2.x - p1.x));
 
   if (theta > 0) {
-    //&& -theta < Math.PI / 4
     return { x: 0, y: 0 };
   }
   return {
@@ -130,14 +212,14 @@ const getDestination = (points: Point[], width: number): Point => {
   };
 };
 
-const generatePathD3Curve = (points: Array<Point>, ...args: any): string => {
-  const origin = getOrigin(points, width);
+const generatePathD3Curve = (nodeWidth: number, nodeHeight: number) => (points: Array<Point>, ...args: any): string => {
+  const origin = getOrigin(points, nodeWidth);
 
   if (origin.x !== 0) {
     points = [
       {
         x: origin.x,
-        y: origin.y + height / 2,
+        y: origin.y + nodeHeight / 2,
       },
       {
         x: origin.x,
@@ -147,17 +229,17 @@ const generatePathD3Curve = (points: Array<Point>, ...args: any): string => {
     ];
   }
 
-  const destination = getDestination(points, width);
+  const destination = getDestination(points, nodeWidth);
   if (destination.x !== 0) {
     points = [
       ...points.slice(0, points.length - 1),
       {
-        x: destination.x, //origin.x,
-        y: points[points.length - 2].y, // destination.y - height / 2  , //points[1].y,
+        x: destination.x,
+        y: points[points.length - 2].y,
       },
       {
         x: destination.x,
-        y: destination.y - height / 2,
+        y: destination.y - nodeHeight / 2,
       },
     ];
   }
@@ -169,16 +251,50 @@ const generatePathD3Curve = (points: Array<Point>, ...args: any): string => {
   }
 
   const c = d3.line().curve(circleCorners.radius(8))(p);
-  // const c = d3.line().curve(d3.curveLinear)(p);
   return c!;
 };
 
 const CircleMarker: React.FC<MarkerProps> = ({ edgeMeta, markerId }) => {
-  // return null;
   return (
     <marker id={markerId} markerWidth="20" markerHeight="10" refX="10" refY="10">
       <circle cx="10" cy="10" r="2" style={edgeMeta.styles.marker.styles} />
-      {/* style={edgeMeta.styles.marker.styles}  */}
     </marker>
   );
 };
+
+function useDagreSize(id: string) {
+  if (typeof document === 'undefined') return null;
+  const dagreElement = document.getElementById(id);
+
+  const [dagreSize, setDagreSize] = useState(
+    dagreElement
+      ? {
+          width: dagreElement.clientWidth,
+          height: dagreElement.clientHeight,
+        }
+      : null
+  );
+
+  useEffect(() => {
+    function handleResize() {
+      if (typeof document === 'undefined') return null;
+      const dagreElement = document.getElementById(id);
+      setDagreSize(
+        dagreElement
+          ? {
+              width: dagreElement.clientWidth,
+              height: dagreElement.clientHeight,
+            }
+          : null
+      );
+    }
+
+    window.addEventListener('resize', handleResize);
+
+    handleResize();
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return dagreSize;
+}
