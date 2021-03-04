@@ -1,4 +1,4 @@
-import { CloseButton, FlexProps, Stack, Text, Tooltip } from '@chakra-ui/react';
+import { Box, BoxProps, LinkProps, CloseButton, FlexProps, Stack, Text, Tooltip } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { LearningGoalLinkData } from '../../graphql/learning_goals/learning_goals.fragments';
 import { LearningGoalPageInfo } from '../../pages/RoutesPageInfos';
@@ -39,8 +39,16 @@ interface LearningGoalBadgeProps {
   removable?: boolean;
   role?: 'prerequisite' | 'outcome';
   clickable?: boolean;
-  size?: 'md' | 'sm';
+  size?: 'md' | 'sm' | 'xs';
 }
+const badgeStyleProps = (role: 'prerequisite' | 'outcome', size: 'md' | 'sm' | 'xs'): LinkProps & BoxProps => ({
+  borderRadius: 10,
+  px: { xs: '3px', sm: '4px', md: '6px' }[size],
+  backgroundColor: roleStyleMapping[role].backgroundColor,
+  borderWidth: '1px',
+  fontSize: size,
+  borderColor: roleStyleMapping[role].borderColor,
+});
 export const LearningGoalBadge: React.FC<LearningGoalBadgeProps> = ({
   onRemove,
   learningGoal,
@@ -49,6 +57,24 @@ export const LearningGoalBadge: React.FC<LearningGoalBadgeProps> = ({
   clickable = true,
   size = 'md',
 }) => {
+  const content = (
+    <Stack direction="row" spacing={1}>
+      {removable && (
+        <CloseButton
+          size={size}
+          boxSize={{ xs: '16px', sm: '20px', md: '24px' }[size]}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onRemove && onRemove();
+          }}
+        />
+      )}
+      <Text textAlign="center" color={roleStyleMapping[role].fontColor} noOfLines={1}>
+        {learningGoal.name}
+      </Text>
+    </Stack>
+  );
   return (
     <Tooltip
       label={learningGoal.name}
@@ -56,39 +82,21 @@ export const LearningGoalBadge: React.FC<LearningGoalBadgeProps> = ({
       openDelay={500}
       isDisabled={learningGoal.name.length < 25}
     >
-      <PageLink
-        borderRadius={10}
-        px="6px"
-        backgroundColor={roleStyleMapping[role].backgroundColor}
-        borderWidth="1px"
-        fontSize={size}
-        borderColor={roleStyleMapping[role].borderColor}
-        isDisabled={!clickable}
-        pageInfo={LearningGoalPageInfo(learningGoal)}
-        {...(clickable && {
-          _hover: {
+      {clickable ? (
+        <PageLink
+          {...badgeStyleProps(role, size)}
+          isDisabled={!clickable}
+          pageInfo={LearningGoalPageInfo(learningGoal)}
+          _hover={{
             backgroundColor: roleStyleMapping[role].hoverBackgroundColor,
             cursor: 'pointer',
-          },
-        })}
-      >
-        <Stack direction="row" spacing={1}>
-          {removable && (
-            <CloseButton
-              size={size}
-              boxSize={{ sm: '20px', md: '24px' }[size]}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                onRemove && onRemove();
-              }}
-            />
-          )}
-          <Text textAlign="center" color={roleStyleMapping[role].fontColor} noOfLines={1}>
-            {learningGoal.name}
-          </Text>
-        </Stack>
-      </PageLink>
+          }}
+        >
+          {content}
+        </PageLink>
+      ) : (
+        <Box {...badgeStyleProps(role, size)}>{content}</Box>
+      )}
     </Tooltip>
   );
 };
