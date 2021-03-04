@@ -8,7 +8,7 @@ import {
   LearningMaterialCardContainer,
   LearningMaterialCardCoveredTopics,
 } from '../learning_materials/LearningMaterialCardContainer';
-import { StarsRatingViewer } from '../learning_materials/LearningMaterialStarsRating';
+import { StarsRatingViewer } from '../lib/StarsRating';
 import { EditableLearningMaterialTags } from '../learning_materials/LearningMaterialTagsEditor';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { DurationViewer } from '../resources/elements/Duration';

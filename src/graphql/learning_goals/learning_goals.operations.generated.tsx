@@ -234,7 +234,25 @@ export type AttachLearningGoalDependencyMutation = (
   { __typename?: 'Mutation' }
   & { attachLearningGoalDependency: (
     { __typename?: 'UpdateLearningGoalDependenciesResult' }
-    & { learningGoal: (
+    & { parentLearningGoal: (
+      { __typename?: 'LearningGoal' }
+      & Pick<Types.LearningGoal, '_id'>
+      & { requiredSubGoals?: Types.Maybe<Array<(
+        { __typename?: 'SubGoalItem' }
+        & { subGoal: (
+          { __typename?: 'LearningGoal' }
+          & Pick<Types.LearningGoal, '_id'>
+          & { dependsOnLearningGoals?: Types.Maybe<Array<(
+            { __typename?: 'DependsOnGoalItem' }
+            & Pick<Types.DependsOnGoalItem, 'parentLearningGoalId'>
+            & { learningGoal: (
+              { __typename?: 'LearningGoal' }
+              & Pick<Types.LearningGoal, '_id'>
+            ) }
+          )>> }
+        ) | { __typename?: 'Concept' } }
+      )>> }
+    ), learningGoal: (
       { __typename?: 'LearningGoal' }
       & Pick<Types.LearningGoal, '_id'>
       & { dependsOnLearningGoals?: Types.Maybe<Array<(

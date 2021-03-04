@@ -11,7 +11,7 @@ import { LearningGoalLinearProgressDataFragment } from './LearningGoalLinearProg
 import { ParentLearningGoalsNavigationBlockDataFragment } from './ParentLearningGoalsNavigationBlock.generated';
 export type LearningGoalRoadmapDataFragment = (
   { __typename?: 'LearningGoal' }
-  & Pick<Types.LearningGoal, '_id'>
+  & Pick<Types.LearningGoal, '_id' | 'rating'>
   & { createdBy?: Types.Maybe<(
     { __typename?: 'User' }
     & UserAvatarDataFragment

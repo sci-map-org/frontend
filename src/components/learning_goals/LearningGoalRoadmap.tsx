@@ -17,11 +17,13 @@ import { DomainSelector } from '../domains/DomainSelector';
 import { EditableTextarea } from '../lib/inputs/EditableTextarea';
 import { EditableTextInput } from '../lib/inputs/EditableTextInput';
 import { OtherLearnersViewer, OtherLearnersViewerUserData } from '../lib/OtherLearnersViewer';
+import { StarsRatingViewer } from '../lib/StarsRating';
 import { UserAvatar, UserAvatarData } from '../users/UserAvatar';
 import { LearningGoalLinearProgress, LearningGoalLinearProgressData } from './LearningGoalLinearProgress';
 import { LearningGoalPublishButtonData } from './LearningGoalPublishButton';
 import { LearningGoalPublishStatusBar } from './LearningGoalPublishStatusBar';
 import { LearningGoalRoadmapDataFragment } from './LearningGoalRoadmap.generated';
+import { LearningGoalStarsRater } from './LearningGoalStarsRater';
 import { LearningGoalTypeEditor } from './LearningGoalTypeEditor';
 import {
   ParentLearningGoalsNavigationBlock,
@@ -35,6 +37,7 @@ import { StartLearningGoalButton, StartLearningGoalButtonData } from './StartLea
 export const LearningGoalRoadmapData = gql`
   fragment LearningGoalRoadmapData on LearningGoal {
     _id
+    rating
     ...LearningGoalData
     createdBy {
       ...UserAvatarData
@@ -127,6 +130,13 @@ export const LearningGoalRoadmap: React.FC<LearningGoalRoadmapProps> = ({ learni
                 )}
               </Center>
             )}
+
+            <Stack direction="row" justifyContent="center" spacing={2} alignItems="center">
+              <StarsRatingViewer value={learningGoal.rating} isLoading={isLoading} />
+              {currentUserStartedGoal && !currentUserIsOwner && (
+                <LearningGoalStarsRater learningGoalId={learningGoal._id} isDisabled={isLoading} />
+              )}
+            </Stack>
           </Stack>
           <Box mt={3}>
             <EditableTextarea

@@ -193,6 +193,7 @@ export type Mutation = {
   startLearningGoal: LearningGoalStartedResult;
   publishLearningGoal: LearningGoalPublishedResult;
   indexLearningGoal: LearningGoalIndexedResult;
+  rateLearningGoal: LearningGoal;
   updateConceptBelongsToDomain: ConceptBelongsToDomain;
   addConceptBelongsToConcept: UpdateConceptBelongsToConceptResult;
   removeConceptBelongsToConcept: UpdateConceptBelongsToConceptResult;
@@ -519,6 +520,12 @@ export type MutationIndexLearningGoalArgs = {
 };
 
 
+export type MutationRateLearningGoalArgs = {
+  learningGoalId: Scalars['String'];
+  value: Scalars['Float'];
+};
+
+
 export type MutationUpdateConceptBelongsToDomainArgs = {
   conceptId: Scalars['String'];
   domainId: Scalars['String'];
@@ -836,6 +843,7 @@ export type LearningGoal = Topic & {
   topicType: TopicType;
   publishedAt?: Maybe<Scalars['Date']>;
   hidden: Scalars['Boolean'];
+  rating?: Maybe<Scalars['Float']>;
   progress?: Maybe<LearningGoalProgress>;
   createdBy?: Maybe<User>;
   domain?: Maybe<LearningGoalBelongsToDomain>;

@@ -30,7 +30,8 @@ import {
   LearningMaterialCardContainer,
   LearningMaterialCardCoveredTopics,
 } from '../learning_materials/LearningMaterialCardContainer';
-import { LearningMaterialStarsRater, StarsRatingViewer } from '../learning_materials/LearningMaterialStarsRating';
+import { LearningMaterialStarsRater } from '../learning_materials/LearningMaterialStarsRating';
+import { StarsRatingViewer } from '../lib/StarsRating';
 import { EditableLearningMaterialTags } from '../learning_materials/LearningMaterialTagsEditor';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { ResourceGroupIcon } from '../lib/icons/ResourceGroupIcon';
