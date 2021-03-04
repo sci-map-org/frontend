@@ -1,4 +1,5 @@
-import { Box, Center, Flex, Stack, Text, Wrap, WrapItem } from '@chakra-ui/react';
+import { AddIcon } from '@chakra-ui/icons';
+import { Box, Center, Flex, IconButton, Stack, Text, Wrap, WrapItem } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useMemo } from 'react';
 import { DomainData } from '../../graphql/domains/domains.fragments';
@@ -17,6 +18,7 @@ import { SubTopicSelector } from '../domains/SubTopicSelector';
 import { EditableTextarea } from '../lib/inputs/EditableTextarea';
 import { EditableTextInput } from '../lib/inputs/EditableTextInput';
 import { OtherLearnersViewerUserData } from '../lib/OtherLearnersViewer';
+import { NewResourceModal } from '../resources/NewResource';
 import { ConceptGroupLearningGoalDataFragment } from './ConceptGroupLearningGoal.generated';
 import { LearningGoalBadge, LearningGoalBadgeData } from './LearningGoalBadge';
 import { LearningGoalPublishButtonData } from './LearningGoalPublishButton';
@@ -78,12 +80,14 @@ interface ConceptGroupLearningGoalProps {
   domain: DomainDataFragment;
   editMode?: boolean;
   isLoading?: boolean;
+  refetch: () => void;
 }
 export const ConceptGroupLearningGoal: React.FC<ConceptGroupLearningGoalProps> = ({
   learningGoal,
   domain,
   editMode,
   isLoading,
+  refetch,
 }) => {
   const [updateLearningGoal] = useUpdateLearningGoalMutation();
   const { currentUser } = useCurrentUser();
@@ -212,6 +216,25 @@ export const ConceptGroupLearningGoal: React.FC<ConceptGroupLearningGoalProps> =
       <Box py={6} />
 
       <LearningGoalRelevantLearningMaterials learningGoal={learningGoal} isLoading={isLoading} />
+      <Center pt={4}>
+        <NewResourceModal
+          defaultResourceCreationData={{
+            outcomes: [learningGoal],
+          }}
+          onResourceCreated={() => refetch()}
+          renderButton={(onClick) => (
+            <IconButton
+              aria-label="add resource"
+              icon={<AddIcon />}
+              variant="outline"
+              size="lg"
+              isRound
+              onClick={() => onClick()}
+              isDisabled={isLoading}
+            />
+          )}
+        />
+      </Center>
       {editMode && domain && (
         <Box py={5}>
           <RoleAccess accessRule="contributorOrAdmin">

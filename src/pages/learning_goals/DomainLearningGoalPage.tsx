@@ -46,7 +46,7 @@ export const DomainLearningGoalPage: React.FC<{ domainKey: string; learningGoalK
   learningGoalKey,
   domainKey,
 }) => {
-  const { data, loading } = useGetLearningGoalDomainLearningGoalPageQuery({
+  const { data, loading, refetch } = useGetLearningGoalDomainLearningGoalPageQuery({
     variables: { domainKey, learningGoalKey },
   });
   const learningGoal = data?.getDomainLearningGoalByKey.learningGoal || placeholderData.learningGoal;
@@ -85,6 +85,7 @@ export const DomainLearningGoalPage: React.FC<{ domainKey: string; learningGoalK
           learningGoal={learningGoal}
           isLoading={loading}
           editMode={editMode}
+          refetch={() => refetch()}
         />
       )}
     </PageLayout>
