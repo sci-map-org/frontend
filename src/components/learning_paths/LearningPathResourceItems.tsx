@@ -1,5 +1,5 @@
 import { AddIcon, DeleteIcon, DragHandleIcon } from '@chakra-ui/icons';
-import { Box, BoxProps, ButtonProps, Flex, FlexProps, IconButton, Stack } from '@chakra-ui/react';
+import { Box, BoxProps, ButtonProps, Center, Flex, FlexProps, IconButton, Stack } from '@chakra-ui/react';
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { LearningPathWithResourceItemsPreviewDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
@@ -206,21 +206,22 @@ const LearningPathResourceItem: React.FC<LearningPathResourceItemProps> = ({
         <Flex w="100px" borderLeft="1px solid transparent" flexShrink={0} justifyContent="center">
           {renderProgressArrow}
         </Flex>
-        <Flex pt={index === 0 ? 0 : 4} pb={3} flexGrow={1}>
-          <EditableTextarea
-            flexGrow={1}
-            flexShrink={1}
-            backgroundColor="white"
-            fontSize="lg"
-            fontWeight={300}
-            color="gray.700"
-            defaultValue={description || ''}
-            placeholder="Write something..."
-            onSubmit={(newDescription: any) => updateDescription(newDescription as string)}
-            isDisabled={!editMode}
-            isLoading={isLoading}
-          />
-        </Flex>
+        <Center pt={index === 0 ? 0 : 10} pb={8} flexGrow={1}>
+          <Box w={{ base: '95%', md: '90%', lg: '85%' }}>
+            <EditableTextarea
+              flexGrow={1}
+              flexShrink={1}
+              backgroundColor="white"
+              fontSize="lg"
+              fontWeight={400}
+              defaultValue={description || ''}
+              placeholder="Write something..."
+              onSubmit={(newDescription: any) => updateDescription(newDescription as string)}
+              isDisabled={!editMode}
+              isLoading={isLoading}
+            />
+          </Box>
+        </Center>
         <Box flexBasis="60px" flexGrow={0} flexShrink={0} />
       </Flex>
       <Flex direction="row">
