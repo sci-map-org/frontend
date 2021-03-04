@@ -38,7 +38,7 @@ export type DagreViewerProps<N, E> = {
   minNodeWidth?: number;
   maxNodeWidth?: number;
   nodeHeight: (nodePxWidth: number) => number;
-  overflow?: SVGAttributes<SVGSVGElement>['overflow'];
+  overflow?: 'visible' | 'hidden';
   horizontalSpacing?: number; // maybe function of something later ?
   verticalSpacing?: number;
   width?: string;
@@ -62,7 +62,8 @@ export const DagreViewer = <N, E>({
   const stage = useMemo(() => {
     return 100 * localStage + (renderingStage || 0);
   }, [localStage, renderingStage]);
-  const [height, setHeight] = useState<number>();
+  const [dagreWidth, setDagreWidth] = useState<number>();
+  const [dagreHeight, setDagreHeight] = useState<number>();
   const [nodePxWidth, setNodePxWidth] = useState<number>();
   const [maxNodesPerRows, setMaxNodesPerRows] = useState<number>();
   const dagreSize = useDagreSize('dagre-container');
@@ -94,94 +95,97 @@ export const DagreViewer = <N, E>({
   }, [maxNodesPerRows]);
 
   return (
-    <Box id="dagre-container" height={height}>
-      {showRealDag && nodePxWidth && (
-        <svg id="dagre" overflow={overflow} height="100%">
-          <DagreReact
-            nodes={nodes}
-            edges={edges}
-            renderNode={(node: NodeOptions, reportSize: ReportSize, valueCache: ValueCache) => {
-              return (
-                <Node key={node.id} node={node} reportSize={reportSize} valueCache={valueCache} html={true}>
-                  {{
-                    shape: (innerSize: Size) => <Rect node={node} innerSize={innerSize} />,
-                    label: () =>
-                      renderNode(node as NodeData<N>, { nodePxWidth, nodePxHeight: nodeHeight(nodePxWidth) }),
-                  }}
-                </Node>
-              );
-            }}
-            customPathGenerators={{ d3curve: generatePathD3Curve(nodePxWidth, nodeHeight(nodePxWidth)) }}
-            customMarkerComponents={{
-              circle: CircleMarker,
-            }}
-            defaultNodeConfig={{
-              styles: {
-                shape: { styles: { borderWidth: 0, stroke: 'unset' } },
-              },
-            }}
-            defaultEdgeConfig={{
-              pathType: 'd3curve',
-              labelPos: 'c',
-              markerType: 'circle',
-              styles: {
-                edge: {
-                  styles: {
-                    strokeWidth: '2px',
-                    fill: '#ffffffff',
+    <Box id="dagre-container" w={width} position="relative" height={dagreHeight} overflow={overflow}>
+      <Box height={dagreHeight} width={dagreWidth} position="absolute">
+        {showRealDag && nodePxWidth && (
+          <svg id="dagre" width="100%" height="100%">
+            <DagreReact
+              nodes={nodes}
+              edges={edges}
+              renderNode={(node: NodeOptions, reportSize: ReportSize, valueCache: ValueCache) => {
+                return (
+                  <Node key={node.id} node={node} reportSize={reportSize} valueCache={valueCache} html={true}>
+                    {{
+                      shape: (innerSize: Size) => <Rect node={node} innerSize={innerSize} />,
+                      label: () =>
+                        renderNode(node as NodeData<N>, { nodePxWidth, nodePxHeight: nodeHeight(nodePxWidth) }),
+                    }}
+                  </Node>
+                );
+              }}
+              customPathGenerators={{ d3curve: generatePathD3Curve(nodePxWidth, nodeHeight(nodePxWidth)) }}
+              customMarkerComponents={{
+                circle: CircleMarker,
+              }}
+              defaultNodeConfig={{
+                styles: {
+                  shape: { styles: { borderWidth: 0, stroke: 'unset' } },
+                },
+              }}
+              defaultEdgeConfig={{
+                pathType: 'd3curve',
+                labelPos: 'c',
+                markerType: 'circle',
+                styles: {
+                  edge: {
+                    styles: {
+                      strokeWidth: '2px',
+                      fill: '#ffffffff',
+                    },
                   },
                 },
-              },
-            }}
-            graphLayoutComplete={async (w, h) => {
-              h && setHeight(h);
-            }}
-            graphOptions={{
-              rankdir: 'TB',
-              align: 'UL',
-              nodesep: horizontalSpacing,
-              edgeSep: verticalSpacing,
-              ranker: 'tight-tree',
-              marginx: 0,
-              marginy: 0,
-            }}
-            stage={stage}
-          />
-        </svg>
-      )}
-      {!showRealDag && (
-        <svg id="fake_dagre" visibility="hidden">
-          <DagreReact
-            nodes={JSON.parse(JSON.stringify(nodes))}
-            edges={JSON.parse(JSON.stringify(edges))}
-            renderNode={(node: NodeOptions, reportSize: ReportSize, valueCache: ValueCache) => {
-              return (
-                <Node key={node.id} node={node} reportSize={reportSize} valueCache={valueCache} html={true}>
-                  {{
-                    shape: (innerSize: Size) => <Rect node={node} innerSize={innerSize} />,
-                    label: () => <Box w="1px" h="1px" />,
-                  }}
-                </Node>
-              );
-            }}
-            graphLayoutComplete={async (w, h) => {
-              if (w) {
-                setMaxNodesPerRows(w);
-              }
-            }}
-            graphOptions={{
-              rankdir: 'TB',
-              align: 'UL',
-              nodesep: 0,
-              edgeSep: 0,
-              ranker: 'network-simplex', //'tight-tree',
-              marginx: 0,
-              marginy: 0,
-            }}
-            stage={stage}
-          />
-        </svg>
-      )}
+              }}
+              graphLayoutComplete={async (w, h) => {
+                h && setDagreHeight(h);
+                w && setDagreWidth(w);
+              }}
+              graphOptions={{
+                rankdir: 'TB',
+                align: 'UL',
+                nodesep: horizontalSpacing,
+                edgeSep: verticalSpacing,
+                ranker: 'tight-tree',
+                marginx: 0,
+                marginy: 0,
+              }}
+              stage={stage}
+            />
+          </svg>
+        )}
+        {!showRealDag && (
+          <svg id="fake_dagre" visibility="hidden">
+            <DagreReact
+              nodes={JSON.parse(JSON.stringify(nodes))}
+              edges={JSON.parse(JSON.stringify(edges))}
+              renderNode={(node: NodeOptions, reportSize: ReportSize, valueCache: ValueCache) => {
+                return (
+                  <Node key={node.id} node={node} reportSize={reportSize} valueCache={valueCache} html={true}>
+                    {{
+                      shape: (innerSize: Size) => <Rect node={node} innerSize={innerSize} />,
+                      label: () => <Box w="1px" h="1px" />,
+                    }}
+                  </Node>
+                );
+              }}
+              graphLayoutComplete={async (w, h) => {
+                if (w) {
+                  setMaxNodesPerRows(w);
+                }
+              }}
+              graphOptions={{
+                rankdir: 'TB',
+                align: 'UL',
+                nodesep: 0,
+                edgeSep: 0,
+                ranker: 'network-simplex', //'tight-tree',
+                marginx: 0,
+                marginy: 0,
+              }}
+              stage={stage}
+            />
+          </svg>
+        )}
+      </Box>
     </Box>
   );
 };
