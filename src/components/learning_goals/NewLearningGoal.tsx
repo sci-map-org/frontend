@@ -141,7 +141,6 @@ export const NewLearningGoalForm: React.FC<NewLearningGoalFormProps> = ({
             variant="flushed"
             value={name}
             onChange={(e) => {
-              // if (key === generateUrlKey(name)) setKey(generateUrlKey(e.target.value));
               setName(e.target.value);
             }}
           />

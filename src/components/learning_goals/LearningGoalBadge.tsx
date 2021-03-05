@@ -85,7 +85,6 @@ export const LearningGoalBadge: React.FC<LearningGoalBadgeProps> = ({
       {clickable ? (
         <PageLink
           {...badgeStyleProps(role, size)}
-          isDisabled={!clickable}
           pageInfo={LearningGoalPageInfo(learningGoal)}
           _hover={{
             backgroundColor: roleStyleMapping[role].hoverBackgroundColor,
