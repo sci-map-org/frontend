@@ -50,7 +50,9 @@ export const LearningGoalPage: React.FC<{ learningGoalKey: string }> = ({ learni
   );
   const router = useRouter();
 
-  const [editMode, setEditMode] = useState(router.query.editMode === 'true');
+  const [editMode, setEditMode] = useState(
+    router.query.editMode === 'true' || (!router.query.editMode && !learningGoal.publishedAt)
+  );
 
   useEffect(() => {
     if (!loading && learningGoal.domain) {

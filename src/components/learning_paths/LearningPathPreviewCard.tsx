@@ -88,7 +88,11 @@ export const LearningPathPreviewCard: React.FC<LearningPathPreviewCardProps> = (
     >
       <Flex direction="row" justifyContent="space-between" flexGrow={1}>
         <Flex direction="column" flexGrow={1}>
-          <Flex direction={{ base: 'column', md: 'row' }} justifyContent={{ base: 'normal', md: 'space-between' }}>
+          <Flex
+            direction={{ base: 'column', md: 'row' }}
+            alignItems="baseline"
+            justifyContent={{ base: 'normal', md: 'space-between' }}
+          >
             <Text fontSize="xl">{learningPath.name}</Text>
             {renderTopRight}
           </Flex>

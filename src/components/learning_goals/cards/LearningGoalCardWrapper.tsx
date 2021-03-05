@@ -30,7 +30,7 @@ const widthMapping = (spacing: string): WrapProps['maxW'] =>
   }, {} as { [key in keyof typeof nbItemsResponsiveMapping]: string });
 
 const aspectRatio = 1.8;
-const responsiveCardWidthPx = { base: 160, md: 220 };
+const responsiveCardWidthPx = { base: 180, md: 220 };
 const responsiveCardWidth = Object.keys(responsiveCardWidthPx).reduce((obj, key) => {
   //@ts-ignore
   obj[key] = responsiveCardWidthPx[key] + 'px';

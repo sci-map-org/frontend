@@ -86,7 +86,7 @@ const CardIncludeElement: React.FC<{
 }> = ({ coverage, learningMaterialIndex, learningMaterialLength }) => {
   // Is this acceptable ? In itself everything is recommended already
   const recommended = useMemo(() => {
-    return learningMaterialLength > 5 ? learningMaterialIndex === 0 : learningMaterialIndex < 2;
+    return learningMaterialLength > 5 ? learningMaterialIndex < 2 : learningMaterialIndex === 0;
   }, [learningMaterialIndex, learningMaterialLength]);
   return recommended || coverage ? (
     <Center>
@@ -116,7 +116,7 @@ const LearningMaterialCoverage: React.FC<{ coverage: number }> = ({ coverage }) 
           <Icon key={idx} as={ImRadioChecked} color="gray.800" />
         ))}
         {[...Array(5 - coveragePoints)].map((_, idx) => (
-          <Icon as={ImRadioUnchecked} color="gray.800" />
+          <Icon key={idx} as={ImRadioUnchecked} color="gray.800" />
         ))}
       </Stack>
     </Stack>
