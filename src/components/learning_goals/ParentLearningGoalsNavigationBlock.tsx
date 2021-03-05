@@ -28,10 +28,10 @@ export const ParentLearningGoalsNavigationBlock: React.FC<ParentLearningGoalsNav
   if (!learningGoal.requiredInGoals || !learningGoal.requiredInGoals.length) return null;
   return (
     <Flex direction="column">
-      <Text fontWeight={500} color="gray.700" fontSize="sm">
+      <Text fontWeight={600} color="gray.600" fontSize="sm">
         Featured In:
       </Text>
-      <Stack direction="column" spacing={1} pl={8}>
+      <Stack direction="column" spacing={1} pl={2} ml={3} maxH="86px" overflowY="scroll" bgColor="gray.50">
         {learningGoal.requiredInGoals.map((parentGoal) => (
           <PageLink key={parentGoal.goal._id} fontSize="sm" pageInfo={LearningGoalPageInfo(parentGoal.goal)}>
             {parentGoal.goal.name}
