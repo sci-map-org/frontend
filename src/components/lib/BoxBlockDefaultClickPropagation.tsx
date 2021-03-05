@@ -6,6 +6,7 @@ export const BoxBlockDefaultClickPropagation: React.FC<BoxProps> = ({ children, 
       _hover={{ cursor: 'auto' }}
       {...props}
       onClick={(e) => {
+        e.preventDefault();
         e.stopPropagation();
         props.onClick && props.onClick(e);
       }}

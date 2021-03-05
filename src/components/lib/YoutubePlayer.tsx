@@ -10,5 +10,5 @@ interface YoutubePlayerProps {
 }
 
 export const YoutubePlayer: React.FC<YoutubePlayerProps> = ({ resource, h, w, playing, skipThumbnail }) => {
-  return <ReactPlayer url={resource.url} light={!skipThumbnail} height={h} width={w} playing={playing} />;
+  return <ReactPlayer url={resource.url} light={!skipThumbnail} height={h} width={w} playing={playing} controls />;
 };

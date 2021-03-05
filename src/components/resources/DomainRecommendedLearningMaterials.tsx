@@ -35,10 +35,11 @@ import {
   ResourceType,
 } from '../../graphql/types';
 import { theme } from '../../theme/theme';
-import { LearningPathPreviewCardData } from '../learning_paths/LearningPathPreviewCard';
+import { LearningPathPreviewCard, LearningPathPreviewCardData } from '../learning_paths/LearningPathPreviewCard';
 import { LearningPathPreviewCardDataFragment } from '../learning_paths/LearningPathPreviewCard.generated';
 import { ResourceTypeBadge, resourceTypeColorMapping, resourceTypeToLabel } from './elements/ResourceType';
 import { LearningMaterialPreviewCardList } from './LearningMaterialPreviewCardList';
+import { ResourcePreviewCard } from './ResourcePreviewCard';
 
 export const getDomainRecommendedLearningMaterials = gql`
   query getDomainRecommendedLearningMaterials(
@@ -184,11 +185,33 @@ export const DomainRecommendedLearningMaterials: React.FC<{
         </Stack>
       </Flex>
       <LearningMaterialPreviewCardList
-        domainKey={domain.key}
-        learningMaterialsPreviews={learningMaterialsPreviews}
+        learningMaterialsPreviewItems={learningMaterialsPreviews.map((learningMaterial) => ({ learningMaterial }))}
         isLoading={isLoading}
-        onResourceConsumed={() => reloadRecommendedResources()}
-        showCompletedNotificationToast={true}
+        renderCard={({ learningMaterial }, idx) => {
+          if (learningMaterial.__typename === 'Resource')
+            return (
+              <ResourcePreviewCard
+                key={learningMaterial._id}
+                domainKey={domain.key}
+                resource={learningMaterial}
+                onResourceConsumed={() => reloadRecommendedResources()}
+                showCompletedNotificationToast={true}
+                leftBlockWidth="120px"
+                inCompactList
+                firstItemInCompactList={idx === 0}
+              />
+            );
+          if (learningMaterial.__typename === 'LearningPath')
+            return (
+              <LearningPathPreviewCard
+                learningPath={learningMaterial}
+                key={learningMaterial._id}
+                leftBlockWidth="120px"
+                inCompactList
+                firstItemInCompactList={idx === 0}
+              />
+            );
+        }}
       />
     </Flex>
   );

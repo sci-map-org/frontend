@@ -16,8 +16,8 @@ import {
 import {
   LearningMaterialStarsRater,
   LearningMaterialStarsRaterData,
-  StarsRatingViewer,
 } from '../../components/learning_materials/LearningMaterialStarsRating';
+import { StarsRatingViewer } from '../../components/lib/StarsRating';
 import { EditableLearningMaterialTags } from '../../components/learning_materials/LearningMaterialTagsEditor';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { YoutubePlayer } from '../../components/lib/YoutubePlayer';

@@ -103,7 +103,7 @@ export const EntitySelector = <T extends EntityType>({
               borderRightWidth={1}
               zIndex={4000}
               position="absolute"
-              backgroundColor="white"
+              bgColor="white"
               w={inputRef.current?.offsetWidth || undefined}
               {...(!!suggestions.length &&
                 suggestionContainerWidth && { w: suggestionContainerWidth, borderTopWidth: 1 })}

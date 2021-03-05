@@ -3,11 +3,10 @@ import gql from 'graphql-tag';
 import { ReactElement } from 'react';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { ResourcePageInfo } from '../../pages/RoutesPageInfos';
-import { StarsRatingViewer } from '../learning_materials/LearningMaterialStarsRating';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
-import { DurationViewer } from './elements/Duration';
-import { ResourceTypeBadge, ResourceTypeIcon } from './elements/ResourceType';
+import { StarsRatingViewer } from '../lib/StarsRating';
+import { ResourceTypeIcon } from './elements/ResourceType';
 import { ResourceUrlLink } from './elements/ResourceUrl';
 import { SquareResourceCardDataFragment } from './SquareResourceCard.generated';
 

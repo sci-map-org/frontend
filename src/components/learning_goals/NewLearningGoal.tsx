@@ -73,7 +73,7 @@ export const NewLearningGoalForm: React.FC<NewLearningGoalFormProps> = ({
 }) => {
   const [domain, setDomain] = useState<DomainDataFragment | undefined>(defaultData?.domain);
   const [name, setName] = useState(defaultData?.name || '');
-  const [key, setKey] = useState(defaultData?.key || '');
+  const [key, setKey] = useState('');
   const [description, setDescription] = useState(defaultData?.description || '');
   const [type, setType] = useState(defaultData?.type || LearningGoalType.Roadmap);
   const [checkTopicKeyAvailability, { loading, data }] = useCheckTopicKeyAvailabilityLazyQuery({
@@ -141,7 +141,6 @@ export const NewLearningGoalForm: React.FC<NewLearningGoalFormProps> = ({
             variant="flushed"
             value={name}
             onChange={(e) => {
-              if (key === generateUrlKey(name)) setKey(generateUrlKey(e.target.value));
               setName(e.target.value);
             }}
           />

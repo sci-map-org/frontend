@@ -6,7 +6,7 @@ import {
   ConceptGroupLearningGoal,
   ConceptGroupLearningGoalData,
 } from '../../components/learning_goals/ConceptGroupLearningGoal';
-import { RoadmapLearningGoal, RoadmapLearningGoalData } from '../../components/learning_goals/RoadmapLearningGoal';
+import { LearningGoalRoadmap, LearningGoalRoadmapData } from '../../components/learning_goals/LearningGoalRoadmap';
 import { DomainLinkData } from '../../graphql/domains/domains.fragments';
 import { generateLearningGoalData } from '../../graphql/learning_goals/learning_goals.fragments';
 import { LearningGoalType, UserRole } from '../../graphql/types';
@@ -23,7 +23,7 @@ export const getLearningGoalDomainLearningGoalPage = gql`
   query getLearningGoalDomainLearningGoalPage($domainKey: String!, $learningGoalKey: String!) {
     getDomainLearningGoalByKey(domainKey: $domainKey, learningGoalKey: $learningGoalKey) {
       learningGoal {
-        ...RoadmapLearningGoalData
+        ...LearningGoalRoadmapData
         ...ConceptGroupLearningGoalData
         domain {
           domain {
@@ -34,7 +34,7 @@ export const getLearningGoalDomainLearningGoalPage = gql`
     }
   }
   ${DomainLinkData}
-  ${RoadmapLearningGoalData}
+  ${LearningGoalRoadmapData}
   ${ConceptGroupLearningGoalData}
 `;
 
@@ -46,7 +46,7 @@ export const DomainLearningGoalPage: React.FC<{ domainKey: string; learningGoalK
   learningGoalKey,
   domainKey,
 }) => {
-  const { data, loading } = useGetLearningGoalDomainLearningGoalPageQuery({
+  const { data, loading, refetch } = useGetLearningGoalDomainLearningGoalPageQuery({
     variables: { domainKey, learningGoalKey },
   });
   const learningGoal = data?.getDomainLearningGoalByKey.learningGoal || placeholderData.learningGoal;
@@ -58,7 +58,9 @@ export const DomainLearningGoalPage: React.FC<{ domainKey: string; learningGoalK
   );
   if (data && !domainItem) throw new Error('no domain found');
   const router = useRouter();
-  const [editMode, setEditMode] = useState(router.query.editMode === 'true');
+  const [editMode, setEditMode] = useState(
+    router.query.editMode === 'true' || (!router.query.editMode && !learningGoal.publishedAt)
+  );
 
   if (!loading && !data) return <NotFoundPage />;
   return (
@@ -75,7 +77,7 @@ export const DomainLearningGoalPage: React.FC<{ domainKey: string; learningGoalK
       }
     >
       {learningGoal.type === LearningGoalType.Roadmap && (
-        <RoadmapLearningGoal learningGoal={learningGoal} isLoading={loading} editMode={editMode} />
+        <LearningGoalRoadmap learningGoal={learningGoal} isLoading={loading} editMode={editMode} />
       )}
       {learningGoal.type === LearningGoalType.SubGoal && domainItem && (
         <ConceptGroupLearningGoal
@@ -83,6 +85,7 @@ export const DomainLearningGoalPage: React.FC<{ domainKey: string; learningGoalK
           learningGoal={learningGoal}
           isLoading={loading}
           editMode={editMode}
+          refetch={() => refetch()}
         />
       )}
     </PageLayout>

@@ -6,7 +6,7 @@ import Router, { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { ConceptGroupLearningGoalData } from '../../components/learning_goals/ConceptGroupLearningGoal';
-import { RoadmapLearningGoal, RoadmapLearningGoalData } from '../../components/learning_goals/RoadmapLearningGoal';
+import { LearningGoalRoadmap, LearningGoalRoadmapData } from '../../components/learning_goals/LearningGoalRoadmap';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { DomainLinkData } from '../../graphql/domains/domains.fragments';
 import { generateLearningGoalData } from '../../graphql/learning_goals/learning_goals.fragments';
@@ -22,7 +22,7 @@ import { GetLearningGoalPageDataQuery, useGetLearningGoalPageDataQuery } from '.
 export const getLearningGoalPageData = gql`
   query getLearningGoalPageData($learningGoalKey: String!) {
     getLearningGoalByKey(key: $learningGoalKey) {
-      ...RoadmapLearningGoalData
+      ...LearningGoalRoadmapData
       ...ConceptGroupLearningGoalData
       domain {
         domain {
@@ -32,7 +32,7 @@ export const getLearningGoalPageData = gql`
     }
   }
   ${DomainLinkData}
-  ${RoadmapLearningGoalData}
+  ${LearningGoalRoadmapData}
   ${ConceptGroupLearningGoalData}
 `;
 
@@ -50,7 +50,9 @@ export const LearningGoalPage: React.FC<{ learningGoalKey: string }> = ({ learni
   );
   const router = useRouter();
 
-  const [editMode, setEditMode] = useState(router.query.editMode === 'true');
+  const [editMode, setEditMode] = useState(
+    router.query.editMode === 'true' || (!router.query.editMode && !learningGoal.publishedAt)
+  );
 
   useEffect(() => {
     if (!loading && learningGoal.domain) {
@@ -79,7 +81,7 @@ export const LearningGoalPage: React.FC<{ learningGoalKey: string }> = ({ learni
       }
     >
       {learningGoal.type === LearningGoalType.Roadmap && (
-        <RoadmapLearningGoal learningGoal={learningGoal} isLoading={loading} editMode={editMode} />
+        <LearningGoalRoadmap learningGoal={learningGoal} isLoading={loading} editMode={editMode} />
       )}
     </PageLayout>
   );

@@ -19,8 +19,10 @@ export const DomainLearningGoals: React.FC<DomainLearningGoalsProps> = ({ learni
         <LearningGoalIcon boxSize="22px" />
         <Text fontSize="2xl">Learning Goals</Text>
       </Stack>
+
       <LearningGoalCardWrapper
         learningGoalItems={learningGoalItems}
+        spacing="20px"
         renderCard={({ learningGoal }, hover) => <LearningGoalCard learningGoal={learningGoal} mouseHover={hover} />}
         oneLine
       />

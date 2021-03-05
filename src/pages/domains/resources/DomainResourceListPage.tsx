@@ -1,7 +1,7 @@
 import { Box, Stack } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { PageLayout } from '../../../components/layout/PageLayout';
-import { StarsRatingViewer } from '../../../components/learning_materials/LearningMaterialStarsRating';
+import { StarsRatingViewer } from '../../../components/lib/StarsRating';
 import { InternalLink } from '../../../components/navigation/InternalLink';
 import { DurationViewer } from '../../../components/resources/elements/Duration';
 import { ResourceTypeIcon } from '../../../components/resources/elements/ResourceType';

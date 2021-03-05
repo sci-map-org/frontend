@@ -7,8 +7,8 @@ import { LearningMaterialMiniCardContainer } from '../learning_materials/Learnin
 import {
   LearningMaterialStarsRater,
   LearningMaterialStarsRaterData,
-  StarsRatingViewer,
 } from '../learning_materials/LearningMaterialStarsRating';
+import { StarsRatingViewer } from '../lib/StarsRating';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { ResourceTypeBadge } from './elements/ResourceType';
 import { ResourceMiniCardDataFragment } from './ResourceMiniCard.generated';

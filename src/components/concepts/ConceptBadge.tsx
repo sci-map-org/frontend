@@ -1,4 +1,4 @@
-import { CloseButton, Stack, Text } from '@chakra-ui/react';
+import { Box, BoxProps, LinkProps, CloseButton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { InternalLink } from '../navigation/InternalLink';
@@ -20,17 +20,31 @@ export const ConceptBadgeData = gql`
   }
 `;
 interface ConceptBadgeProps {
-  size?: 'md' | 'sm';
+  size?: 'md' | 'sm' | 'xs';
   concept: ConceptBadgeDataFragment;
   domain?: DomainLinkDataFragment;
   onRemove?: () => void;
   removable?: boolean;
+  clickable?: boolean;
 }
+
+const badgeStyleProps = (concept: ConceptBadgeDataFragment, size: 'md' | 'sm' | 'xs'): LinkProps & BoxProps => ({
+  borderRadius: 11,
+  px: { xs: '3px', sm: '4px', md: '6px' }[size],
+  bgColor: concept.known ? 'teal.50' : 'white',
+  color: 'gray.800',
+  fontWeight: 400,
+  borderWidth: '1px',
+  borderColor: concept.known ? 'teal.800' : 'gray.800',
+  textAlign: 'center',
+  fontSize: size,
+});
 export const ConceptBadge: React.FC<ConceptBadgeProps> = ({
   concept,
   domain: domainProp,
   removable,
   onRemove,
+  clickable = true,
   size = 'md',
 }) => {
   const domain = concept.domain || domainProp;
@@ -38,40 +52,33 @@ export const ConceptBadge: React.FC<ConceptBadgeProps> = ({
     throw new Error(`Concept ${concept._id} does not have a domain`);
   }
 
-  return (
+  const content = (
+    <Stack spacing={1} direction="row" alignItems="center">
+      {removable && (
+        <CloseButton
+          size={size}
+          boxSize={{ xs: '16px', sm: '20px', md: '24px' }[size]}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onRemove && onRemove();
+          }}
+        />
+      )}
+      <Text textAlign="center" noOfLines={1}>
+        {concept.name}
+      </Text>
+    </Stack>
+  );
+  return clickable ? (
     <InternalLink
-      borderRadius={11}
-      px="6px"
-      bgColor={concept.known ? 'teal.50' : 'white'}
-      color="gray.800"
-      fontWeight={400}
-      borderWidth="1px"
-      borderColor={concept.known ? 'teal.800' : 'gray.800'}
-      textAlign="center"
-      fontSize={size}
+      {...badgeStyleProps(concept, size)}
       routePath="/domains/[key]/concepts/[conceptKey]"
       asHref={`/domains/${domain.key}/concepts/${concept.key}`}
-      _hover={{
-        backgroundColor: 'gray.100',
-        cursor: 'pointer',
-      }}
     >
-      <Stack spacing={1} direction="row" alignItems="center">
-        {removable && (
-          <CloseButton
-            size={size}
-            boxSize={{ sm: '20px', md: '24px' }[size]}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              onRemove && onRemove();
-            }}
-          />
-        )}
-        <Text textAlign="center" noOfLines={1}>
-          {concept.name}
-        </Text>
-      </Stack>
+      {content}
     </InternalLink>
+  ) : (
+    <Box {...badgeStyleProps(concept, size)}>{content}</Box>
   );
 };

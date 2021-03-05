@@ -1,24 +1,22 @@
-import { CloseIcon } from '@chakra-ui/icons';
-import { Center, Flex, Wrap, WrapItem } from '@chakra-ui/react';
+import { CloseIcon, EditIcon } from '@chakra-ui/icons';
+import { Center, Flex, IconButton, LinkProps, Wrap, WrapItem } from '@chakra-ui/react';
 import gql from 'graphql-tag';
-import { useRef, useState } from 'react';
+import { ReactElement, useMemo, useRef, useState } from 'react';
 import { ConceptData } from '../../graphql/concepts/concepts.fragments';
 import { DomainData } from '../../graphql/domains/domains.fragments';
 import { LearningGoalLinkData } from '../../graphql/learning_goals/learning_goals.fragments';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { LearningGoalPageInfo } from '../../pages/RoutesPageInfos';
+import { getChakraRelativeSize } from '../../util/chakra.util';
 import { ConceptBadge } from '../concepts/ConceptBadge';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
-import { InternalLink, PageLink } from '../navigation/InternalLink';
+import { SubGoalStatus } from '../lib/DagreViewer';
+import { PageLink } from '../navigation/InternalLink';
 import { ResourceDescription } from '../resources/elements/ResourceDescription';
 import { LearningGoalBadge, LearningGoalBadgeData } from './LearningGoalBadge';
 import { LearningGoalCircularProgress, LearningGoalCircularProgressData } from './LearningGoalCircularProgress';
-import {
-  ConceptSubGoalCardDataFragment,
-  LearningGoalSubGoalCardDataFragment,
-  SubGoalCardDataFragment,
-} from './SubGoalCard.generated';
+import { LearningGoalSubGoalCardDataFragment } from './SubGoalCard.generated';
 
 export const ConceptSubGoalCardData = gql`
   fragment ConceptSubGoalCardData on Concept {
@@ -52,6 +50,12 @@ export const LearningGoalSubGoalCardData = gql`
         }
       }
     }
+    dependsOnLearningGoals {
+      learningGoal {
+        _id
+      }
+      parentLearningGoalId
+    }
   }
   ${ConceptData}
   ${DomainData}
@@ -73,44 +77,42 @@ export const SubGoalCardData = gql`
   ${ConceptSubGoalCardData}
 `;
 
-interface SharedSubGoalCardProps {
-  onRemove?: (subGoalId: string) => void;
-  editMode?: boolean;
-}
+// interface SubGoalCardProps {
+//   subGoalItem: SubGoalCardDataFragment;
+// }
 
-interface SubGoalCardProps extends SharedSubGoalCardProps {
-  subGoalItem: SubGoalCardDataFragment;
-}
+// export const SubGoalCard: React.FC<SubGoalCardProps> = ({ subGoalItem, ...props }) => {
+//   if (subGoalItem.subGoal.__typename === 'LearningGoal')
+//     return <LearningGoalSubGoalCard learningGoal={subGoalItem.subGoal} {...props} />;
+//   else {
+//     return null;
+//   }
+// };
 
-export const SubGoalCard: React.FC<SubGoalCardProps> = ({ subGoalItem, ...props }) => {
-  if (subGoalItem.subGoal.__typename === 'LearningGoal')
-    return <LearningGoalSubGoalCard learningGoal={subGoalItem.subGoal} {...props} />;
-  if (subGoalItem.subGoal.__typename === 'Concept')
-    return <ConceptSubGoalCard concept={subGoalItem.subGoal} {...props} />;
-  return <Flex borderWidth={1} direction="column" alignItems="stretch"></Flex>;
-};
-
-interface LearningGoalSubGoalCardProps extends SharedSubGoalCardProps {
+export const LearningGoalSubGoalCardContainer: React.FC<{
   learningGoal: LearningGoalSubGoalCardDataFragment;
-}
-
-const LearningGoalSubGoalCard: React.FC<LearningGoalSubGoalCardProps> = ({ learningGoal, editMode, onRemove }) => {
-  const domainItem = learningGoal.domain;
+  children: (hover: boolean) => ReactElement<any>;
+  editMode?: boolean;
+  status: SubGoalStatus;
+}> = ({ children, learningGoal, editMode, status }) => {
   const [mouseHover, setMouseHover] = useState(false);
   const ref = useRef<any>(null);
+
   return (
     <Flex
       ref={ref}
       id={learningGoal._id}
       direction="column"
-      overflow="hidden"
       alignItems="stretch"
+      overflowY="scroll"
+      overflowX="hidden"
       justifyContent="space-between"
       h="100%"
       w="100%"
-      bgColor={learningGoal.progress?.level === 100 ? 'green.100' : mouseHover ? 'gray.300' : 'gray.100'}
-      pl={3}
-      pr={1}
+      bgColor={subGoalStatusStyleMapping.cardBackgroundColor[status]}
+      borderWidth={2}
+      borderColor={subGoalStatusStyleMapping.cardBorderColor[status]}
+      borderRadius={10}
       onMouseOver={(event) => {
         !mouseHover && setMouseHover(true);
       }}
@@ -126,106 +128,174 @@ const LearningGoalSubGoalCard: React.FC<LearningGoalSubGoalCardProps> = ({ learn
         routerPushToPage(LearningGoalPageInfo(learningGoal), { query: { editMode: (!!editMode).toString() } })
       }
     >
-      <Flex direction="row" position="relative">
-        <PageLink
-          pageInfo={LearningGoalPageInfo(learningGoal)}
-          fontSize="lg"
-          fontWeight={500}
-          mt={3}
-          overflowWrap="break-word"
-          {...(editMode && { mr: 5 })}
-        >
-          {learningGoal.name}
-        </PageLink>
-        {editMode && onRemove && (
-          <BoxBlockDefaultClickPropagation position="absolute" top={1} right={1}>
-            <DeleteButtonWithConfirmation
-              // Future: remove and removeAndDelete
-
-              modalBodyText={`Do you confirm removing "${learningGoal.name}" from this learning goal ?`}
-              modalHeaderText="Confirm removing SubGoal ?"
-              mode="iconButton"
-              onConfirmation={() => onRemove(learningGoal._id)}
-              size="xs"
-              variant="ghost"
-              icon={<CloseIcon />}
-              confirmButtonText="Remove"
-            />
-          </BoxBlockDefaultClickPropagation>
-        )}
-      </Flex>
-
-      <Flex pt={1} flexGrow={1} position="relative" direction="column">
-        {!mouseHover && learningGoal.description && (
-          <ResourceDescription description={learningGoal.description} noOfLines={2} />
-        )}
-        {!mouseHover && (
-          <Center position="absolute" bottom={3} right={3}>
-            <LearningGoalCircularProgress learningGoal={learningGoal} />
-          </Center>
-        )}
-        {mouseHover && learningGoal.requiredSubGoals && !!learningGoal.requiredSubGoals.length && (
-          <Wrap pt={2} pb={3} justifySelf="end">
-            {learningGoal.requiredSubGoals.map((subGoalItem) => (
-              <BoxBlockDefaultClickPropagation key={subGoalItem.subGoal._id}>
-                <WrapItem>
-                  {subGoalItem.subGoal.__typename === 'LearningGoal' && (
-                    <LearningGoalBadge size="sm" learningGoal={subGoalItem.subGoal} />
-                  )}
-                  {subGoalItem.subGoal.__typename === 'Concept' && subGoalItem.subGoal.domain && (
-                    <ConceptBadge size="sm" concept={subGoalItem.subGoal} />
-                  )}
-                </WrapItem>
-              </BoxBlockDefaultClickPropagation>
-            ))}
-          </Wrap>
-        )}
-      </Flex>
+      {children(mouseHover)}
     </Flex>
   );
 };
 
-interface ConceptSubGoalCardProps extends SharedSubGoalCardProps {
-  concept: ConceptSubGoalCardDataFragment;
+const subGoalStatusStyleMapping: {
+  fontColor: {
+    [key in SubGoalStatus]: string;
+  };
+  cardBackgroundColor: {
+    [key in SubGoalStatus]: string;
+  };
+  cardBorderColor: {
+    [key in SubGoalStatus]: string;
+  };
+} = {
+  fontColor: {
+    [SubGoalStatus.Completed]: 'white',
+    [SubGoalStatus.Available]: 'teal.600',
+    [SubGoalStatus.Locked]: 'gray.500',
+  },
+  cardBackgroundColor: {
+    [SubGoalStatus.Completed]: 'teal.600',
+    [SubGoalStatus.Available]: 'white',
+    [SubGoalStatus.Locked]: 'gray.50',
+  },
+  cardBorderColor: {
+    [SubGoalStatus.Completed]: 'teal.600',
+    [SubGoalStatus.Available]: 'teal.600',
+    [SubGoalStatus.Locked]: 'gray.500',
+  },
+};
+interface LearningGoalSubGoalCardProps {
+  learningGoal: LearningGoalSubGoalCardDataFragment;
+  size?: 'sm' | 'md' | 'lg';
+  status: SubGoalStatus;
 }
 
-/**
- * Deprecated as roadmaps don't have concept children anymore
- */
-export const ConceptSubGoalCard: React.FC<ConceptSubGoalCardProps> = ({ concept, editMode, onRemove }) => {
-  console.error('Should never be used now');
-  const domain = concept.domain;
-  if (!domain) return null;
+export const LearningGoalSubGoalCard: React.FC<LearningGoalSubGoalCardProps> = ({
+  learningGoal,
+  status,
+  size = 'md',
+}) => {
   return (
-    <Center h="100%" w="100%" direction="column" position="relative">
-      <InternalLink
-        mx={2}
-        py={1}
-        routePath="/domains/[key]/concepts/[conceptKey]"
-        asHref={`/domains/${domain.key}/concepts/${concept.key}`}
-        fontSize="lg"
-        fontWeight={500}
-        {...(editMode && { mr: 6 })}
-      >
-        {concept.name}
-      </InternalLink>
-      {editMode && onRemove && (
-        <DeleteButtonWithConfirmation
-          // Future: remove and removeAndDelete
-          position="absolute"
-          top={1}
-          right={1}
-          modalBodyText={`Do you confirm removing "${concept.name}" from this learning goal ?`}
-          modalHeaderText="Confirm removing this concept ?"
-          mode="iconButton"
-          onConfirmation={() => onRemove(concept._id)}
-          size="xs"
-          variant="ghost"
-          icon={<CloseIcon />}
-          confirmButtonText="Remove"
-        />
+    <LearningGoalSubGoalCardContainer status={status} learningGoal={learningGoal}>
+      {(mouseHover) => (
+        <>
+          <Flex>
+            <LearningGoalSubGoalCardTitle learningGoal={learningGoal} status={status} size={size} />
+          </Flex>
+
+          <Flex pt={1} ml={{ sm: 1, md: 2, lg: 3 }[size]} flexGrow={1} position="relative" direction="column">
+            {!mouseHover && learningGoal.description && (
+              <ResourceDescription
+                color={subGoalStatusStyleMapping.fontColor[status]}
+                fontSize={getChakraRelativeSize(size, -1)}
+                description={learningGoal.description}
+                noOfLines={2}
+              />
+            )}
+            {!mouseHover && (
+              <Center position="absolute" bottom={{ sm: 1, md: 2, lg: 3 }[size]} right={{ sm: 1, md: 2, lg: 3 }[size]}>
+                <LearningGoalCircularProgress pxSize={{ sm: 15, md: 20, lg: 30 }[size]} learningGoal={learningGoal} />
+              </Center>
+            )}
+            {mouseHover && learningGoal.requiredSubGoals && !!learningGoal.requiredSubGoals.length && (
+              <Wrap pt={2} pb={3} justifySelf="end" spacing={1}>
+                {learningGoal.requiredSubGoals.map((subGoalItem) => (
+                  <WrapItem key={subGoalItem.subGoal._id}>
+                    {subGoalItem.subGoal.__typename === 'LearningGoal' && (
+                      <LearningGoalBadge
+                        clickable={false}
+                        size={getChakraRelativeSize(size, -1) as 'md' | 'sm' | 'xs'}
+                        learningGoal={subGoalItem.subGoal}
+                      />
+                    )}
+                    {subGoalItem.subGoal.__typename === 'Concept' && subGoalItem.subGoal.domain && (
+                      <ConceptBadge
+                        size={getChakraRelativeSize(size, -1) as 'md' | 'sm' | 'xs'}
+                        clickable={false}
+                        concept={subGoalItem.subGoal}
+                      />
+                    )}
+                  </WrapItem>
+                ))}
+              </Wrap>
+            )}
+          </Flex>
+        </>
       )}
-      {/* <PageLink pageInfo={ConceptPageInfo(concept.domain, concept)}>{concept.name}</PageLink> */}
-    </Center>
+    </LearningGoalSubGoalCardContainer>
+  );
+};
+
+export const LearningGoalSubGoalCardEditor: React.FC<{
+  learningGoal: LearningGoalSubGoalCardDataFragment;
+  size?: 'sm' | 'md' | 'lg';
+  onRemove: (id: string) => void;
+  onEdit: (id: string) => void;
+  status: SubGoalStatus;
+}> = ({ learningGoal, onRemove, status, onEdit, size = 'md' }) => {
+  return (
+    <LearningGoalSubGoalCardContainer status={status} learningGoal={learningGoal} editMode>
+      {(onHover) => (
+        <>
+          <Flex direction="row" position="relative">
+            <LearningGoalSubGoalCardTitle status={status} learningGoal={learningGoal} size={size} mr={5} />
+
+            <BoxBlockDefaultClickPropagation
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              position="absolute"
+              top={1}
+              right={1}
+            >
+              <DeleteButtonWithConfirmation
+                // Future: remove and removeAndDelete
+
+                modalBodyText={`Do you confirm removing "${learningGoal.name}" from this learning goal ?`}
+                modalHeaderText="Confirm removing SubGoal ?"
+                mode="iconButton"
+                onConfirmation={() => onRemove(learningGoal._id)}
+                size="xs"
+                variant="ghost"
+                color={subGoalStatusStyleMapping.fontColor[status]}
+                icon={<CloseIcon />}
+                confirmButtonText="Remove"
+              />
+              <IconButton
+                aria-label="edit subGoal"
+                onClick={(e) => {
+                  e.preventDefault();
+                  onEdit(learningGoal._id);
+                }}
+                color={subGoalStatusStyleMapping.fontColor[status]}
+                size="xs"
+                variant="ghost"
+                icon={<EditIcon />}
+              ></IconButton>
+            </BoxBlockDefaultClickPropagation>
+          </Flex>
+        </>
+      )}
+    </LearningGoalSubGoalCardContainer>
+  );
+};
+
+const LearningGoalSubGoalCardTitle: React.FC<
+  {
+    learningGoal: LearningGoalSubGoalCardDataFragment;
+    size: 'sm' | 'md' | 'lg';
+    status: SubGoalStatus;
+  } & LinkProps
+> = ({ learningGoal, size, status, ...props }) => {
+  return (
+    <PageLink
+      pageInfo={LearningGoalPageInfo(learningGoal)}
+      fontSize={size}
+      mt={{ sm: 1, md: 2, lg: 3 }[size]}
+      ml={{ sm: 1, md: 2, lg: 3 }[size]}
+      mr={1}
+      fontWeight={500}
+      color={subGoalStatusStyleMapping.fontColor[status]}
+      overflowWrap="break-word"
+      {...props}
+    >
+      {learningGoal.name}
+    </PageLink>
   );
 };

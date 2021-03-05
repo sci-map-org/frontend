@@ -170,3 +170,85 @@ export const detachLearningGoalFromDomain = gql`
     }
   }
 `;
+
+export const attachLearningGoalDependency = gql`
+  mutation attachLearningGoalDependency(
+    $parentLearningGoalId: String!
+    $learningGoalId: String!
+    $learningGoalDependencyId: String!
+  ) {
+    attachLearningGoalDependency(
+      parentLearningGoalId: $parentLearningGoalId
+      learningGoalId: $learningGoalId
+      learningGoalDependencyId: $learningGoalDependencyId
+    ) {
+      parentLearningGoal {
+        _id
+        requiredSubGoals {
+          subGoal {
+            ... on LearningGoal {
+              _id
+              dependsOnLearningGoals {
+                learningGoal {
+                  _id
+                }
+                parentLearningGoalId
+              }
+            }
+          }
+        }
+      }
+      learningGoal {
+        _id
+        dependsOnLearningGoals {
+          learningGoal {
+            _id
+          }
+          parentLearningGoalId
+        }
+      }
+      learningGoalDependency {
+        _id
+        dependantLearningGoals {
+          learningGoal {
+            _id
+          }
+          parentLearningGoalId
+        }
+      }
+    }
+  }
+`;
+
+export const detachLearningGoalDependency = gql`
+  mutation detachLearningGoalDependency(
+    $parentLearningGoalId: String!
+    $learningGoalId: String!
+    $learningGoalDependencyId: String!
+  ) {
+    detachLearningGoalDependency(
+      parentLearningGoalId: $parentLearningGoalId
+      learningGoalId: $learningGoalId
+      learningGoalDependencyId: $learningGoalDependencyId
+    ) {
+      learningGoal {
+        _id
+        dependsOnLearningGoals {
+          learningGoal {
+            _id
+          }
+          parentLearningGoalId
+        }
+      }
+      learningGoalDependency {
+        _id
+        dependantLearningGoals {
+          learningGoal {
+            _id
+          }
+          parentLearningGoalId
+        }
+      }
+    }
+  }
+`;

@@ -1,15 +1,13 @@
-import { Box, Button, Center, Flex, Stack, Text } from '@chakra-ui/react';
+import { Box, Button, Center, Flex, Skeleton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useMemo, useState } from 'react';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { LearningGoalData } from '../../graphql/learning_goals/learning_goals.fragments';
 import {
-  useAttachLearningGoalRequiresSubGoalMutation,
   useAttachLearningGoalToDomainMutation,
   useDetachLearningGoalFromDomainMutation,
   useUpdateLearningGoalMutation,
 } from '../../graphql/learning_goals/learning_goals.operations.generated';
-import { LearningGoalType } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { DomainLearningGoalPageInfo } from '../../pages/RoutesPageInfos';
@@ -19,23 +17,27 @@ import { DomainSelector } from '../domains/DomainSelector';
 import { EditableTextarea } from '../lib/inputs/EditableTextarea';
 import { EditableTextInput } from '../lib/inputs/EditableTextInput';
 import { OtherLearnersViewer, OtherLearnersViewerUserData } from '../lib/OtherLearnersViewer';
+import { StarsRatingViewer } from '../lib/StarsRating';
 import { UserAvatar, UserAvatarData } from '../users/UserAvatar';
 import { LearningGoalLinearProgress, LearningGoalLinearProgressData } from './LearningGoalLinearProgress';
 import { LearningGoalPublishButtonData } from './LearningGoalPublishButton';
 import { LearningGoalPublishStatusBar } from './LearningGoalPublishStatusBar';
-import { LearningGoalSelector } from './LearningGoalSelector';
+import { LearningGoalRoadmapDataFragment } from './LearningGoalRoadmap.generated';
+import { LearningGoalStarsRater } from './LearningGoalStarsRater';
 import { LearningGoalTypeEditor } from './LearningGoalTypeEditor';
 import {
   ParentLearningGoalsNavigationBlock,
   ParentLearningGoalsNavigationBlockData,
 } from './ParentLearningGoalsNavigationBlock';
-import { RoadmapLearningGoalDataFragment } from './RoadmapLearningGoal.generated';
-import { RoadmapSubGoalsWrapper, RoadmapSubGoalsWrapperData } from './RoadmapSubGoalsWrapper';
+import { RoadmapDagEditor } from './roadmaps/RoadmapDagEditor';
+import { RoadmapDagViewer } from './roadmaps/RoadmapDagViewer';
+import { RoadmapSubGoalsWrapperData } from './RoadmapSubGoalsWrapper';
 import { StartLearningGoalButton, StartLearningGoalButtonData } from './StartLearningGoalButton';
 
-export const RoadmapLearningGoalData = gql`
-  fragment RoadmapLearningGoalData on LearningGoal {
+export const LearningGoalRoadmapData = gql`
+  fragment LearningGoalRoadmapData on LearningGoal {
     _id
+    rating
     ...LearningGoalData
     createdBy {
       ...UserAvatarData
@@ -69,12 +71,12 @@ export const RoadmapLearningGoalData = gql`
   ${ParentLearningGoalsNavigationBlockData}
 `;
 
-interface RoadmapLearningGoalProps {
-  learningGoal: RoadmapLearningGoalDataFragment;
+interface LearningGoalRoadmapProps {
+  learningGoal: LearningGoalRoadmapDataFragment;
   editMode?: boolean;
   isLoading?: boolean;
 }
-export const RoadmapLearningGoal: React.FC<RoadmapLearningGoalProps> = ({ learningGoal, editMode, isLoading }) => {
+export const LearningGoalRoadmap: React.FC<LearningGoalRoadmapProps> = ({ learningGoal, editMode, isLoading }) => {
   const [updateLearningGoal] = useUpdateLearningGoalMutation();
   const { currentUser } = useCurrentUser();
   const currentUserIsOwner = useMemo(
@@ -82,7 +84,6 @@ export const RoadmapLearningGoal: React.FC<RoadmapLearningGoalProps> = ({ learni
     [learningGoal, currentUser]
   );
   const currentUserStartedGoal = useMemo(() => !!learningGoal.started, [learningGoal]);
-  const [attachLearningGoalRequiresSubGoal] = useAttachLearningGoalRequiresSubGoalMutation();
 
   return (
     <Flex direction="column" w="100%" alignItems="stretch">
@@ -108,27 +109,36 @@ export const RoadmapLearningGoal: React.FC<RoadmapLearningGoalProps> = ({ learni
           <Stack direction="row">
             {learningGoal.createdBy && (
               <Center>
-                {currentUserIsOwner ? (
-                  <Stack direction="column" alignItems="center">
-                    <Text fontWeight={300} color="gray.500">
-                      You are the owner
-                    </Text>
-                  </Stack>
-                ) : (
-                  <Stack spacing={1} direction="row">
-                    <Center>
-                      <UserAvatar size="xs" user={learningGoal.createdBy} />
-                    </Center>
-                    <Text fontWeight={300} color="gray.500">
-                      Created By{' '}
-                      <Text as="span" fontWeight={500}>
-                        @{learningGoal.createdBy.key}
+                <Skeleton isLoaded={!isLoading}>
+                  {currentUserIsOwner ? (
+                    <Stack direction="column" alignItems="center">
+                      <Text fontWeight={300} color="gray.500">
+                        You are the owner
                       </Text>
-                    </Text>
-                  </Stack>
-                )}
+                    </Stack>
+                  ) : (
+                    <Stack spacing={1} direction="row">
+                      <Center>
+                        <UserAvatar size="xs" user={learningGoal.createdBy} />
+                      </Center>
+                      <Text fontWeight={300} color="gray.500">
+                        Created By{' '}
+                        <Text as="span" fontWeight={500}>
+                          @{learningGoal.createdBy.key}
+                        </Text>
+                      </Text>
+                    </Stack>
+                  )}
+                </Skeleton>
               </Center>
             )}
+
+            <Stack direction="row" justifyContent="center" spacing={2} alignItems="center">
+              <StarsRatingViewer value={learningGoal.rating} isLoading={isLoading} />
+              {currentUserStartedGoal && !currentUserIsOwner && (
+                <LearningGoalStarsRater learningGoalId={learningGoal._id} isDisabled={isLoading} />
+              )}
+            </Stack>
           </Stack>
           <Box mt={3}>
             <EditableTextarea
@@ -178,7 +188,7 @@ export const RoadmapLearningGoal: React.FC<RoadmapLearningGoalProps> = ({ learni
         {currentUserIsOwner && <LearningGoalPublishStatusBar learningGoal={learningGoal} />}
       </Flex>
 
-      <RoadmapSubGoalsWrapper
+      {/* <RoadmapSubGoalsWrapper
         learningGoal={learningGoal}
         editMode={editMode}
         renderLastItem={
@@ -200,7 +210,13 @@ export const RoadmapLearningGoal: React.FC<RoadmapLearningGoalProps> = ({ learni
             </Center>
           )
         }
-      />
+      /> */}
+      {learningGoal.requiredSubGoals &&
+        (editMode ? (
+          <RoadmapDagEditor subGoalsItems={learningGoal.requiredSubGoals} learningGoalId={learningGoal._id} />
+        ) : (
+          <RoadmapDagViewer subGoalsItems={learningGoal.requiredSubGoals} />
+        ))}
       {editMode && <LearningGoalDomainEditor learningGoal={learningGoal} />}
       {editMode && learningGoal.domain && (
         <Box py={5}>
@@ -214,7 +230,7 @@ export const RoadmapLearningGoal: React.FC<RoadmapLearningGoalProps> = ({ learni
 };
 
 interface LearningGoalDomainEditorProps {
-  learningGoal: RoadmapLearningGoalDataFragment;
+  learningGoal: LearningGoalRoadmapDataFragment;
 }
 const LearningGoalDomainEditor: React.FC<LearningGoalDomainEditorProps> = ({ learningGoal }) => {
   const [selectedDomain, setSelectedDomain] = useState<DomainDataFragment>();

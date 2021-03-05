@@ -188,9 +188,12 @@ export type Mutation = {
   deleteLearningGoal: DeleteLearningGoalMutationResult;
   attachLearningGoalRequiresSubGoal: AttachLearningGoalRequiresSubGoalResult;
   detachLearningGoalRequiresSubGoal: DetachLearningGoalRequiresSubGoalResult;
+  attachLearningGoalDependency: UpdateLearningGoalDependenciesResult;
+  detachLearningGoalDependency: UpdateLearningGoalDependenciesResult;
   startLearningGoal: LearningGoalStartedResult;
   publishLearningGoal: LearningGoalPublishedResult;
   indexLearningGoal: LearningGoalIndexedResult;
+  rateLearningGoal: LearningGoal;
   updateConceptBelongsToDomain: ConceptBelongsToDomain;
   addConceptBelongsToConcept: UpdateConceptBelongsToConceptResult;
   removeConceptBelongsToConcept: UpdateConceptBelongsToConceptResult;
@@ -488,6 +491,20 @@ export type MutationDetachLearningGoalRequiresSubGoalArgs = {
 };
 
 
+export type MutationAttachLearningGoalDependencyArgs = {
+  parentLearningGoalId: Scalars['String'];
+  learningGoalId: Scalars['String'];
+  learningGoalDependencyId: Scalars['String'];
+};
+
+
+export type MutationDetachLearningGoalDependencyArgs = {
+  parentLearningGoalId: Scalars['String'];
+  learningGoalId: Scalars['String'];
+  learningGoalDependencyId: Scalars['String'];
+};
+
+
 export type MutationStartLearningGoalArgs = {
   learningGoalId: Scalars['String'];
 };
@@ -500,6 +517,12 @@ export type MutationPublishLearningGoalArgs = {
 
 export type MutationIndexLearningGoalArgs = {
   learningGoalId: Scalars['String'];
+};
+
+
+export type MutationRateLearningGoalArgs = {
+  learningGoalId: Scalars['String'];
+  value: Scalars['Float'];
 };
 
 
@@ -820,18 +843,37 @@ export type LearningGoal = Topic & {
   topicType: TopicType;
   publishedAt?: Maybe<Scalars['Date']>;
   hidden: Scalars['Boolean'];
+  rating?: Maybe<Scalars['Float']>;
   progress?: Maybe<LearningGoalProgress>;
   createdBy?: Maybe<User>;
   domain?: Maybe<LearningGoalBelongsToDomain>;
   requiredInGoals?: Maybe<Array<RequiredInGoalItem>>;
   requiredSubGoals?: Maybe<Array<SubGoalItem>>;
+  dependsOnLearningGoals?: Maybe<Array<DependsOnGoalItem>>;
+  dependantLearningGoals?: Maybe<Array<DependsOnGoalItem>>;
   started?: Maybe<LearningGoalStarted>;
   startedBy?: Maybe<LearningGoalStartedByResults>;
+  relevantLearningMaterials?: Maybe<LearningGoalRelevantLearningMaterialsResults>;
+};
+
+
+export type LearningGoalDependsOnLearningGoalsArgs = {
+  parentLearningGoalIdIn?: Maybe<Array<Scalars['String']>>;
+};
+
+
+export type LearningGoalDependantLearningGoalsArgs = {
+  parentLearningGoalIdIn?: Maybe<Array<Scalars['String']>>;
 };
 
 
 export type LearningGoalStartedByArgs = {
   options: LearningGoalStartedByOptions;
+};
+
+
+export type LearningGoalRelevantLearningMaterialsArgs = {
+  options: LearningGoalRelevantLearningMaterialsOptions;
 };
 
 export type DomainAndLearningGoalResult = {
@@ -1088,6 +1130,13 @@ export type DetachLearningGoalRequiresSubGoalResult = {
   __typename?: 'DetachLearningGoalRequiresSubGoalResult';
   learningGoal: LearningGoal;
   subGoal: SubGoal;
+};
+
+export type UpdateLearningGoalDependenciesResult = {
+  __typename?: 'UpdateLearningGoalDependenciesResult';
+  parentLearningGoal: LearningGoal;
+  learningGoal: LearningGoal;
+  learningGoalDependency: LearningGoal;
 };
 
 export type LearningGoalStartedResult = {
@@ -1398,6 +1447,12 @@ export type SubGoalItem = {
   strength: Scalars['Float'];
 };
 
+export type DependsOnGoalItem = {
+  __typename?: 'DependsOnGoalItem';
+  learningGoal: LearningGoal;
+  parentLearningGoalId: Scalars['String'];
+};
+
 export type LearningGoalStarted = {
   __typename?: 'LearningGoalStarted';
   startedAt: Scalars['Date'];
@@ -1410,6 +1465,16 @@ export type LearningGoalStartedByResults = {
 };
 
 export type LearningGoalStartedByOptions = {
+  pagination?: Maybe<PaginationOptions>;
+};
+
+export type LearningGoalRelevantLearningMaterialsResults = {
+  __typename?: 'LearningGoalRelevantLearningMaterialsResults';
+  items: Array<LearningGoalRelevantLearningMaterialsItem>;
+  count: Scalars['Int'];
+};
+
+export type LearningGoalRelevantLearningMaterialsOptions = {
   pagination?: Maybe<PaginationOptions>;
 };
 
@@ -1524,6 +1589,12 @@ export type LearningGoalStartedByItem = {
   __typename?: 'LearningGoalStartedByItem';
   startedAt: Scalars['Date'];
   user: User;
+};
+
+export type LearningGoalRelevantLearningMaterialsItem = {
+  __typename?: 'LearningGoalRelevantLearningMaterialsItem';
+  learningMaterial: LearningMaterial;
+  coverage?: Maybe<Scalars['Float']>;
 };
 
 export enum DomainConceptSortingEntities {

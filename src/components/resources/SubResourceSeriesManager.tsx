@@ -1,5 +1,5 @@
-import { Flex, Heading, IconButton, Stack, Text } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
+import { Flex, Heading, IconButton, Stack } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { last } from 'lodash';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
@@ -8,16 +8,16 @@ import {
   ResourceDataFragment,
   ResourcePreviewDataFragment,
 } from '../../graphql/resources/resources.fragments.generated';
-import { ResourceList, ResourceListBasicLayout } from './ResourceList';
+import { StarsRatingViewer } from '../lib/StarsRating';
+import { InternalLink } from '../navigation/InternalLink';
+import { DurationViewer } from './elements/Duration';
+import { ResourceTypeIcon } from './elements/ResourceType';
+import { ResourceListBasicLayout } from './ResourceList';
 import { ResourceSelectorModal } from './ResourceSelector';
 import {
   useAddSubResourceToSeriesMutation,
   useCreateSubResourceSeriesMutation,
 } from './SubResourceSeriesManager.generated';
-import { DurationViewer } from './elements/Duration';
-import { ResourceTypeBadge, ResourceTypeIcon } from './elements/ResourceType';
-import { InternalLink } from '../navigation/InternalLink';
-import { StarsRatingViewer } from '../learning_materials/LearningMaterialStarsRating';
 
 interface StatelessSubResourceSeriesManagerProps {
   subResourceSeries?: ResourcePreviewDataFragment[];

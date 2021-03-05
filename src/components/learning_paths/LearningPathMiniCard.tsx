@@ -7,9 +7,9 @@ import { LearningMaterialMiniCardContainer } from '../learning_materials/Learnin
 import {
   LearningMaterialStarsRater,
   LearningMaterialStarsRaterData,
-  StarsRatingViewer,
 } from '../learning_materials/LearningMaterialStarsRating';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
+import { StarsRatingViewer } from '../lib/StarsRating';
 import { LearningPathMiniCardDataFragment } from './LearningPathMiniCard.generated';
 
 export const LearningPathMiniCardData = gql`

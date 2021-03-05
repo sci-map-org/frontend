@@ -8,7 +8,7 @@ import {
   LearningMaterialCardContainer,
   LearningMaterialCardCoveredTopics,
 } from '../learning_materials/LearningMaterialCardContainer';
-import { StarsRatingViewer } from '../learning_materials/LearningMaterialStarsRating';
+import { StarsRatingViewer } from '../lib/StarsRating';
 import { EditableLearningMaterialTags } from '../learning_materials/LearningMaterialTagsEditor';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { DurationViewer } from '../resources/elements/Duration';
@@ -16,6 +16,7 @@ import { ResourceDescription } from '../resources/elements/ResourceDescription';
 import { UserAvatarData } from '../users/UserAvatar';
 import { LearningPathCircularCompletion, LearningPathCompletionData } from './LearningPathCompletion';
 import { LearningPathPreviewCardDataFragment } from './LearningPathPreviewCard.generated';
+import { ReactNode } from 'react';
 
 export const LearningPathPreviewCardData = gql`
   fragment LearningPathPreviewCardData on LearningPath {
@@ -42,6 +43,7 @@ interface LearningPathPreviewCardProps {
   inCompactList?: boolean;
   firstItemInCompactList?: boolean;
   leftBlockWidth?: FlexProps['w'];
+  renderTopRight?: ReactNode;
 }
 export const LearningPathPreviewCard: React.FC<LearningPathPreviewCardProps> = ({
   learningPath,
@@ -49,6 +51,7 @@ export const LearningPathPreviewCard: React.FC<LearningPathPreviewCardProps> = (
   inCompactList,
   firstItemInCompactList,
   leftBlockWidth = '120px',
+  renderTopRight = null,
 }) => {
   return (
     <LearningMaterialCardContainer
@@ -83,9 +86,16 @@ export const LearningPathPreviewCard: React.FC<LearningPathPreviewCardProps> = (
         </Flex>
       }
     >
-      <Flex direction="row" justifyContent="space-between">
-        <Flex direction="column">
-          <Text fontSize="xl">{learningPath.name}</Text>
+      <Flex direction="row" justifyContent="space-between" flexGrow={1}>
+        <Flex direction="column" flexGrow={1}>
+          <Flex
+            direction={{ base: 'column', md: 'row' }}
+            alignItems="baseline"
+            justifyContent={{ base: 'normal', md: 'space-between' }}
+          >
+            <Text fontSize="xl">{learningPath.name}</Text>
+            {renderTopRight}
+          </Flex>
           <Stack direction="row" alignItems="baseline" spacing={2}>
             <StarsRatingViewer pxSize={13} value={learningPath.rating} />
             <Badge colorScheme="teal" fontSize="0.8em">
