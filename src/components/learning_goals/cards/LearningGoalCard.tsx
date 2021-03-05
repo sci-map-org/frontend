@@ -70,9 +70,10 @@ export const LearningGoalCard: React.FC<LearningGoalCardProps> = ({ learningGoal
         flexGrow={1}
         direction="column"
         bgColor={learningGoalStatusStyleMapping.cardBackgroundColor[status]}
-        pl={4}
+        pl={{ base: 2, md: 4 }}
         pr={2}
-        pt={2}
+        pt={{ base: 2, md: 5 }}
+        overflow="hidden"
         borderWidth={2}
         borderBottomWidth={0}
         borderTopLeftRadius={10}
@@ -86,10 +87,9 @@ export const LearningGoalCard: React.FC<LearningGoalCardProps> = ({ learningGoal
         <PageLink
           pageInfo={LearningGoalPageInfo(learningGoal)}
           color={learningGoalStatusStyleMapping.fontColor[status]}
-          fontSize="lg"
+          fontSize={{ base: 'sm', sm: 'md', md: 'lg' }}
           _hover={{}}
           fontWeight={500}
-          mt={3}
           overflowWrap="break-word"
         >
           {learningGoal.name}
