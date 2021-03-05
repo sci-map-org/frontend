@@ -29,6 +29,7 @@ export const PageLink = forwardRef<HTMLAnchorElement, { pageInfo: PageInfo; isDi
   ({ pageInfo, ...props }, ref) => {
     return (
       <InternalLink
+        ref={ref}
         routePath={pageInfo.routePath}
         asHref={pageInfo.path}
         {...pageInfo.breadcrumbLinkProps}
