@@ -287,8 +287,8 @@ const LearningGoalSubGoalCardTitle: React.FC<
     <PageLink
       pageInfo={LearningGoalPageInfo(learningGoal)}
       fontSize={size}
-      mt={{ sm: 1, md: 2, lg: 3 }[size]}
-      ml={{ sm: 1, md: 2, lg: 3 }[size]}
+      mt={{ sm: 1, md: 2, lg: 3 }[size as 'sm' | 'md' | 'lg']} // no idea why i need to do that
+      ml={{ sm: 1, md: 2, lg: 3 }[size as 'sm' | 'md' | 'lg']}
       mr={1}
       fontWeight={500}
       color={subGoalStatusStyleMapping.fontColor[status]}
