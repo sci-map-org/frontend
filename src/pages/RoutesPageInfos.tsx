@@ -9,6 +9,14 @@ import { ResourceDataFragment } from '../graphql/resources/resources.fragments.g
 import { PageInfo } from './PageInfo';
 
 // ====Domains====
+export const DomainsListPagePath = '/domains';
+
+export const DomainsListPageInfo: PageInfo = {
+  name: 'Topics',
+  path: DomainsListPagePath,
+  routePath: DomainsListPagePath,
+};
+
 export const DomainPagePath = (domainKey: string) => `/domains/${domainKey}`;
 
 export const DomainPageInfo = (domain: DomainLinkDataFragment): PageInfo => ({
