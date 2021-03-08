@@ -249,7 +249,7 @@ const LearningPathResourceItem: React.FC<LearningPathResourceItemProps> = ({
             {confirmRemove ? (
               <DeleteButtonWithConfirmation
                 variant="ghost"
-                modalBodyText={`Remove the resource ${resource.name} from the learning path ?`}
+                modalBodyText={`Remove the resource "${resource.name}" from the learning path?`}
                 modalHeaderText="Remove Resource"
                 onConfirmation={onRemove}
                 isDisabled={isLoading}

@@ -52,7 +52,7 @@ export const StatelessSubResourceSeriesManager: React.FC<StatelessSubResourceSer
       ) : (
         <Stack direction="column" spacing={3}>
           <Heading size="sm" textAlign="center">
-            Resource Series
+            Parts
           </Heading>
           <ResourceListBasicLayout
             resources={subResourceSeries}

@@ -165,7 +165,7 @@ const LandingFooter: React.FC<{ layoutProps: FlexProps }> = ({ layoutProps }) =>
       State of the project
     </Heading>
     <Text>
-      The project is currently in a beta release in order to gather feedback and enhance tne product iteratively. It is
+      The project is currently in a beta release in order to gather feedback and enhance the product iteratively. It is
       open-source (checkout our{' '}
       <Link color="blue.500" href="https://github.com/sci-map-org/">
         Github

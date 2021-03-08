@@ -188,7 +188,7 @@ export const LearningGoalSubGoalCard: React.FC<LearningGoalSubGoalCardProps> = (
                 noOfLines={2}
               />
             )}
-            {!mouseHover && (
+            {!mouseHover && status === SubGoalStatus.Available && (
               <Center position="absolute" bottom={{ sm: 1, md: 2, lg: 3 }[size]} right={{ sm: 1, md: 2, lg: 3 }[size]}>
                 <LearningGoalCircularProgress pxSize={{ sm: 15, md: 20, lg: 30 }[size]} learningGoal={learningGoal} />
               </Center>
@@ -243,6 +243,7 @@ export const LearningGoalSubGoalCardEditor: React.FC<{
               position="absolute"
               top={1}
               right={1}
+              preventDefault
             >
               <DeleteButtonWithConfirmation
                 // Future: remove and removeAndDelete
