@@ -1,4 +1,4 @@
-import { Center, Flex, Link, Stack, Text } from '@chakra-ui/react';
+import { Center, Flex, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { ReactElement } from 'react';
 import { routerPushToPage } from '../../pages/PageInfo';
@@ -7,7 +7,7 @@ import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickProp
 import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
 import { StarsRatingViewer } from '../lib/StarsRating';
 import { ResourceTypeIcon } from './elements/ResourceType';
-import { ResourceUrlLink } from './elements/ResourceUrl';
+import { ResourceUrlLinkViewer, ResourceUrlLinkWrapper } from './elements/ResourceUrl';
 import { SquareResourceCardDataFragment } from './SquareResourceCard.generated';
 
 export const SquareResourceCardData = gql`
@@ -57,15 +57,14 @@ export const SquareResourceCard: React.FC<SquareResourceCardProps> = ({ resource
       }
     >
       <BoxBlockDefaultClickPropagation display="flex" justifyContent="center" alignItems="center">
-        <Link display="flex" alignItems="stretch" flexDirection="column" href={resource.url} isExternal>
+        <ResourceUrlLinkWrapper display="flex" alignItems="stretch" flexDirection="column" resource={resource}>
           <Text mr={1} as="span" textAlign="center" fontSize="sm" noOfLines={3}>
-            {/* @ts-ignore */}
             {resource.name}
           </Text>
           <Center>
-            <ResourceUrlLink resource={resource} as="span" maxLength={15} />
+            <ResourceUrlLinkViewer resource={resource} as="span" maxLength={15} />
           </Center>
-        </Link>
+        </ResourceUrlLinkWrapper>
       </BoxBlockDefaultClickPropagation>
     </SquareResourceCardContainer>
   );

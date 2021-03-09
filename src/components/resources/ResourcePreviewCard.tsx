@@ -5,7 +5,6 @@ import {
   Flex,
   FlexProps,
   IconButton,
-  Link,
   Popover,
   PopoverArrow,
   PopoverBody,
@@ -42,7 +41,7 @@ import { DurationViewer } from './elements/Duration';
 import { ResourceCompletedCheckbox } from './elements/ResourceCompletedCheckbox';
 import { ResourceDescription } from './elements/ResourceDescription';
 import { ResourceTypeIcon } from './elements/ResourceType';
-import { ResourceUrlLink } from './elements/ResourceUrl';
+import { ResourceUrlLinkViewer, ResourceUrlLinkWrapper } from './elements/ResourceUrl';
 
 interface ResourcePreviewCardProps {
   domainKey?: string;
@@ -172,18 +171,18 @@ const TitleLink: React.FC<{ resource: ResourcePreviewDataFragment; isLoading?: b
 }) => {
   return (
     <BoxBlockDefaultClickPropagation>
-      <Link
+      <ResourceUrlLinkWrapper
         display="flex"
         alignItems="baseline"
         flexDirection={{ base: 'column', md: 'row' }}
-        href={resource.url}
-        isExternal
+        resource={resource}
+        isLoading={isLoading}
       >
         <Text mr={1} as="span" fontSize="xl">
-          {/* @ts-ignore */}
-          {resource.name} <ResourceUrlLink resource={resource} isLoading={isLoading} as="span" />
+          {resource.name}
         </Text>
-      </Link>
+        <ResourceUrlLinkViewer resource={resource} maxLength={30} />
+      </ResourceUrlLinkWrapper>
     </BoxBlockDefaultClickPropagation>
   );
 };

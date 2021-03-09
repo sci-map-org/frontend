@@ -10,6 +10,8 @@ import {
   LinkProps,
   Skeleton,
   Stack,
+  Text,
+  TextProps,
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useEffect } from 'react';
@@ -32,20 +34,16 @@ export const setResourceOpened = gql`
   }
 `;
 
-export const ResourceUrlLink: React.FC<
+export const ResourceUrlLinkWrapper: React.FC<
   {
     resource: Pick<ResourcePreviewDataFragment, '_id' | 'consumed' | 'url'>;
     isLoading?: boolean;
-    maxLength?: number;
   } & Omit<LinkProps, 'href' | 'onClick' | 'isExternal' | 'resource'>
-> = ({ resource, isLoading, maxLength, ...linkProps }) => {
+> = ({ resource, isLoading, children, ...linkProps }) => {
   const [setResourceOpened] = useSetResourceOpenedMutation({ variables: { resourceId: resource._id } });
   return (
     <Skeleton as="span" isLoaded={!isLoading}>
       <Link
-        whiteSpace="nowrap"
-        color={resource.consumed && resource.consumed.openedAt ? 'blue.400' : 'blue.700'}
-        fontSize="sm"
         {...linkProps}
         href={resource.url}
         onClick={() => {
@@ -55,10 +53,41 @@ export const ResourceUrlLink: React.FC<
         }}
         isExternal
       >
-        {toUrlPreview(resource.url, maxLength)}
-        <ExternalLinkIcon mx="2px" />
+        {children}
       </Link>
     </Skeleton>
+  );
+};
+
+export const ResourceUrlLinkViewer: React.FC<
+  {
+    resource: Pick<ResourcePreviewDataFragment, '_id' | 'consumed' | 'url'>;
+    maxLength?: number;
+  } & Omit<TextProps, 'resource'>
+> = ({ resource, maxLength, ...props }) => {
+  return (
+    <Text
+      whiteSpace="nowrap"
+      color={resource.consumed && resource.consumed.openedAt ? 'blue.700' : 'blue.400'}
+      fontSize="sm"
+      {...props}
+    >
+      {toUrlPreview(resource.url, maxLength)}
+      <ExternalLinkIcon mx="2px" />
+    </Text>
+  );
+};
+export const ResourceUrlLink: React.FC<
+  {
+    resource: Pick<ResourcePreviewDataFragment, '_id' | 'consumed' | 'url'>;
+    isLoading?: boolean;
+    maxLength?: number;
+  } & Omit<LinkProps, 'href' | 'onClick' | 'isExternal' | 'resource'>
+> = ({ resource, isLoading, maxLength, children, ...linkProps }) => {
+  return (
+    <ResourceUrlLinkWrapper resource={resource} isLoading={isLoading} {...linkProps}>
+      <ResourceUrlLinkViewer resource={resource} maxLength={maxLength} />
+    </ResourceUrlLinkWrapper>
   );
 };
 
