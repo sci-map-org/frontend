@@ -33,10 +33,8 @@ export const ResourceCompletedCheckbox: React.FC<
   const unauthentificatedModalDisclosure = useUnauthentificatedModal();
   return (
     <CompletedCheckbox
-      tooltipLabel={
-        !!resource.consumed && !!resource.consumed.consumedAt ? 'Mark as not completed' : 'Mark as completed'
-      }
-      tooltipDelay={500}
+      tooltipLabel={!!resource.consumed && !!resource.consumed.consumedAt ? undefined : 'Mark as completed'}
+      tooltipDelay={1000}
       isDisabled={isLoading}
       isChecked={!!resource.consumed && !!resource.consumed.consumedAt}
       onChange={async () => {

@@ -1,7 +1,6 @@
 import { Box, Button, Center, Flex, Skeleton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import Router, { useRouter } from 'next/router';
-import ReactPlayer from 'react-player';
 import { Access } from '../../components/auth/Access';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
@@ -17,10 +16,9 @@ import {
   LearningMaterialStarsRater,
   LearningMaterialStarsRaterData,
 } from '../../components/learning_materials/LearningMaterialStarsRating';
-import { StarsRatingViewer } from '../../components/lib/StarsRating';
 import { EditableLearningMaterialTags } from '../../components/learning_materials/LearningMaterialTagsEditor';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
-import { YoutubePlayer } from '../../components/lib/YoutubePlayer';
+import { StarsRatingViewer } from '../../components/lib/StarsRating';
 import { InternalLink } from '../../components/navigation/InternalLink';
 import { DurationViewer } from '../../components/resources/elements/Duration';
 import { ResourceCompletedCheckbox } from '../../components/resources/elements/ResourceCompletedCheckbox';
@@ -28,6 +26,7 @@ import { ResourceDescription } from '../../components/resources/elements/Resourc
 import { ResourceMediaTypeBadge } from '../../components/resources/elements/ResourceMediaType';
 import { ResourceTypeBadge } from '../../components/resources/elements/ResourceType';
 import { ResourceUrlLink } from '../../components/resources/elements/ResourceUrl';
+import { ResourceYoutubePlayer } from '../../components/resources/elements/ResourceYoutubePlayer';
 import { LearningMaterialCoveredTopics } from '../../components/resources/LearningMaterialCoveredTopics';
 import { SquareResourceCardData } from '../../components/resources/SquareResourceCard';
 import { SubResourceSeriesManager } from '../../components/resources/SubResourceSeriesManager';
@@ -181,7 +180,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
             {resource.description && <ResourceDescription description={resource.description} />}
             {(resource.type === ResourceType.YoutubeVideo || resource.type === ResourceType.YoutubePlaylist) && (
               <Center mr={4}>
-                <YoutubePlayer resource={resource} skipThumbnail />
+                <ResourceYoutubePlayer resource={resource} skipThumbnail />
               </Center>
             )}
           </Stack>
