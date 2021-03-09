@@ -35,13 +35,13 @@ import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickProp
 import { ResourceGroupIcon } from '../lib/icons/ResourceGroupIcon';
 import { ResourceSeriesIcon } from '../lib/icons/ResourceSeriesIcon';
 import { StarsRatingViewer } from '../lib/StarsRating';
-import { YoutubePlayer } from '../lib/YoutubePlayer';
 import { InternalLink } from '../navigation/InternalLink';
 import { DurationViewer } from './elements/Duration';
 import { ResourceCompletedCheckbox } from './elements/ResourceCompletedCheckbox';
 import { ResourceDescription } from './elements/ResourceDescription';
 import { ResourceTypeIcon } from './elements/ResourceType';
 import { ResourceUrlLinkViewer, ResourceUrlLinkWrapper } from './elements/ResourceUrl';
+import { ResourceYoutubePlayer } from './elements/ResourceYoutubePlayer';
 
 interface ResourcePreviewCardProps {
   domainKey?: string;
@@ -152,7 +152,7 @@ const MainContentBlock: React.FC<{
             mx={showPlayer ? 0 : 4}
             mb={showPlayer ? 3 : 0}
           >
-            <YoutubePlayer
+            <ResourceYoutubePlayer
               resource={resource}
               playing={isOpen}
               skipThumbnail={expandByDefault}
