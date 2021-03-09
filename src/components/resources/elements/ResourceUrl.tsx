@@ -13,26 +13,16 @@ import {
   Text,
   TextProps,
 } from '@chakra-ui/react';
-import gql from 'graphql-tag';
 import { useEffect } from 'react';
 import { BeatLoader } from 'react-spinners';
 import { ResourcePreviewDataFragment } from '../../../graphql/resources/resources.fragments.generated';
-import { useAnalyzeResourceUrlLazyQuery } from '../../../graphql/resources/resources.operations.generated';
+import {
+  useAnalyzeResourceUrlLazyQuery,
+  useSetResourceOpenedMutation,
+} from '../../../graphql/resources/resources.operations.generated';
 import { AnalyzeResourceUrlResult } from '../../../graphql/types';
 import { toUrlPreview, validateUrl } from '../../../services/url.service';
 import { theme } from '../../../theme/theme';
-import { useSetResourceOpenedMutation } from './ResourceUrl.generated';
-
-export const setResourceOpened = gql`
-  mutation setResourceOpened($resourceId: String!) {
-    setResourcesConsumed(payload: { resources: [{ resourceId: $resourceId, opened: true }] }) {
-      _id
-      consumed {
-        openedAt
-      }
-    }
-  }
-`;
 
 export const ResourceUrlLinkWrapper: React.FC<
   {
