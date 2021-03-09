@@ -120,3 +120,11 @@ export const LearningPathPageInfo = (learningPath: Pick<LearningPathDataFragment
   path: LearningPathPagePath(learningPath.key),
   routePath: LearningPathPagePath(),
 });
+
+//====User Profile====
+export const CurrentUserLearningGoalsPagePath = '/profile/goals';
+export const CurrentUserLearningGoalsPageInfo = {
+  name: 'My Goals',
+  path: CurrentUserLearningGoalsPagePath,
+  routePath: CurrentUserLearningGoalsPagePath,
+};

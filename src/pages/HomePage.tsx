@@ -1,4 +1,4 @@
-import { Box, Flex, FlexProps, Heading, Link, Stack, Text, Divider, Center } from '@chakra-ui/react';
+import { Box, Center, Divider, Flex, FlexProps, Heading, Link, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import React, { ReactNode } from 'react';
 import { LearningGoalCardData } from '../components/learning_goals/cards/LearningGoalCard';
@@ -7,16 +7,33 @@ import { MapIcon } from '../components/lib/icons/MapIcon';
 import { SocialNetworkIcon } from '../components/lib/icons/SocialNetworkIcon';
 import { UserCentricIcon } from '../components/lib/icons/UserCentricIcon';
 import { InternalButtonLink, InternalLink } from '../components/navigation/InternalLink';
-import { CurrentUserData } from '../graphql/users/users.fragments';
 import { HomeDomainsRecommendations } from './home/HomeDomainsRecommendations';
-import { useGetHomePageDataQuery } from './HomePage.generated';
 import { HomeLearningGoalsRecommendations } from './home/HomeLearningGoalsRecommendations';
 import { HomeLearningPathsRecommendations } from './home/HomeLearningPathsRecommendations';
+import { HomeUserStartedGoals } from './home/HomeUserStartedGoals';
+import { HomeUserStartedPaths, StartedLearningPathCardData } from './home/HomeUserStartedPaths';
+import { useGetHomePageDataQuery } from './HomePage.generated';
+
 export const getHomePageData = gql`
   query getHomePageData {
     getHomePageData {
       currentUser {
-        ...CurrentUserData
+        _id
+        key
+        email
+        displayName
+        startedLearningPaths(options: {}) {
+          startedAt
+          learningPath {
+            ...StartedLearningPathCardData
+          }
+        }
+        startedLearningGoals(options: {}) {
+          startedAt
+          learningGoal {
+            ...LearningGoalCardData
+          }
+        }
       }
       recommendedLearningGoals {
         ...LearningGoalCardData
@@ -26,22 +43,44 @@ export const getHomePageData = gql`
       }
     }
   }
-  ${CurrentUserData}
   ${LearningPathPreviewCardData}
   ${LearningGoalCardData}
+  ${StartedLearningPathCardData}
 `;
 
 export const HomePage: React.FC = () => {
   const { data, loading } = useGetHomePageDataQuery();
+  const currentUser = data?.getHomePageData.currentUser;
+  const isReturningUser = !(!loading && !currentUser);
   const outerLayoutProps = {
     px: ['5px', '10px', '5%', '15%'],
   };
   return (
     <Flex direction="column" justifyContent="center" alignItems="stretch">
       <Box height={['10px', '20px', '30px', '50px']} />
-      <Flex justifyContent="center">
-        <HomeHeader layoutProps={outerLayoutProps} />
-      </Flex>
+      {!isReturningUser ? (
+        <Center>
+          <HomeHeader layoutProps={outerLayoutProps} />
+        </Center>
+      ) : (
+        <Flex direction="row" justifyContent="space-between" px="5%">
+          {data?.getHomePageData.currentUser?.startedLearningGoals?.length && (
+            <Box mb={1} w="48%">
+              <HomeUserStartedGoals
+                startedGoals={data?.getHomePageData.currentUser?.startedLearningGoals.map((i) => i.learningGoal)}
+              />
+            </Box>
+          )}
+          {data?.getHomePageData.currentUser?.startedLearningPaths?.length && (
+            <Box mb={1} w="48%">
+              <HomeUserStartedPaths
+                startedPaths={data?.getHomePageData.currentUser?.startedLearningPaths.map((i) => i.learningPath)}
+              />
+            </Box>
+          )}
+        </Flex>
+      )}
+
       <Center px="5%" mb={1}>
         <HomeDomainsRecommendations />
       </Center>
@@ -57,7 +96,6 @@ export const HomePage: React.FC = () => {
           />
         </Stack>
       </Center>
-      {/* <Center px="5%" mb={3}></Center> */}
       <HomeContentItem
         imagePosition="left"
         layoutProps={outerLayoutProps}

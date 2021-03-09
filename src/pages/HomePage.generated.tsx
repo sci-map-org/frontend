@@ -1,6 +1,6 @@
 import * as Types from '../graphql/types';
 
-import { CurrentUserDataFragment, LoginResponseDataFragment } from '../graphql/users/users.fragments.generated';
+import { StartedLearningPathCardDataFragment } from './home/HomeUserStartedPaths.generated';
 import { LearningGoalCardDataFragment } from '../components/learning_goals/cards/LearningGoalCard.generated';
 import { LearningPathPreviewCardDataFragment } from '../components/learning_paths/LearningPathPreviewCard.generated';
 import * as Operations from './HomePage';
@@ -14,7 +14,22 @@ export type GetHomePageDataQuery = (
     { __typename?: 'GetHomePageDataResults' }
     & { currentUser?: Types.Maybe<(
       { __typename?: 'CurrentUser' }
-      & CurrentUserDataFragment
+      & Pick<Types.CurrentUser, '_id' | 'key' | 'email' | 'displayName'>
+      & { startedLearningPaths?: Types.Maybe<Array<(
+        { __typename?: 'LearningPathStartedItem' }
+        & Pick<Types.LearningPathStartedItem, 'startedAt'>
+        & { learningPath: (
+          { __typename?: 'LearningPath' }
+          & StartedLearningPathCardDataFragment
+        ) }
+      )>>, startedLearningGoals?: Types.Maybe<Array<(
+        { __typename?: 'LearningGoalStartedItem' }
+        & Pick<Types.LearningGoalStartedItem, 'startedAt'>
+        & { learningGoal: (
+          { __typename?: 'LearningGoal' }
+          & LearningGoalCardDataFragment
+        ) }
+      )>> }
     )>, recommendedLearningGoals: Array<(
       { __typename?: 'LearningGoal' }
       & LearningGoalCardDataFragment
