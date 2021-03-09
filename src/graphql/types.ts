@@ -13,6 +13,7 @@ export type Scalars = {
 
 export type Query = {
   __typename?: 'Query';
+  getHomePageData: GetHomePageDataResults;
   searchTopics: SearchTopicsResult;
   searchSubTopics: SearchTopicsResult;
   checkTopicKeyAvailability: CheckTopicKeyAvailabilityResult;
@@ -568,6 +569,13 @@ export type MutationRemoveConceptReferencesConceptArgs = {
   referencedConceptId: Scalars['String'];
 };
 
+
+export type GetHomePageDataResults = {
+  __typename?: 'GetHomePageDataResults';
+  currentUser?: Maybe<CurrentUser>;
+  recommendedLearningGoals: Array<LearningGoal>;
+  recommendedLearningPaths: Array<LearningPath>;
+};
 
 export type SearchTopicsResult = {
   __typename?: 'SearchTopicsResult';

@@ -1,10 +1,170 @@
 import { Box, Flex, FlexProps, Heading, Link, Stack, Text, Divider, Center } from '@chakra-ui/react';
+import gql from 'graphql-tag';
 import React, { ReactNode } from 'react';
+import { LearningGoalCardData } from '../components/learning_goals/cards/LearningGoalCard';
+import { LearningPathPreviewCardData } from '../components/learning_paths/LearningPathPreviewCard';
 import { MapIcon } from '../components/lib/icons/MapIcon';
 import { SocialNetworkIcon } from '../components/lib/icons/SocialNetworkIcon';
 import { UserCentricIcon } from '../components/lib/icons/UserCentricIcon';
 import { InternalButtonLink, InternalLink } from '../components/navigation/InternalLink';
+import { CurrentUserData } from '../graphql/users/users.fragments';
 import { HomeDomainsRecommendations } from './home/HomeDomainsRecommendations';
+import { useGetHomePageDataQuery } from './HomePage.generated';
+import { HomeLearningGoalsRecommendations } from './home/HomeLearningGoalsRecommendations';
+import { HomeLearningPathsRecommendations } from './home/HomeLearningPathsRecommendations';
+export const getHomePageData = gql`
+  query getHomePageData {
+    getHomePageData {
+      currentUser {
+        ...CurrentUserData
+      }
+      recommendedLearningGoals {
+        ...LearningGoalCardData
+      }
+      recommendedLearningPaths {
+        ...LearningPathPreviewCardData
+      }
+    }
+  }
+  ${CurrentUserData}
+  ${LearningPathPreviewCardData}
+  ${LearningGoalCardData}
+`;
+
+export const HomePage: React.FC = () => {
+  const { data, loading } = useGetHomePageDataQuery();
+  const outerLayoutProps = {
+    px: ['5px', '10px', '5%', '15%'],
+  };
+  return (
+    <Flex direction="column" justifyContent="center" alignItems="stretch">
+      <Box height={['10px', '20px', '30px', '50px']} />
+      <Flex justifyContent="center">
+        <HomeHeader layoutProps={outerLayoutProps} />
+      </Flex>
+      <Center px="5%" mb={1}>
+        <HomeDomainsRecommendations />
+      </Center>
+      <Center px="5%" mb={3}>
+        <Stack direction="row">
+          <HomeLearningGoalsRecommendations
+            learningGoals={data?.getHomePageData.recommendedLearningGoals || []}
+            isLoading={loading}
+          />
+          <HomeLearningPathsRecommendations
+            learningPaths={data?.getHomePageData.recommendedLearningPaths || []}
+            isLoading={loading}
+          />
+        </Stack>
+      </Center>
+      {/* <Center px="5%" mb={3}></Center> */}
+      <HomeContentItem
+        imagePosition="left"
+        layoutProps={outerLayoutProps}
+        darkBackground
+        renderImage={<MapIcon w="200px" h="200px" color="mainDarker" />}
+        title="An open, graph-based learning map"
+        renderTextContent={
+          <Text>
+            Find out what you don't know, what you need to learn next, take a deep dive, or explore seamlessly with an{' '}
+            <Text fontWeight={600} as="span">
+              open map
+            </Text>{' '}
+            of the knowledge space.
+            <br />
+            <br />
+            We leverage{' '}
+            <Text fontWeight={600} as="span">
+              graph database
+            </Text>{' '}
+            technology to build an abstract and precise modeling of knowledge, locate learning material in it, and serve
+            it at the right time to the learner.
+          </Text>
+        }
+      />
+      <HomeContentItem
+        imagePosition="right"
+        layoutProps={outerLayoutProps}
+        renderImage={<UserCentricIcon w="200px" h="200px" color="mainDarker" />}
+        title="An experience tailored to each learner"
+        renderTextContent={
+          <Text>
+            From what the learner already knows, his learning profile, his goals and interests, we will provide an{' '}
+            <Text fontWeight={600} as="span">
+              optimal
+            </Text>{' '}
+            and{' '}
+            <Text fontWeight={600} as="span">
+              fully personalized
+            </Text>{' '}
+            experience.
+            <br />
+            <br />
+            We plan to provide smart recommendations while enabling the learner to keep control over their path, for
+            instance by finding{' '}
+            <Text fontWeight={600} as="span">
+              alternative pedagogical
+            </Text>{' '}
+            approaches in one click.
+            <br />
+            <br />
+            By providing{' '}
+            <Text fontWeight={600} as="span">
+              personal learning management
+            </Text>{' '}
+            features, and building an increasingly precise leaning profile for each user,{' '}
+            <Text as="span" fontWeight={600} color="main">
+              Sci-map.org
+            </Text>{' '}
+            aims to be the perfect tool for{' '}
+            <Text fontWeight={600} as="span">
+              continuous learning
+            </Text>{' '}
+            across a wide range of domains.
+          </Text>
+        }
+      />
+      <HomeContentItem
+        imagePosition="left"
+        layoutProps={outerLayoutProps}
+        darkBackground
+        renderImage={<SocialNetworkIcon w="200px" h="200px" color="mainDarker" />}
+        title="Collaborative and community based"
+        renderTextContent={
+          <Text>
+            This project is{' '}
+            <Text fontWeight={600} as="span">
+              community-based
+            </Text>
+            ; we intend to build a modeling of the knowledge space, assess the content quality, and improve upon it{' '}
+            <Text fontWeight={600} as="span">
+              collaboratively
+            </Text>
+            . <br />
+            <br />
+            We aim to enable new communities to form around different domains, foster{' '}
+            <Text fontWeight={600} as="span">
+              learning with peers
+            </Text>
+            , receiving support and feedback, and connecting people at the right time. <br />
+            <br />
+            By improving content collaboratively based on community feedback and data, we aim to reach a better quality
+            than what an individual alone could achieve.
+          </Text>
+        }
+      />
+      <Flex justifyContent="center" my={10}>
+        <InternalButtonLink size="lg" routePath="/about" asHref="/about" colorScheme="blue" variant="outline">
+          Learn more
+        </InternalButtonLink>
+      </Flex>
+      <Flex justifyContent="center">
+        <Divider width="50%" />
+      </Flex>
+      <HomeFooter layoutProps={outerLayoutProps} />
+    </Flex>
+  );
+};
 
 const Title: React.FC<{}> = () => {
   return (
@@ -39,7 +199,7 @@ const HomeHeader: React.FC<{ layoutProps: FlexProps }> = ({ layoutProps }) => {
         </Heading>
       </Flex>
       <Flex mb="40px" alignItems={{ base: 'center', md: 'start' }} direction={{ base: 'column', md: 'row' }}>
-        <Flex direction="column" flexBasis={{ md: '800px' }} flexShrink={1} pr="10px">
+        <Flex direction="column" flexShrink={1} pr="10px">
           <Text mb={6}>
             <Text as="span" fontWeight={800}>
               Sci-map.org
@@ -76,8 +236,8 @@ const HomeHeader: React.FC<{ layoutProps: FlexProps }> = ({ layoutProps }) => {
             </Text>
           </Stack>
         </Flex>
-        <Box flexGrow={1} />
-        <Flex
+        {/* <Box flexGrow={1} /> */}
+        {/* <Flex
           direction="column"
           alignItems="stretch"
           flexShrink={0}
@@ -112,7 +272,7 @@ const HomeHeader: React.FC<{ layoutProps: FlexProps }> = ({ layoutProps }) => {
               </InternalLink>
             </Text>
           </Stack>
-        </Flex>
+        </Flex> */}
       </Flex>
     </Flex>
   );
@@ -221,125 +381,3 @@ const HomeFooter: React.FC<{ layoutProps: FlexProps }> = ({ layoutProps }) => (
     </Text>
   </Flex>
 );
-
-export const HomePage: React.FC = () => {
-  const outerLayoutProps = {
-    px: ['5px', '10px', '5%', '15%'],
-    // maxWidth: '1400px',
-  };
-  return (
-    <Flex direction="column" justifyContent="center" alignItems="stretch">
-      <Box height={['10px', '20px', '30px', '50px']} />
-      <Flex justifyContent="center">
-        <HomeHeader layoutProps={outerLayoutProps} />
-      </Flex>
-      <Center w="100%" px={10}>
-        <HomeDomainsRecommendations />
-      </Center>
-      <HomeContentItem
-        imagePosition="left"
-        layoutProps={outerLayoutProps}
-        darkBackground
-        renderImage={<MapIcon w="200px" h="200px" color="mainDarker" />}
-        title="An open, graph-based learning map"
-        renderTextContent={
-          <Text>
-            Find out what you don't know, what you need to learn next, take a deep dive, or explore seamlessly with an{' '}
-            <Text fontWeight={600} as="span">
-              open map
-            </Text>{' '}
-            of the knowledge space.
-            <br />
-            <br />
-            We leverage{' '}
-            <Text fontWeight={600} as="span">
-              graph database
-            </Text>{' '}
-            technology to build an abstract and precise modeling of knowledge, locate learning material in it, and serve
-            it at the right time to the learner.
-          </Text>
-        }
-      />
-      <HomeContentItem
-        imagePosition="right"
-        layoutProps={outerLayoutProps}
-        renderImage={<UserCentricIcon w="200px" h="200px" color="mainDarker" />}
-        title="An experience tailored to each learner"
-        renderTextContent={
-          <Text>
-            From what the learner already knows, his learning profile, his goals and interests, we will provide an{' '}
-            <Text fontWeight={600} as="span">
-              optimal
-            </Text>{' '}
-            and{' '}
-            <Text fontWeight={600} as="span">
-              fully personalized
-            </Text>{' '}
-            experience.
-            <br />
-            <br />
-            We plan to provide smart recommendations while enabling the learner to keep control over their path, for
-            instance by finding{' '}
-            <Text fontWeight={600} as="span">
-              alternative pedagogical
-            </Text>{' '}
-            approaches in one click.
-            <br />
-            <br />
-            By providing{' '}
-            <Text fontWeight={600} as="span">
-              personal learning management
-            </Text>{' '}
-            features, and building an increasingly precise leaning profile for each user,{' '}
-            <Text as="span" fontWeight={600} color="main">
-              Sci-map.org
-            </Text>{' '}
-            aims to be the perfect tool for{' '}
-            <Text fontWeight={600} as="span">
-              continuous learning
-            </Text>{' '}
-            across a wide range of domains.
-          </Text>
-        }
-      />
-      <HomeContentItem
-        imagePosition="left"
-        layoutProps={outerLayoutProps}
-        darkBackground
-        renderImage={<SocialNetworkIcon w="200px" h="200px" color="mainDarker" />}
-        title="Collaborative and community based"
-        renderTextContent={
-          <Text>
-            This project is{' '}
-            <Text fontWeight={600} as="span">
-              community-based
-            </Text>
-            ; we intend to build a modeling of the knowledge space, assess the content quality, and improve upon it{' '}
-            <Text fontWeight={600} as="span">
-              collaboratively
-            </Text>
-            . <br />
-            <br />
-            We aim to enable new communities to form around different domains, foster{' '}
-            <Text fontWeight={600} as="span">
-              learning with peers
-            </Text>
-            , receiving support and feedback, and connecting people at the right time. <br />
-            <br />
-            By improving content collaboratively based on community feedback and data, we aim to reach a better quality
-            than what an individual alone could achieve.
-          </Text>
-        }
-      />
-      <Flex justifyContent="center" my={10}>
-        <InternalButtonLink size="lg" routePath="/about" asHref="/about" colorScheme="blue" variant="outline">
-          Learn more
-        </InternalButtonLink>
-      </Flex>
-      <Flex justifyContent="center">
-        <Divider width="50%" />
-      </Flex>
-      <HomeFooter layoutProps={outerLayoutProps} />
-    </Flex>
-  );
-};

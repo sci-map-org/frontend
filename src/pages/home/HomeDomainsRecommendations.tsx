@@ -134,7 +134,7 @@ export const HomeDomainsRecommendations: React.FC<{}> = () => {
         <Heading size="lg" color="gray.700">
           Learn anything
         </Heading>
-        <PageLink px={1} pageInfo={DomainsListPageInfo} fontWeight={500}>
+        <PageLink mx={1} pageInfo={DomainsListPageInfo} fontWeight={500}>
           See all
         </PageLink>
       </Flex>

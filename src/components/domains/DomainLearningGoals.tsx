@@ -2,7 +2,7 @@ import { Flex, Stack, Text } from '@chakra-ui/react';
 import { LearningGoalBelongsToDomain } from '../../graphql/types';
 import { LearningGoalCard } from '../learning_goals/cards/LearningGoalCard';
 import { LearningGoalCardDataFragment } from '../learning_goals/cards/LearningGoalCard.generated';
-import { LearningGoalCardWrapper } from '../learning_goals/cards/LearningGoalCardWrapper';
+import { LearningGoalCardList } from '../learning_goals/cards/LearningGoalCardList';
 import { LearningGoalIcon } from '../lib/icons/LearningGoalIcon';
 
 interface DomainLearningGoalsProps {
@@ -20,11 +20,10 @@ export const DomainLearningGoals: React.FC<DomainLearningGoalsProps> = ({ learni
         <Text fontSize="2xl">Learning Goals</Text>
       </Stack>
 
-      <LearningGoalCardWrapper
+      <LearningGoalCardList
         learningGoalItems={learningGoalItems}
         spacing="20px"
         renderCard={({ learningGoal }, hover) => <LearningGoalCard learningGoal={learningGoal} mouseHover={hover} />}
-        oneLine
       />
     </Flex>
   );
