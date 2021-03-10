@@ -72,7 +72,7 @@ export type SetResourceOpenedMutation = (
     & Pick<Types.Resource, '_id'>
     & { consumed?: Types.Maybe<(
       { __typename?: 'ConsumedResource' }
-      & Pick<Types.ConsumedResource, 'openedAt'>
+      & Pick<Types.ConsumedResource, 'openedAt' | 'lastOpenedAt'>
     )> }
   )> }
 );

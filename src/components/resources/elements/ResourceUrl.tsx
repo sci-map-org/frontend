@@ -37,9 +37,7 @@ export const ResourceUrlLinkWrapper: React.FC<
         {...linkProps}
         href={resource.url}
         onClick={() => {
-          if (!resource.consumed || !resource.consumed.openedAt) {
-            setResourceOpened();
-          }
+          setResourceOpened();
         }}
         isExternal
       >

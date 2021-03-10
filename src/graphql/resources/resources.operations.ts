@@ -45,6 +45,7 @@ export const setResourceOpened = gql`
       _id
       consumed {
         openedAt
+        lastOpenedAt
       }
     }
   }

@@ -16,9 +16,7 @@ export const ResourceYoutubePlayer: React.FC<
       videoUrl={resource.url}
       onEnded={() => setResourceConsumed(resource, true)}
       onStart={() => {
-        if (!resource.consumed || !resource.consumed.openedAt) {
-          setResourceOpened();
-        }
+        setResourceOpened();
       }}
       {...props}
     />

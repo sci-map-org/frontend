@@ -76,7 +76,7 @@ export const HomePage: React.FC = () => {
           <HomeHeader layoutProps={outerLayoutProps} />
         </Center>
       ) : (
-        <Stack direction="column" px="5%">
+        <Stack direction="column" px="5%" spacing={16}>
           {data?.getHomePageData.currentUser?.startedLearningGoals?.length && (
             <Box>
               <HomeUserStartedGoals
@@ -103,7 +103,7 @@ export const HomePage: React.FC = () => {
         </Stack>
       )}
 
-      <Center px="5%" mb={1}>
+      <Center px="5%" mb={10} mt={10}>
         <HomeDomainsRecommendations />
       </Center>
       <Center px="5%" mb={3}>

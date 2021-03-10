@@ -1358,6 +1358,7 @@ export type LearningMaterialTag = {
 export type ConsumedResource = {
   __typename?: 'ConsumedResource';
   openedAt?: Maybe<Scalars['Date']>;
+  lastOpenedAt?: Maybe<Scalars['Date']>;
   consumedAt?: Maybe<Scalars['Date']>;
 };
 
@@ -1544,6 +1545,7 @@ export type UserConsumedResourceItem = {
   __typename?: 'UserConsumedResourceItem';
   resource: Resource;
   openedAt?: Maybe<Scalars['Date']>;
+  lastOpenedAt?: Maybe<Scalars['Date']>;
   consumedAt?: Maybe<Scalars['Date']>;
 };
 
