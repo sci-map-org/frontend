@@ -7,12 +7,14 @@ import { MapIcon } from '../components/lib/icons/MapIcon';
 import { SocialNetworkIcon } from '../components/lib/icons/SocialNetworkIcon';
 import { UserCentricIcon } from '../components/lib/icons/UserCentricIcon';
 import { InternalButtonLink, InternalLink } from '../components/navigation/InternalLink';
+import { ResourceMiniCardData } from '../components/resources/ResourceMiniCard';
 import { HomeDomainsRecommendations } from './home/HomeDomainsRecommendations';
 import { HomeLearningGoalsRecommendations } from './home/HomeLearningGoalsRecommendations';
 import { HomeLearningPathsRecommendations } from './home/HomeLearningPathsRecommendations';
 import { HomeUserStartedGoals } from './home/HomeUserStartedGoals';
 import { HomeUserStartedPaths, StartedLearningPathCardData } from './home/HomeUserStartedPaths';
 import { useGetHomePageDataQuery } from './HomePage.generated';
+import { HomeUserResourcesHistory } from './home/HomeUserResourcesHistory';
 
 export const getHomePageData = gql`
   query getHomePageData {
@@ -34,6 +36,16 @@ export const getHomePageData = gql`
             ...LearningGoalCardData
           }
         }
+        consumedResources(options: { sorting: lastOpened, pagination: {}, filter: {} }) {
+          count
+          items {
+            consumedAt
+            openedAt
+            resource {
+              ...ResourceMiniCardData
+            }
+          }
+        }
       }
       recommendedLearningGoals {
         ...LearningGoalCardData
@@ -46,10 +58,11 @@ export const getHomePageData = gql`
   ${LearningPathPreviewCardData}
   ${LearningGoalCardData}
   ${StartedLearningPathCardData}
+  ${ResourceMiniCardData}
 `;
 
 export const HomePage: React.FC = () => {
-  const { data, loading } = useGetHomePageDataQuery();
+  const { data, loading } = useGetHomePageDataQuery({ fetchPolicy: 'cache-and-network' });
   const currentUser = data?.getHomePageData.currentUser;
   const isReturningUser = !(!loading && !currentUser);
   const outerLayoutProps = {
@@ -63,22 +76,31 @@ export const HomePage: React.FC = () => {
           <HomeHeader layoutProps={outerLayoutProps} />
         </Center>
       ) : (
-        <Flex direction="row" justifyContent="space-between" px="5%">
+        <Stack direction="column" px="5%">
           {data?.getHomePageData.currentUser?.startedLearningGoals?.length && (
-            <Box mb={1} w="48%">
+            <Box>
               <HomeUserStartedGoals
                 startedGoals={data?.getHomePageData.currentUser?.startedLearningGoals.map((i) => i.learningGoal)}
               />
             </Box>
           )}
-          {data?.getHomePageData.currentUser?.startedLearningPaths?.length && (
-            <Box mb={1} w="48%">
-              <HomeUserStartedPaths
-                startedPaths={data?.getHomePageData.currentUser?.startedLearningPaths.map((i) => i.learningPath)}
-              />
-            </Box>
-          )}
-        </Flex>
+          <Flex direction="row" justifyContent="space-between">
+            {data?.getHomePageData.currentUser?.startedLearningPaths?.length && (
+              <Box w="45%">
+                <HomeUserStartedPaths
+                  startedPaths={data?.getHomePageData.currentUser?.startedLearningPaths.map((i) => i.learningPath)}
+                />
+              </Box>
+            )}
+            {data?.getHomePageData.currentUser?.consumedResources?.items.length && (
+              <Flex w="45%">
+                <HomeUserResourcesHistory
+                  consumedResourcesItems={data?.getHomePageData.currentUser?.consumedResources?.items}
+                />
+              </Flex>
+            )}
+          </Flex>
+        </Stack>
       )}
 
       <Center px="5%" mb={1}>

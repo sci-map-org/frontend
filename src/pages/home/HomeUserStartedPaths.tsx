@@ -3,7 +3,10 @@ import { Box, Button, Center, Flex, Heading, Stack, Text } from '@chakra-ui/reac
 import gql from 'graphql-tag';
 import { LearningMaterialCardContainer } from '../../components/learning_materials/LearningMaterialCardContainer';
 import { LearningMaterialStarsRaterData } from '../../components/learning_materials/LearningMaterialStarsRating';
-import { LearningPathCircularCompletion } from '../../components/learning_paths/LearningPathCompletion';
+import {
+  LearningPathCircularCompletion,
+  LearningPathCompletionData,
+} from '../../components/learning_paths/LearningPathCompletion';
 import { ResourceDescription } from '../../components/resources/elements/ResourceDescription';
 import { routerPushToPage } from '../PageInfo';
 import { LearningPathPageInfo } from '../RoutesPageInfos';
@@ -39,8 +42,10 @@ export const StartedLearningPathCardData = gql`
     description
     durationSeconds
     ...LearningMaterialStarsRaterData
+    ...LearningPathCompletionData
   }
   ${LearningMaterialStarsRaterData}
+  ${LearningPathCompletionData}
 `;
 
 const StartedLearningPathCard: React.FC<{
