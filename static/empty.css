@@ -13,3 +13,15 @@
   background-color: rgba(0, 0, 0, 0.2);
   box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
 }
+
+#homeHeader1 {
+  background-color: #dfdbe5;
+  /* Change path color, size (zoom in pattern or not) and path opacity in the svg file */
+  background-image: url(/static/topography_bg1.svg);
+}
+
+#homeHeader2 {
+  background-color: #f9f8fb;
+  /* Change path color, size (zoom in pattern or not) and path opacity in the svg file */
+  background-image: url(/static/topography_bg2.svg);
+}

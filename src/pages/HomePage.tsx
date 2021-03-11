@@ -1,4 +1,4 @@
-import { Box, Center, Divider, Flex, FlexProps, Heading, Link, Stack, Text } from '@chakra-ui/react';
+import { Box, Center, Divider, Flex, FlexProps, Heading, Image, Link, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import React, { ReactNode } from 'react';
 import { LearningGoalCardData } from '../components/learning_goals/cards/LearningGoalCard';
@@ -70,10 +70,9 @@ export const HomePage: React.FC = () => {
   };
   return (
     <Flex direction="column" justifyContent="center" alignItems="stretch">
-      <Box height={['10px', '20px', '30px', '50px']} />
       {!isReturningUser ? (
         <Center>
-          <HomeHeader layoutProps={outerLayoutProps} />
+          <HomeHeader />
         </Center>
       ) : (
         <Stack direction="column" px="5%" spacing={16}>
@@ -103,11 +102,11 @@ export const HomePage: React.FC = () => {
         </Stack>
       )}
 
-      <Center px="5%" mb={10} mt={10}>
+      <Center px="5%" mb={10} mt={4}>
         <HomeDomainsRecommendations />
       </Center>
       <Center px="5%" mb={3}>
-        <Stack direction="row">
+        <Stack direction={{ base: 'column', md: 'row' }}>
           <HomeLearningGoalsRecommendations
             learningGoals={data?.getHomePageData.recommendedLearningGoals || []}
             isLoading={loading}
@@ -118,6 +117,51 @@ export const HomePage: React.FC = () => {
           />
         </Stack>
       </Center>
+      <Flex
+        px="5%"
+        mt={10}
+        mb="40px"
+        alignItems={{ base: 'center', md: 'start' }}
+        direction={{ base: 'column', md: 'row' }}
+      >
+        <Flex direction="column" flexShrink={1} pr="10px">
+          <Text mb={6}>
+            <Text as="span" fontWeight={800}>
+              Sci-map.org
+            </Text>{' '}
+            is a community-based, nonprofit project aiming to reshape online learning by providing a free and
+            personalized learning experience for every topic. It allows you to explore knowledge intuitively, whether
+            you have a specific goal in mind or you simply are following your curiosity.
+          </Text>
+          <Stack direction="column" spacing={2} mb="15px">
+            <Text>
+              ⇒{' '}
+              <Text as="span" fontWeight={800} color="main">
+                Preview
+              </Text>{' '}
+              our first supported domain:{' '}
+              <InternalLink
+                color="blue.500"
+                fontWeight={600}
+                routePath="/domains/[key]"
+                asHref="/domains/functional_programming"
+              >
+                Functional Programming
+              </InternalLink>
+            </Text>
+            <Text>
+              ⇒{' '}
+              <Text as="span" fontWeight={800} color="main">
+                Learn more
+              </Text>{' '}
+              about the project in the{' '}
+              <InternalLink color="blue.500" fontWeight={600} routePath="/about" asHref="/about">
+                About section
+              </InternalLink>
+            </Text>
+          </Stack>
+        </Flex>
+      </Flex>
       <HomeContentItem
         imagePosition="left"
         layoutProps={outerLayoutProps}
@@ -239,99 +283,63 @@ const Title: React.FC<{}> = () => {
   );
 };
 
-const HomeHeader: React.FC<{ layoutProps: FlexProps }> = ({ layoutProps }) => {
+const HomeHeader: React.FC<{ layoutProps?: FlexProps }> = ({ layoutProps = {} }) => {
   return (
-    <Flex direction="column" {...layoutProps}>
-      <Box mb="10px">
-        <Title />
-      </Box>
-      <Flex justifyContent="center" mb="30px" mt="18px">
-        <Heading
-          width="70%"
-          textAlign="center"
-          fontWeight="medium"
-          color="blackAlpha.700"
-          fontStyle="italic"
-          fontSize="2xl"
-        >
-          An open and collaborative learning map embracing every learner's uniqueness, enabling users to navigate
-          knowledge seamlessly.
-        </Heading>
-      </Flex>
-      <Flex mb="40px" alignItems={{ base: 'center', md: 'start' }} direction={{ base: 'column', md: 'row' }}>
-        <Flex direction="column" flexShrink={1} pr="10px">
-          <Text mb={6}>
-            <Text as="span" fontWeight={800}>
-              Sci-map.org
+    <Flex
+      direction="column"
+      {...layoutProps}
+      // id="homeHeader1"
+      id="homeHeader2"
+      w="100%"
+      px="5%"
+    >
+      <Flex justifyContent="space-between" alignItems="stretch" w="100%">
+        {/* <Flex w="50%" direction="column-reverse" alignItems="center" pt={20}>
+          <Image src="./static/walker no bg cropped.png" w="322px" opacity={0.9} />
+        </Flex> */}
+        <Center w="50%">
+          <Image src="./static/walker no bg.png" w="400px" opacity={0.9} />
+        </Center>
+        <Flex w="50%" pl={10} pt={12} direction="column">
+          <Heading size="2xl" w="250px" color="blackAlpha.900" lineHeight={1.1}>
+            Learn{' '}
+            <Text as="span" bgColor="teal.600" ml="-6px" px="6px" pb="3px" color="white">
+              anything
             </Text>{' '}
-            is a community-based, nonprofit project aiming to reshape online learning by providing a free and
-            personalized learning experience for every topic. It allows you to explore knowledge intuitively, whether
-            you have a specific goal in mind or you simply are following your curiosity.
-          </Text>
-          <Stack direction="column" spacing={2} mb="15px">
-            <Text>
-              ⇒{' '}
-              <Text as="span" fontWeight={800} color="main">
-                Preview
-              </Text>{' '}
-              our first supported domain:{' '}
-              <InternalLink
-                color="blue.500"
-                fontWeight={600}
-                routePath="/domains/[key]"
-                asHref="/domains/functional_programming"
-              >
-                Functional Programming
-              </InternalLink>
-            </Text>
-            <Text>
-              ⇒{' '}
-              <Text as="span" fontWeight={800} color="main">
-                Learn more
-              </Text>{' '}
-              about the project in the{' '}
-              <InternalLink color="blue.500" fontWeight={600} routePath="/about" asHref="/about">
-                About section
-              </InternalLink>
-            </Text>
-          </Stack>
-        </Flex>
-        {/* <Box flexGrow={1} /> */}
-        {/* <Flex
-          direction="column"
-          alignItems="stretch"
-          flexShrink={0}
-          py={2}
-          px={2}
-          flexBasis={{ md: '350px' }}
-          borderWidth="1px"
-          borderRadius="7px"
-          borderColor="grayDivider.400"
-        >
-          <Flex pl={2} pb={1}>
-            <Text fontWeight={600} color="main" fontSize="lg">
-              Find the best resources to learn...
+            in a smart way
+          </Heading>
+          <Flex mt={10} mb={8} opacity={0.5} w="100%" direction="column">
+            <Text
+              bgColor="blackAlpha.900"
+              borderRadius={8}
+              px={4}
+              py={2}
+              w="80%"
+              fontSize="xl"
+              color="white"
+              opacity={1}
+              fontWeight={500}
+              py="2px"
+            >
+              Find the best online resources, learn from curated learning paths and community created roadmaps, etc.
             </Text>
           </Flex>
-          <Stack spacing={0}>
-            {[
-              { name: 'Functional Programming', key: 'functional_programming' },
-              { name: 'Machine Learning', key: 'machine_learning' },
-              { name: 'UX Design', key: 'ux_design' },
-              { name: 'Graph Theory', key: 'graph_theory' },
-            ].map((domain) => (
-              <Box key={domain.key} py={1} px={2}>
-                <InternalLink asHref={`/domains/${domain.key}`} routePath={`/domains/[key]`}>
-                  {domain.name}
-                </InternalLink>
-              </Box>
-            ))}
-            <Text py={1} px={2} fontStyle="italic">
-              <InternalLink asHref="/domains" routePath="/domains">
-                ...and much more coming soon !
-              </InternalLink>
-            </Text>
-          </Stack>
+        </Flex>
+        {/* <Flex>
+          
+        </Flex> */}
+        {/* <Flex justifyContent="center" mb="30px" mt="18px">
+          <Heading
+            width="70%"
+            textAlign="center"
+            fontWeight="medium"
+            color="blackAlpha.700"
+            fontStyle="italic"
+            fontSize="2xl"
+          >
+            An open and collaborative learning map embracing every learner's uniqueness, enabling users to navigate
+            knowledge seamlessly.
+          </Heading>
         </Flex> */}
       </Flex>
     </Flex>
