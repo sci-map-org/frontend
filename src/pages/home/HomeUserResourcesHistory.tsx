@@ -8,6 +8,7 @@ import { DurationViewer } from '../../components/resources/elements/Duration';
 import { ResourceCompletedCheckbox } from '../../components/resources/elements/ResourceCompletedCheckbox';
 import { ResourceTypeIcon } from '../../components/resources/elements/ResourceType';
 import { ResourceUrlLink } from '../../components/resources/elements/ResourceUrl';
+import { LearningMaterialPreviewCardList } from '../../components/resources/LearningMaterialPreviewCardList';
 import { ResourceMiniCardDataFragment } from '../../components/resources/ResourceMiniCard.generated';
 import { routerPushToPage } from '../PageInfo';
 import { ResourcePageInfo } from '../RoutesPageInfos';
@@ -19,22 +20,30 @@ interface HomeUserResourcesHistoryProps {
     openedAt?: string | null;
     resource: ResourceMiniCardDataFragment;
   }[];
+  isLoading?: boolean;
 }
-export const HomeUserResourcesHistory: React.FC<HomeUserResourcesHistoryProps> = ({ consumedResourcesItems }) => {
+export const HomeUserResourcesHistory: React.FC<HomeUserResourcesHistoryProps> = ({
+  consumedResourcesItems,
+  isLoading,
+}) => {
   return (
     <Flex direction="column" w="100%">
       <Heading size="md" mb={2} color="gray.700">
         Last Opened Resources
       </Heading>
-      <Flex alignItems="stretch" direction="column" overflow="hidden" overflowY="scroll" h="200px">
-        {consumedResourcesItems.map((resourceItem, idx) => (
+      <LearningMaterialPreviewCardList
+        isLoading={isLoading}
+        maxH="200px"
+        learningMaterialsPreviewItems={consumedResourcesItems}
+        renderCard={(resourceItem, idx) => (
           <LastOpenedResourceCard
             key={resourceItem.resource._id}
             resourceItem={resourceItem}
             firstItemInList={idx === 0}
           />
-        ))}
-      </Flex>
+        )}
+        noItemsMessage="No resources opened"
+      />
     </Flex>
   );
 };

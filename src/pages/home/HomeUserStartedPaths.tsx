@@ -8,6 +8,7 @@ import {
   LearningPathCompletionData,
 } from '../../components/learning_paths/LearningPathCompletion';
 import { ResourceDescription } from '../../components/resources/elements/ResourceDescription';
+import { LearningMaterialPreviewCardList } from '../../components/resources/LearningMaterialPreviewCardList';
 import { routerPushToPage } from '../PageInfo';
 import { LearningPathPageInfo } from '../RoutesPageInfos';
 import { StartedLearningPathCardDataFragment } from './HomeUserStartedPaths.generated';
@@ -17,18 +18,22 @@ export const HomeUserStartedPaths: React.FC<{
   isLoading?: boolean;
 }> = ({ startedPaths, isLoading }) => {
   return (
-    <Flex direction="column" maxH="200px">
+    <Flex direction="column">
       <Box mb={2}>
         <Heading size="md" color="gray.700">
           Started Paths
         </Heading>
       </Box>
 
-      <Flex alignItems="stretch" direction="column" overflow="hidden" overflowY="scroll">
-        {startedPaths.map((startedPath, idx) => (
+      <LearningMaterialPreviewCardList
+        isLoading={isLoading}
+        maxH="200px"
+        learningMaterialsPreviewItems={startedPaths}
+        renderCard={(startedPath, idx) => (
           <StartedLearningPathCard key={startedPath._id} learningPath={startedPath} firstItemInList={idx === 0} />
-        ))}
-      </Flex>
+        )}
+        noItemsMessage="No paths started"
+      />
     </Flex>
   );
 };
@@ -38,6 +43,7 @@ export const StartedLearningPathCardData = gql`
     _id
     key
     name
+    public
     rating
     description
     durationSeconds

@@ -4,7 +4,7 @@ import { LearningMaterialStarsRaterData_Resource_Fragment, LearningMaterialStars
 import { LearningPathCompletionDataFragment } from '../../components/learning_paths/LearningPathCompletion.generated';
 export type StartedLearningPathCardDataFragment = (
   { __typename?: 'LearningPath' }
-  & Pick<Types.LearningPath, '_id' | 'key' | 'name' | 'rating' | 'description' | 'durationSeconds'>
+  & Pick<Types.LearningPath, '_id' | 'key' | 'name' | 'public' | 'rating' | 'description' | 'durationSeconds'>
   & LearningMaterialStarsRaterData_LearningPath_Fragment
   & LearningPathCompletionDataFragment
 );

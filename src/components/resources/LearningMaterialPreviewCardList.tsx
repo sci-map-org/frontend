@@ -1,23 +1,22 @@
 import { Flex, Spinner, Text } from '@chakra-ui/react';
 import { PropsWithChildren, ReactNode } from 'react';
-import { LearningPathDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
-import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 
-interface LearningMaterialPreviewCardListProps<
-  T extends { learningMaterial: ResourcePreviewDataFragment | LearningPathDataFragment }
-> {
+interface LearningMaterialPreviewCardListProps<T extends object> {
   learningMaterialsPreviewItems: T[];
   isLoading?: boolean;
   renderCard: (cardItem: T, idx: number) => ReactNode;
+  maxH?: string;
+  noItemsMessage?: string;
+  loadingMessage?: string;
 }
 
-export const LearningMaterialPreviewCardList = <
-  T extends { learningMaterial: ResourcePreviewDataFragment | LearningPathDataFragment }
->({
+export const LearningMaterialPreviewCardList = <T extends object>({
   learningMaterialsPreviewItems,
   renderCard,
-
+  maxH,
   isLoading,
+  loadingMessage,
+  noItemsMessage = 'No results found',
 }: PropsWithChildren<LearningMaterialPreviewCardListProps<T>>) => {
   if (!isLoading && !learningMaterialsPreviewItems.length)
     return (
@@ -25,29 +24,37 @@ export const LearningMaterialPreviewCardList = <
         alignItems="center"
         justifyContent="center"
         py="50px"
+        h={maxH}
         backgroundColor="backgroundColor.0"
         borderColor="gray.200"
         borderWidth="1px"
       >
         <Text fontSize="xl" fontStyle="italic">
-          No results found
+          {noItemsMessage}
         </Text>
       </Flex>
     );
   return (
-    <Flex direction="column" alignItems="stretch" backgroundColor="backgroundColor.0">
+    <Flex
+      direction="column"
+      alignItems="stretch"
+      backgroundColor="backgroundColor.0"
+      maxH={maxH}
+      {...(!!maxH && { overflowY: 'scroll' })}
+    >
       {isLoading ? (
         <Flex
           backgroundColor="backgroundColor.0"
           direction="column"
           alignItems="center"
-          h="1000px"
-          pt="200px"
+          {...(maxH && { justifyContent: 'center' })}
+          h={maxH || '1000px'}
+          pt={maxH ? 0 : '200px'}
           borderWidth="1px"
           borderColor="gray.200"
         >
           <Spinner size="xl" m={4} />
-          <Text fontStyle="italic">Finding the most adapted learning resources...</Text>
+          {!!loadingMessage && <Text fontStyle="italic">{loadingMessage}</Text>}
         </Flex>
       ) : (
         learningMaterialsPreviewItems.map((item, idx) => renderCard(item, idx))

@@ -187,6 +187,7 @@ export const DomainRecommendedLearningMaterials: React.FC<{
       <LearningMaterialPreviewCardList
         learningMaterialsPreviewItems={learningMaterialsPreviews.map((learningMaterial) => ({ learningMaterial }))}
         isLoading={isLoading}
+        loadingMessage="Finding the most adapted learning resources..."
         renderCard={({ learningMaterial }, idx) => {
           if (learningMaterial.__typename === 'Resource')
             return (

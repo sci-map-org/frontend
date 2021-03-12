@@ -8,7 +8,7 @@ import { CurrentUserLearningGoalsPageInfo } from '../RoutesPageInfos';
 export const HomeUserStartedGoals: React.FC<{
   startedGoals: LearningGoalLinkDataFragment[];
   isLoading?: boolean;
-}> = ({ startedGoals }) => {
+}> = ({ startedGoals, isLoading }) => {
   return (
     <Flex direction="column" w="100%">
       <Flex direction="row" justifyContent="space-between" alignItems="baseline" mb={2}>
@@ -20,6 +20,8 @@ export const HomeUserStartedGoals: React.FC<{
         </PageLink>
       </Flex>
       <LearningGoalCardList
+        isLoading={isLoading}
+        noItemsMessage="No goals started"
         learningGoalItems={startedGoals.map((lg) => ({ learningGoal: lg }))}
         spacing="20px"
         renderCard={({ learningGoal }, hover) => <LearningGoalCard learningGoal={learningGoal} mouseHover={hover} />}

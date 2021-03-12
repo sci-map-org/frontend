@@ -87,32 +87,7 @@ export const HomePage: React.FC = () => {
           <HomeHeader />
         </Center>
       ) : (
-        <Flex direction="column" px="5%" mt={8}>
-          {data?.getHomePageData.currentUser?.startedLearningGoals?.length && (
-            <Box>
-              <HomeUserStartedGoals
-                startedGoals={data?.getHomePageData.currentUser?.startedLearningGoals.map((i) => i.learningGoal)}
-              />
-            </Box>
-          )}
-          <Flex direction={{ base: 'column', md: 'row' }} justifyContent="space-between" mt={8}>
-            {data?.getHomePageData.currentUser?.startedLearningPaths?.length && (
-              <Box w={{ base: '100%', md: '45%' }}>
-                <HomeUserStartedPaths
-                  startedPaths={data?.getHomePageData.currentUser?.startedLearningPaths.map((i) => i.learningPath)}
-                />
-              </Box>
-            )}
-            <Flex w={20} h={8}></Flex>
-            {data?.getHomePageData.currentUser?.consumedResources?.items.length && (
-              <Flex w={{ base: '100%', md: '45%' }}>
-                <HomeUserResourcesHistory
-                  consumedResourcesItems={data?.getHomePageData.currentUser?.consumedResources?.items}
-                />
-              </Flex>
-            )}
-          </Flex>
-        </Flex>
+        <UserDashboard data={data} loading={loading} />
       )}
 
       <RecommendationsBlock data={data} loading={loading} />
@@ -265,6 +240,40 @@ export const HomePage: React.FC = () => {
         <Divider width="50%" />
       </Flex> */}
       {/* <HomeFooter layoutProps={outerLayoutProps} /> */}
+    </Flex>
+  );
+};
+
+const UserDashboard: React.FC<{ data?: GetHomePageDataQuery; loading?: boolean }> = ({ data, loading }) => {
+  return (
+    <Flex direction="column" px="5%" mt={8}>
+      {data?.getHomePageData.currentUser?.startedLearningGoals && (
+        <Box>
+          <HomeUserStartedGoals
+            startedGoals={data.getHomePageData.currentUser.startedLearningGoals.map((i) => i.learningGoal)}
+            isLoading={loading}
+          />
+        </Box>
+      )}
+      <Flex direction={{ base: 'column', md: 'row' }} justifyContent="space-between" mt={8}>
+        {data?.getHomePageData.currentUser?.startedLearningPaths && (
+          <Box w={{ base: '100%', md: '45%' }}>
+            <HomeUserStartedPaths
+              startedPaths={data.getHomePageData.currentUser.startedLearningPaths.map((i) => i.learningPath)}
+              isLoading={loading}
+            />
+          </Box>
+        )}
+        <Flex w={20} h={8}></Flex>
+        {data?.getHomePageData.currentUser?.consumedResources?.items && (
+          <Flex w={{ base: '100%', md: '45%' }}>
+            <HomeUserResourcesHistory
+              consumedResourcesItems={data.getHomePageData.currentUser.consumedResources.items}
+              isLoading={loading}
+            />
+          </Flex>
+        )}
+      </Flex>
     </Flex>
   );
 };
