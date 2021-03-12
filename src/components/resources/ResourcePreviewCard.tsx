@@ -192,10 +192,11 @@ const BottomBlock: React.FC<{
   resource: ResourcePreviewDataFragment;
   isLoading?: boolean;
 }> = ({ domainKey, resource, isLoading }) => {
+  const { currentUser } = useCurrentUser();
   return (
     <Flex pb={2} pt={2} flexWrap="wrap">
       <BoxBlockDefaultClickPropagation display="flex" alignItems="center">
-        <EditableLearningMaterialTags learningMaterial={resource} isLoading={isLoading} />
+        <EditableLearningMaterialTags learningMaterial={resource} isLoading={isLoading} isDisabled={!currentUser} />
       </BoxBlockDefaultClickPropagation>
       <Box flexGrow={1} flexBasis={0} />
       <BoxBlockDefaultClickPropagation>
