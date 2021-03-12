@@ -130,7 +130,7 @@ const recommendedDomains: DomainLinkDataFragment[] = [
 export const HomeDomainsRecommendations: React.FC<{}> = () => {
   return (
     <Flex overflowX="scroll" direction="column">
-      <Flex justifyContent="space-between" alignItems="baseline" mb={1}>
+      <Flex justifyContent="space-between" alignItems="baseline" mb={3}>
         <Heading size="lg" color="gray.700">
           Learn anything
         </Heading>
@@ -138,7 +138,7 @@ export const HomeDomainsRecommendations: React.FC<{}> = () => {
           See all
         </PageLink>
       </Flex>
-      <Stack direction="row" overflowX="scroll" py={2} spacing={4}>
+      <Stack direction="row" overflowX="scroll" spacing={4}>
         {recommendedDomains.map((domain) => (
           <DomainCard domain={domain} key={domain._id} />
         ))}

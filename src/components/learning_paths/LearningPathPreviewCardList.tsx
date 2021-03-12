@@ -8,7 +8,6 @@ interface LearningPathPreviewCardListProps {
   h?: FlexProps['h'];
 }
 
-/**Deprecated */
 export const LearningPathPreviewCardList: React.FC<LearningPathPreviewCardListProps> = ({
   learningPaths,
   isLoading,
@@ -17,13 +16,13 @@ export const LearningPathPreviewCardList: React.FC<LearningPathPreviewCardListPr
   return (
     <Flex
       h={h}
-      overflow="hidden"
-      overflowY="scroll"
+      // overflow="hidden"
+      // overflowY="scroll"
       direction="column"
       alignItems="stretch"
       backgroundColor="backgroundColor.0"
       borderTopWidth="1px"
-      borderBottomWidth="1px"
+      // borderBottomWidth="1px"
       borderColor="gray.200"
     >
       {learningPaths.map((learningPath, index) => (

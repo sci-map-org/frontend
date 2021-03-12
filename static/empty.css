@@ -21,7 +21,8 @@
 }
 
 #homeHeader2 {
-  background-color: #f9f8fb;
+  /* background-color: #f9f8fb; */
+  background-color: white;
   /* Change path color, size (zoom in pattern or not) and path opacity in the svg file */
   background-image: url(/static/topography_bg2.svg);
 }

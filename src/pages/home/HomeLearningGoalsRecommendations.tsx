@@ -1,6 +1,8 @@
-import { Flex, Heading } from '@chakra-ui/react';
+import { Flex, Heading, Stack } from '@chakra-ui/react';
 import { LearningGoalCard } from '../../components/learning_goals/cards/LearningGoalCard';
 import { LearningGoalCardList } from '../../components/learning_goals/cards/LearningGoalCardList';
+import { LearningGoalCardWrapper } from '../../components/learning_goals/cards/LearningGoalCardWrapper';
+import { LearningGoalIcon } from '../../components/lib/icons/LearningGoalIcon';
 import { LearningGoalLinkDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
 
 export const HomeLearningGoalsRecommendations: React.FC<{
@@ -9,15 +11,23 @@ export const HomeLearningGoalsRecommendations: React.FC<{
 }> = ({ learningGoals }) => {
   return (
     <Flex direction="column" w="100%">
-      <Flex mb={2}>
-        <Heading size="md" color="gray.700">
+      <Stack mb={3} direction="row" alignItems="stretch">
+        <LearningGoalIcon boxSize="33px" />
+        <Heading size="lg" color="gray.700">
           Trending goals
         </Heading>
-      </Flex>
-      <LearningGoalCardList
+      </Stack>
+      <LearningGoalCardWrapper
         learningGoalItems={learningGoals.map((lg) => ({ learningGoal: lg }))}
         spacing="20px"
         renderCard={({ learningGoal }, hover) => <LearningGoalCard learningGoal={learningGoal} mouseHover={hover} />}
+        nbItemsResponsiveMapping={{
+          base: 2,
+          sm: 3,
+          md: 3,
+          lg: 2,
+          xl: 2,
+        }}
       />
     </Flex>
   );

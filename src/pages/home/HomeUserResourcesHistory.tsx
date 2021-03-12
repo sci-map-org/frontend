@@ -26,7 +26,7 @@ export const HomeUserResourcesHistory: React.FC<HomeUserResourcesHistoryProps> =
       <Heading size="md" mb={2} color="gray.700">
         Last Opened Resources
       </Heading>
-      <Stack spacing={0} alignItems="stretch" direction="column" overflow="hidden" overflowY="scroll" h="200px">
+      <Flex alignItems="stretch" direction="column" overflow="hidden" overflowY="scroll" h="200px">
         {consumedResourcesItems.map((resourceItem, idx) => (
           <LastOpenedResourceCard
             key={resourceItem.resource._id}
@@ -34,7 +34,7 @@ export const HomeUserResourcesHistory: React.FC<HomeUserResourcesHistoryProps> =
             firstItemInList={idx === 0}
           />
         ))}
-      </Stack>
+      </Flex>
     </Flex>
   );
 };

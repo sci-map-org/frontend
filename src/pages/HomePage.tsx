@@ -1,4 +1,16 @@
-import { Box, Center, Divider, Flex, FlexProps, Heading, Image, Link, Stack, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Center,
+  Divider,
+  Flex,
+  FlexProps,
+  Heading,
+  Image,
+  Link,
+  Stack,
+  Text,
+  useBreakpointValue,
+} from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import React, { ReactNode } from 'react';
 import { LearningGoalCardData } from '../components/learning_goals/cards/LearningGoalCard';
@@ -13,7 +25,7 @@ import { HomeLearningGoalsRecommendations } from './home/HomeLearningGoalsRecomm
 import { HomeLearningPathsRecommendations } from './home/HomeLearningPathsRecommendations';
 import { HomeUserStartedGoals } from './home/HomeUserStartedGoals';
 import { HomeUserStartedPaths, StartedLearningPathCardData } from './home/HomeUserStartedPaths';
-import { useGetHomePageDataQuery } from './HomePage.generated';
+import { GetHomePageDataQuery, useGetHomePageDataQuery } from './HomePage.generated';
 import { HomeUserResourcesHistory } from './home/HomeUserResourcesHistory';
 
 export const getHomePageData = gql`
@@ -75,7 +87,7 @@ export const HomePage: React.FC = () => {
           <HomeHeader />
         </Center>
       ) : (
-        <Stack direction="column" px="5%" spacing={16}>
+        <Flex direction="column" px="5%" mt={8}>
           {data?.getHomePageData.currentUser?.startedLearningGoals?.length && (
             <Box>
               <HomeUserStartedGoals
@@ -83,40 +95,27 @@ export const HomePage: React.FC = () => {
               />
             </Box>
           )}
-          <Flex direction="row" justifyContent="space-between">
+          <Flex direction={{ base: 'column', md: 'row' }} justifyContent="space-between" mt={8}>
             {data?.getHomePageData.currentUser?.startedLearningPaths?.length && (
-              <Box w="45%">
+              <Box w={{ base: '100%', md: '45%' }}>
                 <HomeUserStartedPaths
                   startedPaths={data?.getHomePageData.currentUser?.startedLearningPaths.map((i) => i.learningPath)}
                 />
               </Box>
             )}
+            <Flex w={20} h={8}></Flex>
             {data?.getHomePageData.currentUser?.consumedResources?.items.length && (
-              <Flex w="45%">
+              <Flex w={{ base: '100%', md: '45%' }}>
                 <HomeUserResourcesHistory
                   consumedResourcesItems={data?.getHomePageData.currentUser?.consumedResources?.items}
                 />
               </Flex>
             )}
           </Flex>
-        </Stack>
+        </Flex>
       )}
 
-      <Center px="5%" mb={10} mt={4}>
-        <HomeDomainsRecommendations />
-      </Center>
-      <Center px="5%" mb={3}>
-        <Stack direction={{ base: 'column', md: 'row' }}>
-          <HomeLearningGoalsRecommendations
-            learningGoals={data?.getHomePageData.recommendedLearningGoals || []}
-            isLoading={loading}
-          />
-          <HomeLearningPathsRecommendations
-            learningPaths={data?.getHomePageData.recommendedLearningPaths || []}
-            isLoading={loading}
-          />
-        </Stack>
-      </Center>
+      <RecommendationsBlock data={data} loading={loading} />
       <Flex
         px="5%"
         mt={10}
@@ -262,11 +261,39 @@ export const HomePage: React.FC = () => {
           Learn more
         </InternalButtonLink>
       </Flex>
-      <Flex justifyContent="center">
+      {/* <Flex justifyContent="center">
         <Divider width="50%" />
-      </Flex>
-      <HomeFooter layoutProps={outerLayoutProps} />
+      </Flex> */}
+      {/* <HomeFooter layoutProps={outerLayoutProps} /> */}
     </Flex>
+  );
+};
+
+const RecommendationsBlock: React.FC<{ data?: GetHomePageDataQuery; loading?: boolean }> = ({ data, loading }) => {
+  const orientation = useBreakpointValue<'horizontal' | 'vertical'>({ base: 'horizontal', md: 'vertical' });
+  return (
+    <>
+      <Center px="5%" mb={10} mt={12}>
+        <HomeDomainsRecommendations />
+      </Center>
+      <Center px="5%" mb={3}>
+        <Stack direction={{ base: 'column', lg: 'row' }}>
+          <Flex maxWidth={{ base: '100%', lg: '60%' }} minWidth={{ lg: '40%' }}>
+            <HomeLearningGoalsRecommendations
+              learningGoals={data?.getHomePageData.recommendedLearningGoals || []}
+              isLoading={loading}
+            />
+          </Flex>
+          <Flex w={20} h={8}></Flex>
+          <Flex minWidth={{ lg: '40%' }} maxWidth={{ lg: '60%' }}>
+            <HomeLearningPathsRecommendations
+              learningPaths={data?.getHomePageData.recommendedLearningPaths || []}
+              isLoading={loading}
+            />
+          </Flex>
+        </Stack>
+      </Center>
+    </>
   );
 };
 
@@ -308,7 +335,7 @@ const HomeHeader: React.FC<{ layoutProps?: FlexProps }> = ({ layoutProps = {} })
             </Text>{' '}
             in a smart way
           </Heading>
-          <Flex mt={10} mb={8} opacity={0.5} w="100%" direction="column">
+          <Flex mt={10} mb={8} opacity={0.7} w="100%" direction="column">
             <Text
               bgColor="blackAlpha.900"
               borderRadius={8}
@@ -317,9 +344,9 @@ const HomeHeader: React.FC<{ layoutProps?: FlexProps }> = ({ layoutProps = {} })
               w="80%"
               fontSize="xl"
               color="white"
-              opacity={1}
+              // opacity={0.5}
               fontWeight={500}
-              py="2px"
+              // py="2px"
             >
               Find the best online resources, learn from curated learning paths and community created roadmaps, etc.
             </Text>

@@ -24,11 +24,11 @@ export const HomeUserStartedPaths: React.FC<{
         </Heading>
       </Box>
 
-      <Stack spacing={0} alignItems="stretch" direction="column" overflow="hidden" overflowY="scroll">
+      <Flex alignItems="stretch" direction="column" overflow="hidden" overflowY="scroll">
         {startedPaths.map((startedPath, idx) => (
           <StartedLearningPathCard key={startedPath._id} learningPath={startedPath} firstItemInList={idx === 0} />
         ))}
-      </Stack>
+      </Flex>
     </Flex>
   );
 };

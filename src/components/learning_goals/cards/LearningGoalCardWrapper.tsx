@@ -7,9 +7,10 @@ interface LearningGoalCardWrapperProps<T extends { learningGoal: Pick<LearningGo
   learningGoalItems: T[];
   renderCard: (learningGoalItem: T, mouseHover: boolean) => ReactNode;
   spacing?: string;
+  nbItemsResponsiveMapping?: typeof defaultNbItemsResponsiveMapping;
 }
 
-const nbItemsResponsiveMapping = {
+const defaultNbItemsResponsiveMapping = {
   base: 2,
   sm: 3,
   md: 3,
@@ -17,28 +18,39 @@ const nbItemsResponsiveMapping = {
   xl: 4,
 };
 
-const getWidthPercentage = (size: keyof typeof nbItemsResponsiveMapping) => {
+const getWidthPercentage = (
+  size: keyof typeof defaultNbItemsResponsiveMapping,
+  nbItemsResponsiveMapping: typeof defaultNbItemsResponsiveMapping
+) => {
   return Math.floor(100 / nbItemsResponsiveMapping[size]);
 };
 
-const widthMapping = (spacing: string): WrapProps['maxW'] =>
+const widthMapping = (
+  spacing: string,
+  nbItemsResponsiveMapping: typeof defaultNbItemsResponsiveMapping
+): WrapProps['maxW'] =>
   Object.entries(nbItemsResponsiveMapping).reduce((acc, [key, value]) => {
     // @ts-ignore
-    acc[key] = `calc(${getWidthPercentage(key)}% - ${spacing})`;
+    acc[key] = `calc(${getWidthPercentage(key, nbItemsResponsiveMapping)}% - ${spacing})`;
     return acc;
   }, {} as { [key in keyof typeof nbItemsResponsiveMapping]: string });
 
-export const LearningGoalCardWrapper = <T extends { learningGoal: Pick<LearningGoal, '_id' | '__typename'> }>({
+export const LearningGoalCardWrapper = <
+  T extends {
+    learningGoal: Pick<LearningGoal, '_id' | '__typename'>;
+  }
+>({
   learningGoalItems,
   renderCard,
+  nbItemsResponsiveMapping = defaultNbItemsResponsiveMapping,
   spacing = '30px',
 }: PropsWithChildren<LearningGoalCardWrapperProps<T>>) => {
   return (
     <Wrap w="100%" spacing={spacing} justify="center" justifyContent="space-between">
       {learningGoalItems.map((learningGoalItem) => (
         <WrapItem
-          maxW={widthMapping(spacing)}
-          minW={widthMapping(spacing)}
+          maxW={widthMapping(spacing, nbItemsResponsiveMapping)}
+          minW={widthMapping(spacing, nbItemsResponsiveMapping)}
           h={{ base: '100px', md: '140px' }}
           key={learningGoalItem.learningGoal._id}
         >
