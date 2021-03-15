@@ -67,6 +67,9 @@ const typeToMediaTypeMapping: { [key in ResourceType]: ResourceMediaType | null 
   [ResourceType.YoutubeVideo]: ResourceMediaType.Video,
   [ResourceType.YoutubePlaylist]: ResourceMediaType.Video,
   [ResourceType.VideoGame]: ResourceMediaType.InteractiveContent,
+  [ResourceType.Exercise]: null,
+  [ResourceType.Project]: ResourceMediaType.Text,
+  [ResourceType.Quizz]: ResourceMediaType.InteractiveContent,
 };
 
 type SubResourceCreationData = Omit<
