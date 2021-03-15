@@ -46,13 +46,14 @@ export const LearningPathCompletion: React.FC<LearningPathCompletionProps> = ({ 
 };
 
 const sizes: {
-  [key in 'md' | '2xl']: {
+  [key in 'sm' | 'md' | '2xl']: {
     progressWidth: string | number;
     progressThickness: string;
     buttonHeight: string;
     iconSize: number;
   };
 } = {
+  sm: { progressWidth: '36px', progressThickness: '6px', buttonHeight: '34px', iconSize: 34 },
   md: { progressWidth: '46px', progressThickness: '7px', buttonHeight: '44px', iconSize: 44 },
   '2xl': { progressWidth: '90px', progressThickness: '9px', buttonHeight: '83px', iconSize: 83 },
 };

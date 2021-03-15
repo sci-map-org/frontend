@@ -5,7 +5,6 @@ import {
   Flex,
   FlexProps,
   IconButton,
-  Link,
   Popover,
   PopoverArrow,
   PopoverBody,
@@ -41,7 +40,7 @@ import { DurationViewer } from './elements/Duration';
 import { ResourceCompletedCheckbox } from './elements/ResourceCompletedCheckbox';
 import { ResourceDescription } from './elements/ResourceDescription';
 import { ResourceTypeIcon } from './elements/ResourceType';
-import { ResourceUrlLink } from './elements/ResourceUrl';
+import { ResourceUrlLinkViewer, ResourceUrlLinkWrapper } from './elements/ResourceUrl';
 import { ResourceYoutubePlayer } from './elements/ResourceYoutubePlayer';
 
 interface ResourcePreviewCardProps {
@@ -172,18 +171,18 @@ const TitleLink: React.FC<{ resource: ResourcePreviewDataFragment; isLoading?: b
 }) => {
   return (
     <BoxBlockDefaultClickPropagation>
-      <Link
+      <ResourceUrlLinkWrapper
         display="flex"
         alignItems="baseline"
         flexDirection={{ base: 'column', md: 'row' }}
-        href={resource.url}
-        isExternal
+        resource={resource}
+        isLoading={isLoading}
       >
         <Text mr={1} as="span" fontSize="xl">
-          {/* @ts-ignore */}
-          {resource.name} <ResourceUrlLink resource={resource} isLoading={isLoading} as="span" />
+          {resource.name}
         </Text>
-      </Link>
+        <ResourceUrlLinkViewer resource={resource} maxLength={30} />
+      </ResourceUrlLinkWrapper>
     </BoxBlockDefaultClickPropagation>
   );
 };
@@ -193,10 +192,11 @@ const BottomBlock: React.FC<{
   resource: ResourcePreviewDataFragment;
   isLoading?: boolean;
 }> = ({ domainKey, resource, isLoading }) => {
+  const { currentUser } = useCurrentUser();
   return (
     <Flex pb={2} pt={2} flexWrap="wrap">
       <BoxBlockDefaultClickPropagation display="flex" alignItems="center">
-        <EditableLearningMaterialTags learningMaterial={resource} isLoading={isLoading} />
+        <EditableLearningMaterialTags learningMaterial={resource} isLoading={isLoading} isDisabled={!currentUser} />
       </BoxBlockDefaultClickPropagation>
       <Box flexGrow={1} flexBasis={0} />
       <BoxBlockDefaultClickPropagation>

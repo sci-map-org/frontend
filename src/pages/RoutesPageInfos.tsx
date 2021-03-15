@@ -9,6 +9,14 @@ import { ResourceDataFragment } from '../graphql/resources/resources.fragments.g
 import { PageInfo } from './PageInfo';
 
 // ====Domains====
+export const DomainsListPagePath = '/domains';
+
+export const DomainsListPageInfo: PageInfo = {
+  name: 'Topics',
+  path: DomainsListPagePath,
+  routePath: DomainsListPagePath,
+};
+
 export const DomainPagePath = (domainKey: string) => `/domains/${domainKey}`;
 
 export const DomainPageInfo = (domain: DomainLinkDataFragment): PageInfo => ({
@@ -112,3 +120,11 @@ export const LearningPathPageInfo = (learningPath: Pick<LearningPathDataFragment
   path: LearningPathPagePath(learningPath.key),
   routePath: LearningPathPagePath(),
 });
+
+//====User Profile====
+export const CurrentUserLearningGoalsPagePath = '/profile/goals';
+export const CurrentUserLearningGoalsPageInfo = {
+  name: 'My Goals',
+  path: CurrentUserLearningGoalsPagePath,
+  routePath: CurrentUserLearningGoalsPagePath,
+};

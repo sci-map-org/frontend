@@ -1,5 +1,6 @@
 import { Badge, Box, Flex, FlexProps, Skeleton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
+import { ReactNode } from 'react';
 import { LearningMaterialWithCoveredConceptsByDomainData } from '../../graphql/learning_materials/learning_materials.fragments';
 import { LearningPathData } from '../../graphql/learning_paths/learning_paths.fragments';
 import { routerPushToPage } from '../../pages/PageInfo';
@@ -8,15 +9,14 @@ import {
   LearningMaterialCardContainer,
   LearningMaterialCardCoveredTopics,
 } from '../learning_materials/LearningMaterialCardContainer';
-import { StarsRatingViewer } from '../lib/StarsRating';
 import { EditableLearningMaterialTags } from '../learning_materials/LearningMaterialTagsEditor';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
+import { StarsRatingViewer } from '../lib/StarsRating';
 import { DurationViewer } from '../resources/elements/Duration';
 import { ResourceDescription } from '../resources/elements/ResourceDescription';
 import { UserAvatarData } from '../users/UserAvatar';
 import { LearningPathCircularCompletion, LearningPathCompletionData } from './LearningPathCompletion';
 import { LearningPathPreviewCardDataFragment } from './LearningPathPreviewCard.generated';
-import { ReactNode } from 'react';
 
 export const LearningPathPreviewCardData = gql`
   fragment LearningPathPreviewCardData on LearningPath {
@@ -70,7 +70,7 @@ export const LearningPathPreviewCard: React.FC<LearningPathPreviewCardProps> = (
       renderBottom={
         <Flex pb={2} pt={2} flexWrap="wrap">
           <BoxBlockDefaultClickPropagation>
-            <EditableLearningMaterialTags learningMaterial={learningPath} isLoading={isLoading} />
+            <EditableLearningMaterialTags learningMaterial={learningPath} isLoading={isLoading} isDisabled />
           </BoxBlockDefaultClickPropagation>
           <Box flexGrow={1} flexBasis={0} />
 

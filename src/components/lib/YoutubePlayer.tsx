@@ -8,9 +8,18 @@ interface YoutubePlayerProps {
   playing?: boolean;
   skipThumbnail?: boolean;
   onEnded?: () => void;
+  onStart?: () => void;
 }
 
-export const YoutubePlayer: React.FC<YoutubePlayerProps> = ({ videoUrl, h, w, playing, onEnded, skipThumbnail }) => {
+export const YoutubePlayer: React.FC<YoutubePlayerProps> = ({
+  videoUrl,
+  h,
+  w,
+  playing,
+  onEnded,
+  onStart,
+  skipThumbnail,
+}) => {
   return (
     <ReactPlayer
       url={videoUrl}
@@ -20,6 +29,7 @@ export const YoutubePlayer: React.FC<YoutubePlayerProps> = ({ videoUrl, h, w, pl
       playing={playing}
       controls
       onEnded={onEnded}
+      onStart={onStart}
     />
   );
 };

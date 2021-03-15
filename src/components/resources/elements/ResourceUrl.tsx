@@ -10,55 +10,72 @@ import {
   LinkProps,
   Skeleton,
   Stack,
+  Text,
+  TextProps,
 } from '@chakra-ui/react';
-import gql from 'graphql-tag';
 import { useEffect } from 'react';
 import { BeatLoader } from 'react-spinners';
 import { ResourcePreviewDataFragment } from '../../../graphql/resources/resources.fragments.generated';
-import { useAnalyzeResourceUrlLazyQuery } from '../../../graphql/resources/resources.operations.generated';
+import {
+  useAnalyzeResourceUrlLazyQuery,
+  useSetResourceOpenedMutation,
+} from '../../../graphql/resources/resources.operations.generated';
 import { AnalyzeResourceUrlResult } from '../../../graphql/types';
 import { toUrlPreview, validateUrl } from '../../../services/url.service';
 import { theme } from '../../../theme/theme';
-import { useSetResourceOpenedMutation } from './ResourceUrl.generated';
 
-export const setResourceOpened = gql`
-  mutation setResourceOpened($resourceId: String!) {
-    setResourcesConsumed(payload: { resources: [{ resourceId: $resourceId, opened: true }] }) {
-      _id
-      consumed {
-        openedAt
-      }
-    }
-  }
-`;
+export const ResourceUrlLinkWrapper: React.FC<
+  {
+    resource: Pick<ResourcePreviewDataFragment, '_id' | 'consumed' | 'url'>;
+    isLoading?: boolean;
+  } & Omit<LinkProps, 'href' | 'onClick' | 'isExternal' | 'resource'>
+> = ({ resource, isLoading, children, ...linkProps }) => {
+  const [setResourceOpened] = useSetResourceOpenedMutation({ variables: { resourceId: resource._id } });
+  return (
+    <Skeleton as="span" isLoaded={!isLoading}>
+      <Link
+        {...linkProps}
+        href={resource.url}
+        onClick={() => {
+          setResourceOpened();
+        }}
+        isExternal
+      >
+        {children}
+      </Link>
+    </Skeleton>
+  );
+};
 
+export const ResourceUrlLinkViewer: React.FC<
+  {
+    resource: Pick<ResourcePreviewDataFragment, '_id' | 'consumed' | 'url'>;
+    maxLength?: number;
+  } & Omit<TextProps, 'resource'>
+> = ({ resource, maxLength, ...props }) => {
+  return (
+    <Text
+      whiteSpace="nowrap"
+      color={resource.consumed && resource.consumed.openedAt ? 'blue.700' : 'blue.400'}
+      fontSize="sm"
+      {...props}
+    >
+      {toUrlPreview(resource.url, maxLength)}
+      <ExternalLinkIcon mx="2px" />
+    </Text>
+  );
+};
 export const ResourceUrlLink: React.FC<
   {
     resource: Pick<ResourcePreviewDataFragment, '_id' | 'consumed' | 'url'>;
     isLoading?: boolean;
     maxLength?: number;
   } & Omit<LinkProps, 'href' | 'onClick' | 'isExternal' | 'resource'>
-> = ({ resource, isLoading, maxLength, ...linkProps }) => {
-  const [setResourceOpened] = useSetResourceOpenedMutation({ variables: { resourceId: resource._id } });
+> = ({ resource, isLoading, maxLength, children, ...linkProps }) => {
   return (
-    <Skeleton as="span" isLoaded={!isLoading}>
-      <Link
-        whiteSpace="nowrap"
-        color={resource.consumed && resource.consumed.openedAt ? 'blue.400' : 'blue.700'}
-        fontSize="sm"
-        {...linkProps}
-        href={resource.url}
-        onClick={() => {
-          if (!resource.consumed || !resource.consumed.openedAt) {
-            setResourceOpened();
-          }
-        }}
-        isExternal
-      >
-        {toUrlPreview(resource.url, maxLength)}
-        <ExternalLinkIcon mx="2px" />
-      </Link>
-    </Skeleton>
+    <ResourceUrlLinkWrapper resource={resource} isLoading={isLoading} {...linkProps}>
+      <ResourceUrlLinkViewer resource={resource} maxLength={maxLength} />
+    </ResourceUrlLinkWrapper>
   );
 };
 

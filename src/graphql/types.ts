@@ -13,6 +13,7 @@ export type Scalars = {
 
 export type Query = {
   __typename?: 'Query';
+  getHomePageData: GetHomePageDataResults;
   searchTopics: SearchTopicsResult;
   searchSubTopics: SearchTopicsResult;
   checkTopicKeyAvailability: CheckTopicKeyAvailabilityResult;
@@ -569,6 +570,13 @@ export type MutationRemoveConceptReferencesConceptArgs = {
 };
 
 
+export type GetHomePageDataResults = {
+  __typename?: 'GetHomePageDataResults';
+  currentUser?: Maybe<CurrentUser>;
+  recommendedLearningGoals: Array<LearningGoal>;
+  recommendedLearningPaths: Array<LearningPath>;
+};
+
 export type SearchTopicsResult = {
   __typename?: 'SearchTopicsResult';
   items: Array<Topic>;
@@ -604,6 +612,7 @@ export type CurrentUser = {
   startedLearningPaths?: Maybe<Array<LearningPathStartedItem>>;
   createdLearningGoals?: Maybe<Array<LearningGoalCreatedItem>>;
   startedLearningGoals?: Maybe<Array<LearningGoalStartedItem>>;
+  consumedResources?: Maybe<UserConsumedResourcesResult>;
 };
 
 
@@ -629,6 +638,11 @@ export type CurrentUserCreatedLearningGoalsArgs = {
 
 export type CurrentUserStartedLearningGoalsArgs = {
   options: UserLearningGoalsOptions;
+};
+
+
+export type CurrentUserConsumedResourcesArgs = {
+  options: UserConsumedResourcesOptions;
 };
 
 export type User = {
@@ -1226,6 +1240,18 @@ export type LearningGoalStartedItem = {
   startedAt: Scalars['Date'];
 };
 
+export type UserConsumedResourcesResult = {
+  __typename?: 'UserConsumedResourcesResult';
+  items: Array<UserConsumedResourceItem>;
+  count: Scalars['Int'];
+};
+
+export type UserConsumedResourcesOptions = {
+  filter?: Maybe<UserConsumedResourcesFilter>;
+  sorting: UserConsumedResourcesSortingType;
+  pagination?: Maybe<PaginationOptions>;
+};
+
 export enum ArticleContentType {
   Markdown = 'markdown'
 }
@@ -1332,6 +1358,7 @@ export type LearningMaterialTag = {
 export type ConsumedResource = {
   __typename?: 'ConsumedResource';
   openedAt?: Maybe<Scalars['Date']>;
+  lastOpenedAt?: Maybe<Scalars['Date']>;
   consumedAt?: Maybe<Scalars['Date']>;
 };
 
@@ -1513,6 +1540,22 @@ export type CreateLearningPathResourceItem = {
 };
 
 export type SubGoal = LearningGoal | Concept;
+
+export type UserConsumedResourceItem = {
+  __typename?: 'UserConsumedResourceItem';
+  resource: Resource;
+  openedAt?: Maybe<Scalars['Date']>;
+  lastOpenedAt?: Maybe<Scalars['Date']>;
+  consumedAt?: Maybe<Scalars['Date']>;
+};
+
+export type UserConsumedResourcesFilter = {
+  completed?: Maybe<Scalars['Boolean']>;
+};
+
+export enum UserConsumedResourcesSortingType {
+  LastOpened = 'lastOpened'
+}
 
 export type DomainConceptsItem = {
   __typename?: 'DomainConceptsItem';

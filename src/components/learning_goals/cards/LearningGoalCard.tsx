@@ -6,6 +6,7 @@ import { routerPushToPage } from '../../../pages/PageInfo';
 import { LearningGoalPageInfo } from '../../../pages/RoutesPageInfos';
 import { PageLink } from '../../navigation/InternalLink';
 import { LearningGoalLinearProgress, LearningGoalLinearProgressData } from '../LearningGoalLinearProgress';
+import { LearningGoalTypeIcon } from '../LearningGoalTypeIcon';
 import { LearningGoalCardDataFragment } from './LearningGoalCard.generated';
 
 export const LearningGoalCardData = gql`
@@ -68,11 +69,12 @@ export const LearningGoalCard: React.FC<LearningGoalCardProps> = ({ learningGoal
     >
       <Flex
         flexGrow={1}
+        position="relative"
         direction="column"
         bgColor={learningGoalStatusStyleMapping.cardBackgroundColor[status]}
         pl={{ base: 2, md: 4 }}
         pr={2}
-        pt={{ base: 2, md: 5 }}
+        pt={{ base: 2, md: 4 }}
         overflow="hidden"
         borderWidth={2}
         borderBottomWidth={0}
@@ -94,6 +96,14 @@ export const LearningGoalCard: React.FC<LearningGoalCardProps> = ({ learningGoal
         >
           {learningGoal.name}
         </PageLink>
+        <LearningGoalTypeIcon
+          position="absolute"
+          bottom="5px"
+          right="5px"
+          type={learningGoal.type}
+          boxSize={{ base: 5, md: 7 }}
+          color={learningGoalStatusStyleMapping.fontColor[status]}
+        />
       </Flex>
 
       {showProgressBar && (
