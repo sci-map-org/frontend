@@ -1,6 +1,6 @@
 import * as Types from '../../graphql/types';
 
-import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
+import { DomainDataFragment, DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { LearningGoalCardDataFragment } from '../../components/learning_goals/cards/LearningGoalCard.generated';
 import * as Operations from './DomainPage';
@@ -39,11 +39,17 @@ export type GetDomainByKeyDomainPageQuery = (
           & Pick<Types.ConceptBelongsToDomain, 'index'>
         ) }
       )> }
-    )>, subDomains?: Types.Maybe<Array<(
+    )>, parentDomains?: Types.Maybe<Array<(
       { __typename?: 'DomainBelongsToDomainItem' }
       & { domain: (
         { __typename?: 'Domain' }
-        & DomainDataFragment
+        & DomainLinkDataFragment
+      ) }
+    )>>, subDomains?: Types.Maybe<Array<(
+      { __typename?: 'DomainBelongsToDomainItem' }
+      & { domain: (
+        { __typename?: 'Domain' }
+        & DomainLinkDataFragment
       ) }
     )>>, learningGoals?: Types.Maybe<Array<(
       { __typename?: 'LearningGoalBelongsToDomain' }

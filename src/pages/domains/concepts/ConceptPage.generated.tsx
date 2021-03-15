@@ -2,7 +2,7 @@ import * as Types from '../../../graphql/types';
 
 import { ConceptDataFragment } from '../../../graphql/concepts/concepts.fragments.generated';
 import { ResourcePreviewDataFragment } from '../../../graphql/resources/resources.fragments.generated';
-import { DomainDataFragment } from '../../../graphql/domains/domains.fragments.generated';
+import { DomainDataFragment, DomainLinkDataFragment } from '../../../graphql/domains/domains.fragments.generated';
 import * as Operations from './ConceptPage';
 import * as Apollo from '@apollo/client';
 export type GetConceptConceptPageQueryVariables = Types.Exact<{

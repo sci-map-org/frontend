@@ -3,6 +3,7 @@ import gql from 'graphql-tag';
 import Router, { useRouter } from 'next/router';
 import { Access } from '../../components/auth/Access';
 import { RoleAccess } from '../../components/auth/RoleAccess';
+import { ParentDomainsNavigationBlock } from '../../components/domains/ParentDomainsNavigationBlock';
 import { PageLayout } from '../../components/layout/PageLayout';
 import {
   EditableLearningMaterialOutcomes,
@@ -132,6 +133,9 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
         )
       }
       renderTopRight={<TopRightIconButtons loading={loading} resource={resource} />}
+      renderTopLeft={
+        <ParentDomainsNavigationBlock domains={(resource.coveredConceptsByDomain || []).map(({ domain }) => domain)} />
+      }
     >
       <Stack w={['30rem', '36rem', '40rem', '50rem']} spacing={4}>
         {resource.parentResources && resource.parentResources.length && (

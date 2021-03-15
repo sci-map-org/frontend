@@ -63,6 +63,7 @@ import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { GetLearningPathPageQuery, useGetLearningPathPageQuery } from './LearningPathPage.generated';
 import { LearningPathPublishButton } from '../../components/learning_paths/LearningPathPublishButton';
 import { OtherLearnersViewer } from '../../components/lib/OtherLearnersViewer';
+import { ParentDomainsNavigationBlock } from '../../components/domains/ParentDomainsNavigationBlock';
 
 export const getLearningPathPage = gql`
   query getLearningPathPage($key: String!) {
@@ -176,6 +177,11 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
           isDisabled={loading}
           editMode={editMode}
           setEditMode={setEditMode}
+        />
+      }
+      renderTopLeft={
+        <ParentDomainsNavigationBlock
+          domains={(learningPath.coveredConceptsByDomain || []).map(({ domain }) => domain)}
         />
       }
     >

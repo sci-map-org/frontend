@@ -26,6 +26,7 @@ interface PageLayoutProps {
   breadCrumbsLinks?: NavigationBreadcrumbsProps['links'];
   title?: string;
   renderTopRight?: ReactNode;
+  renderTopLeft?: ReactNode;
   centerChildren?: boolean;
   isLoading?: boolean;
   accessRule?: RoleAccessAllowedRule | boolean;
@@ -37,6 +38,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   mode,
   breadCrumbsLinks,
   title,
+  renderTopLeft,
   renderTopRight,
   renderLeft,
   renderRight,
@@ -63,15 +65,16 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
       backgroundColor="backgroundColor.1"
       maxWidth={{ base: '100%', md: '1800px' }}
     >
-      {(breadCrumbsLinks || renderTopRight) && (
+      {(breadCrumbsLinks || renderTopRight || renderTopLeft) && (
         <Flex direction="row" justifyContent="space-between" pb="8px" pl={6}>
-          {breadCrumbsLinks && breadCrumbsLinks.length ? (
-            <Skeleton isLoaded={!isLoading}>
-              <NavigationBreadcrumbs links={breadCrumbsLinks} />
-            </Skeleton>
-          ) : (
-            <Box />
-          )}
+          <Flex direction="column">
+            {breadCrumbsLinks && breadCrumbsLinks.length && (
+              <Skeleton isLoaded={!isLoading}>
+                <NavigationBreadcrumbs links={breadCrumbsLinks} />
+              </Skeleton>
+            )}
+            {renderTopLeft}
+          </Flex>
           <Box pr={6}>{renderTopRight}</Box>
         </Flex>
       )}

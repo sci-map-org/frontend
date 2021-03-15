@@ -4,7 +4,7 @@ import { LearningGoalLinkDataFragment } from '../../graphql/learning_goals/learn
 import { LearningGoalCircularProgressDataFragment } from './LearningGoalCircularProgress.generated';
 import { LearningGoalBadgeDataFragment } from './LearningGoalBadge.generated';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
-import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
+import { DomainDataFragment, DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
 export type ConceptSubGoalCardDataFragment = (
   { __typename?: 'Concept' }
   & Pick<Types.Concept, '_id' | 'key' | 'name'>

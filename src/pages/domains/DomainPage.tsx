@@ -10,6 +10,7 @@ import { DomainConceptList } from '../../components/concepts/DomainConceptList';
 import { BestXPagesLinks } from '../../components/domains/BestXPagesLinks';
 import { DomainLearningGoals } from '../../components/domains/DomainLearningGoals';
 import { DomainUserHistory } from '../../components/domains/DomainUserHistory';
+import { ParentDomainsNavigationBlock } from '../../components/domains/ParentDomainsNavigationBlock';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { LearningGoalCardData } from '../../components/learning_goals/cards/LearningGoalCard';
 import { LearningPathPreviewCardDataFragment } from '../../components/learning_paths/LearningPathPreviewCard.generated';
@@ -17,7 +18,7 @@ import { InternalButtonLink, InternalLink, PageLink } from '../../components/nav
 import { DomainRecommendedLearningMaterials } from '../../components/resources/DomainRecommendedLearningMaterials';
 import { useGetDomainRecommendedLearningMaterialsQuery } from '../../components/resources/DomainRecommendedLearningMaterials.generated';
 import { ConceptData, generateConceptData } from '../../graphql/concepts/concepts.fragments';
-import { DomainData, generateDomainData } from '../../graphql/domains/domains.fragments';
+import { DomainData, DomainLinkData, generateDomainData } from '../../graphql/domains/domains.fragments';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { DomainLearningMaterialsOptions, DomainLearningMaterialsSortingType } from '../../graphql/types';
 import { routerPushToPage } from '../PageInfo';
@@ -48,9 +49,14 @@ export const getDomainByKeyDomainPage = gql`
           }
         }
       }
+      parentDomains {
+        domain {
+          ...DomainLinkData
+        }
+      }
       subDomains {
         domain {
-          ...DomainData
+          ...DomainLinkData
         }
       }
       learningGoals {
@@ -62,6 +68,7 @@ export const getDomainByKeyDomainPage = gql`
     }
   }
   ${DomainData}
+  ${DomainLinkData}
   ${ConceptData}
   ${LearningGoalCardData}
 `;
@@ -122,10 +129,14 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
 
   const domain = data?.getDomainByKey || placeholderDomainData;
 
-  // const { mockedFeaturesEnabled } = useMockedFeaturesEnabled();
   if (error) return null;
   return (
-    <PageLayout marginSize="md">
+    <PageLayout
+      marginSize="md"
+      renderTopLeft={
+        <ParentDomainsNavigationBlock domains={(domain.parentDomains || []).map(({ domain }) => domain)} />
+      }
+    >
       <Stack direction={{ base: 'column', md: 'row' }} alignItems="stretch" pb={5} spacing={5}>
         <Flex direction="column" alignItems="flex-start" flexGrow={1}>
           <Skeleton isLoaded={!loading}>

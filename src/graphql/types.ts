@@ -198,8 +198,8 @@ export type Mutation = {
   updateConceptBelongsToDomain: ConceptBelongsToDomain;
   addConceptBelongsToConcept: UpdateConceptBelongsToConceptResult;
   removeConceptBelongsToConcept: UpdateConceptBelongsToConceptResult;
-  addDomainBelongsToDomain: Domain;
-  removeDomainBelongsToDomain: Domain;
+  addDomainBelongsToDomain: UpdateDomainBelongsToDomainResults;
+  removeDomainBelongsToDomain: UpdateDomainBelongsToDomainResults;
   addConceptReferencesConcept: UpdateConceptReferencesConceptResult;
   removeConceptReferencesConcept: UpdateConceptReferencesConceptResult;
 };
@@ -1182,6 +1182,12 @@ export type UpdateConceptBelongsToConceptResult = {
   __typename?: 'UpdateConceptBelongsToConceptResult';
   parentConcept: Concept;
   subConcept: Concept;
+};
+
+export type UpdateDomainBelongsToDomainResults = {
+  __typename?: 'UpdateDomainBelongsToDomainResults';
+  parentDomain: Domain;
+  subDomain: Domain;
 };
 
 export type UpdateConceptReferencesConceptResult = {

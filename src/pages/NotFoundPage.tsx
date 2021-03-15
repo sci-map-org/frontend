@@ -6,7 +6,7 @@ import { PageLayout } from '../components/layout/PageLayout';
 export const NotFoundPage: React.FC<{}> = () => {
   return (
     <PageLayout>
-      <Flex direction="column" justifyContent="center" alignItems="center">
+      <Flex direction="column" justifyContent="center" alignItems="center" h="400px">
         <Box textAlign="center">
           <Text fontSize="3xl">Not Found</Text>
           <Link fontSize="xl" onClick={() => Router.back()}>

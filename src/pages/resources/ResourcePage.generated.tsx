@@ -1,7 +1,7 @@
 import * as Types from '../../graphql/types';
 
 import { ResourceDataFragment, ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
-import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
+import { DomainDataFragment, DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { SquareResourceCardDataFragment } from '../../components/resources/SquareResourceCard.generated';
 import { EditableLearningMaterialOutcomesData_Resource_Fragment, EditableLearningMaterialOutcomesData_LearningPath_Fragment } from '../../components/learning_materials/EditableLearningMaterialOutcomes.generated';

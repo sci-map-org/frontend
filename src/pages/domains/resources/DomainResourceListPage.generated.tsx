@@ -1,6 +1,6 @@
 import * as Types from '../../../graphql/types';
 
-import { DomainDataFragment } from '../../../graphql/domains/domains.fragments.generated';
+import { DomainDataFragment, DomainLinkDataFragment } from '../../../graphql/domains/domains.fragments.generated';
 import { ResourceDataFragment, ResourcePreviewDataFragment } from '../../../graphql/resources/resources.fragments.generated';
 import * as Operations from './DomainResourceListPage';
 import * as Apollo from '@apollo/client';
