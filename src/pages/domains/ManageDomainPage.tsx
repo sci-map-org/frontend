@@ -26,6 +26,11 @@ export const getDomainByKeyManageDomainPage = gql`
           ...DomainData
         }
       }
+      parentDomains {
+        domain {
+          ...DomainData
+        }
+      }
     }
   }
   ${DomainData}
@@ -38,7 +43,7 @@ export const ManageDomainPage: React.FC<{ domainKey: string }> = ({ domainKey })
   const [addDomainBelongsToDomainMutation] = useAddDomainBelongsToDomainMutation();
   const [removeDomainBelongsToDomainMutation] = useRemoveDomainBelongsToDomainMutation();
   const domain = data?.getDomainByKey || placeholderDomainData;
-  const subDomains = domain.subDomains?.map((subDomainItem) => subDomainItem.domain) || [];
+
   return (
     <PageLayout
       isLoading={loading}
@@ -73,7 +78,7 @@ export const ManageDomainPage: React.FC<{ domainKey: string }> = ({ domainKey })
         <Box>
           <DomainsPicker
             title="Sub Domains"
-            pickedDomainList={subDomains}
+            pickedDomainList={(domain.subDomains || []).map((subDomainItem) => subDomainItem.domain)}
             onSelect={(domainToAdd) =>
               addDomainBelongsToDomainMutation({
                 variables: { parentDomainId: domain._id, subDomainId: domainToAdd._id },
@@ -82,6 +87,22 @@ export const ManageDomainPage: React.FC<{ domainKey: string }> = ({ domainKey })
             onRemove={(domainToRemove) =>
               removeDomainBelongsToDomainMutation({
                 variables: { parentDomainId: domain._id, subDomainId: domainToRemove._id },
+              })
+            }
+          />
+        </Box>
+        <Box>
+          <DomainsPicker
+            title="Parent Domains"
+            pickedDomainList={(domain.parentDomains || []).map((parentDomainItem) => parentDomainItem.domain)}
+            onSelect={(domainToAdd) =>
+              addDomainBelongsToDomainMutation({
+                variables: { parentDomainId: domainToAdd._id, subDomainId: domain._id },
+              })
+            }
+            onRemove={(domainToRemove) =>
+              removeDomainBelongsToDomainMutation({
+                variables: { parentDomainId: domainToRemove._id, subDomainId: domain._id },
               })
             }
           />

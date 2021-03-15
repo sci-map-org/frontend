@@ -1,6 +1,6 @@
 import * as Types from '../../graphql/types';
 
-import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
+import { DomainDataFragment, DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import * as Operations from './ManageDomainPage';
 import * as Apollo from '@apollo/client';
 export type GetDomainByKeyManageDomainPageQueryVariables = Types.Exact<{
@@ -13,6 +13,12 @@ export type GetDomainByKeyManageDomainPageQuery = (
   & { getDomainByKey: (
     { __typename?: 'Domain' }
     & { subDomains?: Types.Maybe<Array<(
+      { __typename?: 'DomainBelongsToDomainItem' }
+      & { domain: (
+        { __typename?: 'Domain' }
+        & DomainDataFragment
+      ) }
+    )>>, parentDomains?: Types.Maybe<Array<(
       { __typename?: 'DomainBelongsToDomainItem' }
       & { domain: (
         { __typename?: 'Domain' }

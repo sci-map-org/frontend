@@ -1,6 +1,6 @@
 import * as Types from '../types';
 
-import { DomainDataFragment } from './domains.fragments.generated';
+import { DomainDataFragment, DomainLinkDataFragment } from './domains.fragments.generated';
 import * as Operations from './domains.operations';
 import * as Apollo from '@apollo/client';
 export type GetDomainByKeyQueryVariables = Types.Exact<{
@@ -81,15 +81,28 @@ export type AddDomainBelongsToDomainMutationVariables = Types.Exact<{
 export type AddDomainBelongsToDomainMutation = (
   { __typename?: 'Mutation' }
   & { addDomainBelongsToDomain: (
-    { __typename?: 'Domain' }
-    & Pick<Types.Domain, '_id'>
-    & { subDomains?: Types.Maybe<Array<(
-      { __typename?: 'DomainBelongsToDomainItem' }
-      & { domain: (
-        { __typename?: 'Domain' }
-        & Pick<Types.Domain, '_id'>
-      ) }
-    )>> }
+    { __typename?: 'UpdateDomainBelongsToDomainResults' }
+    & { parentDomain: (
+      { __typename?: 'Domain' }
+      & Pick<Types.Domain, '_id'>
+      & { subDomains?: Types.Maybe<Array<(
+        { __typename?: 'DomainBelongsToDomainItem' }
+        & { domain: (
+          { __typename?: 'Domain' }
+          & Pick<Types.Domain, '_id'>
+        ) }
+      )>> }
+    ), subDomain: (
+      { __typename?: 'Domain' }
+      & Pick<Types.Domain, '_id'>
+      & { parentDomains?: Types.Maybe<Array<(
+        { __typename?: 'DomainBelongsToDomainItem' }
+        & { domain: (
+          { __typename?: 'Domain' }
+          & Pick<Types.Domain, '_id'>
+        ) }
+      )>> }
+    ) }
   ) }
 );
 
@@ -102,15 +115,28 @@ export type RemoveDomainBelongsToDomainMutationVariables = Types.Exact<{
 export type RemoveDomainBelongsToDomainMutation = (
   { __typename?: 'Mutation' }
   & { removeDomainBelongsToDomain: (
-    { __typename?: 'Domain' }
-    & Pick<Types.Domain, '_id'>
-    & { subDomains?: Types.Maybe<Array<(
-      { __typename?: 'DomainBelongsToDomainItem' }
-      & { domain: (
-        { __typename?: 'Domain' }
-        & Pick<Types.Domain, '_id'>
-      ) }
-    )>> }
+    { __typename?: 'UpdateDomainBelongsToDomainResults' }
+    & { parentDomain: (
+      { __typename?: 'Domain' }
+      & Pick<Types.Domain, '_id'>
+      & { subDomains?: Types.Maybe<Array<(
+        { __typename?: 'DomainBelongsToDomainItem' }
+        & { domain: (
+          { __typename?: 'Domain' }
+          & Pick<Types.Domain, '_id'>
+        ) }
+      )>> }
+    ), subDomain: (
+      { __typename?: 'Domain' }
+      & Pick<Types.Domain, '_id'>
+      & { parentDomains?: Types.Maybe<Array<(
+        { __typename?: 'DomainBelongsToDomainItem' }
+        & { domain: (
+          { __typename?: 'Domain' }
+          & Pick<Types.Domain, '_id'>
+        ) }
+      )>> }
+    ) }
   ) }
 );
 
