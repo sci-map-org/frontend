@@ -38,7 +38,7 @@ export const getDomainByKeyDomainPage = gql`
                 _id
               }
             }
-            subConcepts {
+            parentConcepts {
               concept {
                 _id
               }

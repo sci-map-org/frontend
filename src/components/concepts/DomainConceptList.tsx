@@ -1,6 +1,6 @@
 import { AddIcon, MinusIcon } from '@chakra-ui/icons';
 import { Box, Collapse, Divider, Flex, FlexProps, IconButton, Skeleton, Stack, Text } from '@chakra-ui/react';
-import { remove } from 'lodash';
+import { partition } from 'lodash';
 import { useMemo, useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import {
@@ -14,7 +14,7 @@ import { CompletedCheckbox } from '../lib/CompletedCheckbox';
 import { InternalLink } from '../navigation/InternalLink';
 
 type NestedConceptItem = {
-  concept: ConceptDataFragment & { subConcepts?: { concept: { _id: string } }[] | null };
+  concept: ConceptDataFragment & { parentConcepts?: { concept: { _id: string } }[] | null };
   relationship: { index: number }; // ConceptBelongsToDomain or ConceptBelongsToConcept
   subConceptItems?: NestedConceptItem[];
 };
@@ -31,32 +31,50 @@ export const DomainConceptList: React.FC<{
   const [setConceptKnown] = useSetConceptsKnownMutation();
   const [setConceptUnknown] = useSetConceptsUnknownMutation();
 
-  const addSubConceptItems = (
-    conceptItemList: NestedConceptItem[],
-    parentItem: NestedConceptItem
-  ): NestedConceptItem => {
-    if (!parentItem.concept.subConcepts?.length) return parentItem;
+  const recursiveSearchParent = (
+    parentConceptId: string,
+    nestedList: NestedConceptItem[]
+  ): NestedConceptItem | null => {
+    for (let i = 0; i < nestedList.length; i++) {
+      const currentItem = nestedList[i];
 
-    const subConceptsIds = parentItem.concept.subConcepts.map((i) => i.concept._id);
-    const subConceptItems = remove(conceptItemList, (c) => subConceptsIds.indexOf(c.concept._id) > -1);
+      if (currentItem.concept._id === parentConceptId) {
+        return currentItem;
+      }
+      if (currentItem.subConceptItems?.length) {
+        const nestedParent = recursiveSearchParent(parentConceptId, currentItem.subConceptItems);
+        if (nestedParent) return nestedParent;
+      }
+    }
 
-    return {
-      ...parentItem,
-      subConceptItems: subConceptItems.map((sci) => addSubConceptItems(conceptItemList, sci)),
-    };
+    return null;
   };
-
+  /**
+   * TODO: Very hacky, refactor. Ideally with IS_SUBTOPIC relationship
+   */
   const conceptNestedList = useMemo(() => {
     if (!domain.concepts) return [];
-    const conceptItemList: NestedConceptItem[] = [...domain.concepts.items];
+    const [hasParentConceptItemList, conceptItemList]: [NestedConceptItem[], NestedConceptItem[]] = partition(
+      domain.concepts.items.map((i) => JSON.parse(JSON.stringify(i))),
+      (c) => !!c.concept.parentConcepts?.length
+    );
+    let leftToSort = hasParentConceptItemList;
+    while (leftToSort.length > 0) {
+      const tmp: NestedConceptItem[] = [];
+      leftToSort.forEach((item) => {
+        item.concept.parentConcepts?.forEach(({ concept: parentConcept }) => {
+          const parent = recursiveSearchParent(parentConcept._id, conceptItemList);
+          if (parent) {
+            parent.subConceptItems = [...(parent.subConceptItems || []), item];
+          } else {
+            tmp.push(item);
+          }
+        });
+      });
+      leftToSort = tmp;
+    }
 
-    // TODO: refactor (mutating an array while iterating on it isn't exactly what they call _clean_)
-    const nestedConceptItemList: NestedConceptItem[] = [];
-    conceptItemList.forEach((item) => {
-      if (item) nestedConceptItemList.push(addSubConceptItems(conceptItemList, item));
-    });
-
-    return nestedConceptItemList;
+    return conceptItemList;
   }, [domain.concepts?.items]);
 
   const domainConceptItems = domain?.concepts?.items;
