@@ -8,7 +8,7 @@ export const HomeLearningPathsRecommendations: React.FC<{
   isLoading?: boolean;
 }> = ({ learningPaths, isLoading }) => {
   return (
-    <Flex direction="column" alignItems="stretch">
+    <Flex direction="column" alignItems="stretch" w="100%">
       <Stack mb={3} direction="row" alignItems="stretch">
         <LearningPathIcon boxSize="33px" />
         <Heading size="lg" color="gray.700">

@@ -27,6 +27,7 @@ import { HomeUserStartedGoals } from './home/HomeUserStartedGoals';
 import { HomeUserStartedPaths, StartedLearningPathCardData } from './home/HomeUserStartedPaths';
 import { GetHomePageDataQuery, useGetHomePageDataQuery } from './HomePage.generated';
 import { HomeUserResourcesHistory } from './home/HomeUserResourcesHistory';
+import { useCurrentUser } from '../graphql/users/users.hooks';
 
 export const getHomePageData = gql`
   query getHomePageData {
@@ -75,8 +76,8 @@ export const getHomePageData = gql`
 
 export const HomePage: React.FC = () => {
   const { data, loading } = useGetHomePageDataQuery({ fetchPolicy: 'cache-and-network' });
-  const currentUser = data?.getHomePageData.currentUser;
-  const isReturningUser = !(!loading && !currentUser);
+  const { currentUser } = useCurrentUser();
+  const isReturningUser = !!currentUser;
   const outerLayoutProps = {
     px: ['5px', '10px', '5%', '15%'],
   };
@@ -231,6 +232,14 @@ export const HomePage: React.FC = () => {
           </Text>
         }
       />
+      {/* <Flex w="100%" h="calc(100vw*0.12)" overflow="hidden"> */}
+      {/* <Image src="/static/caravan_bg2.svg" w="100%" /> */}
+      {/* </Flex> */}
+      {/* <Flex h="400px" mt="-1px" px="20%" bgColor="#974b31" justifyContent="space-between">
+        <Text size="xl" fontWeight={500} color="white" mt="140px">
+          Learn Together
+        </Text>
+      </Flex> */}
       <Flex justifyContent="center" my={10}>
         <InternalButtonLink size="lg" routePath="/about" asHref="/about" colorScheme="blue" variant="outline">
           Learn more
@@ -279,28 +288,24 @@ const UserDashboard: React.FC<{ data?: GetHomePageDataQuery; loading?: boolean }
 };
 
 const RecommendationsBlock: React.FC<{ data?: GetHomePageDataQuery; loading?: boolean }> = ({ data, loading }) => {
-  const orientation = useBreakpointValue<'horizontal' | 'vertical'>({ base: 'horizontal', md: 'vertical' });
   return (
     <>
       <Center px="5%" mb={10} mt={12}>
         <HomeDomainsRecommendations />
       </Center>
       <Center px="5%" mb={3}>
-        <Stack direction={{ base: 'column', lg: 'row' }}>
+        <Flex direction={{ base: 'column', lg: 'row' }} flexGrow={1} justifyContent="space-between">
           <Flex maxWidth={{ base: '100%', lg: '60%' }} minWidth={{ lg: '40%' }}>
-            <HomeLearningGoalsRecommendations
-              learningGoals={data?.getHomePageData.recommendedLearningGoals || []}
-              isLoading={loading}
-            />
+            <HomeLearningGoalsRecommendations learningGoals={data?.getHomePageData.recommendedLearningGoals || []} />
           </Flex>
           <Flex w={20} h={8}></Flex>
-          <Flex minWidth={{ lg: '40%' }} maxWidth={{ lg: '60%' }}>
+          <Flex minWidth={{ lg: '40%' }} maxWidth={{ lg: '60%' }} flexGrow={2}>
             <HomeLearningPathsRecommendations
               learningPaths={data?.getHomePageData.recommendedLearningPaths || []}
               isLoading={loading}
             />
           </Flex>
-        </Stack>
+        </Flex>
       </Center>
     </>
   );
@@ -336,18 +341,18 @@ const HomeHeader: React.FC<{ layoutProps?: FlexProps }> = ({ layoutProps = {} })
         <Center w="50%">
           <Image src="./static/walker no bg.png" w="400px" opacity={0.9} />
         </Center>
-        <Flex w="50%" pl={10} pt={12} direction="column">
-          <Heading size="2xl" w="250px" color="blackAlpha.900" lineHeight={1.1}>
+        <Flex w="50%" pl={10} pr={3} pt={16} direction="column">
+          <Heading size="2xl" maxW="250px" color="blackAlpha.900" lineHeight={1.1}>
             Learn{' '}
             <Text as="span" bgColor="teal.600" ml="-6px" px="6px" pb="3px" color="white">
               anything
             </Text>{' '}
             in a smart way
           </Heading>
-          <Flex mt={10} mb={8} opacity={0.7} w="100%" direction="column">
+          {/* <Flex mt={10} mb={10} opacity={0.8} w="100%" direction="column" alignItems="center">
             <Text
-              bgColor="blackAlpha.900"
-              borderRadius={8}
+              bgColor="#974b31"
+              borderRadius={6}
               px={4}
               py={2}
               w="80%"
@@ -359,7 +364,7 @@ const HomeHeader: React.FC<{ layoutProps?: FlexProps }> = ({ layoutProps = {} })
             >
               Find the best online resources, learn from curated learning paths and community created roadmaps, etc.
             </Text>
-          </Flex>
+          </Flex> */}
         </Flex>
         {/* <Flex>
           

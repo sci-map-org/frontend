@@ -1,33 +1,28 @@
-import { Flex, FlexProps } from '@chakra-ui/react';
+import { LearningMaterialPreviewCardList } from '../resources/LearningMaterialPreviewCardList';
 import { LearningPathPreviewCard } from './LearningPathPreviewCard';
 import { LearningPathPreviewCardDataFragment } from './LearningPathPreviewCard.generated';
 
 interface LearningPathPreviewCardListProps {
   learningPaths: LearningPathPreviewCardDataFragment[];
   isLoading?: boolean;
-  h?: FlexProps['h'];
 }
 
 export const LearningPathPreviewCardList: React.FC<LearningPathPreviewCardListProps> = ({
   learningPaths,
   isLoading,
-  h,
 }) => {
   return (
-    <Flex
-      h={h}
-      // overflow="hidden"
-      // overflowY="scroll"
-      direction="column"
-      alignItems="stretch"
-      backgroundColor="backgroundColor.0"
-      borderTopWidth="1px"
-      // borderBottomWidth="1px"
-      borderColor="gray.200"
-    >
-      {learningPaths.map((learningPath, index) => (
-        <LearningPathPreviewCard key={learningPath._id} learningPath={learningPath} inCompactList />
-      ))}
-    </Flex>
+    <LearningMaterialPreviewCardList
+      isLoading={isLoading}
+      learningMaterialsPreviewItems={learningPaths}
+      renderCard={(learningPath, idx) => (
+        <LearningPathPreviewCard
+          key={learningPath._id}
+          learningPath={learningPath}
+          inCompactList
+          firstItemInCompactList={idx === 0}
+        />
+      )}
+    />
   );
 };
