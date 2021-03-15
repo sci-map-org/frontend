@@ -1339,6 +1339,9 @@ export enum ResourceType {
   VideoGame = 'video_game',
   Infographic = 'infographic',
   Tweet = 'tweet',
+  Exercise = 'exercise',
+  Quizz = 'quizz',
+  Project = 'project',
   Other = 'other'
 }
 
