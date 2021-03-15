@@ -2,10 +2,14 @@ import { Flex } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useMemo } from 'react';
 import { LearningGoalLinkData } from '../../../graphql/learning_goals/learning_goals.fragments';
+import { LearningGoalType } from '../../../graphql/types';
 import { routerPushToPage } from '../../../pages/PageInfo';
 import { LearningGoalPageInfo } from '../../../pages/RoutesPageInfos';
+import { ModuleIcon } from '../../lib/icons/ModuleIcon';
+import { RoadmapIcon } from '../../lib/icons/RoadmapIcon';
 import { PageLink } from '../../navigation/InternalLink';
 import { LearningGoalLinearProgress, LearningGoalLinearProgressData } from '../LearningGoalLinearProgress';
+import { LearningGoalTypeIcon } from '../LearningGoalTypeIcon';
 import { LearningGoalCardDataFragment } from './LearningGoalCard.generated';
 
 export const LearningGoalCardData = gql`
@@ -94,6 +98,13 @@ export const LearningGoalCard: React.FC<LearningGoalCardProps> = ({ learningGoal
         >
           {learningGoal.name}
         </PageLink>
+        <Flex w="100%" flexGrow={1} direction="row-reverse" alignItems="flex-end" px={0} pb={1}>
+          <LearningGoalTypeIcon
+            type={learningGoal.type}
+            boxSize={7}
+            color={learningGoalStatusStyleMapping.fontColor[status]}
+          />
+        </Flex>
       </Flex>
 
       {showProgressBar && (
