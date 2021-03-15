@@ -2,11 +2,8 @@ import { Flex } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useMemo } from 'react';
 import { LearningGoalLinkData } from '../../../graphql/learning_goals/learning_goals.fragments';
-import { LearningGoalType } from '../../../graphql/types';
 import { routerPushToPage } from '../../../pages/PageInfo';
 import { LearningGoalPageInfo } from '../../../pages/RoutesPageInfos';
-import { ModuleIcon } from '../../lib/icons/ModuleIcon';
-import { RoadmapIcon } from '../../lib/icons/RoadmapIcon';
 import { PageLink } from '../../navigation/InternalLink';
 import { LearningGoalLinearProgress, LearningGoalLinearProgressData } from '../LearningGoalLinearProgress';
 import { LearningGoalTypeIcon } from '../LearningGoalTypeIcon';
@@ -72,11 +69,12 @@ export const LearningGoalCard: React.FC<LearningGoalCardProps> = ({ learningGoal
     >
       <Flex
         flexGrow={1}
+        position="relative"
         direction="column"
         bgColor={learningGoalStatusStyleMapping.cardBackgroundColor[status]}
         pl={{ base: 2, md: 4 }}
         pr={2}
-        pt={{ base: 2, md: 5 }}
+        pt={{ base: 2, md: 4 }}
         overflow="hidden"
         borderWidth={2}
         borderBottomWidth={0}
@@ -98,13 +96,14 @@ export const LearningGoalCard: React.FC<LearningGoalCardProps> = ({ learningGoal
         >
           {learningGoal.name}
         </PageLink>
-        <Flex w="100%" flexGrow={1} direction="row-reverse" alignItems="flex-end" px={0} pb={1}>
-          <LearningGoalTypeIcon
-            type={learningGoal.type}
-            boxSize={7}
-            color={learningGoalStatusStyleMapping.fontColor[status]}
-          />
-        </Flex>
+        <LearningGoalTypeIcon
+          position="absolute"
+          bottom="5px"
+          right="5px"
+          type={learningGoal.type}
+          boxSize={7}
+          color={learningGoalStatusStyleMapping.fontColor[status]}
+        />
       </Flex>
 
       {showProgressBar && (
