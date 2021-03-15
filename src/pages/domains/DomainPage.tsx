@@ -197,23 +197,10 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
               />
             </RoleAccess>
           </ButtonGroup>
-
-          {/* {mockedFeaturesEnabled && (
-          <Box ml={2}>
-            <InternalButtonLink
-              routePath="/domains/[key]/resources/indexing_queue"
-              asHref={router.asPath + '/resources/indexing_queue'}
-              variant="solid"
-              fontStyle="italic"
-            >
-              32 Pending Resources
-            </InternalButtonLink>
-          </Box>
-        )} */}
         </Flex>
       </Stack>
-      {domain.learningGoals && !!domain.learningGoals.length && (
-        <DomainLearningGoals learningGoalItems={domain.learningGoals} />
+      {(loading || (domain.learningGoals && !!domain.learningGoals.length)) && (
+        <DomainLearningGoals learningGoalItems={domain.learningGoals || []} isLoading={loading} />
       )}
       <Flex direction={{ base: 'column-reverse', md: 'row' }} mb="100px">
         <Flex direction="column" flexShrink={1} flexGrow={1}>

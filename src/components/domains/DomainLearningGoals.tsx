@@ -11,8 +11,9 @@ interface DomainLearningGoalsProps {
       learningGoal: LearningGoalCardDataFragment;
     }
   >;
+  isLoading?: boolean;
 }
-export const DomainLearningGoals: React.FC<DomainLearningGoalsProps> = ({ learningGoalItems }) => {
+export const DomainLearningGoals: React.FC<DomainLearningGoalsProps> = ({ learningGoalItems, isLoading }) => {
   return (
     <Flex direction="column" pb={5}>
       <Stack direction="row" alignItems="center" mb={2}>
@@ -23,6 +24,7 @@ export const DomainLearningGoals: React.FC<DomainLearningGoalsProps> = ({ learni
       <LearningGoalCardList
         learningGoalItems={learningGoalItems}
         spacing="20px"
+        isLoading={isLoading}
         renderCard={({ learningGoal }, hover) => <LearningGoalCard learningGoal={learningGoal} mouseHover={hover} />}
       />
     </Flex>
