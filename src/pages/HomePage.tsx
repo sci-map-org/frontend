@@ -1,16 +1,4 @@
-import {
-  Box,
-  Center,
-  Divider,
-  Flex,
-  FlexProps,
-  Heading,
-  Image,
-  Link,
-  Stack,
-  Text,
-  useBreakpointValue,
-} from '@chakra-ui/react';
+import { Box, Center, Flex, FlexProps, Heading, Image, Link, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import React, { ReactNode } from 'react';
 import { LearningGoalCardData } from '../components/learning_goals/cards/LearningGoalCard';
@@ -20,15 +8,14 @@ import { SocialNetworkIcon } from '../components/lib/icons/SocialNetworkIcon';
 import { UserCentricIcon } from '../components/lib/icons/UserCentricIcon';
 import { InternalButtonLink, InternalLink } from '../components/navigation/InternalLink';
 import { ResourceMiniCardData } from '../components/resources/ResourceMiniCard';
+import { useCurrentUser } from '../graphql/users/users.hooks';
 import { HomeDomainsRecommendations } from './home/HomeDomainsRecommendations';
 import { HomeLearningGoalsRecommendations } from './home/HomeLearningGoalsRecommendations';
 import { HomeLearningPathsRecommendations } from './home/HomeLearningPathsRecommendations';
+import { HomeUserResourcesHistory } from './home/HomeUserResourcesHistory';
 import { HomeUserStartedGoals } from './home/HomeUserStartedGoals';
 import { HomeUserStartedPaths, StartedLearningPathCardData } from './home/HomeUserStartedPaths';
 import { GetHomePageDataQuery, useGetHomePageDataQuery } from './HomePage.generated';
-import { HomeUserResourcesHistory } from './home/HomeUserResourcesHistory';
-import { useCurrentUser } from '../graphql/users/users.hooks';
-
 export const getHomePageData = gql`
   query getHomePageData {
     getHomePageData {
@@ -75,7 +62,9 @@ export const getHomePageData = gql`
 `;
 
 export const HomePage: React.FC = () => {
-  const { data, loading } = useGetHomePageDataQuery({ fetchPolicy: 'cache-and-network' });
+  const { data, loading: l } = useGetHomePageDataQuery({ fetchPolicy: 'cache-and-network' });
+
+  const loading = !data && l;
   const { currentUser } = useCurrentUser();
   const isReturningUser = !!currentUser;
   const outerLayoutProps = {
@@ -256,32 +245,28 @@ export const HomePage: React.FC = () => {
 const UserDashboard: React.FC<{ data?: GetHomePageDataQuery; loading?: boolean }> = ({ data, loading }) => {
   return (
     <Flex direction="column" px="5%" mt={8}>
-      {data?.getHomePageData.currentUser?.startedLearningGoals && (
-        <Box>
-          <HomeUserStartedGoals
-            startedGoals={data.getHomePageData.currentUser.startedLearningGoals.map((i) => i.learningGoal)}
+      <Box>
+        <HomeUserStartedGoals
+          startedGoals={(data?.getHomePageData.currentUser?.startedLearningGoals || []).map((i) => i.learningGoal)}
+          isLoading={loading}
+        />
+      </Box>
+      <Flex direction={{ base: 'column', md: 'row' }} justifyContent="space-between" mt={8}>
+        <Box w={{ base: '100%', md: '45%' }}>
+          <HomeUserStartedPaths
+            startedPaths={(data?.getHomePageData.currentUser?.startedLearningPaths || []).map((i) => i.learningPath)}
             isLoading={loading}
           />
         </Box>
-      )}
-      <Flex direction={{ base: 'column', md: 'row' }} justifyContent="space-between" mt={8}>
-        {data?.getHomePageData.currentUser?.startedLearningPaths && (
-          <Box w={{ base: '100%', md: '45%' }}>
-            <HomeUserStartedPaths
-              startedPaths={data.getHomePageData.currentUser.startedLearningPaths.map((i) => i.learningPath)}
-              isLoading={loading}
-            />
-          </Box>
-        )}
+
         <Flex w={20} h={8}></Flex>
-        {data?.getHomePageData.currentUser?.consumedResources?.items && (
-          <Flex w={{ base: '100%', md: '45%' }}>
-            <HomeUserResourcesHistory
-              consumedResourcesItems={data.getHomePageData.currentUser.consumedResources.items}
-              isLoading={loading}
-            />
-          </Flex>
-        )}
+
+        <Flex w={{ base: '100%', md: '45%' }}>
+          <HomeUserResourcesHistory
+            consumedResourcesItems={data?.getHomePageData.currentUser?.consumedResources?.items || []}
+            isLoading={loading}
+          />
+        </Flex>
       </Flex>
     </Flex>
   );
