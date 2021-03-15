@@ -101,7 +101,7 @@ export const LearningGoalCard: React.FC<LearningGoalCardProps> = ({ learningGoal
           bottom="5px"
           right="5px"
           type={learningGoal.type}
-          boxSize={7}
+          boxSize={{ base: 5, md: 7 }}
           color={learningGoalStatusStyleMapping.fontColor[status]}
         />
       </Flex>
