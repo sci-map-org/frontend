@@ -156,6 +156,11 @@ export const Header: React.FC = () => {
                   <Link>Profile</Link>
                 </MenuItem>
               </NextLink>
+              <NextLink href="/profile/paths" as={`/profile/paths`} passHref>
+                <MenuItem>
+                  <Link>My Paths</Link>
+                </MenuItem>
+              </NextLink>
               <NextLink href="/profile/goals" as={`/profile/goals`} passHref>
                 <MenuItem>
                   <Link>My Goals</Link>

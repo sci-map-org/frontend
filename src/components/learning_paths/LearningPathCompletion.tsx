@@ -85,7 +85,8 @@ export const LearningPathCircularCompletion: React.FC<{
     // TODO: have cleaner, reactive /computed way of handling "completed" (also on recommendation engine).
     if (!resourceItems.length) return;
     const completedLp = resourceItems.every(({ resource }) => resource.consumed?.consumedAt);
-    if (!!learningPath.started?.completedAt !== completedLp && !loading) {
+
+    if (learningPath.started && !!learningPath.started.completedAt !== completedLp && !loading) {
       completeLearningPath({ variables: { learningPathId: learningPath._id, completed: completedLp } });
     }
   }, [resourceItems]);
