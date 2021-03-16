@@ -87,7 +87,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
           </Skeleton>
         </Flex>
       )}
-      <Flex direction="row" justifyContent="stretch">
+      <Flex direction="row" justifyContent="stretch" minH="100%">
         {renderLeft && <Box>{renderLeft}</Box>}
         <Box
           flexGrow={1}

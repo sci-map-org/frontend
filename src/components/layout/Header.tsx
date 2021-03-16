@@ -26,6 +26,7 @@ import { useCurrentUser, useLogout } from '../../graphql/users/users.hooks';
 import { LearningPathPagePath } from '../../pages/RoutesPageInfos';
 import { globalStyleVariables } from '../../theme/theme';
 import { RoleAccess } from '../auth/RoleAccess';
+import { GlobalSearchBox } from '../navigation/GlobalSearchBox';
 import { InternalLink, InternalLinkProps } from '../navigation/InternalLink';
 
 const HeaderLinkStyle: LinkProps = {
@@ -80,6 +81,7 @@ export const Header: React.FC = () => {
       <Box flexGrow={1} />
 
       <Stack direction="row" spacing={4}>
+        <GlobalSearchBox />
         {!!currentUser && (
           <Popover placement="bottom" isOpen={isOpenLp} onClose={onCloseLP} onOpen={openOpenLP} isLazy>
             <PopoverTrigger>
