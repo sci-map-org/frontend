@@ -324,7 +324,7 @@ const HomeHeader: React.FC<{ layoutProps?: FlexProps }> = ({ layoutProps = {} })
           <Image src="./static/walker no bg cropped.png" w="322px" opacity={0.9} />
         </Flex> */}
         <Center w="50%">
-          <Image src="./static/walker no bg.png" w="400px" opacity={0.9} />
+          <Image src="./static/walker no bg.png" w="400px" />
         </Center>
         <Flex w="50%" pl={10} pr={3} pt={16} direction="column">
           <Heading size="2xl" maxW="250px" color="blackAlpha.900" lineHeight={1.1}>
