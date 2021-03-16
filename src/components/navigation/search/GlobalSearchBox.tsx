@@ -3,59 +3,32 @@ import { Box, Flex, Text } from '@chakra-ui/layout';
 import gql from 'graphql-tag';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Autosuggest from 'react-autosuggest';
-import { DomainLinkData } from '../../graphql/domains/domains.fragments';
-import { ConceptLinkData } from '../../graphql/concepts/concepts.fragments';
-import { LearningGoalLinkData } from '../../graphql/learning_goals/learning_goals.fragments';
-import { SearchResultEntity } from '../../graphql/types';
-import { routerPushToPage } from '../../pages/PageInfo';
+import { BeatLoader } from 'react-spinners';
+import { useDebouncedCallback } from 'use-debounce';
+import { ConceptLinkData } from '../../../graphql/concepts/concepts.fragments';
+import { DomainLinkData } from '../../../graphql/domains/domains.fragments';
+import { LearningGoalLinkData } from '../../../graphql/learning_goals/learning_goals.fragments';
+import { routerPushToPage } from '../../../pages/PageInfo';
 import {
   ConceptPageInfo,
   DomainPageInfo,
   LearningGoalPageInfo,
   LearningPathPageInfo,
   ResourcePageInfo,
-} from '../../pages/RoutesPageInfos';
+} from '../../../pages/RoutesPageInfos';
+import { theme } from '../../../theme/theme';
 import { GlobalSearchQuery, useGlobalSearchLazyQuery } from './GlobalSearchBox.generated';
-import { BeatLoader } from 'react-spinners';
-import { theme } from '../../theme/theme';
-import { useDebouncedCallback } from 'use-debounce';
+import { SearchResultCard, SearchResultCardData } from './search_results_cards/SearchResultCard';
 
 export const globalSearch = gql`
   query globalSearch($query: String!, $options: GlobalSearchOptions) {
     globalSearch(query: $query, options: $options) {
       results {
-        __typename
-        entity {
-          __typename
-          ... on Domain {
-            ...DomainLinkData
-          }
-          ... on Concept {
-            ...ConceptLinkData
-            domain {
-              ...DomainLinkData
-            }
-          }
-          ... on LearningGoal {
-            ...LearningGoalLinkData
-          }
-          ... on LearningPath {
-            _id
-            key
-            name
-          }
-          ... on Resource {
-            _id
-            name
-          }
-        }
-        score
+        ...SearchResultCardData
       }
     }
   }
-  ${DomainLinkData}
-  ${ConceptLinkData}
-  ${LearningGoalLinkData}
+  ${SearchResultCardData}
 `;
 interface GlobalSearchBoxProps {
   placeholder?: string;
@@ -85,7 +58,7 @@ export const GlobalSearchBox: React.FC<GlobalSearchBoxProps> = ({
   });
 
   const debouncedSearch = useDebouncedCallback((query: string) => {
-    globalSearchLazyQuery({ variables: { query, options: { pagination: { limit: 10, offset: 0 } } } });
+    globalSearchLazyQuery({ variables: { query, options: { pagination: { limit: 6, offset: 0 } } } });
   }, 300);
 
   const isSearching = loading || pendingSearch;
@@ -122,8 +95,6 @@ export const GlobalSearchBox: React.FC<GlobalSearchBoxProps> = ({
         }}
         suggestions={suggestions}
         inputProps={inputProps}
-        // onSuggestionsFetchRequested={({ value: v }) => debouncedSearch.callback(v)}
-        // onSuggestionsClearRequested={() => debouncedSearch.callback(value)}
         onSuggestionsFetchRequested={({ value: v }) => setValue(v)}
         onSuggestionsClearRequested={() => setValue('')}
         onSuggestionSelected={(e, { suggestion }) => {
@@ -144,17 +115,7 @@ export const GlobalSearchBox: React.FC<GlobalSearchBoxProps> = ({
           setValue('');
         }}
         renderSuggestion={(suggestion, { isHighlighted }) => (
-          <Flex
-            direction="row"
-            px={5}
-            py={1}
-            borderBottomWidth={1}
-            // w={width}
-            w="100%"
-            {...(isHighlighted && { backgroundColor: 'gray.100' })}
-          >
-            <Text fontWeight={500}>{suggestion.entity.name}</Text>
-          </Flex>
+          <SearchResultCard searchResult={suggestion} isHighlighted={isHighlighted} />
         )}
         renderSuggestionsContainer={({ containerProps, children }) =>
           children && (

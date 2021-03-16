@@ -24,6 +24,13 @@ export const ResourceData = gql`
   }
 `;
 
+export const ResourceLinkData = gql`
+  fragment ResourceLinkData on Resource {
+    _id
+    name
+  }
+`;
+
 export const generateResourceData = (): ResourceDataFragment => ({
   _id: Math.random().toString(),
   name: 'My awesome resource name',

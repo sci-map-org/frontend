@@ -14,6 +14,11 @@ export type ResourceDataFragment = (
   )> }
 );
 
+export type ResourceLinkDataFragment = (
+  { __typename?: 'Resource' }
+  & Pick<Types.Resource, '_id' | 'name'>
+);
+
 export type ResourcePreviewDataFragment = (
   { __typename?: 'Resource' }
   & Pick<Types.Resource, '_id' | 'name' | 'type' | 'mediaType' | 'url' | 'description' | 'durationSeconds' | 'upvotes' | 'rating'>

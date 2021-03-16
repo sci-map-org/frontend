@@ -1,8 +1,6 @@
-import * as Types from '../../graphql/types';
+import * as Types from '../../../graphql/types';
 
-import { DomainLinkDataFragment, DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
-import { ConceptLinkDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
-import { LearningGoalLinkDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
+import { SearchResultCardDataFragment } from './search_results_cards/SearchResultCard.generated';
 import * as Operations from './GlobalSearchBox';
 import * as Apollo from '@apollo/client';
 export type GlobalSearchQueryVariables = Types.Exact<{
@@ -16,28 +14,8 @@ export type GlobalSearchQuery = (
   & { globalSearch: (
     { __typename?: 'GlobalSearchResults' }
     & { results: Array<(
-      { __typename: 'SearchResult' }
-      & Pick<Types.SearchResult, 'score'>
-      & { entity: (
-        { __typename: 'Domain' }
-        & DomainLinkDataFragment
-      ) | (
-        { __typename: 'Concept' }
-        & { domain?: Types.Maybe<(
-          { __typename?: 'Domain' }
-          & DomainLinkDataFragment
-        )> }
-        & ConceptLinkDataFragment
-      ) | (
-        { __typename: 'LearningGoal' }
-        & LearningGoalLinkDataFragment
-      ) | (
-        { __typename: 'Resource' }
-        & Pick<Types.Resource, '_id' | 'name'>
-      ) | (
-        { __typename: 'LearningPath' }
-        & Pick<Types.LearningPath, '_id' | 'key' | 'name'>
-      ) }
+      { __typename?: 'SearchResult' }
+      & SearchResultCardDataFragment
     )> }
   ) }
 );

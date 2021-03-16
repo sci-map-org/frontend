@@ -26,7 +26,7 @@ import { useCurrentUser, useLogout } from '../../graphql/users/users.hooks';
 import { LearningPathPagePath } from '../../pages/RoutesPageInfos';
 import { globalStyleVariables } from '../../theme/theme';
 import { RoleAccess } from '../auth/RoleAccess';
-import { GlobalSearchBox } from '../navigation/GlobalSearchBox';
+import { GlobalSearchBox } from '../navigation/search/GlobalSearchBox';
 import { InternalLink, InternalLinkProps } from '../navigation/InternalLink';
 
 const HeaderLinkStyle: LinkProps = {

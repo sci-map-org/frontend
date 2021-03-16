@@ -6,6 +6,11 @@ export type LearningPathDataFragment = (
   & Pick<Types.LearningPath, '_id' | 'key' | 'public' | 'name' | 'description' | 'durationSeconds'>
 );
 
+export type LearningPathLinkDataFragment = (
+  { __typename?: 'LearningPath' }
+  & Pick<Types.LearningPath, '_id' | 'key' | 'name'>
+);
+
 export type LearningPathWithResourceItemsPreviewDataFragment = (
   { __typename?: 'LearningPath' }
   & { resourceItems?: Types.Maybe<Array<(

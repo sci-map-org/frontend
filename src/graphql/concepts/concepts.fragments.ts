@@ -1,4 +1,5 @@
 import gql from 'graphql-tag';
+
 import { ConceptDataFragment } from './concepts.fragments.generated';
 
 export const ConceptLinkData = gql`
@@ -6,6 +7,11 @@ export const ConceptLinkData = gql`
     _id
     key
     name
+    domain {
+      _id
+      key
+      name
+    }
   }
 `;
 
