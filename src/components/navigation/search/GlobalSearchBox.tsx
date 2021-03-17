@@ -43,7 +43,7 @@ export const GlobalSearchBox: React.FC<GlobalSearchBoxProps> = ({
   isDisabled,
   inputSize = 'sm',
   width = '180px',
-  placeholder = 'Search anything',
+  placeholder = 'Search...',
 }) => {
   const [value, setValue] = useState('');
   const [suggestions, setSuggestions] = useState<SearchResult[]>([]);
@@ -90,13 +90,14 @@ export const GlobalSearchBox: React.FC<GlobalSearchBoxProps> = ({
   return (
     <Box w={width} ref={inputRef}>
       <Autosuggest
+        // alwaysRenderSuggestions
         shouldRenderSuggestions={() => {
           return true;
         }}
         suggestions={suggestions}
         inputProps={inputProps}
         onSuggestionsFetchRequested={({ value: v }) => setValue(v)}
-        onSuggestionsClearRequested={() => setValue('')}
+        // onSuggestionsClearRequested={() => setValue('')}
         onSuggestionSelected={(e, { suggestion }) => {
           e.preventDefault();
           if (suggestion.entity.__typename === 'Domain') routerPushToPage(DomainPageInfo(suggestion.entity));
