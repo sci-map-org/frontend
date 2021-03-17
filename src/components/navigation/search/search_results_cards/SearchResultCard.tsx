@@ -44,13 +44,13 @@ export const SearchResultCard: React.FC<{ searchResult: SearchResultCardDataFrag
         />
       );
     case 'Concept':
-      return (
+      return searchResult.entity.domain ? (
         <SearchResultConceptCard
           entityPageInfo={ConceptPageInfo(searchResult.entity.domain, searchResult.entity)}
           concept={searchResult.entity}
           isHighlighted={isHighlighted}
         />
-      );
+      ) : null;
     case 'LearningGoal':
       return (
         <SearchResultLearningGoalCard
