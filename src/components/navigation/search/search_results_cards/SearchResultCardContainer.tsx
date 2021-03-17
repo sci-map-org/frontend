@@ -27,11 +27,13 @@ export const SearchResultCardContainer: React.FC<SearchResultCardContainerProps>
         cursor: 'pointer',
       }}
       borderRadius={3}
-      fontSize="sm"
+      fontSize="md"
       {...(isHighlighted && { backgroundColor: 'gray.50', borderColor: 'blue.600' })}
     >
-      {renderIcon && renderIcon({ boxSize: 6 })}
-      <Flex direction="row">{children}</Flex>
+      {renderIcon && renderIcon({ boxSize: 7 })}
+      <Flex direction="row" flexGrow={1}>
+        {children}
+      </Flex>
     </Stack>
   );
 };
