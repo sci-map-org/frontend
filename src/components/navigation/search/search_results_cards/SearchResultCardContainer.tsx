@@ -1,4 +1,4 @@
-import { Icon, IconProps } from '@chakra-ui/icons';
+import { IconProps } from '@chakra-ui/icons';
 import { Flex, Stack, StackProps } from '@chakra-ui/layout';
 import { ReactNode } from 'react';
 import { PageInfo, routerPushToPage } from '../../../../pages/PageInfo';

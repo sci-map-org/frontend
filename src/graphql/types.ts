@@ -714,9 +714,11 @@ export type Domain = Topic & {
   description?: Maybe<Scalars['String']>;
   topicType: TopicType;
   concepts?: Maybe<DomainConceptsResults>;
+  conceptTotalCount?: Maybe<Scalars['Int']>;
   resources?: Maybe<DomainResourcesResults>;
   learningPaths?: Maybe<DomainLearningPathsResults>;
   learningMaterials?: Maybe<DomainLearningMaterialsResults>;
+  learningMaterialsTotalCount?: Maybe<Scalars['Int']>;
   subDomains?: Maybe<Array<DomainBelongsToDomainItem>>;
   parentDomains?: Maybe<Array<DomainBelongsToDomainItem>>;
   learningGoals?: Maybe<Array<LearningGoalBelongsToDomain>>;

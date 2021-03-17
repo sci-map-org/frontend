@@ -22,7 +22,9 @@ export const SearchResultLearningGoalCard: React.FC<
       borderLeftColor="red.200"
       {...props}
     >
-      <Text fontWeight={500}>{learningGoal.name}</Text>
+      <Text fontWeight={500} noOfLines={2}>
+        {learningGoal.name}
+      </Text>
     </SearchResultCardContainer>
   );
 };
