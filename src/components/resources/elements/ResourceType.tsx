@@ -26,6 +26,7 @@ import { ResourceType } from '../../../graphql/types';
 import { InfographicIcon } from '../../lib/icons/InfographicIcon';
 import { OnlineBookIcon } from '../../lib/icons/OnlineBookIcon';
 import { YoutubePlaylistIcon } from '../../lib/icons/YoutubePlaylistIcon';
+import { IconProps } from '@chakra-ui/icons';
 
 export const resourceTypeColorMapping: { [key in ResourceType]: string } = {
   [ResourceType.Article]: 'green',
@@ -81,11 +82,9 @@ export const resourceTypeIconMapping: { [key in ResourceType]?: IconType | typeo
   [ResourceType.VideoGame]: RiGamepadLine,
 };
 
-export const ResourceTypeIcon: React.FC<{ resourceType: ResourceType; boxSize?: string | number } & CenterProps> = ({
-  resourceType,
-  boxSize,
-  ...centerProps
-}) => {
+export const ResourceTypeIcon: React.FC<
+  { resourceType: ResourceType; boxSize?: IconProps['boxSize'] } & CenterProps
+> = ({ resourceType, boxSize, ...centerProps }) => {
   const icon = useMemo(() => {
     return resourceTypeIconMapping[resourceType];
   }, [resourceType]);

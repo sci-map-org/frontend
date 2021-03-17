@@ -13,6 +13,14 @@ export const LearningPathData = gql`
   }
 `;
 
+export const LearningPathLinkData = gql`
+  fragment LearningPathLinkData on LearningPath {
+    _id
+    key
+    name
+  }
+`;
+
 export const LearningPathWithResourceItemsPreviewData = gql`
   fragment LearningPathWithResourceItemsPreviewData on LearningPath {
     ...LearningPathData

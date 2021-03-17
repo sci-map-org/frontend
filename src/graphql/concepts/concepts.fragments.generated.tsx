@@ -3,6 +3,10 @@ import * as Types from '../types';
 export type ConceptLinkDataFragment = (
   { __typename?: 'Concept' }
   & Pick<Types.Concept, '_id' | 'key' | 'name'>
+  & { domain?: Types.Maybe<(
+    { __typename?: 'Domain' }
+    & Pick<Types.Domain, '_id' | 'key' | 'name'>
+  )> }
 );
 
 export type ConceptDataFragment = (

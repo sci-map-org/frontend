@@ -38,7 +38,7 @@ export const articlesMenuItems: ArticleMenuItem[] = [
 
 export const AboutPage: React.FC<{ pageKey: string }> = ({ pageKey: key }) => {
   return (
-    <Box display="flex" flexDirection="row" alignItems="stretch" justifyContent="stretch">
+    <Box display="flex" flexDirection="row" alignItems="stretch" minH="100%" justifyContent="stretch">
       <Box
         borderRightWidth={1}
         borderRightColor="gray.300"

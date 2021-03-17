@@ -14,6 +14,7 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query';
   getHomePageData: GetHomePageDataResults;
+  globalSearch: GlobalSearchResults;
   searchTopics: SearchTopicsResult;
   searchSubTopics: SearchTopicsResult;
   checkTopicKeyAvailability: CheckTopicKeyAvailabilityResult;
@@ -34,6 +35,12 @@ export type Query = {
   searchLearningGoals: SearchLearningGoalsResult;
   getLearningGoalByKey: LearningGoal;
   getDomainLearningGoalByKey: DomainAndLearningGoalResult;
+};
+
+
+export type QueryGlobalSearchArgs = {
+  query: Scalars['String'];
+  options?: Maybe<GlobalSearchOptions>;
 };
 
 
@@ -577,6 +584,15 @@ export type GetHomePageDataResults = {
   recommendedLearningPaths: Array<LearningPath>;
 };
 
+export type GlobalSearchResults = {
+  __typename?: 'GlobalSearchResults';
+  results: Array<SearchResult>;
+};
+
+export type GlobalSearchOptions = {
+  pagination?: Maybe<PaginationOptions>;
+};
+
 export type SearchTopicsResult = {
   __typename?: 'SearchTopicsResult';
   items: Array<Topic>;
@@ -698,9 +714,11 @@ export type Domain = Topic & {
   description?: Maybe<Scalars['String']>;
   topicType: TopicType;
   concepts?: Maybe<DomainConceptsResults>;
+  conceptTotalCount?: Maybe<Scalars['Int']>;
   resources?: Maybe<DomainResourcesResults>;
   learningPaths?: Maybe<DomainLearningPathsResults>;
   learningMaterials?: Maybe<DomainLearningMaterialsResults>;
+  learningMaterialsTotalCount?: Maybe<Scalars['Int']>;
   subDomains?: Maybe<Array<DomainBelongsToDomainItem>>;
   parentDomains?: Maybe<Array<DomainBelongsToDomainItem>>;
   learningGoals?: Maybe<Array<LearningGoalBelongsToDomain>>;
@@ -1196,17 +1214,23 @@ export type UpdateConceptReferencesConceptResult = {
   referencedConcept: Concept;
 };
 
+export type SearchResult = {
+  __typename?: 'SearchResult';
+  entity: SearchResultEntity;
+  score: Scalars['Float'];
+};
+
+export type PaginationOptions = {
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+};
+
 export type Topic = {
   _id: Scalars['String'];
   name: Scalars['String'];
   key: Scalars['String'];
   description?: Maybe<Scalars['String']>;
   topicType: TopicType;
-};
-
-export type PaginationOptions = {
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
 };
 
 export type SearchTopicsFilterOptions = {
@@ -1549,6 +1573,8 @@ export type CreateLearningPathResourceItem = {
 };
 
 export type SubGoal = LearningGoal | Concept;
+
+export type SearchResultEntity = Domain | Concept | LearningGoal | Resource | LearningPath;
 
 export type UserConsumedResourceItem = {
   __typename?: 'UserConsumedResourceItem';
