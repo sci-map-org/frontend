@@ -7,6 +7,7 @@ import { MapIcon } from '../components/lib/icons/MapIcon';
 import { SocialNetworkIcon } from '../components/lib/icons/SocialNetworkIcon';
 import { UserCentricIcon } from '../components/lib/icons/UserCentricIcon';
 import { InternalButtonLink, InternalLink } from '../components/navigation/InternalLink';
+import { GlobalSearchBox } from '../components/navigation/search/GlobalSearchBox';
 import { ResourceMiniCardData } from '../components/resources/ResourceMiniCard';
 import { useCurrentUser } from '../graphql/users/users.hooks';
 import { HomeDomainsRecommendations } from './home/HomeDomainsRecommendations';
@@ -81,6 +82,9 @@ export const HomePage: React.FC = () => {
       )}
 
       <RecommendationsBlock data={data} loading={loading} />
+      <Center py="100px">
+        <GlobalSearchBox inputSize="lg" width="400px" />
+      </Center>
       <Flex
         px="5%"
         mt={10}

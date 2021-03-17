@@ -18,6 +18,7 @@ export const SearchResultResourceCard: React.FC<
   return (
     <SearchResultCardContainer
       renderIcon={(props) => <ResourceTypeIcon resourceType={resource.resourceType} {...props} />}
+      borderLeftColor="blue.300"
       {...props}
     >
       {resource.name}

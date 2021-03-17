@@ -90,7 +90,7 @@ export const GlobalSearchBox: React.FC<GlobalSearchBoxProps> = ({
   return (
     <Box w={width} ref={inputRef}>
       <Autosuggest
-        // alwaysRenderSuggestions
+        alwaysRenderSuggestions
         shouldRenderSuggestions={() => {
           return true;
         }}
@@ -122,11 +122,11 @@ export const GlobalSearchBox: React.FC<GlobalSearchBoxProps> = ({
           children && (
             <Box
               {...containerProps}
-              borderLeftWidth={1}
+              // borderLeftWidth={1}
               w="400px"
               borderTopWidth={1}
-              borderRightWidth={1}
-              zIndex={4000}
+              // borderRightWidth={1}
+              zIndex={1000}
               position="absolute"
               bgColor="white"
               // w={inputRef.current?.offsetWidth || undefined}

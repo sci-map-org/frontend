@@ -1,3 +1,4 @@
+import { Text } from '@chakra-ui/layout';
 import gql from 'graphql-tag';
 import { LearningPathLinkData } from '../../../../graphql/learning_paths/learning_paths.fragments';
 import { LearningPathIcon } from '../../../lib/icons/LearningPathIcon';
@@ -15,8 +16,12 @@ export const SearchResultLearningPathCard: React.FC<
   { learningPath: SearchResultLearningPathCardDataFragment } & SearchResultCardContainerProps
 > = ({ learningPath, ...props }) => {
   return (
-    <SearchResultCardContainer renderIcon={(props) => <LearningPathIcon {...props} />} {...props}>
-      {learningPath.name}
+    <SearchResultCardContainer
+      renderIcon={(props) => <LearningPathIcon {...props} />}
+      {...props}
+      borderLeftColor="teal.300"
+    >
+      <Text fontWeight={500}>{learningPath.name}</Text>
     </SearchResultCardContainer>
   );
 };

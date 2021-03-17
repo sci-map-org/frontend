@@ -18,7 +18,11 @@ export const SearchResultConceptCard: React.FC<
   { concept: SearchResultConceptCardDataFragment } & SearchResultCardContainerProps
 > = ({ concept, ...props }) => {
   return (
-    <SearchResultCardContainer renderIcon={(props) => <ConceptIcon {...props} />} {...props}>
+    <SearchResultCardContainer
+      renderIcon={(props) => <ConceptIcon {...props} />}
+      {...props}
+      borderLeftColor="yellow.200"
+    >
       <Flex direction="row" alignItems="baseline" justifyContent="space-between" w="100%">
         <Text fontWeight={500}>{concept.name}</Text>
         {concept.domain && (
