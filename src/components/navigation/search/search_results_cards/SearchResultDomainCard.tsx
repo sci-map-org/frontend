@@ -18,7 +18,7 @@ export const SearchResultDomainCardData = gql`
 `;
 
 export const SearchResultDomainCard: React.FC<
-  { domain: SearchResultDomainCardDataFragment } & SearchResultCardContainerProps
+  { domain: SearchResultDomainCardDataFragment } & Omit<SearchResultCardContainerProps, 'borderLeftColor'>
 > = ({ domain, ...props }) => {
   return (
     <SearchResultCardContainer

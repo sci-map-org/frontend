@@ -23,7 +23,7 @@ export const SearchResultLearningPathCardData = gql`
 `;
 
 export const SearchResultLearningPathCard: React.FC<
-  { learningPath: SearchResultLearningPathCardDataFragment } & SearchResultCardContainerProps
+  { learningPath: SearchResultLearningPathCardDataFragment } & Omit<SearchResultCardContainerProps, 'borderLeftColor'>
 > = ({ learningPath, ...props }) => {
   return (
     <SearchResultCardContainer

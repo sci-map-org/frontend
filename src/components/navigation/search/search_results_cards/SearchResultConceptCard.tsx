@@ -15,7 +15,7 @@ export const SearchResultConceptCardData = gql`
 `;
 
 export const SearchResultConceptCard: React.FC<
-  { concept: SearchResultConceptCardDataFragment } & SearchResultCardContainerProps
+  { concept: SearchResultConceptCardDataFragment } & Omit<SearchResultCardContainerProps, 'borderLeftColor'>
 > = ({ concept, ...props }) => {
   return (
     <SearchResultCardContainer

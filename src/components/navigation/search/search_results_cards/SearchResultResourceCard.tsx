@@ -16,7 +16,7 @@ export const SearchResultResourceCardData = gql`
 `;
 
 export const SearchResultResourceCard: React.FC<
-  { resource: SearchResultResourceCardDataFragment } & SearchResultCardContainerProps
+  { resource: SearchResultResourceCardDataFragment } & Omit<SearchResultCardContainerProps, 'borderLeftColor'>
 > = ({ resource, ...props }) => {
   return (
     <SearchResultCardContainer

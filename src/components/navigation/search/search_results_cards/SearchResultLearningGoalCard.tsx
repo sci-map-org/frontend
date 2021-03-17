@@ -14,7 +14,7 @@ export const SearchResultLearningGoalCardData = gql`
 `;
 
 export const SearchResultLearningGoalCard: React.FC<
-  { learningGoal: SearchResultLearningGoalCardDataFragment } & SearchResultCardContainerProps
+  { learningGoal: SearchResultLearningGoalCardDataFragment } & Omit<SearchResultCardContainerProps, 'borderLeftColor'>
 > = ({ learningGoal, ...props }) => {
   return (
     <SearchResultCardContainer
