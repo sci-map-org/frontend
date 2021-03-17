@@ -1,13 +1,10 @@
 import { Input, InputGroup, InputRightElement } from '@chakra-ui/input';
-import { Box, Flex, Text } from '@chakra-ui/layout';
+import { Box } from '@chakra-ui/layout';
 import gql from 'graphql-tag';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Autosuggest from 'react-autosuggest';
 import { BeatLoader } from 'react-spinners';
 import { useDebouncedCallback } from 'use-debounce';
-import { ConceptLinkData } from '../../../graphql/concepts/concepts.fragments';
-import { DomainLinkData } from '../../../graphql/domains/domains.fragments';
-import { LearningGoalLinkData } from '../../../graphql/learning_goals/learning_goals.fragments';
 import { routerPushToPage } from '../../../pages/PageInfo';
 import {
   ConceptPageInfo,
@@ -90,14 +87,16 @@ export const GlobalSearchBox: React.FC<GlobalSearchBoxProps> = ({
   return (
     <Box w={width} ref={inputRef}>
       <Autosuggest
-        alwaysRenderSuggestions
         shouldRenderSuggestions={() => {
           return true;
         }}
         suggestions={suggestions}
         inputProps={inputProps}
         onSuggestionsFetchRequested={({ value: v }) => setValue(v)}
-        // onSuggestionsClearRequested={() => setValue('')}
+        onSuggestionsClearRequested={() => {
+          setSuggestions([]);
+          setValue('');
+        }}
         onSuggestionSelected={(e, { suggestion }) => {
           e.preventDefault();
           if (suggestion.entity.__typename === 'Domain') routerPushToPage(DomainPageInfo(suggestion.entity));
@@ -120,17 +119,7 @@ export const GlobalSearchBox: React.FC<GlobalSearchBoxProps> = ({
         )}
         renderSuggestionsContainer={({ containerProps, children }) =>
           children && (
-            <Box
-              {...containerProps}
-              // borderLeftWidth={1}
-              w="400px"
-              borderTopWidth={1}
-              // borderRightWidth={1}
-              zIndex={1000}
-              position="absolute"
-              bgColor="white"
-              // w={inputRef.current?.offsetWidth || undefined}
-            >
+            <Box {...containerProps} w="400px" borderTopWidth={1} zIndex={1000} position="absolute" bgColor="white">
               {children}
             </Box>
           )

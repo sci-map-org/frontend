@@ -3,7 +3,7 @@ import { Icon, IconProps } from '@chakra-ui/icons';
 export const ModuleIcon = (
   props: Omit<IconProps, 'css'> // ts bug with emotion, checkout https://github.com/emotion-js/emotion/issues/1640
 ) => (
-  <Icon version="1.1" x="0px" y="0px" viewBox="0 0 48 48" {...props}>
+  <Icon version="1.1" x="0px" y="0px" viewBox="0 0 48 48" {...props} fill="currentColor">
     <path d="M35,16.49,25,10.71a2,2,0,0,0-2,0L13,16.49a2,2,0,0,0-1,1.73V29.78a2,2,0,0,0,1,1.73l10,5.78a2,2,0,0,0,2,0l10-5.78a2,2,0,0,0,1-1.73V18.22A2,2,0,0,0,35,16.49ZM23.25,35.7l-9.51-5.49a.5.5,0,0,1-.25-.43v-11h0l9.76,5.63ZM24,23.1l-9.72-5.62L23.75,12h0a.5.5,0,0,1,.5,0l9.47,5.47Zm10.52,6.68a.5.5,0,0,1-.25.43L24.75,35.7V24.39l9.76-5.63h0Z" />
     {/* // Below: old one, the "sector" */}
     {/* <switch>
