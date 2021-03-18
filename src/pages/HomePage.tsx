@@ -1,11 +1,8 @@
-import { Box, Center, Flex, FlexProps, Heading, Image, Link, Stack, Text } from '@chakra-ui/react';
+import { Box, Center, Flex, FlexProps, Heading, Image, ImageProps, Link, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import React, { ReactNode } from 'react';
 import { LearningGoalCardData } from '../components/learning_goals/cards/LearningGoalCard';
 import { LearningPathPreviewCardData } from '../components/learning_paths/LearningPathPreviewCard';
-import { MapIcon } from '../components/lib/icons/MapIcon';
-import { SocialNetworkIcon } from '../components/lib/icons/SocialNetworkIcon';
-import { UserCentricIcon } from '../components/lib/icons/UserCentricIcon';
 import { InternalButtonLink, InternalLink } from '../components/navigation/InternalLink';
 import { GlobalSearchBox } from '../components/navigation/search/GlobalSearchBox';
 import { ResourceMiniCardData } from '../components/resources/ResourceMiniCard';
@@ -82,8 +79,36 @@ export const HomePage: React.FC = () => {
       )}
 
       <RecommendationsBlock data={data} loading={loading} />
-      <Center py="100px">
-        <GlobalSearchBox inputSize="lg" width="400px" />
+      <Center>
+        <Box position="relative" px={5}>
+          <Image
+            position="absolute"
+            src="./static/search_dots_pin.svg"
+            right="-160px"
+            bottom="10px"
+            w="320px"
+            zIndex={20}
+          />
+          <Image
+            position="absolute"
+            src="./static/search_stain.svg"
+            zIndex={-3}
+            right="-200px"
+            bottom="-80px"
+            opacity={0.8}
+            w="360px"
+          />
+          <Stack py="100px" alignItems="center" spacing={10}>
+            <Heading fontSize="4xl" color="gray.800" textAlign="center">
+              What would you like to{' '}
+              <Text color="blue.600" as="span">
+                learn
+              </Text>
+              ?
+            </Heading>
+            <GlobalSearchBox inputSize="lg" width={{ base: '300px', sm: '400px' }} />
+          </Stack>
+        </Box>
       </Center>
       <Flex
         px="5%"
@@ -131,10 +156,13 @@ export const HomePage: React.FC = () => {
         </Flex>
       </Flex>
       <HomeContentItem
+        renderTopoStain={(props) => (
+          <Image {...props} src="./static/topostain_brown.svg" w="400px" opacity={0.7} right="2%" />
+        )}
         imagePosition="left"
         layoutProps={outerLayoutProps}
         darkBackground
-        renderImage={<MapIcon w="200px" h="200px" color="mainDarker" />}
+        renderImage={<Image src="./static/map.svg" w="400px" ml="-90px" mr="-40px" />}
         title="An open, graph-based learning map"
         renderTextContent={
           <Text>
@@ -155,9 +183,12 @@ export const HomePage: React.FC = () => {
         }
       />
       <HomeContentItem
+        renderTopoStain={(props) => (
+          <Image {...props} src="./static/topostain_teal.svg" w="400px" opacity={0.7} left="2%" />
+        )}
         imagePosition="right"
         layoutProps={outerLayoutProps}
-        renderImage={<UserCentricIcon w="200px" h="200px" color="mainDarker" />}
+        renderImage={<Image src="./static/boatymacboatface.svg" w="400px" />}
         title="An experience tailored to each learner"
         renderTextContent={
           <Text>
@@ -198,9 +229,12 @@ export const HomePage: React.FC = () => {
       />
       <HomeContentItem
         imagePosition="left"
+        renderTopoStain={(props) => (
+          <Image {...props} src="./static/topostain_green.svg" w="260px" opacity={0.7} right="6%" />
+        )}
         layoutProps={outerLayoutProps}
         darkBackground
-        renderImage={<SocialNetworkIcon w="200px" h="200px" color="mainDarker" />}
+        renderImage={<Image src="./static/together_goal.svg" w="400px" />}
         title="Collaborative and community based"
         renderTextContent={
           <Text>
@@ -225,23 +259,12 @@ export const HomePage: React.FC = () => {
           </Text>
         }
       />
-      {/* <Flex w="100%" h="calc(100vw*0.12)" overflow="hidden"> */}
-      {/* <Image src="/static/caravan_bg2.svg" w="100%" /> */}
-      {/* </Flex> */}
-      {/* <Flex h="400px" mt="-1px" px="20%" bgColor="#974b31" justifyContent="space-between">
-        <Text size="xl" fontWeight={500} color="white" mt="140px">
-          Learn Together
-        </Text>
-      </Flex> */}
+
       <Flex justifyContent="center" my={10}>
         <InternalButtonLink size="lg" routePath="/about" asHref="/about" colorScheme="blue" variant="outline">
           Learn more
         </InternalButtonLink>
       </Flex>
-      {/* <Flex justifyContent="center">
-        <Divider width="50%" />
-      </Flex> */}
-      {/* <HomeFooter layoutProps={outerLayoutProps} /> */}
     </Flex>
   );
 };
@@ -383,20 +406,25 @@ const HomeContentItem: React.FC<{
   layoutProps: FlexProps;
   title: string;
   renderTextContent: ReactNode;
-}> = ({ layoutProps, imagePosition, renderImage, title, renderTextContent, darkBackground }) => {
+  renderTopoStain: (props: Partial<ImageProps>) => ReactNode;
+}> = ({ layoutProps, renderTopoStain, imagePosition, renderImage, title, renderTextContent, darkBackground }) => {
   return (
     <Flex
       direction={{ base: imagePosition === 'left' ? 'column' : 'column-reverse', md: 'row' }}
-      py="50px"
+      my="50px"
       alignItems="center"
-      backgroundColor={darkBackground ? 'gray.200' : 'background.0'}
+      // backgroundColor={darkBackground ? 'gray.200' : 'background.0'}
+      // backgroundImage="url("
+      position="relative"
       {...layoutProps}
     >
+      {renderTopoStain({ position: 'absolute', zIndex: -1 })}
       {imagePosition === 'left' && (
         <>
-          <Box flexBasis="200px" flexGrow={0} flexShrink={0}>
-            {renderImage}
-          </Box>
+          {/* <Box> */}
+          {/* flexBasis="200px" flexGrow={0} flexShrink={0} */}
+          {renderImage}
+          {/* </Box> */}
           <Box w={16} h={4} />
         </>
       )}
@@ -409,9 +437,10 @@ const HomeContentItem: React.FC<{
       {imagePosition === 'right' && (
         <>
           <Box w={16} h={4} />
-          <Box width="200px" height="200px" flexGrow={0} flexShrink={0}>
-            {renderImage}
-          </Box>
+          {/* <Box> */}
+          {/* width="200px" height="200px" flexGrow={0} flexShrink={0} */}
+          {renderImage}
+          {/* </Box> */}
         </>
       )}
     </Flex>
