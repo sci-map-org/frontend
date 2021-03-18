@@ -1,5 +1,6 @@
-import { Input, InputGroup, InputRightElement } from '@chakra-ui/input';
-import { Box } from '@chakra-ui/layout';
+import { SearchIcon } from '@chakra-ui/icons';
+import { Input, InputGroup, InputLeftElement, InputRightElement } from '@chakra-ui/input';
+import { Box, BoxProps } from '@chakra-ui/layout';
 import gql from 'graphql-tag';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Autosuggest from 'react-autosuggest';
@@ -31,7 +32,7 @@ interface GlobalSearchBoxProps {
   placeholder?: string;
   isDisabled?: boolean;
   inputSize?: 'sm' | 'md' | 'lg';
-  width?: string;
+  width?: BoxProps['width'];
 }
 
 type SearchResult = GlobalSearchQuery['globalSearch']['results'][0];
@@ -127,8 +128,10 @@ export const GlobalSearchBox: React.FC<GlobalSearchBoxProps> = ({
         highlightFirstSuggestion={true}
         getSuggestionValue={(suggestion) => value}
         renderInputComponent={(inputProps: any) => (
-          <InputGroup size={inputSize}>
-            <Input variant="outline" borderRadius={4} _focus={{ borderColor: 'gray.500' }} {...inputProps} w={width} />
+          <InputGroup size={inputSize} w={width}>
+            <InputLeftElement pointerEvents="none" children={<SearchIcon color="gray.400" />} />
+
+            <Input variant="outline" borderRadius={4} _focus={{ borderColor: 'gray.500' }} {...inputProps} />
             {isSearching && (
               <InputRightElement w="auto" px={2}>
                 <BeatLoader size={{ sm: 5, md: 8, lg: 9 }[inputSize]} margin={2} color={theme.colors.main} />
