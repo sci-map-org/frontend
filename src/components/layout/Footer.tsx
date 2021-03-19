@@ -6,7 +6,7 @@ export const Footer: React.FC<{}> = () => {
     <Flex direction="column" alignItems="stretch">
       <Image src="./static/caravan_bg2.svg" mt={16} mb={-1} />
       <Flex
-        bgColor="#974b31"
+        bgColor="gray.600"
         w="100%"
         px={{ base: '2%', md: '5%', lg: '8%' }}
         pt={5}
