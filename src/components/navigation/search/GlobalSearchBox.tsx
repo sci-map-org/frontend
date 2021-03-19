@@ -34,6 +34,7 @@ interface GlobalSearchBoxProps {
   inputSize?: 'sm' | 'md' | 'lg';
   width?: BoxProps['width'];
   inputBgColor?: InputProps['bgColor'];
+  positionSuggestions?: 'left' | 'right';
 }
 
 type SearchResult = GlobalSearchQuery['globalSearch']['results'][0];
@@ -44,6 +45,7 @@ export const GlobalSearchBox: React.FC<GlobalSearchBoxProps> = ({
   width = '180px',
   placeholder = 'Search...',
   inputBgColor,
+  positionSuggestions = 'right',
 }) => {
   const [value, setValue] = useState('');
   const [suggestions, setSuggestions] = useState<SearchResult[]>([]);
@@ -88,7 +90,7 @@ export const GlobalSearchBox: React.FC<GlobalSearchBoxProps> = ({
 
   let inputRef = useRef<HTMLDivElement>(null);
   return (
-    <Box w={width} ref={inputRef}>
+    <Box w={width} ref={inputRef} position="relative" id="search_box">
       <Autosuggest
         shouldRenderSuggestions={() => {
           return true;
@@ -120,9 +122,24 @@ export const GlobalSearchBox: React.FC<GlobalSearchBoxProps> = ({
         renderSuggestion={(suggestion, { isHighlighted }) => (
           <SearchResultCard searchResult={suggestion} isHighlighted={isHighlighted} />
         )}
+        alwaysRenderSuggestions
         renderSuggestionsContainer={({ containerProps, children }) =>
           children && (
-            <Box {...containerProps} w={width} borderTopWidth={1} zIndex={1000} position="absolute" bgColor="white">
+            <Box
+              {...containerProps}
+              minW={width}
+              maxW={'100vw'}
+              {...(positionSuggestions === 'left' && {
+                right: {
+                  base: 0,
+                  md: 'auto',
+                },
+              })}
+              borderTopWidth={1}
+              zIndex={1000}
+              position="absolute"
+              bgColor="white"
+            >
               {children}
             </Box>
           )

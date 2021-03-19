@@ -1,4 +1,4 @@
-import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel } from '@chakra-ui/accordion';
+import { Accordion, AccordionButton, AccordionItem, AccordionPanel } from '@chakra-ui/accordion';
 import { Box } from '@chakra-ui/layout';
 import { ReactNode } from 'react';
 
@@ -36,7 +36,6 @@ export const Accordeon: React.FC<AccordeonProps> = ({ items, textAlign = 'left' 
             <Box flex="1" fontSize="lg" textAlign={textAlign} borderTopWidth={0}>
               {title}
             </Box>
-            {/* <AccordionIcon /> */}
           </AccordionButton>
           <AccordionPanel textAlign={textAlign} pb={4}>
             {content}
