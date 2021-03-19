@@ -3,6 +3,7 @@ import gql from 'graphql-tag';
 import React, { ReactNode } from 'react';
 import { LearningGoalCardData } from '../components/learning_goals/cards/LearningGoalCard';
 import { LearningPathPreviewCardData } from '../components/learning_paths/LearningPathPreviewCard';
+import { Accordeon } from '../components/lib/Accordeon';
 import { InternalButtonLink, InternalLink } from '../components/navigation/InternalLink';
 import { GlobalSearchBox } from '../components/navigation/search/GlobalSearchBox';
 import { ResourceMiniCardData } from '../components/resources/ResourceMiniCard';
@@ -14,6 +15,7 @@ import { HomeUserResourcesHistory } from './home/HomeUserResourcesHistory';
 import { HomeUserStartedGoals } from './home/HomeUserStartedGoals';
 import { HomeUserStartedPaths, StartedLearningPathCardData } from './home/HomeUserStartedPaths';
 import { GetHomePageDataQuery, useGetHomePageDataQuery } from './HomePage.generated';
+
 export const getHomePageData = gql`
   query getHomePageData {
     getHomePageData {
@@ -126,6 +128,7 @@ export const HomePage: React.FC = () => {
             personalized learning experience for every topic. It allows you to explore knowledge intuitively, whether
             you have a specific goal in mind or you simply are following your curiosity.
           </Text>
+
           <Stack direction="column" spacing={2} mb="15px">
             <Text>
               ⇒{' '}
@@ -163,23 +166,52 @@ export const HomePage: React.FC = () => {
         layoutProps={outerLayoutProps}
         darkBackground
         renderImage={<Image src="./static/map.svg" w="400px" ml="-90px" mr="-40px" />}
-        title="An open, graph-based learning map"
+        title="A collaborative learning map"
+        // "An open, graph-based learning map"
         renderTextContent={
-          <Text>
-            Find out what you don't know, what you need to learn next, take a deep dive, or explore seamlessly with an{' '}
-            <Text fontWeight={600} as="span">
-              open map
-            </Text>{' '}
-            of the knowledge space.
-            <br />
-            <br />
-            We leverage{' '}
-            <Text fontWeight={600} as="span">
-              graph database
-            </Text>{' '}
-            technology to build an abstract and precise modeling of knowledge, locate learning material in it, and serve
-            it at the right time to the learner.
-          </Text>
+          <Accordeon
+            items={[
+              {
+                title: 'Find the best learning content out there',
+                content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+          consequat.`,
+              },
+              {
+                title: "Get a bird's eye view of all knowledge",
+                content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+          consequat.`,
+              },
+              {
+                title: 'Built by you and me',
+                content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+          consequat.`,
+              },
+              {
+                title: 'Free and open source',
+                content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+          consequat.`,
+              },
+            ]}
+          />
+          // <Text>
+          //   Find out what you don't know, what you need to learn next, take a deep dive, or explore seamlessly with an{' '}
+          //   <Text fontWeight={600} as="span">
+          //     open map
+          //   </Text>{' '}
+          //   of the knowledge space.
+          //   <br />
+          //   <br />
+          //   We leverage{' '}
+          //   <Text fontWeight={600} as="span">
+          //     graph database
+          //   </Text>{' '}
+          //   technology to build an abstract and precise modeling of knowledge, locate learning material in it, and serve
+          //   it at the right time to the learner.
+          // </Text>
         }
       />
       <HomeContentItem
@@ -189,42 +221,70 @@ export const HomePage: React.FC = () => {
         imagePosition="right"
         layoutProps={outerLayoutProps}
         renderImage={<Image src="./static/boatymacboatface.svg" w="400px" />}
-        title="An experience tailored to each learner"
+        title="Navigate seamlessly"
         renderTextContent={
-          <Text>
-            From what the learner already knows, his learning profile, his goals and interests, we will provide an{' '}
-            <Text fontWeight={600} as="span">
-              optimal
-            </Text>{' '}
-            and{' '}
-            <Text fontWeight={600} as="span">
-              fully personalized
-            </Text>{' '}
-            experience.
-            <br />
-            <br />
-            We plan to provide smart recommendations while enabling the learner to keep control over their path, for
-            instance by finding{' '}
-            <Text fontWeight={600} as="span">
-              alternative pedagogical
-            </Text>{' '}
-            approaches in one click.
-            <br />
-            <br />
-            By providing{' '}
-            <Text fontWeight={600} as="span">
-              personal learning management
-            </Text>{' '}
-            features, and building an increasingly precise leaning profile for each user,{' '}
-            <Text as="span" fontWeight={600} color="main">
-              Sci-map.org
-            </Text>{' '}
-            aims to be the perfect tool for{' '}
-            <Text fontWeight={600} as="span">
-              continuous learning
-            </Text>{' '}
-            across a wide range of domains.
-          </Text>
+          <Accordeon
+            items={[
+              {
+                title: 'Get a tailored experience',
+                content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+          consequat.`,
+              },
+              {
+                title: 'Follow your curiosity',
+                content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+          consequat.`,
+              },
+              {
+                title: 'Switch pedagogical approaches in one click',
+                content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+          consequat.`,
+              },
+              {
+                title: 'Learn optimally, whatever your goal is',
+                content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+          consequat.`,
+              },
+            ]}
+          />
+          // <Text>
+          //   From what the learner already knows, his learning profile, his goals and interests, we will provide an{' '}
+          //   <Text fontWeight={600} as="span">
+          //     optimal
+          //   </Text>{' '}
+          //   and{' '}
+          //   <Text fontWeight={600} as="span">
+          //     fully personalized
+          //   </Text>{' '}
+          //   experience.
+          //   <br />
+          //   <br />
+          //   We plan to provide smart recommendations while enabling the learner to keep control over their path, for
+          //   instance by finding{' '}
+          //   <Text fontWeight={600} as="span">
+          //     alternative pedagogical
+          //   </Text>{' '}
+          //   approaches in one click.
+          //   <br />
+          //   <br />
+          //   By providing{' '}
+          //   <Text fontWeight={600} as="span">
+          //     personal learning management
+          //   </Text>{' '}
+          //   features, and building an increasingly precise leaning profile for each user,{' '}
+          //   <Text as="span" fontWeight={600} color="main">
+          //     Sci-map.org
+          //   </Text>{' '}
+          //   aims to be the perfect tool for{' '}
+          //   <Text fontWeight={600} as="span">
+          //     continuous learning
+          //   </Text>{' '}
+          //   across a wide range of domains.
+          // </Text>
         }
       />
       <HomeContentItem
@@ -237,26 +297,55 @@ export const HomePage: React.FC = () => {
         renderImage={<Image src="./static/together_goal.svg" w="400px" />}
         title="Collaborative and community based"
         renderTextContent={
-          <Text>
-            This project is{' '}
-            <Text fontWeight={600} as="span">
-              community-based
-            </Text>
-            ; we intend to build a modeling of the knowledge space, assess the content quality, and improve upon it{' '}
-            <Text fontWeight={600} as="span">
-              collaboratively
-            </Text>
-            . <br />
-            <br />
-            We aim to enable new communities to form around different domains, foster{' '}
-            <Text fontWeight={600} as="span">
-              learning with peers
-            </Text>
-            , receiving support and feedback, and connecting people at the right time. <br />
-            <br />
-            By improving content collaboratively based on community feedback and data, we aim to reach a better quality
-            than what an individual alone could achieve.
-          </Text>
+          <Accordeon
+            items={[
+              {
+                title: 'Connect with other learners',
+                content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+          consequat.`,
+              },
+
+              {
+                title: 'Keep track of what your learn',
+                content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+          consequat.`,
+              },
+              {
+                title: 'Share your learning journey',
+                content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+          consequat.`,
+              },
+              //     {
+              //       title: 'Learn optimally, whatever your goal is',
+              //       content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+              // magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+              // consequat.`,
+              //     },
+            ]}
+          />
+          // <Text>
+          //   This project is{' '}
+          //   <Text fontWeight={600} as="span">
+          //     community-based
+          //   </Text>
+          //   ; we intend to build a modeling of the knowledge space, assess the content quality, and improve upon it{' '}
+          //   <Text fontWeight={600} as="span">
+          //     collaboratively
+          //   </Text>
+          //   . <br />
+          //   <br />
+          //   We aim to enable new communities to form around different domains, foster{' '}
+          //   <Text fontWeight={600} as="span">
+          //     learning with peers
+          //   </Text>
+          //   , receiving support and feedback, and connecting people at the right time. <br />
+          //   <br />
+          //   By improving content collaboratively based on community feedback and data, we aim to reach a better quality
+          //   than what an individual alone could achieve.
+          // </Text>
         }
       />
 
@@ -432,7 +521,9 @@ const HomeContentItem: React.FC<{
         <Heading size="xl" fontWeight={400} mb={5}>
           {title}
         </Heading>
-        <Box color="gray.700">{renderTextContent}</Box>
+        <Box color="gray.700" flexGrow={1}>
+          {renderTextContent}
+        </Box>
       </Flex>
       {imagePosition === 'right' && (
         <>
