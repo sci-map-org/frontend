@@ -71,7 +71,7 @@ export const HomePage: React.FC = () => {
     px: ['5px', '10px', '5%', '15%'],
   };
   return (
-    <Flex direction="column" justifyContent="center" alignItems="stretch">
+    <Flex direction="column" justifyContent="center" alignItems="stretch" overflow="hidden">
       {!isReturningUser ? (
         <Center>
           <HomeHeader />
@@ -81,24 +81,25 @@ export const HomePage: React.FC = () => {
       )}
 
       <RecommendationsBlock data={data} loading={loading} />
-      <Center>
+      <Center mt={8} mb={12}>
         <Box position="relative" px={5}>
           <Image
             position="absolute"
             src="./static/search_dots_pin.svg"
-            right="-160px"
-            bottom="10px"
-            w="320px"
-            zIndex={20}
+            right={{ base: '-30px', md: '-160px' }}
+            bottom={{ base: '-30px', md: '10px' }}
+            w={{ base: '300px', md: '320px' }}
+            zIndex={-2}
           />
           <Image
             position="absolute"
             src="./static/search_stain.svg"
             zIndex={-3}
-            right="-200px"
-            bottom="-80px"
+            // display={{ base: 'none', md: 'inherit' }}
+            right={{ base: '-20px', md: '-200px' }}
+            bottom={{ base: '-120px', md: '-80px' }}
             opacity={0.8}
-            w="360px"
+            w={{ base: '340px', md: '360px' }}
           />
           <Stack py="100px" alignItems="center" spacing={10}>
             <Heading fontSize="4xl" color="gray.800" textAlign="center">
@@ -108,18 +109,18 @@ export const HomePage: React.FC = () => {
               </Text>
               ?
             </Heading>
-            <GlobalSearchBox inputSize="lg" width={{ base: '300px', sm: '400px' }} />
+            <GlobalSearchBox inputBgColor="white" inputSize="lg" width={{ base: '160px', sm: '300px', md: '400px' }} />
           </Stack>
         </Box>
       </Center>
-      <Flex
+      {/*<Flex
         px="5%"
         mt={10}
         mb="40px"
         alignItems={{ base: 'center', md: 'start' }}
         direction={{ base: 'column', md: 'row' }}
       >
-        <Flex direction="column" flexShrink={1} pr="10px">
+         <Flex direction="column" flexShrink={1} pr="10px">
           <Text mb={6}>
             <Text as="span" fontWeight={800}>
               Sci-map.org
@@ -131,7 +132,7 @@ export const HomePage: React.FC = () => {
 
           <Stack direction="column" spacing={2} mb="15px">
             <Text>
-              ⇒{' '}
+              ⇒{' '} 
               <Text as="span" fontWeight={800} color="main">
                 Preview
               </Text>{' '}
@@ -156,16 +157,29 @@ export const HomePage: React.FC = () => {
               </InternalLink>
             </Text>
           </Stack>
-        </Flex>
+        </Flex> 
       </Flex>
+*/}
+      {/* <Center py="50px">
+        <Heading size="2xl" color="teal.400">
+          Sci-Map.org
+        </Heading>
+      </Center> */}
       <HomeContentItem
         renderTopoStain={(props) => (
-          <Image {...props} src="./static/topostain_brown.svg" w="400px" opacity={0.7} right="2%" />
+          <Image
+            {...props}
+            src="./static/topostain_brown.svg"
+            w="400px"
+            opacity={0.7}
+            right={{ base: '-5%', md: '2%' }}
+            top={{ base: '50%', md: '10%' }}
+          />
         )}
         imagePosition="left"
         layoutProps={outerLayoutProps}
         darkBackground
-        renderImage={<Image src="./static/map.svg" w="400px" ml="-90px" mr="-40px" />}
+        renderImage={<Image src="./static/map.svg" my="-20%" mx="-5%" />}
         title="A collaborative learning map"
         // "An open, graph-based learning map"
         renderTextContent={
@@ -216,14 +230,22 @@ export const HomePage: React.FC = () => {
       />
       <HomeContentItem
         renderTopoStain={(props) => (
-          <Image {...props} src="./static/topostain_teal.svg" w="400px" opacity={0.7} left="2%" />
+          <Image
+            {...props}
+            src="./static/topostain_teal.svg"
+            w="400px"
+            opacity={0.7}
+            left={{ base: '-5%', md: '2%' }}
+            top={{ base: '60%', md: '10%' }}
+          />
         )}
         imagePosition="right"
         layoutProps={outerLayoutProps}
-        renderImage={<Image src="./static/boatymacboatface.svg" w="400px" />}
+        renderImage={<Image src="./static/boatymacboatface.svg" pl={10} my="-18%" />}
         title="Navigate seamlessly"
         renderTextContent={
           <Accordeon
+            textAlign="right"
             items={[
               {
                 title: 'Get a tailored experience',
@@ -290,11 +312,18 @@ export const HomePage: React.FC = () => {
       <HomeContentItem
         imagePosition="left"
         renderTopoStain={(props) => (
-          <Image {...props} src="./static/topostain_green.svg" w="260px" opacity={0.7} right="6%" />
+          <Image
+            {...props}
+            src="./static/topostain_green.svg"
+            w={{ base: '300px', md: '360px' }}
+            opacity={0.7}
+            right={{ base: '0%', md: '6%' }}
+            top={{ base: '50%', md: '10%' }}
+          />
         )}
         layoutProps={outerLayoutProps}
         darkBackground
-        renderImage={<Image src="./static/together_goal.svg" w="400px" />}
+        renderImage={<Image src="./static/together_goal.svg" />}
         title="Collaborative and community based"
         renderTextContent={
           <Accordeon
@@ -499,25 +528,33 @@ const HomeContentItem: React.FC<{
 }> = ({ layoutProps, renderTopoStain, imagePosition, renderImage, title, renderTextContent, darkBackground }) => {
   return (
     <Flex
+      textAlign={imagePosition === 'left' ? 'left' : 'right'}
       direction={{ base: imagePosition === 'left' ? 'column' : 'column-reverse', md: 'row' }}
-      my="50px"
+      // my="50px"
+      px={['5px', '10px', '10%', '15%']}
       alignItems="center"
       // backgroundColor={darkBackground ? 'gray.200' : 'background.0'}
       // backgroundImage="url("
       position="relative"
-      {...layoutProps}
+      // {...layoutProps}
     >
       {renderTopoStain({ position: 'absolute', zIndex: -1 })}
       {imagePosition === 'left' && (
         <>
-          {/* <Box> */}
-          {/* flexBasis="200px" flexGrow={0} flexShrink={0} */}
-          {renderImage}
-          {/* </Box> */}
-          <Box w={16} h={4} />
+          <Flex
+            direction="column"
+            alignItems="center"
+            py="50px"
+            ml="-10%"
+            w={{ base: '100%', md: '50%' }}
+            h={{ base: '50%', md: '100%' }}
+          >
+            {renderImage}
+          </Flex>
+          {/* <Box w={16} h={4} /> */}
         </>
       )}
-      <Flex direction="column" justifyContent="center">
+      <Flex direction="column" justifyContent="center" w={{ base: '100%', md: '50%' }} px={{ base: '5%', md: 0 }}>
         <Heading size="xl" fontWeight={400} mb={5}>
           {title}
         </Heading>
@@ -526,12 +563,19 @@ const HomeContentItem: React.FC<{
         </Box>
       </Flex>
       {imagePosition === 'right' && (
+        // <>
         <>
-          <Box w={16} h={4} />
-          {/* <Box> */}
-          {/* width="200px" height="200px" flexGrow={0} flexShrink={0} */}
-          {renderImage}
-          {/* </Box> */}
+          {/* <Box w={16} h={4} /> */}
+          <Flex
+            direction="column"
+            alignItems="center"
+            py="50px"
+            mr="-10%"
+            w={{ base: '100%', md: '50%' }}
+            h={{ base: '50%', md: '100%' }}
+          >
+            {renderImage}
+          </Flex>
         </>
       )}
     </Flex>

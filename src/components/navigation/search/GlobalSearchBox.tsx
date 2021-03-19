@@ -1,5 +1,5 @@
 import { SearchIcon } from '@chakra-ui/icons';
-import { Input, InputGroup, InputLeftElement, InputRightElement } from '@chakra-ui/input';
+import { Input, InputGroup, InputLeftElement, InputRightElement, InputProps } from '@chakra-ui/input';
 import { Box, BoxProps } from '@chakra-ui/layout';
 import gql from 'graphql-tag';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -33,6 +33,7 @@ interface GlobalSearchBoxProps {
   isDisabled?: boolean;
   inputSize?: 'sm' | 'md' | 'lg';
   width?: BoxProps['width'];
+  inputBgColor?: InputProps['bgColor'];
 }
 
 type SearchResult = GlobalSearchQuery['globalSearch']['results'][0];
@@ -42,6 +43,7 @@ export const GlobalSearchBox: React.FC<GlobalSearchBoxProps> = ({
   inputSize = 'sm',
   width = '180px',
   placeholder = 'Search...',
+  inputBgColor,
 }) => {
   const [value, setValue] = useState('');
   const [suggestions, setSuggestions] = useState<SearchResult[]>([]);
@@ -120,7 +122,7 @@ export const GlobalSearchBox: React.FC<GlobalSearchBoxProps> = ({
         )}
         renderSuggestionsContainer={({ containerProps, children }) =>
           children && (
-            <Box {...containerProps} w="400px" borderTopWidth={1} zIndex={1000} position="absolute" bgColor="white">
+            <Box {...containerProps} w={width} borderTopWidth={1} zIndex={1000} position="absolute" bgColor="white">
               {children}
             </Box>
           )
@@ -128,10 +130,10 @@ export const GlobalSearchBox: React.FC<GlobalSearchBoxProps> = ({
         highlightFirstSuggestion={true}
         getSuggestionValue={(suggestion) => value}
         renderInputComponent={(inputProps: any) => (
-          <InputGroup size={inputSize} w={width}>
+          <InputGroup size={inputSize} w={width} bgColor={inputBgColor}>
             <InputLeftElement pointerEvents="none" children={<SearchIcon color="gray.400" />} />
 
-            <Input variant="outline" borderRadius={4} _focus={{ borderColor: 'gray.500' }} {...inputProps} />
+            <Input variant="outline" borderRadius={4} _focus={{ borderColor: 'gray.500' }} {...inputProps} w={width} />
             {isSearching && (
               <InputRightElement w="auto" px={2}>
                 <BeatLoader size={{ sm: 5, md: 8, lg: 9 }[inputSize]} margin={2} color={theme.colors.main} />
