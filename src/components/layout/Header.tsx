@@ -136,13 +136,13 @@ export const Header: React.FC = () => {
             </PopoverContent>
           </Popover>
         )}
-        <HeaderLink routePath="/domains" asHref="/domains">
+        <HeaderLink display={{ base: 'none', md: 'inherit' }} routePath="/domains" asHref="/domains">
           Topics
         </HeaderLink>
-        <HeaderLink routePath="/about/[key]" asHref="/about/introduction">
+        <HeaderLink display={{ base: 'none', md: 'inherit' }} routePath="/about/[key]" asHref="/about/introduction">
           About
         </HeaderLink>
-        <HeaderLink href={env.DISCOURSE_FORUM_URL} external>
+        <HeaderLink display={{ base: 'none', md: 'inherit' }} href={env.DISCOURSE_FORUM_URL} external>
           Forum
         </HeaderLink>
         {!!currentUser ? (

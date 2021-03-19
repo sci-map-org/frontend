@@ -179,7 +179,7 @@ export const HomePage: React.FC = () => {
         imagePosition="left"
         layoutProps={outerLayoutProps}
         darkBackground
-        renderImage={<Image src="./static/map.svg" my="-20%" mx="-5%" />}
+        renderImage={<Image src="./static/map.svg" my="-120px" mx="-5%" />}
         title="A collaborative learning map"
         // "An open, graph-based learning map"
         renderTextContent={
@@ -536,6 +536,7 @@ const HomeContentItem: React.FC<{
       // backgroundColor={darkBackground ? 'gray.200' : 'background.0'}
       // backgroundImage="url("
       position="relative"
+      my={10}
       // {...layoutProps}
     >
       {renderTopoStain({ position: 'absolute', zIndex: -1 })}
