@@ -1,15 +1,13 @@
-import { Image } from '@chakra-ui/image';
 import { Center, Flex, Link, Stack, Text } from '@chakra-ui/layout';
 
 export const Footer: React.FC<{}> = () => {
   return (
     <Flex direction="column" alignItems="stretch">
-      <Image src="./static/caravan_bg2.svg" mt={16} mb={-1} />
       <Flex
-        bgColor="gray.600"
+        bgColor="teal.600"
         w="100%"
         px={{ base: '2%', md: '5%', lg: '8%' }}
-        pt={5}
+        pt={8}
         pb={10}
         justifyContent="space-between"
         color="white"
