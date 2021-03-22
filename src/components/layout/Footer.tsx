@@ -1,4 +1,4 @@
-import { Center, Flex, Link, Stack, Text } from '@chakra-ui/layout';
+import { Center, Divider, Flex, Link, Stack, Text } from '@chakra-ui/layout';
 import { FaDiscourse } from '@react-icons/all-files/fa/FaDiscourse';
 import { RiGithubFill } from '@react-icons/all-files/ri/RiGithubFill';
 import { RiTwitterLine } from '@react-icons/all-files/ri/RiTwitterLine';
@@ -16,45 +16,40 @@ export const Footer: React.FC<{}> = () => {
         justifyContent="space-between"
         color="white"
       >
-        <Center w="40%" mr={4}>
+        <Flex alignItems="center" w="40%" mr={4}>
           <Text fontSize="lg" fontWeight={500}>
             © 2021 Sci-Map.org
           </Text>
-        </Center>
+        </Flex>
 
-        <Flex
-          direction="row"
-          alignItems="flex-start"
-          justifyContent={{ base: 'space-between', md: 'space-between' }}
-          w="60%"
-        >
-          <Link href="https://github.com/sci-map-org/" _hover={{}} fontWeight={500} fontSize="lg" isExternal>
-            <Stack direction="row" spacing={1} alignItems="center">
-              <RiGithubFill />
-              <Text>Github</Text>
-            </Stack>
-          </Link>
-          <Stack direction="column" spacing={10} alignItems="center" mx={4}>
+        <Flex direction="row" alignItems="stretch" justifyContent="space-between" w="60%">
+          <Stack spacing={2}>
+            <Link href="https://github.com/sci-map-org/" _hover={{}} fontWeight={500} fontSize="lg" isExternal>
+              <Stack direction="row" spacing={1} alignItems="center">
+                <RiGithubFill />
+                <Text>Github</Text>
+              </Stack>
+            </Link>
             <Link href="https://twitter.com/sci_map_org" _hover={{}} fontWeight={500} fontSize="lg" isExternal>
               <Stack direction="row" spacing={1} alignItems="center">
                 <RiTwitterLine />
                 <Text>Twitter</Text>
               </Stack>
             </Link>
-            <Stack direction="column" spacing={2} alignItems="center">
-              <Link href="/about" isExternal>
-                About
-              </Link>
-              <Link href="mailto:olivier@sci-map.org">Contact</Link>
-            </Stack>
-          </Stack>
-          <Stack direction="column" spacing={10} alignItems="center">
             <Link href={env.DISCOURSE_FORUM_URL} _hover={{}} fontWeight={500} fontSize="lg" isExternal>
               <Stack direction="row" spacing={1} alignItems="center">
                 <FaDiscourse />
                 <Text>Forum</Text>
               </Stack>
             </Link>
+          </Stack>
+          <Stack direction="row" spacing={{ base: 2, sm: 5, md: 12 }}>
+            <Stack direction="column" spacing={2} alignItems="center">
+              <Link href="/about" isExternal>
+                About
+              </Link>
+              <Link href="mailto:olivier@sci-map.org">Contact</Link>
+            </Stack>
             <Stack direction="column" spacing={2} alignItems="center" textAlign="center">
               <Link href="https://forum.sci-map.org/c/tech/bugs/8" isExternal>
                 Report a bug
