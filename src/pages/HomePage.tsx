@@ -1,10 +1,10 @@
-import { Box, Center, Flex, FlexProps, Heading, Image, ImageProps, Link, Stack, Text } from '@chakra-ui/react';
+import { Box, Center, Flex, FlexProps, Heading, Image, ImageProps, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import React, { ReactNode } from 'react';
 import { LearningGoalCardData } from '../components/learning_goals/cards/LearningGoalCard';
 import { LearningPathPreviewCardData } from '../components/learning_paths/LearningPathPreviewCard';
 import { Accordeon } from '../components/lib/Accordeon';
-import { InternalButtonLink, InternalLink } from '../components/navigation/InternalLink';
+import { InternalButtonLink } from '../components/navigation/InternalLink';
 import { GlobalSearchBox } from '../components/navigation/search/GlobalSearchBox';
 import { ResourceMiniCardData } from '../components/resources/ResourceMiniCard';
 import { useCurrentUser } from '../graphql/users/users.hooks';
@@ -70,6 +70,7 @@ export const HomePage: React.FC = () => {
   const outerLayoutProps = {
     px: ['5px', '10px', '5%', '15%'],
   };
+
   return (
     <Flex direction="column" justifyContent="center" alignItems="stretch" overflow="hidden">
       {!isReturningUser ? (
@@ -81,107 +82,23 @@ export const HomePage: React.FC = () => {
       )}
 
       <RecommendationsBlock data={data} loading={loading} />
-      <Center mt={8} mb={12}>
-        <Box position="relative" px={5}>
-          <Image
-            position="absolute"
-            src="./static/search_dots_pin.svg"
-            right={{ base: '-30px', md: '-160px' }}
-            bottom={{ base: '-30px', md: '10px' }}
-            w={{ base: '300px', md: '320px' }}
-            zIndex={-2}
-          />
-          <Image
-            position="absolute"
-            src="./static/search_stain.svg"
-            zIndex={-3}
-            // display={{ base: 'none', md: 'inherit' }}
-            right={{ base: '-20px', md: '-200px' }}
-            bottom={{ base: '-120px', md: '-80px' }}
-            opacity={0.8}
-            w={{ base: '340px', md: '360px' }}
-          />
-          <Stack py="100px" alignItems="center" spacing={10}>
-            <Heading fontSize="4xl" color="gray.800" textAlign="center">
-              What would you like to{' '}
-              <Text color="blue.600" as="span">
-                learn
-              </Text>
-              ?
-            </Heading>
-            <GlobalSearchBox inputBgColor="white" inputSize="lg" width={{ base: '160px', sm: '300px', md: '400px' }} />
-          </Stack>
-        </Box>
-      </Center>
-      {/*<Flex
-        px="5%"
-        mt={10}
-        mb="40px"
-        alignItems={{ base: 'center', md: 'start' }}
-        direction={{ base: 'column', md: 'row' }}
-      >
-         <Flex direction="column" flexShrink={1} pr="10px">
-          <Text mb={6}>
-            <Text as="span" fontWeight={800}>
-              Sci-map.org
-            </Text>{' '}
-            is a community-based, nonprofit project aiming to reshape online learning by providing a free and
-            personalized learning experience for every topic. It allows you to explore knowledge intuitively, whether
-            you have a specific goal in mind or you simply are following your curiosity.
-          </Text>
-
-          <Stack direction="column" spacing={2} mb="15px">
-            <Text>
-              ⇒{' '} 
-              <Text as="span" fontWeight={800} color="main">
-                Preview
-              </Text>{' '}
-              our first supported domain:{' '}
-              <InternalLink
-                color="blue.500"
-                fontWeight={600}
-                routePath="/domains/[key]"
-                asHref="/domains/functional_programming"
-              >
-                Functional Programming
-              </InternalLink>
-            </Text>
-            <Text>
-              ⇒{' '}
-              <Text as="span" fontWeight={800} color="main">
-                Learn more
-              </Text>{' '}
-              about the project in the{' '}
-              <InternalLink color="blue.500" fontWeight={600} routePath="/about" asHref="/about">
-                About section
-              </InternalLink>
-            </Text>
-          </Stack>
-        </Flex> 
-      </Flex>
-*/}
-      {/* <Center py="50px">
-        <Heading size="2xl" color="teal.400">
-          Sci-Map.org
-        </Heading>
-      </Center> */}
+      {isReturningUser && <SearchBox leftTopoStainPosition="bottom" />}
+      <Box h={8} />
       <HomeContentItem
         renderTopoStain={(props) => (
           <Image
             {...props}
             src="./static/topostain_brown.svg"
             w="400px"
-            opacity={0.7}
-            right={{ base: '-5%', md: '2%' }}
-            top={{ base: '50%', md: '10%' }}
+            opacity={0.5}
+            right={{ base: '-20%', md: '2%' }}
+            top={{ base: '60%', md: '30%' }}
           />
         )}
         imagePosition="left"
         layoutProps={outerLayoutProps}
-        darkBackground
-        renderImage={<Image src="./static/map.svg" my="-120px" mx="-5%" />}
+        renderImage={<Image src="./static/graph_illustration_bold.svg" px="20px" />}
         title="A collaborative learning map"
-        // "An open, graph-based learning map"
         renderTextContent={
           <Accordeon
             items={[
@@ -211,21 +128,6 @@ export const HomePage: React.FC = () => {
               },
             ]}
           />
-          // <Text>
-          //   Find out what you don't know, what you need to learn next, take a deep dive, or explore seamlessly with an{' '}
-          //   <Text fontWeight={600} as="span">
-          //     open map
-          //   </Text>{' '}
-          //   of the knowledge space.
-          //   <br />
-          //   <br />
-          //   We leverage{' '}
-          //   <Text fontWeight={600} as="span">
-          //     graph database
-          //   </Text>{' '}
-          //   technology to build an abstract and precise modeling of knowledge, locate learning material in it, and serve
-          //   it at the right time to the learner.
-          // </Text>
         }
       />
       <HomeContentItem
@@ -233,15 +135,15 @@ export const HomePage: React.FC = () => {
           <Image
             {...props}
             src="./static/topostain_teal.svg"
-            w="400px"
-            opacity={0.7}
-            left={{ base: '-5%', md: '2%' }}
-            top={{ base: '60%', md: '10%' }}
+            w={{ base: '360px', md: '400px' }}
+            opacity={0.5}
+            left={{ base: '-25%', md: '-1%' }}
+            top={{ base: '60%', md: '25%' }}
           />
         )}
         imagePosition="right"
         layoutProps={outerLayoutProps}
-        renderImage={<Image src="./static/boatymacboatface.svg" pl={10} my="-18%" />}
+        renderImage={<Image src="./static/boatymacboatface_reframed.svg" w={{ base: '300px', md: '360px' }} />}
         title="Navigate seamlessly"
         renderTextContent={
           <Accordeon
@@ -273,40 +175,6 @@ export const HomePage: React.FC = () => {
               },
             ]}
           />
-          // <Text>
-          //   From what the learner already knows, his learning profile, his goals and interests, we will provide an{' '}
-          //   <Text fontWeight={600} as="span">
-          //     optimal
-          //   </Text>{' '}
-          //   and{' '}
-          //   <Text fontWeight={600} as="span">
-          //     fully personalized
-          //   </Text>{' '}
-          //   experience.
-          //   <br />
-          //   <br />
-          //   We plan to provide smart recommendations while enabling the learner to keep control over their path, for
-          //   instance by finding{' '}
-          //   <Text fontWeight={600} as="span">
-          //     alternative pedagogical
-          //   </Text>{' '}
-          //   approaches in one click.
-          //   <br />
-          //   <br />
-          //   By providing{' '}
-          //   <Text fontWeight={600} as="span">
-          //     personal learning management
-          //   </Text>{' '}
-          //   features, and building an increasingly precise leaning profile for each user,{' '}
-          //   <Text as="span" fontWeight={600} color="main">
-          //     Sci-map.org
-          //   </Text>{' '}
-          //   aims to be the perfect tool for{' '}
-          //   <Text fontWeight={600} as="span">
-          //     continuous learning
-          //   </Text>{' '}
-          //   across a wide range of domains.
-          // </Text>
         }
       />
       <HomeContentItem
@@ -316,14 +184,13 @@ export const HomePage: React.FC = () => {
             {...props}
             src="./static/topostain_green.svg"
             w={{ base: '300px', md: '360px' }}
-            opacity={0.7}
-            right={{ base: '0%', md: '6%' }}
-            top={{ base: '50%', md: '10%' }}
+            opacity={0.5}
+            right={{ base: '-10%', md: '6%' }}
+            top={{ base: '45%', md: '-15%' }}
           />
         )}
         layoutProps={outerLayoutProps}
-        darkBackground
-        renderImage={<Image src="./static/together_goal.svg" />}
+        renderImage={<Image src="./static/together_goal_reframed.svg" w={{ base: '250px', md: '320px' }} />}
         title="Collaborative and community based"
         renderTextContent={
           <Accordeon
@@ -347,42 +214,22 @@ export const HomePage: React.FC = () => {
           magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
           consequat.`,
               },
-              //     {
-              //       title: 'Learn optimally, whatever your goal is',
-              //       content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-              // magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-              // consequat.`,
-              //     },
             ]}
           />
-          // <Text>
-          //   This project is{' '}
-          //   <Text fontWeight={600} as="span">
-          //     community-based
-          //   </Text>
-          //   ; we intend to build a modeling of the knowledge space, assess the content quality, and improve upon it{' '}
-          //   <Text fontWeight={600} as="span">
-          //     collaboratively
-          //   </Text>
-          //   . <br />
-          //   <br />
-          //   We aim to enable new communities to form around different domains, foster{' '}
-          //   <Text fontWeight={600} as="span">
-          //     learning with peers
-          //   </Text>
-          //   , receiving support and feedback, and connecting people at the right time. <br />
-          //   <br />
-          //   By improving content collaboratively based on community feedback and data, we aim to reach a better quality
-          //   than what an individual alone could achieve.
-          // </Text>
         }
       />
-
-      <Flex justifyContent="center" my={10}>
-        <InternalButtonLink size="lg" routePath="/about" asHref="/about" colorScheme="blue" variant="outline">
-          Learn more
-        </InternalButtonLink>
+      <Flex justifyContent="center">
+        <Stack spacing={8} direction="row">
+          <InternalButtonLink size="lg" routePath="/about" asHref="/about" colorScheme="blue" variant="outline">
+            Learn more
+          </InternalButtonLink>
+          <InternalButtonLink size="lg" routePath="/register" asHref="/register" colorScheme="teal" variant="solid">
+            Register
+          </InternalButtonLink>
+        </Stack>
       </Flex>
+      {!isReturningUser && <SearchBox leftTopoStainPosition="top" />}
+      <Box h={32} />
     </Flex>
   );
 };
@@ -441,33 +288,10 @@ const RecommendationsBlock: React.FC<{ data?: GetHomePageDataQuery; loading?: bo
   );
 };
 
-const Title: React.FC<{}> = () => {
-  return (
-    <Flex direction={{ base: 'column', lg: 'row' }} alignItems={{ base: 'center', lg: 'baseline' }}>
-      <Heading fontSize="5xl" color="main" pr={3}>
-        Sci-Map.org
-      </Heading>
-      <Heading fontSize="4xl" color="blackAlpha.500">
-        (Beta)
-      </Heading>
-    </Flex>
-  );
-};
-
 const HomeHeader: React.FC<{ layoutProps?: FlexProps }> = ({ layoutProps = {} }) => {
   return (
-    <Flex
-      direction="column"
-      {...layoutProps}
-      // id="homeHeader1"
-      id="homeHeader2"
-      w="100%"
-      px="5%"
-    >
+    <Flex direction="column" {...layoutProps} id="homeHeader" w="100%" px="5%">
       <Flex justifyContent="space-between" alignItems="stretch" w="100%">
-        {/* <Flex w="50%" direction="column-reverse" alignItems="center" pt={20}>
-          <Image src="./static/walker no bg cropped.png" w="322px" opacity={0.9} />
-        </Flex> */}
         <Center w="50%">
           <Image src="./static/walker no bg.png" w="400px" />
         </Center>
@@ -479,39 +303,7 @@ const HomeHeader: React.FC<{ layoutProps?: FlexProps }> = ({ layoutProps = {} })
             </Text>{' '}
             in a smart way
           </Heading>
-          {/* <Flex mt={10} mb={10} opacity={0.8} w="100%" direction="column" alignItems="center">
-            <Text
-              bgColor="#974b31"
-              borderRadius={6}
-              px={4}
-              py={2}
-              w="80%"
-              fontSize="xl"
-              color="white"
-              // opacity={0.5}
-              fontWeight={500}
-              // py="2px"
-            >
-              Find the best online resources, learn from curated learning paths and community created roadmaps, etc.
-            </Text>
-          </Flex> */}
         </Flex>
-        {/* <Flex>
-          
-        </Flex> */}
-        {/* <Flex justifyContent="center" mb="30px" mt="18px">
-          <Heading
-            width="70%"
-            textAlign="center"
-            fontWeight="medium"
-            color="blackAlpha.700"
-            fontStyle="italic"
-            fontSize="2xl"
-          >
-            An open and collaborative learning map embracing every learner's uniqueness, enabling users to navigate
-            knowledge seamlessly.
-          </Heading>
-        </Flex> */}
       </Flex>
     </Flex>
   );
@@ -519,25 +311,21 @@ const HomeHeader: React.FC<{ layoutProps?: FlexProps }> = ({ layoutProps = {} })
 
 const HomeContentItem: React.FC<{
   imagePosition: 'left' | 'right';
-  darkBackground?: boolean;
   renderImage: ReactNode;
   layoutProps: FlexProps;
   title: string;
   renderTextContent: ReactNode;
   renderTopoStain: (props: Partial<ImageProps>) => ReactNode;
-}> = ({ layoutProps, renderTopoStain, imagePosition, renderImage, title, renderTextContent, darkBackground }) => {
+}> = ({ layoutProps, renderTopoStain, imagePosition, renderImage, title, renderTextContent }) => {
   return (
     <Flex
       textAlign={imagePosition === 'left' ? 'left' : 'right'}
       direction={{ base: imagePosition === 'left' ? 'column' : 'column-reverse', md: 'row' }}
-      // my="50px"
       px={['5px', '10px', '10%', '15%']}
       alignItems="center"
-      // backgroundColor={darkBackground ? 'gray.200' : 'background.0'}
-      // backgroundImage="url("
       position="relative"
       my={10}
-      // {...layoutProps}
+      {...layoutProps}
     >
       {renderTopoStain({ position: 'absolute', zIndex: -1 })}
       {imagePosition === 'left' && (
@@ -545,14 +333,12 @@ const HomeContentItem: React.FC<{
           <Flex
             direction="column"
             alignItems="center"
-            py="50px"
-            ml="-10%"
+            py="30px"
             w={{ base: '100%', md: '50%' }}
             h={{ base: '50%', md: '100%' }}
           >
             {renderImage}
           </Flex>
-          {/* <Box w={16} h={4} /> */}
         </>
       )}
       <Flex direction="column" justifyContent="center" w={{ base: '100%', md: '50%' }} px={{ base: '5%', md: 0 }}>
@@ -564,14 +350,11 @@ const HomeContentItem: React.FC<{
         </Box>
       </Flex>
       {imagePosition === 'right' && (
-        // <>
         <>
-          {/* <Box w={16} h={4} /> */}
           <Flex
             direction="column"
             alignItems="center"
-            py="50px"
-            mr="-10%"
+            py="30px"
             w={{ base: '100%', md: '50%' }}
             h={{ base: '50%', md: '100%' }}
           >
@@ -583,64 +366,55 @@ const HomeContentItem: React.FC<{
   );
 };
 
-const HomeFooter: React.FC<{ layoutProps: FlexProps }> = ({ layoutProps }) => (
-  <Flex direction="column" mt={10} mb="100px" {...layoutProps}>
-    <Heading textAlign="center" size="2xl" fontWeight={200} mb={4}>
-      State of the project
-    </Heading>
-    <Text>
-      The project is currently in a beta release in order to gather feedback and enhance the product iteratively. It is
-      open-source (checkout our{' '}
-      <Link color="blue.500" href="https://github.com/sci-map-org/">
-        Github
-      </Link>
-      ), and will be registered as a non-profit.
-      <br />
-      Our mission is simple:{' '}
-      <Text fontWeight={600} as="span">
-        Improving access to education
-      </Text>
-      . As such, the product will be free and we will never charge for access to content.
-      <br />
-      <br />
-      Our initial focus is around tech domains such as{' '}
-      <InternalLink color="blue.500" routePath="/domains/[key]" asHref="/domains/functional_programming">
-        Functional Programming
-      </InternalLink>
-      ,{' '}
-      <InternalLink color="blue.500" routePath="/domains/[key]" asHref="/domains/machine_learning">
-        Machine Learning
-      </InternalLink>{' '}
-      or{' '}
-      <InternalLink color="blue.500" routePath="/domains/[key]" asHref="/domains/ux_design">
-        User Experience Design
-      </InternalLink>
-      . The first version of the product entails a recommendation feed of external learning resources, based on a
-      mapping of the dependencies between concepts and the current knowledge of the learner.
-      <br />
-      Our goal is to support learners by indexing free external learning resources and serving it in a useful way
-      (recommendations, learning paths, etc.). Afterwards, we plan to collect feedback around resources, develop social
-      features, and drive contributions towards user-generated content.
-      <br />
-      <br />
-      To learn more about the project, you can check out the{' '}
-      <InternalLink color="blue.500" routePath="/about" asHref="/about">
-        About section
-      </InternalLink>{' '}
-      where we explain in detail the motivations behind the project, our vision, and the approach we are undertaking to
-      bring it to life. <br />
-      At the current stage, feedback is highly appreciated. Please let us know what you think on the{' '}
-      <Link color="blue.500" href="https://forum.sci-map.org" isExternal>
-        Forum
-      </Link>
-      .
-    </Text>
-    <Text textAlign="center" fontStyle="italic" mt="25px">
-      Finally, to stay up to date with the state of the project, you can follow us on{' '}
-      <Link color="blue.500" href="https://twitter.com/sci_map_org" isExternal>
-        Twitter
-      </Link>
-      .
-    </Text>
-  </Flex>
-);
+const SearchBox: React.FC<{ leftTopoStainPosition?: 'top' | 'bottom' }> = ({ leftTopoStainPosition }) => {
+  return (
+    <Center w="100%" position="relative">
+      <Image
+        position="absolute"
+        src="./static/topostain_blue.svg"
+        zIndex={-3}
+        left={{ base: '-20%', md: '0px' }}
+        {...(leftTopoStainPosition === 'bottom' && {
+          bottom: { base: '-120px', md: '-30%' },
+        })}
+        {...(leftTopoStainPosition === 'top' && {
+          top: { base: '1%', md: '-80px' },
+        })}
+        opacity={0.7}
+        w={{ base: '320px', md: '340px' }}
+      />
+      <Center mt={8} mb={12}>
+        <Box position="relative" px={5}>
+          <Image
+            position="absolute"
+            src="./static/search_dots_pin.svg"
+            right={{ base: '-30px', md: '-160px' }}
+            bottom={{ base: '-30px', md: '10px' }}
+            w={{ base: '300px', md: '320px' }}
+            zIndex={-2}
+          />
+          <Image
+            position="absolute"
+            src="./static/search_stain.svg"
+            zIndex={-3}
+            right={{ base: '-20px', md: '-200px' }}
+            bottom={{ base: '-120px', md: '-80px' }}
+            opacity={0.8}
+            w={{ base: '340px', md: '360px' }}
+          />
+
+          <Stack py="100px" alignItems="center" spacing={10}>
+            <Heading fontSize="4xl" color="gray.800" textAlign="center">
+              What would you like to{' '}
+              <Text color="blue.600" as="span">
+                learn
+              </Text>
+              ?
+            </Heading>
+            <GlobalSearchBox inputBgColor="white" inputSize="lg" width={{ base: '160px', sm: '300px', md: '400px' }} />
+          </Stack>
+        </Box>
+      </Center>
+    </Center>
+  );
+};
