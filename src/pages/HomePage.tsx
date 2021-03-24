@@ -72,7 +72,7 @@ export const HomePage: React.FC = () => {
   };
 
   return (
-    <Flex direction="column" justifyContent="center" alignItems="stretch" overflow="hidden">
+    <Flex direction="column" justifyContent="center" alignItems="stretch" overflowX="hidden">
       {!isReturningUser ? (
         <Center>
           <HomeHeader />
@@ -97,16 +97,28 @@ export const HomePage: React.FC = () => {
         )}
         imagePosition="left"
         layoutProps={outerLayoutProps}
-        renderImage={<Image src="./static/graph_illustration_bold.svg" px="20px" />}
-        title="A collaborative learning map"
+        renderImage={<Image src="./static/graph_illustration_bold.svg" mt={{ md: '-40px' }} pr={{ md: '20px' }} />}
+        title={
+          <>
+            Explore a{' '}
+            <Text fontWeight={500} as="span" color="yellow.700">
+              {/* y.700 /500 ou 600 */}
+              {/* orange.600 / 600 */}
+              {/* color="white" as="span" bgColor="teal.600" */}
+              learning map
+            </Text>{' '}
+            built collectively
+          </>
+        }
         renderTextContent={
           <Accordeon
+            h="270px"
+            color="yellow.700"
+            borderColor="yellow.600"
             items={[
               {
                 title: 'Find the best learning content out there',
-                content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-          consequat.`,
+                content: `Don’t waste time and get the perfect resource right away.`,
               },
               {
                 title: "Get a bird's eye view of all knowledge",
@@ -115,13 +127,13 @@ export const HomePage: React.FC = () => {
           consequat.`,
               },
               {
-                title: 'Built by you and me',
+                title: 'Built by you and me', ///Wikipedia for learning?
                 content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
           magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
           consequat.`,
               },
               {
-                title: 'Free and open source',
+                title: 'Free, non profit and open source',
                 content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
           magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
           consequat.`,
@@ -144,16 +156,15 @@ export const HomePage: React.FC = () => {
         imagePosition="right"
         layoutProps={outerLayoutProps}
         renderImage={<Image src="./static/boatymacboatface_reframed.svg" w={{ base: '300px', md: '360px' }} />}
-        title="Navigate seamlessly"
+        title="Stay in control of your journey"
         renderTextContent={
           <Accordeon
             textAlign="right"
+            h="300px"
             items={[
               {
                 title: 'Get a tailored experience',
-                content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-          consequat.`,
+                content: `Get personalized recommendations based on what you already know, your goals and interests and how you learn best.`,
               },
               {
                 title: 'Follow your curiosity',
@@ -163,9 +174,7 @@ export const HomePage: React.FC = () => {
               },
               {
                 title: 'Switch pedagogical approaches in one click',
-                content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-          consequat.`,
+                content: `Feel bored in the middle of a course or stuck on a concept ? Just take a turn and find an alternative in one click.`,
               },
               {
                 title: 'Learn optimally, whatever your goal is',
@@ -194,6 +203,7 @@ export const HomePage: React.FC = () => {
         title="Collaborative and community based"
         renderTextContent={
           <Accordeon
+            h="270px"
             items={[
               {
                 title: 'Connect with other learners',
@@ -313,7 +323,7 @@ const HomeContentItem: React.FC<{
   imagePosition: 'left' | 'right';
   renderImage: ReactNode;
   layoutProps: FlexProps;
-  title: string;
+  title: string | ReactNode;
   renderTextContent: ReactNode;
   renderTopoStain: (props: Partial<ImageProps>) => ReactNode;
 }> = ({ layoutProps, renderTopoStain, imagePosition, renderImage, title, renderTextContent }) => {
@@ -403,7 +413,7 @@ const SearchBox: React.FC<{ leftTopoStainPosition?: 'top' | 'bottom' }> = ({ lef
             w={{ base: '340px', md: '360px' }}
           />
 
-          <Stack py="100px" alignItems="center" spacing={10}>
+          <Stack pt="100px" pb="120px" alignItems="center" spacing={10}>
             <Heading fontSize="4xl" color="gray.800" textAlign="center">
               What would you like to{' '}
               <Text color="blue.600" as="span">
