@@ -13,7 +13,7 @@ export const DomainsListPage: React.FC = () => {
   const { domains, refetch } = useSearchDomains();
   const [deleteDomainMutation] = useDeleteDomainMutation();
   return (
-    <PageLayout title="Topics" centerChildren>
+    <PageLayout title="Areas" centerChildren>
       <Stack spacing={8} direction="column" width="36rem">
         <Flex
           direction="column"
@@ -40,7 +40,7 @@ export const DomainsListPage: React.FC = () => {
                   <Box flexGrow={1} />
                   <RoleAccess accessRule="contributorOrAdmin">
                     <IconButton
-                      aria-label="manage domain"
+                      aria-label="manage area"
                       size="sm"
                       icon={<SettingsIcon />}
                       onClick={() => routerPushToPage(ManageDomainPageInfo(domain))}
@@ -49,8 +49,8 @@ export const DomainsListPage: React.FC = () => {
                   <RoleAccess accessRule="admin">
                     <Box width={4} />
                     <DeleteButtonWithConfirmation
-                      modalBodyText="Confirm deleting this domain ?"
-                      modalHeaderText="Delete Domain"
+                      modalBodyText="Confirm deleting this area ?"
+                      modalHeaderText="Delete Area"
                       onConfirmation={() =>
                         deleteDomainMutation({ variables: { id: domain._id } }).then(() => refetch())
                       }

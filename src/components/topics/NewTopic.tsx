@@ -71,7 +71,7 @@ export const NewTopic: React.FC<NewTopicProps> = ({
           {allowedTopicTypes.includes(TopicType.Domain) && (
             <Box>
               <Button variant="outline" onClick={() => setTopicType(TopicType.Domain)}>
-                Domain
+                Area
               </Button>
             </Box>
           )}

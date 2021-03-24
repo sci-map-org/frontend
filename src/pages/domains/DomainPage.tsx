@@ -258,7 +258,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
               pb={2}
             >
               <Text fontSize="xl" textAlign="center" fontWeight={600} color="gray.600" pb={2}>
-                SubTopics
+                SubAreas
               </Text>
               <Stack>
                 {(domain.subDomains || []).map(({ domain }) => (

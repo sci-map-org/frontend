@@ -52,12 +52,12 @@ export const ManageDomainPage: React.FC<{ domainKey: string }> = ({ domainKey })
   return (
     <PageLayout
       isLoading={loading}
-      title={`Manage Domain - ${domain.name}`}
+      title={`Manage Area - ${domain.name}`}
       breadCrumbsLinks={[DomainPageInfo(domain), ManageDomainPageInfo(domain)]}
       renderTopRight={
         <RoleAccess accessRule="contributorOrAdmin">
           <IconButton
-            aria-label="edit domain"
+            aria-label="edit area"
             size="sm"
             variant="outline"
             icon={<EditIcon />}
@@ -82,7 +82,7 @@ export const ManageDomainPage: React.FC<{ domainKey: string }> = ({ domainKey })
         </Box>
         <Box>
           <DomainsPicker
-            title="Sub Domains"
+            title="Sub Areas"
             pickedDomainList={(domain.subDomains || []).map((subDomainItem) => subDomainItem.domain)}
             onSelect={(domainToAdd) =>
               addDomainBelongsToDomainMutation({
@@ -98,7 +98,7 @@ export const ManageDomainPage: React.FC<{ domainKey: string }> = ({ domainKey })
         </Box>
         <Box>
           <DomainsPicker
-            title="Parent Domains"
+            title="Parent Areas"
             pickedDomainList={(domain.parentDomains || []).map((parentDomainItem) => parentDomainItem.domain)}
             onSelect={(domainToAdd) =>
               addDomainBelongsToDomainMutation({

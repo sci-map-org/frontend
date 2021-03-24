@@ -58,7 +58,7 @@ export const LearningMaterialDomainAndCoveredConceptsSelector: React.FC<{
       ))}
       <EntitySelector
         inputSize="sm"
-        placeholder="Add new domain"
+        placeholder="Add new area"
         entitySuggestions={differenceBy(
           data?.searchDomains.items || [],
           learningMaterial.coveredConceptsByDomain.map((s) => s.domain),

@@ -137,7 +137,7 @@ export const Header: React.FC = () => {
           </Popover>
         )}
         <HeaderLink routePath="/areas" asHref="/areas">
-          Topics
+          Areas
         </HeaderLink>
         <HeaderLink routePath="/about/[key]" asHref="/about/introduction">
           About

@@ -58,7 +58,7 @@ const NewDomainForm: React.FC<NewDomainFormProps> = ({ defaultPayload, size = 'm
       <FormControl id="key" size={size}>
         <InputGroup>
           <Input
-            placeholder="Domain Url Key"
+            placeholder="Area Url Key"
             variant="flushed"
             value={key}
             size={size}
@@ -75,7 +75,7 @@ const NewDomainForm: React.FC<NewDomainFormProps> = ({ defaultPayload, size = 'm
                   <Tooltip
                     hasArrow
                     aria-label="Key already in use"
-                    label="Domain already in use"
+                    label="key already in use"
                     placement="top"
                     bg="red.600"
                   >

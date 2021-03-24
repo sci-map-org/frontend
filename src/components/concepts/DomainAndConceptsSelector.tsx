@@ -69,7 +69,7 @@ export const DomainAndConceptsSelector: React.FC<DomainAndConceptsSelectorProps>
         </Flex>
       ))}
       <EntitySelector
-        placeholder="Search domains..."
+        placeholder="Search areas..."
         entitySuggestions={differenceBy(
           data?.searchDomains.items || [],
           selectedDomainsAndConcepts.map((s) => s.domain),

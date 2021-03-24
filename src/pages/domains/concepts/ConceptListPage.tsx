@@ -45,7 +45,7 @@ export const ConceptListPage: React.FC<{ domainKey: string }> = ({ domainKey }) 
     },
   });
 
-  if (!data) return <Box>Domain not found !</Box>;
+  if (!data) return <Box>Area not found !</Box>;
   const domain = data.getDomainByKey;
   return (
     <PageLayout
