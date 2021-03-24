@@ -23,26 +23,28 @@ export const Footer: React.FC<{}> = () => {
         </Flex>
 
         <Flex direction="row" alignItems="stretch" justifyContent="space-between" w="60%">
-          <Stack spacing={2}>
-            <Link href="https://github.com/sci-map-org/" _hover={{}} fontWeight={500} fontSize="lg" isExternal>
-              <Stack direction="row" spacing={1} alignItems="center">
-                <RiGithubFill />
-                <Text>Github</Text>
-              </Stack>
-            </Link>
-            <Link href="https://twitter.com/sci_map_org" _hover={{}} fontWeight={500} fontSize="lg" isExternal>
-              <Stack direction="row" spacing={1} alignItems="center">
-                <RiTwitterLine />
-                <Text>Twitter</Text>
-              </Stack>
-            </Link>
-            <Link href={env.DISCOURSE_FORUM_URL} _hover={{}} fontWeight={500} fontSize="lg" isExternal>
-              <Stack direction="row" spacing={1} alignItems="center">
-                <FaDiscourse />
-                <Text>Forum</Text>
-              </Stack>
-            </Link>
-          </Stack>
+          <Flex justifyContent="center" flexGrow={1}>
+            <Stack spacing={2} mr={3}>
+              <Link href="https://github.com/sci-map-org/" _hover={{}} fontWeight={500} fontSize="lg" isExternal>
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <RiGithubFill />
+                  <Text>Github</Text>
+                </Stack>
+              </Link>
+              <Link href="https://twitter.com/sci_map_org" _hover={{}} fontWeight={500} fontSize="lg" isExternal>
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <RiTwitterLine />
+                  <Text>Twitter</Text>
+                </Stack>
+              </Link>
+              <Link href={env.DISCOURSE_FORUM_URL} _hover={{}} fontWeight={500} fontSize="lg" isExternal>
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <FaDiscourse />
+                  <Text>Forum</Text>
+                </Stack>
+              </Link>
+            </Stack>
+          </Flex>
           <Stack direction="row" spacing={{ base: 2, sm: 5, md: 12 }}>
             <Stack direction="column" spacing={2} alignItems="center">
               <Link href="/about" isExternal>
