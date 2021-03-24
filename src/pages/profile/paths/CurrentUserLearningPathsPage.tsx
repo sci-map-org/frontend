@@ -1,10 +1,10 @@
-import { Box, Center, Text } from '@chakra-ui/react';
+import { Center, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { PageLayout } from '../../../components/layout/PageLayout';
 import { LearningPathPreviewCardData } from '../../../components/learning_paths/LearningPathPreviewCard';
 import { LearningPathPreviewCardList } from '../../../components/learning_paths/LearningPathPreviewCardList';
-
-import { InternalButtonLink } from '../../../components/navigation/InternalLink';
+import { PageButtonLink } from '../../../components/navigation/InternalLink';
+import { NewLearningPathPageInfo } from '../../RoutesPageInfos';
 import {
   GetCurrentUserLearningPathsPageQuery,
   useGetCurrentUserLearningPathsPageQuery,
@@ -65,18 +65,12 @@ export const CurrentUserLearningPathsPage: React.FC<{}> = () => {
 
       {currentUser && currentUser.createdLearningPaths && (
         <LearningPathPreviewCardList learningPaths={currentUser.createdLearningPaths} />
-        // <LearningGoalCardWrapper
-        //   learningGoalItems={currentUser.createdLearningPaths}
-        //   renderCard={({ learningGoal }, mouseHover) => (
-        //     <LearningGoalCard learningGoal={learningGoal} mouseHover={mouseHover} />
-        //   )}
-        // />
       )}
 
       <Center mt={6}>
-        <InternalButtonLink routePath="/paths/new" asHref="/paths/new" colorScheme="blue">
-          Create New Goal
-        </InternalButtonLink>
+        <PageButtonLink pageInfo={NewLearningPathPageInfo} colorScheme="blue">
+          Create New Path
+        </PageButtonLink>
       </Center>
     </PageLayout>
   );

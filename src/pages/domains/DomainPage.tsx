@@ -14,7 +14,7 @@ import { ParentDomainsNavigationBlock } from '../../components/domains/ParentDom
 import { PageLayout } from '../../components/layout/PageLayout';
 import { LearningGoalCardData } from '../../components/learning_goals/cards/LearningGoalCard';
 import { LearningPathPreviewCardDataFragment } from '../../components/learning_paths/LearningPathPreviewCard.generated';
-import { InternalButtonLink, InternalLink, PageLink } from '../../components/navigation/InternalLink';
+import { PageButtonLink, PageLink } from '../../components/navigation/InternalLink';
 import { DomainRecommendedLearningMaterials } from '../../components/resources/DomainRecommendedLearningMaterials';
 import { useGetDomainRecommendedLearningMaterialsQuery } from '../../components/resources/DomainRecommendedLearningMaterials.generated';
 import { ConceptData, generateConceptData } from '../../graphql/concepts/concepts.fragments';
@@ -23,10 +23,12 @@ import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.f
 import { DomainLearningMaterialsOptions, DomainLearningMaterialsSortingType } from '../../graphql/types';
 import { routerPushToPage } from '../PageInfo';
 import {
+  AddLearningGoalToDomainPageInfo,
+  AddResourceToDomainPageInfo,
   ConceptListPageInfo,
-  DomainLearningGoalPageInfo,
   DomainPageInfo,
   ManageDomainPageInfo,
+  NewLearningPathPageInfo,
 } from '../RoutesPageInfos';
 import { GetDomainByKeyDomainPageQuery, useGetDomainByKeyDomainPageQuery } from './DomainPage.generated';
 
@@ -169,37 +171,33 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
 
         <Flex direction="column" alignItems={{ base: 'flex-start', md: 'flex-end' }}>
           <ButtonGroup spacing={2}>
-            <InternalButtonLink
+            <PageButtonLink
               variant="solid"
               colorScheme="blue"
-              routePath="/areas/[key]/resources/new"
-              asHref={router.asPath + '/resources/new'}
+              pageInfo={AddResourceToDomainPageInfo(domain)}
               loggedInOnly
               isDisabled={loading}
             >
               Add Resource
-            </InternalButtonLink>
-            <InternalButtonLink
+            </PageButtonLink>
+            <PageButtonLink
               variant="outline"
               colorScheme="teal"
-              // borderWidth="1px"
-              routePath="/learning_paths/new"
-              asHref="/resources/new"
+              pageInfo={NewLearningPathPageInfo}
               loggedInOnly
               isDisabled={loading}
             >
               Add Learning Path
-            </InternalButtonLink>
-            <InternalButtonLink
+            </PageButtonLink>
+            <PageButtonLink
               variant="outline"
               colorScheme="grey"
-              routePath="/areas/[key]/goals/new"
-              asHref={router.asPath + '/goals/new'}
+              pageInfo={AddLearningGoalToDomainPageInfo(domain)}
               loggedInOnly
               isDisabled={loading}
             >
               Add Goal
-            </InternalButtonLink>
+            </PageButtonLink>
             {/* ? would be expected to be there from the start maybe (attached + public). good to push for creation though */}
             <RoleAccess accessRule="contributorOrAdmin">
               <IconButton

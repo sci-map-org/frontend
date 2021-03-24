@@ -1,13 +1,13 @@
-import { Box, Flex, IconButton, Stack } from '@chakra-ui/react';
 import { SettingsIcon } from '@chakra-ui/icons';
+import { Box, Flex, IconButton, Stack } from '@chakra-ui/react';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
-import { InternalButtonLink, InternalLink, PageLink } from '../../components/navigation/InternalLink';
+import { PageButtonLink, PageLink } from '../../components/navigation/InternalLink';
 import { useSearchDomains } from '../../graphql/domains/domains.hooks';
 import { useDeleteDomainMutation } from '../../graphql/domains/domains.operations.generated';
 import { routerPushToPage } from '../PageInfo';
-import { DomainPageInfo, ManageDomainPageInfo } from '../RoutesPageInfos';
+import { DomainPageInfo, ManageDomainPageInfo, NewDomainPageInfo } from '../RoutesPageInfos';
 
 export const DomainsListPage: React.FC = () => {
   const { domains, refetch } = useSearchDomains();
@@ -61,9 +61,9 @@ export const DomainsListPage: React.FC = () => {
             })}
         </Flex>
         <RoleAccess accessRule="contributorOrAdmin">
-          <InternalButtonLink variant="outline" routePath="/areas/new" asHref="/areas/new">
+          <PageButtonLink variant="outline" pageInfo={NewDomainPageInfo}>
             + New Area
-          </InternalButtonLink>
+          </PageButtonLink>
         </RoleAccess>
       </Stack>
     </PageLayout>

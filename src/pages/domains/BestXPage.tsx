@@ -5,7 +5,7 @@ import { DomainConceptList } from '../../components/concepts/DomainConceptList';
 import { BestXPagesLinks } from '../../components/domains/BestXPagesLinks';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { LearningPathPreviewCardData } from '../../components/learning_paths/LearningPathPreviewCard';
-import { InternalButtonLink } from '../../components/navigation/InternalLink';
+import { PageButtonLink } from '../../components/navigation/InternalLink';
 import { DomainRecommendedLearningMaterials } from '../../components/resources/DomainRecommendedLearningMaterials';
 import { ConceptData } from '../../graphql/concepts/concepts.fragments';
 import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
@@ -15,7 +15,7 @@ import {
   LearningMaterialType,
   ResourceType,
 } from '../../graphql/types';
-import { DomainPageInfo } from '../RoutesPageInfos';
+import { AddResourceToDomainPageInfo, DomainPageInfo } from '../RoutesPageInfos';
 import { GetBestXPageDataQuery, useGetBestXPageDataQuery } from './BestXPage.generated';
 
 export const getBestXPageData = gql`
@@ -85,15 +85,14 @@ export const BestXPage: React.FC<{ domainKey: string; x: ResourceType[] }> = ({ 
           {domain && domain.description && <Box fontWeight={250}>{domain.description}</Box>}
         </Flex>
         <Flex direction="row" justifyContent="flex-end" alignItems="center">
-          <InternalButtonLink
+          <PageButtonLink
             variant="solid"
             colorScheme="blue"
-            routePath="/areas/[key]/resources/new"
-            asHref={`/areas/${domain.key}/resources/new`}
+            pageInfo={AddResourceToDomainPageInfo(domain)}
             loggedInOnly
           >
             Add Resource
-          </InternalButtonLink>
+          </PageButtonLink>
         </Flex>
       </Flex>
       <Box my={8} />

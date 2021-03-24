@@ -42,9 +42,18 @@ export const PageLink = forwardRef<HTMLAnchorElement, PageLinkProps>(({ pageInfo
   );
 });
 
-export const InternalButtonLink: React.FC<
-  { routePath: string; asHref: string; loggedInOnly?: boolean } & ButtonProps
-> = ({ routePath, asHref, children, loggedInOnly, ...buttonProps }) => {
+interface InternalButtonLinkProps extends ButtonProps {
+  routePath: string;
+  asHref: string;
+  loggedInOnly?: boolean;
+}
+export const InternalButtonLink: React.FC<InternalButtonLinkProps> = ({
+  routePath,
+  asHref,
+  children,
+  loggedInOnly,
+  ...buttonProps
+}) => {
   const { currentUser } = useCurrentUser();
   const { onOpen } = useUnauthentificatedModal();
   return (
@@ -61,5 +70,15 @@ export const InternalButtonLink: React.FC<
         {children}
       </Button>
     </NextLink>
+  );
+};
+
+export const PageButtonLink: React.FC<
+  { pageInfo: PageInfo } & Omit<InternalButtonLinkProps, 'routePath' | 'asHref'>
+> = ({ pageInfo, children, ...buttonLinkProps }) => {
+  return (
+    <InternalButtonLink routePath={pageInfo.routePath} asHref={pageInfo.path} {...buttonLinkProps}>
+      {children}
+    </InternalButtonLink>
   );
 };
