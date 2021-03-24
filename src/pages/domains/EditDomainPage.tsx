@@ -38,7 +38,7 @@ export const EditDomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) =
     >
       <Stack direction="column" spacing={6} alignItems="stretch">
         <Input
-          placeholder="Domain Name"
+          placeholder="Area Name"
           size="md"
           variant="flushed"
           value={name}

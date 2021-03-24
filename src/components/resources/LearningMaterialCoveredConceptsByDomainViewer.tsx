@@ -1,6 +1,7 @@
 import { Box, Skeleton, Stack } from '@chakra-ui/react';
 import { LearningMaterialWithCoveredConceptsByDomainDataFragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
-import { InternalLink } from '../navigation/InternalLink';
+import { ConceptPageInfo, DomainPageInfo } from '../../pages/RoutesPageInfos';
+import { InternalLink, PageLink } from '../navigation/InternalLink';
 
 interface LearningMaterialCoveredConceptsByDomainViewerProps {
   learningMaterial: LearningMaterialWithCoveredConceptsByDomainDataFragment;
@@ -17,22 +18,16 @@ export const LearningMaterialCoveredConceptsByDomainViewer: React.FC<LearningMat
       {learningMaterial.coveredConceptsByDomain.map(({ domain, coveredConcepts }) => (
         <Box key={domain._id}>
           <Skeleton isLoaded={!isLoading}>
-            <InternalLink routePath="/domains/[key]" asHref={`/domains/${domain.key}`}>
-              {domain.name}
-            </InternalLink>
+            <PageLink pageInfo={DomainPageInfo(domain)}>{domain.name}</PageLink>
           </Skeleton>
           {!!coveredConcepts.length && (
             <Stack spacing={1} pl={5}>
               {coveredConcepts.map((concept) => (
                 <Box key={concept._id}>
                   <Skeleton isLoaded={!isLoading}>
-                    <InternalLink
-                      routePath="/domains/[key]/concepts/[conceptKey]"
-                      asHref={`/domains/${domain.key}/concepts/${concept.key}`}
-                      fontSize="sm"
-                    >
+                    <PageLink pageInfo={ConceptPageInfo(domain, concept)} fontSize="sm">
                       {concept.name}
-                    </InternalLink>
+                    </PageLink>
                   </Skeleton>
                 </Box>
               ))}

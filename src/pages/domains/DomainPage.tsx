@@ -14,7 +14,7 @@ import { ParentDomainsNavigationBlock } from '../../components/domains/ParentDom
 import { PageLayout } from '../../components/layout/PageLayout';
 import { LearningGoalCardData } from '../../components/learning_goals/cards/LearningGoalCard';
 import { LearningPathPreviewCardDataFragment } from '../../components/learning_paths/LearningPathPreviewCard.generated';
-import { InternalButtonLink, InternalLink, PageLink } from '../../components/navigation/InternalLink';
+import { PageButtonLink, PageLink } from '../../components/navigation/InternalLink';
 import { DomainRecommendedLearningMaterials } from '../../components/resources/DomainRecommendedLearningMaterials';
 import { useGetDomainRecommendedLearningMaterialsQuery } from '../../components/resources/DomainRecommendedLearningMaterials.generated';
 import { ConceptData, generateConceptData } from '../../graphql/concepts/concepts.fragments';
@@ -22,7 +22,14 @@ import { DomainData, DomainLinkData, generateDomainData } from '../../graphql/do
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { DomainLearningMaterialsOptions, DomainLearningMaterialsSortingType } from '../../graphql/types';
 import { routerPushToPage } from '../PageInfo';
-import { DomainLearningGoalPageInfo, ManageDomainPageInfo } from '../RoutesPageInfos';
+import {
+  AddLearningGoalToDomainPageInfo,
+  AddResourceToDomainPageInfo,
+  ConceptListPageInfo,
+  DomainPageInfo,
+  ManageDomainPageInfo,
+  NewLearningPathPageInfo,
+} from '../RoutesPageInfos';
 import { GetDomainByKeyDomainPageQuery, useGetDomainByKeyDomainPageQuery } from './DomainPage.generated';
 
 export const getDomainByKeyDomainPage = gql`
@@ -145,16 +152,15 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
             </Heading>
           </Skeleton>
           <Skeleton isLoaded={!loading}>
-            <InternalLink
+            <PageLink
               color="gray.600"
               _hover={{ color: 'gray.700', textDecoration: 'underline' }}
               fontWeight={600}
-              routePath="/domains/[key]/concepts"
-              asHref={`/domains/${domain.key}/concepts`}
+              pageInfo={ConceptListPageInfo(domain)}
               isDisabled={loading}
             >
               {domain.concepts?.items.length ? domain.concepts?.items.length + ' Concepts ' : 'No concepts yet'}
-            </InternalLink>
+            </PageLink>
           </Skeleton>
           {domain && domain.description && (
             <Skeleton mt={2} isLoaded={!loading}>
@@ -165,37 +171,33 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
 
         <Flex direction="column" alignItems={{ base: 'flex-start', md: 'flex-end' }}>
           <ButtonGroup spacing={2}>
-            <InternalButtonLink
+            <PageButtonLink
               variant="solid"
               colorScheme="blue"
-              routePath="/domains/[key]/resources/new"
-              asHref={router.asPath + '/resources/new'}
+              pageInfo={AddResourceToDomainPageInfo(domain)}
               loggedInOnly
               isDisabled={loading}
             >
               Add Resource
-            </InternalButtonLink>
-            <InternalButtonLink
+            </PageButtonLink>
+            <PageButtonLink
               variant="outline"
               colorScheme="teal"
-              // borderWidth="1px"
-              routePath="/learning_paths/new"
-              asHref="/resources/new"
+              pageInfo={NewLearningPathPageInfo}
               loggedInOnly
               isDisabled={loading}
             >
               Add Learning Path
-            </InternalButtonLink>
-            <InternalButtonLink
+            </PageButtonLink>
+            <PageButtonLink
               variant="outline"
               colorScheme="grey"
-              routePath="/domains/[key]/goals/new"
-              asHref={router.asPath + '/goals/new'}
+              pageInfo={AddLearningGoalToDomainPageInfo(domain)}
               loggedInOnly
               isDisabled={loading}
             >
               Add Goal
-            </InternalButtonLink>
+            </PageButtonLink>
             {/* ? would be expected to be there from the start maybe (attached + public). good to push for creation though */}
             <RoleAccess accessRule="contributorOrAdmin">
               <IconButton
@@ -254,19 +256,14 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
               pb={2}
             >
               <Text fontSize="xl" textAlign="center" fontWeight={600} color="gray.600" pb={2}>
-                SubTopics
+                SubAreas
               </Text>
               <Stack>
                 {(domain.subDomains || []).map(({ domain }) => (
                   <Box key={domain._id}>
-                    <InternalLink
-                      fontWeight={600}
-                      color="gray.700"
-                      routePath="/domains/[key]"
-                      asHref={`/domains/${domain.key}`}
-                    >
+                    <PageLink fontWeight={600} color="gray.700" pageInfo={DomainPageInfo(domain)}>
                       {domain.name}
-                    </InternalLink>
+                    </PageLink>
                   </Box>
                 ))}
               </Stack>

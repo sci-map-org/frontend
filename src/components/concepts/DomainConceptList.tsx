@@ -7,11 +7,13 @@ import {
   useSetConceptsKnownMutation,
   useSetConceptsUnknownMutation,
 } from '../../graphql/concepts/concepts.operations.generated';
+import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { GetDomainByKeyDomainPageQuery } from '../../pages/domains/DomainPage.generated';
+import { ConceptPageInfo, NewConceptPageInfo } from '../../pages/RoutesPageInfos';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import { CompletedCheckbox } from '../lib/CompletedCheckbox';
-import { InternalLink } from '../navigation/InternalLink';
+import { InternalLink, PageLink } from '../navigation/InternalLink';
 
 type NestedConceptItem = {
   concept: ConceptDataFragment & { parentConcepts?: { concept: { _id: string } }[] | null };
@@ -133,21 +135,15 @@ export const DomainConceptList: React.FC<{
 
       <DomainConceptListMenuLevel
         nestedConceptItems={conceptNestedList}
-        domainKey={domain.key}
+        domain={domain}
         onToggle={toggleConceptKnown}
         isLoading={isLoading}
         level={0}
       />
       <Flex direction="row" justifyContent="center" pt={2} pb={1}>
-        <InternalLink
-          color="gray.600"
-          fontWeight={600}
-          routePath="/domains/[key]/concepts/new"
-          asHref={`/domains/${domain.key}/concepts/new`}
-          isDisabled={isLoading}
-        >
+        <PageLink color="gray.600" fontWeight={600} pageInfo={NewConceptPageInfo(domain)} isDisabled={isLoading}>
           + Add Concept
-        </InternalLink>
+        </PageLink>
       </Flex>
     </Flex>
   );
@@ -155,11 +151,11 @@ export const DomainConceptList: React.FC<{
 
 export const DomainConceptListMenuLevel: React.FC<{
   nestedConceptItems: NestedConceptItem[];
-  domainKey: string;
+  domain: DomainLinkDataFragment;
   onToggle: (concept: ConceptDataFragment) => void;
   isLoading?: boolean;
   level: number;
-}> = ({ nestedConceptItems, domainKey, onToggle, isLoading, level }) => {
+}> = ({ nestedConceptItems, domain, onToggle, isLoading, level }) => {
   return (
     <Stack direction="column" spacing={1} alignItems="flex-start">
       {nestedConceptItems.map((conceptItem) => {
@@ -167,7 +163,7 @@ export const DomainConceptListMenuLevel: React.FC<{
           return (
             <CollapsableMenuLink
               key={conceptItem.concept._id}
-              domainKey={domainKey}
+              domain={domain}
               concept={conceptItem.concept}
               subConceptItems={conceptItem.subConceptItems}
               onToggle={onToggle}
@@ -179,7 +175,7 @@ export const DomainConceptListMenuLevel: React.FC<{
           return (
             <DomainConceptListMenuLink
               key={conceptItem.concept._id}
-              domainKey={domainKey}
+              domain={domain}
               concept={conceptItem.concept}
               onToggle={onToggle}
               isLoading={isLoading}
@@ -194,18 +190,18 @@ export const DomainConceptListMenuLevel: React.FC<{
 export const CollapsableMenuLink: React.FC<{
   concept: ConceptDataFragment;
   subConceptItems: NestedConceptItem[];
-  domainKey: string;
+  domain: DomainLinkDataFragment;
   onToggle: (concept: ConceptDataFragment) => void;
   isLoading?: boolean;
   level: number;
-}> = ({ concept, subConceptItems, domainKey, isLoading, onToggle, level }) => {
+}> = ({ concept, subConceptItems, domain, isLoading, onToggle, level }) => {
   const [show, setShow] = useState(level === 0);
 
   const handleExpand = () => setShow(!show);
   return (
     <Box key={concept._id}>
       <DomainConceptListMenuLink
-        domainKey={domainKey}
+        domain={domain}
         concept={concept}
         onToggle={onToggle}
         isLoading={isLoading}
@@ -227,7 +223,7 @@ export const CollapsableMenuLink: React.FC<{
           />
           <DomainConceptListMenuLevel
             nestedConceptItems={subConceptItems}
-            domainKey={domainKey}
+            domain={domain}
             onToggle={onToggle}
             isLoading={isLoading}
             level={level + 1}
@@ -239,14 +235,14 @@ export const CollapsableMenuLink: React.FC<{
 };
 
 export const DomainConceptListMenuLink: React.FC<{
-  domainKey: string;
+  domain: DomainLinkDataFragment;
   concept: ConceptDataFragment;
   onToggle: (concept: ConceptDataFragment) => void;
   isLoading?: boolean;
   expandable?: boolean;
   expanded?: boolean;
   onExpand?: () => void;
-}> = ({ domainKey, concept, onToggle, isLoading, expandable, onExpand, expanded }) => {
+}> = ({ domain, concept, onToggle, isLoading, expandable, onExpand, expanded }) => {
   return (
     <Flex direction="row" alignItems="center" px={expandable ? 1 : 5}>
       {expandable && (
@@ -261,13 +257,9 @@ export const DomainConceptListMenuLink: React.FC<{
         />
       )}
       <Skeleton isLoaded={!isLoading} display="flex" alignItems="center">
-        <InternalLink
-          ml={expandable ? 1 : 0}
-          routePath="/domains/[key]/concepts/[conceptKey]"
-          asHref={`/domains/${domainKey}/concepts/${concept.key}`}
-        >
+        <PageLink ml={expandable ? 1 : 0} pageInfo={ConceptPageInfo(domain, concept)}>
           {concept.name}
-        </InternalLink>
+        </PageLink>
         <CompletedCheckbox
           ml={2}
           size="xs"

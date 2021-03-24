@@ -1,7 +1,8 @@
 import { Box, BoxProps, LinkProps, CloseButton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
-import { InternalLink } from '../navigation/InternalLink';
+import { ConceptPageInfo } from '../../pages/RoutesPageInfos';
+import { InternalLink, PageLink } from '../navigation/InternalLink';
 import { ConceptBadgeDataFragment } from './ConceptBadge.generated';
 
 export const ConceptBadgeData = gql`
@@ -71,13 +72,9 @@ export const ConceptBadge: React.FC<ConceptBadgeProps> = ({
     </Stack>
   );
   return clickable ? (
-    <InternalLink
-      {...badgeStyleProps(concept, size)}
-      routePath="/domains/[key]/concepts/[conceptKey]"
-      asHref={`/domains/${domain.key}/concepts/${concept.key}`}
-    >
+    <PageLink {...badgeStyleProps(concept, size)} pageInfo={ConceptPageInfo(domain, concept)}>
       {content}
-    </InternalLink>
+    </PageLink>
   ) : (
     <Box {...badgeStyleProps(concept, size)}>{content}</Box>
   );

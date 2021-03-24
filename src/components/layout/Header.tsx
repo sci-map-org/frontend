@@ -23,7 +23,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { env } from '../../env';
 import { useCurrentUser, useLogout } from '../../graphql/users/users.hooks';
-import { LearningPathPagePath } from '../../pages/RoutesPageInfos';
+import { LearningPathPagePath, NewDomainPagePath } from '../../pages/RoutesPageInfos';
 import { globalStyleVariables } from '../../theme/theme';
 import { RoleAccess } from '../auth/RoleAccess';
 import { GlobalSearchBox } from '../navigation/search/GlobalSearchBox';
@@ -136,8 +136,8 @@ export const Header: React.FC = () => {
             </PopoverContent>
           </Popover>
         )}
-        <HeaderLink routePath="/domains" asHref="/domains">
-          Topics
+        <HeaderLink routePath="/areas" asHref="/areas">
+          Areas
         </HeaderLink>
         <HeaderLink routePath="/about/[key]" asHref="/about/introduction">
           About
@@ -183,9 +183,9 @@ export const Header: React.FC = () => {
                 </NextLink>
               </RoleAccess>
               <RoleAccess accessRule="contributorOrAdmin">
-                <NextLink href={`/domains/new`} as="/domains/new" passHref>
+                <NextLink href={NewDomainPagePath} as={NewDomainPagePath} passHref>
                   <MenuItem>
-                    <Link>New Domain</Link>
+                    <Link>New Area</Link>
                   </MenuItem>
                 </NextLink>
               </RoleAccess>

@@ -1,19 +1,19 @@
-import { Box, Flex, IconButton, Stack } from '@chakra-ui/react';
 import { SettingsIcon } from '@chakra-ui/icons';
+import { Box, Flex, IconButton, Stack } from '@chakra-ui/react';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
-import { InternalButtonLink, InternalLink } from '../../components/navigation/InternalLink';
+import { PageButtonLink, PageLink } from '../../components/navigation/InternalLink';
 import { useSearchDomains } from '../../graphql/domains/domains.hooks';
 import { useDeleteDomainMutation } from '../../graphql/domains/domains.operations.generated';
 import { routerPushToPage } from '../PageInfo';
-import { ManageDomainPageInfo } from '../RoutesPageInfos';
+import { DomainPageInfo, ManageDomainPageInfo, NewDomainPageInfo } from '../RoutesPageInfos';
 
 export const DomainsListPage: React.FC = () => {
   const { domains, refetch } = useSearchDomains();
   const [deleteDomainMutation] = useDeleteDomainMutation();
   return (
-    <PageLayout title="Topics" centerChildren>
+    <PageLayout title="Areas" centerChildren>
       <Stack spacing={8} direction="column" width="36rem">
         <Flex
           direction="column"
@@ -34,13 +34,13 @@ export const DomainsListPage: React.FC = () => {
                   direction="row"
                   alignItems="center"
                 >
-                  <InternalLink routePath="/domains/[key]" asHref={`/domains/${domain.key}`} fontWeight={500}>
+                  <PageLink pageInfo={DomainPageInfo(domain)} fontWeight={500}>
                     {domain.name}
-                  </InternalLink>
+                  </PageLink>
                   <Box flexGrow={1} />
                   <RoleAccess accessRule="contributorOrAdmin">
                     <IconButton
-                      aria-label="manage domain"
+                      aria-label="manage area"
                       size="sm"
                       icon={<SettingsIcon />}
                       onClick={() => routerPushToPage(ManageDomainPageInfo(domain))}
@@ -49,8 +49,8 @@ export const DomainsListPage: React.FC = () => {
                   <RoleAccess accessRule="admin">
                     <Box width={4} />
                     <DeleteButtonWithConfirmation
-                      modalBodyText="Confirm deleting this domain ?"
-                      modalHeaderText="Delete Domain"
+                      modalBodyText="Confirm deleting this area ?"
+                      modalHeaderText="Delete Area"
                       onConfirmation={() =>
                         deleteDomainMutation({ variables: { id: domain._id } }).then(() => refetch())
                       }
@@ -61,9 +61,9 @@ export const DomainsListPage: React.FC = () => {
             })}
         </Flex>
         <RoleAccess accessRule="contributorOrAdmin">
-          <InternalButtonLink variant="outline" routePath="/domains/new" asHref="/domains/new">
-            + New Topic
-          </InternalButtonLink>
+          <PageButtonLink variant="outline" pageInfo={NewDomainPageInfo}>
+            + New Area
+          </PageButtonLink>
         </RoleAccess>
       </Stack>
     </PageLayout>

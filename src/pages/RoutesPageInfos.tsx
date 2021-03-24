@@ -9,15 +9,23 @@ import { ResourceDataFragment } from '../graphql/resources/resources.fragments.g
 import { PageInfo } from './PageInfo';
 
 // ====Domains====
-export const DomainsListPagePath = '/domains';
+export const DomainsListPagePath = '/areas';
 
 export const DomainsListPageInfo: PageInfo = {
-  name: 'Topics',
+  name: 'Areas',
   path: DomainsListPagePath,
   routePath: DomainsListPagePath,
 };
 
-export const DomainPagePath = (domainKey: string) => `/domains/${domainKey}`;
+export const NewDomainPagePath = '/areas/new';
+
+export const NewDomainPageInfo: PageInfo = {
+  name: 'New Area',
+  path: NewDomainPagePath,
+  routePath: NewDomainPagePath,
+};
+
+export const DomainPagePath = (domainKey: string) => `/areas/${domainKey}`;
 
 export const DomainPageInfo = (domain: DomainLinkDataFragment): PageInfo => ({
   name: domain.name,
@@ -26,14 +34,14 @@ export const DomainPageInfo = (domain: DomainLinkDataFragment): PageInfo => ({
   breadcrumbLinkProps: domainLinkStyleProps,
 });
 
-export const EditDomainPagePath = (domainKey: string) => `/domains/${domainKey}/edit`;
+export const EditDomainPagePath = (domainKey: string) => `/areas/${domainKey}/edit`;
 export const EditDomainPageInfo = (domain: DomainDataFragment): PageInfo => ({
   name: 'Edit',
   path: EditDomainPagePath(domain.key),
   routePath: EditDomainPagePath('[key]'),
 });
 
-export const ManageDomainPagePath = (domainKey: string) => `/domains/${domainKey}/manage`;
+export const ManageDomainPagePath = (domainKey: string) => `/areas/${domainKey}/manage`;
 export const ManageDomainPageInfo = (domain: DomainDataFragment): PageInfo => ({
   name: 'Manage',
   path: ManageDomainPagePath(domain.key),
@@ -41,15 +49,21 @@ export const ManageDomainPageInfo = (domain: DomainDataFragment): PageInfo => ({
 });
 
 // ====Concepts====
-export const ConceptListPagePath = (domainKey: string) => `/domains/${domainKey}/concepts`;
+export const ConceptListPagePath = (domainKey: string) => `/areas/${domainKey}/concepts`;
 export const ConceptListPageInfo = (domain: DomainDataFragment): PageInfo => ({
   name: 'Concepts',
   path: ConceptListPagePath(domain.key),
   routePath: ConceptListPagePath('[key]'),
 });
 
-export const ConceptPagePath = (domainKey: string, conceptKey: string) =>
-  `/domains/${domainKey}/concepts/${conceptKey}`;
+export const NewConceptPagePath = (domainKey: string) => `/areas/${domainKey}/concepts/new`;
+export const NewConceptPageInfo = (domain: DomainDataFragment): PageInfo => ({
+  name: `Add concept to ${domain.name}`,
+  path: NewConceptPagePath(domain.key),
+  routePath: NewConceptPagePath('[key]'),
+});
+
+export const ConceptPagePath = (domainKey: string, conceptKey: string) => `/areas/${domainKey}/concepts/${conceptKey}`;
 export const ConceptPageInfo = (domain: DomainDataFragment, concept: ConceptDataFragment): PageInfo => ({
   name: `${domain.name} - ${concept.name}`,
   path: ConceptPagePath(domain.key, concept.key),
@@ -57,7 +71,7 @@ export const ConceptPageInfo = (domain: DomainDataFragment, concept: ConceptData
 });
 
 export const EditConceptPagePath = (domainKey: string, conceptKey: string) =>
-  `/domains/${domainKey}/concepts/${conceptKey}/edit`;
+  `/areas/${domainKey}/concepts/${conceptKey}/edit`;
 export const EditConceptPageInfo = (
   domain: Pick<DomainDataFragment, 'name' | 'key'>,
   concept: Pick<ConceptDataFragment, 'name' | 'key'>
@@ -82,7 +96,15 @@ export const EditResourcePageInfo = (resource: ResourceDataFragment): PageInfo =
   routePath: EditResourcePagePath('[_id]'),
 });
 
-export const DomainResourceListPagePath = (domainKey: string) => `/domains/${domainKey}/resources`;
+export const AddResourceToDomainPagePath = (domainKey: string) => `/areas/${domainKey}/resources/new`;
+
+export const AddResourceToDomainPageInfo = (domain: DomainLinkDataFragment) => ({
+  name: `Add Resource to ${domain.name}`,
+  path: AddResourceToDomainPagePath(domain.key),
+  routePath: AddResourceToDomainPagePath('[key]'),
+});
+
+export const DomainResourceListPagePath = (domainKey: string) => `/areas/${domainKey}/resources`;
 export const DomainResourceListPageInfo = (domain: DomainDataFragment): PageInfo => ({
   name: 'Resources',
   path: DomainResourceListPagePath(domain.key),
@@ -90,6 +112,13 @@ export const DomainResourceListPageInfo = (domain: DomainDataFragment): PageInfo
 });
 
 //====Learning Goals====
+export const NewLearningGoalPagePath = '/goals/new';
+export const NewLearningGoalPageInfo: PageInfo = {
+  name: 'New Learning Goal',
+  path: NewLearningGoalPagePath,
+  routePath: NewLearningGoalPagePath,
+};
+
 export const LearningGoalPagePath = (learningGoalKey: string) => '/goals/' + learningGoalKey;
 export const LearningGoalPageInfo = (learningGoal: LearningGoalLinkDataFragment): PageInfo => {
   return learningGoal.domain
@@ -101,8 +130,16 @@ export const LearningGoalPageInfo = (learningGoal: LearningGoalLinkDataFragment)
       };
 };
 
+export const AddLearningGoalToDomainPagePath = (domainKey: string) => `/areas/${domainKey}/goals/new`;
+
+export const AddLearningGoalToDomainPageInfo = (domain: DomainLinkDataFragment): PageInfo => ({
+  name: `Add goal to ${domain.name}`,
+  path: AddLearningGoalToDomainPagePath(domain.key),
+  routePath: AddLearningGoalToDomainPagePath('[key]'),
+});
+
 export const DomainLearningGoalPagePath = (domainKey: string, learningGoalKey: string) =>
-  `/domains/${domainKey}/goals/${learningGoalKey}`;
+  `/areas/${domainKey}/goals/${learningGoalKey}`;
 export const DomainLearningGoalPageInfo = (
   domain: DomainLinkDataFragment,
   learningGoal: LearningGoalLinkDataFragment
@@ -113,6 +150,14 @@ export const DomainLearningGoalPageInfo = (
 });
 
 //====Learning Paths====
+export const NewLearningPathPagePath = `/learning_paths/new`;
+
+export const NewLearningPathPageInfo: PageInfo = {
+  name: 'New Learning Path',
+  path: NewLearningPathPagePath,
+  routePath: NewLearningPathPagePath,
+};
+
 export const LearningPathPagePath = (learningPathKey: string = '[learningPathKey]') =>
   `/learning_paths/${learningPathKey}`;
 export const LearningPathPageInfo = (learningPath: Pick<LearningPathDataFragment, 'key' | 'name'>): PageInfo => ({
