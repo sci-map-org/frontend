@@ -57,8 +57,8 @@ const LandingHeader: React.FC<{ layoutProps: FlexProps }> = ({ layoutProps }) =>
               <InternalLink
                 color="blue.500"
                 fontWeight={600}
-                routePath="/domains/[key]"
-                asHref="/domains/functional_programming"
+                routePath="/areas/[key]"
+                asHref="/areas/functional_programming"
               >
                 Functional Programming
               </InternalLink>
@@ -100,13 +100,13 @@ const LandingHeader: React.FC<{ layoutProps: FlexProps }> = ({ layoutProps }) =>
               { name: 'Graph Theory', key: 'graph_theory' },
             ].map((domain) => (
               <Box key={domain.key} py={1} px={2}>
-                <InternalLink asHref={`/domains/${domain.key}`} routePath={`/domains/[key]`}>
+                <InternalLink asHref={`/areas/${domain.key}`} routePath={`/areas/[key]`}>
                   {domain.name}
                 </InternalLink>
               </Box>
             ))}
             <Text py={1} px={2} fontStyle="italic">
-              <InternalLink asHref="/domains" routePath="/domains">
+              <InternalLink asHref="/areas" routePath="/areas">
                 ...and much more coming soon !
               </InternalLink>
             </Text>
@@ -180,15 +180,15 @@ const LandingFooter: React.FC<{ layoutProps: FlexProps }> = ({ layoutProps }) =>
       <br />
       <br />
       Our initial focus is around tech domains such as{' '}
-      <InternalLink color="blue.500" routePath="/domains/[key]" asHref="/domains/functional_programming">
+      <InternalLink color="blue.500" routePath="/areas/[key]" asHref="/areas/functional_programming">
         Functional Programming
       </InternalLink>
       ,{' '}
-      <InternalLink color="blue.500" routePath="/domains/[key]" asHref="/domains/machine_learning">
+      <InternalLink color="blue.500" routePath="/areas/[key]" asHref="/areas/machine_learning">
         Machine Learning
       </InternalLink>{' '}
       or{' '}
-      <InternalLink color="blue.500" routePath="/domains/[key]" asHref="/domains/ux_design">
+      <InternalLink color="blue.500" routePath="/areas/[key]" asHref="/areas/ux_design">
         User Experience Design
       </InternalLink>
       . The first version of the product entails a recommendation feed of external learning resources, based on a

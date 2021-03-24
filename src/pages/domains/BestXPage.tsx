@@ -88,8 +88,8 @@ export const BestXPage: React.FC<{ domainKey: string; x: ResourceType[] }> = ({ 
           <InternalButtonLink
             variant="solid"
             colorScheme="blue"
-            routePath="/domains/[key]/resources/new"
-            asHref={`/domains/${domain.key}/resources/new`}
+            routePath="/areas/[key]/resources/new"
+            asHref={`/areas/${domain.key}/resources/new`}
             loggedInOnly
           >
             Add Resource

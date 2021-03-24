@@ -90,7 +90,7 @@ const NewDomainForm: React.FC<NewDomainFormProps> = ({ defaultPayload, size = 'm
           <FormHelperText fontSize="xs">
             Url will look like{' '}
             <Text as="span" fontWeight={500}>
-              /domains/{key}
+              /areas/{key}
             </Text>
           </FormHelperText>
         )}

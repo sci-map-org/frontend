@@ -4,8 +4,8 @@ import { take } from 'lodash';
 import { useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { EntitySelector } from '../lib/selectors/EntitySelector';
-import { InternalLink } from '../navigation/InternalLink';
-import { ConceptPagePath } from '../../pages/RoutesPageInfos';
+import { InternalLink, PageLink } from '../navigation/InternalLink';
+import { ConceptPageInfo, ConceptPagePath } from '../../pages/RoutesPageInfos';
 import { NewConceptModal } from './NewConcept';
 import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { AddConceptToDomainPayload } from '../../graphql/types';
@@ -67,12 +67,7 @@ export const DomainConceptsPicker: React.FC<DomainConceptsPickerProps> = ({
             />
             <Text fontSize="sm">
               <Skeleton isLoaded={!isLoading} as="span">
-                <InternalLink
-                  routePath="/domains/[key]/concepts/[conceptKey]"
-                  asHref={ConceptPagePath(domain.key, pickedConcept.key)}
-                >
-                  {pickedConcept.name}
-                </InternalLink>
+                <PageLink pageInfo={ConceptPageInfo(domain, pickedConcept)}>{pickedConcept.name}</PageLink>
               </Skeleton>
             </Text>
           </Stack>

@@ -3,11 +3,11 @@ import { SettingsIcon } from '@chakra-ui/icons';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
-import { InternalButtonLink, InternalLink } from '../../components/navigation/InternalLink';
+import { InternalButtonLink, InternalLink, PageLink } from '../../components/navigation/InternalLink';
 import { useSearchDomains } from '../../graphql/domains/domains.hooks';
 import { useDeleteDomainMutation } from '../../graphql/domains/domains.operations.generated';
 import { routerPushToPage } from '../PageInfo';
-import { ManageDomainPageInfo } from '../RoutesPageInfos';
+import { DomainPageInfo, ManageDomainPageInfo } from '../RoutesPageInfos';
 
 export const DomainsListPage: React.FC = () => {
   const { domains, refetch } = useSearchDomains();
@@ -34,9 +34,9 @@ export const DomainsListPage: React.FC = () => {
                   direction="row"
                   alignItems="center"
                 >
-                  <InternalLink routePath="/domains/[key]" asHref={`/domains/${domain.key}`} fontWeight={500}>
+                  <PageLink pageInfo={DomainPageInfo(domain)} fontWeight={500}>
                     {domain.name}
-                  </InternalLink>
+                  </PageLink>
                   <Box flexGrow={1} />
                   <RoleAccess accessRule="contributorOrAdmin">
                     <IconButton
@@ -61,8 +61,8 @@ export const DomainsListPage: React.FC = () => {
             })}
         </Flex>
         <RoleAccess accessRule="contributorOrAdmin">
-          <InternalButtonLink variant="outline" routePath="/domains/new" asHref="/domains/new">
-            + New Topic
+          <InternalButtonLink variant="outline" routePath="/areas/new" asHref="/areas/new">
+            + New Area
           </InternalButtonLink>
         </RoleAccess>
       </Stack>

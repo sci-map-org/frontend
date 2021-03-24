@@ -7,10 +7,10 @@ interface DomainSelectorProps {
 }
 
 export const DomainSelector: React.FC<DomainSelectorProps> = ({ onSelect }) => {
-  const [searchDomains, { data, loading }] = useSearchDomainsLazyQuery();
+  const [searchDomains, { data }] = useSearchDomainsLazyQuery();
   return (
     <EntitySelector
-      placeholder="Search domains..."
+      placeholder="Search areas..."
       entitySuggestions={data?.searchDomains.items || []}
       fetchEntitySuggestions={(v) => searchDomains({ variables: { options: { pagination: {}, query: v } } })}
       onSelect={onSelect}

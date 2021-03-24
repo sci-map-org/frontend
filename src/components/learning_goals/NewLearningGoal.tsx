@@ -204,7 +204,7 @@ export const NewLearningGoalForm: React.FC<NewLearningGoalFormProps> = ({
                   <FormHelperText fontSize="xs">
                     Url will look like{' '}
                     <Text as="span" fontWeight={500}>
-                      {domain && `/domains/${domain.key}`}/goals/{key}
+                      {domain && `/areas/${domain.key}`}/goals/{key}
                     </Text>
                   </FormHelperText>
                 )}

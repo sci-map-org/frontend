@@ -22,7 +22,12 @@ import { DomainData, DomainLinkData, generateDomainData } from '../../graphql/do
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { DomainLearningMaterialsOptions, DomainLearningMaterialsSortingType } from '../../graphql/types';
 import { routerPushToPage } from '../PageInfo';
-import { DomainLearningGoalPageInfo, ManageDomainPageInfo } from '../RoutesPageInfos';
+import {
+  ConceptListPageInfo,
+  DomainLearningGoalPageInfo,
+  DomainPageInfo,
+  ManageDomainPageInfo,
+} from '../RoutesPageInfos';
 import { GetDomainByKeyDomainPageQuery, useGetDomainByKeyDomainPageQuery } from './DomainPage.generated';
 
 export const getDomainByKeyDomainPage = gql`
@@ -145,16 +150,15 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
             </Heading>
           </Skeleton>
           <Skeleton isLoaded={!loading}>
-            <InternalLink
+            <PageLink
               color="gray.600"
               _hover={{ color: 'gray.700', textDecoration: 'underline' }}
               fontWeight={600}
-              routePath="/domains/[key]/concepts"
-              asHref={`/domains/${domain.key}/concepts`}
+              pageInfo={ConceptListPageInfo(domain)}
               isDisabled={loading}
             >
               {domain.concepts?.items.length ? domain.concepts?.items.length + ' Concepts ' : 'No concepts yet'}
-            </InternalLink>
+            </PageLink>
           </Skeleton>
           {domain && domain.description && (
             <Skeleton mt={2} isLoaded={!loading}>
@@ -168,7 +172,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
             <InternalButtonLink
               variant="solid"
               colorScheme="blue"
-              routePath="/domains/[key]/resources/new"
+              routePath="/areas/[key]/resources/new"
               asHref={router.asPath + '/resources/new'}
               loggedInOnly
               isDisabled={loading}
@@ -189,7 +193,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
             <InternalButtonLink
               variant="outline"
               colorScheme="grey"
-              routePath="/domains/[key]/goals/new"
+              routePath="/areas/[key]/goals/new"
               asHref={router.asPath + '/goals/new'}
               loggedInOnly
               isDisabled={loading}
@@ -259,14 +263,9 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
               <Stack>
                 {(domain.subDomains || []).map(({ domain }) => (
                   <Box key={domain._id}>
-                    <InternalLink
-                      fontWeight={600}
-                      color="gray.700"
-                      routePath="/domains/[key]"
-                      asHref={`/domains/${domain.key}`}
-                    >
+                    <PageLink fontWeight={600} color="gray.700" pageInfo={DomainPageInfo(domain)}>
                       {domain.name}
-                    </InternalLink>
+                    </PageLink>
                   </Box>
                 ))}
               </Stack>

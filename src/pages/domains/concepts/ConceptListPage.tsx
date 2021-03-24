@@ -65,8 +65,8 @@ export const ConceptListPage: React.FC<{ domainKey: string }> = ({ domainKey }) 
           <RoleAccess accessRule="contributorOrAdmin">
             <InternalButtonLink
               variant="outline"
-              routePath="/domains/[key]/concepts/new"
-              asHref={`/domains/${domain.key}/concepts/new`}
+              routePath="/areas/[key]/concepts/new"
+              asHref={`/areas/${domain.key}/concepts/new`}
             >
               + Add concept
             </InternalButtonLink>

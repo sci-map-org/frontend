@@ -3,8 +3,9 @@ import { DeleteIcon } from '@chakra-ui/icons';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { useSearchDomainsLazyQuery } from '../../graphql/domains/domains.operations.generated';
 import { EntitySelector } from '../lib/selectors/EntitySelector';
-import { InternalLink } from '../navigation/InternalLink';
+import { InternalLink, PageLink } from '../navigation/InternalLink';
 import { DomainSelector } from './DomainSelector';
+import { DomainPageInfo } from '../../pages/RoutesPageInfos';
 
 interface DomainsPickerProps {
   title: string;
@@ -30,9 +31,7 @@ export const DomainsPicker: React.FC<DomainsPickerProps> = ({ title, pickedDomai
                   onClick={() => onRemove(pickedDomain)}
                   size="xs"
                 />
-                <InternalLink routePath="/domains/[key]" asHref={`/domains/${pickedDomain.key}`}>
-                  {pickedDomain.name}
-                </InternalLink>
+                <PageLink pageInfo={DomainPageInfo(pickedDomain)}>{pickedDomain.name}</PageLink>
               </Stack>
             );
           })}

@@ -4,14 +4,19 @@ import gql from 'graphql-tag';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { DomainsPicker } from '../../components/domains/DomainsPicker';
 import { PageLayout } from '../../components/layout/PageLayout';
-import { InternalLink } from '../../components/navigation/InternalLink';
+import { InternalLink, PageLink } from '../../components/navigation/InternalLink';
 import { DomainData, generateDomainData } from '../../graphql/domains/domains.fragments';
 import {
   useAddDomainBelongsToDomainMutation,
   useRemoveDomainBelongsToDomainMutation,
 } from '../../graphql/domains/domains.operations.generated';
 import { routerPushToPage } from '../PageInfo';
-import { DomainPageInfo, EditDomainPageInfo, ManageDomainPageInfo } from '../RoutesPageInfos';
+import {
+  DomainPageInfo,
+  DomainResourceListPageInfo,
+  EditDomainPageInfo,
+  ManageDomainPageInfo,
+} from '../RoutesPageInfos';
 import {
   GetDomainByKeyManageDomainPageQuery,
   useGetDomainByKeyManageDomainPageQuery,
@@ -64,12 +69,12 @@ export const ManageDomainPage: React.FC<{ domainKey: string }> = ({ domainKey })
     >
       <Stack spacing={4}>
         <Box>
-          <InternalLink routePath="/domains/[key]/resources" asHref={`/domains/${domainKey}/resources`}>
+          <PageLink pageInfo={DomainResourceListPageInfo(domain)}>
             <Text fontSize="lg">
               Full Resource List
               <ExternalLinkIcon />
             </Text>
-          </InternalLink>
+          </PageLink>
         </Box>
         <Box>
           <b>Description</b>
