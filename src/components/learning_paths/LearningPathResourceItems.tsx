@@ -133,7 +133,7 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
                                 position="absolute"
                                 top={getArrowTopPosition(index, previewCardsHeight)}
                                 color={
-                                  !isLoading && !!currentUserStartedPath && index < allConsumedBeforeIndex
+                                  !isLoading && !!currentUserStartedPath && index <= allConsumedBeforeIndex
                                     ? 'teal.400'
                                     : 'gray.300'
                                 }
