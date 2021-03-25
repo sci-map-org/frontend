@@ -20,7 +20,7 @@
   background-image: url(/static/topography_bg1.svg);
 }
 
-#homeHeader2 {
+#homeHeader {
   /* background-color: #f9f8fb; */
   background-color: white;
   /* Change path color, size (zoom in pattern or not) and path opacity in the svg file */

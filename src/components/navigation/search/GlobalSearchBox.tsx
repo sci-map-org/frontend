@@ -1,5 +1,6 @@
-import { Input, InputGroup, InputRightElement } from '@chakra-ui/input';
-import { Box } from '@chakra-ui/layout';
+import { SearchIcon } from '@chakra-ui/icons';
+import { Input, InputGroup, InputLeftElement, InputRightElement, InputProps } from '@chakra-ui/input';
+import { Box, BoxProps } from '@chakra-ui/layout';
 import gql from 'graphql-tag';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Autosuggest from 'react-autosuggest';
@@ -31,7 +32,9 @@ interface GlobalSearchBoxProps {
   placeholder?: string;
   isDisabled?: boolean;
   inputSize?: 'sm' | 'md' | 'lg';
-  width?: string;
+  width?: BoxProps['width'];
+  inputBgColor?: InputProps['bgColor'];
+  positionSuggestions?: 'left' | 'right';
 }
 
 type SearchResult = GlobalSearchQuery['globalSearch']['results'][0];
@@ -41,6 +44,8 @@ export const GlobalSearchBox: React.FC<GlobalSearchBoxProps> = ({
   inputSize = 'sm',
   width = '180px',
   placeholder = 'Search...',
+  inputBgColor,
+  positionSuggestions = 'right',
 }) => {
   const [value, setValue] = useState('');
   const [suggestions, setSuggestions] = useState<SearchResult[]>([]);
@@ -85,7 +90,7 @@ export const GlobalSearchBox: React.FC<GlobalSearchBoxProps> = ({
 
   let inputRef = useRef<HTMLDivElement>(null);
   return (
-    <Box w={width} ref={inputRef}>
+    <Box w={width} ref={inputRef} position="relative" id="search_box">
       <Autosuggest
         shouldRenderSuggestions={() => {
           return true;
@@ -117,9 +122,24 @@ export const GlobalSearchBox: React.FC<GlobalSearchBoxProps> = ({
         renderSuggestion={(suggestion, { isHighlighted }) => (
           <SearchResultCard searchResult={suggestion} isHighlighted={isHighlighted} />
         )}
+        alwaysRenderSuggestions
         renderSuggestionsContainer={({ containerProps, children }) =>
           children && (
-            <Box {...containerProps} w="400px" borderTopWidth={1} zIndex={1000} position="absolute" bgColor="white">
+            <Box
+              {...containerProps}
+              minW={width}
+              maxW={'100vw'}
+              {...(positionSuggestions === 'left' && {
+                right: {
+                  base: 0,
+                  md: 'auto',
+                },
+              })}
+              borderTopWidth={1}
+              zIndex={1000}
+              position="absolute"
+              bgColor="white"
+            >
               {children}
             </Box>
           )
@@ -127,7 +147,9 @@ export const GlobalSearchBox: React.FC<GlobalSearchBoxProps> = ({
         highlightFirstSuggestion={true}
         getSuggestionValue={(suggestion) => value}
         renderInputComponent={(inputProps: any) => (
-          <InputGroup size={inputSize}>
+          <InputGroup size={inputSize} w={width} bgColor={inputBgColor}>
+            <InputLeftElement pointerEvents="none" children={<SearchIcon color="gray.400" />} />
+
             <Input variant="outline" borderRadius={4} _focus={{ borderColor: 'gray.500' }} {...inputProps} w={width} />
             {isSearching && (
               <InputRightElement w="auto" px={2}>

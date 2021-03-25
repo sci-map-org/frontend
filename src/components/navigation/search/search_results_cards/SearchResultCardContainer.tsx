@@ -24,12 +24,12 @@ export const SearchResultCardContainer: React.FC<SearchResultCardContainerProps>
       py="6px"
       borderWidth={1}
       borderTopWidth={0}
-      w="100%"
       onClick={() => routerPushToPage(entityPageInfo)}
       alignItems="center"
       _hover={{
         cursor: 'pointer',
       }}
+      w="400px"
       borderLeftRadius={0}
       fontSize="md"
       {...(isHighlighted && {
