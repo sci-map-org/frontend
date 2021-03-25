@@ -118,25 +118,20 @@ export const HomePage: React.FC = () => {
             items={[
               {
                 title: 'Find the best learning content out there',
-                content: `Don’t waste time and get the perfect resource right away.`,
+                content: `Don’t waste your time going through hundreds of search results. Sci-Map provides a curated selection of the web’s finest learning resources reviewed by the community.`,
               },
               {
-                title: "Get a bird's eye view of all knowledge",
-                content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-          consequat.`,
+                title: 'Visualize what you know... and what you don’t',
+                content: `Find out what to learn next, how concepts are related, and discover multiple ways to reach your goals. Sci-Map is powered by graph database technology, which allows for a precise representation of the concepts that constitute any area of knowledge.`,
               },
               {
-                title: 'Built by you and me', ///Wikipedia for learning?
-                content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-          consequat.`,
+                title: 'Powered by the people',
+                content: `Take advantage of the web’s collective intelligence with Sci-Map’s collaboratively built map of knowledge. Enjoy a range of crowdsourced content, continuously improved through feedback and suggestions.`,
               },
               {
                 title: 'Free, non profit and open source',
-                content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-          consequat.`,
+                content: `Sci-Map is free to use and its recommendations favor free content by default. 
+                Our mission is to accelerate the spreading of knowledge by structuring it in an innovative way. In order to remain unbiased and transparent, the project is open source and not for profit.`,
               },
             ]}
           />
@@ -156,31 +151,36 @@ export const HomePage: React.FC = () => {
         imagePosition="right"
         layoutProps={outerLayoutProps}
         renderImage={<Image src="./static/boatymacboatface_reframed.svg" w={{ base: '300px', md: '360px' }} />}
-        title="Stay in control of your journey"
+        title={
+          <>
+            Navigate{' '}
+            <Text fontWeight={500} as="span" color="blue.500">
+              seamlessly
+            </Text>
+          </>
+        }
         renderTextContent={
           <Accordeon
             textAlign="right"
+            color="blue.500"
+            borderColor="blue.400"
             h="300px"
             items={[
               {
-                title: 'Get a tailored experience',
-                content: `Get personalized recommendations based on what you already know, your goals and interests and how you learn best.`,
+                title: 'Follow your curiosity...',
+                content: `Explore new topics, dive deeper into your favourite ones, wander around and broaden your horizon. Discover exciting ideas intuitively and jump from one aha-moment to the next.`,
               },
               {
-                title: 'Follow your curiosity',
-                content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-          consequat.`,
+                title: '...or go straight to what you need.',
+                content: `Reach your goals in the most efficient way by cutting down to what matters.  Instead of one-size-fits-all courses, learn precisely what you need to, no more, no less and be in control of your time.`,
               },
               {
-                title: 'Switch pedagogical approaches in one click',
-                content: `Feel bored in the middle of a course or stuck on a concept ? Just take a turn and find an alternative in one click.`,
+                title: 'Enjoy a tailored experience',
+                content: `Get smart recommendations and learning paths built specifically for you based on what you already know, your goals and interests and how you learn best.`,
               },
               {
-                title: 'Learn optimally, whatever your goal is',
-                content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-          consequat.`,
+                title: 'Be in control',
+                content: `Feeling bored in the middle of a course or stuck on a concept? Just switch to another path and find an alternative explanation in one click.`,
               },
             ]}
           />
@@ -200,29 +200,36 @@ export const HomePage: React.FC = () => {
         )}
         layoutProps={outerLayoutProps}
         renderImage={<Image src="./static/together_goal_reframed.svg" w={{ base: '250px', md: '320px' }} />}
-        title="Collaborative and community based"
+        title={
+          <>
+            Grow{' '}
+            <Text fontWeight={500} as="span" color="teal.500">
+              together
+            </Text>
+          </>
+        }
         renderTextContent={
           <Accordeon
             h="270px"
+            color="teal.500"
+            borderColor="teal.400"
             items={[
               {
-                title: 'Connect with other learners',
-                content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-          consequat.`,
+                title: 'All your learning in one place',
+                content: `Track what you learn, pause and resume your paths, navigate your history or save learning material for later.`,
               },
 
               {
-                title: 'Keep track of what your learn',
-                content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-          consequat.`,
+                title: 'Share your journey',
+                content: `Display your progress and achievements on your public profile page, or help future learners by sharing the learning paths you’ve taken.`,
               },
               {
-                title: 'Share your learning journey',
-                content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-          consequat.`,
+                title: 'Connect with other learners',
+                content: `Learning online doesn’t have to be lonely, even if you’re a self-directed learner. With Sci-Map you can easily meet other like-minded learners on the same trajectory as yours and support each other to reach your goals. `,
+              },
+              {
+                title: 'Follow in other users’ footsteps',
+                content: `Receive advice at any point of your journey from people who have been there before. See what worked for them, what they suggest to get unstuck and avoid the various pitfalls.`,
               },
             ]}
           />
