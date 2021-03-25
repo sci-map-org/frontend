@@ -4,10 +4,10 @@ import { RoleAccess } from '../../../components/auth/RoleAccess';
 import { ConceptList } from '../../../components/concepts/ConceptList';
 import { VerticalConceptMappingVisualisation } from '../../../components/concepts/ConceptMappingVisualisation';
 import { PageLayout } from '../../../components/layout/PageLayout';
-import { InternalButtonLink } from '../../../components/navigation/InternalLink';
+import { PageButtonLink } from '../../../components/navigation/InternalLink';
 import { ConceptWithDependenciesData } from '../../../graphql/concepts/concepts.fragments';
 import { DomainConceptSortingEntities, DomainConceptSortingFields, SortingDirection } from '../../../graphql/types';
-import { ConceptListPageInfo, DomainPageInfo } from '../../RoutesPageInfos';
+import { ConceptListPageInfo, DomainPageInfo, NewConceptPageInfo } from '../../RoutesPageInfos';
 import { useListConceptsConceptListPageQuery } from './ConceptListPage.generated';
 
 export const listConceptsConceptListPage = gql`
@@ -45,7 +45,7 @@ export const ConceptListPage: React.FC<{ domainKey: string }> = ({ domainKey }) 
     },
   });
 
-  if (!data) return <Box>Domain not found !</Box>;
+  if (!data) return <Box>Area not found !</Box>;
   const domain = data.getDomainByKey;
   return (
     <PageLayout
@@ -63,13 +63,9 @@ export const ConceptListPage: React.FC<{ domainKey: string }> = ({ domainKey }) 
             />
           </Box>
           <RoleAccess accessRule="contributorOrAdmin">
-            <InternalButtonLink
-              variant="outline"
-              routePath="/domains/[key]/concepts/new"
-              asHref={`/domains/${domain.key}/concepts/new`}
-            >
+            <PageButtonLink variant="outline" pageInfo={NewConceptPageInfo(domain)}>
               + Add concept
-            </InternalButtonLink>
+            </PageButtonLink>
           </RoleAccess>
         </Stack>
         <Box width="20px"></Box>

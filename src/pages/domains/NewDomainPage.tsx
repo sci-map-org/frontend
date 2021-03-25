@@ -8,7 +8,7 @@ import { DomainPageInfo } from '../RoutesPageInfos';
 
 export const NewDomainPage: NextPage = () => {
   return (
-    <PageLayout title="New Domain" marginSize="xl" accessRule="contributorOrAdmin" centerChildren>
+    <PageLayout title="New Area" marginSize="xl" accessRule="contributorOrAdmin" centerChildren>
       <NewDomain
         onCancel={() => Router.back()}
         onCreated={(createdDomain) => routerPushToPage(DomainPageInfo(createdDomain))}

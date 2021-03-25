@@ -9,7 +9,7 @@ import { ConceptListPageInfo, ConceptPageInfo, DomainPageInfo } from '../../Rout
 export const NewConceptPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
   const { domain } = useGetDomainByKey(domainKey);
 
-  if (!domain) return <Box>Domain not found !</Box>;
+  if (!domain) return <Box>Area not found !</Box>;
   return (
     <PageLayout
       marginSize="xl"

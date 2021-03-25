@@ -13,7 +13,6 @@ import {
   Button,
   ButtonGroup,
   Center,
-  Collapse,
   Flex,
   FormControl,
   FormHelperText,
@@ -21,7 +20,6 @@ import {
   IconButton,
   Input,
   InputGroup,
-  InputLeftAddon,
   InputRightElement,
   Modal,
   ModalBody,
@@ -42,12 +40,13 @@ import { DomainDataFragment } from '../../graphql/domains/domains.fragments.gene
 import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
 import { useCreateLearningGoalMutation } from '../../graphql/learning_goals/learning_goals.operations.generated';
 import { useCheckTopicKeyAvailabilityLazyQuery } from '../../graphql/topics/topics.operations.generated';
-import { CreateLearningGoalPayload, LearningGoalType, TopicType } from '../../graphql/types';
-import { generateUrlKey } from '../../services/url.service';
+import { LearningGoalType, TopicType } from '../../graphql/types';
+import { DomainPageInfo } from '../../pages/RoutesPageInfos';
 import { getChakraRelativeSize } from '../../util/chakra.util';
 import { RoleAccess } from '../auth/RoleAccess';
 import { DomainSelector } from '../domains/DomainSelector';
 import { FormButtons } from '../lib/buttons/FormButtons';
+import { PageLink } from '../navigation/InternalLink';
 
 interface NewLearningGoalData {
   name: string;
@@ -89,9 +88,11 @@ export const NewLearningGoalForm: React.FC<NewLearningGoalFormProps> = ({
         <Flex direction="column">
           <Text fontWeight={600}>
             In:{' '}
-            <Text as="span" color="gray.600">
-              {domain && domain.name}
-            </Text>
+            {domain && (
+              <PageLink pageInfo={DomainPageInfo(domain)} color="gray.600">
+                {domain && domain.name}
+              </PageLink>
+            )}
             {domain && allowDomainChange && (
               <IconButton
                 size="xs"
@@ -204,7 +205,7 @@ export const NewLearningGoalForm: React.FC<NewLearningGoalFormProps> = ({
                   <FormHelperText fontSize="xs">
                     Url will look like{' '}
                     <Text as="span" fontWeight={500}>
-                      {domain && `/domains/${domain.key}`}/goals/{key}
+                      {domain && `/areas/${domain.key}`}/goals/{key}
                     </Text>
                   </FormHelperText>
                 )}

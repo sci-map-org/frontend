@@ -34,7 +34,7 @@ export const BestXPagesLinks: React.FC<{ domainKey: string }> = ({ domainKey }) 
       </Text>
       <Stack spacing={1} pl={5} pr={5}>
         {links.map((link) =>
-          router.route === '/domains/[key]/' + link.url_suffix ? (
+          router.route === '/areas/[key]/' + link.url_suffix ? (
             <Text key={link.url_suffix} fontWeight={500} color="blue.800">
               {link.name}
             </Text>
@@ -44,8 +44,8 @@ export const BestXPagesLinks: React.FC<{ domainKey: string }> = ({ domainKey }) 
               color="blue.800"
               textDecoration="underline"
               key={link.url_suffix}
-              routePath={'/domains/[key]/' + link.url_suffix}
-              asHref={`/domains/${domainKey}/${link.url_suffix}`}
+              routePath={'/areas/[key]/' + link.url_suffix}
+              asHref={`/areas/${domainKey}/${link.url_suffix}`}
             >
               {link.name}
             </InternalLink>

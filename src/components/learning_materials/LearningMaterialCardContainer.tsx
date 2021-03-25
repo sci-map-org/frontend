@@ -21,9 +21,10 @@ import React, { forwardRef, ReactNode, useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { LearningMaterialWithCoveredConceptsByDomainDataFragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
+import { ConceptPageInfo } from '../../pages/RoutesPageInfos';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
-import { InternalLink } from '../navigation/InternalLink';
+import { InternalLink, PageLink } from '../navigation/InternalLink';
 import { LearningMaterialDomainCoveredConceptsSelector } from '../resources/CoveredConceptsSelector';
 import { LearningMaterialCoveredConceptsByDomainViewer } from '../resources/LearningMaterialCoveredConceptsByDomainViewer';
 import { LearningMaterialDomainAndCoveredConceptsSelector } from '../resources/LearningMaterialDomainAndCoveredConceptsSelector';
@@ -168,12 +169,9 @@ export const LearningMaterialCardCoveredTopics: React.FC<{
             <Stack direction="column">
               {domainCoveredConcepts[0].coveredConcepts.map((concept) => (
                 <Box key={concept._id}>
-                  <InternalLink
-                    routePath="/domains/[key]/concepts/[conceptKey]"
-                    asHref={`/domains/${domainCoveredConcepts[0].domain.key}/concepts/${concept.key}`}
-                  >
+                  <PageLink pageInfo={ConceptPageInfo(domainCoveredConcepts[0].domain, concept)}>
                     {concept.name}
-                  </InternalLink>
+                  </PageLink>
                 </Box>
               ))}
             </Stack>

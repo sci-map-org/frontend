@@ -4,8 +4,9 @@ import { useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { ConceptBelongsToDomain } from '../../graphql/types';
+import { ConceptPageInfo } from '../../pages/RoutesPageInfos';
 import { RoleAccess } from '../auth/RoleAccess';
-import { InternalLink } from '../navigation/InternalLink';
+import { InternalLink, PageLink } from '../navigation/InternalLink';
 import { useUpdateConceptBelongsToDomainIndexMutation } from './ConceptList.generated';
 
 interface ConceptListProps {
@@ -37,7 +38,7 @@ export const ConceptList: React.FC<ConceptListProps> = ({ domain, domainConceptI
             key={concept._id}
             concept={concept}
             relationship={relationship}
-            domainKey={domain.key}
+            domain={domain}
             onIndexSubmit={async (index) => {
               await updateIndex({
                 variables: {
@@ -60,10 +61,10 @@ export const ConceptList: React.FC<ConceptListProps> = ({ domain, domainConceptI
 interface ConceptListItemProps {
   concept: ConceptDataFragment;
   relationship: { index: number };
-  domainKey: string;
+  domain: DomainDataFragment;
   onIndexSubmit: (index: number) => void;
 }
-const ConceptListItem: React.FC<ConceptListItemProps> = ({ concept, relationship, domainKey, onIndexSubmit }) => {
+const ConceptListItem: React.FC<ConceptListItemProps> = ({ concept, relationship, domain, onIndexSubmit }) => {
   const [indexValue, setIndexValue] = useState(relationship.index);
   return (
     <Flex
@@ -77,14 +78,9 @@ const ConceptListItem: React.FC<ConceptListItemProps> = ({ concept, relationship
       backgroundColor="backgroundColor.0"
     >
       <Box>
-        <InternalLink
-          fontSize="l"
-          fontWeight={500}
-          routePath="/domains/[key]/concepts/[conceptKey]"
-          asHref={`/domains/${domainKey}/concepts/${concept.key}`}
-        >
+        <PageLink fontSize="l" fontWeight={500} pageInfo={ConceptPageInfo(domain, concept)}>
           {concept.name}
-        </InternalLink>
+        </PageLink>
       </Box>
       <Box flexGrow={1}></Box>
       <RoleAccess accessRule="contributorOrAdmin">

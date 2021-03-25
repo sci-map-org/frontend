@@ -8,8 +8,9 @@ import {
   useDetachLearningMaterialFromDomainMutation,
 } from '../../graphql/learning_materials/learning_materials.operations.generated';
 import { EntitySelector } from '../lib/selectors/EntitySelector';
-import { InternalLink } from '../navigation/InternalLink';
+import { InternalLink, PageLink } from '../navigation/InternalLink';
 import { LearningMaterialDomainCoveredConceptsSelector } from './CoveredConceptsSelector';
+import { DomainPageInfo } from '../../pages/RoutesPageInfos';
 
 export const LearningMaterialDomainAndCoveredConceptsSelector: React.FC<{
   learningMaterial: LearningMaterialWithCoveredConceptsByDomainDataFragment;
@@ -40,9 +41,7 @@ export const LearningMaterialDomainAndCoveredConceptsSelector: React.FC<{
             />
             <Text>
               <Skeleton isLoaded={!isLoading} as="span">
-                <InternalLink asHref={`/domains/${domain.key}`} routePath="/domains/[key]">
-                  {domain.name}
-                </InternalLink>
+                <PageLink pageInfo={DomainPageInfo(domain)}>{domain.name}</PageLink>
               </Skeleton>
             </Text>
           </Stack>
@@ -59,7 +58,7 @@ export const LearningMaterialDomainAndCoveredConceptsSelector: React.FC<{
       ))}
       <EntitySelector
         inputSize="sm"
-        placeholder="Add new domain"
+        placeholder="Add new area"
         entitySuggestions={differenceBy(
           data?.searchDomains.items || [],
           learningMaterial.coveredConceptsByDomain.map((s) => s.domain),

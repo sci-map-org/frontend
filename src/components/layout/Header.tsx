@@ -27,7 +27,7 @@ import { useRouter } from 'next/router';
 import { useRef } from 'react';
 import { env } from '../../env';
 import { useCurrentUser, useLogout } from '../../graphql/users/users.hooks';
-import { LearningPathPagePath } from '../../pages/RoutesPageInfos';
+import { LearningPathPagePath, NewDomainPagePath } from '../../pages/RoutesPageInfos';
 import { globalStyleVariables } from '../../theme/theme';
 import { RoleAccess } from '../auth/RoleAccess';
 import { InternalLink, InternalLinkProps } from '../navigation/InternalLink';
@@ -65,9 +65,9 @@ export const Header: React.FC = () => {
   const showHamburger = useBreakpointValue({ base: true, md: false });
   const headerHamburgerLinks: (HeaderLinkProps & { name: string; show?: 'notLoggedIn' | 'loggedIn' })[] = [
     {
-      routePath: '/domains',
-      asHref: '/domains',
-      name: 'Topics',
+      routePath: '/areas',
+      asHref: '/areas',
+      name: 'Areas',
     },
     {
       routePath: '/about/[key]',
@@ -256,9 +256,9 @@ export const Header: React.FC = () => {
                 </NextLink>
               </RoleAccess>
               <RoleAccess accessRule="contributorOrAdmin">
-                <NextLink href={`/domains/new`} as="/domains/new" passHref>
+                <NextLink href={NewDomainPagePath} as={NewDomainPagePath} passHref>
                   <MenuItem>
-                    <Link>New Domain</Link>
+                    <Link>New Area</Link>
                   </MenuItem>
                 </NextLink>
               </RoleAccess>

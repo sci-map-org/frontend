@@ -4,6 +4,7 @@ import dagre from 'cytoscape-dagre';
 import dynamic from 'next/dynamic';
 import Router from 'next/router';
 import { ConceptWithDependenciesDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
+import { ConceptPagePath } from '../../pages/RoutesPageInfos';
 import { theme } from '../../theme/theme';
 
 const CytoscapeComponent = dynamic(import('react-cytoscapejs'), { ssr: false });
@@ -69,8 +70,8 @@ export const ConceptMappingVisualisation: React.FC<{
             cy.nodes().on('click', (e, data) => {
               const [node] = e.target;
               Router.push(
-                '/domains/[key]/concepts/[conceptKey]',
-                `/domains/${domainKey}/concepts/${node._private.data.conceptKey}`
+                ConceptPagePath('[key]', '[conceptKey]'),
+                ConceptPagePath(domainKey, node._private.data.conceptKey)
               );
             })
           }

@@ -1,9 +1,10 @@
-import { Box, Center, Text } from '@chakra-ui/react';
+import { Center, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { PageLayout } from '../../../components/layout/PageLayout';
 import { LearningGoalCard, LearningGoalCardData } from '../../../components/learning_goals/cards/LearningGoalCard';
 import { LearningGoalCardWrapper } from '../../../components/learning_goals/cards/LearningGoalCardWrapper';
-import { InternalButtonLink } from '../../../components/navigation/InternalLink';
+import { PageButtonLink } from '../../../components/navigation/InternalLink';
+import { NewLearningGoalPageInfo } from '../../RoutesPageInfos';
 import {
   GetCurrentUserLearningGoalsPageQuery,
   useGetCurrentUserLearningGoalsPageQuery,
@@ -72,9 +73,9 @@ export const CurrentUserLearningGoalsPage: React.FC<{}> = () => {
       )}
 
       <Center mt={6}>
-        <InternalButtonLink routePath="/goals/new" asHref="/goals/new" colorScheme="blue">
+        <PageButtonLink pageInfo={NewLearningGoalPageInfo} colorScheme="blue">
           Create New Goal
-        </InternalButtonLink>
+        </PageButtonLink>
       </Center>
     </PageLayout>
   );
