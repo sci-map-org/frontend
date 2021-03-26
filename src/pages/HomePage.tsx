@@ -1,4 +1,15 @@
-import { Box, Center, Flex, FlexProps, Heading, Image, ImageProps, Stack, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Center,
+  Flex,
+  FlexProps,
+  Heading,
+  Image,
+  ImageProps,
+  Stack,
+  Text,
+  useBreakpointValue,
+} from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import React, { ReactNode } from 'react';
 import { LearningGoalCardData } from '../components/learning_goals/cards/LearningGoalCard';
@@ -235,7 +246,7 @@ export const HomePage: React.FC = () => {
           />
         }
       />
-      <Flex justifyContent="center">
+      <Flex justifyContent="center" mt={16}>
         <Stack spacing={8} direction="row">
           <InternalButtonLink size="lg" routePath="/about" asHref="/about" colorScheme="blue" variant="outline">
             Learn more
@@ -306,18 +317,33 @@ const RecommendationsBlock: React.FC<{ data?: GetHomePageDataQuery; loading?: bo
 };
 
 const HomeHeader: React.FC<{ layoutProps?: FlexProps }> = ({ layoutProps = {} }) => {
+  const headingProps = useBreakpointValue({ base: { fontSize: '30px' }, sm: {} });
   return (
     <Flex direction="column" {...layoutProps} id="homeHeader" w="100%" px="5%">
       <Flex justifyContent="space-between" alignItems="stretch" w="100%">
         <Center w="50%">
           <Image src="./static/walker no bg.png" w="400px" />
         </Center>
-        <Flex w="50%" pl={10} pr={3} pt={16} direction="column">
-          <Heading size="2xl" maxW="250px" color="blackAlpha.900" lineHeight={1.1}>
+        <Flex
+          w="50%"
+          pl={{ base: 2, sm: 10, md: 10 }}
+          pr={{ base: 0, sm: 3 }}
+          pt={{ base: 5, sm: 8, md: 16 }}
+          pb={2}
+          direction="column"
+        >
+          <Heading
+            size="2xl"
+            maxW={{ base: '200px', sm: '230px', md: '250px' }}
+            color="blackAlpha.900"
+            lineHeight={1.1}
+            {...headingProps}
+          >
             Learn{' '}
             <Text as="span" bgColor="teal.600" ml="-6px" px="6px" pb="3px" color="white">
               anything
             </Text>{' '}
+            <br />
             in a smart way
           </Heading>
         </Flex>
@@ -390,15 +416,15 @@ const SearchBox: React.FC<{ leftTopoStainPosition?: 'top' | 'bottom' }> = ({ lef
         position="absolute"
         src="./static/topostain_blue.svg"
         zIndex={-3}
-        left={{ base: '-20%', md: '0px' }}
+        left={{ base: '-33%', sm: '-20%', md: '0px' }}
         {...(leftTopoStainPosition === 'bottom' && {
           bottom: { base: '-120px', md: '-30%' },
         })}
         {...(leftTopoStainPosition === 'top' && {
-          top: { base: '1%', md: '-80px' },
+          top: { base: '1%', sm: '1%', md: '-80px' },
         })}
         opacity={0.7}
-        w={{ base: '320px', md: '340px' }}
+        w={{ base: '300px', sm: '320px', md: '340px' }}
       />
       <Center mt={8} mb={12}>
         <Box position="relative" px={5}>

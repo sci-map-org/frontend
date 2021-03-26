@@ -6,7 +6,7 @@ import { env } from '../../env';
 
 export const Footer: React.FC<{}> = () => {
   return (
-    <Flex direction="column" alignItems="stretch">
+    <Flex direction="column" alignItems="stretch" overflowX="hidden">
       <Flex
         bgColor="teal.600"
         w="100%"
@@ -16,28 +16,28 @@ export const Footer: React.FC<{}> = () => {
         justifyContent="space-between"
         color="white"
       >
-        <Flex alignItems="center" w="40%" mr={4}>
-          <Text fontSize="lg" fontWeight={500}>
+        <Flex alignItems="center" w="35%" mr={{ base: 2, sm: 4 }}>
+          <Text fontSize={{ base: 'md', md: 'lg' }} fontWeight={500}>
             © 2021 Sci-Map.org
           </Text>
         </Flex>
 
-        <Flex direction="row" alignItems="stretch" justifyContent="space-between" w="60%">
-          <Flex justifyContent="center" flexGrow={1}>
+        <Flex direction="row" alignItems="stretch" justifyContent="space-between" w="65%">
+          <Flex justifyContent="center" flexGrow={1} fontSize={{ base: 'md', md: 'lg' }}>
             <Stack spacing={2} mr={3}>
-              <Link href="https://github.com/sci-map-org/" _hover={{}} fontWeight={500} fontSize="lg" isExternal>
+              <Link href="https://github.com/sci-map-org/" _hover={{}} fontWeight={500} isExternal>
                 <Stack direction="row" spacing={1} alignItems="center">
                   <RiGithubFill />
                   <Text>Github</Text>
                 </Stack>
               </Link>
-              <Link href="https://twitter.com/sci_map_org" _hover={{}} fontWeight={500} fontSize="lg" isExternal>
+              <Link href="https://twitter.com/sci_map_org" _hover={{}} fontWeight={500} isExternal>
                 <Stack direction="row" spacing={1} alignItems="center">
                   <RiTwitterLine />
                   <Text>Twitter</Text>
                 </Stack>
               </Link>
-              <Link href={env.DISCOURSE_FORUM_URL} _hover={{}} fontWeight={500} fontSize="lg" isExternal>
+              <Link href={env.DISCOURSE_FORUM_URL} _hover={{}} fontWeight={500} isExternal>
                 <Stack direction="row" spacing={1} alignItems="center">
                   <FaDiscourse />
                   <Text>Forum</Text>
@@ -45,7 +45,7 @@ export const Footer: React.FC<{}> = () => {
               </Link>
             </Stack>
           </Flex>
-          <Stack direction="row" spacing={{ base: 2, sm: 5, md: 12 }}>
+          <Stack direction="row" spacing={{ base: 2, sm: 5, md: 12 }} fontSize={{ base: 'sm', md: 'ms' }}>
             <Stack direction="column" spacing={2} alignItems="center">
               <Link href="/about" isExternal>
                 About

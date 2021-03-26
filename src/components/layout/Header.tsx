@@ -174,7 +174,7 @@ export const Header: React.FC = () => {
       <Stack direction="row" spacing={4}>
         {showHamburger && (
           <>
-            <GlobalSearchBox positionSuggestions="left" />
+            <GlobalSearchBox positionSuggestions="left" width={{ base: '120px', sm: '180px', md: '200px' }} />
             <Menu>
               <MenuButton
                 as={IconButton}
