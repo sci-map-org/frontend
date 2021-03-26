@@ -138,7 +138,7 @@ export const HomeDomainsRecommendations: React.FC<{}> = () => {
           See all
         </PageLink>
       </Flex>
-      <Stack direction="row" overflowX="scroll" spacing={4}>
+      <Stack direction="row" overflowX="auto" spacing={4}>
         {recommendedDomains.map((domain) => (
           <DomainCard domain={domain} key={domain._id} />
         ))}
