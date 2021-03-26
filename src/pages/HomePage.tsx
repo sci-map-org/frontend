@@ -161,7 +161,7 @@ export const HomePage: React.FC = () => {
         )}
         imagePosition="right"
         layoutProps={outerLayoutProps}
-        renderImage={<Image src="./static/boatymacboatface_reframed.svg" w={{ base: '300px', md: '360px' }} />}
+        renderImage={<Image src="./static/boatymacboatface.svg" w={{ base: '300px', md: '360px' }} />}
         title={
           <>
             Navigate{' '}
@@ -210,7 +210,7 @@ export const HomePage: React.FC = () => {
           />
         )}
         layoutProps={outerLayoutProps}
-        renderImage={<Image src="./static/together_goal_reframed.svg" w={{ base: '250px', md: '320px' }} />}
+        renderImage={<Image src="./static/together_goal.svg" w={{ base: '250px', md: '320px' }} />}
         title={
           <>
             Grow{' '}
@@ -322,7 +322,7 @@ const HomeHeader: React.FC<{ layoutProps?: FlexProps }> = ({ layoutProps = {} })
     <Flex direction="column" {...layoutProps} id="homeHeader" w="100%" px="5%">
       <Flex justifyContent="space-between" alignItems="stretch" w="100%">
         <Center w="50%">
-          <Image src="./static/walker no bg.png" w="400px" />
+          <Image src="./static/walker.svg" w="400px" />
         </Center>
         <Flex
           w="50%"
