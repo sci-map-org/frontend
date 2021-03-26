@@ -14,7 +14,7 @@ export const DomainsListPage: React.FC = () => {
   const [deleteDomainMutation] = useDeleteDomainMutation();
   return (
     <PageLayout title="Areas" centerChildren>
-      <Stack spacing={8} direction="column" width="36rem">
+      <Stack spacing={8} direction="column" width={{ base: '90%', md: '36rem' }}>
         <Flex
           direction="column"
           borderBottomWidth="1px"
