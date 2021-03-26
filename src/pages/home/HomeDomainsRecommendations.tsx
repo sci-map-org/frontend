@@ -129,7 +129,7 @@ const recommendedDomains: DomainLinkDataFragment[] = [
 
 export const HomeDomainsRecommendations: React.FC<{}> = () => {
   return (
-    <Flex overflowX="scroll" direction="column">
+    <Flex overflowX="auto" direction="column">
       <Flex justifyContent="space-between" alignItems="baseline" mb={3}>
         <Heading size="lg" color="gray.700">
           Learn anything

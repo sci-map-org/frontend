@@ -79,21 +79,22 @@ export const HomePage: React.FC = () => {
   const { currentUser } = useCurrentUser();
   const isReturningUser = !!currentUser;
   const outerLayoutProps = {
-    px: ['5px', '10px', '5%', '15%'],
+    mx: ['5px', '10px', '5%', '10%'],
+    maxW: { lg: '2000px' },
   };
 
   return (
     <Flex direction="column" justifyContent="center" alignItems="stretch" overflowX="hidden">
       {!isReturningUser ? (
         <Center>
-          <HomeHeader />
+          <HomeHeader layoutProps={outerLayoutProps} />
         </Center>
       ) : (
         <UserDashboard data={data} loading={loading} />
       )}
 
-      <RecommendationsBlock data={data} loading={loading} />
-      {isReturningUser && <SearchBox leftTopoStainPosition="bottom" />}
+      <RecommendationsBlock data={data} loading={loading} layoutProps={outerLayoutProps} />
+      {isReturningUser && <SearchBox leftTopoStainPosition="bottom" layoutProps={outerLayoutProps} />}
       <Box h={8} />
       <HomeContentItem
         renderTopoStain={(props) => (
@@ -256,7 +257,7 @@ export const HomePage: React.FC = () => {
           </InternalButtonLink>
         </Stack>
       </Flex>
-      {!isReturningUser && <SearchBox leftTopoStainPosition="top" />}
+      {!isReturningUser && <SearchBox leftTopoStainPosition="top" layoutProps={outerLayoutProps} />}
       <Box h={32} />
     </Flex>
   );
@@ -292,14 +293,20 @@ const UserDashboard: React.FC<{ data?: GetHomePageDataQuery; loading?: boolean }
   );
 };
 
-const RecommendationsBlock: React.FC<{ data?: GetHomePageDataQuery; loading?: boolean }> = ({ data, loading }) => {
+const RecommendationsBlock: React.FC<{ data?: GetHomePageDataQuery; loading?: boolean; layoutProps?: FlexProps }> = ({
+  data,
+  loading,
+  layoutProps = {},
+}) => {
   return (
     <>
-      <Center px="5%" mb={10} mt={12}>
-        <HomeDomainsRecommendations />
+      <Center mb={10} mt={12}>
+        <Flex {...layoutProps} overflow="auto">
+          <HomeDomainsRecommendations />
+        </Flex>
       </Center>
-      <Center px="5%" mb={3}>
-        <Flex direction={{ base: 'column', lg: 'row' }} flexGrow={1} justifyContent="space-between">
+      <Center mb={3}>
+        <Flex direction={{ base: 'column', lg: 'row' }} flexGrow={1} justifyContent="space-between" {...layoutProps}>
           <Flex maxWidth={{ base: '100%', lg: '60%' }} minWidth={{ lg: '40%' }}>
             <HomeLearningGoalsRecommendations learningGoals={data?.getHomePageData.recommendedLearningGoals || []} />
           </Flex>
@@ -319,8 +326,8 @@ const RecommendationsBlock: React.FC<{ data?: GetHomePageDataQuery; loading?: bo
 const HomeHeader: React.FC<{ layoutProps?: FlexProps }> = ({ layoutProps = {} }) => {
   const headingProps = useBreakpointValue({ base: { fontSize: '30px' }, sm: {} });
   return (
-    <Flex direction="column" {...layoutProps} id="homeHeader" w="100%" px="5%">
-      <Flex justifyContent="space-between" alignItems="stretch" w="100%">
+    <Flex direction="column" id="homeHeader" w="100%" alignItems="center">
+      <Flex justifyContent="space-between" alignItems="stretch" w="100%" {...layoutProps}>
         <Center w="50%">
           <Image src="./static/walker.svg" w="400px" />
         </Center>
@@ -361,102 +368,114 @@ const HomeContentItem: React.FC<{
   renderTopoStain: (props: Partial<ImageProps>) => ReactNode;
 }> = ({ layoutProps, renderTopoStain, imagePosition, renderImage, title, renderTextContent }) => {
   return (
-    <Flex
-      textAlign={imagePosition === 'left' ? 'left' : 'right'}
-      direction={{ base: imagePosition === 'left' ? 'column' : 'column-reverse', md: 'row' }}
-      px={['5px', '10px', '10%', '15%']}
-      alignItems="center"
-      position="relative"
-      my={10}
-      {...layoutProps}
-    >
-      {renderTopoStain({ position: 'absolute', zIndex: -1 })}
-      {imagePosition === 'left' && (
-        <>
-          <Flex
-            direction="column"
-            alignItems="center"
-            py="30px"
-            w={{ base: '100%', md: '50%' }}
-            h={{ base: '50%', md: '100%' }}
-          >
-            {renderImage}
-          </Flex>
-        </>
-      )}
-      <Flex direction="column" justifyContent="center" w={{ base: '100%', md: '50%' }} px={{ base: '5%', md: 0 }}>
-        <Heading size="xl" fontWeight={400} mb={5}>
-          {title}
-        </Heading>
-        <Box color="gray.700" flexGrow={1}>
-          {renderTextContent}
-        </Box>
+    <Center>
+      <Flex
+        w="100%"
+        textAlign={imagePosition === 'left' ? 'left' : 'right'}
+        direction={{ base: imagePosition === 'left' ? 'column' : 'column-reverse', md: 'row' }}
+        // px={['5px', '10px', '10%', '15%']}
+        alignItems="center"
+        position="relative"
+        my={10}
+        {...layoutProps}
+      >
+        {renderTopoStain({ position: 'absolute', zIndex: -1 })}
+        {imagePosition === 'left' && (
+          <>
+            <Flex
+              direction="column"
+              alignItems="center"
+              py="30px"
+              w={{ base: '100%', md: '50%' }}
+              h={{ base: '50%', md: '100%' }}
+            >
+              {renderImage}
+            </Flex>
+          </>
+        )}
+        <Flex direction="column" justifyContent="center" w={{ base: '100%', md: '50%' }} px={{ base: '5%', md: 0 }}>
+          <Heading size="xl" fontWeight={400} mb={5}>
+            {title}
+          </Heading>
+          <Box color="gray.700" flexGrow={1}>
+            {renderTextContent}
+          </Box>
+        </Flex>
+        {imagePosition === 'right' && (
+          <>
+            <Flex
+              direction="column"
+              alignItems="center"
+              py="30px"
+              w={{ base: '100%', md: '50%' }}
+              h={{ base: '50%', md: '100%' }}
+            >
+              {renderImage}
+            </Flex>
+          </>
+        )}
       </Flex>
-      {imagePosition === 'right' && (
-        <>
-          <Flex
-            direction="column"
-            alignItems="center"
-            py="30px"
-            w={{ base: '100%', md: '50%' }}
-            h={{ base: '50%', md: '100%' }}
-          >
-            {renderImage}
-          </Flex>
-        </>
-      )}
-    </Flex>
+    </Center>
   );
 };
 
-const SearchBox: React.FC<{ leftTopoStainPosition?: 'top' | 'bottom' }> = ({ leftTopoStainPosition }) => {
+const SearchBox: React.FC<{ layoutProps?: FlexProps; leftTopoStainPosition?: 'top' | 'bottom' }> = ({
+  leftTopoStainPosition,
+  layoutProps = {},
+}) => {
   return (
-    <Center w="100%" position="relative">
-      <Image
-        position="absolute"
-        src="./static/topostain_blue.svg"
-        zIndex={-3}
-        left={{ base: '-33%', sm: '-20%', md: '0px' }}
-        {...(leftTopoStainPosition === 'bottom' && {
-          bottom: { base: '-120px', md: '-30%' },
-        })}
-        {...(leftTopoStainPosition === 'top' && {
-          top: { base: '1%', sm: '1%', md: '-80px' },
-        })}
-        opacity={0.7}
-        w={{ base: '300px', sm: '320px', md: '340px' }}
-      />
-      <Center mt={8} mb={12}>
-        <Box position="relative" px={5}>
-          <Image
-            position="absolute"
-            src="./static/search_dots_pin.svg"
-            right={{ base: '-30px', md: '-160px' }}
-            bottom={{ base: '-30px', md: '10px' }}
-            w={{ base: '300px', md: '320px' }}
-            zIndex={-2}
-          />
-          <Image
-            position="absolute"
-            src="./static/search_stain.svg"
-            zIndex={-3}
-            right={{ base: '-20px', md: '-200px' }}
-            bottom={{ base: '-120px', md: '-80px' }}
-            opacity={0.8}
-            w={{ base: '340px', md: '360px' }}
-          />
+    <Center>
+      <Center w="100%" position="relative" {...layoutProps}>
+        <Image
+          position="absolute"
+          src="./static/topostain_blue.svg"
+          zIndex={-3}
+          left={{ base: '-33%', sm: '-20%', md: '0px' }}
+          {...(leftTopoStainPosition === 'bottom' && {
+            bottom: { base: '-120px', md: '-30%' },
+          })}
+          {...(leftTopoStainPosition === 'top' && {
+            top: { base: '1%', sm: '1%', md: '-80px' },
+          })}
+          opacity={0.7}
+          w={{ base: '300px', sm: '320px', md: '340px' }}
+        />
+        <Center mt={8} mb={12}>
+          <Box position="relative" px={5}>
+            <Image
+              position="absolute"
+              src="./static/search_dots_pin.svg"
+              right={{ base: '-30px', md: '-160px' }}
+              bottom={{ base: '-30px', md: '10px' }}
+              w={{ base: '300px', md: '320px' }}
+              zIndex={-2}
+            />
+            <Image
+              position="absolute"
+              src="./static/search_stain.svg"
+              zIndex={-3}
+              right={{ base: '-20px', md: '-200px' }}
+              bottom={{ base: '-120px', md: '-80px' }}
+              opacity={0.8}
+              w={{ base: '340px', md: '360px' }}
+            />
 
-          <Stack pt="100px" pb="120px" alignItems="center" spacing={10}>
-            <Heading fontSize="4xl" color="gray.800" textAlign="center">
-              What would you like to{' '}
-              <Text color="blue.600" as="span">
-                learn
-              </Text>
-              ?
-            </Heading>
-            <GlobalSearchBox inputBgColor="white" inputSize="lg" width={{ base: '160px', sm: '300px', md: '400px' }} />
-          </Stack>
-        </Box>
+            <Stack pt="100px" pb="120px" alignItems="center" spacing={10}>
+              <Heading fontSize="4xl" color="gray.800" textAlign="center">
+                What would you like to{' '}
+                <Text color="blue.600" as="span">
+                  learn
+                </Text>
+                ?
+              </Heading>
+              <GlobalSearchBox
+                inputBgColor="white"
+                inputSize="lg"
+                width={{ base: '160px', sm: '300px', md: '400px' }}
+              />
+            </Stack>
+          </Box>
+        </Center>
       </Center>
     </Center>
   );
