@@ -29,7 +29,7 @@ export const SearchResultCardContainer: React.FC<SearchResultCardContainerProps>
       _hover={{
         cursor: 'pointer',
       }}
-      w="400px"
+      w={{ base: '280px', sm: '400px' }}
       borderLeftRadius={0}
       fontSize="md"
       {...(isHighlighted && {

@@ -1,6 +1,9 @@
 import { SearchIcon } from '@chakra-ui/icons';
 import { Input, InputGroup, InputLeftElement, InputRightElement, InputProps } from '@chakra-ui/input';
 import { Box, BoxProps } from '@chakra-ui/layout';
+import { useBreakpointValue } from '@chakra-ui/media-query';
+import { Popover, PopoverContent } from '@chakra-ui/popover';
+import { Placement, usePopper, UsePopperProps } from '@chakra-ui/popper';
 import gql from 'graphql-tag';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Autosuggest from 'react-autosuggest';
@@ -34,7 +37,7 @@ interface GlobalSearchBoxProps {
   inputSize?: 'sm' | 'md' | 'lg';
   width?: BoxProps['width'];
   inputBgColor?: InputProps['bgColor'];
-  positionSuggestions?: 'left' | 'right';
+  suggestionsPlacement?: 'left' | 'right';
 }
 
 type SearchResult = GlobalSearchQuery['globalSearch']['results'][0];
@@ -45,12 +48,12 @@ export const GlobalSearchBox: React.FC<GlobalSearchBoxProps> = ({
   width = '180px',
   placeholder = 'Search...',
   inputBgColor,
-  positionSuggestions = 'right',
+  suggestionsPlacement = 'right',
 }) => {
   const [value, setValue] = useState('');
   const [suggestions, setSuggestions] = useState<SearchResult[]>([]);
   const [pendingSearch, setPendingSearch] = useState(false);
-
+  const [containerCpmt, setContainerCpmt] = useState<HTMLDivElement | null>(null);
   const [globalSearchLazyQuery, { loading }] = useGlobalSearchLazyQuery({
     fetchPolicy: 'network-only',
     onCompleted(data) {
@@ -87,10 +90,32 @@ export const GlobalSearchBox: React.FC<GlobalSearchBoxProps> = ({
       setValue(newValue);
     },
   };
-
+  const placement: UsePopperProps['placement'] = useBreakpointValue({
+    base: 'bottom-end',
+    sm: 'bottom',
+    md: 'bottom-start',
+  });
+  const { getPopperProps, getReferenceProps } = usePopper({
+    placement: placement,
+    arrowPadding: 0,
+    arrowSize: 0,
+    preventOverflow: true,
+    // modifiers: [
+    //   {
+    //     name: 'preventOverflow',
+    //     phase: 'main',
+    //     fn: () => {},
+    //     options: {
+    //       rootBoundary: 'document',
+    //     },
+    //   },
+    // ],
+    // enabled: true,
+    // offset: [0, 1],
+  });
   let inputRef = useRef<HTMLDivElement>(null);
   return (
-    <Box w={width} ref={inputRef} position="relative" id="search_box">
+    <Box w={width} ref={inputRef} position="relative" id="search_box" {...getReferenceProps()}>
       <Autosuggest
         shouldRenderSuggestions={() => {
           return true;
@@ -123,27 +148,50 @@ export const GlobalSearchBox: React.FC<GlobalSearchBoxProps> = ({
           <SearchResultCard searchResult={suggestion} isHighlighted={isHighlighted} />
         )}
         alwaysRenderSuggestions
-        renderSuggestionsContainer={({ containerProps, children }) =>
-          children && (
-            <Box
-              {...containerProps}
-              minW={width}
-              maxW={'100vw'}
-              {...(positionSuggestions === 'left' && {
-                right: {
-                  base: 0,
-                  md: 'auto',
-                },
-              })}
-              borderTopWidth={1}
-              zIndex={1000}
-              position="absolute"
-              bgColor="white"
-            >
-              {children}
-            </Box>
-          )
-        }
+        renderSuggestionsContainer={({ containerProps, children }) => {
+          const { ref, ...restPopperProps } = getPopperProps();
+
+          // const { ref, ...restContainerProps } = containerProps;
+          // const { ref, ...restContainerProps } = containerProps;
+          // const callRef = (isolatedScroll) => {
+          //   if (isolatedScroll !== null) {
+          //     ref(isolatedScroll.component);
+          //   }
+          // };
+          // ref(popperNode);
+          return (
+            children && (
+              // <PopoverContent {...restContainerProps} ref={callRef}>
+              <Box
+                minW={width}
+                maxW={'100vw'}
+                // {...containerProps}
+                {...restPopperProps}
+                ref={(n) => {
+                  setContainerCpmt(n);
+                  containerProps.ref(containerCpmt);
+                  // @ts-ignore
+                  ref && ref(containerCpmt);
+                  // ref (n) => n = containerCpmt;
+                }}
+                // {...(positionSuggestions === 'left' && {
+                //   right: {
+                //     base: 0,
+                //     md: 'auto',
+                //   },
+                // })}
+                borderTopWidth={1}
+                zIndex={1000}
+                position="absolute"
+                bgColor="white"
+              >
+                {children}
+              </Box>
+              // </PopoverContent>
+            )
+          );
+          // </Popover>
+        }}
         highlightFirstSuggestion={true}
         getSuggestionValue={(suggestion) => value}
         renderInputComponent={(inputProps: any) => (
