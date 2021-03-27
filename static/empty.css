@@ -20,3 +20,19 @@
   /* Change path color, size (zoom in pattern or not) and path opacity in the svg file */
   background-image: url(/static/topography_bg.svg);
 }
+
+.link {
+  stroke: #000;
+  stroke-width: 1.5px;
+}
+
+.node {
+  cursor: move;
+  fill: #ccc;
+  stroke: #000;
+  stroke-width: 1.5px;
+}
+
+.node.fixed {
+  fill: #f00;
+}

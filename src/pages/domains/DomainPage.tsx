@@ -1,6 +1,6 @@
 import { NetworkStatus } from '@apollo/client';
 import { SettingsIcon } from '@chakra-ui/icons';
-import { Box, ButtonGroup, Flex, Heading, IconButton, Skeleton, Stack, Text } from '@chakra-ui/react';
+import { Box, ButtonGroup, Center, Flex, Heading, IconButton, Skeleton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -14,6 +14,7 @@ import { ParentDomainsNavigationBlock } from '../../components/domains/ParentDom
 import { PageLayout } from '../../components/layout/PageLayout';
 import { LearningGoalCardData } from '../../components/learning_goals/cards/LearningGoalCard';
 import { LearningPathPreviewCardDataFragment } from '../../components/learning_paths/LearningPathPreviewCard.generated';
+import { Minimap } from '../../components/lib/Minimap';
 import { PageButtonLink, PageLink } from '../../components/navigation/InternalLink';
 import { DomainRecommendedLearningMaterials } from '../../components/resources/DomainRecommendedLearningMaterials';
 import { useGetDomainRecommendedLearningMaterialsQuery } from '../../components/resources/DomainRecommendedLearningMaterials.generated';
@@ -168,6 +169,9 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
             </Skeleton>
           )}
         </Flex>
+        <Center>
+          <Minimap concepts={domain.concepts?.items.map((i) => i.concept) || []} />
+        </Center>
 
         <Flex direction="column" alignItems={{ base: 'flex-start', md: 'flex-end' }}>
           <ButtonGroup spacing={2}>
