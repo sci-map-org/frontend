@@ -1,5 +1,5 @@
 import { Accordion, AccordionButton, AccordionItem, AccordionPanel, AccordionProps } from '@chakra-ui/accordion';
-import { Box, BoxProps } from '@chakra-ui/layout';
+import { Box, BoxProps, Text } from '@chakra-ui/layout';
 import { ReactNode } from 'react';
 
 interface AccordeonItem {
@@ -48,8 +48,13 @@ export const Accordeon: React.FC<AccordeonProps> = ({
               {title}
             </Box>
           </AccordionButton>
-          <AccordionPanel textAlign={textAlign} pb={4}>
-            {content}
+          <AccordionPanel
+            backgroundImage="linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,1), rgba(255,255,255,1), rgba(255,255,255,0.1))"
+            textAlign={textAlign}
+            pt={3}
+            pb={2}
+          >
+            <Text>{content}</Text>
           </AccordionPanel>
         </AccordionItem>
       ))}
