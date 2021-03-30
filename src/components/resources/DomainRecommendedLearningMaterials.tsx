@@ -1,4 +1,4 @@
-import { AddIcon } from '@chakra-ui/icons';
+import { AddIcon, SearchIcon } from '@chakra-ui/icons';
 import {
   Badge,
   Box,
@@ -9,6 +9,7 @@ import {
   FormLabel,
   Input,
   InputGroup,
+  InputLeftElement,
   InputRightElement,
   Select,
   Stack,
@@ -245,17 +246,12 @@ export const SearchResourcesInput: React.FC<{
     }
   }, [value]);
   return (
-    <InputGroup>
-      <Input
-        w="16rem"
-        variant="outline"
-        placeholder="Search..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-      />
+    <InputGroup w="16rem">
+      <InputLeftElement pointerEvents="none" children={<SearchIcon color="gray.400" />} />
+      <Input variant="outline" placeholder="Search..." value={query} onChange={(e) => setQuery(e.target.value)} />
       {value !== query && shouldSearch(query) && (
-        <InputRightElement w="auto">
-          <BeatLoader size={8} margin={2} color={theme.colors.main} />
+        <InputRightElement w="auto" px={2}>
+          <BeatLoader size={8} color={theme.colors.main} />
         </InputRightElement>
       )}
     </InputGroup>
@@ -339,35 +335,19 @@ const LearningMaterialTypeFilter: React.FC<{
     });
   };
   return (
-    <Stack direction="row" alignItems="baseline">
-      <Box w="16rem">
-        <MultiSelect
-          options={options}
-          value={(selectedTypes || []).map(learningMaterialTypeToOption)}
-          onChange={(selectedOptions: { value: LearningMaterialFilterType }[]) =>
-            onChange(selectedOptions.map((o) => o.value))
-          }
-          labelledBy={'Filter by type'}
-          valueRenderer={(selectedOptions) => (<ValueRenderer selected={selectedOptions} onChange={onChange} />) as any}
-          ItemRenderer={ItemRenderer}
-          hasSelectAll={false}
-        />
-      </Box>
-      {[ResourceType.Podcast, ResourceType.Course, ResourceType.Book]
-        .filter((defaultTypeFilter) => !selectedTypes || selectedTypes.indexOf(defaultTypeFilter) === -1)
-        .map((defaultTypeFilter) => (
-          <Button
-            key={defaultTypeFilter}
-            size="xs"
-            variant="outline"
-            colorScheme={learningMaterialFilterTypeColorMapping[defaultTypeFilter]}
-            leftIcon={<AddIcon />}
-            onClick={() => onChange([...(selectedTypes || []), defaultTypeFilter])}
-          >
-            {resourceTypeToLabel(defaultTypeFilter)}
-          </Button>
-        ))}
-    </Stack>
+    <Box w="16rem">
+      <MultiSelect
+        options={options}
+        value={(selectedTypes || []).map(learningMaterialTypeToOption)}
+        onChange={(selectedOptions: { value: LearningMaterialFilterType }[]) =>
+          onChange(selectedOptions.map((o) => o.value))
+        }
+        labelledBy={'Filter by type'}
+        valueRenderer={(selectedOptions) => (<ValueRenderer selected={selectedOptions} onChange={onChange} />) as any}
+        ItemRenderer={ItemRenderer}
+        hasSelectAll={false}
+      />
+    </Box>
   );
 };
 
@@ -422,9 +402,7 @@ const ItemRenderer = ({
       {option.value !== LearningMaterialType.LearningPath ? (
         <ResourceTypeBadge type={option.value as ResourceType} />
       ) : (
-        <Badge colorScheme="teal" fontSize="0.8em">
-          Learning Path
-        </Badge>
+        <Badge colorScheme="teal">Learning Path</Badge>
       )}
     </Stack>
   );
