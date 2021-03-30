@@ -126,10 +126,23 @@ export const DomainConceptList: React.FC<{
   if (!domainConceptItems) return null;
   if (!isLoading && !domainConceptItems.length) return null;
   return (
-    <Flex direction="column" backgroundColor="gray.100" borderRadius={5} px={0} pt={1} pb={2} minW={minWidth}>
+    <Flex
+      direction="column"
+      backgroundColor="white"
+      borderWidth={1}
+      boxShadow="lg"
+      borderRadius={5}
+      px={0}
+      pl={2}
+      pt={1}
+      pb={2}
+      fontWeight={500}
+      color="gray.500"
+      minW={minWidth}
+    >
       <Box>
-        <Text fontSize="xl" textAlign="center" fontWeight={600} color="gray.600" pb={2}>
-          My Progress
+        <Text fontSize="xl" textAlign="center" fontWeight={500} color="gray.800" pb={2}>
+          SubTopics
         </Text>
       </Box>
 
@@ -157,7 +170,7 @@ export const DomainConceptListMenuLevel: React.FC<{
   level: number;
 }> = ({ nestedConceptItems, domain, onToggle, isLoading, level }) => {
   return (
-    <Stack direction="column" spacing={1} alignItems="flex-start">
+    <Stack direction="column" spacing="4px" alignItems="flex-start">
       {nestedConceptItems.map((conceptItem) => {
         if (!!conceptItem.subConceptItems) {
           return (
@@ -257,7 +270,12 @@ export const DomainConceptListMenuLink: React.FC<{
         />
       )}
       <Skeleton isLoaded={!isLoading} display="flex" alignItems="center">
-        <PageLink ml={expandable ? 1 : 0} pageInfo={ConceptPageInfo(domain, concept)}>
+        <PageLink
+          ml={expandable ? 1 : 0}
+          fontSize="sm"
+          pageInfo={ConceptPageInfo(domain, concept)}
+          color={!!concept.known ? 'teal.600' : undefined}
+        >
           {concept.name}
         </PageLink>
         <CompletedCheckbox
