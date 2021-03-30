@@ -1,8 +1,7 @@
 import { NetworkStatus } from '@apollo/client';
 import { SettingsIcon } from '@chakra-ui/icons';
-import { Box, ButtonGroup, Flex, Heading, IconButton, Skeleton, Stack, Text } from '@chakra-ui/react';
+import { Box, BoxProps, Flex, Heading, IconButton, Image, Skeleton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { DomainConceptGraph } from '../../components/concepts/DomainConceptGraph';
@@ -11,9 +10,13 @@ import { BestXPagesLinks } from '../../components/domains/BestXPagesLinks';
 import { DomainLearningGoals } from '../../components/domains/DomainLearningGoals';
 import { DomainUserHistory } from '../../components/domains/DomainUserHistory';
 import { ParentDomainsNavigationBlock } from '../../components/domains/ParentDomainsNavigationBlock';
-import { PageLayout } from '../../components/layout/PageLayout';
+import { BasePageLayout } from '../../components/layout/PageLayout';
 import { LearningGoalCardData } from '../../components/learning_goals/cards/LearningGoalCard';
 import { LearningPathPreviewCardDataFragment } from '../../components/learning_paths/LearningPathPreviewCard.generated';
+import { DomainIcon } from '../../components/lib/icons/DomainIcon';
+import { LearningGoalIcon } from '../../components/lib/icons/LearningGoalIcon';
+import { LearningPathIcon } from '../../components/lib/icons/LearningPathIcon';
+import { ResourceIcon } from '../../components/lib/icons/ResourceIcon';
 import { PageButtonLink, PageLink } from '../../components/navigation/InternalLink';
 import { DomainRecommendedLearningMaterials } from '../../components/resources/DomainRecommendedLearningMaterials';
 import { useGetDomainRecommendedLearningMaterialsQuery } from '../../components/resources/DomainRecommendedLearningMaterials.generated';
@@ -93,8 +96,6 @@ const placeholderDomainData: GetDomainByKeyDomainPageQuery['getDomainByKey'] = {
 };
 
 export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
-  const router = useRouter();
-
   const { data, loading, error } = useGetDomainByKeyDomainPageQuery({
     variables: { key: domainKey },
   });
@@ -138,140 +139,208 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
 
   if (error) return null;
   return (
-    <PageLayout
+    <BasePageLayout
       marginSize="md"
-      renderTopLeft={
-        <ParentDomainsNavigationBlock domains={(domain.parentDomains || []).map(({ domain }) => domain)} />
-      }
+      renderHeader={(layoutProps) => <DomainPageHeader domain={domain} isLoading={loading} layoutProps={layoutProps} />}
     >
-      <Stack direction={{ base: 'column', md: 'row' }} alignItems="stretch" pb={5} spacing={5}>
-        <Flex direction="column" alignItems="flex-start" flexGrow={1}>
-          <Skeleton isLoaded={!loading}>
-            <Heading fontSize="4xl" fontWeight="normal" color="blackAlpha.800">
+      <>
+        {(loading || (domain.learningGoals && !!domain.learningGoals.length)) && (
+          <DomainLearningGoals learningGoalItems={domain.learningGoals || []} isLoading={loading} />
+        )}
+        <Flex direction={{ base: 'column-reverse', md: 'row' }} mb="100px">
+          <Flex direction="column" flexShrink={1} flexGrow={1}>
+            <DomainRecommendedLearningMaterials
+              domain={domain}
+              learningMaterialsPreviews={learningMaterials}
+              isLoading={resourcesLoading}
+              reloadRecommendedResources={() => refetchLearningMaterials()}
+              learningMaterialsOptions={learningMaterialsOptions}
+              setLearningMaterialsOptions={setLearningMaterialsOptions}
+            />
+            <DomainConceptGraph domain={domain} isLoading={loading} minNbRelationships={5} />
+            {/* <DomainLearningPaths domain={domain} /> */}
+            {/* {mockedFeaturesEnabled && <DomainLearningPaths domain={domain} />} */}
+          </Flex>
+          <Stack
+            spacing={4}
+            alignItems={{ base: 'start', md: 'stretch' }}
+            direction={{ base: 'row', md: 'column' }}
+            flexShrink={0}
+            ml={{ base: 0, md: 8 }}
+          >
+            <RoleAccess accessRule="loggedInUser">
+              <DomainUserHistory maxH={{ md: '210px' }} domainKey={domainKey} />
+            </RoleAccess>
+            <DomainConceptList
+              minWidth="260px"
+              domain={domain}
+              isLoading={loading}
+              onConceptToggled={() => refetchLearningMaterials()}
+            />
+            {domain.subDomains?.length && (
+              <Flex
+                direction="column"
+                alignItems="stretch"
+                backgroundColor="gray.100"
+                borderRadius={5}
+                px={5}
+                pt={1}
+                pb={2}
+              >
+                <Text fontSize="xl" textAlign="center" fontWeight={600} color="gray.600" pb={2}>
+                  SubAreas
+                </Text>
+                <Stack>
+                  {(domain.subDomains || []).map(({ domain }) => (
+                    <Box key={domain._id}>
+                      <PageLink fontWeight={600} color="gray.700" pageInfo={DomainPageInfo(domain)}>
+                        {domain.name}
+                      </PageLink>
+                    </Box>
+                  ))}
+                </Stack>
+              </Flex>
+            )}
+            <BestXPagesLinks domainKey={domain.key} />
+          </Stack>
+        </Flex>
+      </>
+    </BasePageLayout>
+  );
+};
+
+const DomainPageHeader: React.FC<{
+  domain: GetDomainByKeyDomainPageQuery['getDomainByKey'];
+  isLoading?: boolean;
+  layoutProps: BoxProps;
+}> = ({ domain, layoutProps, isLoading }) => {
+  return (
+    <Flex
+      w="100%"
+      h="300px"
+      direction="row"
+      position="relative"
+      overflow="hidden"
+      justifyContent="space-between"
+      {...layoutProps}
+      // backgroundImage="linear-gradient(rgba(0,122,122,0.2), rgba(255,255,255,1), rgba(255,255,255,0.1))"
+    >
+      <Image
+        position="absolute"
+        src="/static/tourist.svg"
+        bottom={0}
+        right="0%"
+        // right={{ base: '-30px', md: '-160px' }}
+        // bottom={{ base: '-30px', md: '10px' }}
+        // h={{ base: '300px', md: '320px' }}
+        h="280px"
+        zIndex={1}
+      />
+      <Image
+        position="absolute"
+        src="/static/topostain_green_domain_page.svg"
+        zIndex={0}
+        top="-30%"
+        right="-5%"
+        opacity={0.6}
+        // right={{ base: '-20px', md: '-200px' }}
+        // bottom={{ base: '-120px', md: '-80px' }}
+        // opacity={0.8}
+
+        h={{ base: '300px', md: '500px' }}
+      />
+      <Flex direction="column" maxW="60%">
+        <ParentDomainsNavigationBlock domains={(domain.parentDomains || []).map(({ domain }) => domain)} />
+
+        <Stack spacing={1} pt={10} zIndex={2} alignItems="flex-start">
+          <Stack direction="row" spacing={1} alignItems="center">
+            <DomainIcon boxSize={6} />
+            <Text fontSize="xl" fontWeight={400}>
+              Area
+            </Text>
+          </Stack>
+          <Skeleton isLoaded={!isLoading}>
+            <Heading
+              fontSize="5xl"
+              // pt={1}
+              // pb={3}
+              fontWeight={500}
+              color="blackAlpha.800"
+              // color="black"
+              backgroundImage="linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,1), rgba(255,255,255,1), rgba(255,255,255,0.1))"
+            >
               Learn {domain.name}
             </Heading>
           </Skeleton>
-          <Skeleton isLoaded={!loading}>
-            <PageLink
-              color="gray.600"
-              _hover={{ color: 'gray.700', textDecoration: 'underline' }}
-              fontWeight={600}
-              pageInfo={ConceptListPageInfo(domain)}
-              isDisabled={loading}
-            >
-              {domain.concepts?.items.length ? domain.concepts?.items.length + ' Concepts ' : 'No concepts yet'}
-            </PageLink>
+          <Skeleton isLoaded={!isLoading}>
+            <Stack direction="row" alignItems="baseline">
+              <RoleAccess accessRule="contributorOrAdmin">
+                <IconButton
+                  size="xs"
+                  isDisabled={isLoading}
+                  variant="solid"
+                  aria-label="manage_domain"
+                  icon={<SettingsIcon />}
+                  onClick={() => routerPushToPage(ManageDomainPageInfo(domain))}
+                />
+              </RoleAccess>
+              <PageLink
+                color="gray.600"
+                _hover={{ color: 'gray.700', textDecoration: 'underline' }}
+                fontWeight={600}
+                pageInfo={ConceptListPageInfo(domain)}
+                isDisabled={isLoading}
+              >
+                {domain.concepts?.items.length ? domain.concepts?.items.length + ' Concepts ' : 'No concepts yet'}
+              </PageLink>
+            </Stack>
           </Skeleton>
           {domain && domain.description && (
-            <Skeleton mt={2} isLoaded={!loading}>
-              <Box fontWeight={250}>{domain.description}</Box>
+            <Skeleton mt={2} isLoaded={!isLoading}>
+              <Box
+                backgroundImage="linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,1), rgba(255,255,255,1), rgba(255,255,255,0.1))"
+                fontWeight={250}
+              >
+                {domain.description}
+              </Box>
             </Skeleton>
           )}
-        </Flex>
-
-        <Flex direction="column" alignItems={{ base: 'flex-start', md: 'flex-end' }}>
-          <ButtonGroup spacing={2}>
-            <PageButtonLink
-              variant="solid"
-              colorScheme="blue"
-              pageInfo={AddResourceToDomainPageInfo(domain)}
-              loggedInOnly
-              isDisabled={loading}
-            >
-              Add Resource
-            </PageButtonLink>
-            <PageButtonLink
-              variant="outline"
-              colorScheme="teal"
-              pageInfo={NewLearningPathPageInfo}
-              loggedInOnly
-              isDisabled={loading}
-            >
-              Add Learning Path
-            </PageButtonLink>
-            <PageButtonLink
-              variant="outline"
-              colorScheme="grey"
-              pageInfo={AddLearningGoalToDomainPageInfo(domain)}
-              loggedInOnly
-              isDisabled={loading}
-            >
-              Add Goal
-            </PageButtonLink>
-            {/* ? would be expected to be there from the start maybe (attached + public). good to push for creation though */}
-            <RoleAccess accessRule="contributorOrAdmin">
-              <IconButton
-                ml={2}
-                isDisabled={loading}
-                variant="outline"
-                aria-label="manage_domain"
-                icon={<SettingsIcon />}
-                onClick={() => routerPushToPage(ManageDomainPageInfo(domain))}
-              />
-            </RoleAccess>
-          </ButtonGroup>
-        </Flex>
-      </Stack>
-      {(loading || (domain.learningGoals && !!domain.learningGoals.length)) && (
-        <DomainLearningGoals learningGoalItems={domain.learningGoals || []} isLoading={loading} />
-      )}
-      <Flex direction={{ base: 'column-reverse', md: 'row' }} mb="100px">
-        <Flex direction="column" flexShrink={1} flexGrow={1}>
-          <DomainRecommendedLearningMaterials
-            domain={domain}
-            learningMaterialsPreviews={learningMaterials}
-            isLoading={resourcesLoading}
-            reloadRecommendedResources={() => refetchLearningMaterials()}
-            learningMaterialsOptions={learningMaterialsOptions}
-            setLearningMaterialsOptions={setLearningMaterialsOptions}
-          />
-          <DomainConceptGraph domain={domain} isLoading={loading} minNbRelationships={5} />
-          {/* <DomainLearningPaths domain={domain} /> */}
-          {/* {mockedFeaturesEnabled && <DomainLearningPaths domain={domain} />} */}
-        </Flex>
-        <Stack
-          spacing={4}
-          alignItems={{ base: 'start', md: 'stretch' }}
-          direction={{ base: 'row', md: 'column' }}
-          flexShrink={0}
-          ml={{ base: 0, md: 8 }}
-        >
-          <RoleAccess accessRule="loggedInUser">
-            <DomainUserHistory maxH={{ md: '210px' }} domainKey={domainKey} />
-          </RoleAccess>
-          <DomainConceptList
-            minWidth="260px"
-            domain={domain}
-            isLoading={loading}
-            onConceptToggled={() => refetchLearningMaterials()}
-          />
-          {domain.subDomains?.length && (
-            <Flex
-              direction="column"
-              alignItems="stretch"
-              backgroundColor="gray.100"
-              borderRadius={5}
-              px={5}
-              pt={1}
-              pb={2}
-            >
-              <Text fontSize="xl" textAlign="center" fontWeight={600} color="gray.600" pb={2}>
-                SubAreas
-              </Text>
-              <Stack>
-                {(domain.subDomains || []).map(({ domain }) => (
-                  <Box key={domain._id}>
-                    <PageLink fontWeight={600} color="gray.700" pageInfo={DomainPageInfo(domain)}>
-                      {domain.name}
-                    </PageLink>
-                  </Box>
-                ))}
-              </Stack>
-            </Flex>
-          )}
-          <BestXPagesLinks domainKey={domain.key} />
         </Stack>
       </Flex>
-    </PageLayout>
+      <Flex direction="column-reverse" w="40%">
+        <Stack direction="column" spacing={4} pl={10} pb={12} pr={10} alignItems="flex-start">
+          <PageButtonLink
+            leftIcon={<ResourceIcon boxSize={8} />}
+            variant="solid"
+            colorScheme="blue"
+            pageInfo={AddResourceToDomainPageInfo(domain)}
+            loggedInOnly
+            isDisabled={isLoading}
+          >
+            Add Resource
+          </PageButtonLink>
+          <PageButtonLink
+            leftIcon={<LearningPathIcon boxSize={7} />}
+            variant="solid"
+            colorScheme="teal"
+            pageInfo={NewLearningPathPageInfo}
+            loggedInOnly
+            isDisabled={isLoading}
+          >
+            Add Learning Path
+          </PageButtonLink>
+          <PageButtonLink
+            variant="solid"
+            leftIcon={<LearningGoalIcon boxSize={5} />}
+            colorScheme="orange"
+            pageInfo={AddLearningGoalToDomainPageInfo(domain)}
+            loggedInOnly
+            isDisabled={isLoading}
+          >
+            Add Goal
+          </PageButtonLink>
+        </Stack>
+      </Flex>
+    </Flex>
   );
 };

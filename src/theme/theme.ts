@@ -1,4 +1,5 @@
 import { extendTheme } from '@chakra-ui/react';
+import { colors1 } from './colors1';
 
 export const fonts = {
   main: 'Helvetica Neue,Helvetica,Arial,sans-serif', // menu, titles, etc.
@@ -96,23 +97,39 @@ export const theme = extendTheme({
       800: 'rgb(50, 50, 50)',
       900: 'rgb(0, 0, 0)',
     },
+    // ...colors1,
   },
   fonts: {
     heading: fonts.main,
     body: fonts.main,
     mono: fonts.mono,
   },
+  // fontSizes: {
+  //   xs: '12px',
+  //   sm: '14px',
+  //   md: '16px',
+  //   lg: '18px',
+  //   xl: '20px',
+  //   '2xl': '24px',
+  //   '3xl': '28px',
+  //   '4xl': '36px',
+  //   '5xl': '48px',
+  //   '6xl': '64px',
+  // },
   fontSizes: {
-    xs: '12px',
-    sm: '14px',
-    md: '16px',
-    lg: '18px',
-    xl: '20px',
-    '2xl': '24px',
-    '3xl': '28px',
-    '4xl': '36px',
-    '5xl': '48px',
-    '6xl': '64px',
+    xs: '0.7rem',
+    sm: '0.825rem',
+    md: '0.95rem',
+    lg: '1.075rem',
+    xl: '1.20rem',
+    '2xl': '1.5rem',
+    '3xl': '1.875rem',
+    '4xl': '2.25rem',
+    '5xl': '3rem',
+    '6xl': '3.75rem',
+    '7xl': '4.5rem',
+    '8xl': '6rem',
+    '9xl': '8rem',
   },
   components: {
     Popover: {
