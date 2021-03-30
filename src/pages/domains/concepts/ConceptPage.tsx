@@ -249,11 +249,7 @@ export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = 
   if (!concept.domain) throw new Error('Concept has no domain');
   return (
     <PageLayout
-      breadCrumbsLinks={[
-        DomainPageInfo(concept.domain),
-        ConceptListPageInfo(concept.domain),
-        ConceptPageInfo(concept.domain, concept),
-      ]}
+      breadCrumbsLinks={[DomainPageInfo(concept.domain), ConceptPageInfo(concept.domain, concept)]}
       title={concept.domain.name + ' - ' + concept.name}
       renderTopRight={<ConceptPageRightIcons concept={concept} isDisabled={loading} />}
       isLoading={loading}
