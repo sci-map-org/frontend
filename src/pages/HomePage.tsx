@@ -6,6 +6,7 @@ import {
   Heading,
   Image,
   ImageProps,
+  Img,
   Stack,
   Text,
   useBreakpointValue,
@@ -79,7 +80,7 @@ export const HomePage: React.FC = () => {
   const { currentUser } = useCurrentUser();
   const isReturningUser = !!currentUser;
   const outerLayoutProps = {
-    mx: ['5px', '10px', '5%', '10%'],
+    mx: ['5px', '10px', '3%', '6%'],
     maxW: { lg: '2000px' },
   };
 
@@ -329,7 +330,7 @@ const HomeHeader: React.FC<{ layoutProps?: FlexProps }> = ({ layoutProps = {} })
     <Flex direction="column" id="homeHeader" w="100%" alignItems="center">
       <Flex justifyContent="space-between" alignItems="stretch" w="100%" {...layoutProps}>
         <Center w="50%">
-          <Image src="./static/walker.svg" w="400px" />
+          <Img src="./static/walker.svg" w="400px" />
         </Center>
         <Flex
           w="50%"
