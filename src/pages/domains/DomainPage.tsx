@@ -222,7 +222,6 @@ const DomainPageHeader: React.FC<{
       overflow="hidden"
       justifyContent="space-between"
       {...layoutProps}
-      // backgroundImage="linear-gradient(rgba(0,122,122,0.2), rgba(255,255,255,1), rgba(255,255,255,0.1))"
     >
       <Image position="absolute" src="/static/tourist.svg" bottom={0} right="0%" h="280px" zIndex={1} />
       <Image
