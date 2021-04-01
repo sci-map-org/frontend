@@ -217,7 +217,6 @@ const DomainPageHeader: React.FC<{
   return (
     <Flex
       w="100%"
-      // h="300px"
       direction="row"
       position="relative"
       overflow="hidden"
@@ -225,17 +224,7 @@ const DomainPageHeader: React.FC<{
       {...layoutProps}
       // backgroundImage="linear-gradient(rgba(0,122,122,0.2), rgba(255,255,255,1), rgba(255,255,255,0.1))"
     >
-      <Image
-        position="absolute"
-        src="/static/tourist.svg"
-        bottom={0}
-        right="0%"
-        // right={{ base: '-30px', md: '-160px' }}
-        // bottom={{ base: '-30px', md: '10px' }}
-        // h={{ base: '300px', md: '320px' }}
-        h="280px"
-        zIndex={1}
-      />
+      <Image position="absolute" src="/static/tourist.svg" bottom={0} right="0%" h="280px" zIndex={1} />
       <Image
         position="absolute"
         src="/static/topostain_green_domain_page.svg"
@@ -243,10 +232,6 @@ const DomainPageHeader: React.FC<{
         top="-30%"
         right="-5%"
         opacity={0.6}
-        // right={{ base: '-20px', md: '-200px' }}
-        // bottom={{ base: '-120px', md: '-80px' }}
-        // opacity={0.8}
-
         h={{ base: '300px', md: '500px' }}
       />
       <Flex direction="column" maxW="60%">
@@ -262,11 +247,8 @@ const DomainPageHeader: React.FC<{
           <Skeleton isLoaded={!isLoading}>
             <Heading
               fontSize={{ base: '4xl', md: '4xl', lg: '5xl' }}
-              // pt={1}
-              // pb={3}
               fontWeight={500}
               color="blackAlpha.800"
-              // color="black"
               backgroundImage="linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,1), rgba(255,255,255,1), rgba(255,255,255,0.1))"
             >
               Learn <Text as="span">{domain.name}</Text>
