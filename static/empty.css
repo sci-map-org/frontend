@@ -27,8 +27,9 @@
 }
 
 .node {
-  cursor: move;
-  fill: #ccc;
+  /* cursor: move; */
+  /* fill: #ccc; */
+  opacity: 0.7;
   stroke: #000;
   stroke-width: 1.5px;
 }

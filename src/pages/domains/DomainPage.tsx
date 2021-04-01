@@ -169,9 +169,11 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
             </Skeleton>
           )}
         </Flex>
-        <Center>
-          <Minimap concepts={domain.concepts?.items.map((i) => i.concept) || []} />
-        </Center>
+        {!loading && !resourcesLoading && (
+          <Center>
+            <Minimap concepts={domain.concepts?.items.map((i) => i.concept) || []} />
+          </Center>
+        )}
 
         <Flex direction="column" alignItems={{ base: 'flex-start', md: 'flex-end' }}>
           <ButtonGroup spacing={2}>
