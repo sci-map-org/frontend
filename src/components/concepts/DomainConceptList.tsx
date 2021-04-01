@@ -128,34 +128,39 @@ export const DomainConceptList: React.FC<{
   return (
     <Flex
       direction="column"
+      alignItems="stretch"
       backgroundColor="white"
       borderWidth={1}
-      boxShadow="lg"
-      borderRadius={5}
-      px={0}
-      pl={2}
-      pt={1}
-      pb={2}
+      borderColor="gray.200"
+      boxShadow="md"
+      borderRadius={3}
       fontWeight={500}
       color="gray.500"
       minW={minWidth}
     >
-      <Box>
-        <Text fontSize="xl" textAlign="center" fontWeight={500} color="gray.800" pb={2}>
+      <Box bgColor="originalPalette.red" mt="-1px" mx="-1px" borderTopRadius="inherit">
+        <Text fontSize="lg" textAlign="center" fontWeight={600} pt={2} pb={2} color="white">
           SubTopics
         </Text>
       </Box>
-
-      <DomainConceptListMenuLevel
-        nestedConceptItems={conceptNestedList}
-        domain={domain}
-        onToggle={toggleConceptKnown}
-        isLoading={isLoading}
-        level={0}
-      />
-      <Flex direction="row" justifyContent="center" pt={2} pb={1}>
-        <PageLink color="gray.600" fontWeight={600} pageInfo={NewConceptPageInfo(domain)} isDisabled={isLoading}>
-          + Add Concept
+      <Flex pl={2}>
+        <DomainConceptListMenuLevel
+          nestedConceptItems={conceptNestedList}
+          domain={domain}
+          onToggle={toggleConceptKnown}
+          isLoading={isLoading}
+          level={0}
+        />
+      </Flex>
+      <Flex direction="row" justifyContent="center" pt={1} pb={3}>
+        <PageLink
+          color="originalPalette.red"
+          fontSize="md"
+          fontWeight={600}
+          pageInfo={NewConceptPageInfo(domain)}
+          isDisabled={isLoading}
+        >
+          + Add SubTopic
         </PageLink>
       </Flex>
     </Flex>
@@ -170,7 +175,7 @@ export const DomainConceptListMenuLevel: React.FC<{
   level: number;
 }> = ({ nestedConceptItems, domain, onToggle, isLoading, level }) => {
   return (
-    <Stack direction="column" spacing="4px" alignItems="flex-start">
+    <Stack direction="column" spacing="6px" alignItems="flex-start" py="6px">
       {nestedConceptItems.map((conceptItem) => {
         if (!!conceptItem.subConceptItems) {
           return (
@@ -275,11 +280,14 @@ export const DomainConceptListMenuLink: React.FC<{
           fontSize="sm"
           pageInfo={ConceptPageInfo(domain, concept)}
           color={!!concept.known ? 'teal.600' : undefined}
+          _hover={{ textDecoration: 'none', color: 'gray.600' }}
+          _activeLink={{}}
+          _focus={{}}
         >
           {concept.name}
         </PageLink>
         <CompletedCheckbox
-          ml={2}
+          ml={1}
           size="xs"
           uncheckedColor="gray.400"
           tooltipLabel={!!concept.known ? 'Mark this concept as unknown' : 'Mark this concept as known'}
