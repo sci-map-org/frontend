@@ -16,6 +16,7 @@ interface SubTopicsMinimapProps {
   pxWidth?: number;
   pxHeight?: number;
 }
+
 function clamp(x, lo, hi) {
   return x < lo ? lo : x > hi ? hi : x;
 }
@@ -177,6 +178,19 @@ const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps> = ({ t
         //   .attr('y2', (d) => d.target.y);
         node.attr('cx', (d) => d.x).attr('cy', (d) => d.y);
       };
+
+      svg.call(
+        d3
+          .zoom()
+          .extent([
+            [0, 0],
+            [pxWidth, pxHeight],
+          ])
+          .scaleExtent([0.6, 3])
+          .on('zoom', function zoomed({ transform }) {
+            node.attr('transform', transform);
+          })
+      );
 
       // const drag = d3
       //   .drag()
