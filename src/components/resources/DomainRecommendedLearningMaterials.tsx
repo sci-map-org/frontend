@@ -1,4 +1,4 @@
-import { AddIcon } from '@chakra-ui/icons';
+import { AddIcon, SearchIcon } from '@chakra-ui/icons';
 import {
   Badge,
   Box,
@@ -9,6 +9,7 @@ import {
   FormLabel,
   Input,
   InputGroup,
+  InputLeftElement,
   InputRightElement,
   Select,
   Stack,
@@ -124,65 +125,73 @@ export const DomainRecommendedLearningMaterials: React.FC<{
     learningMaterialsOptions.filter,
   ]);
   return (
-    <Flex direction="column" mb={4} w="100%">
-      <Flex direction="row" alignItems="baseline" mb={2}>
-        <Text fontSize="2xl">
-          {s1 + ' '}
-          <Text fontSize="2xl" as="span" {...(s2 !== 'Learning Resources' && { color: 'blue.800' })}>
-            {s2}
+    <Flex direction="column" w="100%" borderTopRadius={2}>
+      <Flex direction="column" alignItems="stretch" pl={2} bgColor="teal.600" color="white" borderTopRadius="inherit">
+        <Flex direction="row" alignItems="baseline" pt={1}>
+          <Text fontSize="2xl" fontWeight={500}>
+            {s1 + ' '}
+            <Text fontSize="2xl" as="span" {...(s2 !== 'Learning Resources' && { color: 'blue.800' })}>
+              {s2}
+            </Text>
+            {' ' + s3}
           </Text>
-          {' ' + s3}
-        </Text>
-        <Box pl={3}>
-          <FormControl id="sort_by" display="flex" flexDir="row" alignItems="center">
-            <FormLabel mb={0} fontWeight={300} flexShrink={0}>
-              Sort by:
-            </FormLabel>
-            <Select
-              w="8rem"
-              size="sm"
-              variant="flushed"
-              onChange={(e) =>
-                setLearningMaterialsOptions({
-                  ...learningMaterialsOptions,
-                  sortingType: e.target.value as DomainLearningMaterialsSortingType,
-                })
-              }
-              value={learningMaterialsOptions.sortingType}
-            >
-              <option value={DomainLearningMaterialsSortingType.Recommended}>Most Relevant</option>
-              <option value={DomainLearningMaterialsSortingType.Rating}>Highest Rating</option>
-              <option value={DomainLearningMaterialsSortingType.Newest}>Newest First</option>
-            </Select>
-          </FormControl>
-        </Box>
-      </Flex>
-      <Flex
-        direction={{ base: 'column', md: 'row' }}
-        mb={3}
-        justifyContent={{ base: 'flex-start', md: 'space-between' }}
-        alignItems={{ base: 'flex-start', md: 'center' }}
-      >
-        <Stack
+          <Box pl={3}></Box>
+        </Flex>
+        <Flex
+          pt={4}
           direction={{ base: 'column', md: 'row' }}
-          spacing={{ base: 2, md: 8 }}
+          pb={3}
+          justifyContent={{ base: 'flex-start', md: 'space-between' }}
           alignItems={{ base: 'flex-start', md: 'center' }}
         >
-          <SearchResourcesInput
-            onChange={(value) =>
-              setLearningMaterialsOptions({ ...learningMaterialsOptions, query: value || undefined })
-            }
-          />
-          <LearningMaterialTypeFilter
-            filterOptions={learningMaterialsOptions.filter}
-            setFilterOptions={(filterOptions) =>
-              setLearningMaterialsOptions({
-                ...learningMaterialsOptions,
-                filter: filterOptions,
-              })
-            }
-          />
-        </Stack>
+          <Stack
+            direction={{ base: 'column', md: 'row' }}
+            spacing={{ base: 2, md: 8 }}
+            alignItems={{ base: 'flex-start', md: 'center' }}
+          >
+            <SearchResourcesInput
+              onChange={(value) =>
+                setLearningMaterialsOptions({ ...learningMaterialsOptions, query: value || undefined })
+              }
+            />
+            <LearningMaterialTypeFilter
+              filterOptions={learningMaterialsOptions.filter}
+              setFilterOptions={(filterOptions) =>
+                setLearningMaterialsOptions({
+                  ...learningMaterialsOptions,
+                  filter: filterOptions,
+                })
+              }
+            />
+          </Stack>
+          <Box py={1}>
+            <FormControl id="sort_by" display="flex" flexDir="row" alignItems="center" px={2}>
+              <FormLabel mb={0} fontWeight={600} flexShrink={0}>
+                Sort by:
+              </FormLabel>
+              <Select
+                size="sm"
+                fontWeight={500}
+                variant="outline"
+                borderColor="white"
+                _focus={{}}
+                bgColor="teal.600"
+                colorScheme="whiteAlpha"
+                onChange={(e) =>
+                  setLearningMaterialsOptions({
+                    ...learningMaterialsOptions,
+                    sortingType: e.target.value as DomainLearningMaterialsSortingType,
+                  })
+                }
+                value={learningMaterialsOptions.sortingType}
+              >
+                <option value={DomainLearningMaterialsSortingType.Recommended}>Most Relevant</option>
+                <option value={DomainLearningMaterialsSortingType.Rating}>Highest Rating</option>
+                <option value={DomainLearningMaterialsSortingType.Newest}>Newest First</option>
+              </Select>
+            </FormControl>
+          </Box>
+        </Flex>
       </Flex>
       <LearningMaterialPreviewCardList
         learningMaterialsPreviewItems={learningMaterialsPreviews.map((learningMaterial) => ({ learningMaterial }))}
@@ -245,17 +254,23 @@ export const SearchResourcesInput: React.FC<{
     }
   }, [value]);
   return (
-    <InputGroup>
+    <InputGroup w="16rem">
+      <InputLeftElement pointerEvents="none" children={<SearchIcon color="gray.400" />} />
       <Input
-        w="16rem"
         variant="outline"
         placeholder="Search..."
         value={query}
+        color="gray.500"
         onChange={(e) => setQuery(e.target.value)}
+        borderRadius={20}
+        borderColor="white"
+        borderWidth={1}
+        bgColor="white"
+        _focus={{}}
       />
       {value !== query && shouldSearch(query) && (
-        <InputRightElement w="auto">
-          <BeatLoader size={8} margin={2} color={theme.colors.main} />
+        <InputRightElement w="auto" px={2}>
+          <BeatLoader size={8} color={theme.colors.main} />
         </InputRightElement>
       )}
     </InputGroup>
@@ -339,35 +354,19 @@ const LearningMaterialTypeFilter: React.FC<{
     });
   };
   return (
-    <Stack direction="row" alignItems="baseline">
-      <Box w="16rem">
-        <MultiSelect
-          options={options}
-          value={(selectedTypes || []).map(learningMaterialTypeToOption)}
-          onChange={(selectedOptions: { value: LearningMaterialFilterType }[]) =>
-            onChange(selectedOptions.map((o) => o.value))
-          }
-          labelledBy={'Filter by type'}
-          valueRenderer={(selectedOptions) => (<ValueRenderer selected={selectedOptions} onChange={onChange} />) as any}
-          ItemRenderer={ItemRenderer}
-          hasSelectAll={false}
-        />
-      </Box>
-      {[ResourceType.Podcast, ResourceType.Course, ResourceType.Book]
-        .filter((defaultTypeFilter) => !selectedTypes || selectedTypes.indexOf(defaultTypeFilter) === -1)
-        .map((defaultTypeFilter) => (
-          <Button
-            key={defaultTypeFilter}
-            size="xs"
-            variant="outline"
-            colorScheme={learningMaterialFilterTypeColorMapping[defaultTypeFilter]}
-            leftIcon={<AddIcon />}
-            onClick={() => onChange([...(selectedTypes || []), defaultTypeFilter])}
-          >
-            {resourceTypeToLabel(defaultTypeFilter)}
-          </Button>
-        ))}
-    </Stack>
+    <Box w="16rem">
+      <MultiSelect
+        options={options}
+        value={(selectedTypes || []).map(learningMaterialTypeToOption)}
+        onChange={(selectedOptions: { value: LearningMaterialFilterType }[]) =>
+          onChange(selectedOptions.map((o) => o.value))
+        }
+        labelledBy={'Filter by type'}
+        valueRenderer={(selectedOptions) => (<ValueRenderer selected={selectedOptions} onChange={onChange} />) as any}
+        ItemRenderer={ItemRenderer}
+        hasSelectAll={false}
+      />
+    </Box>
   );
 };
 
@@ -422,9 +421,7 @@ const ItemRenderer = ({
       {option.value !== LearningMaterialType.LearningPath ? (
         <ResourceTypeBadge type={option.value as ResourceType} />
       ) : (
-        <Badge colorScheme="teal" fontSize="0.8em">
-          Learning Path
-        </Badge>
+        <Badge colorScheme="teal">Learning Path</Badge>
       )}
     </Stack>
   );

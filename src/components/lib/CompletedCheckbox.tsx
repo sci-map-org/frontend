@@ -3,7 +3,7 @@ import { IoIosCheckmarkCircle } from '@react-icons/all-files/io/IoIosCheckmarkCi
 import { IoIosCheckmarkCircleOutline } from '@react-icons/all-files/io/IoIosCheckmarkCircleOutline';
 
 const sizeMapping = {
-  xs: { iconSize: 24 },
+  xs: { iconSize: 20 },
   sm: { iconSize: 34 },
   md: { iconSize: 46 },
   lg: { iconSize: 52 },

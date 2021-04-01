@@ -3,7 +3,7 @@ import { Tooltip } from '@chakra-ui/tooltip';
 import gql from 'graphql-tag';
 import { DomainLinkData } from '../../../../graphql/domains/domains.fragments';
 import { ConceptIcon } from '../../../lib/icons/ConceptIcon';
-import { DomainIcon3 } from '../../../lib/icons/DomainIcon3';
+import { DomainIcon } from '../../../lib/icons/DomainIcon';
 import { ResourceSeriesIcon } from '../../../lib/icons/ResourceSeriesIcon';
 import { SearchResultCardContainer, SearchResultCardContainerProps } from './SearchResultCardContainer';
 import { SearchResultDomainCardDataFragment } from './SearchResultDomainCard.generated';
@@ -22,7 +22,7 @@ export const SearchResultDomainCard: React.FC<
 > = ({ domain, ...props }) => {
   return (
     <SearchResultCardContainer
-      renderIcon={(props) => <DomainIcon3 {...props} />}
+      renderIcon={(props) => <DomainIcon {...props} />}
       {...props}
       borderLeftColor="gray.500"
       bgColor={props.isHighlighted ? 'gray.200' : 'gray.100'}

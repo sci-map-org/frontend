@@ -21,7 +21,9 @@ export const NavigationBreadcrumbs: React.FC<NavigationBreadcrumbsProps> = ({ li
       {links.map((link) =>
         router.route === link.routePath ? (
           <BreadcrumbItem key={link.path} isCurrentPage>
-            <BreadcrumbLink {...link.breadcrumbLinkProps}>{shortenString(link.name, 35)}</BreadcrumbLink>
+            <BreadcrumbLink {...link.breadcrumbLinkProps} _hover={{}} cursor="auto">
+              {shortenString(link.name, 35)}
+            </BreadcrumbLink>
           </BreadcrumbItem>
         ) : (
           <BreadcrumbItem key={link.path}>
