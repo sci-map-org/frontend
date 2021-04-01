@@ -1,3 +1,4 @@
+import { ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons';
 import { Box, Button, Center, Flex, Skeleton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import Router, { useRouter } from 'next/router';
@@ -41,6 +42,9 @@ import { ResourceType, UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { isResourceGroupType, isResourceSeriesType } from '../../services/resources.service';
 import { GetResourceResourcePageQuery, useGetResourceResourcePageQuery } from './ResourcePage.generated';
+import { BsArrowLeft } from '@react-icons/all-files/bs/BsArrowLeft';
+import { BsArrowRight } from '@react-icons/all-files/bs/BsArrowRight';
+import { BsArrow90DegUp } from '@react-icons/all-files/bs/BsArrow90DegUp';
 
 export const getResourceResourcePage = gql`
   query getResourceResourcePage($id: String!) {
@@ -118,17 +122,17 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
       centerChildren
       renderLeft={
         (resource.previousResource || resource.nextResource) && (
-          <Box w="200px" pt="100px">
+          <Box w="200px" pt="100px" fontSize="md">
             {resource.previousResource && (
-              <RelatedResourceLink text="Previous:" relatedResource={resource.previousResource} />
+              <RelatedResourceLink type="previous" relatedResource={resource.previousResource} />
             )}
           </Box>
         )
       }
       renderRight={
         (resource.previousResource || resource.nextResource) && (
-          <Box w="200px" pt="100px">
-            {resource.nextResource && <RelatedResourceLink text="Next:" relatedResource={resource.nextResource} />}
+          <Box w="200px" pt="100px" fontSize="md">
+            {resource.nextResource && <RelatedResourceLink type="next" relatedResource={resource.nextResource} />}
           </Box>
         )
       }
@@ -138,20 +142,17 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
       }
     >
       <Stack w={['30rem', '36rem', '40rem', '50rem']} spacing={4}>
-        {resource.parentResources && resource.parentResources.length && (
-          <Text fontSize="lg" fontWeight={300} textAlign="center">
-            {resource.parentResources.map((parentResource, idx) => (
-              <RelatedResourceLink
-                key={parentResource._id}
-                text={idx === 0 ? 'Part of: ' : ', '}
-                relatedResource={parentResource}
-              />
-            ))}
-          </Text>
-        )}
-        {resource.seriesParentResource && (
-          <RelatedResourceLink text="Part of Series: " relatedResource={resource.seriesParentResource} />
-        )}
+        {(resource.parentResources && resource.parentResources.length) ||
+          (resource.seriesParentResource && (
+            <Stack spacing={1} alignItems="center">
+              {(resource.parentResources || []).map((parentResource, idx) => (
+                <RelatedResourceLink key={parentResource._id} type="parent" relatedResource={parentResource} />
+              ))}
+              {resource.seriesParentResource && (
+                <RelatedResourceLink type="series_parent" relatedResource={resource.seriesParentResource} />
+              )}
+            </Stack>
+          ))}
         <Flex justifyContent="space-between" alignItems="flex-end">
           <Stack direction="row" spacing={2} alignItems="baseline">
             <ResourceUrlLink fontSize="md" resource={resource} isLoading={loading} />
@@ -263,13 +264,22 @@ const TopRightIconButtons: React.FC<{
   );
 };
 
-const RelatedResourceLink: React.FC<{ text?: string; relatedResource: Pick<ResourceDataFragment, '_id' | 'name'> }> = ({
-  text,
-  relatedResource,
-}) => {
+const RelatedResourceLink: React.FC<{
+  type: 'previous' | 'next' | 'parent' | 'series_parent';
+  relatedResource: Pick<ResourceDataFragment, '_id' | 'name'>;
+}> = ({ type, relatedResource }) => {
   return (
-    <Text fontSize="lg" fontWeight={300} textAlign="center" as="span">
-      {!!text && text + ' '}
+    <Stack
+      fontWeight={300}
+      textAlign="center"
+      alignItems="center"
+      direction={type === 'parent' || type === 'series_parent' ? 'row' : 'column'}
+    >
+      {type === 'previous' && <BsArrowLeft />}
+      {type === 'next' && <BsArrowRight />}
+      {type === 'parent' && <BsArrow90DegUp />}
+      {type === 'series_parent' && <BsArrow90DegUp />}
+
       <InternalLink
         fontWeight={500}
         fontStyle="italic"
@@ -278,6 +288,6 @@ const RelatedResourceLink: React.FC<{ text?: string; relatedResource: Pick<Resou
       >
         {relatedResource.name}
       </InternalLink>
-    </Text>
+    </Stack>
   );
 };

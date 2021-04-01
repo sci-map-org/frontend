@@ -343,7 +343,7 @@ const HomeHeader: React.FC<{ layoutProps?: FlexProps }> = ({ layoutProps = {} })
           <Heading
             size="2xl"
             maxW={{ base: '200px', sm: '230px', md: '250px' }}
-            color="blackAlpha.900"
+            color="blackAlpha.800"
             lineHeight={1.1}
             {...headingProps}
           >
