@@ -1,13 +1,15 @@
-import { useEffect, useMemo, useRef } from 'react';
-import { ConceptWithDependenciesDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
-import * as d3 from 'd3';
-import * as d3Force from 'd3-force';
-import { Box, Center, Stack, Text } from '@chakra-ui/layout';
-import { Topic } from '../../graphql/types';
-import { GridLoader } from 'react-spinners';
-import { theme } from '../../theme/theme';
 import { IconButton } from '@chakra-ui/button';
+import { useDisclosure } from '@chakra-ui/hooks';
+import { Box, Center, Stack } from '@chakra-ui/layout';
+import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay } from '@chakra-ui/modal';
 import { CgArrowsExpandRight } from '@react-icons/all-files/cg/CgArrowsExpandRight';
+import * as d3 from 'd3';
+import { useEffect, useMemo, useRef } from 'react';
+import { GridLoader } from 'react-spinners';
+import { ConceptWithDependenciesDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
+import { Topic } from '../../graphql/types';
+import { theme } from '../../theme/theme';
+import { useElementSize } from '../../util/useElementSize';
 interface SubTopicsMinimapProps {
   isLoading: boolean;
   concepts: ConceptWithDependenciesDataFragment[];
@@ -41,6 +43,8 @@ export const SubTopicsMinimap: React.FC<SubTopicsMinimapProps> = ({
   pxWidth = 300,
   pxHeight = 200,
 }) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
     <Box
       w={`${pxWidth}px`}
@@ -66,17 +70,46 @@ export const SubTopicsMinimap: React.FC<SubTopicsMinimapProps> = ({
       )}
       <IconButton
         position="absolute"
-        variant="ghost"
+        variant="solid"
         size="md"
+        onClick={() => onOpen()}
         bottom={2}
         right={2}
+        opacity={0.8}
+        _hover={{ opacity: 1 }}
         aria-label="expand minimap"
         icon={<CgArrowsExpandRight />}
       />
+      <Modal isOpen={isOpen} onClose={onClose} size="xl">
+        <ModalOverlay />
+        <ModalContent w="600px">
+          <ModalHeader>SubTopics Map</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody justifyContent="stretch" alignItems="stretch">
+            <SubTopicsMapModalContent topics={concepts} />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 };
 
+const SubTopicsMapModalContent: React.FC<{ topics: Topic[] }> = ({ topics }) => {
+  const modalContainerRef = useRef<HTMLDivElement>(null);
+  const modalContainerSize = useElementSize(modalContainerRef);
+
+  return (
+    <Box ref={modalContainerRef} boxShadow="lg" mb={5}>
+      {modalContainerSize && (
+        <SubTopicsMapVisualisation
+          topics={topics}
+          pxWidth={modalContainerSize.width}
+          pxHeight={modalContainerSize.width}
+        />
+      )}
+    </Box>
+  );
+};
 interface SubTopicsMapVisualisationProps {
   topics: Topic[];
   pxWidth: number;
@@ -116,7 +149,6 @@ const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps> = ({ t
   // );
   useEffect(() => {
     if (d3Container) {
-      console.log(topics);
       const colorMap: any = {};
 
       const interp = d3.interpolateRainbow;
@@ -171,7 +203,6 @@ const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps> = ({ t
         .force('center', d3.forceCenter(pxWidth / 2, pxHeight / 2))
         // .force('link', d3.forceLink(links))
         .on('tick', tick);
-      console.log('running');
     }
   }, [nodes]);
   return <svg ref={d3Container} width={`${pxWidth}px`} height={`${pxHeight}px`} />;

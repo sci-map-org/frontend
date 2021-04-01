@@ -14,7 +14,8 @@ import {
   Size,
   ValueCache,
 } from 'dagre-reactjs';
-import { PropsWithChildren, SVGAttributes, useEffect, useMemo, useState } from 'react';
+import { PropsWithChildren, useEffect, useMemo, useRef, useState } from 'react';
+import { useElementSize } from '../../util/useElementSize';
 
 export enum SubGoalStatus {
   Completed = 'Completed',
@@ -66,7 +67,8 @@ export const DagreViewer = <N, E>({
   const [dagreHeight, setDagreHeight] = useState<number>();
   const [nodePxWidth, setNodePxWidth] = useState<number>();
   const [maxNodesPerRows, setMaxNodesPerRows] = useState<number>();
-  const dagreSize = useDagreSize('dagre-container');
+  const dagreContainerRef = useRef<HTMLDivElement>(null);
+  const dagreSize = useElementSize(dagreContainerRef);
 
   const getNodeWidth = (dagreWidth: number, maxNodesPerRows: number, horizontalSpacing: number) => {
     const fittedNodeWidth = (dagreWidth - (maxNodesPerRows - 1) * horizontalSpacing) / maxNodesPerRows;
@@ -95,7 +97,7 @@ export const DagreViewer = <N, E>({
   }, [maxNodesPerRows]);
 
   return (
-    <Box id="dagre-container" w={width} position="relative" height={dagreHeight} overflow={overflow}>
+    <Box ref={dagreContainerRef} w={width} position="relative" height={dagreHeight} overflow={overflow}>
       <Box height={dagreHeight} width={dagreWidth} position="absolute">
         {showRealDag && nodePxWidth && (
           <svg id="dagre" width="100%" height="100%">
@@ -265,40 +267,3 @@ const CircleMarker: React.FC<MarkerProps> = ({ edgeMeta, markerId }) => {
     </marker>
   );
 };
-
-function useDagreSize(id: string) {
-  if (typeof document === 'undefined') return null;
-  const dagreElement = document.getElementById(id);
-
-  const [dagreSize, setDagreSize] = useState(
-    dagreElement
-      ? {
-          width: dagreElement.clientWidth,
-          height: dagreElement.clientHeight,
-        }
-      : null
-  );
-
-  useEffect(() => {
-    function handleResize() {
-      if (typeof document === 'undefined') return null;
-      const dagreElement = document.getElementById(id);
-      setDagreSize(
-        dagreElement
-          ? {
-              width: dagreElement.clientWidth,
-              height: dagreElement.clientHeight,
-            }
-          : null
-      );
-    }
-
-    window.addEventListener('resize', handleResize);
-
-    handleResize();
-
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  return dagreSize;
-}
