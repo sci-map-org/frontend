@@ -1,5 +1,5 @@
 import { extendTheme } from '@chakra-ui/react';
-import { colors1 } from './colors1';
+import { colors } from './colors';
 
 export const fonts = {
   main: 'Helvetica Neue,Helvetica,Arial,sans-serif', // menu, titles, etc.
@@ -71,7 +71,6 @@ export const theme = extendTheme({
       800: '#1A202C',
       900: '#171923',
     },
-
     grayFont: {
       50: '#F7FAFC',
       100: '#EDF2F7',
@@ -84,7 +83,6 @@ export const theme = extendTheme({
       800: '#1A202C',
       900: '#171923',
     },
-
     grayDivider: {
       50: 'rgb(255, 255, 255)',
       100: 'rgb(247, 247, 247)',
@@ -97,7 +95,7 @@ export const theme = extendTheme({
       800: 'rgb(50, 50, 50)',
       900: 'rgb(0, 0, 0)',
     },
-    // ...colors1,
+    ...colors,
   },
   fonts: {
     heading: fonts.main,
