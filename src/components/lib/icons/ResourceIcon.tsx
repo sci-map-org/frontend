@@ -3,7 +3,7 @@ import { Icon, IconProps } from '@chakra-ui/icons';
 export const ResourceIcon = (
   props: Omit<IconProps, 'css'> // ts bug with emotion, checkout https://github.com/emotion-js/emotion/issues/1640
 ) => (
-  <Icon viewBox="0 0 10000 10000" x="0px" y="0px" fill-rule="evenodd" clip-rule="evenodd" {...props}>
+  <Icon viewBox="0 0 10000 10000" x="0px" y="0px" fillRule="evenodd" clipRule="evenodd" {...props}>
     <g>
       <path
         fill="currentColor"
