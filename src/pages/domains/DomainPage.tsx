@@ -145,9 +145,9 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
     >
       <>
         {(loading || (domain.learningGoals && !!domain.learningGoals.length)) && (
-          <DomainLearningGoals learningGoalItems={domain.learningGoals || []} isLoading={loading} />
+          <DomainLearningGoals domain={domain} learningGoalItems={domain.learningGoals || []} isLoading={loading} />
         )}
-        <Flex direction={{ base: 'column-reverse', md: 'row' }} mb="100px">
+        <Flex direction={{ base: 'column-reverse', md: 'row' }} mb="100px" mt={10}>
           <Flex direction="column" flexShrink={1} flexGrow={1}>
             <DomainRecommendedLearningMaterials
               domain={domain}
@@ -157,7 +157,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
               learningMaterialsOptions={learningMaterialsOptions}
               setLearningMaterialsOptions={setLearningMaterialsOptions}
             />
-            <DomainConceptGraph domain={domain} isLoading={loading} minNbRelationships={5} />
+            {/* <DomainConceptGraph domain={domain} isLoading={loading} minNbRelationships={5} /> */}
             {/* <DomainLearningPaths domain={domain} /> */}
             {/* {mockedFeaturesEnabled && <DomainLearningPaths domain={domain} />} */}
           </Flex>
@@ -217,7 +217,7 @@ const DomainPageHeader: React.FC<{
   return (
     <Flex
       w="100%"
-      h="300px"
+      // h="300px"
       direction="row"
       position="relative"
       overflow="hidden"
@@ -252,16 +252,16 @@ const DomainPageHeader: React.FC<{
       <Flex direction="column" maxW="60%">
         <ParentDomainsNavigationBlock domains={(domain.parentDomains || []).map(({ domain }) => domain)} />
 
-        <Stack spacing={1} pt={10} zIndex={2} alignItems="flex-start">
-          <Stack direction="row" spacing={1} alignItems="center">
-            <DomainIcon boxSize={6} />
-            <Text fontSize="xl" fontWeight={400}>
+        <Stack spacing={0} pt={10} zIndex={2} alignItems="flex-start">
+          <Stack direction="row" spacing={1} alignItems="center" color="gray.800" mb={1}>
+            <DomainIcon boxSize="20px" mb="4px" />
+            <Text fontSize="lg" fontWeight={400}>
               Area
             </Text>
           </Stack>
           <Skeleton isLoaded={!isLoading}>
             <Heading
-              fontSize="5xl"
+              fontSize={{ base: '4xl', md: '4xl', lg: '5xl' }}
               // pt={1}
               // pb={3}
               fontWeight={500}
@@ -269,7 +269,7 @@ const DomainPageHeader: React.FC<{
               // color="black"
               backgroundImage="linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,1), rgba(255,255,255,1), rgba(255,255,255,0.1))"
             >
-              Learn {domain.name}
+              Learn <Text as="span">{domain.name}</Text>
             </Heading>
           </Skeleton>
           <Skeleton isLoaded={!isLoading}>
@@ -286,18 +286,20 @@ const DomainPageHeader: React.FC<{
               </RoleAccess>
               <PageLink
                 color="gray.600"
-                _hover={{ color: 'gray.700', textDecoration: 'underline' }}
+                _hover={{ color: 'gray.700', textDecoration: 'none' }}
                 fontWeight={600}
+                fontSize="sm"
                 pageInfo={ConceptListPageInfo(domain)}
                 isDisabled={isLoading}
               >
-                {domain.concepts?.items.length ? domain.concepts?.items.length + ' Concepts ' : 'No concepts yet'}
+                {domain.concepts?.items.length ? domain.concepts?.items.length + ' SubTopics ' : 'No SubTopics yet'}
               </PageLink>
             </Stack>
           </Skeleton>
           {domain && domain.description && (
-            <Skeleton mt={2} isLoaded={!isLoading}>
+            <Skeleton isLoaded={!isLoading}>
               <Box
+                mt={3}
                 backgroundImage="linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,1), rgba(255,255,255,1), rgba(255,255,255,0.1))"
                 fontWeight={250}
               >
@@ -305,42 +307,33 @@ const DomainPageHeader: React.FC<{
               </Box>
             </Skeleton>
           )}
+          <Flex direction="row" w="100%">
+            <Stack direction="row" spacing={4} pl={0} pt={10} pb={12} pr={10} alignItems="flex-start">
+              <PageButtonLink
+                leftIcon={<ResourceIcon boxSize={8} />}
+                variant="solid"
+                colorScheme="blue"
+                pageInfo={AddResourceToDomainPageInfo(domain)}
+                loggedInOnly
+                isDisabled={isLoading}
+              >
+                Add Resource
+              </PageButtonLink>
+              <PageButtonLink
+                leftIcon={<LearningPathIcon boxSize={7} />}
+                variant="solid"
+                colorScheme="teal"
+                pageInfo={NewLearningPathPageInfo}
+                loggedInOnly
+                isDisabled={isLoading}
+              >
+                Add Learning Path
+              </PageButtonLink>
+            </Stack>
+          </Flex>
         </Stack>
       </Flex>
-      <Flex direction="column-reverse" w="40%">
-        <Stack direction="column" spacing={4} pl={10} pb={12} pr={10} alignItems="flex-start">
-          <PageButtonLink
-            leftIcon={<ResourceIcon boxSize={8} />}
-            variant="solid"
-            colorScheme="blue"
-            pageInfo={AddResourceToDomainPageInfo(domain)}
-            loggedInOnly
-            isDisabled={isLoading}
-          >
-            Add Resource
-          </PageButtonLink>
-          <PageButtonLink
-            leftIcon={<LearningPathIcon boxSize={7} />}
-            variant="solid"
-            colorScheme="teal"
-            pageInfo={NewLearningPathPageInfo}
-            loggedInOnly
-            isDisabled={isLoading}
-          >
-            Add Learning Path
-          </PageButtonLink>
-          <PageButtonLink
-            variant="solid"
-            leftIcon={<LearningGoalIcon boxSize={5} />}
-            colorScheme="orange"
-            pageInfo={AddLearningGoalToDomainPageInfo(domain)}
-            loggedInOnly
-            isDisabled={isLoading}
-          >
-            Add Goal
-          </PageButtonLink>
-        </Stack>
-      </Flex>
+      <Flex direction="column-reverse" w="40%"></Flex>
     </Flex>
   );
 };
