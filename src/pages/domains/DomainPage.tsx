@@ -326,6 +326,7 @@ const DomainPageHeader: React.FC<{
       </Flex>
       <Flex direction="row" alignItems="center" w="40%">
         <SubTopicsMinimap
+          domainKey={domain.key}
           isLoading={!!isLoading || !!resourcesLoading}
           topics={[
             ...(domain.concepts?.items.map((i) => i.concept) || []),
