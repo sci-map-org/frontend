@@ -62,7 +62,7 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
 
       node
         .append('circle')
-        .classed('nodeC', true)
+        .classed('node_circle', true)
         .attr('r', getNodeRadius)
         .attr('fill', (n) => colorMap[n._id]);
 

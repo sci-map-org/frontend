@@ -21,12 +21,7 @@
   background-image: url(/static/topography_bg.svg);
 }
 
-.link {
-  stroke: #000;
-  stroke-width: 1.5px;
-}
-
-.node:hover .nodeC {
+.node:hover .node_circle {
   stroke: rgb(30, 30, 30);
 }
 
@@ -37,7 +32,7 @@
 .node:hover {
   cursor: pointer;
 }
-.nodeC {
+.node_circle {
   stroke: rgb(80, 80, 80);
   stroke-width: 1px;
 }
