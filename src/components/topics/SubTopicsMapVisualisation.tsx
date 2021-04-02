@@ -1,5 +1,8 @@
-import * as d3 from 'd3';
-import { SimulationNodeDatum } from 'd3';
+import * as d3Force from 'd3-force';
+import { SimulationNodeDatum } from 'd3-force';
+import * as d3ScaleChromatic from 'd3-scale-chromatic';
+import * as d3Selection from 'd3-selection';
+import * as d3Zoom from 'd3-zoom';
 import Router from 'next/router';
 import { useEffect, useMemo, useRef } from 'react';
 import { TopicType } from '../../graphql/types';
@@ -39,10 +42,10 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
       const colorMap: any = {};
 
       nodes.forEach((node, i) => {
-        colorMap[node._id] = d3.schemePastel1[i % 9];
+        colorMap[node._id] = d3ScaleChromatic.schemePastel1[i % 9];
       });
 
-      const svg = d3.select(d3Container.current).attr('viewBox', [0, 0, pxWidth, pxHeight].join(','));
+      const svg = d3Selection.select(d3Container.current).attr('viewBox', [0, 0, pxWidth, pxHeight].join(','));
       const container = svg.append('g');
 
       const node = container
@@ -80,7 +83,7 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
           return d.name;
         });
 
-      const zoom = d3.zoom<SVGSVGElement, unknown>();
+      const zoom = d3Zoom.zoom<SVGSVGElement, unknown>();
       const tick = () => {
         node.attr('transform', function (d) {
           return 'translate(' + d.x + ',' + d.y + ')';
@@ -99,17 +102,17 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
           })
       );
 
-      const simulation = d3
+      const simulation = d3Force
         .forceSimulation<NodeElement>()
         .nodes(nodes)
         .force(
           'charge',
-          d3.forceManyBody<NodeElement>().strength((d) => {
+          d3Force.forceManyBody<NodeElement>().strength((d) => {
             return d.size ? -(getNodeRadius(d) * getNodeRadius(d)) / 15 : -8;
           })
         )
 
-        .force('center', d3.forceCenter(pxWidth / 2, pxHeight / 2))
+        .force('center', d3Force.forceCenter(pxWidth / 2, pxHeight / 2))
         .on('tick', tick);
     }
   }, [nodes]);
