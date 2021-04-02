@@ -55,17 +55,14 @@ export const SubTopicsMinimap: React.FC<SubTopicsMinimapProps> = ({
       bgColor="white"
       zIndex={4}
       borderWidth={1}
-      borderColor="gray.100"
+      borderRadius={4}
+      borderColor="deepBlue.200"
+      overflow="hidden"
       position="relative"
     >
       {isLoading ? (
         <Center w="100%" h="100%">
-          <Stack alignItems="center">
-            <PuffLoader size={Math.floor(pxWidth / 3)} color={theme.colors.blue[500]} />
-            {/* <Text fontStyle="italic" fontWeight={400} fontSize="sm">
-              Analyzing Area Topology...
-            </Text> */}
-          </Stack>
+          <PuffLoader size={Math.floor(pxWidth / 3)} color={theme.colors.blue[500]} />
         </Center>
       ) : (
         <SubTopicsMapVisualisation domainKey={domainKey} topics={topics} pxWidth={pxWidth} pxHeight={pxHeight} />
@@ -104,7 +101,16 @@ const SubTopicsMapModalContent: React.FC<{ topics: MinimapTopicDataFragment[]; d
   const modalContainerSize = useElementSize(modalContainerRef);
 
   return (
-    <Box ref={modalContainerRef} boxShadow="lg" mb={5}>
+    <Box
+      ref={modalContainerRef}
+      boxShadow="lg"
+      bgColor="white"
+      zIndex={4}
+      borderWidth={1}
+      borderRadius={4}
+      borderColor="deepBlue.200"
+      mb={5}
+    >
       {modalContainerSize && (
         <SubTopicsMapVisualisation
           domainKey={domainKey}

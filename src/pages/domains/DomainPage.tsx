@@ -22,7 +22,7 @@ import { useGetDomainRecommendedLearningMaterialsQuery } from '../../components/
 import { ConceptData, generateConceptData } from '../../graphql/concepts/concepts.fragments';
 import { DomainData, DomainLinkData, generateDomainData } from '../../graphql/domains/domains.fragments';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
-import { DomainLearningMaterialsOptions, DomainLearningMaterialsSortingType } from '../../graphql/types';
+import { DomainLearningMaterialsOptions, DomainLearningMaterialsSortingType, TopicType } from '../../graphql/types';
 import { routerPushToPage } from '../PageInfo';
 import {
   AddResourceToDomainPageInfo,
@@ -89,7 +89,7 @@ const placeholderDomainData: GetDomainByKeyDomainPageQuery['getDomainByKey'] = {
   ...generateDomainData(),
   concepts: {
     items: [...Array(12)].map(() => ({
-      concept: generateConceptData(),
+      concept: { ...generateConceptData(), topicType: TopicType.Concept },
       relationship: {
         index: 0,
       },
@@ -227,23 +227,32 @@ const DomainPageHeader: React.FC<{
   return (
     <Flex
       w="100%"
-      direction="row"
-      position="relative"
+      direction={{ base: 'column', lg: 'row' }}
       overflow="hidden"
-      justifyContent="space-between"
+      justifyContent={{ base: 'flex-start', md: 'space-between' }}
+      alignItems="stretch"
+      pb={4}
       {...layoutProps}
     >
-      <Image position="absolute" src="/static/tourist.svg" bottom={0} right="0%" h="280px" zIndex={1} />
-      <Image
-        position="absolute"
-        src="/static/topostain_green_domain_page.svg"
-        zIndex={0}
-        top="-30%"
-        right="-5%"
-        opacity={0.6}
-        h={{ base: '300px', md: '500px' }}
-      />
-      <Flex direction="column" maxW="60%">
+      <Flex direction="column" flexGrow={1} position="relative" minH="280px" pr={{ md: '200px' }}>
+        <Image
+          display={{ base: 'none', md: 'initial' }}
+          position="absolute"
+          src="/static/tourist.svg"
+          top={5}
+          right={-2}
+          h="280px"
+          zIndex={1}
+        />
+        <Image
+          position="absolute"
+          src="/static/topostain_green_domain_page.svg"
+          zIndex={0}
+          top="-30%"
+          right="0%"
+          opacity={0.6}
+          h={{ base: '300px', md: '500px' }}
+        />
         <ParentDomainsNavigationBlock domains={(domain.parentDomains || []).map(({ domain }) => domain)} />
 
         <Stack spacing={0} pt={10} zIndex={2} alignItems="flex-start">
@@ -258,7 +267,7 @@ const DomainPageHeader: React.FC<{
               fontSize={{ base: '4xl', md: '4xl', lg: '5xl' }}
               fontWeight={500}
               color="blackAlpha.800"
-              backgroundImage="linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,1), rgba(255,255,255,1), rgba(255,255,255,0.1))"
+              backgroundImage="linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0.7), rgba(255,255,255,0.7), rgba(255,255,255,0.1))"
             >
               Learn <Text as="span">{domain.name}</Text>
             </Heading>
@@ -291,7 +300,7 @@ const DomainPageHeader: React.FC<{
             <Skeleton isLoaded={!isLoading}>
               <Box
                 mt={3}
-                backgroundImage="linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,1), rgba(255,255,255,1), rgba(255,255,255,0.1))"
+                backgroundImage="linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0.7), rgba(255,255,255,0.7), rgba(255,255,255,0.1))"
                 fontWeight={250}
               >
                 {domain.description}
@@ -299,7 +308,7 @@ const DomainPageHeader: React.FC<{
             </Skeleton>
           )}
           <Flex direction="row" w="100%">
-            <Stack direction="row" spacing={4} pl={0} pt={10} pb={12} pr={10} alignItems="flex-start">
+            <Stack direction="row" spacing={4} pl={0} pt={10} pb={{ base: 4, lg: 12 }} pr={10} alignItems="flex-start">
               <PageButtonLink
                 leftIcon={<ResourceIcon boxSize={8} />}
                 variant="solid"
@@ -324,7 +333,14 @@ const DomainPageHeader: React.FC<{
           </Flex>
         </Stack>
       </Flex>
-      <Flex direction="row" alignItems="center" w="40%">
+      <Flex
+        direction="row-reverse"
+        pl={{ lg: 8 }}
+        pr={0}
+        pt={{ lg: 8 }}
+        justifyContent={{ base: 'center', lg: 'flex-start' }}
+        alignItems={{ base: 'center', lg: 'flex-start' }}
+      >
         <SubTopicsMinimap
           domainKey={domain.key}
           isLoading={!!isLoading || !!resourcesLoading}

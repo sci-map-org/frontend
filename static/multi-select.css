@@ -7,5 +7,17 @@
   --rmsc-bg: #fff;
   --rmsc-p: 10px !important; /* Spacing */
   --rmsc-radius: 4px; /* Radius */
-  --rmsc-h: 38px !important; /* Height */
+  --rmsc-h: 38px !important; /*Height */
+}
+
+.domain_lm_type_multiselect {
+  /* --rmsc-main: #4285f4;
+  --rmsc-hover: #f1f3f5;
+  --rmsc-selected: #e2e6ea;
+  --rmsc-border: white !important;
+  --rmsc-gray: white !important;
+  --rmsc-bg: #2c7a7b !important;
+  --rmsc-p: 10px !important;
+  --rmsc-radius: 4px;  */
+  --rmsc-h: 30px !important; /* Height */
 }

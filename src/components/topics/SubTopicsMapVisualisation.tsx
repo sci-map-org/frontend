@@ -1,4 +1,5 @@
 import * as d3 from 'd3';
+import { SimulationNodeDatum } from 'd3';
 import Router from 'next/router';
 import { useEffect, useMemo, useRef } from 'react';
 import { TopicType } from '../../graphql/types';
@@ -7,6 +8,10 @@ import { ConceptPagePath, DomainPageInfo } from '../../pages/RoutesPageInfos';
 import { theme } from '../../theme/theme';
 import { MinimapTopicDataFragment } from './SubTopicsMinimap.generated';
 
+type NodeElement = SimulationNodeDatum &
+  MinimapTopicDataFragment & {
+    id: string;
+  };
 export interface SubTopicsMapVisualisationProps {
   domainKey: string;
   topics: MinimapTopicDataFragment[];
@@ -19,9 +24,9 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
   pxWidth,
   pxHeight,
 }) => {
-  const d3Container = useRef(null);
+  const d3Container = useRef<SVGSVGElement>(null);
 
-  const nodes = useMemo(
+  const nodes: NodeElement[] = useMemo(
     () =>
       topics.map((topic) => {
         return { id: topic._id, ...topic };
@@ -30,28 +35,14 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
   );
 
   useEffect(() => {
-    if (d3Container) {
+    if (d3Container && d3Container.current) {
       const colorMap: any = {};
 
       nodes.forEach((node, i) => {
-        // 1
-        // colorMap[node._id] = d3.interpolateRainbow(i / nodes.length);
-        // 2
-        // colorMap[node._id] = d3.schemeSet3[i % 12];
-        // 3
-        // colorMap[node._id] = d3.schemeSet2[i % 8];
-        // 4
-        // colorMap[node._id] = d3.schemeSet1[i % 9];
-
         colorMap[node._id] = d3.schemePastel1[i % 9];
-
-        //5
-        // colorMap[node._id] = d3.interpolateYlGnBu(i / nodes.length);
-
-        // colorMap[node._id] = d3.interpolateSpectral(i / nodes.length);
       });
 
-      const svg = d3.select(d3Container.current).attr('viewBox', [0, 0, pxWidth, pxHeight]);
+      const svg = d3.select(d3Container.current).attr('viewBox', [0, 0, pxWidth, pxHeight].join(','));
       const container = svg.append('g');
 
       const node = container
@@ -60,12 +51,11 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
         .join('g')
         .classed('node', true)
         .on('click', (event, n) => {
-          n.topicType === TopicType.Domain && routerPushToPage(DomainPageInfo(n));
+          n.__typename === 'Domain' && routerPushToPage(DomainPageInfo(n));
           n.topicType === TopicType.Concept && Router.push(ConceptPagePath(domainKey, n.key));
         });
 
-      const getNodeRadius = (n: MinimapTopicDataFragment) =>
-        n.size ? 12 + (n.size > 1 ? Math.log(n.size) * 12 : 0) : 12;
+      const getNodeRadius = (n: NodeElement) => (n.size ? 12 + (n.size > 1 ? Math.log(n.size) * 12 : 0) : 12);
 
       node
         .append('circle')
@@ -90,7 +80,7 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
           return d.name;
         });
 
-      const zoom = d3.zoom();
+      const zoom = d3.zoom<SVGSVGElement, unknown>();
       const tick = () => {
         node.attr('transform', function (d) {
           return 'translate(' + d.x + ',' + d.y + ')';
@@ -110,11 +100,11 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
       );
 
       const simulation = d3
-        .forceSimulation()
+        .forceSimulation<NodeElement>()
         .nodes(nodes)
         .force(
           'charge',
-          d3.forceManyBody().strength((d) => {
+          d3.forceManyBody<NodeElement>().strength((d) => {
             return d.size ? -(getNodeRadius(d) * getNodeRadius(d)) / 15 : -8;
           })
         )

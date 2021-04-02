@@ -35,6 +35,7 @@ export const getBestXPageData = gql`
         items {
           concept {
             ...ConceptData
+            topicType
             referencedByConcepts {
               concept {
                 _id
