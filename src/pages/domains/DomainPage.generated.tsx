@@ -20,6 +20,7 @@ export type GetDomainByKeyDomainPageQuery = (
         { __typename?: 'DomainConceptsItem' }
         & { concept: (
           { __typename?: 'Concept' }
+          & Pick<Types.Concept, 'topicType' | 'size'>
           & { referencedByConcepts?: Types.Maybe<Array<(
             { __typename?: 'ConceptReferencesConceptItem' }
             & { concept: (
@@ -49,6 +50,7 @@ export type GetDomainByKeyDomainPageQuery = (
       { __typename?: 'DomainBelongsToDomainItem' }
       & { domain: (
         { __typename?: 'Domain' }
+        & Pick<Types.Domain, 'topicType' | 'size'>
         & DomainLinkDataFragment
       ) }
     )>>, learningGoals?: Types.Maybe<Array<(

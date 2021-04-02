@@ -20,3 +20,23 @@
   /* Change path color, size (zoom in pattern or not) and path opacity in the svg file */
   background-image: url(/static/topography_bg.svg);
 }
+
+.node:hover .node_circle {
+  stroke: rgb(30, 30, 30);
+}
+
+.node:hover .node_label {
+  fill: rgb(40, 40, 40);
+}
+
+.node:hover {
+  cursor: pointer;
+}
+.node_circle {
+  stroke: rgb(80, 80, 80);
+  stroke-width: 1px;
+}
+
+.node.fixed {
+  fill: #f00;
+}

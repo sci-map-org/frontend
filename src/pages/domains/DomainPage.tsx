@@ -4,7 +4,6 @@ import { Box, BoxProps, Flex, Heading, IconButton, Image, Skeleton, Stack, Text 
 import gql from 'graphql-tag';
 import { useEffect, useState } from 'react';
 import { RoleAccess } from '../../components/auth/RoleAccess';
-import { DomainConceptGraph } from '../../components/concepts/DomainConceptGraph';
 import { DomainConceptList } from '../../components/concepts/DomainConceptList';
 import { BestXPagesLinks } from '../../components/domains/BestXPagesLinks';
 import { DomainLearningGoals } from '../../components/domains/DomainLearningGoals';
@@ -14,19 +13,18 @@ import { BasePageLayout } from '../../components/layout/PageLayout';
 import { LearningGoalCardData } from '../../components/learning_goals/cards/LearningGoalCard';
 import { LearningPathPreviewCardDataFragment } from '../../components/learning_paths/LearningPathPreviewCard.generated';
 import { DomainIcon } from '../../components/lib/icons/DomainIcon';
-import { LearningGoalIcon } from '../../components/lib/icons/LearningGoalIcon';
 import { LearningPathIcon } from '../../components/lib/icons/LearningPathIcon';
 import { ResourceIcon } from '../../components/lib/icons/ResourceIcon';
+import { SubTopicsMinimap } from '../../components/topics/SubTopicsMinimap';
 import { PageButtonLink, PageLink } from '../../components/navigation/InternalLink';
 import { DomainRecommendedLearningMaterials } from '../../components/resources/DomainRecommendedLearningMaterials';
 import { useGetDomainRecommendedLearningMaterialsQuery } from '../../components/resources/DomainRecommendedLearningMaterials.generated';
 import { ConceptData, generateConceptData } from '../../graphql/concepts/concepts.fragments';
 import { DomainData, DomainLinkData, generateDomainData } from '../../graphql/domains/domains.fragments';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
-import { DomainLearningMaterialsOptions, DomainLearningMaterialsSortingType } from '../../graphql/types';
+import { DomainLearningMaterialsOptions, DomainLearningMaterialsSortingType, TopicType } from '../../graphql/types';
 import { routerPushToPage } from '../PageInfo';
 import {
-  AddLearningGoalToDomainPageInfo,
   AddResourceToDomainPageInfo,
   ConceptListPageInfo,
   DomainPageInfo,
@@ -43,6 +41,8 @@ export const getDomainByKeyDomainPage = gql`
         items {
           concept {
             ...ConceptData
+            topicType
+            size
             referencedByConcepts {
               concept {
                 _id
@@ -67,6 +67,8 @@ export const getDomainByKeyDomainPage = gql`
       subDomains {
         domain {
           ...DomainLinkData
+          topicType
+          size
         }
       }
       learningGoals {
@@ -87,7 +89,7 @@ const placeholderDomainData: GetDomainByKeyDomainPageQuery['getDomainByKey'] = {
   ...generateDomainData(),
   concepts: {
     items: [...Array(12)].map(() => ({
-      concept: generateConceptData(),
+      concept: { ...generateConceptData(), topicType: TopicType.Concept },
       relationship: {
         index: 0,
       },
@@ -141,7 +143,14 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
   return (
     <BasePageLayout
       marginSize="md"
-      renderHeader={(layoutProps) => <DomainPageHeader domain={domain} isLoading={loading} layoutProps={layoutProps} />}
+      renderHeader={(layoutProps) => (
+        <DomainPageHeader
+          domain={domain}
+          isLoading={loading}
+          resourcesLoading={resourcesLoading}
+          layoutProps={layoutProps}
+        />
+      )}
     >
       <>
         {(loading || (domain.learningGoals && !!domain.learningGoals.length)) && (
@@ -212,28 +221,38 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
 const DomainPageHeader: React.FC<{
   domain: GetDomainByKeyDomainPageQuery['getDomainByKey'];
   isLoading?: boolean;
+  resourcesLoading?: boolean;
   layoutProps: BoxProps;
-}> = ({ domain, layoutProps, isLoading }) => {
+}> = ({ domain, layoutProps, isLoading, resourcesLoading }) => {
   return (
     <Flex
       w="100%"
-      direction="row"
-      position="relative"
+      direction={{ base: 'column', lg: 'row' }}
       overflow="hidden"
-      justifyContent="space-between"
+      justifyContent={{ base: 'flex-start', md: 'space-between' }}
+      alignItems="stretch"
+      pb={4}
       {...layoutProps}
     >
-      <Image position="absolute" src="/static/tourist.svg" bottom={0} right="0%" h="280px" zIndex={1} />
-      <Image
-        position="absolute"
-        src="/static/topostain_green_domain_page.svg"
-        zIndex={0}
-        top="-30%"
-        right="-5%"
-        opacity={0.6}
-        h={{ base: '300px', md: '500px' }}
-      />
-      <Flex direction="column" maxW="60%">
+      <Flex direction="column" flexGrow={1} position="relative" minH="280px" pr={{ md: '200px' }}>
+        <Image
+          display={{ base: 'none', md: 'initial' }}
+          position="absolute"
+          src="/static/tourist.svg"
+          top={5}
+          right={-2}
+          h="280px"
+          zIndex={1}
+        />
+        <Image
+          position="absolute"
+          src="/static/topostain_green_domain_page.svg"
+          zIndex={0}
+          top="-30%"
+          right="0%"
+          opacity={0.6}
+          h={{ base: '300px', md: '500px' }}
+        />
         <ParentDomainsNavigationBlock domains={(domain.parentDomains || []).map(({ domain }) => domain)} />
 
         <Stack spacing={0} pt={10} zIndex={2} alignItems="flex-start">
@@ -248,7 +267,7 @@ const DomainPageHeader: React.FC<{
               fontSize={{ base: '4xl', md: '4xl', lg: '5xl' }}
               fontWeight={500}
               color="blackAlpha.800"
-              backgroundImage="linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,1), rgba(255,255,255,1), rgba(255,255,255,0.1))"
+              backgroundImage="linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0.7), rgba(255,255,255,0.7), rgba(255,255,255,0.1))"
             >
               Learn <Text as="span">{domain.name}</Text>
             </Heading>
@@ -281,7 +300,7 @@ const DomainPageHeader: React.FC<{
             <Skeleton isLoaded={!isLoading}>
               <Box
                 mt={3}
-                backgroundImage="linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,1), rgba(255,255,255,1), rgba(255,255,255,0.1))"
+                backgroundImage="linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0.7), rgba(255,255,255,0.7), rgba(255,255,255,0.1))"
                 fontWeight={250}
               >
                 {domain.description}
@@ -289,7 +308,7 @@ const DomainPageHeader: React.FC<{
             </Skeleton>
           )}
           <Flex direction="row" w="100%">
-            <Stack direction="row" spacing={4} pl={0} pt={10} pb={12} pr={10} alignItems="flex-start">
+            <Stack direction="row" spacing={4} pl={0} pt={10} pb={{ base: 4, lg: 12 }} pr={10} alignItems="flex-start">
               <PageButtonLink
                 leftIcon={<ResourceIcon boxSize={8} />}
                 variant="solid"
@@ -314,7 +333,23 @@ const DomainPageHeader: React.FC<{
           </Flex>
         </Stack>
       </Flex>
-      <Flex direction="column-reverse" w="40%"></Flex>
+      <Flex
+        direction="row-reverse"
+        pl={{ lg: 8 }}
+        pr={0}
+        pt={{ lg: 8 }}
+        justifyContent={{ base: 'center', lg: 'flex-start' }}
+        alignItems={{ base: 'center', lg: 'flex-start' }}
+      >
+        <SubTopicsMinimap
+          domainKey={domain.key}
+          isLoading={!!isLoading || !!resourcesLoading}
+          topics={[
+            ...(domain.concepts?.items.map((i) => i.concept) || []),
+            ...(domain.subDomains?.map((i) => i.domain) || []),
+          ]}
+        />
+      </Flex>
     </Flex>
   );
 };

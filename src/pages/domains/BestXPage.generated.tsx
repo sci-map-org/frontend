@@ -31,6 +31,7 @@ export type GetBestXPageDataQuery = (
         { __typename?: 'DomainConceptsItem' }
         & { concept: (
           { __typename?: 'Concept' }
+          & Pick<Types.Concept, 'topicType'>
           & { referencedByConcepts?: Types.Maybe<Array<(
             { __typename?: 'ConceptReferencesConceptItem' }
             & { concept: (

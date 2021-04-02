@@ -126,13 +126,13 @@ export const DomainRecommendedLearningMaterials: React.FC<{
   ]);
   return (
     <Flex direction="column" w="100%" borderTopRadius={2}>
-      <Flex direction="column" alignItems="stretch" pl={2} bgColor="teal.600" color="white" borderTopRadius="inherit">
+      <Flex direction="column" alignItems="stretch" pl={3} bgColor="teal.600" color="white" borderTopRadius="inherit">
         <Flex direction="row" alignItems="baseline" pt={1}>
           <Text fontSize="2xl" fontWeight={500}>
             {s1 + ' '}
-            <Text fontSize="2xl" as="span" {...(s2 !== 'Learning Resources' && { color: 'blue.800' })}>
-              {s2}
-            </Text>
+            {/* <Text fontSize="2xl" as="span" {...(s2 !== 'Learning Resources' && { color: 'blue.800' })}> */}
+            {s2}
+            {/* </Text> */}
             {' ' + s3}
           </Text>
           <Box pl={3}></Box>
@@ -165,7 +165,7 @@ export const DomainRecommendedLearningMaterials: React.FC<{
             />
           </Stack>
           <Box py={1}>
-            <FormControl id="sort_by" display="flex" flexDir="row" alignItems="center" px={2}>
+            <FormControl id="sort_by" display="flex" flexDir="row" alignItems="center" px={3}>
               <FormLabel mb={0} fontWeight={600} flexShrink={0}>
                 Sort by:
               </FormLabel>
@@ -254,7 +254,7 @@ export const SearchResourcesInput: React.FC<{
     }
   }, [value]);
   return (
-    <InputGroup w="16rem">
+    <InputGroup w="14rem" size="sm">
       <InputLeftElement pointerEvents="none" children={<SearchIcon color="gray.400" />} />
       <Input
         variant="outline"
@@ -270,7 +270,7 @@ export const SearchResourcesInput: React.FC<{
       />
       {value !== query && shouldSearch(query) && (
         <InputRightElement w="auto" px={2}>
-          <BeatLoader size={8} color={theme.colors.main} />
+          <BeatLoader size={7} color={theme.colors.main} />
         </InputRightElement>
       )}
     </InputGroup>
@@ -354,9 +354,10 @@ const LearningMaterialTypeFilter: React.FC<{
     });
   };
   return (
-    <Box w="16rem">
+    <Box w="14rem" fontSize="sm">
       <MultiSelect
         options={options}
+        className="domain_lm_type_multiselect"
         value={(selectedTypes || []).map(learningMaterialTypeToOption)}
         onChange={(selectedOptions: { value: LearningMaterialFilterType }[]) =>
           onChange(selectedOptions.map((o) => o.value))
