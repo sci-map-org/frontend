@@ -713,6 +713,7 @@ export type Domain = Topic & {
   key: Scalars['String'];
   description?: Maybe<Scalars['String']>;
   topicType: TopicType;
+  size?: Maybe<Scalars['Float']>;
   concepts?: Maybe<DomainConceptsResults>;
   conceptTotalCount?: Maybe<Scalars['Int']>;
   resources?: Maybe<DomainResourcesResults>;
@@ -810,6 +811,7 @@ export type Concept = Topic & {
   description?: Maybe<Scalars['String']>;
   topicType: TopicType;
   domain?: Maybe<Domain>;
+  size?: Maybe<Scalars['Float']>;
   coveredByResources?: Maybe<ConceptCoveredByResourcesResults>;
   known?: Maybe<KnownConcept>;
   referencingConcepts?: Maybe<Array<ConceptReferencesConceptItem>>;
@@ -879,6 +881,7 @@ export type LearningGoal = Topic & {
   progress?: Maybe<LearningGoalProgress>;
   createdBy?: Maybe<User>;
   domain?: Maybe<LearningGoalBelongsToDomain>;
+  size?: Maybe<Scalars['Float']>;
   requiredInGoals?: Maybe<Array<RequiredInGoalItem>>;
   requiredSubGoals?: Maybe<Array<SubGoalItem>>;
   dependsOnLearningGoals?: Maybe<Array<DependsOnGoalItem>>;
@@ -1231,6 +1234,7 @@ export type Topic = {
   key: Scalars['String'];
   description?: Maybe<Scalars['String']>;
   topicType: TopicType;
+  size?: Maybe<Scalars['Float']>;
 };
 
 export type SearchTopicsFilterOptions = {

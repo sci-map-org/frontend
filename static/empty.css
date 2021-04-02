@@ -26,10 +26,10 @@
   stroke-width: 1.5px;
 }
 
-.node {
-  /* cursor: move; */
+.nodeC {
+  cursor: pointer;
   /* fill: #ccc; */
-  opacity: 0.7;
+  /* opacity: 0.7; */
   stroke: #000;
   stroke-width: 1.5px;
 }

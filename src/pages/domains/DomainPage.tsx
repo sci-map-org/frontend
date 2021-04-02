@@ -41,6 +41,8 @@ export const getDomainByKeyDomainPage = gql`
         items {
           concept {
             ...ConceptData
+            topicType
+            size
             referencedByConcepts {
               concept {
                 _id
@@ -65,6 +67,8 @@ export const getDomainByKeyDomainPage = gql`
       subDomains {
         domain {
           ...DomainLinkData
+          topicType
+          size
         }
       }
       learningGoals {
@@ -323,7 +327,10 @@ const DomainPageHeader: React.FC<{
       <Flex direction="row" alignItems="center" w="40%">
         <SubTopicsMinimap
           isLoading={!!isLoading || !!resourcesLoading}
-          concepts={domain.concepts?.items.map((i) => i.concept) || []}
+          topics={[
+            ...(domain.concepts?.items.map((i) => i.concept) || []),
+            ...(domain.subDomains?.map((i) => i.domain) || []),
+          ]}
         />
       </Flex>
     </Flex>
