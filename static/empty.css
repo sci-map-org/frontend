@@ -26,12 +26,20 @@
   stroke-width: 1.5px;
 }
 
-.nodeC {
+.node:hover .nodeC {
+  stroke: rgb(30, 30, 30);
+}
+
+.node:hover .node_label {
+  fill: rgb(40, 40, 40);
+}
+
+.node:hover {
   cursor: pointer;
-  /* fill: #ccc; */
-  /* opacity: 0.7; */
-  stroke: #000;
-  stroke-width: 1.5px;
+}
+.nodeC {
+  stroke: rgb(80, 80, 80);
+  stroke-width: 1px;
 }
 
 .node.fixed {

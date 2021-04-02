@@ -165,22 +165,40 @@ const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps> = ({ t
     if (d3Container) {
       const colorMap: any = {};
 
-      const interp = d3.interpolateRainbow;
       nodes.forEach((node, i) => {
-        colorMap[node._id] = interp(i / nodes.length);
+        // 1
+        // colorMap[node._id] = d3.interpolateRainbow(i / nodes.length);
+        // 2
+        // colorMap[node._id] = d3.schemeSet3[i % 12];
+        // 3
+        // colorMap[node._id] = d3.schemeSet2[i % 8];
+        // 4
+        // colorMap[node._id] = d3.schemeSet1[i % 9];
+
+        colorMap[node._id] = d3.schemePastel1[i % 9];
+
+        //5
+        // colorMap[node._id] = d3.interpolateYlGnBu(i / nodes.length);
+
+        // colorMap[node._id] = d3.interpolateSpectral(i / nodes.length);
       });
       // for (const [i, node] of dag.idescendants().entries()) {
       // }
 
       const svg = d3.select(d3Container.current).attr('viewBox', [0, 0, pxWidth, pxHeight]);
+      const container = svg.append('g');
       // const link = svg.selectAll('.link').data(links).join('line').classed('link', true);
-      const node = svg
+      const node = container
         .selectAll('.node')
         .data(nodes)
         .join('g')
         // .attr('r', 12)
         // .attr('fill', (n) => colorMap[n.id])
-        .classed('node', true);
+        .classed('node', true)
+        .on('click', (event, n) => {
+          console.log(n);
+          n.topicType === TopicType.Domain && routerPushToPage(DomainPageInfo(n));
+        });
       // .join('g')
       // .enter()
       // .append('g')
@@ -188,22 +206,20 @@ const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps> = ({ t
       // // .attr('fill', (n) => colorMap[n.id])
       // .classed('node', true);
       // .classed('fixed', (d) => d.fx !== undefined);
-      const getNodeRadius = (n: MinimapTopicDataFragment) => 12 + (n.size > 1 ? Math.log(120) * 12 : 0);
+      const getNodeRadius = (n: MinimapTopicDataFragment) => 12 + (n.size > 1 ? Math.log(n.size) * 12 : 0);
       node
         .append('circle')
         .classed('nodeC', true)
         .attr('r', getNodeRadius)
         // .attr('r', (n) => 12 + (n.size  ? Math.log(n.size) * 12 : 0))
-        .attr('fill', (n) => colorMap[n._id])
-        .on('click', (event, n) => {
-          console.log(n);
-          n.topicType === TopicType.Domain && routerPushToPage(DomainPageInfo(n));
-        });
+        .attr('fill', (n) => colorMap[n._id]);
 
       node
         .append('text')
+        .classed('node_label', true)
         .attr('text-anchor', 'middle')
         .attr('dx', 0)
+
         .attr('dy', (d) => {
           // console.log(d.r);
           return getNodeRadius(d) + (d.topicType === TopicType.Domain ? 16 : 12);
@@ -242,9 +258,12 @@ const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps> = ({ t
             [pxWidth, pxHeight],
           ])
           .scaleExtent([0.6, 3])
-          .on('zoom', function zoomed({ transform }) {
-            node.attr('transform', transform);
+          .on('zoom', function ({ transform }) {
+            container.attr('transform', transform);
           })
+        // .on('zoom', function zoomed({ transform }) {
+        //   node.attr('transform', transform);
+        // })
       );
 
       // const drag = d3
@@ -272,7 +291,7 @@ const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps> = ({ t
           'charge',
           d3.forceManyBody().strength((d) => {
             console.log(d);
-            return d.size ? -8 * d.size * d.size : -8;
+            return d.size ? -(getNodeRadius(d) * getNodeRadius(d)) / 15 : -8;
           })
         )
         // .force(
