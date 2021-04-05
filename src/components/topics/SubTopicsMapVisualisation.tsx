@@ -12,7 +12,7 @@ import { theme } from '../../theme/theme';
 import { MinimapTopicDataFragment } from './SubTopicsMinimap.generated';
 
 type NodeElement = SimulationNodeDatum &
-  MinimapTopicDataFragment & {
+  MinimapTopicDataFragment['subTopic'] & {
     id: string;
   };
 export interface SubTopicsMapVisualisationProps {

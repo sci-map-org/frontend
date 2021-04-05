@@ -1,6 +1,7 @@
 import * as Types from '../../graphql/types';
 
 import { DomainDataFragment, DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
+import { SubTopicsMenuDataFragment } from '../../components/topics/SubTopicsMenu.generated';
 import { MinimapTopicDataFragment } from '../../components/topics/SubTopicsMinimap.generated';
 import { LearningGoalCardDataFragment } from '../../components/learning_goals/cards/LearningGoalCard.generated';
 import * as Operations from './DomainPage';
@@ -16,6 +17,7 @@ export type GetDomainByKeyDomainPageQuery = (
     { __typename?: 'Domain' }
     & { subTopics?: Types.Maybe<Array<(
       { __typename?: 'TopicIsSubTopicOfTopic' }
+      & SubTopicsMenuDataFragment
       & MinimapTopicDataFragment
     )>>, parentTopics?: Types.Maybe<Array<(
       { __typename?: 'TopicIsSubTopicOfTopic' }

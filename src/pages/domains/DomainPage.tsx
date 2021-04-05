@@ -4,7 +4,6 @@ import { Box, BoxProps, Flex, Heading, IconButton, Image, Skeleton, Stack, Text 
 import gql from 'graphql-tag';
 import { useEffect, useState } from 'react';
 import { RoleAccess } from '../../components/auth/RoleAccess';
-import { DomainConceptList } from '../../components/concepts/DomainConceptList';
 import { BestXPagesLinks } from '../../components/domains/BestXPagesLinks';
 import { DomainLearningGoals } from '../../components/domains/DomainLearningGoals';
 import { DomainUserHistory } from '../../components/domains/DomainUserHistory';
@@ -33,6 +32,7 @@ import {
 } from '../RoutesPageInfos';
 import { GetDomainByKeyDomainPageQuery, useGetDomainByKeyDomainPageQuery } from './DomainPage.generated';
 import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
+import { SubTopicsMenu, SubTopicsMenuData } from '../../components/topics/SubTopicsMenu';
 
 export const getDomainByKeyDomainPage = gql`
   query getDomainByKeyDomainPage($key: String!) {
@@ -61,6 +61,7 @@ export const getDomainByKeyDomainPage = gql`
       #   }
       # }
       subTopics(options: { sorting: { type: index, direction: ASC } }) {
+        ...SubTopicsMenuData
         ...MinimapTopicData
         # subTopic {
         #   ... on Concept {
@@ -124,9 +125,10 @@ export const getDomainByKeyDomainPage = gql`
     }
   }
   ${DomainData}
+  ${MinimapTopicData}
   ${DomainLinkData}
   ${LearningGoalCardData}
-  ${MinimapTopicData}
+  ${SubTopicsMenuData}
 `;
 
 const placeholderDomainData: GetDomainByKeyDomainPageQuery['getDomainByKey'] = {
@@ -224,9 +226,10 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
             <RoleAccess accessRule="loggedInUser">
               <DomainUserHistory maxH={{ md: '210px' }} domainKey={domainKey} />
             </RoleAccess>
-            <DomainConceptList
+            <SubTopicsMenu
+              topicId={domain._id}
               minWidth="260px"
-              domain={domain}
+              subTopics={domain.subTopics || []}
               isLoading={loading}
               onConceptToggled={() => refetchLearningMaterials()}
             />

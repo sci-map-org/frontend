@@ -23,10 +23,8 @@ import { NotFoundPage } from '../../NotFoundPage';
 import { ConceptListPageInfo, ConceptPageInfo, DomainPageInfo } from '../../RoutesPageInfos';
 import {
   GetConceptConceptPageQuery,
-  useAddConceptBelongsToConceptMutation,
   useAddConceptReferencesConceptMutation,
   useGetConceptConceptPageQuery,
-  useRemoveConceptBelongsToConceptMutation,
   useRemoveConceptReferencesConceptMutation,
 } from './ConceptPage.generated';
 
@@ -195,11 +193,11 @@ export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = 
   const concept = data?.getDomainConceptByKey || conceptPlaceholder;
   const domainConcepts = concept.domain?.concepts?.items.map((item) => item.concept) || [];
   const referencingConcepts = concept.referencingConcepts?.map((item) => item.concept) || [];
-  const subConcepts = concept.subConcepts?.map((item) => item.concept) || [];
+  // const subConcepts = concept.subConcepts?.map((item) => item.concept) || [];
   const [addConceptReferencesConceptMutation] = useAddConceptReferencesConceptMutation();
   const [removeConceptReferencesConcept] = useRemoveConceptReferencesConceptMutation();
-  const [addConceptBelongsToConceptMutation] = useAddConceptBelongsToConceptMutation();
-  const [removeConceptBelongsToConceptMutation] = useRemoveConceptBelongsToConceptMutation();
+  // const [addConceptBelongsToConceptMutation] = useAddConceptBelongsToConceptMutation();
+  // const [removeConceptBelongsToConceptMutation] = useRemoveConceptBelongsToConceptMutation();
   const { currentUser } = useCurrentUser();
   const [setConceptKnown] = useSetConceptsKnownMutation();
   const [setConceptUnknown] = useSetConceptsUnknownMutation();
@@ -299,7 +297,7 @@ export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = 
               }
             />
           </Box>
-          <Box mt={5}>
+          {/* <Box mt={5}>
             <DomainConceptsPicker
               title="Sub Concepts"
               domain={concept.domain}
@@ -318,7 +316,7 @@ export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = 
                 })
               }
             />
-          </Box>
+          </Box> */}
         </RoleAccess>
       </Box>
     </PageLayout>

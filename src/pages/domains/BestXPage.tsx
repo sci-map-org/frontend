@@ -1,7 +1,7 @@
 import { Box, Flex, Heading, Stack } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useState } from 'react';
-import { DomainConceptList } from '../../components/concepts/DomainConceptList';
+import { SubTopicsMenu } from '../../components/topics/SubTopicsMenu';
 import { BestXPagesLinks } from '../../components/domains/BestXPagesLinks';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { LearningPathPreviewCardData } from '../../components/learning_paths/LearningPathPreviewCard';
@@ -109,7 +109,7 @@ export const BestXPage: React.FC<{ domainKey: string; x: ResourceType[] }> = ({ 
           />
         </Flex>
         <Stack spacing={5} direction="column">
-          <DomainConceptList minWidth="260px" domain={domain} />
+          <SubTopicsMenu minWidth="260px" domain={domain} />
           <BestXPagesLinks domainKey={domain.key} />
         </Stack>
       </Stack>
