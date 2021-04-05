@@ -15,7 +15,7 @@ import { LearningPathPreviewCardDataFragment } from '../../components/learning_p
 import { DomainIcon } from '../../components/lib/icons/DomainIcon';
 import { LearningPathIcon } from '../../components/lib/icons/LearningPathIcon';
 import { ResourceIcon } from '../../components/lib/icons/ResourceIcon';
-import { SubTopicsMinimap } from '../../components/topics/SubTopicsMinimap';
+import { SubTopicsMinimap, MinimapTopicData } from '../../components/topics/SubTopicsMinimap';
 import { PageButtonLink, PageLink } from '../../components/navigation/InternalLink';
 import { DomainRecommendedLearningMaterials } from '../../components/resources/DomainRecommendedLearningMaterials';
 import { useGetDomainRecommendedLearningMaterialsQuery } from '../../components/resources/DomainRecommendedLearningMaterials.generated';
@@ -32,45 +32,89 @@ import {
   NewLearningPathPageInfo,
 } from '../RoutesPageInfos';
 import { GetDomainByKeyDomainPageQuery, useGetDomainByKeyDomainPageQuery } from './DomainPage.generated';
+import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
 
 export const getDomainByKeyDomainPage = gql`
   query getDomainByKeyDomainPage($key: String!) {
     getDomainByKey(key: $key) {
       ...DomainData
-      concepts(options: { sorting: { entity: relationship, field: index, direction: ASC } }) {
-        items {
-          concept {
-            ...ConceptData
-            topicType
-            size
-            referencedByConcepts {
-              concept {
-                _id
-              }
-            }
-            parentConcepts {
-              concept {
-                _id
-              }
-            }
-          }
-          relationship {
-            index
-          }
-        }
+      # concepts(options: { sorting: { entity: relationship, field: index, direction: ASC } }) {
+      #   items {
+      #     concept {
+      #       ...ConceptData
+      #       topicType
+      #       size
+      #       referencedByConcepts {
+      #         concept {
+      #           _id
+      #         }
+      #       }
+      #       parentConcepts {
+      #         concept {
+      #           _id
+      #         }
+      #       }
+      #     }
+      #     relationship {
+      #       index
+      #     }
+      #   }
+      # }
+      subTopics(options: { sorting: { type: index, direction: ASC } }) {
+        ...MinimapTopicData
+        # subTopic {
+        #   ... on Concept {
+        #     _id
+        #     key
+        #     topicType
+        #     name
+        #     size
+        #   }
+        #   ... on Domain {
+        #     _id
+        #     key
+        #     topicType
+        #     name
+        #     size
+        #   }
+        # ... on Concept {
+        #   ...ConceptData
+        #   topicType
+        #   size
+        # referencedByConcepts {
+        #   concept {
+        #     _id
+        #   }
+        # }
+        # parentConcepts {
+        #   concept {
+        #     _id
+        #   }
+        # }
+        # }
+        # relationship {
+        #   index
+        # }
+        # }
       }
-      parentDomains {
-        domain {
+      parentTopics(options: { sorting: { type: index, direction: ASC } }) {
+        index
+        parentTopic {
           ...DomainLinkData
         }
       }
-      subDomains {
-        domain {
-          ...DomainLinkData
-          topicType
-          size
-        }
-      }
+      # parentDomains {
+      #   domain {
+      #     ...DomainLinkData
+      #   }
+      # }
+      # subDomains {
+      #   domain {
+      #     ...DomainLinkData
+      #     topicType
+      #     size
+      #   }
+      # }
       learningGoals {
         learningGoal {
           ...LearningGoalCardData
@@ -81,20 +125,20 @@ export const getDomainByKeyDomainPage = gql`
   }
   ${DomainData}
   ${DomainLinkData}
-  ${ConceptData}
   ${LearningGoalCardData}
+  ${MinimapTopicData}
 `;
 
 const placeholderDomainData: GetDomainByKeyDomainPageQuery['getDomainByKey'] = {
   ...generateDomainData(),
-  concepts: {
-    items: [...Array(12)].map(() => ({
-      concept: { ...generateConceptData(), topicType: TopicType.Concept },
-      relationship: {
-        index: 0,
-      },
-    })),
-  },
+  // concepts: {
+  //   items: [...Array(12)].map(() => ({
+  //     concept: { ...generateConceptData(), topicType: TopicType.Concept },
+  //     relationship: {
+  //       index: 0,
+  //     },
+  //   })),
+  // },
 };
 
 export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
@@ -186,7 +230,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
               isLoading={loading}
               onConceptToggled={() => refetchLearningMaterials()}
             />
-            {domain.subDomains?.length && (
+            {/* {domain.subDomains?.length && (
               <Flex
                 direction="column"
                 alignItems="stretch"
@@ -209,7 +253,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
                   ))}
                 </Stack>
               </Flex>
-            )}
+            )} */}
             <BestXPagesLinks domainKey={domain.key} />
           </Stack>
         </Flex>
@@ -253,7 +297,13 @@ const DomainPageHeader: React.FC<{
           opacity={0.6}
           h={{ base: '300px', md: '500px' }}
         />
-        <ParentDomainsNavigationBlock domains={(domain.parentDomains || []).map(({ domain }) => domain)} />
+        <ParentDomainsNavigationBlock
+          domains={
+            (domain.parentTopics || [])
+              .filter(({ parentTopic }) => parentTopic.__typename === 'Domain')
+              .map(({ parentTopic }) => parentTopic) as DomainLinkDataFragment[] // TODO
+          }
+        />
 
         <Stack spacing={0} pt={10} zIndex={2} alignItems="flex-start">
           <Stack direction="row" spacing={1} alignItems="center" color="gray.800" mb={1}>
@@ -292,7 +342,7 @@ const DomainPageHeader: React.FC<{
                 pageInfo={ConceptListPageInfo(domain)}
                 isDisabled={isLoading}
               >
-                {domain.concepts?.items.length ? domain.concepts?.items.length + ' SubTopics ' : 'No SubTopics yet'}
+                {domain.subTopics?.length ? domain.subTopics.length + ' SubTopics ' : 'No SubTopics yet'}
               </PageLink>
             </Stack>
           </Skeleton>
@@ -344,10 +394,7 @@ const DomainPageHeader: React.FC<{
         <SubTopicsMinimap
           domainKey={domain.key}
           isLoading={!!isLoading || !!resourcesLoading}
-          topics={[
-            ...(domain.concepts?.items.map((i) => i.concept) || []),
-            ...(domain.subDomains?.map((i) => i.domain) || []),
-          ]}
+          subTopics={domain.subTopics || []}
         />
       </Flex>
     </Flex>

@@ -26,16 +26,16 @@ export const getDomainByKeyManageDomainPage = gql`
   query getDomainByKeyManageDomainPage($key: String!) {
     getDomainByKey(key: $key) {
       ...DomainData
-      subDomains {
-        domain {
-          ...DomainData
-        }
-      }
-      parentDomains {
-        domain {
-          ...DomainData
-        }
-      }
+      # subDomains {
+      #   domain {
+      #     ...DomainData
+      #   }
+      # }
+      # parentDomains {
+      #   domain {
+      #     ...DomainData
+      #   }
+      # }
     }
   }
   ${DomainData}

@@ -21,12 +21,6 @@ export type GetConceptConceptPageQuery = (
         { __typename?: 'Concept' }
         & ConceptDataFragment
       ) }
-    )>>, subConcepts?: Types.Maybe<Array<(
-      { __typename?: 'ConceptBelongsToConceptItem' }
-      & { concept: (
-        { __typename?: 'Concept' }
-        & ConceptDataFragment
-      ) }
     )>>, coveredByResources?: Types.Maybe<(
       { __typename?: 'ConceptCoveredByResourcesResults' }
       & { items: Array<(
@@ -119,74 +113,6 @@ export type RemoveConceptReferencesConceptMutation = (
   ) }
 );
 
-export type AddConceptBelongsToConceptMutationVariables = Types.Exact<{
-  parentConceptId: Types.Scalars['String'];
-  subConceptId: Types.Scalars['String'];
-}>;
-
-
-export type AddConceptBelongsToConceptMutation = (
-  { __typename?: 'Mutation' }
-  & { addConceptBelongsToConcept: (
-    { __typename?: 'UpdateConceptBelongsToConceptResult' }
-    & { parentConcept: (
-      { __typename?: 'Concept' }
-      & Pick<Types.Concept, '_id'>
-      & { subConcepts?: Types.Maybe<Array<(
-        { __typename?: 'ConceptBelongsToConceptItem' }
-        & { concept: (
-          { __typename?: 'Concept' }
-          & Pick<Types.Concept, '_id'>
-        ) }
-      )>> }
-    ), subConcept: (
-      { __typename?: 'Concept' }
-      & Pick<Types.Concept, '_id'>
-      & { parentConcepts?: Types.Maybe<Array<(
-        { __typename?: 'ConceptBelongsToConceptItem' }
-        & { concept: (
-          { __typename?: 'Concept' }
-          & Pick<Types.Concept, '_id'>
-        ) }
-      )>> }
-    ) }
-  ) }
-);
-
-export type RemoveConceptBelongsToConceptMutationVariables = Types.Exact<{
-  parentConceptId: Types.Scalars['String'];
-  subConceptId: Types.Scalars['String'];
-}>;
-
-
-export type RemoveConceptBelongsToConceptMutation = (
-  { __typename?: 'Mutation' }
-  & { removeConceptBelongsToConcept: (
-    { __typename?: 'UpdateConceptBelongsToConceptResult' }
-    & { parentConcept: (
-      { __typename?: 'Concept' }
-      & Pick<Types.Concept, '_id'>
-      & { subConcepts?: Types.Maybe<Array<(
-        { __typename?: 'ConceptBelongsToConceptItem' }
-        & { concept: (
-          { __typename?: 'Concept' }
-          & Pick<Types.Concept, '_id'>
-        ) }
-      )>> }
-    ), subConcept: (
-      { __typename?: 'Concept' }
-      & Pick<Types.Concept, '_id'>
-      & { parentConcepts?: Types.Maybe<Array<(
-        { __typename?: 'ConceptBelongsToConceptItem' }
-        & { concept: (
-          { __typename?: 'Concept' }
-          & Pick<Types.Concept, '_id'>
-        ) }
-      )>> }
-    ) }
-  ) }
-);
-
 
 
 /**
@@ -267,55 +193,3 @@ export function useRemoveConceptReferencesConceptMutation(baseOptions?: Apollo.M
 export type RemoveConceptReferencesConceptMutationHookResult = ReturnType<typeof useRemoveConceptReferencesConceptMutation>;
 export type RemoveConceptReferencesConceptMutationResult = Apollo.MutationResult<RemoveConceptReferencesConceptMutation>;
 export type RemoveConceptReferencesConceptMutationOptions = Apollo.BaseMutationOptions<RemoveConceptReferencesConceptMutation, RemoveConceptReferencesConceptMutationVariables>;
-export type AddConceptBelongsToConceptMutationFn = Apollo.MutationFunction<AddConceptBelongsToConceptMutation, AddConceptBelongsToConceptMutationVariables>;
-
-/**
- * __useAddConceptBelongsToConceptMutation__
- *
- * To run a mutation, you first call `useAddConceptBelongsToConceptMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAddConceptBelongsToConceptMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [addConceptBelongsToConceptMutation, { data, loading, error }] = useAddConceptBelongsToConceptMutation({
- *   variables: {
- *      parentConceptId: // value for 'parentConceptId'
- *      subConceptId: // value for 'subConceptId'
- *   },
- * });
- */
-export function useAddConceptBelongsToConceptMutation(baseOptions?: Apollo.MutationHookOptions<AddConceptBelongsToConceptMutation, AddConceptBelongsToConceptMutationVariables>) {
-        return Apollo.useMutation<AddConceptBelongsToConceptMutation, AddConceptBelongsToConceptMutationVariables>(Operations.addConceptBelongsToConcept, baseOptions);
-      }
-export type AddConceptBelongsToConceptMutationHookResult = ReturnType<typeof useAddConceptBelongsToConceptMutation>;
-export type AddConceptBelongsToConceptMutationResult = Apollo.MutationResult<AddConceptBelongsToConceptMutation>;
-export type AddConceptBelongsToConceptMutationOptions = Apollo.BaseMutationOptions<AddConceptBelongsToConceptMutation, AddConceptBelongsToConceptMutationVariables>;
-export type RemoveConceptBelongsToConceptMutationFn = Apollo.MutationFunction<RemoveConceptBelongsToConceptMutation, RemoveConceptBelongsToConceptMutationVariables>;
-
-/**
- * __useRemoveConceptBelongsToConceptMutation__
- *
- * To run a mutation, you first call `useRemoveConceptBelongsToConceptMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRemoveConceptBelongsToConceptMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [removeConceptBelongsToConceptMutation, { data, loading, error }] = useRemoveConceptBelongsToConceptMutation({
- *   variables: {
- *      parentConceptId: // value for 'parentConceptId'
- *      subConceptId: // value for 'subConceptId'
- *   },
- * });
- */
-export function useRemoveConceptBelongsToConceptMutation(baseOptions?: Apollo.MutationHookOptions<RemoveConceptBelongsToConceptMutation, RemoveConceptBelongsToConceptMutationVariables>) {
-        return Apollo.useMutation<RemoveConceptBelongsToConceptMutation, RemoveConceptBelongsToConceptMutationVariables>(Operations.removeConceptBelongsToConcept, baseOptions);
-      }
-export type RemoveConceptBelongsToConceptMutationHookResult = ReturnType<typeof useRemoveConceptBelongsToConceptMutation>;
-export type RemoveConceptBelongsToConceptMutationResult = Apollo.MutationResult<RemoveConceptBelongsToConceptMutation>;
-export type RemoveConceptBelongsToConceptMutationOptions = Apollo.BaseMutationOptions<RemoveConceptBelongsToConceptMutation, RemoveConceptBelongsToConceptMutationVariables>;

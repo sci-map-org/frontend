@@ -17,13 +17,13 @@ type NodeElement = SimulationNodeDatum &
   };
 export interface SubTopicsMapVisualisationProps {
   domainKey: string;
-  topics: MinimapTopicDataFragment[];
+  subTopics: MinimapTopicDataFragment[];
   pxWidth: number;
   pxHeight: number;
 }
 export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps> = ({
   domainKey,
-  topics,
+  subTopics,
   pxWidth,
   pxHeight,
 }) => {
@@ -31,8 +31,8 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
 
   const nodes: NodeElement[] = useMemo(
     () =>
-      topics.map((topic) => {
-        return { id: topic._id, ...topic };
+      subTopics.map(({ subTopic }) => {
+        return { id: subTopic._id, ...subTopic };
       }),
     []
   );

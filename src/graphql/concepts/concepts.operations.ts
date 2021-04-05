@@ -2,27 +2,27 @@ import { ConceptData } from './concepts.fragments';
 import gql from 'graphql-tag';
 import { ResourcePreviewData } from '../resources/resources.fragments';
 
-export const addConceptToDomain = gql`
-  mutation addConceptToDomain($domainId: String!, $payload: AddConceptToDomainPayload!) {
-    addConceptToDomain(domainId: $domainId, payload: $payload) {
-      ...ConceptData
-      domain {
-        _id
-        concepts(options: { sorting: { entity: relationship, field: index, direction: ASC } }) {
-          items {
-            concept {
-              _id
-            }
-            relationship {
-              index
-            }
-          }
-        }
-      }
-    }
-  }
-  ${ConceptData}
-`;
+// export const addConceptToDomain = gql`
+//   mutation addConceptToDomain($domainId: String!, $payload: AddConceptToDomainPayload!) {
+//     addConceptToDomain(domainId: $domainId, payload: $payload) {
+//       ...ConceptData
+//       domain {
+//         _id
+//         concepts(options: { sorting: { entity: relationship, field: index, direction: ASC } }) {
+//           items {
+//             concept {
+//               _id
+//             }
+//             relationship {
+//               index
+//             }
+//           }
+//         }
+//       }
+//     }
+//   }
+//   ${ConceptData}
+// `;
 
 export const updateConcept = gql`
   mutation updateConcept($_id: String!, $payload: UpdateConceptPayload!) {

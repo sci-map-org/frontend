@@ -4,37 +4,6 @@ import { ConceptDataFragment } from './concepts.fragments.generated';
 import { ResourcePreviewDataFragment } from '../resources/resources.fragments.generated';
 import * as Operations from './concepts.operations';
 import * as Apollo from '@apollo/client';
-export type AddConceptToDomainMutationVariables = Types.Exact<{
-  domainId: Types.Scalars['String'];
-  payload: Types.AddConceptToDomainPayload;
-}>;
-
-
-export type AddConceptToDomainMutation = (
-  { __typename?: 'Mutation' }
-  & { addConceptToDomain: (
-    { __typename?: 'Concept' }
-    & { domain?: Types.Maybe<(
-      { __typename?: 'Domain' }
-      & Pick<Types.Domain, '_id'>
-      & { concepts?: Types.Maybe<(
-        { __typename?: 'DomainConceptsResults' }
-        & { items: Array<(
-          { __typename?: 'DomainConceptsItem' }
-          & { concept: (
-            { __typename?: 'Concept' }
-            & Pick<Types.Concept, '_id'>
-          ), relationship: (
-            { __typename?: 'ConceptBelongsToDomain' }
-            & Pick<Types.ConceptBelongsToDomain, 'index'>
-          ) }
-        )> }
-      )> }
-    )> }
-    & ConceptDataFragment
-  ) }
-);
-
 export type UpdateConceptMutationVariables = Types.Exact<{
   _id: Types.Scalars['String'];
   payload: Types.UpdateConceptPayload;
@@ -132,32 +101,6 @@ export type GetDomainConceptListQuery = (
 );
 
 
-export type AddConceptToDomainMutationFn = Apollo.MutationFunction<AddConceptToDomainMutation, AddConceptToDomainMutationVariables>;
-
-/**
- * __useAddConceptToDomainMutation__
- *
- * To run a mutation, you first call `useAddConceptToDomainMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAddConceptToDomainMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [addConceptToDomainMutation, { data, loading, error }] = useAddConceptToDomainMutation({
- *   variables: {
- *      domainId: // value for 'domainId'
- *      payload: // value for 'payload'
- *   },
- * });
- */
-export function useAddConceptToDomainMutation(baseOptions?: Apollo.MutationHookOptions<AddConceptToDomainMutation, AddConceptToDomainMutationVariables>) {
-        return Apollo.useMutation<AddConceptToDomainMutation, AddConceptToDomainMutationVariables>(Operations.addConceptToDomain, baseOptions);
-      }
-export type AddConceptToDomainMutationHookResult = ReturnType<typeof useAddConceptToDomainMutation>;
-export type AddConceptToDomainMutationResult = Apollo.MutationResult<AddConceptToDomainMutation>;
-export type AddConceptToDomainMutationOptions = Apollo.BaseMutationOptions<AddConceptToDomainMutation, AddConceptToDomainMutationVariables>;
 export type UpdateConceptMutationFn = Apollo.MutationFunction<UpdateConceptMutation, UpdateConceptMutationVariables>;
 
 /**

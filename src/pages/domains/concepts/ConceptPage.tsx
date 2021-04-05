@@ -63,11 +63,11 @@ export const getConceptConceptPage = gql`
           ...ConceptData
         }
       }
-      subConcepts {
-        concept {
-          ...ConceptData
-        }
-      }
+      # subConcepts {
+      #   concept {
+      #     ...ConceptData
+      #   }
+      # }
       coveredByResources(options: {}) {
         items {
           ...ResourcePreviewData
@@ -136,51 +136,51 @@ export const removeConceptReferencesConcept = gql`
   }
 `;
 
-export const addConceptBelongsToConcept = gql`
-  mutation addConceptBelongsToConcept($parentConceptId: String!, $subConceptId: String!) {
-    addConceptBelongsToConcept(parentConceptId: $parentConceptId, subConceptId: $subConceptId) {
-      parentConcept {
-        _id
-        subConcepts {
-          concept {
-            _id
-          }
-        }
-      }
-      subConcept {
-        _id
-        parentConcepts {
-          concept {
-            _id
-          }
-        }
-      }
-    }
-  }
-`;
+// export const addConceptBelongsToConcept = gql`
+//   mutation addConceptBelongsToConcept($parentConceptId: String!, $subConceptId: String!) {
+//     addConceptBelongsToConcept(parentConceptId: $parentConceptId, subConceptId: $subConceptId) {
+//       parentConcept {
+//         _id
+//         subConcepts {
+//           concept {
+//             _id
+//           }
+//         }
+//       }
+//       subConcept {
+//         _id
+//         parentConcepts {
+//           concept {
+//             _id
+//           }
+//         }
+//       }
+//     }
+//   }
+// `;
 
-export const removeConceptBelongsToConcept = gql`
-  mutation removeConceptBelongsToConcept($parentConceptId: String!, $subConceptId: String!) {
-    removeConceptBelongsToConcept(parentConceptId: $parentConceptId, subConceptId: $subConceptId) {
-      parentConcept {
-        _id
-        subConcepts {
-          concept {
-            _id
-          }
-        }
-      }
-      subConcept {
-        _id
-        parentConcepts {
-          concept {
-            _id
-          }
-        }
-      }
-    }
-  }
-`;
+// export const removeConceptBelongsToConcept = gql`
+//   mutation removeConceptBelongsToConcept($parentConceptId: String!, $subConceptId: String!) {
+//     removeConceptBelongsToConcept(parentConceptId: $parentConceptId, subConceptId: $subConceptId) {
+//       parentConcept {
+//         _id
+//         subConcepts {
+//           concept {
+//             _id
+//           }
+//         }
+//       }
+//       subConcept {
+//         _id
+//         parentConcepts {
+//           concept {
+//             _id
+//           }
+//         }
+//       }
+//     }
+//   }
+// `;
 
 const conceptPlaceholder: GetConceptConceptPageQuery['getDomainConceptByKey'] = {
   ...generateConceptData(),

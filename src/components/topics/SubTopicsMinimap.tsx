@@ -22,25 +22,37 @@ const SubTopicsMapVisualisation = dynamic<SubTopicsMapVisualisationProps>(
 );
 
 export const MinimapTopicData = gql`
-  fragment MinimapTopicData on Topic {
-    _id
-    key
-    topicType
-    name
-    size
+  fragment MinimapTopicData on TopicIsSubTopicOfTopic {
+    index
+    subTopic {
+      ... on Concept {
+        _id
+        key
+        topicType
+        name
+        size
+      }
+      ... on Domain {
+        _id
+        key
+        topicType
+        name
+        size
+      }
+    }
   }
 `;
 interface SubTopicsMinimapProps {
   domainKey: string;
   isLoading: boolean;
-  topics: MinimapTopicDataFragment[];
+  subTopics: MinimapTopicDataFragment[];
   pxWidth?: number;
   pxHeight?: number;
 }
 
 export const SubTopicsMinimap: React.FC<SubTopicsMinimapProps> = ({
   domainKey,
-  topics,
+  subTopics,
   isLoading,
   pxWidth = 300,
   pxHeight = 200,
@@ -65,7 +77,7 @@ export const SubTopicsMinimap: React.FC<SubTopicsMinimapProps> = ({
           <PuffLoader size={Math.floor(pxWidth / 3)} color={theme.colors.blue[500]} />
         </Center>
       ) : (
-        <SubTopicsMapVisualisation domainKey={domainKey} topics={topics} pxWidth={pxWidth} pxHeight={pxHeight} />
+        <SubTopicsMapVisualisation domainKey={domainKey} subTopics={subTopics} pxWidth={pxWidth} pxHeight={pxHeight} />
       )}
       <IconButton
         position="absolute"
@@ -85,7 +97,7 @@ export const SubTopicsMinimap: React.FC<SubTopicsMinimapProps> = ({
           <ModalHeader>SubTopics Map</ModalHeader>
           <ModalCloseButton />
           <ModalBody justifyContent="stretch" alignItems="stretch">
-            <SubTopicsMapModalContent domainKey={domainKey} topics={topics} />
+            <SubTopicsMapModalContent domainKey={domainKey} subTopics={subTopics} />
           </ModalBody>
         </ModalContent>
       </Modal>
@@ -93,8 +105,8 @@ export const SubTopicsMinimap: React.FC<SubTopicsMinimapProps> = ({
   );
 };
 
-const SubTopicsMapModalContent: React.FC<{ topics: MinimapTopicDataFragment[]; domainKey: string }> = ({
-  topics,
+const SubTopicsMapModalContent: React.FC<{ subTopics: MinimapTopicDataFragment[]; domainKey: string }> = ({
+  subTopics,
   domainKey,
 }) => {
   const modalContainerRef = useRef<HTMLDivElement>(null);
@@ -114,7 +126,7 @@ const SubTopicsMapModalContent: React.FC<{ topics: MinimapTopicDataFragment[]; d
       {modalContainerSize && (
         <SubTopicsMapVisualisation
           domainKey={domainKey}
-          topics={topics}
+          subTopics={subTopics}
           pxWidth={modalContainerSize.width}
           pxHeight={modalContainerSize.width}
         />

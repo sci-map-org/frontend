@@ -1,7 +1,7 @@
 import * as Types from '../../graphql/types';
 
 import { DomainDataFragment, DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
-import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
+import { MinimapTopicDataFragment } from '../../components/topics/SubTopicsMinimap.generated';
 import { LearningGoalCardDataFragment } from '../../components/learning_goals/cards/LearningGoalCard.generated';
 import * as Operations from './DomainPage';
 import * as Apollo from '@apollo/client';
@@ -14,45 +14,16 @@ export type GetDomainByKeyDomainPageQuery = (
   { __typename?: 'Query' }
   & { getDomainByKey: (
     { __typename?: 'Domain' }
-    & { concepts?: Types.Maybe<(
-      { __typename?: 'DomainConceptsResults' }
-      & { items: Array<(
-        { __typename?: 'DomainConceptsItem' }
-        & { concept: (
-          { __typename?: 'Concept' }
-          & Pick<Types.Concept, 'topicType' | 'size'>
-          & { referencedByConcepts?: Types.Maybe<Array<(
-            { __typename?: 'ConceptReferencesConceptItem' }
-            & { concept: (
-              { __typename?: 'Concept' }
-              & Pick<Types.Concept, '_id'>
-            ) }
-          )>>, parentConcepts?: Types.Maybe<Array<(
-            { __typename?: 'ConceptBelongsToConceptItem' }
-            & { concept: (
-              { __typename?: 'Concept' }
-              & Pick<Types.Concept, '_id'>
-            ) }
-          )>> }
-          & ConceptDataFragment
-        ), relationship: (
-          { __typename?: 'ConceptBelongsToDomain' }
-          & Pick<Types.ConceptBelongsToDomain, 'index'>
-        ) }
-      )> }
-    )>, parentDomains?: Types.Maybe<Array<(
-      { __typename?: 'DomainBelongsToDomainItem' }
-      & { domain: (
+    & { subTopics?: Types.Maybe<Array<(
+      { __typename?: 'TopicIsSubTopicOfTopic' }
+      & MinimapTopicDataFragment
+    )>>, parentTopics?: Types.Maybe<Array<(
+      { __typename?: 'TopicIsSubTopicOfTopic' }
+      & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
+      & { parentTopic: (
         { __typename?: 'Domain' }
         & DomainLinkDataFragment
-      ) }
-    )>>, subDomains?: Types.Maybe<Array<(
-      { __typename?: 'DomainBelongsToDomainItem' }
-      & { domain: (
-        { __typename?: 'Domain' }
-        & Pick<Types.Domain, 'topicType' | 'size'>
-        & DomainLinkDataFragment
-      ) }
+      ) | { __typename?: 'Concept' } | { __typename?: 'LearningGoal' } | { __typename?: 'Topic' } }
     )>>, learningGoals?: Types.Maybe<Array<(
       { __typename?: 'LearningGoalBelongsToDomain' }
       & Pick<Types.LearningGoalBelongsToDomain, 'index'>

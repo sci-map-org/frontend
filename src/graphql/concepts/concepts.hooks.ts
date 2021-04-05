@@ -5,15 +5,15 @@ import {
   useUpdateConceptMutation,
 } from './concepts.operations.generated';
 
-export const useAddConceptToDomain = () => {
-  const [addConceptToDomain, { loading, error, data }] = useAddConceptToDomainMutation();
-  return {
-    addConceptToDomain,
-    loading,
-    error,
-    createdConcept: data && data.addConceptToDomain,
-  };
-};
+// export const useAddConceptToDomain = () => {
+//   const [addConceptToDomain, { loading, error, data }] = useAddConceptToDomainMutation();
+//   return {
+//     addConceptToDomain,
+//     loading,
+//     error,
+//     createdConcept: data && data.addConceptToDomain,
+//   };
+// };
 
 export const useUpdateConcept = () => {
   const [updateConcept, { loading, error }] = useUpdateConceptMutation();

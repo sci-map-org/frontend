@@ -41,11 +41,11 @@ export const getBestXPageData = gql`
                 _id
               }
             }
-            subConcepts {
-              concept {
-                _id
-              }
-            }
+            # subConcepts {
+            #   concept {
+            #     _id
+            #   }
+            # }
           }
           relationship {
             index

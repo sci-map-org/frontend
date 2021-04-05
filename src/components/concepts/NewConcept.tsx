@@ -9,11 +9,11 @@ import {
   ModalOverlay,
   Stack,
   Text,
-  Textarea
+  Textarea,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
-import { useAddConceptToDomain } from '../../graphql/concepts/concepts.hooks';
+// import { useAddConceptToDomain } from '../../graphql/concepts/concepts.hooks';
 import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { AddConceptToDomainPayload } from '../../graphql/types';
 import { generateUrlKey } from '../../services/url.service';
@@ -91,18 +91,18 @@ interface NewConceptProps extends Omit<NewConceptFormProps, 'onCreate'> {
   onCreated?: (createdConcept: ConceptDataFragment) => void;
 }
 export const NewConcept: React.FC<NewConceptProps> = ({ onCreated, ...props }) => {
-  const { addConceptToDomain } = useAddConceptToDomain();
+  // const { addConceptToDomain } = useAddConceptToDomain();
   return (
     <NewConceptForm
       onCreate={async (domainId, payload) => {
-        const { data } = await addConceptToDomain({
-          variables: {
-            domainId,
-            payload,
-          },
-        });
-        if (!data) throw new Error('no data returned');
-        !!onCreated && onCreated(data.addConceptToDomain);
+        // const { data } = await addConceptToDomain({
+        //   variables: {
+        //     domainId,
+        //     payload,
+        //   },
+        // });
+        // if (!data) throw new Error('no data returned');
+        // !!onCreated && onCreated(data.addConceptToDomain);
       }}
       {...props}
     />

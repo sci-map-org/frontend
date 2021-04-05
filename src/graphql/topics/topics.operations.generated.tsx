@@ -23,6 +23,9 @@ export type CheckTopicKeyAvailabilityQuery = (
     ) | (
       { __typename?: 'LearningGoal' }
       & Pick<Types.LearningGoal, '_id' | 'name'>
+    ) | (
+      { __typename?: 'Topic' }
+      & Pick<Types.Topic, '_id' | 'name'>
     )> }
   ) }
 );

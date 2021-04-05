@@ -12,19 +12,6 @@ export type GetDomainByKeyManageDomainPageQuery = (
   { __typename?: 'Query' }
   & { getDomainByKey: (
     { __typename?: 'Domain' }
-    & { subDomains?: Types.Maybe<Array<(
-      { __typename?: 'DomainBelongsToDomainItem' }
-      & { domain: (
-        { __typename?: 'Domain' }
-        & DomainDataFragment
-      ) }
-    )>>, parentDomains?: Types.Maybe<Array<(
-      { __typename?: 'DomainBelongsToDomainItem' }
-      & { domain: (
-        { __typename?: 'Domain' }
-        & DomainDataFragment
-      ) }
-    )>> }
     & DomainDataFragment
   ) }
 );

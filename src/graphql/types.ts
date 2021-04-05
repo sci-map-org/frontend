@@ -177,7 +177,6 @@ export type Mutation = {
   addSubResource: SubResourceCreatedResult;
   createSubResourceSeries: SubResourceSeriesCreatedResult;
   addSubResourceToSeries: SubResourceSeriesCreatedResult;
-  addConceptToDomain: Concept;
   updateConcept: Concept;
   deleteConcept: DeleteConceptResult;
   setConceptsKnown: Array<Concept>;
@@ -203,12 +202,11 @@ export type Mutation = {
   indexLearningGoal: LearningGoalIndexedResult;
   rateLearningGoal: LearningGoal;
   updateConceptBelongsToDomain: ConceptBelongsToDomain;
-  addConceptBelongsToConcept: UpdateConceptBelongsToConceptResult;
-  removeConceptBelongsToConcept: UpdateConceptBelongsToConceptResult;
-  addDomainBelongsToDomain: UpdateDomainBelongsToDomainResults;
-  removeDomainBelongsToDomain: UpdateDomainBelongsToDomainResults;
   addConceptReferencesConcept: UpdateConceptReferencesConceptResult;
   removeConceptReferencesConcept: UpdateConceptReferencesConceptResult;
+  attachTopicIsSubTopicOfTopic: TopicIsSubTopicOfTopic;
+  updateTopicIsSubTopicOfTopic: TopicIsSubTopicOfTopic;
+  detachTopicIsSubTopicOfTopic: TopicIsSubTopicOfTopic;
 };
 
 
@@ -390,12 +388,6 @@ export type MutationAddSubResourceToSeriesArgs = {
 };
 
 
-export type MutationAddConceptToDomainArgs = {
-  domainId: Scalars['String'];
-  payload: AddConceptToDomainPayload;
-};
-
-
 export type MutationUpdateConceptArgs = {
   _id: Scalars['String'];
   payload: UpdateConceptPayload;
@@ -541,30 +533,6 @@ export type MutationUpdateConceptBelongsToDomainArgs = {
 };
 
 
-export type MutationAddConceptBelongsToConceptArgs = {
-  parentConceptId: Scalars['String'];
-  subConceptId: Scalars['String'];
-};
-
-
-export type MutationRemoveConceptBelongsToConceptArgs = {
-  parentConceptId: Scalars['String'];
-  subConceptId: Scalars['String'];
-};
-
-
-export type MutationAddDomainBelongsToDomainArgs = {
-  parentDomainId: Scalars['String'];
-  subDomainId: Scalars['String'];
-};
-
-
-export type MutationRemoveDomainBelongsToDomainArgs = {
-  parentDomainId: Scalars['String'];
-  subDomainId: Scalars['String'];
-};
-
-
 export type MutationAddConceptReferencesConceptArgs = {
   conceptId: Scalars['String'];
   referencedConceptId: Scalars['String'];
@@ -574,6 +542,26 @@ export type MutationAddConceptReferencesConceptArgs = {
 export type MutationRemoveConceptReferencesConceptArgs = {
   conceptId: Scalars['String'];
   referencedConceptId: Scalars['String'];
+};
+
+
+export type MutationAttachTopicIsSubTopicOfTopicArgs = {
+  parentTopicId: Scalars['String'];
+  subTopicId: Scalars['String'];
+  payload: AttachTopicIsSubTopicOfTopicPayload;
+};
+
+
+export type MutationUpdateTopicIsSubTopicOfTopicArgs = {
+  parentTopicId: Scalars['String'];
+  subTopicId: Scalars['String'];
+  payload: UpdateTopicIsSubTopicOfTopicPayload;
+};
+
+
+export type MutationDetachTopicIsSubTopicOfTopicArgs = {
+  parentTopicId: Scalars['String'];
+  subTopicId: Scalars['String'];
 };
 
 
@@ -595,7 +583,7 @@ export type GlobalSearchOptions = {
 
 export type SearchTopicsResult = {
   __typename?: 'SearchTopicsResult';
-  items: Array<Topic>;
+  items: Array<ITopic>;
 };
 
 export type SearchTopicsOptions = {
@@ -607,7 +595,7 @@ export type SearchTopicsOptions = {
 export type CheckTopicKeyAvailabilityResult = {
   __typename?: 'CheckTopicKeyAvailabilityResult';
   available: Scalars['Boolean'];
-  existingTopic?: Maybe<Topic>;
+  existingTopic?: Maybe<ITopic>;
 };
 
 export enum TopicType {
@@ -706,7 +694,7 @@ export type SearchDomainsOptions = {
   pagination: PaginationOptions;
 };
 
-export type Domain = Topic & {
+export type Domain = ITopic & {
   __typename?: 'Domain';
   _id: Scalars['String'];
   name: Scalars['String'];
@@ -714,16 +702,25 @@ export type Domain = Topic & {
   description?: Maybe<Scalars['String']>;
   topicType: TopicType;
   size?: Maybe<Scalars['Float']>;
+  subTopics?: Maybe<Array<TopicIsSubTopicOfTopic>>;
+  parentTopics?: Maybe<Array<TopicIsSubTopicOfTopic>>;
   concepts?: Maybe<DomainConceptsResults>;
   conceptTotalCount?: Maybe<Scalars['Int']>;
   resources?: Maybe<DomainResourcesResults>;
   learningPaths?: Maybe<DomainLearningPathsResults>;
   learningMaterials?: Maybe<DomainLearningMaterialsResults>;
   learningMaterialsTotalCount?: Maybe<Scalars['Int']>;
-  subDomains?: Maybe<Array<DomainBelongsToDomainItem>>;
-  parentDomains?: Maybe<Array<DomainBelongsToDomainItem>>;
   learningGoals?: Maybe<Array<LearningGoalBelongsToDomain>>;
-  subTopics?: Maybe<Array<TopicBelongsToDomain>>;
+};
+
+
+export type DomainSubTopicsArgs = {
+  options: TopicSubTopicsOptions;
+};
+
+
+export type DomainParentTopicsArgs = {
+  options: TopicSubTopicsOptions;
 };
 
 
@@ -803,7 +800,7 @@ export type AnalyzeResourceUrlResult = {
   resourceData?: Maybe<ResourceData>;
 };
 
-export type Concept = Topic & {
+export type Concept = ITopic & {
   __typename?: 'Concept';
   _id: Scalars['String'];
   key: Scalars['String'];
@@ -811,13 +808,18 @@ export type Concept = Topic & {
   description?: Maybe<Scalars['String']>;
   topicType: TopicType;
   domain?: Maybe<Domain>;
+  parentTopic?: Maybe<TopicIsSubTopicOfTopic>;
+  subTopics?: Maybe<Array<TopicIsSubTopicOfTopic>>;
   size?: Maybe<Scalars['Float']>;
   coveredByResources?: Maybe<ConceptCoveredByResourcesResults>;
   known?: Maybe<KnownConcept>;
   referencingConcepts?: Maybe<Array<ConceptReferencesConceptItem>>;
   referencedByConcepts?: Maybe<Array<ConceptReferencesConceptItem>>;
-  subConcepts?: Maybe<Array<ConceptBelongsToConceptItem>>;
-  parentConcepts?: Maybe<Array<ConceptBelongsToConceptItem>>;
+};
+
+
+export type ConceptSubTopicsArgs = {
+  options: TopicSubTopicsOptions;
 };
 
 
@@ -867,7 +869,7 @@ export type SearchLearningGoalsOptions = {
   pagination: PaginationOptions;
 };
 
-export type LearningGoal = Topic & {
+export type LearningGoal = ITopic & {
   __typename?: 'LearningGoal';
   _id: Scalars['String'];
   key: Scalars['String'];
@@ -881,6 +883,8 @@ export type LearningGoal = Topic & {
   progress?: Maybe<LearningGoalProgress>;
   createdBy?: Maybe<User>;
   domain?: Maybe<LearningGoalBelongsToDomain>;
+  subTopics?: Maybe<Array<TopicIsSubTopicOfTopic>>;
+  parentTopic?: Maybe<TopicIsSubTopicOfTopic>;
   size?: Maybe<Scalars['Float']>;
   requiredInGoals?: Maybe<Array<RequiredInGoalItem>>;
   requiredSubGoals?: Maybe<Array<SubGoalItem>>;
@@ -889,6 +893,11 @@ export type LearningGoal = Topic & {
   started?: Maybe<LearningGoalStarted>;
   startedBy?: Maybe<LearningGoalStartedByResults>;
   relevantLearningMaterials?: Maybe<LearningGoalRelevantLearningMaterialsResults>;
+};
+
+
+export type LearningGoalSubTopicsArgs = {
+  options: TopicSubTopicsOptions;
 };
 
 
@@ -1056,13 +1065,6 @@ export type SubResourceSeriesCreatedResult = {
   subResource: Resource;
 };
 
-export type AddConceptToDomainPayload = {
-  key?: Maybe<Scalars['String']>;
-  name: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-  index?: Maybe<Scalars['Float']>;
-};
-
 export type UpdateConceptPayload = {
   key?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
@@ -1199,22 +1201,27 @@ export type UpdateConceptBelongsToDomainPayload = {
   index?: Maybe<Scalars['Float']>;
 };
 
-export type UpdateConceptBelongsToConceptResult = {
-  __typename?: 'UpdateConceptBelongsToConceptResult';
-  parentConcept: Concept;
-  subConcept: Concept;
-};
-
-export type UpdateDomainBelongsToDomainResults = {
-  __typename?: 'UpdateDomainBelongsToDomainResults';
-  parentDomain: Domain;
-  subDomain: Domain;
-};
-
 export type UpdateConceptReferencesConceptResult = {
   __typename?: 'UpdateConceptReferencesConceptResult';
   concept: Concept;
   referencedConcept: Concept;
+};
+
+export type TopicIsSubTopicOfTopic = {
+  __typename?: 'TopicIsSubTopicOfTopic';
+  index: Scalars['Float'];
+  createdAt: Scalars['Date'];
+  createdByUserId?: Maybe<Scalars['String']>;
+  subTopic: ITopic;
+  parentTopic: ITopic;
+};
+
+export type AttachTopicIsSubTopicOfTopicPayload = {
+  index?: Maybe<Scalars['Float']>;
+};
+
+export type UpdateTopicIsSubTopicOfTopicPayload = {
+  index?: Maybe<Scalars['Float']>;
 };
 
 export type SearchResult = {
@@ -1228,13 +1235,19 @@ export type PaginationOptions = {
   offset?: Maybe<Scalars['Int']>;
 };
 
-export type Topic = {
+export type ITopic = {
   _id: Scalars['String'];
   name: Scalars['String'];
   key: Scalars['String'];
   description?: Maybe<Scalars['String']>;
   topicType: TopicType;
   size?: Maybe<Scalars['Float']>;
+  subTopics?: Maybe<Array<TopicIsSubTopicOfTopic>>;
+};
+
+
+export type ITopicSubTopicsArgs = {
+  options: TopicSubTopicsOptions;
 };
 
 export type SearchTopicsFilterOptions = {
@@ -1294,6 +1307,11 @@ export type ListArticlesFilter = {
   contentType?: Maybe<ArticleContentType>;
 };
 
+export type TopicSubTopicsOptions = {
+  sorting: TopicSubTopicsSortingOptions;
+  topicsIn?: Maybe<Array<TopicType>>;
+};
+
 export type DomainConceptsResults = {
   __typename?: 'DomainConceptsResults';
   items: Array<DomainConceptsItem>;
@@ -1336,24 +1354,11 @@ export type DomainLearningMaterialsOptions = {
   filter: DomainLearningMaterialsFilterOptions;
 };
 
-export type DomainBelongsToDomainItem = {
-  __typename?: 'DomainBelongsToDomainItem';
-  domain: Domain;
-  relationship: DomainBelongsToDomain;
-};
-
 export type LearningGoalBelongsToDomain = {
   __typename?: 'LearningGoalBelongsToDomain';
   index: Scalars['Float'];
   domain: Domain;
   learningGoal: LearningGoal;
-};
-
-export type TopicBelongsToDomain = {
-  __typename?: 'TopicBelongsToDomain';
-  index: Scalars['Float'];
-  topic: Topic;
-  domain: Domain;
 };
 
 export enum ResourceType {
@@ -1458,12 +1463,6 @@ export type ConceptReferencesConceptItem = {
   __typename?: 'ConceptReferencesConceptItem';
   concept: Concept;
   relationship: ConceptReferencesConcept;
-};
-
-export type ConceptBelongsToConceptItem = {
-  __typename?: 'ConceptBelongsToConceptItem';
-  concept: Concept;
-  relationship: ConceptBelongsToConcept;
 };
 
 export type LearningPathResourceItem = {
@@ -1580,6 +1579,28 @@ export type SubGoal = LearningGoal | Concept;
 
 export type SearchResultEntity = Domain | Concept | LearningGoal | Resource | LearningPath;
 
+export type Topic = ITopic & {
+  __typename?: 'Topic';
+  _id: Scalars['String'];
+  name: Scalars['String'];
+  key: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  topicType: TopicType;
+  size?: Maybe<Scalars['Float']>;
+  parentTopics?: Maybe<Array<TopicIsSubTopicOfTopic>>;
+  subTopics?: Maybe<Array<TopicIsSubTopicOfTopic>>;
+};
+
+
+export type TopicParentTopicsArgs = {
+  options: TopicSubTopicsOptions;
+};
+
+
+export type TopicSubTopicsArgs = {
+  options: TopicSubTopicsOptions;
+};
+
 export type UserConsumedResourceItem = {
   __typename?: 'UserConsumedResourceItem';
   resource: Resource;
@@ -1595,6 +1616,11 @@ export type UserConsumedResourcesFilter = {
 export enum UserConsumedResourcesSortingType {
   LastOpened = 'lastOpened'
 }
+
+export type TopicSubTopicsSortingOptions = {
+  type: TopicSubTopicsSortingType;
+  direction: SortingDirection;
+};
 
 export type DomainConceptsItem = {
   __typename?: 'DomainConceptsItem';
@@ -1635,11 +1661,6 @@ export type DomainLearningMaterialsFilterOptions = {
   learningMaterialTypeIn?: Maybe<Array<LearningMaterialType>>;
 };
 
-export type DomainBelongsToDomain = {
-  __typename?: 'DomainBelongsToDomain';
-  index: Scalars['Float'];
-};
-
 export type SubResourceExtractedData = {
   __typename?: 'SubResourceExtractedData';
   name: Scalars['String'];
@@ -1653,11 +1674,6 @@ export type SubResourceExtractedData = {
 export type ConceptReferencesConcept = {
   __typename?: 'ConceptReferencesConcept';
   strength: Scalars['Float'];
-};
-
-export type ConceptBelongsToConcept = {
-  __typename?: 'ConceptBelongsToConcept';
-  index: Scalars['Float'];
 };
 
 export type LearningPathStartedByItem = {
@@ -1679,6 +1695,15 @@ export type LearningGoalRelevantLearningMaterialsItem = {
   coverage?: Maybe<Scalars['Float']>;
 };
 
+export enum TopicSubTopicsSortingType {
+  Index = 'index'
+}
+
+export enum SortingDirection {
+  Asc = 'ASC',
+  Desc = 'DESC'
+}
+
 export enum DomainConceptSortingEntities {
   Concept = 'concept',
   Relationship = 'relationship'
@@ -1687,11 +1712,6 @@ export enum DomainConceptSortingEntities {
 export enum DomainConceptSortingFields {
   Id = '_id',
   Index = 'index'
-}
-
-export enum SortingDirection {
-  Asc = 'ASC',
-  Desc = 'DESC'
 }
 
 export enum DomainLearningPathsSortingFields {
