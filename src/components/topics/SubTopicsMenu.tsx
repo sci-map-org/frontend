@@ -1,5 +1,17 @@
 import { AddIcon, MinusIcon } from '@chakra-ui/icons';
-import { Box, Collapse, Divider, Flex, FlexProps, IconButton, Skeleton, Stack, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Collapse,
+  Divider,
+  Flex,
+  FlexProps,
+  IconButton,
+  Link,
+  Skeleton,
+  Stack,
+  Text,
+  useDisclosure,
+} from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useState } from 'react';
 import { ConceptLinkData } from '../../graphql/concepts/concepts.fragments';
@@ -9,11 +21,13 @@ import {
   useSetConceptsUnknownMutation,
 } from '../../graphql/concepts/concepts.operations.generated';
 import { DomainLinkData } from '../../graphql/domains/domains.fragments';
+import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { ConceptPageInfo, DomainPageInfo } from '../../pages/RoutesPageInfos';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import { CompletedCheckbox } from '../lib/CompletedCheckbox';
 import { PageLink } from '../navigation/InternalLink';
+import { AddSubTopicModal } from './AddSubTopic';
 import { SubTopicsMenuDataFragment } from './SubTopicsMenu.generated';
 
 type NestedConceptItem = {
@@ -60,17 +74,18 @@ export const SubTopicsMenuData = gql`
 // TODO: To Subtopics, add fragment here
 export const SubTopicsMenu: React.FC<{
   topicId: string;
+  domain: DomainLinkDataFragment;
   subTopics: SubTopicsMenuDataFragment[];
   isLoading?: boolean;
   onConceptToggled?: (conceptId: string) => void;
   minWidth?: FlexProps['minWidth'];
-}> = ({ topicId, subTopics, isLoading, onConceptToggled, minWidth = '260px' }) => {
+}> = ({ topicId, domain, subTopics, isLoading, onConceptToggled, minWidth = '260px' }) => {
   // Transform data into suitable one, as little as possible
 
   const { currentUser } = useCurrentUser();
   const [setConceptKnown] = useSetConceptsKnownMutation();
   const [setConceptUnknown] = useSetConceptsUnknownMutation();
-
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const unauthentificatedModalDisclosure = useUnauthentificatedModal();
   const toggleConceptKnown = async (concept: ConceptDataFragment) => {
     if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
@@ -142,17 +157,24 @@ export const SubTopicsMenu: React.FC<{
           level={0}
         />
       </Flex>
-      {/* <Flex direction="row" justifyContent="center" pt={1} pb={3}>
-        <PageLink
+      <Flex direction="row" justifyContent="center" pt={1} pb={3}>
+        <Link
           color="originalPalette.red"
           fontSize="md"
           fontWeight={600}
-          pageInfo={NewConceptPageInfo(domain)}
+          onClick={() => onOpen()}
           isDisabled={isLoading}
         >
           + Add SubTopic
-        </PageLink>
-      </Flex> */}
+        </Link>
+      </Flex>
+      <AddSubTopicModal
+        domain={domain}
+        parentTopicId={topicId}
+        isOpen={isOpen}
+        onClose={onClose}
+        onCancel={() => onClose()}
+      />
     </Flex>
   );
 };

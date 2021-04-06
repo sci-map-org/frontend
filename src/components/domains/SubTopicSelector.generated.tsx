@@ -22,7 +22,7 @@ export type SearchSubTopicsQuery = (
     ) | (
       { __typename?: 'LearningGoal' }
       & LearningGoalSubGoalCardDataFragment
-    ) | { __typename?: 'Topic' }> }
+    )> }
   ) }
 );
 

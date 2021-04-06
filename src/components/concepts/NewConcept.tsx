@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
-// import { useAddConceptToDomain } from '../../graphql/concepts/concepts.hooks';
+import { useAddConceptToDomainMutation } from '../../graphql/concepts/concepts.operations.generated';
 import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { AddConceptToDomainPayload } from '../../graphql/types';
 import { generateUrlKey } from '../../services/url.service';
@@ -23,13 +23,15 @@ import { FormButtons } from '../lib/buttons/FormButtons';
 
 interface NewConceptFormProps {
   domain?: DomainLinkDataFragment;
+  parentTopicId?: string;
   defaultPayload?: Partial<AddConceptToDomainPayload>;
   size?: 'sm' | 'md' | 'lg';
-  onCreate: (domainId: string, payload: AddConceptToDomainPayload) => void;
+  onCreate: (domainId: string, parentTopicId: string, payload: AddConceptToDomainPayload) => void;
   onCancel: () => void;
 }
 export const NewConceptForm: React.FC<NewConceptFormProps> = ({
   domain,
+  parentTopicId,
   defaultPayload,
   size = 'md',
   onCancel,
@@ -81,7 +83,10 @@ export const NewConceptForm: React.FC<NewConceptFormProps> = ({
         isPrimaryDisabled={!name || !selectedDomain}
         onCancel={() => onCancel()}
         size={getChakraRelativeSize(size, 1)}
-        onPrimaryClick={() => selectedDomain && onCreate(selectedDomain._id, { name, description, key })}
+        onPrimaryClick={() =>
+          selectedDomain &&
+          onCreate(selectedDomain._id, parentTopicId || selectedDomain._id, { name, description, key })
+        }
       />
     </Stack>
   );
@@ -91,18 +96,19 @@ interface NewConceptProps extends Omit<NewConceptFormProps, 'onCreate'> {
   onCreated?: (createdConcept: ConceptDataFragment) => void;
 }
 export const NewConcept: React.FC<NewConceptProps> = ({ onCreated, ...props }) => {
-  // const { addConceptToDomain } = useAddConceptToDomain();
+  const [addConceptToDomain] = useAddConceptToDomainMutation();
   return (
     <NewConceptForm
-      onCreate={async (domainId, payload) => {
-        // const { data } = await addConceptToDomain({
-        //   variables: {
-        //     domainId,
-        //     payload,
-        //   },
-        // });
-        // if (!data) throw new Error('no data returned');
-        // !!onCreated && onCreated(data.addConceptToDomain);
+      onCreate={async (domainId, parentTopicId, payload) => {
+        const { data } = await addConceptToDomain({
+          variables: {
+            domainId,
+            parentTopicId,
+            payload,
+          },
+        });
+        if (!data) throw new Error('no data returned');
+        !!onCreated && onCreated(data.addConceptToDomain.concept);
       }}
       {...props}
     />

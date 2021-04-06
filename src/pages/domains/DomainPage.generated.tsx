@@ -25,7 +25,7 @@ export type GetDomainByKeyDomainPageQuery = (
       & { parentTopic: (
         { __typename?: 'Domain' }
         & DomainLinkDataFragment
-      ) | { __typename?: 'Concept' } | { __typename?: 'LearningGoal' } | { __typename?: 'Topic' } }
+      ) | { __typename?: 'Concept' } | { __typename?: 'LearningGoal' } }
     )>>, learningGoals?: Types.Maybe<Array<(
       { __typename?: 'LearningGoalBelongsToDomain' }
       & Pick<Types.LearningGoalBelongsToDomain, 'index'>

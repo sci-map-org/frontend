@@ -33,17 +33,11 @@ export type SubTopicsMenuDataFragment = (
       ) | (
         { __typename?: 'LearningGoal' }
         & Pick<Types.LearningGoal, '_id'>
-      ) | (
-        { __typename?: 'Topic' }
-        & Pick<Types.Topic, '_id'>
       ) }
     )>> }
     & ConceptLinkDataFragment
   ) | (
     { __typename?: 'LearningGoal' }
     & Pick<Types.LearningGoal, '_id'>
-  ) | (
-    { __typename?: 'Topic' }
-    & Pick<Types.Topic, '_id'>
   ) }
 );

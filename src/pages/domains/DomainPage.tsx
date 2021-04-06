@@ -38,65 +38,9 @@ export const getDomainByKeyDomainPage = gql`
   query getDomainByKeyDomainPage($key: String!) {
     getDomainByKey(key: $key) {
       ...DomainData
-      # concepts(options: { sorting: { entity: relationship, field: index, direction: ASC } }) {
-      #   items {
-      #     concept {
-      #       ...ConceptData
-      #       topicType
-      #       size
-      #       referencedByConcepts {
-      #         concept {
-      #           _id
-      #         }
-      #       }
-      #       parentConcepts {
-      #         concept {
-      #           _id
-      #         }
-      #       }
-      #     }
-      #     relationship {
-      #       index
-      #     }
-      #   }
-      # }
       subTopics(options: { sorting: { type: index, direction: ASC } }) {
         ...SubTopicsMenuData
         ...MinimapTopicData
-        # subTopic {
-        #   ... on Concept {
-        #     _id
-        #     key
-        #     topicType
-        #     name
-        #     size
-        #   }
-        #   ... on Domain {
-        #     _id
-        #     key
-        #     topicType
-        #     name
-        #     size
-        #   }
-        # ... on Concept {
-        #   ...ConceptData
-        #   topicType
-        #   size
-        # referencedByConcepts {
-        #   concept {
-        #     _id
-        #   }
-        # }
-        # parentConcepts {
-        #   concept {
-        #     _id
-        #   }
-        # }
-        # }
-        # relationship {
-        #   index
-        # }
-        # }
       }
       parentTopics(options: { sorting: { type: index, direction: ASC } }) {
         index
@@ -104,18 +48,6 @@ export const getDomainByKeyDomainPage = gql`
           ...DomainLinkData
         }
       }
-      # parentDomains {
-      #   domain {
-      #     ...DomainLinkData
-      #   }
-      # }
-      # subDomains {
-      #   domain {
-      #     ...DomainLinkData
-      #     topicType
-      #     size
-      #   }
-      # }
       learningGoals {
         learningGoal {
           ...LearningGoalCardData
@@ -228,6 +160,7 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
             </RoleAccess>
             <SubTopicsMenu
               topicId={domain._id}
+              domain={domain}
               minWidth="260px"
               subTopics={domain.subTopics || []}
               isLoading={loading}

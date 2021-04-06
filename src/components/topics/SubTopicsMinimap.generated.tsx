@@ -9,5 +9,5 @@ export type MinimapTopicDataFragment = (
   ) | (
     { __typename?: 'Concept' }
     & Pick<Types.Concept, '_id' | 'key' | 'topicType' | 'name' | 'size'>
-  ) | { __typename?: 'LearningGoal' } | { __typename?: 'Topic' } }
+  ) | { __typename?: 'LearningGoal' } }
 );

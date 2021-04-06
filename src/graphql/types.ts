@@ -177,6 +177,7 @@ export type Mutation = {
   addSubResource: SubResourceCreatedResult;
   createSubResourceSeries: SubResourceSeriesCreatedResult;
   addSubResourceToSeries: SubResourceSeriesCreatedResult;
+  addConceptToDomain: AddConceptToDomainResult;
   updateConcept: Concept;
   deleteConcept: DeleteConceptResult;
   setConceptsKnown: Array<Concept>;
@@ -385,6 +386,13 @@ export type MutationAddSubResourceToSeriesArgs = {
   parentResourceId: Scalars['String'];
   previousResourceId: Scalars['String'];
   subResourceId: Scalars['String'];
+};
+
+
+export type MutationAddConceptToDomainArgs = {
+  domainId: Scalars['String'];
+  parentTopicId: Scalars['String'];
+  payload: AddConceptToDomainPayload;
 };
 
 
@@ -1065,6 +1073,20 @@ export type SubResourceSeriesCreatedResult = {
   subResource: Resource;
 };
 
+export type AddConceptToDomainResult = {
+  __typename?: 'AddConceptToDomainResult';
+  concept: Concept;
+  domain: Domain;
+  parentTopic: ITopic;
+};
+
+export type AddConceptToDomainPayload = {
+  key?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  index?: Maybe<Scalars['Float']>;
+};
+
 export type UpdateConceptPayload = {
   key?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
@@ -1309,7 +1331,7 @@ export type ListArticlesFilter = {
 
 export type TopicSubTopicsOptions = {
   sorting: TopicSubTopicsSortingOptions;
-  topicsIn?: Maybe<Array<TopicType>>;
+  topicTypeIn?: Maybe<Array<TopicType>>;
 };
 
 export type DomainConceptsResults = {
@@ -1578,28 +1600,6 @@ export type CreateLearningPathResourceItem = {
 export type SubGoal = LearningGoal | Concept;
 
 export type SearchResultEntity = Domain | Concept | LearningGoal | Resource | LearningPath;
-
-export type Topic = ITopic & {
-  __typename?: 'Topic';
-  _id: Scalars['String'];
-  name: Scalars['String'];
-  key: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-  topicType: TopicType;
-  size?: Maybe<Scalars['Float']>;
-  parentTopics?: Maybe<Array<TopicIsSubTopicOfTopic>>;
-  subTopics?: Maybe<Array<TopicIsSubTopicOfTopic>>;
-};
-
-
-export type TopicParentTopicsArgs = {
-  options: TopicSubTopicsOptions;
-};
-
-
-export type TopicSubTopicsArgs = {
-  options: TopicSubTopicsOptions;
-};
 
 export type UserConsumedResourceItem = {
   __typename?: 'UserConsumedResourceItem';

@@ -11,3 +11,50 @@ export const checkTopicKeyAvailability = gql`
     }
   }
 `;
+
+export const attachTopicIsSubTopicOfTopic = gql`
+  mutation attachTopicIsSubTopicOfTopic(
+    $parentTopicId: String!
+    $subTopicId: String!
+    $payload: AttachTopicIsSubTopicOfTopicPayload!
+  ) {
+    attachTopicIsSubTopicOfTopic(parentTopicId: $parentTopicId, subTopicId: $subTopicId, payload: $payload) {
+      parentTopic {
+        _id
+        subTopics(options: { sorting: { type: index, direction: ASC } }) {
+          index
+          subTopic {
+            _id
+          }
+        }
+      }
+      subTopic {
+        _id
+        ... on Domain {
+          parentTopics(options: { sorting: { type: index, direction: ASC } }) {
+            index
+            parentTopic {
+              _id
+            }
+          }
+        }
+        ... on Concept {
+          parentTopic {
+            index
+            parentTopic {
+              _id
+            }
+          }
+        }
+        ... on LearningGoal {
+          parentTopic {
+            index
+            parentTopic {
+              _id
+            }
+          }
+        }
+      }
+    }
+  }
+`;
