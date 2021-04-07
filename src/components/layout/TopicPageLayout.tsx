@@ -1,3 +1,4 @@
+import { Image } from '@chakra-ui/image';
 import { Flex, Stack, Text } from '@chakra-ui/layout';
 import { Skeleton } from '@chakra-ui/skeleton';
 import { ReactNode } from 'react';
@@ -54,7 +55,40 @@ export const TopicPageLayout: React.FC<TopicPageLayoutProps> = ({
           {...layoutProps}
         >
           <Flex direction="column" flexGrow={1} position="relative" minH="280px" pr={{ md: '200px' }}>
-            <Flex ml={-6} mt={1} maxH={12} overflowY="scroll" position="absolute" zIndex={3}>
+            {topicType === TopicType.Domain && (
+              <>
+                <Image
+                  display={{ base: 'none', md: 'initial' }}
+                  position="absolute"
+                  src="/static/tourist.svg"
+                  top={5}
+                  right={-2}
+                  h="280px"
+                  zIndex={1}
+                />
+                <Image
+                  position="absolute"
+                  src="/static/topostain_green_domain_page.svg"
+                  zIndex={0}
+                  top="-30%"
+                  right="0%"
+                  opacity={0.6}
+                  h={{ base: '300px', md: '500px' }}
+                />
+              </>
+            )}
+            {topicType === TopicType.Concept && (
+              <Image
+                position="absolute"
+                src="/static/search_stain.svg"
+                zIndex={0}
+                top="-5%"
+                right="5%"
+                opacity={0.6}
+                h={{ base: '320px', md: '350px' }}
+              />
+            )}
+            <Flex ml={{ base: 0, md: -6 }} mt={1} maxH={12} overflowY="scroll" position="absolute" zIndex={3}>
               {renderTopLeftNavigation}
             </Flex>
 
