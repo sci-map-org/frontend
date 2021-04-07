@@ -49,21 +49,21 @@ export const ManageDomainPageInfo = (domain: DomainDataFragment): PageInfo => ({
 });
 
 // ====Concepts====
-export const ConceptListPagePath = (domainKey: string) => `/areas/${domainKey}/concepts`;
+export const ConceptListPagePath = (domainKey: string) => `/areas/${domainKey}/subtopics`;
 export const ConceptListPageInfo = (domain: DomainDataFragment): PageInfo => ({
   name: 'Concepts',
   path: ConceptListPagePath(domain.key),
   routePath: ConceptListPagePath('[key]'),
 });
 
-export const NewConceptPagePath = (domainKey: string) => `/areas/${domainKey}/concepts/new`;
+export const NewConceptPagePath = (domainKey: string) => `/areas/${domainKey}/subtopics/new`;
 export const NewConceptPageInfo = (domain: DomainDataFragment): PageInfo => ({
   name: `Add concept to ${domain.name}`,
   path: NewConceptPagePath(domain.key),
   routePath: NewConceptPagePath('[key]'),
 });
 
-export const ConceptPagePath = (domainKey: string, conceptKey: string) => `/areas/${domainKey}/concepts/${conceptKey}`;
+export const ConceptPagePath = (domainKey: string, conceptKey: string) => `/areas/${domainKey}/subtopics/${conceptKey}`;
 export const ConceptPageInfo = (domain: DomainDataFragment, concept: ConceptDataFragment): PageInfo => ({
   name: `${concept.name}`,
   path: ConceptPagePath(domain.key, concept.key),
@@ -71,7 +71,7 @@ export const ConceptPageInfo = (domain: DomainDataFragment, concept: ConceptData
 });
 
 export const EditConceptPagePath = (domainKey: string, conceptKey: string) =>
-  `/areas/${domainKey}/concepts/${conceptKey}/edit`;
+  `/areas/${domainKey}/subtopics/${conceptKey}/edit`;
 export const EditConceptPageInfo = (
   domain: Pick<DomainDataFragment, 'name' | 'key'>,
   concept: Pick<ConceptDataFragment, 'name' | 'key'>
