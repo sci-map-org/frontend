@@ -1,6 +1,7 @@
 import { AddIcon, MinusIcon } from '@chakra-ui/icons';
 import {
   Box,
+  Center,
   Collapse,
   Divider,
   Flex,
@@ -25,6 +26,7 @@ import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { ConceptPageInfo, DomainPageInfo } from '../../pages/RoutesPageInfos';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
+import { ConceptKnownCheckbox } from '../concepts/ConceptKnownCheckbox';
 import { CompletedCheckbox } from '../lib/CompletedCheckbox';
 import { PageLink } from '../navigation/InternalLink';
 import { AddSubTopicModal } from './AddSubTopic';
@@ -80,56 +82,9 @@ export const SubTopicsMenu: React.FC<{
   onConceptToggled?: (conceptId: string) => void;
   minWidth?: FlexProps['minWidth'];
 }> = ({ topicId, domain, subTopics, isLoading, onConceptToggled, minWidth = '260px' }) => {
-  // Transform data into suitable one, as little as possible
-
-  const { currentUser } = useCurrentUser();
-  const [setConceptKnown] = useSetConceptsKnownMutation();
-  const [setConceptUnknown] = useSetConceptsUnknownMutation();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const unauthentificatedModalDisclosure = useUnauthentificatedModal();
-  const toggleConceptKnown = async (concept: ConceptDataFragment) => {
-    if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
-    if (!concept.known) {
-      await setConceptKnown({
-        variables: {
-          payload: {
-            concepts: [
-              {
-                conceptId: concept._id,
-              },
-            ],
-          },
-        },
-        optimisticResponse: {
-          __typename: 'Mutation',
-          setConceptsKnown: [
-            {
-              ...concept,
-              known: {
-                __typename: 'KnownConcept',
-                level: 100,
-              },
-            },
-          ],
-        },
-      });
-    } else {
-      await setConceptUnknown({
-        variables: { conceptIds: [concept._id] },
-        optimisticResponse: {
-          __typename: 'Mutation',
-          setConceptsUnknown: [
-            {
-              ...concept,
-              known: null,
-            },
-          ],
-        },
-      });
-    }
-    !!onConceptToggled && onConceptToggled(concept._id);
-  };
-  if (!isLoading && !subTopics.length) return null;
+
+  // if (!isLoading && !subTopics.length) return null;
   return (
     <Flex
       direction="column"
@@ -148,23 +103,25 @@ export const SubTopicsMenu: React.FC<{
           SubTopics
         </Text>
       </Box>
-      <Flex pl={2}>
-        <DomainConceptListMenuLevel
-          topics={subTopics}
-          rootTopicId={topicId}
-          onToggle={toggleConceptKnown}
-          isLoading={isLoading}
-          level={0}
-        />
+      <Flex px={2}>
+        {!isLoading && !subTopics.length ? (
+          <Center w="100%" py={2}>
+            <Text textAlign="center" fontWeight={600} fontStyle="italic" color="gray.400">
+              No SubTopics found
+            </Text>
+          </Center>
+        ) : (
+          <DomainConceptListMenuLevel
+            topics={subTopics}
+            rootTopicId={topicId}
+            onConceptToggled={(concept) => onConceptToggled && onConceptToggled(concept._id)}
+            isLoading={isLoading}
+            level={0}
+          />
+        )}
       </Flex>
       <Flex direction="row" justifyContent="center" pt={1} pb={3}>
-        <Link
-          color="originalPalette.red"
-          fontSize="md"
-          fontWeight={600}
-          onClick={() => onOpen()}
-          isDisabled={isLoading}
-        >
+        <Link color="originalPalette.red" fontSize="md" fontWeight={600} onClick={() => onOpen()}>
           + Add SubTopic
         </Link>
       </Flex>
@@ -182,10 +139,10 @@ export const SubTopicsMenu: React.FC<{
 export const DomainConceptListMenuLevel: React.FC<{
   topics: SubTopicsMenuDataFragment[];
   rootTopicId: string;
-  onToggle: (concept: ConceptDataFragment) => void;
+  onConceptToggled: (concept: ConceptDataFragment) => void;
   isLoading?: boolean;
   level: number;
-}> = ({ topics, rootTopicId, onToggle, isLoading, level }) => {
+}> = ({ topics, rootTopicId, onConceptToggled, isLoading, level }) => {
   return (
     <Stack direction="column" spacing="6px" alignItems="flex-start" py="6px">
       {topics.map(({ subTopic: topic }) => {
@@ -196,7 +153,7 @@ export const DomainConceptListMenuLevel: React.FC<{
               rootTopicId={rootTopicId}
               topic={topic}
               subTopics={topic.subTopics}
-              onToggle={onToggle}
+              onConceptToggled={onConceptToggled}
               isLoading={isLoading}
               level={level}
             />
@@ -207,7 +164,7 @@ export const DomainConceptListMenuLevel: React.FC<{
               key={topic._id}
               rootTopicId={rootTopicId}
               topic={topic}
-              onToggle={onToggle}
+              onConceptToggled={onConceptToggled}
               isLoading={isLoading}
             />
           );
@@ -221,10 +178,10 @@ export const CollapsableMenuLink: React.FC<{
   topic: SubTopicsMenuDataFragment['subTopic'];
   subTopics: SubTopicsMenuDataFragment[];
   rootTopicId: string;
-  onToggle: (concept: ConceptDataFragment) => void;
+  onConceptToggled: (concept: ConceptDataFragment) => void;
   isLoading?: boolean;
   level: number;
-}> = ({ topic, subTopics, rootTopicId, isLoading, onToggle, level }) => {
+}> = ({ topic, subTopics, rootTopicId, isLoading, onConceptToggled, level }) => {
   const [show, setShow] = useState(level === 0);
 
   const handleExpand = () => setShow(!show);
@@ -233,7 +190,7 @@ export const CollapsableMenuLink: React.FC<{
       <SubTopicMenuLink
         rootTopicId={rootTopicId}
         topic={topic}
-        onToggle={onToggle}
+        onConceptToggled={onConceptToggled}
         isLoading={isLoading}
         expandable={true}
         expanded={show}
@@ -254,7 +211,7 @@ export const CollapsableMenuLink: React.FC<{
           <DomainConceptListMenuLevel
             topics={subTopics}
             rootTopicId={rootTopicId}
-            onToggle={onToggle}
+            onConceptToggled={onConceptToggled}
             isLoading={isLoading}
             level={level + 1}
           />
@@ -267,12 +224,12 @@ export const CollapsableMenuLink: React.FC<{
 const SubTopicMenuLink: React.FC<{
   rootTopicId: string;
   topic: SubTopicsMenuDataFragment['subTopic'];
-  onToggle: (concept: ConceptDataFragment) => void;
+  onConceptToggled: (concept: ConceptDataFragment) => void;
   isLoading?: boolean;
   expandable?: boolean;
   expanded?: boolean;
   onExpand?: () => void;
-}> = ({ rootTopicId, topic, onToggle, isLoading, expandable, onExpand, expanded }) => {
+}> = ({ rootTopicId, topic, onConceptToggled, isLoading, expandable, onExpand, expanded }) => {
   if (topic.__typename === 'Concept' && !!topic.domain)
     return (
       <Flex direction="row" alignItems="center" px={expandable ? 1 : 5}>
@@ -299,17 +256,7 @@ const SubTopicMenuLink: React.FC<{
           >
             {topic.name}
           </PageLink>
-          <CompletedCheckbox
-            ml={1}
-            size="xs"
-            uncheckedColor="gray.400"
-            tooltipLabel={!!topic.known ? 'Mark this concept as unknown' : 'Mark this concept as known'}
-            tooltipDelay={500}
-            onChange={() => {
-              onToggle(topic);
-            }}
-            isChecked={!!topic.known}
-          />
+          <ConceptKnownCheckbox ml={1} size="xxs" concept={topic} onConceptKnown={() => onConceptToggled(topic)} />
         </Skeleton>
       </Flex>
     );
@@ -321,7 +268,6 @@ const SubTopicMenuLink: React.FC<{
             ml={expandable ? 1 : 0}
             fontSize="sm"
             pageInfo={DomainPageInfo(topic)}
-            // color={!!topic.known ? 'teal.600' : undefined}
             _hover={{ textDecoration: 'none', color: 'gray.600' }}
             _activeLink={{}}
             _focus={{}}

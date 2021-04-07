@@ -71,19 +71,23 @@ export const getConcept = gql`
 export const setConceptsKnown = gql`
   mutation setConceptsKnown($payload: SetConceptKnownPayload!) {
     setConceptsKnown(payload: $payload) {
-      ...ConceptData
+      _id
+      known {
+        level
+      }
     }
   }
-  ${ConceptData}
 `;
 
 export const setConceptsUnknown = gql`
   mutation setConceptsUnknown($conceptIds: [String!]!) {
     setConceptsUnknown(conceptIds: $conceptIds) {
-      ...ConceptData
+      _id
+      known {
+        level
+      }
     }
   }
-  ${ConceptData}
 `;
 
 export const getDomainConceptList = gql`

@@ -145,7 +145,11 @@ export type SetConceptsKnownMutation = (
   { __typename?: 'Mutation' }
   & { setConceptsKnown: Array<(
     { __typename?: 'Concept' }
-    & ConceptDataFragment
+    & Pick<Types.Concept, '_id'>
+    & { known?: Types.Maybe<(
+      { __typename?: 'KnownConcept' }
+      & Pick<Types.KnownConcept, 'level'>
+    )> }
   )> }
 );
 
@@ -158,7 +162,11 @@ export type SetConceptsUnknownMutation = (
   { __typename?: 'Mutation' }
   & { setConceptsUnknown: Array<(
     { __typename?: 'Concept' }
-    & ConceptDataFragment
+    & Pick<Types.Concept, '_id'>
+    & { known?: Types.Maybe<(
+      { __typename?: 'KnownConcept' }
+      & Pick<Types.KnownConcept, 'level'>
+    )> }
   )> }
 );
 

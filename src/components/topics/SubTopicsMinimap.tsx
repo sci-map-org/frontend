@@ -1,6 +1,6 @@
 import { IconButton } from '@chakra-ui/button';
 import { useDisclosure } from '@chakra-ui/hooks';
-import { Box, Center, Stack } from '@chakra-ui/layout';
+import { Box, Center, Stack, Text } from '@chakra-ui/layout';
 import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay } from '@chakra-ui/modal';
 import { CgArrowsExpandRight } from '@react-icons/all-files/cg/CgArrowsExpandRight';
 import gql from 'graphql-tag';
@@ -45,6 +45,7 @@ export const MinimapTopicData = gql`
 interface SubTopicsMinimapProps {
   domainKey: string;
   isLoading: boolean;
+  topicId: string;
   subTopics: MinimapTopicDataFragment[];
   pxWidth?: number;
   pxHeight?: number;
@@ -52,6 +53,7 @@ interface SubTopicsMinimapProps {
 
 export const SubTopicsMinimap: React.FC<SubTopicsMinimapProps> = ({
   domainKey,
+  topicId,
   subTopics,
   isLoading,
   pxWidth = 300,
@@ -76,28 +78,43 @@ export const SubTopicsMinimap: React.FC<SubTopicsMinimapProps> = ({
         <Center w="100%" h="100%">
           <PuffLoader size={Math.floor(pxWidth / 3)} color={theme.colors.blue[500]} />
         </Center>
+      ) : subTopics.length ? (
+        <SubTopicsMapVisualisation
+          topicId={topicId}
+          domainKey={domainKey}
+          subTopics={subTopics}
+          pxWidth={pxWidth}
+          pxHeight={pxHeight}
+        />
       ) : (
-        <SubTopicsMapVisualisation domainKey={domainKey} subTopics={subTopics} pxWidth={pxWidth} pxHeight={pxHeight} />
+        <Center w="100%" h="100%">
+          <Text textAlign="center" fontWeight={600} fontStyle="italic" color="gray.400">
+            No SubTopics found
+          </Text>
+        </Center>
       )}
-      <IconButton
-        position="absolute"
-        variant="solid"
-        size="md"
-        onClick={() => onOpen()}
-        bottom={2}
-        right={2}
-        opacity={0.8}
-        _hover={{ opacity: 1 }}
-        aria-label="expand minimap"
-        icon={<CgArrowsExpandRight />}
-      />
+
+      {(isLoading || subTopics.length) && (
+        <IconButton
+          position="absolute"
+          variant="solid"
+          size="md"
+          onClick={() => onOpen()}
+          bottom={2}
+          right={2}
+          opacity={0.8}
+          _hover={{ opacity: 1 }}
+          aria-label="expand minimap"
+          icon={<CgArrowsExpandRight />}
+        />
+      )}
       <Modal isOpen={isOpen} onClose={onClose} size="xl">
         <ModalOverlay />
         <ModalContent w="600px">
           <ModalHeader>SubTopics Map</ModalHeader>
           <ModalCloseButton />
           <ModalBody justifyContent="stretch" alignItems="stretch">
-            <SubTopicsMapModalContent domainKey={domainKey} subTopics={subTopics} />
+            <SubTopicsMapModalContent topicId={topicId} domainKey={domainKey} subTopics={subTopics} />
           </ModalBody>
         </ModalContent>
       </Modal>
@@ -105,10 +122,11 @@ export const SubTopicsMinimap: React.FC<SubTopicsMinimapProps> = ({
   );
 };
 
-const SubTopicsMapModalContent: React.FC<{ subTopics: MinimapTopicDataFragment[]; domainKey: string }> = ({
-  subTopics,
-  domainKey,
-}) => {
+const SubTopicsMapModalContent: React.FC<{
+  subTopics: MinimapTopicDataFragment[];
+  domainKey: string;
+  topicId: string;
+}> = ({ subTopics, domainKey, topicId }) => {
   const modalContainerRef = useRef<HTMLDivElement>(null);
   const modalContainerSize = useElementSize(modalContainerRef);
 
@@ -126,6 +144,7 @@ const SubTopicsMapModalContent: React.FC<{ subTopics: MinimapTopicDataFragment[]
       {modalContainerSize && (
         <SubTopicsMapVisualisation
           domainKey={domainKey}
+          topicId={topicId}
           subTopics={subTopics}
           pxWidth={modalContainerSize.width}
           pxHeight={modalContainerSize.width}

@@ -1,6 +1,8 @@
 import * as Types from '../../../graphql/types';
 
 import { ConceptDataFragment } from '../../../graphql/concepts/concepts.fragments.generated';
+import { SubTopicsMenuDataFragment } from '../../../components/topics/SubTopicsMenu.generated';
+import { MinimapTopicDataFragment } from '../../../components/topics/SubTopicsMinimap.generated';
 import { ResourcePreviewDataFragment } from '../../../graphql/resources/resources.fragments.generated';
 import { DomainDataFragment, DomainLinkDataFragment } from '../../../graphql/domains/domains.fragments.generated';
 import * as Operations from './ConceptPage';
@@ -21,7 +23,25 @@ export type GetConceptConceptPageQuery = (
         { __typename?: 'Concept' }
         & ConceptDataFragment
       ) }
-    )>>, coveredByResources?: Types.Maybe<(
+    )>>, subTopics?: Types.Maybe<Array<(
+      { __typename?: 'TopicIsSubTopicOfTopic' }
+      & SubTopicsMenuDataFragment
+      & MinimapTopicDataFragment
+    )>>, parentTopic?: Types.Maybe<(
+      { __typename?: 'TopicIsSubTopicOfTopic' }
+      & { parentTopic: { __typename?: 'Domain' } | (
+        { __typename?: 'Concept' }
+        & Pick<Types.Concept, '_id' | 'key' | 'name'>
+        & { parentTopic?: Types.Maybe<(
+          { __typename?: 'TopicIsSubTopicOfTopic' }
+          & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
+          & { parentTopic: { __typename?: 'Domain' } | (
+            { __typename?: 'Concept' }
+            & Pick<Types.Concept, '_id' | 'key' | 'name'>
+          ) | { __typename?: 'LearningGoal' } }
+        )> }
+      ) | { __typename?: 'LearningGoal' } }
+    )>, coveredByResources?: Types.Maybe<(
       { __typename?: 'ConceptCoveredByResourcesResults' }
       & { items: Array<(
         { __typename?: 'Resource' }

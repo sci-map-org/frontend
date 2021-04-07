@@ -79,6 +79,7 @@ export const EditConceptPage: React.FC<{ domainKey: string; conceptKey: string }
           onPrimaryClick={() =>
             updateConcept({ variables: { _id: concept._id, payload: { name, description } } }).then(() => Router.back())
           }
+          primaryText="Edit"
         />
       </Stack>
     </PageLayout>

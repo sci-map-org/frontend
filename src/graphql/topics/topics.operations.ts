@@ -58,3 +58,46 @@ export const attachTopicIsSubTopicOfTopic = gql`
     }
   }
 `;
+
+export const detachTopicIsSubTopicOfTopic = gql`
+  mutation detachTopicIsSubTopicOfTopic($parentTopicId: String!, $subTopicId: String!) {
+    detachTopicIsSubTopicOfTopic(parentTopicId: $parentTopicId, subTopicId: $subTopicId) {
+      parentTopic {
+        _id
+        subTopics(options: { sorting: { type: index, direction: ASC } }) {
+          index
+          subTopic {
+            _id
+          }
+        }
+      }
+      subTopic {
+        _id
+        ... on Domain {
+          parentTopics(options: { sorting: { type: index, direction: ASC } }) {
+            index
+            parentTopic {
+              _id
+            }
+          }
+        }
+        ... on Concept {
+          parentTopic {
+            index
+            parentTopic {
+              _id
+            }
+          }
+        }
+        ... on LearningGoal {
+          parentTopic {
+            index
+            parentTopic {
+              _id
+            }
+          }
+        }
+      }
+    }
+  }
+`;

@@ -1,26 +1,25 @@
-import { Box, Button, Center, Heading, Stack, Text } from '@chakra-ui/react';
+import { EditIcon } from '@chakra-ui/icons';
+import { Box, Flex, Heading, IconButton, Skeleton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { differenceBy } from 'lodash';
 import Router from 'next/router';
 import { RoleAccess } from '../../../components/auth/RoleAccess';
-import { useUnauthentificatedModal } from '../../../components/auth/UnauthentificatedModal';
+import { ConceptKnownCheckbox } from '../../../components/concepts/ConceptKnownCheckbox';
 import { DomainConceptsPicker } from '../../../components/concepts/DomainConceptsPicker';
-import { PageLayout } from '../../../components/layout/PageLayout';
+import { NavigationBreadcrumbs } from '../../../components/layout/NavigationBreadcrumbs';
+import { TopicPageLayout } from '../../../components/layout/TopicPageLayout';
 import { DeleteButtonWithConfirmation } from '../../../components/lib/buttons/DeleteButtonWithConfirmation';
-import { CompletedCheckbox } from '../../../components/lib/CompletedCheckbox';
 import { ResourcePreviewCardList } from '../../../components/resources/ResourcePreviewCardList';
+import { SubTopicsMenu, SubTopicsMenuData } from '../../../components/topics/SubTopicsMenu';
+import { MinimapTopicData, SubTopicsMinimap } from '../../../components/topics/SubTopicsMinimap';
 import { ConceptData, generateConceptData } from '../../../graphql/concepts/concepts.fragments';
 import { ConceptDataFragment } from '../../../graphql/concepts/concepts.fragments.generated';
 import { useDeleteConcept } from '../../../graphql/concepts/concepts.hooks';
-import {
-  useSetConceptsKnownMutation,
-  useSetConceptsUnknownMutation,
-} from '../../../graphql/concepts/concepts.operations.generated';
 import { DomainData, generateDomainData } from '../../../graphql/domains/domains.fragments';
 import { generateResourceData, ResourcePreviewData } from '../../../graphql/resources/resources.fragments';
-import { useCurrentUser } from '../../../graphql/users/users.hooks';
+import { TopicType } from '../../../graphql/types';
 import { NotFoundPage } from '../../NotFoundPage';
-import { ConceptListPageInfo, ConceptPageInfo, DomainPageInfo } from '../../RoutesPageInfos';
+import { ConceptPageInfo, DomainPageInfo } from '../../RoutesPageInfos';
 import {
   GetConceptConceptPageQuery,
   useAddConceptReferencesConceptMutation,
@@ -28,21 +27,32 @@ import {
   useRemoveConceptReferencesConceptMutation,
 } from './ConceptPage.generated';
 
-const ConceptPageRightIcons: React.FC<{ concept: ConceptDataFragment; isDisabled?: boolean }> = ({
+const ConceptPageManagementIcons: React.FC<{ concept: ConceptDataFragment; isDisabled?: boolean }> = ({
   concept,
   isDisabled,
 }) => {
   const { deleteConcept } = useDeleteConcept();
   return (
-    <Stack spacing={2} direction="row">
+    <Stack spacing={2} mt={2} alignItems="center" direction="row">
+      <ConceptKnownCheckbox size="xs" concept={concept} />
       <RoleAccess accessRule="contributorOrAdmin">
-        <Button size="sm" onClick={() => Router.push(Router.asPath + '/edit')} isDisabled={isDisabled}>
+        <IconButton
+          aria-label="delete concept"
+          icon={<EditIcon />}
+          size="xs"
+          variant="outline"
+          onClick={() => Router.push(Router.asPath + '/edit')}
+          isDisabled={isDisabled}
+        >
           Edit
-        </Button>
+        </IconButton>
       </RoleAccess>
       <RoleAccess accessRule="contributorOrAdmin">
         <DeleteButtonWithConfirmation
           modalHeaderText="Delete Concept"
+          size="xs"
+          mode="iconButton"
+          variant="outline"
           modalBodyText="Confirm deleting this concept ?"
           isDisabled={isDisabled}
           onConfirmation={() => deleteConcept({ variables: { _id: concept._id } }).then(() => Router.back())}
@@ -61,11 +71,29 @@ export const getConceptConceptPage = gql`
           ...ConceptData
         }
       }
-      # subConcepts {
-      #   concept {
-      #     ...ConceptData
-      #   }
-      # }
+      subTopics(options: { sorting: { type: index, direction: ASC } }) {
+        ...SubTopicsMenuData
+        ...MinimapTopicData
+      }
+      parentTopic {
+        parentTopic {
+          ... on Concept {
+            _id
+            key
+            name
+            parentTopic {
+              index
+              parentTopic {
+                ... on Concept {
+                  _id
+                  key
+                  name
+                }
+              }
+            }
+          }
+        }
+      }
       coveredByResources(options: {}) {
         items {
           ...ResourcePreviewData
@@ -86,6 +114,8 @@ export const getConceptConceptPage = gql`
   ${ResourcePreviewData}
   ${ConceptData}
   ${DomainData}
+  ${SubTopicsMenuData}
+  ${MinimapTopicData}
 `;
 
 export const addConceptReferencesConcept = gql`
@@ -134,52 +164,6 @@ export const removeConceptReferencesConcept = gql`
   }
 `;
 
-// export const addConceptBelongsToConcept = gql`
-//   mutation addConceptBelongsToConcept($parentConceptId: String!, $subConceptId: String!) {
-//     addConceptBelongsToConcept(parentConceptId: $parentConceptId, subConceptId: $subConceptId) {
-//       parentConcept {
-//         _id
-//         subConcepts {
-//           concept {
-//             _id
-//           }
-//         }
-//       }
-//       subConcept {
-//         _id
-//         parentConcepts {
-//           concept {
-//             _id
-//           }
-//         }
-//       }
-//     }
-//   }
-// `;
-
-// export const removeConceptBelongsToConcept = gql`
-//   mutation removeConceptBelongsToConcept($parentConceptId: String!, $subConceptId: String!) {
-//     removeConceptBelongsToConcept(parentConceptId: $parentConceptId, subConceptId: $subConceptId) {
-//       parentConcept {
-//         _id
-//         subConcepts {
-//           concept {
-//             _id
-//           }
-//         }
-//       }
-//       subConcept {
-//         _id
-//         parentConcepts {
-//           concept {
-//             _id
-//           }
-//         }
-//       }
-//     }
-//   }
-// `;
-
 const conceptPlaceholder: GetConceptConceptPageQuery['getDomainConceptByKey'] = {
   ...generateConceptData(),
   coveredByResources: { items: [0, 0].map(generateResourceData) },
@@ -192,133 +176,109 @@ export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = 
   });
   const concept = data?.getDomainConceptByKey || conceptPlaceholder;
   const domainConcepts = concept.domain?.concepts?.items.map((item) => item.concept) || [];
+  const domain = concept.domain;
+  if (!domain) return null;
   const referencingConcepts = concept.referencingConcepts?.map((item) => item.concept) || [];
-  // const subConcepts = concept.subConcepts?.map((item) => item.concept) || [];
+
   const [addConceptReferencesConceptMutation] = useAddConceptReferencesConceptMutation();
   const [removeConceptReferencesConcept] = useRemoveConceptReferencesConceptMutation();
-  // const [addConceptBelongsToConceptMutation] = useAddConceptBelongsToConceptMutation();
-  // const [removeConceptBelongsToConceptMutation] = useRemoveConceptBelongsToConceptMutation();
-  const { currentUser } = useCurrentUser();
-  const [setConceptKnown] = useSetConceptsKnownMutation();
-  const [setConceptUnknown] = useSetConceptsUnknownMutation();
-  const unauthentificatedModalDisclosure = useUnauthentificatedModal();
-  const toggleConceptKnown = async (concept: ConceptDataFragment) => {
-    if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
-    if (!concept.known) {
-      await setConceptKnown({
-        variables: {
-          payload: {
-            concepts: [
-              {
-                conceptId: concept._id,
-              },
-            ],
-          },
-        },
-        optimisticResponse: {
-          __typename: 'Mutation',
-          setConceptsKnown: [
-            {
-              ...concept,
-              known: {
-                __typename: 'KnownConcept',
-                level: 100,
-              },
-            },
-          ],
-        },
-      });
-    } else {
-      await setConceptUnknown({
-        variables: { conceptIds: [concept._id] },
-        optimisticResponse: {
-          __typename: 'Mutation',
-          setConceptsUnknown: [
-            {
-              ...concept,
-              known: null,
-            },
-          ],
-        },
-      });
-    }
-  };
+
   if (error) return <NotFoundPage />;
   if (!concept.domain) throw new Error('Concept has no domain');
   return (
-    <PageLayout
-      breadCrumbsLinks={[DomainPageInfo(concept.domain), ConceptPageInfo(concept.domain, concept)]}
-      title={concept.domain.name + ' - ' + concept.name}
-      renderTopRight={<ConceptPageRightIcons concept={concept} isDisabled={loading} />}
+    <TopicPageLayout
+      renderTopLeftNavigation={
+        <Skeleton isLoaded={!loading}>
+          <NavigationBreadcrumbs
+            size="sm"
+            links={[
+              DomainPageInfo(concept.domain),
+              ...(concept.parentTopic?.parentTopic.__typename === 'Concept' &&
+              concept.parentTopic.parentTopic.parentTopic?.parentTopic.__typename === 'Concept'
+                ? [ConceptPageInfo(domain, concept.parentTopic.parentTopic.parentTopic.parentTopic)]
+                : []),
+              ...(concept.parentTopic?.parentTopic.__typename === 'Concept'
+                ? [ConceptPageInfo(domain, concept.parentTopic.parentTopic)]
+                : []),
+              ConceptPageInfo(domain, concept),
+            ]}
+          />
+        </Skeleton>
+      }
+      renderTopRightIconButtons={null}
+      renderTitle={
+        <Heading
+          fontSize={{ base: '4xl', md: '4xl', lg: '5xl' }}
+          fontWeight={500}
+          color="blackAlpha.800"
+          backgroundImage="linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0.7), rgba(255,255,255,0.7), rgba(255,255,255,0.1))"
+        >
+          {concept.name}
+        </Heading>
+      }
+      renderBlockBelowTitle={<Stack>{concept.description && <Text pb={5}>{concept.description}</Text>}</Stack>}
+      renderManagementIcons={<ConceptPageManagementIcons concept={concept} isDisabled={loading} />}
+      renderMinimap={(pxWidth, pxHeight) => (
+        <SubTopicsMinimap
+          domainKey={domain.key}
+          topicId={concept._id}
+          isLoading={!!loading}
+          subTopics={concept.subTopics || []}
+          pxWidth={pxWidth}
+          pxHeight={pxHeight}
+        />
+      )}
+      topicType={TopicType.Concept}
       isLoading={loading}
     >
-      <Box>
-        <Center>
-          <CompletedCheckbox
-            ml={2}
-            size="lg"
-            uncheckedColor="gray.400"
-            tooltipLabel={!!concept.known ? 'Mark this concept as unknown' : 'Mark this concept as known'}
-            tooltipDelay={500}
-            onChange={() => {
-              toggleConceptKnown(concept);
-            }}
-            isChecked={!!concept.known}
-          />
-        </Center>
-        <Text pb={5}>{concept.description}</Text>
-        <Heading fontWeight="light" fontSize="2xl" mb={2}>
-          Covered by
-        </Heading>
-        <ResourcePreviewCardList
-          domainKey={concept.domain.key}
-          resourcePreviews={concept.coveredByResources?.items || []}
-          isLoading={loading}
-        />
+      <Flex direction="row" alignItems="flex-start">
+        <Flex direction="column" borderTopRadius={2} flexGrow={1}>
+          <Flex direction="column" alignItems="stretch" borderTopRadius="inherit">
+            <Flex pl={3} color="white" bgColor="teal.600" borderTopRadius="inherit">
+              <Heading fontWeight={500} color="white" fontSize="2xl" mt={2} mb={3}>
+                Covered by
+              </Heading>
+            </Flex>
+            <ResourcePreviewCardList
+              domainKey={concept.domain.key}
+              resourcePreviews={concept.coveredByResources?.items || []}
+              isLoading={loading}
+            />
+          </Flex>
 
-        <RoleAccess accessRule="contributorOrAdmin">
-          <Box mt={5}>
-            <DomainConceptsPicker
-              domain={concept.domain}
-              title="Referenced Concepts"
-              pickableConceptList={differenceBy(domainConcepts, referencingConcepts, [concept], (concept) => {
-                return concept._id;
-              })}
-              pickedConceptList={referencingConcepts}
-              onSelect={(conceptToAdd) =>
-                addConceptReferencesConceptMutation({
-                  variables: { conceptId: concept._id, referencedConceptId: conceptToAdd._id },
-                })
-              }
-              onRemove={(conceptToRemove) =>
-                removeConceptReferencesConcept({
-                  variables: { conceptId: concept._id, referencedConceptId: conceptToRemove._id },
-                })
-              }
-            />
-          </Box>
-          {/* <Box mt={5}>
-            <DomainConceptsPicker
-              title="Sub Concepts"
-              domain={concept.domain}
-              pickableConceptList={differenceBy(domainConcepts, subConcepts, [concept], (concept) => {
-                return concept._id;
-              })}
-              pickedConceptList={subConcepts}
-              onSelect={(conceptToAdd) =>
-                addConceptBelongsToConceptMutation({
-                  variables: { parentConceptId: concept._id, subConceptId: conceptToAdd._id },
-                })
-              }
-              onRemove={(conceptToRemove) =>
-                removeConceptBelongsToConceptMutation({
-                  variables: { parentConceptId: concept._id, subConceptId: conceptToRemove._id },
-                })
-              }
-            />
-          </Box> */}
-        </RoleAccess>
-      </Box>
-    </PageLayout>
+          <RoleAccess accessRule="contributorOrAdmin">
+            <Box mt={5}>
+              <DomainConceptsPicker
+                domain={concept.domain}
+                title="Prerequisites"
+                pickableConceptList={differenceBy(domainConcepts, referencingConcepts, [concept], (concept) => {
+                  return concept._id;
+                })}
+                pickedConceptList={referencingConcepts}
+                onSelect={(conceptToAdd) =>
+                  addConceptReferencesConceptMutation({
+                    variables: { conceptId: concept._id, referencedConceptId: conceptToAdd._id },
+                  })
+                }
+                onRemove={(conceptToRemove) =>
+                  removeConceptReferencesConcept({
+                    variables: { conceptId: concept._id, referencedConceptId: conceptToRemove._id },
+                  })
+                }
+              />
+            </Box>
+          </RoleAccess>
+        </Flex>
+        <Flex ml={10}>
+          <SubTopicsMenu
+            topicId={concept._id}
+            domain={domain}
+            minWidth="260px"
+            subTopics={concept.subTopics || []}
+            isLoading={loading}
+          />
+        </Flex>
+      </Flex>
+    </TopicPageLayout>
   );
 };

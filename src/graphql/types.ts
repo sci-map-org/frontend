@@ -207,7 +207,7 @@ export type Mutation = {
   removeConceptReferencesConcept: UpdateConceptReferencesConceptResult;
   attachTopicIsSubTopicOfTopic: TopicIsSubTopicOfTopic;
   updateTopicIsSubTopicOfTopic: TopicIsSubTopicOfTopic;
-  detachTopicIsSubTopicOfTopic: TopicIsSubTopicOfTopic;
+  detachTopicIsSubTopicOfTopic: DetachTopicIsSubTopicOfTopicResult;
 };
 
 
@@ -1244,6 +1244,12 @@ export type AttachTopicIsSubTopicOfTopicPayload = {
 
 export type UpdateTopicIsSubTopicOfTopicPayload = {
   index?: Maybe<Scalars['Float']>;
+};
+
+export type DetachTopicIsSubTopicOfTopicResult = {
+  __typename?: 'DetachTopicIsSubTopicOfTopicResult';
+  parentTopic: ITopic;
+  subTopic: ITopic;
 };
 
 export type SearchResult = {

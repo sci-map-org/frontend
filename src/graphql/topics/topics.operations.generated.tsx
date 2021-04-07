@@ -144,6 +144,122 @@ export type AttachTopicIsSubTopicOfTopicMutation = (
   ) }
 );
 
+export type DetachTopicIsSubTopicOfTopicMutationVariables = Types.Exact<{
+  parentTopicId: Types.Scalars['String'];
+  subTopicId: Types.Scalars['String'];
+}>;
+
+
+export type DetachTopicIsSubTopicOfTopicMutation = (
+  { __typename?: 'Mutation' }
+  & { detachTopicIsSubTopicOfTopic: (
+    { __typename?: 'DetachTopicIsSubTopicOfTopicResult' }
+    & { parentTopic: (
+      { __typename?: 'Domain' }
+      & Pick<Types.Domain, '_id'>
+      & { subTopics?: Types.Maybe<Array<(
+        { __typename?: 'TopicIsSubTopicOfTopic' }
+        & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
+        & { subTopic: (
+          { __typename?: 'Domain' }
+          & Pick<Types.Domain, '_id'>
+        ) | (
+          { __typename?: 'Concept' }
+          & Pick<Types.Concept, '_id'>
+        ) | (
+          { __typename?: 'LearningGoal' }
+          & Pick<Types.LearningGoal, '_id'>
+        ) }
+      )>> }
+    ) | (
+      { __typename?: 'Concept' }
+      & Pick<Types.Concept, '_id'>
+      & { subTopics?: Types.Maybe<Array<(
+        { __typename?: 'TopicIsSubTopicOfTopic' }
+        & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
+        & { subTopic: (
+          { __typename?: 'Domain' }
+          & Pick<Types.Domain, '_id'>
+        ) | (
+          { __typename?: 'Concept' }
+          & Pick<Types.Concept, '_id'>
+        ) | (
+          { __typename?: 'LearningGoal' }
+          & Pick<Types.LearningGoal, '_id'>
+        ) }
+      )>> }
+    ) | (
+      { __typename?: 'LearningGoal' }
+      & Pick<Types.LearningGoal, '_id'>
+      & { subTopics?: Types.Maybe<Array<(
+        { __typename?: 'TopicIsSubTopicOfTopic' }
+        & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
+        & { subTopic: (
+          { __typename?: 'Domain' }
+          & Pick<Types.Domain, '_id'>
+        ) | (
+          { __typename?: 'Concept' }
+          & Pick<Types.Concept, '_id'>
+        ) | (
+          { __typename?: 'LearningGoal' }
+          & Pick<Types.LearningGoal, '_id'>
+        ) }
+      )>> }
+    ), subTopic: (
+      { __typename?: 'Domain' }
+      & Pick<Types.Domain, '_id'>
+      & { parentTopics?: Types.Maybe<Array<(
+        { __typename?: 'TopicIsSubTopicOfTopic' }
+        & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
+        & { parentTopic: (
+          { __typename?: 'Domain' }
+          & Pick<Types.Domain, '_id'>
+        ) | (
+          { __typename?: 'Concept' }
+          & Pick<Types.Concept, '_id'>
+        ) | (
+          { __typename?: 'LearningGoal' }
+          & Pick<Types.LearningGoal, '_id'>
+        ) }
+      )>> }
+    ) | (
+      { __typename?: 'Concept' }
+      & Pick<Types.Concept, '_id'>
+      & { parentTopic?: Types.Maybe<(
+        { __typename?: 'TopicIsSubTopicOfTopic' }
+        & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
+        & { parentTopic: (
+          { __typename?: 'Domain' }
+          & Pick<Types.Domain, '_id'>
+        ) | (
+          { __typename?: 'Concept' }
+          & Pick<Types.Concept, '_id'>
+        ) | (
+          { __typename?: 'LearningGoal' }
+          & Pick<Types.LearningGoal, '_id'>
+        ) }
+      )> }
+    ) | (
+      { __typename?: 'LearningGoal' }
+      & Pick<Types.LearningGoal, '_id'>
+      & { parentTopic?: Types.Maybe<(
+        { __typename?: 'TopicIsSubTopicOfTopic' }
+        & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
+        & { parentTopic: (
+          { __typename?: 'Domain' }
+          & Pick<Types.Domain, '_id'>
+        ) | (
+          { __typename?: 'Concept' }
+          & Pick<Types.Concept, '_id'>
+        ) | (
+          { __typename?: 'LearningGoal' }
+          & Pick<Types.LearningGoal, '_id'>
+        ) }
+      )> }
+    ) }
+  ) }
+);
+
 
 
 /**
@@ -200,3 +316,29 @@ export function useAttachTopicIsSubTopicOfTopicMutation(baseOptions?: Apollo.Mut
 export type AttachTopicIsSubTopicOfTopicMutationHookResult = ReturnType<typeof useAttachTopicIsSubTopicOfTopicMutation>;
 export type AttachTopicIsSubTopicOfTopicMutationResult = Apollo.MutationResult<AttachTopicIsSubTopicOfTopicMutation>;
 export type AttachTopicIsSubTopicOfTopicMutationOptions = Apollo.BaseMutationOptions<AttachTopicIsSubTopicOfTopicMutation, AttachTopicIsSubTopicOfTopicMutationVariables>;
+export type DetachTopicIsSubTopicOfTopicMutationFn = Apollo.MutationFunction<DetachTopicIsSubTopicOfTopicMutation, DetachTopicIsSubTopicOfTopicMutationVariables>;
+
+/**
+ * __useDetachTopicIsSubTopicOfTopicMutation__
+ *
+ * To run a mutation, you first call `useDetachTopicIsSubTopicOfTopicMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDetachTopicIsSubTopicOfTopicMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [detachTopicIsSubTopicOfTopicMutation, { data, loading, error }] = useDetachTopicIsSubTopicOfTopicMutation({
+ *   variables: {
+ *      parentTopicId: // value for 'parentTopicId'
+ *      subTopicId: // value for 'subTopicId'
+ *   },
+ * });
+ */
+export function useDetachTopicIsSubTopicOfTopicMutation(baseOptions?: Apollo.MutationHookOptions<DetachTopicIsSubTopicOfTopicMutation, DetachTopicIsSubTopicOfTopicMutationVariables>) {
+        return Apollo.useMutation<DetachTopicIsSubTopicOfTopicMutation, DetachTopicIsSubTopicOfTopicMutationVariables>(Operations.detachTopicIsSubTopicOfTopic, baseOptions);
+      }
+export type DetachTopicIsSubTopicOfTopicMutationHookResult = ReturnType<typeof useDetachTopicIsSubTopicOfTopicMutation>;
+export type DetachTopicIsSubTopicOfTopicMutationResult = Apollo.MutationResult<DetachTopicIsSubTopicOfTopicMutation>;
+export type DetachTopicIsSubTopicOfTopicMutationOptions = Apollo.BaseMutationOptions<DetachTopicIsSubTopicOfTopicMutation, DetachTopicIsSubTopicOfTopicMutationVariables>;

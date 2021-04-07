@@ -12,6 +12,21 @@ export type GetDomainByKeyManageDomainPageQuery = (
   { __typename?: 'Query' }
   & { getDomainByKey: (
     { __typename?: 'Domain' }
+    & { subTopics?: Types.Maybe<Array<(
+      { __typename?: 'TopicIsSubTopicOfTopic' }
+      & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
+      & { subTopic: (
+        { __typename?: 'Domain' }
+        & DomainDataFragment
+      ) | { __typename?: 'Concept' } | { __typename?: 'LearningGoal' } }
+    )>>, parentTopics?: Types.Maybe<Array<(
+      { __typename?: 'TopicIsSubTopicOfTopic' }
+      & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
+      & { parentTopic: (
+        { __typename?: 'Domain' }
+        & DomainDataFragment
+      ) | { __typename?: 'Concept' } | { __typename?: 'LearningGoal' } }
+    )>> }
     & DomainDataFragment
   ) }
 );
