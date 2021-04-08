@@ -5,11 +5,14 @@ import { HorizontalConceptMappingVisualisation } from './ConceptMappingVisualisa
 interface DomainConceptGraphProps {
   isLoading?: boolean;
   minNbRelationships?: number;
-  domain: GetDomainByKeyDomainPageQuery['getDomainByKey'];
+  domain: any;
 }
+/**
+ * Deprecated
+ */
 export const DomainConceptGraph: React.FC<DomainConceptGraphProps> = ({ domain, isLoading, minNbRelationships }) => {
   const nbRelationships = domain.concepts
-    ? domain.concepts.items.reduce((sum, item) => {
+    ? domain.concepts.items.reduce((sum: any, item: any) => {
         return sum + (item.concept.referencedByConcepts || []).length;
       }, 0)
     : 0;
@@ -23,7 +26,7 @@ export const DomainConceptGraph: React.FC<DomainConceptGraphProps> = ({ domain, 
       </Text>
       <HorizontalConceptMappingVisualisation
         domainKey={domain.key}
-        concepts={domain.concepts?.items.map((i) => i.concept) || []}
+        concepts={domain.concepts?.items.map((i: any) => i.concept) || []}
         isLoading={isLoading}
       />
     </Flex>

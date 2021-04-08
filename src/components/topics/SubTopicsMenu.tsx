@@ -17,17 +17,11 @@ import gql from 'graphql-tag';
 import { useState } from 'react';
 import { ConceptLinkData } from '../../graphql/concepts/concepts.fragments';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
-import {
-  useSetConceptsKnownMutation,
-  useSetConceptsUnknownMutation,
-} from '../../graphql/concepts/concepts.operations.generated';
 import { DomainLinkData } from '../../graphql/domains/domains.fragments';
 import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
-import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { ConceptPageInfo, DomainPageInfo } from '../../pages/RoutesPageInfos';
-import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
+import { RoleAccess } from '../auth/RoleAccess';
 import { ConceptKnownCheckbox } from '../concepts/ConceptKnownCheckbox';
-import { CompletedCheckbox } from '../lib/CompletedCheckbox';
 import { PageLink } from '../navigation/InternalLink';
 import { AddSubTopicModal } from './AddSubTopic';
 import { SubTopicsMenuDataFragment } from './SubTopicsMenu.generated';
@@ -120,11 +114,13 @@ export const SubTopicsMenu: React.FC<{
           />
         )}
       </Flex>
-      <Flex direction="row" justifyContent="center" pt={1} pb={3}>
-        <Link color="originalPalette.red" fontSize="md" fontWeight={600} onClick={() => onOpen()}>
-          + Add SubTopic
-        </Link>
-      </Flex>
+      <RoleAccess accessRule="loggedInUser">
+        <Flex direction="row" justifyContent="center" pt={1} pb={3}>
+          <Link color="originalPalette.red" fontSize="md" fontWeight={600} onClick={() => onOpen()}>
+            + Add SubTopic
+          </Link>
+        </Flex>
+      </RoleAccess>
       <AddSubTopicModal
         domain={domain}
         parentTopicId={topicId}
