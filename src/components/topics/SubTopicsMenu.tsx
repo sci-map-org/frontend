@@ -26,12 +26,6 @@ import { PageLink } from '../navigation/InternalLink';
 import { AddSubTopicModal } from './AddSubTopic';
 import { SubTopicsMenuDataFragment } from './SubTopicsMenu.generated';
 
-type NestedConceptItem = {
-  concept: ConceptDataFragment; //& { parentConcepts?: { concept: { _id: string } }[] | null };
-  index: number; // ConceptBelongsToDomain or ConceptBelongsToConcept
-  subConceptItems?: NestedConceptItem[];
-};
-
 export const SubTopicsMenuData = gql`
   fragment SubTopicsMenuData on TopicIsSubTopicOfTopic {
     index

@@ -25,20 +25,11 @@ export const MinimapTopicData = gql`
   fragment MinimapTopicData on TopicIsSubTopicOfTopic {
     index
     subTopic {
-      ... on Concept {
-        _id
-        key
-        topicType
-        name
-        size
-      }
-      ... on Domain {
-        _id
-        key
-        topicType
-        name
-        size
-      }
+      _id
+      key
+      topicType
+      name
+      size
     }
   }
 `;

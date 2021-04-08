@@ -813,6 +813,7 @@ export type Concept = ITopic & {
   _id: Scalars['String'];
   key: Scalars['String'];
   name: Scalars['String'];
+  types: Array<ConceptType>;
   description?: Maybe<Scalars['String']>;
   topicType: TopicType;
   domain?: Maybe<Domain>;
@@ -1083,6 +1084,7 @@ export type AddConceptToDomainResult = {
 export type AddConceptToDomainPayload = {
   key?: Maybe<Scalars['String']>;
   name: Scalars['String'];
+  types: Array<ConceptType>;
   description?: Maybe<Scalars['String']>;
   index?: Maybe<Scalars['Float']>;
 };
@@ -1090,6 +1092,7 @@ export type AddConceptToDomainPayload = {
 export type UpdateConceptPayload = {
   key?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
+  types?: Maybe<Array<ConceptType>>;
   description?: Maybe<Scalars['String']>;
 };
 
@@ -1472,6 +1475,18 @@ export type ResourceData = {
   durationSeconds?: Maybe<Scalars['Int']>;
   subResourceSeries?: Maybe<Array<SubResourceExtractedData>>;
 };
+
+export enum ConceptType {
+  Concept = 'concept',
+  Question = 'question',
+  Problem = 'problem',
+  Theory = 'theory',
+  Method = 'method',
+  Technic = 'technic',
+  Person = 'person',
+  Fact = 'fact',
+  Event = 'event'
+}
 
 export type ConceptCoveredByResourcesResults = {
   __typename?: 'ConceptCoveredByResourcesResults';
