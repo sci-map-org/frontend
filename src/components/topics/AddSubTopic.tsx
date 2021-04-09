@@ -1,4 +1,5 @@
 import {
+  Box,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -65,12 +66,14 @@ export const AddSubTopic: React.FC<AddSubTopicProps> = ({
             />
           </TabPanel>
           <TabPanel>
-            <DomainSelector onSelect={(domain) => selectDomain(domain)} />
-            {selectedDomain && (
-              <Text fontSize="md" fontWeight={500} my={4}>
-                Selected Area: <PageLink pageInfo={DomainPageInfo(selectedDomain)}>{selectedDomain.name}</PageLink>
-              </Text>
-            )}
+            <Box mb={5}>
+              <DomainSelector onSelect={(domain) => selectDomain(domain)} />
+              {selectedDomain && (
+                <Text fontSize="md" fontWeight={500} my={4}>
+                  Selected Area: <PageLink pageInfo={DomainPageInfo(selectedDomain)}>{selectedDomain.name}</PageLink>
+                </Text>
+              )}
+            </Box>
             <FormButtons
               primaryText="Add SubTopic"
               size={size}
@@ -104,7 +107,7 @@ export const AddSubTopicModal: React.FC<AddSubTopicModalProps> = ({ isOpen, onCl
     <Modal onClose={onClose} size="xl" isOpen={isOpen}>
       <ModalOverlay>
         <ModalContent>
-          <ModalHeader>{props.domain ? `Add a SubTopic to ${props.domain.name}` : 'Create new SubTopic'}</ModalHeader>
+          <ModalHeader>{props.domain ? `Add a SubTopic` : 'Create new SubTopic'}</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={5}>
             <AddSubTopic
