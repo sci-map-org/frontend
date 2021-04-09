@@ -1,7 +1,7 @@
 import { Box, Flex, Heading, Stack } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useState } from 'react';
-import { SubTopicsMenu } from '../../components/topics/SubTopicsMenu';
+import { SubTopicsMenu, SubTopicsMenuData } from '../../components/topics/SubTopicsMenu';
 import { BestXPagesLinks } from '../../components/domains/BestXPagesLinks';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { LearningPathPreviewCardData } from '../../components/learning_paths/LearningPathPreviewCard';
@@ -31,31 +31,13 @@ export const getBestXPageData = gql`
           ...LearningPathPreviewCardData
         }
       }
-      concepts(options: { sorting: { entity: relationship, field: index, direction: ASC } }) {
-        items {
-          concept {
-            ...ConceptData
-            topicType
-            referencedByConcepts {
-              concept {
-                _id
-              }
-            }
-            # subConcepts {
-            #   concept {
-            #     _id
-            #   }
-            # }
-          }
-          relationship {
-            index
-          }
-        }
+      subTopics(options: { sorting: { type: index, direction: ASC } }) {
+        ...SubTopicsMenuData
       }
     }
   }
   ${ResourcePreviewData}
-  ${ConceptData}
+  ${SubTopicsMenuData}
   ${LearningPathPreviewCardData}
 `;
 
@@ -109,7 +91,13 @@ export const BestXPage: React.FC<{ domainKey: string; x: ResourceType[] }> = ({ 
           />
         </Flex>
         <Stack spacing={5} direction="column">
-          <SubTopicsMenu minWidth="260px" domain={domain} />
+          <SubTopicsMenu
+            topicId={domain._id}
+            subTopics={domain.subTopics || []}
+            isLoading={loading}
+            minWidth="260px"
+            domain={domain}
+          />
           <BestXPagesLinks domainKey={domain.key} />
         </Stack>
       </Stack>
