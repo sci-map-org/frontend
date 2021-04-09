@@ -27,19 +27,11 @@ import { PageLink } from '../navigation/InternalLink';
 interface AddSubTopicProps {
   domain?: DomainLinkDataFragment;
   parentTopicId: string; // add data ?
-  // defaultPayload?: Partial<any>; // TODO
   size?: 'sm' | 'md' | 'lg';
   onAdded?: () => void;
   onCancel: () => void;
 }
-export const AddSubTopic: React.FC<AddSubTopicProps> = ({
-  domain,
-  parentTopicId,
-  // defaultPayload,
-  size = 'md',
-  onCancel,
-  onAdded,
-}) => {
+export const AddSubTopic: React.FC<AddSubTopicProps> = ({ domain, parentTopicId, size = 'md', onCancel, onAdded }) => {
   const [attachTopicIsSubTopicOfTopic] = useAttachTopicIsSubTopicOfTopicMutation();
   const [selectedDomain, selectDomain] = useState<DomainDataFragment>();
 
