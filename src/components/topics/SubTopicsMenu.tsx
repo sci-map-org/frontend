@@ -74,7 +74,6 @@ export const SubTopicsMenu: React.FC<{
 }> = ({ topicId, domain, subTopics, isLoading, onConceptToggled, minWidth = '260px' }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  // if (!isLoading && !subTopics.length) return null;
   return (
     <Flex
       direction="column"

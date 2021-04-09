@@ -1,6 +1,6 @@
 import { NetworkStatus } from '@apollo/client';
 import { SettingsIcon } from '@chakra-ui/icons';
-import { Box, BoxProps, Flex, Heading, IconButton, Image, Skeleton, Stack, Text } from '@chakra-ui/react';
+import { Box, Flex, Heading, IconButton, Skeleton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useEffect, useState } from 'react';
 import { RoleAccess } from '../../components/auth/RoleAccess';
@@ -8,32 +8,29 @@ import { BestXPagesLinks } from '../../components/domains/BestXPagesLinks';
 import { DomainLearningGoals } from '../../components/domains/DomainLearningGoals';
 import { DomainUserHistory } from '../../components/domains/DomainUserHistory';
 import { ParentDomainsNavigationBlock } from '../../components/domains/ParentDomainsNavigationBlock';
-import { BasePageLayout } from '../../components/layout/PageLayout';
+import { TopicPageLayout } from '../../components/layout/TopicPageLayout';
 import { LearningGoalCardData } from '../../components/learning_goals/cards/LearningGoalCard';
 import { LearningPathPreviewCardDataFragment } from '../../components/learning_paths/LearningPathPreviewCard.generated';
-import { DomainIcon } from '../../components/lib/icons/DomainIcon';
 import { LearningPathIcon } from '../../components/lib/icons/LearningPathIcon';
 import { ResourceIcon } from '../../components/lib/icons/ResourceIcon';
-import { SubTopicsMinimap, MinimapTopicData } from '../../components/topics/SubTopicsMinimap';
 import { PageButtonLink, PageLink } from '../../components/navigation/InternalLink';
 import { DomainRecommendedLearningMaterials } from '../../components/resources/DomainRecommendedLearningMaterials';
 import { useGetDomainRecommendedLearningMaterialsQuery } from '../../components/resources/DomainRecommendedLearningMaterials.generated';
-import { ConceptData, generateConceptData } from '../../graphql/concepts/concepts.fragments';
+import { SubTopicsMenu, SubTopicsMenuData } from '../../components/topics/SubTopicsMenu';
+import { MinimapTopicData, SubTopicsMinimap } from '../../components/topics/SubTopicsMinimap';
+import { generateConceptData } from '../../graphql/concepts/concepts.fragments';
 import { DomainData, DomainLinkData, generateDomainData } from '../../graphql/domains/domains.fragments';
+import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { DomainLearningMaterialsOptions, DomainLearningMaterialsSortingType, TopicType } from '../../graphql/types';
 import { routerPushToPage } from '../PageInfo';
 import {
   AddResourceToDomainPageInfo,
   ConceptListPageInfo,
-  DomainPageInfo,
   ManageDomainPageInfo,
   NewLearningPathPageInfo,
 } from '../RoutesPageInfos';
 import { GetDomainByKeyDomainPageQuery, useGetDomainByKeyDomainPageQuery } from './DomainPage.generated';
-import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
-import { SubTopicsMenu, SubTopicsMenuData } from '../../components/topics/SubTopicsMenu';
-import { TopicPageLayout } from '../../components/layout/TopicPageLayout';
 
 export const getDomainByKeyDomainPage = gql`
   query getDomainByKeyDomainPage($key: String!) {
@@ -66,14 +63,10 @@ export const getDomainByKeyDomainPage = gql`
 
 const placeholderDomainData: GetDomainByKeyDomainPageQuery['getDomainByKey'] = {
   ...generateDomainData(),
-  // concepts: {
-  //   items: [...Array(12)].map(() => ({
-  //     concept: { ...generateConceptData(), topicType: TopicType.Concept },
-  //     relationship: {
-  //       index: 0,
-  //     },
-  //   })),
-  // },
+  subTopics: [...Array(12)].map(() => ({
+    subTopic: { ...generateConceptData(), topicType: TopicType.Concept },
+    index: 0,
+  })),
 };
 
 export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {

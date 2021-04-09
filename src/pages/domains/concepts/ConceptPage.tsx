@@ -168,8 +168,13 @@ export const removeConceptReferencesConcept = gql`
 
 const conceptPlaceholder: GetConceptConceptPageQuery['getDomainConceptByKey'] = {
   ...generateConceptData(),
+  name: 'Placeholder Name',
   coveredByResources: { items: [0, 0].map(generateResourceData) },
   domain: generateDomainData(),
+  subTopics: [...Array(12)].map(() => ({
+    subTopic: { ...generateConceptData(), topicType: TopicType.Concept },
+    index: 0,
+  })),
 };
 
 export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = ({ conceptKey, domainKey }) => {
