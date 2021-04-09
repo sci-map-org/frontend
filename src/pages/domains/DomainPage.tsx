@@ -145,15 +145,6 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
           Learn <Text as="span">{domain.name}</Text>
         </Heading>
       }
-      // renderTopicType={
-      //   <TopicPageTypeIcon topicType={TopicType.Domain} />
-      // <Stack direction="row" spacing={1} alignItems="center" color="gray.800" mb={1}>
-      //   <DomainIcon boxSize="20px" mb="4px" />
-      //   <Text fontSize="lg" fontWeight={400}>
-      //     Area
-      //   </Text>
-      // </Stack>
-      // }
       renderBlockBelowTitle={
         <>
           <Skeleton isLoaded={!loading}>
@@ -217,14 +208,6 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
       )}
       isLoading={loading}
       topicType={TopicType.Domain}
-      // renderHeader={(layoutProps) => (
-      //   <DomainPageHeader
-      //     domain={domain}
-      //     isLoading={loading}
-      //     resourcesLoading={resourcesLoading}
-      //     layoutProps={layoutProps}
-      //   />
-      // )}
     >
       <>
         {(loading || (domain.learningGoals && !!domain.learningGoals.length)) && (
@@ -262,30 +245,6 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
               isLoading={loading}
               onConceptToggled={() => refetchLearningMaterials()}
             />
-            {/* {domain.subDomains?.length && (
-              <Flex
-                direction="column"
-                alignItems="stretch"
-                backgroundColor="gray.100"
-                borderRadius={5}
-                px={5}
-                pt={1}
-                pb={2}
-              >
-                <Text fontSize="xl" textAlign="center" fontWeight={600} color="gray.600" pb={2}>
-                  SubAreas
-                </Text>
-                <Stack>
-                  {(domain.subDomains || []).map(({ domain }) => (
-                    <Box key={domain._id}>
-                      <PageLink fontWeight={600} color="gray.700" pageInfo={DomainPageInfo(domain)}>
-                        {domain.name}
-                      </PageLink>
-                    </Box>
-                  ))}
-                </Stack>
-              </Flex>
-            )} */}
             <BestXPagesLinks domainKey={domain.key} />
           </Stack>
         </Flex>
