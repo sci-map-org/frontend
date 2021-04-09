@@ -1,7 +1,7 @@
 // Exist mostly because having pageinfos in Pages creates circular dependencies
 
 import { domainLinkStyleProps } from '../components/domains/DomainLink';
-import { ConceptDataFragment } from '../graphql/concepts/concepts.fragments.generated';
+import { ConceptLinkDataFragment } from '../graphql/concepts/concepts.fragments.generated';
 import { DomainDataFragment, DomainLinkDataFragment } from '../graphql/domains/domains.fragments.generated';
 import { LearningGoalLinkDataFragment } from '../graphql/learning_goals/learning_goals.fragments.generated';
 import { LearningPathDataFragment } from '../graphql/learning_paths/learning_paths.fragments.generated';
@@ -49,32 +49,32 @@ export const ManageDomainPageInfo = (domain: DomainDataFragment): PageInfo => ({
 });
 
 // ====Concepts====
-export const ConceptListPagePath = (domainKey: string) => `/areas/${domainKey}/concepts`;
+export const ConceptListPagePath = (domainKey: string) => `/areas/${domainKey}/subtopics`;
 export const ConceptListPageInfo = (domain: DomainDataFragment): PageInfo => ({
   name: 'Concepts',
   path: ConceptListPagePath(domain.key),
   routePath: ConceptListPagePath('[key]'),
 });
 
-export const NewConceptPagePath = (domainKey: string) => `/areas/${domainKey}/concepts/new`;
+export const NewConceptPagePath = (domainKey: string) => `/areas/${domainKey}/subtopics/new`;
 export const NewConceptPageInfo = (domain: DomainDataFragment): PageInfo => ({
   name: `Add concept to ${domain.name}`,
   path: NewConceptPagePath(domain.key),
   routePath: NewConceptPagePath('[key]'),
 });
 
-export const ConceptPagePath = (domainKey: string, conceptKey: string) => `/areas/${domainKey}/concepts/${conceptKey}`;
-export const ConceptPageInfo = (domain: DomainDataFragment, concept: ConceptDataFragment): PageInfo => ({
+export const ConceptPagePath = (domainKey: string, conceptKey: string) => `/areas/${domainKey}/subtopics/${conceptKey}`;
+export const ConceptPageInfo = (domain: DomainLinkDataFragment, concept: ConceptLinkDataFragment): PageInfo => ({
   name: `${concept.name}`,
   path: ConceptPagePath(domain.key, concept.key),
   routePath: ConceptPagePath('[key]', '[conceptKey]'),
 });
 
 export const EditConceptPagePath = (domainKey: string, conceptKey: string) =>
-  `/areas/${domainKey}/concepts/${conceptKey}/edit`;
+  `/areas/${domainKey}/subtopics/${conceptKey}/edit`;
 export const EditConceptPageInfo = (
-  domain: Pick<DomainDataFragment, 'name' | 'key'>,
-  concept: Pick<ConceptDataFragment, 'name' | 'key'>
+  domain: Pick<DomainLinkDataFragment, 'name' | 'key'>,
+  concept: Pick<ConceptLinkDataFragment, 'name' | 'key'>
 ): PageInfo => ({
   name: `Edit: ${domain.name} - ${concept.name}`,
   path: EditConceptPagePath(domain.key, concept.key),

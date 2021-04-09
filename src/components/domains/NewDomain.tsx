@@ -15,7 +15,7 @@ import { useEffect, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { useCreateDomain } from '../../graphql/domains/domains.hooks';
-import { useAddDomainBelongsToDomainMutation } from '../../graphql/domains/domains.operations.generated';
+import { useAttachTopicIsSubTopicOfTopicMutation } from '../../graphql/topics/topics.operations.generated';
 import { useCheckTopicKeyAvailabilityLazyQuery } from '../../graphql/topics/topics.operations.generated';
 import { CreateDomainPayload, TopicType } from '../../graphql/types';
 import { generateUrlKey } from '../../services/url.service';
@@ -124,14 +124,16 @@ interface NewDomainProps {
 
 export const NewDomain: React.FC<NewDomainProps> = ({ parentDomainId, defaultPayload, onCreated, onCancel, size }) => {
   const { createDomain } = useCreateDomain();
-  const [addDomainBelongsToDomainMutation] = useAddDomainBelongsToDomainMutation();
+  const [attachTopicIsSubTopicOfTopicMutation] = useAttachTopicIsSubTopicOfTopicMutation();
   return (
     <NewDomainForm
       onCreate={async (payload) => {
         const { data } = await createDomain({ variables: { payload } });
         if (!data) throw new Error();
         if (parentDomainId)
-          await addDomainBelongsToDomainMutation({ variables: { parentDomainId, subDomainId: data.createDomain._id } });
+          await attachTopicIsSubTopicOfTopicMutation({
+            variables: { parentTopicId: parentDomainId, subTopicId: data.createDomain._id, payload: {} },
+          });
         !!onCreated && onCreated(data.createDomain);
       }}
       onCancel={onCancel}

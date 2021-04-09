@@ -1,14 +1,14 @@
 import { differenceBy } from 'lodash';
-import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
+import { ConceptDataFragment, ConceptLinkDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { useGetDomainConceptListQuery } from '../../graphql/concepts/concepts.operations.generated';
 import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { DomainConceptsPicker } from './DomainConceptsPicker';
 
 interface DomainConceptsSelectorProps {
   domain: DomainLinkDataFragment;
-  onSelect: (concept: ConceptDataFragment) => void;
-  onRemove: (concept: ConceptDataFragment) => void;
-  selectedConcepts: ConceptDataFragment[];
+  onSelect: (concept: ConceptLinkDataFragment) => void;
+  onRemove: (concept: ConceptLinkDataFragment) => void;
+  selectedConcepts: ConceptLinkDataFragment[];
   title?: string;
   placeholder?: string;
   isLoading?: boolean;

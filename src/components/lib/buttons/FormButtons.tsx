@@ -7,6 +7,7 @@ interface FormButtonsProps {
   onPrimaryClick: () => void;
   isPrimaryLoading?: boolean;
   isPrimaryDisabled?: boolean;
+  primaryText?: string;
 }
 export const FormButtons: React.FC<FormButtonsProps> = ({
   size = 'md',
@@ -14,6 +15,7 @@ export const FormButtons: React.FC<FormButtonsProps> = ({
   onPrimaryClick,
   isPrimaryLoading,
   isPrimaryDisabled,
+  primaryText = 'Create',
 }) => {
   return (
     <Flex justifyContent="flex-end">
@@ -31,7 +33,7 @@ export const FormButtons: React.FC<FormButtonsProps> = ({
           isDisabled={isPrimaryDisabled}
           onClick={onPrimaryClick}
         >
-          Create
+          {primaryText}
         </Button>
       </ButtonGroup>
     </Flex>

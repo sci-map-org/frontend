@@ -1,4 +1,4 @@
-import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
+import { ConceptLinkDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import {
   useAttachLearningMaterialCoversConceptsMutation,
@@ -9,7 +9,7 @@ import { DomainConceptsSelector } from '../concepts/DomainConceptsSelector';
 export const LearningMaterialDomainCoveredConceptsSelector: React.FC<{
   learningMaterialId: string;
   domain: DomainLinkDataFragment;
-  coveredConcepts: ConceptDataFragment[];
+  coveredConcepts: ConceptLinkDataFragment[];
   title?: string;
   isLoading?: boolean;
   allowCreation?: boolean;

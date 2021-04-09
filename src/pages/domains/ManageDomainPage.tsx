@@ -4,12 +4,13 @@ import gql from 'graphql-tag';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { DomainsPicker } from '../../components/domains/DomainsPicker';
 import { PageLayout } from '../../components/layout/PageLayout';
-import { InternalLink, PageLink } from '../../components/navigation/InternalLink';
+import { PageLink } from '../../components/navigation/InternalLink';
 import { DomainData, generateDomainData } from '../../graphql/domains/domains.fragments';
+import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import {
-  useAddDomainBelongsToDomainMutation,
-  useRemoveDomainBelongsToDomainMutation,
-} from '../../graphql/domains/domains.operations.generated';
+  useAttachTopicIsSubTopicOfTopicMutation,
+  useDetachTopicIsSubTopicOfTopicMutation,
+} from '../../graphql/topics/topics.operations.generated';
 import { routerPushToPage } from '../PageInfo';
 import {
   DomainPageInfo,
@@ -26,13 +27,15 @@ export const getDomainByKeyManageDomainPage = gql`
   query getDomainByKeyManageDomainPage($key: String!) {
     getDomainByKey(key: $key) {
       ...DomainData
-      subDomains {
-        domain {
+      subTopics(options: { sorting: { type: index, direction: ASC }, topicTypeIn: [Domain] }) {
+        index
+        subTopic {
           ...DomainData
         }
       }
-      parentDomains {
-        domain {
+      parentTopics(options: { sorting: { type: index, direction: ASC }, topicTypeIn: [Domain] }) {
+        index
+        parentTopic {
           ...DomainData
         }
       }
@@ -45,8 +48,8 @@ const placeholderDomainData: GetDomainByKeyManageDomainPageQuery['getDomainByKey
 
 export const ManageDomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
   const { data, loading } = useGetDomainByKeyManageDomainPageQuery({ variables: { key: domainKey } });
-  const [addDomainBelongsToDomainMutation] = useAddDomainBelongsToDomainMutation();
-  const [removeDomainBelongsToDomainMutation] = useRemoveDomainBelongsToDomainMutation();
+  const [attachTopicIsSubTopicOfTopicMutation] = useAttachTopicIsSubTopicOfTopicMutation();
+  const [detachTopicIsSubTopicOfTopicMutation] = useDetachTopicIsSubTopicOfTopicMutation();
   const domain = data?.getDomainByKey || placeholderDomainData;
 
   return (
@@ -83,15 +86,19 @@ export const ManageDomainPage: React.FC<{ domainKey: string }> = ({ domainKey })
         <Box>
           <DomainsPicker
             title="Sub Areas"
-            pickedDomainList={(domain.subDomains || []).map((subDomainItem) => subDomainItem.domain)}
+            pickedDomainList={
+              (domain.subTopics || [])
+                .map((subDomainItem) => subDomainItem.subTopic)
+                .filter((topic) => topic.__typename === 'Domain') as DomainDataFragment[]
+            }
             onSelect={(domainToAdd) =>
-              addDomainBelongsToDomainMutation({
-                variables: { parentDomainId: domain._id, subDomainId: domainToAdd._id },
+              attachTopicIsSubTopicOfTopicMutation({
+                variables: { parentTopicId: domain._id, subTopicId: domainToAdd._id, payload: {} },
               })
             }
             onRemove={(domainToRemove) =>
-              removeDomainBelongsToDomainMutation({
-                variables: { parentDomainId: domain._id, subDomainId: domainToRemove._id },
+              detachTopicIsSubTopicOfTopicMutation({
+                variables: { parentTopicId: domain._id, subTopicId: domainToRemove._id },
               })
             }
           />
@@ -99,15 +106,19 @@ export const ManageDomainPage: React.FC<{ domainKey: string }> = ({ domainKey })
         <Box>
           <DomainsPicker
             title="Parent Areas"
-            pickedDomainList={(domain.parentDomains || []).map((parentDomainItem) => parentDomainItem.domain)}
+            pickedDomainList={
+              (domain.parentTopics || [])
+                .map((parentDomainItem) => parentDomainItem.parentTopic)
+                .filter((topic) => topic.__typename === 'Domain') as DomainDataFragment[]
+            }
             onSelect={(domainToAdd) =>
-              addDomainBelongsToDomainMutation({
-                variables: { parentDomainId: domainToAdd._id, subDomainId: domain._id },
+              attachTopicIsSubTopicOfTopicMutation({
+                variables: { parentTopicId: domainToAdd._id, subTopicId: domain._id, payload: {} },
               })
             }
             onRemove={(domainToRemove) =>
-              removeDomainBelongsToDomainMutation({
-                variables: { parentDomainId: domainToRemove._id, subDomainId: domain._id },
+              detachTopicIsSubTopicOfTopicMutation({
+                variables: { parentTopicId: domainToRemove._id, subTopicId: domain._id },
               })
             }
           />

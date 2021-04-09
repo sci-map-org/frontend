@@ -11,7 +11,7 @@ export type ConceptLinkDataFragment = (
 
 export type ConceptDataFragment = (
   { __typename?: 'Concept' }
-  & Pick<Types.Concept, '_id' | 'key' | 'name' | 'description'>
+  & Pick<Types.Concept, '_id' | 'key' | 'name' | 'types' | 'description'>
   & { known?: Types.Maybe<(
     { __typename?: 'KnownConcept' }
     & Pick<Types.KnownConcept, 'level'>
@@ -20,7 +20,7 @@ export type ConceptDataFragment = (
 
 export type ConceptWithDependenciesDataFragment = (
   { __typename?: 'Concept' }
-  & Pick<Types.Concept, '_id' | 'key' | 'name'>
+  & Pick<Types.Concept, '_id' | 'key' | 'name' | 'types'>
   & { known?: Types.Maybe<(
     { __typename?: 'KnownConcept' }
     & Pick<Types.KnownConcept, 'level'>

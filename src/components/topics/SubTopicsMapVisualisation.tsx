@@ -12,18 +12,20 @@ import { theme } from '../../theme/theme';
 import { MinimapTopicDataFragment } from './SubTopicsMinimap.generated';
 
 type NodeElement = SimulationNodeDatum &
-  MinimapTopicDataFragment & {
+  MinimapTopicDataFragment['subTopic'] & {
     id: string;
   };
 export interface SubTopicsMapVisualisationProps {
   domainKey: string;
-  topics: MinimapTopicDataFragment[];
+  topicId: string; //only used to force rerendering
+  subTopics: MinimapTopicDataFragment[];
   pxWidth: number;
   pxHeight: number;
 }
 export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps> = ({
   domainKey,
-  topics,
+  topicId,
+  subTopics,
   pxWidth,
   pxHeight,
 }) => {
@@ -31,10 +33,10 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
 
   const nodes: NodeElement[] = useMemo(
     () =>
-      topics.map((topic) => {
-        return { id: topic._id, ...topic };
+      subTopics.map(({ subTopic }) => {
+        return { id: subTopic._id, ...subTopic };
       }),
-    []
+    [subTopics]
   );
 
   useEffect(() => {
@@ -46,7 +48,8 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
       });
 
       const svg = d3Selection.select(d3Container.current).attr('viewBox', [0, 0, pxWidth, pxHeight].join(','));
-      const container = svg.append('g');
+
+      const container = svg.selectAll('.innerContainer').data([true]).join('g').classed('innerContainer', true);
 
       const node = container
         .selectAll('.node')
@@ -115,6 +118,6 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
         .force('center', d3Force.forceCenter(pxWidth / 2, pxHeight / 2))
         .on('tick', tick);
     }
-  }, [nodes]);
+  }, [topicId]);
   return <svg ref={d3Container} width={`${pxWidth}px`} height={`${pxHeight}px`} fontSize="xs" />;
 };

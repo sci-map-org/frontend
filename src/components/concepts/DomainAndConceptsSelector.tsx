@@ -1,7 +1,7 @@
 import { MinusIcon } from '@chakra-ui/icons';
-import { Box, Flex, Heading, IconButton, Stack, Text } from '@chakra-ui/react';
+import { Box, Flex, Heading, IconButton, Stack } from '@chakra-ui/react';
 import { differenceBy } from 'lodash';
-import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
+import { ConceptLinkDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { useSearchDomainsLazyQuery } from '../../graphql/domains/domains.operations.generated';
 import { DomainPageInfo } from '../../pages/RoutesPageInfos';
@@ -11,7 +11,7 @@ import { DomainConceptsSelector } from './DomainConceptsSelector';
 
 export type DomainAndSelectedConcepts = {
   domain: DomainDataFragment;
-  selectedConcepts: ConceptDataFragment[];
+  selectedConcepts: ConceptLinkDataFragment[];
 };
 
 interface DomainAndConceptsSelectorProps {
@@ -27,7 +27,7 @@ export const DomainAndConceptsSelector: React.FC<DomainAndConceptsSelectorProps>
 }) => {
   const [searchDomains, { data }] = useSearchDomainsLazyQuery();
 
-  const updateSelectedConcepts = (index: number, newSelectedConcepts: ConceptDataFragment[]) => {
+  const updateSelectedConcepts = (index: number, newSelectedConcepts: ConceptLinkDataFragment[]) => {
     const newSelectedDomainsAndConcepts = [...selectedDomainsAndConcepts];
     newSelectedDomainsAndConcepts[index] = {
       ...newSelectedDomainsAndConcepts[index],

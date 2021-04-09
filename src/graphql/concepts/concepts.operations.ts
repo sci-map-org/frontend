@@ -3,9 +3,11 @@ import gql from 'graphql-tag';
 import { ResourcePreviewData } from '../resources/resources.fragments';
 
 export const addConceptToDomain = gql`
-  mutation addConceptToDomain($domainId: String!, $payload: AddConceptToDomainPayload!) {
-    addConceptToDomain(domainId: $domainId, payload: $payload) {
-      ...ConceptData
+  mutation addConceptToDomain($domainId: String!, $parentTopicId: String!, $payload: AddConceptToDomainPayload!) {
+    addConceptToDomain(domainId: $domainId, parentTopicId: $parentTopicId, payload: $payload) {
+      concept {
+        ...ConceptData
+      }
       domain {
         _id
         concepts(options: { sorting: { entity: relationship, field: index, direction: ASC } }) {
@@ -16,6 +18,15 @@ export const addConceptToDomain = gql`
             relationship {
               index
             }
+          }
+        }
+      }
+      parentTopic {
+        _id
+        subTopics(options: { sorting: { type: index, direction: ASC } }) {
+          index
+          subTopic {
+            _id
           }
         }
       }
@@ -60,19 +71,23 @@ export const getConcept = gql`
 export const setConceptsKnown = gql`
   mutation setConceptsKnown($payload: SetConceptKnownPayload!) {
     setConceptsKnown(payload: $payload) {
-      ...ConceptData
+      _id
+      known {
+        level
+      }
     }
   }
-  ${ConceptData}
 `;
 
 export const setConceptsUnknown = gql`
   mutation setConceptsUnknown($conceptIds: [String!]!) {
     setConceptsUnknown(conceptIds: $conceptIds) {
-      ...ConceptData
+      _id
+      known {
+        level
+      }
     }
   }
-  ${ConceptData}
 `;
 
 export const getDomainConceptList = gql`

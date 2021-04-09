@@ -1,6 +1,6 @@
 import { IconButton } from '@chakra-ui/button';
 import { useDisclosure } from '@chakra-ui/hooks';
-import { Box, Center, Stack } from '@chakra-ui/layout';
+import { Box, Center, Stack, Text } from '@chakra-ui/layout';
 import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay } from '@chakra-ui/modal';
 import { CgArrowsExpandRight } from '@react-icons/all-files/cg/CgArrowsExpandRight';
 import gql from 'graphql-tag';
@@ -22,25 +22,30 @@ const SubTopicsMapVisualisation = dynamic<SubTopicsMapVisualisationProps>(
 );
 
 export const MinimapTopicData = gql`
-  fragment MinimapTopicData on Topic {
-    _id
-    key
-    topicType
-    name
-    size
+  fragment MinimapTopicData on TopicIsSubTopicOfTopic {
+    index
+    subTopic {
+      _id
+      key
+      topicType
+      name
+      size
+    }
   }
 `;
 interface SubTopicsMinimapProps {
   domainKey: string;
   isLoading: boolean;
-  topics: MinimapTopicDataFragment[];
+  topicId: string;
+  subTopics: MinimapTopicDataFragment[];
   pxWidth?: number;
   pxHeight?: number;
 }
 
 export const SubTopicsMinimap: React.FC<SubTopicsMinimapProps> = ({
   domainKey,
-  topics,
+  topicId,
+  subTopics,
   isLoading,
   pxWidth = 300,
   pxHeight = 200,
@@ -64,28 +69,43 @@ export const SubTopicsMinimap: React.FC<SubTopicsMinimapProps> = ({
         <Center w="100%" h="100%">
           <PuffLoader size={Math.floor(pxWidth / 3)} color={theme.colors.blue[500]} />
         </Center>
+      ) : subTopics.length ? (
+        <SubTopicsMapVisualisation
+          topicId={topicId}
+          domainKey={domainKey}
+          subTopics={subTopics}
+          pxWidth={pxWidth}
+          pxHeight={pxHeight}
+        />
       ) : (
-        <SubTopicsMapVisualisation domainKey={domainKey} topics={topics} pxWidth={pxWidth} pxHeight={pxHeight} />
+        <Center w="100%" h="100%">
+          <Text textAlign="center" fontWeight={600} fontStyle="italic" color="gray.400">
+            No SubTopics found
+          </Text>
+        </Center>
       )}
-      <IconButton
-        position="absolute"
-        variant="solid"
-        size="md"
-        onClick={() => onOpen()}
-        bottom={2}
-        right={2}
-        opacity={0.8}
-        _hover={{ opacity: 1 }}
-        aria-label="expand minimap"
-        icon={<CgArrowsExpandRight />}
-      />
+
+      {(isLoading || subTopics.length) && (
+        <IconButton
+          position="absolute"
+          variant="solid"
+          size="md"
+          onClick={() => onOpen()}
+          bottom={2}
+          right={2}
+          opacity={0.8}
+          _hover={{ opacity: 1 }}
+          aria-label="expand minimap"
+          icon={<CgArrowsExpandRight />}
+        />
+      )}
       <Modal isOpen={isOpen} onClose={onClose} size="xl">
         <ModalOverlay />
         <ModalContent w="600px">
           <ModalHeader>SubTopics Map</ModalHeader>
           <ModalCloseButton />
           <ModalBody justifyContent="stretch" alignItems="stretch">
-            <SubTopicsMapModalContent domainKey={domainKey} topics={topics} />
+            <SubTopicsMapModalContent topicId={topicId} domainKey={domainKey} subTopics={subTopics} />
           </ModalBody>
         </ModalContent>
       </Modal>
@@ -93,10 +113,11 @@ export const SubTopicsMinimap: React.FC<SubTopicsMinimapProps> = ({
   );
 };
 
-const SubTopicsMapModalContent: React.FC<{ topics: MinimapTopicDataFragment[]; domainKey: string }> = ({
-  topics,
-  domainKey,
-}) => {
+const SubTopicsMapModalContent: React.FC<{
+  subTopics: MinimapTopicDataFragment[];
+  domainKey: string;
+  topicId: string;
+}> = ({ subTopics, domainKey, topicId }) => {
   const modalContainerRef = useRef<HTMLDivElement>(null);
   const modalContainerSize = useElementSize(modalContainerRef);
 
@@ -114,7 +135,8 @@ const SubTopicsMapModalContent: React.FC<{ topics: MinimapTopicDataFragment[]; d
       {modalContainerSize && (
         <SubTopicsMapVisualisation
           domainKey={domainKey}
-          topics={topics}
+          topicId={topicId}
+          subTopics={subTopics}
           pxWidth={modalContainerSize.width}
           pxHeight={modalContainerSize.width}
         />

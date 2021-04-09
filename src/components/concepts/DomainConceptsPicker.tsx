@@ -1,17 +1,17 @@
-import { Box, Button, IconButton, Skeleton, Stack, Text, useDisclosure } from '@chakra-ui/react';
 import { MinusIcon } from '@chakra-ui/icons';
+import { Box, Button, IconButton, Skeleton, Stack, Text, useDisclosure } from '@chakra-ui/react';
 import { take } from 'lodash';
 import { useState } from 'react';
-import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
-import { EntitySelector } from '../lib/selectors/EntitySelector';
-import { InternalLink, PageLink } from '../navigation/InternalLink';
-import { ConceptPageInfo, ConceptPagePath } from '../../pages/RoutesPageInfos';
-import { NewConceptModal } from './NewConcept';
+import { ConceptDataFragment, ConceptLinkDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { AddConceptToDomainPayload } from '../../graphql/types';
+import { ConceptPageInfo } from '../../pages/RoutesPageInfos';
 import { generateUrlKey } from '../../services/url.service';
+import { EntitySelector } from '../lib/selectors/EntitySelector';
+import { PageLink } from '../navigation/InternalLink';
+import { NewConceptModal } from './NewConcept';
 
-const getConceptSuggestions = (entities: ConceptDataFragment[], value: string): ConceptDataFragment[] => {
+const getConceptSuggestions = (entities: ConceptLinkDataFragment[], value: string): ConceptLinkDataFragment[] => {
   const inputValue = value.trim().toLowerCase();
   const inputLength = inputValue.length;
 
@@ -23,10 +23,10 @@ const getConceptSuggestions = (entities: ConceptDataFragment[], value: string): 
 interface DomainConceptsPickerProps {
   title?: string;
   placeholder?: string;
-  pickableConceptList: ConceptDataFragment[];
-  pickedConceptList: ConceptDataFragment[];
-  onSelect: (concept: ConceptDataFragment) => void;
-  onRemove: (concept: ConceptDataFragment) => void;
+  pickableConceptList: ConceptLinkDataFragment[];
+  pickedConceptList: ConceptLinkDataFragment[];
+  onSelect: (concept: ConceptLinkDataFragment) => void;
+  onRemove: (concept: ConceptLinkDataFragment) => void;
   maxNbConceptsShown?: number;
   domain: DomainLinkDataFragment;
   isLoading?: boolean;
@@ -45,7 +45,7 @@ export const DomainConceptsPicker: React.FC<DomainConceptsPickerProps> = ({
   isLoading,
   allowCreation,
 }) => {
-  const [conceptSuggestions, setConceptSuggestions] = useState<ConceptDataFragment[]>([]);
+  const [conceptSuggestions, setConceptSuggestions] = useState<ConceptLinkDataFragment[]>([]);
   const [showAll, setShowAll] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [createConceptDefaultPayload, setCreateConceptDefaultPayload] = useState<Partial<AddConceptToDomainPayload>>(

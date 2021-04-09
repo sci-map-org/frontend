@@ -6,6 +6,7 @@ import * as Operations from './concepts.operations';
 import * as Apollo from '@apollo/client';
 export type AddConceptToDomainMutationVariables = Types.Exact<{
   domainId: Types.Scalars['String'];
+  parentTopicId: Types.Scalars['String'];
   payload: Types.AddConceptToDomainPayload;
 }>;
 
@@ -13,8 +14,11 @@ export type AddConceptToDomainMutationVariables = Types.Exact<{
 export type AddConceptToDomainMutation = (
   { __typename?: 'Mutation' }
   & { addConceptToDomain: (
-    { __typename?: 'Concept' }
-    & { domain?: Types.Maybe<(
+    { __typename?: 'AddConceptToDomainResult' }
+    & { concept: (
+      { __typename?: 'Concept' }
+      & ConceptDataFragment
+    ), domain: (
       { __typename?: 'Domain' }
       & Pick<Types.Domain, '_id'>
       & { concepts?: Types.Maybe<(
@@ -30,8 +34,58 @@ export type AddConceptToDomainMutation = (
           ) }
         )> }
       )> }
-    )> }
-    & ConceptDataFragment
+    ), parentTopic: (
+      { __typename?: 'Domain' }
+      & Pick<Types.Domain, '_id'>
+      & { subTopics?: Types.Maybe<Array<(
+        { __typename?: 'TopicIsSubTopicOfTopic' }
+        & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
+        & { subTopic: (
+          { __typename?: 'Domain' }
+          & Pick<Types.Domain, '_id'>
+        ) | (
+          { __typename?: 'Concept' }
+          & Pick<Types.Concept, '_id'>
+        ) | (
+          { __typename?: 'LearningGoal' }
+          & Pick<Types.LearningGoal, '_id'>
+        ) }
+      )>> }
+    ) | (
+      { __typename?: 'Concept' }
+      & Pick<Types.Concept, '_id'>
+      & { subTopics?: Types.Maybe<Array<(
+        { __typename?: 'TopicIsSubTopicOfTopic' }
+        & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
+        & { subTopic: (
+          { __typename?: 'Domain' }
+          & Pick<Types.Domain, '_id'>
+        ) | (
+          { __typename?: 'Concept' }
+          & Pick<Types.Concept, '_id'>
+        ) | (
+          { __typename?: 'LearningGoal' }
+          & Pick<Types.LearningGoal, '_id'>
+        ) }
+      )>> }
+    ) | (
+      { __typename?: 'LearningGoal' }
+      & Pick<Types.LearningGoal, '_id'>
+      & { subTopics?: Types.Maybe<Array<(
+        { __typename?: 'TopicIsSubTopicOfTopic' }
+        & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
+        & { subTopic: (
+          { __typename?: 'Domain' }
+          & Pick<Types.Domain, '_id'>
+        ) | (
+          { __typename?: 'Concept' }
+          & Pick<Types.Concept, '_id'>
+        ) | (
+          { __typename?: 'LearningGoal' }
+          & Pick<Types.LearningGoal, '_id'>
+        ) }
+      )>> }
+    ) }
   ) }
 );
 
@@ -91,7 +145,11 @@ export type SetConceptsKnownMutation = (
   { __typename?: 'Mutation' }
   & { setConceptsKnown: Array<(
     { __typename?: 'Concept' }
-    & ConceptDataFragment
+    & Pick<Types.Concept, '_id'>
+    & { known?: Types.Maybe<(
+      { __typename?: 'KnownConcept' }
+      & Pick<Types.KnownConcept, 'level'>
+    )> }
   )> }
 );
 
@@ -104,7 +162,11 @@ export type SetConceptsUnknownMutation = (
   { __typename?: 'Mutation' }
   & { setConceptsUnknown: Array<(
     { __typename?: 'Concept' }
-    & ConceptDataFragment
+    & Pick<Types.Concept, '_id'>
+    & { known?: Types.Maybe<(
+      { __typename?: 'KnownConcept' }
+      & Pick<Types.KnownConcept, 'level'>
+    )> }
   )> }
 );
 
@@ -148,6 +210,7 @@ export type AddConceptToDomainMutationFn = Apollo.MutationFunction<AddConceptToD
  * const [addConceptToDomainMutation, { data, loading, error }] = useAddConceptToDomainMutation({
  *   variables: {
  *      domainId: // value for 'domainId'
+ *      parentTopicId: // value for 'parentTopicId'
  *      payload: // value for 'payload'
  *   },
  * });
