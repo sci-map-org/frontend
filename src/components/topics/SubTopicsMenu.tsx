@@ -80,6 +80,7 @@ export const SubTopicsMenu: React.FC<{
       alignItems="stretch"
       backgroundColor="white"
       borderWidth={1}
+      pb={2}
       borderColor="gray.200"
       boxShadow="md"
       borderRadius={3}
@@ -110,7 +111,7 @@ export const SubTopicsMenu: React.FC<{
         )}
       </Flex>
       <RoleAccess accessRule="loggedInUser">
-        <Flex direction="row" justifyContent="center" pt={1} pb={3}>
+        <Flex direction="row" justifyContent="center" pt={1} pb={1}>
           <Link color="originalPalette.red" fontSize="md" fontWeight={600} onClick={() => onOpen()}>
             + Add SubTopic
           </Link>
