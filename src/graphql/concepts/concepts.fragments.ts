@@ -34,6 +34,7 @@ export const ConceptWithDependenciesData = gql`
     _id
     key
     name
+    types
     known {
       level
     }

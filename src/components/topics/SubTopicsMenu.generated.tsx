@@ -11,7 +11,7 @@ export type SubTopicsMenuDataFragment = (
     & DomainLinkDataFragment
   ) | (
     { __typename?: 'Concept' }
-    & Pick<Types.Concept, '_id'>
+    & Pick<Types.Concept, 'types' | '_id'>
     & { known?: Types.Maybe<(
       { __typename?: 'KnownConcept' }
       & Pick<Types.KnownConcept, 'level'>
@@ -24,7 +24,7 @@ export type SubTopicsMenuDataFragment = (
         & DomainLinkDataFragment
       ) | (
         { __typename?: 'Concept' }
-        & Pick<Types.Concept, '_id'>
+        & Pick<Types.Concept, 'types' | '_id'>
         & { known?: Types.Maybe<(
           { __typename?: 'KnownConcept' }
           & Pick<Types.KnownConcept, 'level'>

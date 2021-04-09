@@ -33,6 +33,7 @@ export const SubTopicsMenuData = gql`
       _id
       ... on Concept {
         ...ConceptLinkData
+        types
         known {
           level
         }
@@ -42,6 +43,7 @@ export const SubTopicsMenuData = gql`
             _id
             ... on Concept {
               ...ConceptLinkData
+              types
               known {
                 level
               }
