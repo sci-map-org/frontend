@@ -1,5 +1,5 @@
 import { AddIcon } from '@chakra-ui/icons';
-import { Badge, BadgeProps } from '@chakra-ui/layout';
+import { Badge, BadgeProps, Wrap, WrapItem } from '@chakra-ui/layout';
 import { Tag, TagCloseButton, TagLabel, TagLeftIcon, TagProps } from '@chakra-ui/tag';
 import { upperFirst } from 'lodash';
 import { ConceptType } from '../../graphql/types';
@@ -32,5 +32,20 @@ export const ConceptTypeBadge: React.FC<
         />
       )}
     </Tag>
+  );
+};
+
+interface ConceptTypesViewerProps {
+  types: ConceptType[];
+}
+export const ConceptTypesViewer: React.FC<ConceptTypesViewerProps> = ({ types }) => {
+  return (
+    <Wrap>
+      {types.map((type) => (
+        <WrapItem key={type}>
+          <ConceptTypeBadge colorScheme="blue" type={type} />
+        </WrapItem>
+      ))}
+    </Wrap>
   );
 };

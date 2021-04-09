@@ -5,6 +5,7 @@ import { differenceBy } from 'lodash';
 import Router from 'next/router';
 import { RoleAccess } from '../../../components/auth/RoleAccess';
 import { ConceptKnownCheckbox } from '../../../components/concepts/ConceptKnownCheckbox';
+import { EditableConceptTypes } from '../../../components/concepts/ConceptTypesEditor';
 import { DomainConceptsPicker } from '../../../components/concepts/DomainConceptsPicker';
 import { NavigationBreadcrumbs } from '../../../components/layout/NavigationBreadcrumbs';
 import { TopicPageLayout } from '../../../components/layout/TopicPageLayout';
@@ -18,6 +19,7 @@ import { useDeleteConcept } from '../../../graphql/concepts/concepts.hooks';
 import { DomainData, generateDomainData } from '../../../graphql/domains/domains.fragments';
 import { generateResourceData, ResourcePreviewData } from '../../../graphql/resources/resources.fragments';
 import { TopicType } from '../../../graphql/types';
+import { useCurrentUser } from '../../../graphql/users/users.hooks';
 import { NotFoundPage } from '../../NotFoundPage';
 import { ConceptPageInfo, DomainPageInfo } from '../../RoutesPageInfos';
 import {
@@ -179,7 +181,7 @@ export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = 
   const domain = concept.domain;
   if (!domain) return null;
   const referencingConcepts = concept.referencingConcepts?.map((item) => item.concept) || [];
-
+  const { currentUser } = useCurrentUser();
   const [addConceptReferencesConceptMutation] = useAddConceptReferencesConceptMutation();
   const [removeConceptReferencesConcept] = useRemoveConceptReferencesConceptMutation();
 
@@ -216,7 +218,16 @@ export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = 
           {concept.name}
         </Heading>
       }
-      renderBlockBelowTitle={<Stack>{concept.description && <Text pb={5}>{concept.description}</Text>}</Stack>}
+      renderBlockBelowTitle={
+        <Stack pt={2}>
+          <EditableConceptTypes concept={concept} editable={!!currentUser} />
+          {concept.description && (
+            <Text fontWeight={250} pb={5}>
+              {concept.description}
+            </Text>
+          )}
+        </Stack>
+      }
       renderManagementIcons={<ConceptPageManagementIcons concept={concept} isDisabled={loading} />}
       renderMinimap={(pxWidth, pxHeight) => (
         <SubTopicsMinimap
@@ -231,45 +242,21 @@ export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = 
       topicType={TopicType.Concept}
       isLoading={loading}
     >
-      <Flex direction="row" alignItems="flex-start">
+      <Flex direction={{ base: 'column', md: 'row' }} alignItems={{ base: 'center', md: 'flex-start' }}>
         <Flex direction="column" borderTopRadius={2} flexGrow={1}>
-          <Flex direction="column" alignItems="stretch" borderTopRadius="inherit">
-            <Flex pl={3} color="white" bgColor="teal.600" borderTopRadius="inherit">
-              <Heading fontWeight={500} color="white" fontSize="2xl" mt={2} mb={3}>
-                Covered by
-              </Heading>
-            </Flex>
-            <ResourcePreviewCardList
-              domainKey={concept.domain.key}
-              resourcePreviews={concept.coveredByResources?.items || []}
-              isLoading={loading}
-            />
+          <Flex pl={3} color="white" bgColor="teal.600" borderTopRadius="inherit">
+            <Heading fontWeight={500} color="white" fontSize="2xl" mt={2} mb={3}>
+              Covered by
+            </Heading>
           </Flex>
-
-          <RoleAccess accessRule="contributorOrAdmin">
-            <Box mt={5}>
-              <DomainConceptsPicker
-                domain={concept.domain}
-                title="Prerequisites"
-                pickableConceptList={differenceBy(domainConcepts, referencingConcepts, [concept], (concept) => {
-                  return concept._id;
-                })}
-                pickedConceptList={referencingConcepts}
-                onSelect={(conceptToAdd) =>
-                  addConceptReferencesConceptMutation({
-                    variables: { conceptId: concept._id, referencedConceptId: conceptToAdd._id },
-                  })
-                }
-                onRemove={(conceptToRemove) =>
-                  removeConceptReferencesConcept({
-                    variables: { conceptId: concept._id, referencedConceptId: conceptToRemove._id },
-                  })
-                }
-              />
-            </Box>
-          </RoleAccess>
+          <ResourcePreviewCardList
+            domainKey={concept.domain.key}
+            resourcePreviews={concept.coveredByResources?.items || []}
+            isLoading={loading}
+          />
         </Flex>
-        <Flex ml={10}>
+
+        <Flex ml={10} mt={{ base: 10, md: 0 }}>
           <SubTopicsMenu
             topicId={concept._id}
             domain={domain}
@@ -279,6 +266,28 @@ export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = 
           />
         </Flex>
       </Flex>
+      <RoleAccess accessRule="contributorOrAdmin">
+        <Box mt={5}>
+          <DomainConceptsPicker
+            domain={concept.domain}
+            title="Prerequisites"
+            pickableConceptList={differenceBy(domainConcepts, referencingConcepts, [concept], (concept) => {
+              return concept._id;
+            })}
+            pickedConceptList={referencingConcepts}
+            onSelect={(conceptToAdd) =>
+              addConceptReferencesConceptMutation({
+                variables: { conceptId: concept._id, referencedConceptId: conceptToAdd._id },
+              })
+            }
+            onRemove={(conceptToRemove) =>
+              removeConceptReferencesConcept({
+                variables: { conceptId: concept._id, referencedConceptId: conceptToRemove._id },
+              })
+            }
+          />
+        </Box>
+      </RoleAccess>
     </TopicPageLayout>
   );
 };

@@ -225,7 +225,7 @@ export const Header: React.FC = () => {
                 <AvatarBadge bg="green.500" boxSize="0.7rem" />
               </Avatar>
             </MenuButton>
-            <MenuList bg="white">
+            <MenuList bg="white" zIndex={100}>
               <NextLink href="/profile/[key]" as={`/profile/${currentUser.key}`} passHref>
                 <MenuItem>
                   <Link>Profile</Link>

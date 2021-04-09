@@ -1,4 +1,5 @@
 import gql from 'graphql-tag';
+import { ConceptType } from '../types';
 
 import { ConceptDataFragment } from './concepts.fragments.generated';
 
@@ -20,6 +21,7 @@ export const ConceptData = gql`
     _id
     key
     name
+    types
     description
     known {
       level
@@ -46,5 +48,6 @@ export const ConceptWithDependenciesData = gql`
 export const generateConceptData = (): ConceptDataFragment => ({
   _id: Math.random().toString(),
   key: Math.random().toString(),
+  types: [ConceptType.Concept],
   name: 'Oups ' + "you shouldn't see that...".substr(0, Math.round(Math.random() * 25)),
 });
