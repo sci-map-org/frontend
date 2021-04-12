@@ -173,3 +173,11 @@ export const CurrentUserLearningGoalsPageInfo = {
   path: CurrentUserLearningGoalsPagePath,
   routePath: CurrentUserLearningGoalsPagePath,
 };
+
+//====Other====
+export const ExploreMapPagePath = '/explore';
+export const ExploreMapPagePageInfo = {
+  name: 'Explore',
+  path: ExploreMapPagePath,
+  routePath: ExploreMapPagePath,
+};

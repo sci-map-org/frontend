@@ -14,6 +14,7 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query';
   getHomePageData: GetHomePageDataResults;
+  getTopLevelDomains: GetTopLevelDomainsResults;
   globalSearch: GlobalSearchResults;
   searchTopics: SearchTopicsResult;
   searchSubTopics: SearchTopicsResult;
@@ -578,6 +579,11 @@ export type GetHomePageDataResults = {
   currentUser?: Maybe<CurrentUser>;
   recommendedLearningGoals: Array<LearningGoal>;
   recommendedLearningPaths: Array<LearningPath>;
+};
+
+export type GetTopLevelDomainsResults = {
+  __typename?: 'GetTopLevelDomainsResults';
+  items: Array<Domain>;
 };
 
 export type GlobalSearchResults = {

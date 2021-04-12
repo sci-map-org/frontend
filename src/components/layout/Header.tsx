@@ -27,10 +27,10 @@ import { useRouter } from 'next/router';
 import { useRef } from 'react';
 import { env } from '../../env';
 import { useCurrentUser, useLogout } from '../../graphql/users/users.hooks';
-import { LearningPathPagePath, NewDomainPagePath } from '../../pages/RoutesPageInfos';
+import { LearningPathPagePath, NewDomainPagePath, ExploreMapPagePageInfo } from '../../pages/RoutesPageInfos';
 import { globalStyleVariables } from '../../theme/theme';
 import { RoleAccess } from '../auth/RoleAccess';
-import { InternalLink, InternalLinkProps } from '../navigation/InternalLink';
+import { InternalLink, InternalLinkProps, PageLink } from '../navigation/InternalLink';
 import { GlobalSearchBox } from '../navigation/search/GlobalSearchBox';
 
 const HeaderLinkStyle: LinkProps = {
@@ -202,7 +202,9 @@ export const Header: React.FC = () => {
             </Menu>
           </>
         )}
-
+        <PageLink pageInfo={ExploreMapPagePageInfo} {...HeaderLinkStyle}>
+          Explore
+        </PageLink>
         {!showHamburger && (
           <>
             <GlobalSearchBox />
