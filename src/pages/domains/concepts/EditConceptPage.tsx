@@ -10,6 +10,7 @@ import { useUpdateConcept } from '../../../graphql/concepts/concepts.hooks';
 import { DomainData } from '../../../graphql/domains/domains.fragments';
 import { DomainDataFragment } from '../../../graphql/domains/domains.fragments.generated';
 import { NotFoundPage } from '../../NotFoundPage';
+import { routerPushToPage } from '../../PageInfo';
 import { ConceptListPageInfo, ConceptPageInfo, DomainPageInfo, EditConceptPageInfo } from '../../RoutesPageInfos';
 
 import { useGetConceptEditConceptPageQuery } from './EditConceptPage.generated';
@@ -77,7 +78,9 @@ export const EditConceptPage: React.FC<{ domainKey: string; conceptKey: string }
           onCancel={() => Router.back()}
           size="lg"
           onPrimaryClick={() =>
-            updateConcept({ variables: { _id: concept._id, payload: { name, description } } }).then(() => Router.back())
+            updateConcept({ variables: { _id: concept._id, payload: { name, key, description } } }).then(
+              ({ data }) => data && routerPushToPage(ConceptPageInfo(domain, data.updateConcept))
+            )
           }
           primaryText="Edit"
         />
