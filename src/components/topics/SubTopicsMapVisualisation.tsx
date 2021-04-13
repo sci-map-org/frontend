@@ -48,7 +48,7 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
       });
 
       const svg = d3Selection.select(d3Container.current).attr('viewBox', [0, 0, pxWidth, pxHeight].join(','));
-
+      svg.selectAll('.innerContainer').remove();
       const container = svg.selectAll('.innerContainer').data([true]).join('g').classed('innerContainer', true);
 
       const rootCircle = container

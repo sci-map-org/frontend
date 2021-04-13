@@ -122,7 +122,6 @@ export const GlobalSearchBox: React.FC<GlobalSearchBoxProps> = ({
         renderSuggestion={(suggestion, { isHighlighted }) => (
           <SearchResultCard searchResult={suggestion} isHighlighted={isHighlighted} />
         )}
-        alwaysRenderSuggestions
         renderSuggestionsContainer={({ containerProps, children }) =>
           children && (
             <Box
