@@ -51,6 +51,18 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
 
       const container = svg.selectAll('.innerContainer').data([true]).join('g').classed('innerContainer', true);
 
+      const rootCircle = container
+        .append('circle')
+        .attr('r', (_, _2, circle) => {
+          return 120;
+        })
+        .classed('rootCircle', true)
+        .attr('cx', pxWidth / 2)
+        .attr('cy', pxHeight / 2)
+        .attr('fill', (n) => 'white')
+        .attr('stroke', 'black')
+        .attr('stroke-width', 1);
+
       const node = container
         .selectAll('.node')
         .data(nodes)
@@ -88,6 +100,17 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
 
       const zoom = d3Zoom.zoom<SVGSVGElement, unknown>();
       const tick = () => {
+        let maxDistance = 0;
+        const xCenter = pxWidth / 2;
+        const yCenter = pxHeight / 2;
+        node.each(function (d) {
+          if (d.x && d.y) {
+            const distance = Math.sqrt(Math.pow(d.x - xCenter, 2) + Math.pow(d.y - yCenter, 2)) + getNodeRadius(d);
+            if (distance > maxDistance) maxDistance = distance;
+          }
+        });
+        rootCircle.attr('r', maxDistance + 20);
+
         node.attr('transform', function (d) {
           return 'translate(' + d.x + ',' + d.y + ')';
         });

@@ -34,8 +34,8 @@ export const ExplorePage: React.FC<{}> = () => {
     <PageLayout marginSize="md">
       <Center>
         <Box boxShadow="lg">
-          {/* {data && <ExploreMapForceLayout data={data.getTopLevelDomains} pxWidth={pxWidth} pxHeight={pxHeight} />} */}
-          {data && <ExploreMapCirclePacking data={data.getTopLevelDomains} pxWidth={pxWidth} pxHeight={pxHeight} />}
+          {data && <ExploreMapForceLayout data={data.getTopLevelDomains} pxWidth={pxWidth} pxHeight={pxHeight} />}
+          {/* {data && <ExploreMapCirclePacking data={data.getTopLevelDomains} pxWidth={pxWidth} pxHeight={pxHeight} />} */}
         </Box>
       </Center>
     </PageLayout>
