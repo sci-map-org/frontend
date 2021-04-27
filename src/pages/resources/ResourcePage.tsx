@@ -45,13 +45,14 @@ import { GetResourceResourcePageQuery, useGetResourceResourcePageQuery } from '.
 import { BsArrowLeft } from '@react-icons/all-files/bs/BsArrowLeft';
 import { BsArrowRight } from '@react-icons/all-files/bs/BsArrowRight';
 import { BsArrow90DegUp } from '@react-icons/all-files/bs/BsArrow90DegUp';
+import { UserAvatar, UserAvatarData } from '../../components/users/UserAvatar';
 
 export const getResourceResourcePage = gql`
   query getResourceResourcePage($id: String!) {
     getResourceById(id: $id) {
       ...ResourceData
       creator {
-        _id
+        ...UserAvatarData
       }
       coveredConceptsByDomain {
         domain {
@@ -92,6 +93,7 @@ export const getResourceResourcePage = gql`
   ${DomainData}
   ${ResourceData}
   ${ConceptData}
+  ${UserAvatarData}
   ${EditableLearningMaterialOutcomesData}
   ${EditableLearningMaterialPrerequisitesData}
   ${LearningMaterialStarsRaterData}
@@ -154,6 +156,14 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
             </Stack>
           ))}
         <Flex justifyContent="space-between" alignItems="flex-end">
+          {resource.creator && (
+            <Stack direction="row" alignItems="center">
+              <Text fontWeight={300} fontSize="md">
+                Added By
+              </Text>
+              <UserAvatar user={resource.creator} size="xs" />
+            </Stack>
+          )}
           <Stack direction="row" spacing={2} alignItems="baseline">
             <ResourceUrlLink fontSize="md" resource={resource} isLoading={loading} />
             <DurationViewer value={resource.durationSeconds} />
