@@ -1,4 +1,4 @@
-import { Center, Divider, Flex, Link, Stack, Text } from '@chakra-ui/layout';
+import { Flex, Link, Stack, Text } from '@chakra-ui/layout';
 import { FaDiscourse } from '@react-icons/all-files/fa/FaDiscourse';
 import { RiGithubFill } from '@react-icons/all-files/ri/RiGithubFill';
 import { RiTwitterLine } from '@react-icons/all-files/ri/RiTwitterLine';
@@ -6,7 +6,7 @@ import { env } from '../../env';
 
 export const Footer: React.FC<{}> = () => {
   return (
-    <Flex direction="column" alignItems="stretch" overflowX="hidden">
+    <Flex direction="column" alignItems="stretch" overflowX="hidden" flexShrink={0}>
       <Flex
         bgColor="teal.600"
         w="100%"
