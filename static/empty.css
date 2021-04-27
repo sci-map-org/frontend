@@ -40,3 +40,15 @@
 .node.fixed {
   fill: #f00;
 }
+
+.parentCircle:hover {
+  cursor: pointer;
+}
+
+.parentCircle:hover .parentLabel {
+  fill: rgb(40, 40, 40);
+}
+.parentLabel:hover {
+  cursor: pointer;
+  fill: rgb(40, 40, 40);
+}

@@ -16,8 +16,9 @@ import { ResourceIcon } from '../../components/lib/icons/ResourceIcon';
 import { PageButtonLink, PageLink } from '../../components/navigation/InternalLink';
 import { DomainRecommendedLearningMaterials } from '../../components/resources/DomainRecommendedLearningMaterials';
 import { useGetDomainRecommendedLearningMaterialsQuery } from '../../components/resources/DomainRecommendedLearningMaterials.generated';
+import { MapVisualisationTopicData } from '../../components/topics/SubTopicsMapVisualisation';
 import { SubTopicsMenu, SubTopicsMenuData } from '../../components/topics/SubTopicsMenu';
-import { MinimapTopicData, SubTopicsMinimap } from '../../components/topics/SubTopicsMinimap';
+import { SubTopicsMinimap } from '../../components/topics/SubTopicsMinimap';
 import { generateConceptData } from '../../graphql/concepts/concepts.fragments';
 import { DomainData, DomainLinkData, generateDomainData } from '../../graphql/domains/domains.fragments';
 import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
@@ -36,14 +37,15 @@ export const getDomainByKeyDomainPage = gql`
   query getDomainByKeyDomainPage($key: String!) {
     getDomainByKey(key: $key) {
       ...DomainData
+      ...MapVisualisationTopicData
       subTopics(options: { sorting: { type: index, direction: ASC } }) {
         ...SubTopicsMenuData
-        ...MinimapTopicData
       }
       parentTopics(options: { sorting: { type: index, direction: ASC } }) {
         index
         parentTopic {
           ...DomainLinkData
+          ...MapVisualisationTopicData
         }
       }
       learningGoals {
@@ -55,7 +57,7 @@ export const getDomainByKeyDomainPage = gql`
     }
   }
   ${DomainData}
-  ${MinimapTopicData}
+  ${MapVisualisationTopicData}
   ${DomainLinkData}
   ${LearningGoalCardData}
   ${SubTopicsMenuData}
@@ -63,6 +65,7 @@ export const getDomainByKeyDomainPage = gql`
 
 const placeholderDomainData: GetDomainByKeyDomainPageQuery['getDomainByKey'] = {
   ...generateDomainData(),
+  topicType: TopicType.Domain,
   subTopics: [...Array(12)].map(() => ({
     subTopic: { ...generateConceptData(), topicType: TopicType.Concept },
     index: 0,
@@ -85,11 +88,12 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
 
   const {
     data: learningMaterialsData,
-    networkStatus,
+    // networkStatus,
+    loading: resourcesLoading,
     refetch: refetchLearningMaterials,
   } = useGetDomainRecommendedLearningMaterialsQuery({
     variables: { key: domainKey, learningMaterialsOptions: learningMaterialsOptions },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'no-cache',
     ssr: false,
     notifyOnNetworkStatusChange: true,
     onCompleted(data) {
@@ -98,14 +102,15 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
       }
     },
   });
-  const [resourcesLoading, setResourcesLoading] = useState(networkStatus === NetworkStatus.loading);
-
-  useEffect(() => {
-    setResourcesLoading(
-      [NetworkStatus.refetch, NetworkStatus.setVariables, NetworkStatus.loading, NetworkStatus].indexOf(networkStatus) >
-        -1
-    );
-  }, [networkStatus]);
+  // const [resourcesLoading, setResourcesLoading] = useState(networkStatus === NetworkStatus.loading);
+  // console.log(loading, resourcesLoading, networkStatus);
+  // console.log(loadingR, resourcesLoading);
+  // useEffect(() => {
+  //   setResourcesLoading(
+  //     [NetworkStatus.refetch, NetworkStatus.setVariables, NetworkStatus.loading, NetworkStatus].indexOf(networkStatus) >
+  //       -1
+  //   );
+  // }, [networkStatus]);
 
   const learningMaterials = learningMaterialsData?.getDomainByKey?.learningMaterials?.items || learningMaterialPreviews; // ? after getDomainByKey because of https://github.com/apollographql/apollo-client/issues/6986
 
@@ -199,9 +204,10 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
       renderMinimap={(pxWidth, pxHeight) => (
         <SubTopicsMinimap
           domainKey={domain.key}
-          topicId={domain._id}
+          topic={domain}
           isLoading={!!loading || !!resourcesLoading}
-          subTopics={domain.subTopics || []}
+          subTopics={(domain.subTopics || []).map(({ subTopic }) => subTopic)}
+          parentTopics={(domain.parentTopics || []).map(({ parentTopic }) => parentTopic)}
           pxWidth={pxWidth}
           pxHeight={pxHeight}
         />

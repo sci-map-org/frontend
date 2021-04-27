@@ -3,6 +3,7 @@ import { SimulationNodeDatum } from 'd3-force';
 import * as d3ScaleChromatic from 'd3-scale-chromatic';
 import * as d3Selection from 'd3-selection';
 import * as d3Zoom from 'd3-zoom';
+import * as d3Scale from 'd3-scale';
 import Router from 'next/router';
 import { useEffect, useMemo, useRef } from 'react';
 import { TopicType } from '../../graphql/types';
@@ -10,22 +11,33 @@ import { routerPushToPage } from '../../pages/PageInfo';
 import { ConceptPagePath, DomainPageInfo } from '../../pages/RoutesPageInfos';
 import { theme } from '../../theme/theme';
 import { MinimapTopicDataFragment } from './SubTopicsMinimap.generated';
+import { MapVisualisationTopicDataFragment } from './SubTopicsMapVisualisation.generated';
+import gql from 'graphql-tag';
 
-type NodeElement = SimulationNodeDatum &
-  MinimapTopicDataFragment['subTopic'] & {
-    id: string;
-  };
+export const MapVisualisationTopicData = gql`
+  fragment MapVisualisationTopicData on ITopic {
+    _id
+    key
+    topicType
+    name
+    size
+  }
+`;
+
+type NodeElement = SimulationNodeDatum & MapVisualisationTopicDataFragment;
 export interface SubTopicsMapVisualisationProps {
   domainKey: string;
-  topicId: string; //only used to force rerendering
-  subTopics: MinimapTopicDataFragment[];
+  topic: MapVisualisationTopicDataFragment; //only used to force rerendering
+  subTopics: MapVisualisationTopicDataFragment[];
+  parentTopics?: MapVisualisationTopicDataFragment[];
   pxWidth: number;
   pxHeight: number;
 }
 export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps> = ({
   domainKey,
-  topicId,
+  topic,
   subTopics,
+  parentTopics,
   pxWidth,
   pxHeight,
 }) => {
@@ -33,16 +45,25 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
 
   const nodes: NodeElement[] = useMemo(
     () =>
-      subTopics.map(({ subTopic }) => {
+      subTopics.map((subTopic) => {
         return { id: subTopic._id, ...subTopic };
       }),
     [subTopics]
   );
 
+  const parentCircles: NodeElement[] = useMemo(
+    () =>
+      (parentTopics || []).map((parentTopic) => {
+        return { id: parentTopic._id, ...parentTopic };
+      }),
+    [parentTopics]
+  );
+
   useEffect(() => {
+    console.log(parentTopics);
     if (d3Container && d3Container.current) {
       const colorMap: any = {};
-
+      console.log('run ' + topic._id);
       nodes.forEach((node, i) => {
         colorMap[node._id] = d3ScaleChromatic.schemePastel1[i % 9];
       });
@@ -50,6 +71,59 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
       const svg = d3Selection.select(d3Container.current).attr('viewBox', [0, 0, pxWidth, pxHeight].join(','));
       svg.selectAll('.innerContainer').remove();
       const container = svg.selectAll('.innerContainer').data([true]).join('g').classed('innerContainer', true);
+
+      const parentCircleDistance = 400;
+      const parentCircleRadius = 400;
+      var circleScale = d3Scale
+        .scaleLinear()
+        .range([0, 2 * Math.PI])
+        .domain([0, parentCircles.length]);
+
+      const parentCircle = container
+        .selectAll('.parentCircle')
+        .data(parentCircles)
+        .join('circle')
+        .classed('parentCircle', true)
+        .attr('r', parentCircleRadius)
+        .attr('cx', (n, i) => {
+          const x = pxWidth / 2 + (parentCircles.length === 1 ? 0 : parentCircleDistance * Math.cos(circleScale(i)));
+          return x;
+        })
+        .attr(
+          'cy',
+          (n, i) => pxHeight / 2 + (parentCircles.length === 1 ? 0 : parentCircleDistance * Math.sin(circleScale(i)))
+        )
+        .attr('fill', (n, i) => d3ScaleChromatic.schemePastel2[i])
+        .attr('stroke', 'black')
+        .on('click', (event, n) => {
+          console.log(n, domainKey);
+          n.__typename === 'Domain' && routerPushToPage(DomainPageInfo(n));
+          n.__typename === 'Concept' && Router.push(ConceptPagePath(domainKey, n.key));
+        })
+        .attr('stroke-width', 1);
+
+      const parentLabel = container
+        .selectAll('.parentLabel')
+        .data(parentCircles)
+        .join('text')
+        .classed('parentLabel', true)
+        .attr('text-anchor', 'middle')
+
+        .on('click', (event, n) => {
+          n.__typename === 'Domain' && routerPushToPage(DomainPageInfo(n));
+          n.__typename === 'Concept' && Router.push(ConceptPagePath(domainKey, n.key));
+        })
+        .attr('dx', (n, i) => {
+          const x = pxWidth / 2 + parentCircleDistance * Math.cos(circleScale(i));
+          return x;
+        })
+        .attr('dy', (n, i) => pxHeight / 2 + parentCircleDistance * Math.sin(circleScale(i)))
+        // .attr('fill', 'black')
+        .attr('font-weight', 500)
+        .attr('fill', (d) => (d.topicType === TopicType.Domain ? theme.colors.gray[600] : theme.colors.gray[600]))
+        .text(function (d) {
+          return d.name;
+        });
 
       const rootCircle = container
         .append('circle')
@@ -61,7 +135,24 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
         .attr('cy', pxHeight / 2)
         .attr('fill', (n) => 'white')
         .attr('stroke', 'black')
-        .attr('stroke-width', 1);
+        .attr('stroke-width', parentCircles.length ? 1 : 0);
+
+      const rootCircleLabel = container
+        .append('text')
+        .attr('x', (_, _2, circle) => {
+          return pxWidth / 2;
+        })
+        .classed('rootCircle', true)
+        .attr('text-anchor', 'middle')
+        .attr('x', pxWidth / 2)
+        .attr('y', pxHeight / 2)
+        .attr('fill', (n) => theme.colors.gray[700])
+        .attr('font-size', theme.fontSizes.lg)
+        .attr('font-weight', 600)
+        .attr('display', parentCircles.length ? 'inherit' : 'none')
+        .text(function (d) {
+          return topic.name;
+        });
 
       const node = container
         .selectAll('.node')
@@ -70,7 +161,7 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
         .classed('node', true)
         .on('click', (event, n) => {
           n.__typename === 'Domain' && routerPushToPage(DomainPageInfo(n));
-          n.topicType === TopicType.Concept && Router.push(ConceptPagePath(domainKey, n.key));
+          n.__typename === 'Concept' && Router.push(ConceptPagePath(domainKey, n.key));
         });
 
       const getNodeRadius = (n: NodeElement) => (n.size ? 12 + (n.size > 1 ? Math.log(n.size) * 12 : 0) : 12);
@@ -106,11 +197,23 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
         node.each(function (d) {
           if (d.x && d.y) {
             const distance = Math.sqrt(Math.pow(d.x - xCenter, 2) + Math.pow(d.y - yCenter, 2)) + getNodeRadius(d);
+            // console.log(node.nodes().map((n: SVGElement) => n.getBBox()));
             if (distance > maxDistance) maxDistance = distance;
           }
         });
-        rootCircle.attr('r', maxDistance + 20);
 
+        const labelDistance = parentCircles.length > 1 ? maxDistance + 90 : maxDistance + 120;
+
+        const angle = (i: number) => (parentCircles.length > 1 ? circleScale(i) : Math.PI + Math.PI / 8);
+
+        parentLabel
+          .attr('dx', (n, i) => {
+            const x = pxWidth / 2 + labelDistance * Math.cos(angle(i));
+            return x;
+          })
+          .attr('dy', (n, i) => pxHeight / 2 + labelDistance * Math.sin(angle(i)));
+        rootCircle.attr('r', maxDistance + 30);
+        rootCircleLabel.attr('y', pxHeight / 2 + maxDistance + 48);
         node.attr('transform', function (d) {
           return 'translate(' + d.x + ',' + d.y + ')';
         });
@@ -141,6 +244,6 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
         .force('center', d3Force.forceCenter(pxWidth / 2, pxHeight / 2))
         .on('tick', tick);
     }
-  }, [topicId]);
+  }, [topic._id]);
   return <svg ref={d3Container} width={`${pxWidth}px`} height={`${pxHeight}px`} fontSize="xs" />;
 };

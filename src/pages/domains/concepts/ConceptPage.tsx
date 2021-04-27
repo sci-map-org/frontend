@@ -11,8 +11,9 @@ import { NavigationBreadcrumbs } from '../../../components/layout/NavigationBrea
 import { TopicPageLayout } from '../../../components/layout/TopicPageLayout';
 import { DeleteButtonWithConfirmation } from '../../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { ResourcePreviewCardList } from '../../../components/resources/ResourcePreviewCardList';
+import { MapVisualisationTopicData } from '../../../components/topics/SubTopicsMapVisualisation';
 import { SubTopicsMenu, SubTopicsMenuData } from '../../../components/topics/SubTopicsMenu';
-import { MinimapTopicData, SubTopicsMinimap } from '../../../components/topics/SubTopicsMinimap';
+import { SubTopicsMinimap } from '../../../components/topics/SubTopicsMinimap';
 import { ConceptData, generateConceptData } from '../../../graphql/concepts/concepts.fragments';
 import { ConceptDataFragment } from '../../../graphql/concepts/concepts.fragments.generated';
 import { useDeleteConcept } from '../../../graphql/concepts/concepts.hooks';
@@ -68,6 +69,7 @@ export const getConceptConceptPage = gql`
   query getConceptConceptPage($domainKey: String!, $conceptKey: String!) {
     getDomainConceptByKey(domainKey: $domainKey, conceptKey: $conceptKey) {
       ...ConceptData
+      ...MapVisualisationTopicData
       referencingConcepts {
         concept {
           ...ConceptData
@@ -75,10 +77,10 @@ export const getConceptConceptPage = gql`
       }
       subTopics(options: { sorting: { type: index, direction: ASC } }) {
         ...SubTopicsMenuData
-        ...MinimapTopicData
       }
       parentTopic {
         parentTopic {
+          ...MapVisualisationTopicData
           ... on Concept {
             _id
             key
@@ -113,11 +115,11 @@ export const getConceptConceptPage = gql`
       }
     }
   }
+  ${MapVisualisationTopicData}
   ${ResourcePreviewData}
   ${ConceptData}
   ${DomainData}
   ${SubTopicsMenuData}
-  ${MinimapTopicData}
 `;
 
 export const addConceptReferencesConcept = gql`
@@ -169,6 +171,7 @@ export const removeConceptReferencesConcept = gql`
 const conceptPlaceholder: GetConceptConceptPageQuery['getDomainConceptByKey'] = {
   ...generateConceptData(),
   name: 'Placeholder Name',
+  topicType: TopicType.Concept,
   coveredByResources: { items: [0, 0].map(generateResourceData) },
   domain: generateDomainData(),
   subTopics: [...Array(12)].map(() => ({
@@ -189,7 +192,7 @@ export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = 
   const { currentUser } = useCurrentUser();
   const [addConceptReferencesConceptMutation] = useAddConceptReferencesConceptMutation();
   const [removeConceptReferencesConcept] = useRemoveConceptReferencesConceptMutation();
-
+  console.log(concept);
   if (error) return <NotFoundPage />;
   if (!concept.domain) throw new Error('Concept has no domain');
   return (
@@ -237,9 +240,10 @@ export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = 
       renderMinimap={(pxWidth, pxHeight) => (
         <SubTopicsMinimap
           domainKey={domain.key}
-          topicId={concept._id}
+          parentTopics={!!concept.parentTopic?.parentTopic ? [concept.parentTopic.parentTopic] : undefined}
+          topic={concept}
           isLoading={!!loading}
-          subTopics={concept.subTopics || []}
+          subTopics={(concept.subTopics || []).map(({ subTopic }) => subTopic)}
           pxWidth={pxWidth}
           pxHeight={pxHeight}
         />

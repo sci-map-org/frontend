@@ -7,11 +7,11 @@ export type SubTopicsMenuDataFragment = (
   & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
   & { subTopic: (
     { __typename?: 'Domain' }
-    & Pick<Types.Domain, '_id'>
+    & Pick<Types.Domain, '_id' | 'topicType' | 'size'>
     & DomainLinkDataFragment
   ) | (
     { __typename?: 'Concept' }
-    & Pick<Types.Concept, 'types' | '_id'>
+    & Pick<Types.Concept, 'types' | '_id' | 'topicType' | 'size'>
     & { known?: Types.Maybe<(
       { __typename?: 'KnownConcept' }
       & Pick<Types.KnownConcept, 'level'>
@@ -20,11 +20,11 @@ export type SubTopicsMenuDataFragment = (
       & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
       & { subTopic: (
         { __typename?: 'Domain' }
-        & Pick<Types.Domain, '_id'>
+        & Pick<Types.Domain, '_id' | 'topicType'>
         & DomainLinkDataFragment
       ) | (
         { __typename?: 'Concept' }
-        & Pick<Types.Concept, 'types' | '_id'>
+        & Pick<Types.Concept, 'types' | '_id' | 'topicType'>
         & { known?: Types.Maybe<(
           { __typename?: 'KnownConcept' }
           & Pick<Types.KnownConcept, 'level'>
@@ -32,12 +32,12 @@ export type SubTopicsMenuDataFragment = (
         & ConceptLinkDataFragment
       ) | (
         { __typename?: 'LearningGoal' }
-        & Pick<Types.LearningGoal, '_id'>
+        & Pick<Types.LearningGoal, 'key' | 'name' | '_id' | 'topicType'>
       ) }
     )>> }
     & ConceptLinkDataFragment
   ) | (
     { __typename?: 'LearningGoal' }
-    & Pick<Types.LearningGoal, '_id'>
+    & Pick<Types.LearningGoal, 'key' | 'name' | '_id' | 'topicType' | 'size'>
   ) }
 );

@@ -1,8 +1,8 @@
 import * as Types from '../../graphql/types';
 
 import { DomainDataFragment, DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
+import { MapVisualisationTopicData_Domain_Fragment, MapVisualisationTopicData_Concept_Fragment, MapVisualisationTopicData_LearningGoal_Fragment } from '../../components/topics/SubTopicsMapVisualisation.generated';
 import { SubTopicsMenuDataFragment } from '../../components/topics/SubTopicsMenu.generated';
-import { MinimapTopicDataFragment } from '../../components/topics/SubTopicsMinimap.generated';
 import { LearningGoalCardDataFragment } from '../../components/learning_goals/cards/LearningGoalCard.generated';
 import * as Operations from './DomainPage';
 import * as Apollo from '@apollo/client';
@@ -18,14 +18,20 @@ export type GetDomainByKeyDomainPageQuery = (
     & { subTopics?: Types.Maybe<Array<(
       { __typename?: 'TopicIsSubTopicOfTopic' }
       & SubTopicsMenuDataFragment
-      & MinimapTopicDataFragment
     )>>, parentTopics?: Types.Maybe<Array<(
       { __typename?: 'TopicIsSubTopicOfTopic' }
       & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
       & { parentTopic: (
         { __typename?: 'Domain' }
         & DomainLinkDataFragment
-      ) | { __typename?: 'Concept' } | { __typename?: 'LearningGoal' } }
+        & MapVisualisationTopicData_Domain_Fragment
+      ) | (
+        { __typename?: 'Concept' }
+        & MapVisualisationTopicData_Concept_Fragment
+      ) | (
+        { __typename?: 'LearningGoal' }
+        & MapVisualisationTopicData_LearningGoal_Fragment
+      ) }
     )>>, learningGoals?: Types.Maybe<Array<(
       { __typename?: 'LearningGoalBelongsToDomain' }
       & Pick<Types.LearningGoalBelongsToDomain, 'index'>
@@ -35,6 +41,7 @@ export type GetDomainByKeyDomainPageQuery = (
       ) }
     )>> }
     & DomainDataFragment
+    & MapVisualisationTopicData_Domain_Fragment
   ) }
 );
 
