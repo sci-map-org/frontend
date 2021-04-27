@@ -6,6 +6,7 @@ import { DomainDataFragment, DomainLinkDataFragment } from '../graphql/domains/d
 import { LearningGoalLinkDataFragment } from '../graphql/learning_goals/learning_goals.fragments.generated';
 import { LearningPathDataFragment } from '../graphql/learning_paths/learning_paths.fragments.generated';
 import { ResourceDataFragment } from '../graphql/resources/resources.fragments.generated';
+import { PublicUserDataFragment } from '../graphql/users/users.fragments.generated';
 import { PageInfo } from './PageInfo';
 
 // ====Domains====
@@ -167,6 +168,14 @@ export const LearningPathPageInfo = (learningPath: Pick<LearningPathDataFragment
 });
 
 //====User Profile====
+export const UserProfilePagePath = (userKey: string) => `/profile/${userKey}`;
+
+export const UserProfilePageInfo = (user: Pick<PublicUserDataFragment, '_id' | 'key' | 'displayName'>): PageInfo => ({
+  name: `Profile of ${user.displayName} (@${user.key})`,
+  path: UserProfilePagePath(user.key),
+  routePath: UserProfilePagePath('[key]'),
+});
+
 export const CurrentUserLearningGoalsPagePath = '/profile/goals';
 export const CurrentUserLearningGoalsPageInfo = {
   name: 'My Goals',
