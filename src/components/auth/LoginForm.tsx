@@ -3,7 +3,9 @@ import { useState } from 'react';
 import { DiscourseSso } from '../../graphql/types';
 import { LoginResponseDataFragment } from '../../graphql/users/users.fragments.generated';
 import { useLogin } from '../../graphql/users/users.hooks';
+import { ResetPasswordPageInfo } from '../../pages/RoutesPageInfos';
 import { PasswordInput } from '../lib/inputs/PasswordInput';
+import { PageLink } from '../navigation/InternalLink';
 import { GoogleAuthButton } from './GoogleAuthButton';
 
 export const LoginForm: React.FC<{
@@ -36,9 +38,14 @@ export const LoginForm: React.FC<{
       </Stack>
       <Divider />
       <Stack spacing={2}>
-        <Text fontSize="xl" fontWeight={300}>
-          Or with your email address
-        </Text>
+        <Stack spacing={0}>
+          <Text fontSize="xl" fontWeight={300}>
+            Or with your email address
+          </Text>
+          <PageLink pageInfo={ResetPasswordPageInfo} color="blue.500" fontSize="xs" fontWeight={400}>
+            Forgot password?
+          </PageLink>
+        </Stack>
         <Input
           placeholder="Email"
           size="md"

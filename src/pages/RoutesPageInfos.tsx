@@ -177,8 +177,16 @@ export const UserProfilePageInfo = (user: Pick<PublicUserDataFragment, '_id' | '
 });
 
 export const CurrentUserLearningGoalsPagePath = '/profile/goals';
-export const CurrentUserLearningGoalsPageInfo = {
+export const CurrentUserLearningGoalsPageInfo: PageInfo = {
   name: 'My Goals',
   path: CurrentUserLearningGoalsPagePath,
   routePath: CurrentUserLearningGoalsPagePath,
+};
+
+//====Other====
+export const ResetPasswordPagePath = '/reset_pwd';
+export const ResetPasswordPageInfo: PageInfo = {
+  name: 'Reset Password',
+  path: ResetPasswordPagePath,
+  routePath: ResetPasswordPagePath,
 };
