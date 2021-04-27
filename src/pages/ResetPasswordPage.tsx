@@ -30,7 +30,9 @@ export const ResetPasswordPage: React.FC<{}> = () => {
 
   return (
     <PageLayout marginSize="xl" title="Reset Password" centerChildren>
-      <Flex w="36rem">{token ? <SetNewPasswordForm resetPwdToken={token} /> : <TriggerResetPasswordForm />}</Flex>
+      <Flex w="36rem" maxW="90vw">
+        {token ? <SetNewPasswordForm resetPwdToken={token} /> : <TriggerResetPasswordForm />}
+      </Flex>
     </PageLayout>
   );
 };
