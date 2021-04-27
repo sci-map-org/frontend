@@ -1,21 +1,11 @@
-import { IconButton, Stack, Text } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
+import { IconButton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { UserRole } from '../../graphql/types';
 import { generatePublicUserData, PublicUserData } from '../../graphql/users/users.fragments';
-import { PublicUserDataFragment } from '../../graphql/users/users.fragments.generated';
-import { PageInfo } from '../PageInfo';
 import { GetUserUserProfilePageQuery, useGetUserUserProfilePageQuery } from './UserProfilePage.generated';
-
-export const UserProfilePagePath = (userKey: string) => `/profile/${userKey}`;
-
-export const UserProfilePageInfo = (user: Pick<PublicUserDataFragment, '_id' | 'key' | 'displayName'>): PageInfo => ({
-  name: `Profile of ${user.displayName} (@${user.key})`,
-  path: UserProfilePagePath(user.key),
-  routePath: UserProfilePagePath('[key]'),
-});
 
 export const getUserUserProfilePage = gql`
   query getUserUserProfilePage($key: String!) {
