@@ -36,7 +36,6 @@ export const StatelessEditableLearningMaterialPrerequisites: React.FC<StatelessE
   onRemove,
   onAdded,
 }) => {
-  if (!editable && !learningGoalsPrerequisites?.length) return null;
   return (
     <Stack direction="column" alignItems="center" spacing={1}>
       <Text fontWeight={600} color="gray.500">

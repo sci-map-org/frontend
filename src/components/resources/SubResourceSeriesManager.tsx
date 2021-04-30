@@ -8,6 +8,7 @@ import {
   ResourceDataFragment,
   ResourcePreviewDataFragment,
 } from '../../graphql/resources/resources.fragments.generated';
+import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { StarsRatingViewer } from '../lib/StarsRating';
 import { InternalLink } from '../navigation/InternalLink';
 import { DurationViewer } from './elements/Duration';
@@ -23,12 +24,15 @@ interface StatelessSubResourceSeriesManagerProps {
   subResourceSeries?: ResourcePreviewDataFragment[];
   onSelect: (selectedResource: ResourceDataFragment) => void;
   domains?: DomainDataFragment[];
+  editable?: boolean;
 }
 export const StatelessSubResourceSeriesManager: React.FC<StatelessSubResourceSeriesManagerProps> = ({
   subResourceSeries,
   onSelect,
   domains,
+  editable,
 }) => {
+  if (!editable && (!subResourceSeries || !subResourceSeries.length)) return null;
   return (
     <Flex direction="column" alignItems="stretch">
       {!subResourceSeries || !subResourceSeries.length ? (
@@ -142,9 +146,11 @@ export const SubResourceSeriesManager: React.FC<SubResourceSeriesManagerProps> =
 }) => {
   const [addSubResourceToSeriesMutation] = useAddSubResourceToSeriesMutation();
   const [createSubResourceSeriesMutation] = useCreateSubResourceSeriesMutation();
+  const { currentUser } = useCurrentUser();
   return (
     <StatelessSubResourceSeriesManager
       subResourceSeries={subResourceSeries}
+      editable={!!currentUser}
       onSelect={(selectedResource) =>
         !subResourceSeries || subResourceSeries.length === 0
           ? createSubResourceSeriesMutation({
