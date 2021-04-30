@@ -25,6 +25,7 @@ export const StatelessSubResourcesManager: React.FC<StatelessSubResourcesManager
   editable,
   isLoading,
 }) => {
+  if (!editable && !subResources.length) return null;
   return (
     <Stack direction="column" spacing={3}>
       <Heading size="md" textAlign="center">

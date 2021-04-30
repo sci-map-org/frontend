@@ -1,6 +1,7 @@
 import * as Types from '../../graphql/types';
 
 import { ResourceDataFragment, ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { UserAvatarDataFragment } from '../../components/users/UserAvatar.generated';
 import { DomainDataFragment, DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { SquareResourceCardDataFragment } from '../../components/resources/SquareResourceCard.generated';
@@ -20,7 +21,7 @@ export type GetResourceResourcePageQuery = (
     { __typename?: 'Resource' }
     & { creator?: Types.Maybe<(
       { __typename?: 'User' }
-      & Pick<Types.User, '_id'>
+      & UserAvatarDataFragment
     )>, coveredConceptsByDomain?: Types.Maybe<Array<(
       { __typename?: 'LearningMaterialCoveredConceptsByDomainItem' }
       & { domain: (

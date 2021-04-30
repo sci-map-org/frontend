@@ -5,8 +5,15 @@ import { LoginForm } from '../components/auth/LoginForm';
 import { PageLayout } from '../components/layout/PageLayout';
 import { DiscourseSso } from '../graphql/types';
 import { useCurrentUser } from '../graphql/users/users.hooks';
+import { PageInfo } from './PageInfo';
 
 export const LoginPagePath = '/login';
+
+export const LoginPageInfo: PageInfo = {
+  name: 'Login',
+  path: LoginPagePath,
+  routePath: LoginPagePath,
+};
 
 export const LoginPage: React.FC = () => {
   const router = useRouter();

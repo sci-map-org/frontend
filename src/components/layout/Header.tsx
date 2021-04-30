@@ -156,6 +156,7 @@ export const Header: React.FC = () => {
       fontSize="lg"
       display="flex"
       flexDirection="row"
+      alignItems="center"
       borderBottomColor="grayDivider.300"
       borderBottomWidth="1px"
       as="header"
@@ -171,7 +172,7 @@ export const Header: React.FC = () => {
         Sci-Map.org
       </InternalLink>
       <Box flexGrow={1} />
-      <Stack direction="row" spacing={4}>
+      <Stack direction="row" spacing={4} alignItems="center">
         {showHamburger && (
           <>
             <GlobalSearchBox positionSuggestions="left" width={{ base: '120px', sm: '180px', md: '200px' }} />

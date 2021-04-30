@@ -152,6 +152,8 @@ export type Mutation = {
   register: CurrentUser;
   registerGoogle: CurrentUser;
   verifyEmailAddress: VerifyEmailResponse;
+  triggerResetPassword: TriggerResetPasswordResponse;
+  resetPassword: ResetPasswordResponse;
   adminUpdateUser: User;
   createArticle: Article;
   updateArticle: Article;
@@ -237,6 +239,16 @@ export type MutationRegisterGoogleArgs = {
 
 export type MutationVerifyEmailAddressArgs = {
   token: Scalars['String'];
+};
+
+
+export type MutationTriggerResetPasswordArgs = {
+  email: Scalars['String'];
+};
+
+
+export type MutationResetPasswordArgs = {
+  payload: ResetPasswordPayload;
 };
 
 
@@ -969,6 +981,22 @@ export type RegisterGooglePayload = {
 export type VerifyEmailResponse = {
   __typename?: 'VerifyEmailResponse';
   email: Scalars['String'];
+};
+
+export type TriggerResetPasswordResponse = {
+  __typename?: 'TriggerResetPasswordResponse';
+  errorMessage?: Maybe<Scalars['String']>;
+  success: Scalars['Boolean'];
+};
+
+export type ResetPasswordResponse = {
+  __typename?: 'ResetPasswordResponse';
+  currentUser: CurrentUser;
+};
+
+export type ResetPasswordPayload = {
+  token: Scalars['String'];
+  password: Scalars['String'];
 };
 
 export type AdminUpdateUserPayload = {
