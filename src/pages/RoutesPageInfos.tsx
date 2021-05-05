@@ -52,14 +52,14 @@ export const ManageDomainPageInfo = (domain: DomainDataFragment): PageInfo => ({
 // ====Concepts====
 export const ConceptListPagePath = (domainKey: string) => `/areas/${domainKey}/subtopics`;
 export const ConceptListPageInfo = (domain: DomainDataFragment): PageInfo => ({
-  name: 'Concepts',
+  name: 'SubTopics',
   path: ConceptListPagePath(domain.key),
   routePath: ConceptListPagePath('[key]'),
 });
 
 export const NewConceptPagePath = (domainKey: string) => `/areas/${domainKey}/subtopics/new`;
 export const NewConceptPageInfo = (domain: DomainDataFragment): PageInfo => ({
-  name: `Add concept to ${domain.name}`,
+  name: `Add SubTopic to ${domain.name}`,
   path: NewConceptPagePath(domain.key),
   routePath: NewConceptPagePath('[key]'),
 });

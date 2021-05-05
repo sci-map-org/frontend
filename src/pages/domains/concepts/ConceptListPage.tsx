@@ -9,6 +9,8 @@ import { ConceptWithDependenciesData } from '../../../graphql/concepts/concepts.
 import { DomainConceptSortingEntities, DomainConceptSortingFields, SortingDirection } from '../../../graphql/types';
 import { ConceptListPageInfo, DomainPageInfo, NewConceptPageInfo } from '../../RoutesPageInfos';
 import { useListConceptsConceptListPageQuery } from './ConceptListPage.generated';
+import SortableTree, { TreeItem } from 'react-sortable-tree';
+import { useState } from 'react';
 
 export const listConceptsConceptListPage = gql`
   query listConceptsConceptListPage($domainKey: String!, $options: DomainConceptsOptions!) {
@@ -45,22 +47,29 @@ export const ConceptListPage: React.FC<{ domainKey: string }> = ({ domainKey }) 
     },
   });
 
+  const [treeData, setTreeData] = useState<TreeItem[]>([
+    { title: 'Chicken', children: [{ title: 'Egg' }] },
+    { title: 'Fish', children: [{ title: 'fingerline' }] },
+  ]);
+
   if (!data) return <Box>Area not found !</Box>;
   const domain = data.getDomainByKey;
   return (
     <PageLayout
       breadCrumbsLinks={[DomainPageInfo(domain), ConceptListPageInfo(domain)]}
-      title={domain.name + ' - Concepts'}
+      title={domain.name + ' - SubTopics'}
       centerChildren
+      isLoading={loading}
     >
-      <Flex direction="row" mt={4}>
+      <Flex direction="column" mt={4}>
         <Stack spacing={4} width="36rem">
-          <Box>
-            <ConceptList
+          <Box h="400px">
+            <SortableTree treeData={treeData} onChange={(treeData) => setTreeData(treeData)} />
+            {/* <ConceptList
               domain={domain}
               domainConceptItems={domain.concepts?.items || []}
               onUpdateConceptIndex={() => refetch()}
-            />
+            /> */}
           </Box>
           <RoleAccess accessRule="contributorOrAdmin">
             <PageButtonLink variant="outline" pageInfo={NewConceptPageInfo(domain)}>
