@@ -26,7 +26,62 @@ export type ListConceptsConceptListPageQuery = (
           & Pick<Types.ConceptBelongsToDomain, 'index'>
         ) }
       )> }
-    )> }
+    )>, subTopics?: Types.Maybe<Array<(
+      { __typename?: 'TopicIsSubTopicOfTopic' }
+      & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
+      & { subTopic: (
+        { __typename?: 'Domain' }
+        & Pick<Types.Domain, '_id' | 'name' | 'description'>
+        & { subTopics?: Types.Maybe<Array<(
+          { __typename?: 'TopicIsSubTopicOfTopic' }
+          & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
+          & { subTopic: (
+            { __typename?: 'Domain' }
+            & Pick<Types.Domain, '_id' | 'name' | 'description'>
+          ) | (
+            { __typename?: 'Concept' }
+            & Pick<Types.Concept, '_id' | 'name' | 'description'>
+          ) | (
+            { __typename?: 'LearningGoal' }
+            & Pick<Types.LearningGoal, '_id' | 'name' | 'description'>
+          ) }
+        )>> }
+      ) | (
+        { __typename?: 'Concept' }
+        & Pick<Types.Concept, '_id' | 'name' | 'description'>
+        & { subTopics?: Types.Maybe<Array<(
+          { __typename?: 'TopicIsSubTopicOfTopic' }
+          & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
+          & { subTopic: (
+            { __typename?: 'Domain' }
+            & Pick<Types.Domain, '_id' | 'name' | 'description'>
+          ) | (
+            { __typename?: 'Concept' }
+            & Pick<Types.Concept, '_id' | 'name' | 'description'>
+          ) | (
+            { __typename?: 'LearningGoal' }
+            & Pick<Types.LearningGoal, '_id' | 'name' | 'description'>
+          ) }
+        )>> }
+      ) | (
+        { __typename?: 'LearningGoal' }
+        & Pick<Types.LearningGoal, '_id' | 'name' | 'description'>
+        & { subTopics?: Types.Maybe<Array<(
+          { __typename?: 'TopicIsSubTopicOfTopic' }
+          & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
+          & { subTopic: (
+            { __typename?: 'Domain' }
+            & Pick<Types.Domain, '_id' | 'name' | 'description'>
+          ) | (
+            { __typename?: 'Concept' }
+            & Pick<Types.Concept, '_id' | 'name' | 'description'>
+          ) | (
+            { __typename?: 'LearningGoal' }
+            & Pick<Types.LearningGoal, '_id' | 'name' | 'description'>
+          ) }
+        )>> }
+      ) }
+    )>> }
   ) }
 );
 
