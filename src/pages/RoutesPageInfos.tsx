@@ -57,13 +57,6 @@ export const ConceptListPageInfo = (domain: DomainDataFragment): PageInfo => ({
   routePath: ConceptListPagePath('[key]'),
 });
 
-export const NewConceptPagePath = (domainKey: string) => `/areas/${domainKey}/subtopics/new`;
-export const NewConceptPageInfo = (domain: DomainDataFragment): PageInfo => ({
-  name: `Add SubTopic to ${domain.name}`,
-  path: NewConceptPagePath(domain.key),
-  routePath: NewConceptPagePath('[key]'),
-});
-
 export const ConceptPagePath = (domainKey: string, conceptKey: string) => `/areas/${domainKey}/subtopics/${conceptKey}`;
 export const ConceptPageInfo = (domain: DomainLinkDataFragment, concept: ConceptLinkDataFragment): PageInfo => ({
   name: `${concept.name}`,
