@@ -1,10 +1,21 @@
 import { IconButton } from '@chakra-ui/button';
 import { AddIcon, EditIcon, MinusIcon } from '@chakra-ui/icons';
-import { Box, Center, Stack, Text } from '@chakra-ui/layout';
+import { Box, Center, Flex, Link, Stack, Text } from '@chakra-ui/layout';
+import { domainLinkStyleProps } from '../domains/DomainLink';
 import React, { useMemo, useState } from 'react';
 import SortableTree, { getVisibleNodeCount, NodeRendererProps, TreeItem } from 'react-sortable-tree';
+import { TopicType } from '../../graphql/types';
+import { DomainIcon } from '../lib/icons/DomainIcon';
+import { ConceptIcon } from '../lib/icons/ConceptIcon';
+import { LearningGoalIcon } from '../lib/icons/LearningGoalIcon';
+import { RoleAccess } from '../auth/RoleAccess';
+import { AddSubTopicModal } from './AddSubTopic';
+import { domain } from 'process';
+import { useDisclosure } from '@chakra-ui/hooks';
+import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 
 export interface ManageSubTopicsTreeProps {
+  domain: DomainDataFragment;
   subTopics: SubTopicItem[];
 }
 const rowPadding = '6px';
@@ -19,7 +30,7 @@ type SubTopicItem = {
     subTopics?: SubTopicItem[] | null;
   };
 };
-export const ManageSubTopicsTree: React.FC<ManageSubTopicsTreeProps> = ({ subTopics }) => {
+export const ManageSubTopicsTree: React.FC<ManageSubTopicsTreeProps> = ({ domain, subTopics }) => {
   const transformSubTopics = (subTopicItems: SubTopicItem[]): TreeItem[] => {
     return subTopicItems.map((subTopicItem) => ({
       ...subTopicItem.subTopic,
@@ -33,22 +44,37 @@ export const ManageSubTopicsTree: React.FC<ManageSubTopicsTreeProps> = ({ subTop
     return subTopics ? transformSubTopics(subTopics) : [];
   }, [subTopics]);
 
-  const editSubTopic = (subTopicId: string) => {
-    console.log(subTopicId);
-  };
   const [treeData, setTreeData] = useState<TreeItem[]>(subTopicsData);
   const count = getVisibleNodeCount({ treeData });
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
   return (
-    <Box h={`${count * 36 + 10}px`}>
-      <SortableTree
-        treeData={treeData}
-        rowHeight={36}
-        scaffoldBlockPxWidth={120}
-        onChange={(treeData) => setTreeData(treeData)}
-        getNodeKey={({ node }) => node._id}
-        nodeContentRenderer={CustomThemeNodeContentRenderer}
+    <Stack>
+      <Box h={`${count * 36 + 10}px`} w="800px">
+        <SortableTree
+          treeData={treeData}
+          rowHeight={36}
+          scaffoldBlockPxWidth={120}
+          onChange={(treeData) => setTreeData(treeData)}
+          getNodeKey={({ node }) => node._id}
+          nodeContentRenderer={CustomThemeNodeContentRenderer}
+        />
+      </Box>
+      <RoleAccess accessRule="loggedInUser">
+        <Flex direction="row" justifyContent="center" pt={1} pb={1}>
+          <Link color="blue.500" fontSize="md" fontWeight={600} onClick={() => onOpen()}>
+            + Add SubTopic
+          </Link>
+        </Flex>
+      </RoleAccess>
+      <AddSubTopicModal
+        domain={domain}
+        parentTopicId={domain._id}
+        isOpen={isOpen}
+        onClose={onClose}
+        onCancel={() => onClose()}
       />
-    </Box>
+    </Stack>
   );
 };
 
@@ -99,6 +125,7 @@ const CustomThemeNodeContentRenderer: React.FC<NodeRendererProps> = ({
   const nodeContent = connectDragPreview(
     <div>
       <Center
+        pl={2}
         height="100%"
         whiteSpace="nowrap"
         display="flex"
@@ -141,26 +168,30 @@ const CustomThemeNodeContentRenderer: React.FC<NodeRendererProps> = ({
           : {})}
         opacity={isDraggedDescendant ? 0.5 : 1}
       >
-        <Stack direction="row">
-          <Text as="span">
-            {typeof nodeTitle === 'function'
-              ? nodeTitle({
-                  node,
-                  path,
-                  treeIndex,
-                })
-              : nodeTitle}
-          </Text>
-
+        <Stack direction="row" spacing={2}>
+          <Stack direction="row" spacing={1}>
+            {node.topicType === TopicType.Domain && <DomainIcon boxSize={6} />}
+            {node.topicType === TopicType.Concept && <ConceptIcon opacity={0.7} boxSize={6} />}
+            {node.topicType === TopicType.LearningGoal && <LearningGoalIcon boxSize={6} />}
+            <Text as="span" {...(node.topicType === TopicType.Domain && domainLinkStyleProps)}>
+              {typeof nodeTitle === 'function'
+                ? nodeTitle({
+                    node,
+                    path,
+                    treeIndex,
+                  })
+                : nodeTitle}
+            </Text>
+          </Stack>
           <IconButton
             aria-label="Edit SubTopic"
+            // opacity={1}
+            // _hover={{ opacity: 1 }}
             icon={<EditIcon />}
             onClick={() => console.log(node._id)}
             size="xs"
             variant="ghost"
-          >
-            Test
-          </IconButton>
+          />
         </Stack>
       </Center>
     </div>

@@ -40,14 +40,25 @@ export const listConceptsConceptListPage = gql`
         index
         subTopic {
           _id
+          topicType
           name
           description
           subTopics(options: { sorting: { type: index, direction: ASC } }) {
             index
             subTopic {
+              topicType
               _id
               name
               description
+              subTopics(options: { sorting: { type: index, direction: ASC } }) {
+                index
+                subTopic {
+                  topicType
+                  _id
+                  name
+                  description
+                }
+              }
             }
           }
         }
@@ -70,7 +81,6 @@ export const ConceptListPage: React.FC<{ domainKey: string }> = ({ domainKey }) 
       },
     },
   });
-  console.log(data?.getDomainByKey.subTopics);
 
   if (!data) return <Box>Area not found !</Box>;
   const domain = data.getDomainByKey;
@@ -83,12 +93,9 @@ export const ConceptListPage: React.FC<{ domainKey: string }> = ({ domainKey }) 
     >
       <Flex direction="column" mt={4}>
         <Stack spacing={4} width="36rem">
-          {data.getDomainByKey.subTopics && <ManageSubTopicsTree subTopics={data.getDomainByKey.subTopics} />}
-          <RoleAccess accessRule="contributorOrAdmin">
-            <PageButtonLink variant="outline" pageInfo={NewConceptPageInfo(domain)}>
-              + Add concept
-            </PageButtonLink>
-          </RoleAccess>
+          {data.getDomainByKey.subTopics && (
+            <ManageSubTopicsTree domain={data.getDomainByKey} subTopics={data.getDomainByKey.subTopics} />
+          )}
         </Stack>
         <Box width="20px"></Box>
         <VerticalConceptMappingVisualisation
