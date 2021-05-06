@@ -1,14 +1,9 @@
 import { Box, Flex, Stack } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import dynamic from 'next/dynamic';
-import { RoleAccess } from '../../../components/auth/RoleAccess';
-import { VerticalConceptMappingVisualisation } from '../../../components/concepts/ConceptMappingVisualisation';
 import { PageLayout } from '../../../components/layout/PageLayout';
-import { PageButtonLink } from '../../../components/navigation/InternalLink';
 import { ManageSubTopicsTreeProps } from '../../../components/topics/ManageSubTopicsTree';
-import { ConceptWithDependenciesData } from '../../../graphql/concepts/concepts.fragments';
-import { DomainConceptSortingEntities, DomainConceptSortingFields, SortingDirection } from '../../../graphql/types';
-import { ConceptListPageInfo, DomainPageInfo, NewConceptPageInfo } from '../../RoutesPageInfos';
+import { ConceptListPageInfo, DomainPageInfo } from '../../RoutesPageInfos';
 import { useListConceptsConceptListPageQuery } from './ConceptListPage.generated';
 
 const ManageSubTopicsTree = dynamic<ManageSubTopicsTreeProps>(
@@ -21,25 +16,16 @@ const ManageSubTopicsTree = dynamic<ManageSubTopicsTreeProps>(
 );
 
 export const listConceptsConceptListPage = gql`
-  query listConceptsConceptListPage($domainKey: String!, $options: DomainConceptsOptions!) {
+  query listConceptsConceptListPage($domainKey: String!) {
     getDomainByKey(key: $domainKey) {
       _id
       key
       name
-      concepts(options: $options) {
-        items {
-          concept {
-            ...ConceptWithDependenciesData
-          }
-          relationship {
-            index
-          }
-        }
-      }
       subTopics(options: { sorting: { type: index, direction: ASC } }) {
         index
         subTopic {
           _id
+          key
           topicType
           name
           description
@@ -48,6 +34,7 @@ export const listConceptsConceptListPage = gql`
             subTopic {
               topicType
               _id
+              key
               name
               description
               subTopics(options: { sorting: { type: index, direction: ASC } }) {
@@ -55,6 +42,7 @@ export const listConceptsConceptListPage = gql`
                 subTopic {
                   topicType
                   _id
+                  key
                   name
                   description
                 }
@@ -65,20 +53,19 @@ export const listConceptsConceptListPage = gql`
       }
     }
   }
-  ${ConceptWithDependenciesData}
 `;
 
 export const ConceptListPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
   const { data, loading, refetch } = useListConceptsConceptListPageQuery({
     variables: {
       domainKey,
-      options: {
-        sorting: {
-          field: DomainConceptSortingFields.Index,
-          entity: DomainConceptSortingEntities.Relationship,
-          direction: SortingDirection.Asc,
-        },
-      },
+      // options: {
+      //   sorting: {
+      //     field: DomainConceptSortingFields.Index,
+      //     entity: DomainConceptSortingEntities.Relationship,
+      //     direction: SortingDirection.Asc,
+      //   },
+      // },
     },
   });
 
@@ -94,16 +81,23 @@ export const ConceptListPage: React.FC<{ domainKey: string }> = ({ domainKey }) 
       <Flex direction="column" mt={4}>
         <Stack spacing={4} width="36rem">
           {data.getDomainByKey.subTopics && (
-            <ManageSubTopicsTree domain={data.getDomainByKey} subTopics={data.getDomainByKey.subTopics} />
+            <ManageSubTopicsTree
+              domain={data.getDomainByKey}
+              subTopics={data.getDomainByKey.subTopics}
+              onUpdated={() => {
+                refetch();
+              }}
+              isLoading={loading}
+            />
           )}
         </Stack>
-        <Box width="20px"></Box>
-        <VerticalConceptMappingVisualisation
+        {/* <Box width="20px"></Box> */}
+        {/* <VerticalConceptMappingVisualisation
           domainKey={domainKey}
           isLoading={loading}
           concepts={domain.concepts?.items.map((i) => i.concept) || []}
           width="36rem"
-        />
+        /> */}
       </Flex>
     </PageLayout>
   );

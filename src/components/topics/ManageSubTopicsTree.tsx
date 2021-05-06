@@ -1,22 +1,30 @@
-import { IconButton } from '@chakra-ui/button';
-import { AddIcon, EditIcon, MinusIcon } from '@chakra-ui/icons';
-import { Box, Center, Flex, Link, Stack, Text } from '@chakra-ui/layout';
-import { domainLinkStyleProps } from '../domains/DomainLink';
-import React, { useMemo, useState } from 'react';
-import SortableTree, { getVisibleNodeCount, NodeRendererProps, TreeItem } from 'react-sortable-tree';
-import { TopicType } from '../../graphql/types';
-import { DomainIcon } from '../lib/icons/DomainIcon';
-import { ConceptIcon } from '../lib/icons/ConceptIcon';
-import { LearningGoalIcon } from '../lib/icons/LearningGoalIcon';
-import { RoleAccess } from '../auth/RoleAccess';
-import { AddSubTopicModal } from './AddSubTopic';
-import { domain } from 'process';
+import { Button, IconButton } from '@chakra-ui/button';
 import { useDisclosure } from '@chakra-ui/hooks';
-import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
-
+import { AddIcon, EditIcon, ExternalLinkIcon, MinusIcon } from '@chakra-ui/icons';
+import { Box, Center, Flex, Stack, Text } from '@chakra-ui/layout';
+import { Spinner } from '@chakra-ui/spinner';
+import { BiUnlink } from '@react-icons/all-files/bi/BiUnlink';
+import React, { useEffect, useState } from 'react';
+import SortableTree, { getVisibleNodeCount, NodeRendererProps, TreeItem } from 'react-sortable-tree';
+import { ConceptLinkDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
+import { DomainDataFragment, DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
+import {
+  useAttachTopicIsSubTopicOfTopicMutation,
+  useDetachTopicIsSubTopicOfTopicMutation,
+  useUpdateTopicIsSubTopicOfTopicMutation,
+} from '../../graphql/topics/topics.operations.generated';
+import { TopicType } from '../../graphql/types';
+import { ConceptPageInfo, DomainPageInfo } from '../../pages/RoutesPageInfos';
+import { domainLinkStyleProps } from '../domains/DomainLink';
+import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
+import { DomainIcon } from '../lib/icons/DomainIcon';
+import { PageLink } from '../navigation/InternalLink';
+import { AddSubTopicModal } from './AddSubTopic';
 export interface ManageSubTopicsTreeProps {
   domain: DomainDataFragment;
   subTopics: SubTopicItem[];
+  onUpdated: () => void;
+  isLoading?: boolean;
 }
 const rowPadding = '6px';
 const linesColor = 'gray.400';
@@ -25,53 +33,224 @@ type SubTopicItem = {
   index: number;
   subTopic: {
     _id: string;
+    topicType: TopicType;
     name: string;
     description?: string | null;
     subTopics?: SubTopicItem[] | null;
   };
 };
-export const ManageSubTopicsTree: React.FC<ManageSubTopicsTreeProps> = ({ domain, subTopics }) => {
-  const transformSubTopics = (subTopicItems: SubTopicItem[]): TreeItem[] => {
+
+type PendingUpdate = {
+  nodeId: string;
+  previousParentId: string;
+  nextParentId: string;
+  index: number;
+};
+
+export const ManageSubTopicsTree: React.FC<ManageSubTopicsTreeProps> = ({
+  domain,
+  subTopics,
+  onUpdated,
+  isLoading,
+}) => {
+  const transformSubTopics = (subTopicItems: SubTopicItem[], updatable: boolean): TreeItem[] => {
     return subTopicItems.map((subTopicItem) => ({
       ...subTopicItem.subTopic,
       title: subTopicItem.subTopic.name,
+      index: subTopicItem.index,
+      updatable,
       subtitle: subTopicItem.subTopic.description,
-      children: subTopicItem.subTopic.subTopics ? transformSubTopics(subTopicItem.subTopic.subTopics) : undefined,
-      expanded: true,
+      children: subTopicItem.subTopic.subTopics
+        ? transformSubTopics(
+            subTopicItem.subTopic.subTopics,
+            updatable && subTopicItem.subTopic.topicType !== TopicType.Domain
+          )
+        : undefined,
+      expanded: subTopicItem.subTopic.topicType !== TopicType.Domain,
     }));
   };
-  const subTopicsData = useMemo(() => {
-    return subTopics ? transformSubTopics(subTopics) : [];
+
+  const [treeData, setTreeData] = useState<TreeItem[]>([]);
+  const buildTreeData = () => {
+    const subTopicsData = subTopics ? transformSubTopics(subTopics, true) : [];
+    setTreeData(subTopicsData);
+  };
+  useEffect(() => {
+    buildTreeData();
   }, [subTopics]);
 
-  const [treeData, setTreeData] = useState<TreeItem[]>(subTopicsData);
   const count = getVisibleNodeCount({ treeData });
+
+  const [isUpdating, setIsUpdating] = useState(false);
+  // ideally would be better to have a single source of truth
+  const [pendingUpdates, setPendingUpdates] = useState<PendingUpdate[]>([]);
+
+  const addPendingUpdate = async (update: PendingUpdate) => setPendingUpdates([...pendingUpdates, update]);
+
+  const [updateTopicIsSubTopicOfTopicMutation] = useUpdateTopicIsSubTopicOfTopicMutation();
+  const [attachTopicIsSubTopicOfTopicMutation] = useAttachTopicIsSubTopicOfTopicMutation();
+  const [detachTopicIsSubTopicOfTopicMutation] = useDetachTopicIsSubTopicOfTopicMutation();
+  const runUpdate = async ({ previousParentId, nextParentId, nodeId, index }: PendingUpdate) => {
+    if (previousParentId === nextParentId) {
+      await updateTopicIsSubTopicOfTopicMutation({
+        variables: { parentTopicId: previousParentId, subTopicId: nodeId, payload: { index } },
+        fetchPolicy: 'no-cache',
+      });
+    } else {
+      await detachTopicIsSubTopicOfTopicMutation({
+        variables: { parentTopicId: previousParentId, subTopicId: nodeId },
+        fetchPolicy: 'no-cache',
+      });
+      await attachTopicIsSubTopicOfTopicMutation({
+        variables: { parentTopicId: nextParentId, subTopicId: nodeId, payload: { index } },
+        fetchPolicy: 'no-cache',
+      });
+    }
+  };
+  const runPendingUpdates = async () => {
+    setIsUpdating(true);
+    for (let pendingUpdate of pendingUpdates) {
+      await runUpdate(pendingUpdate);
+    }
+    setPendingUpdates([]);
+    onUpdated();
+    setIsUpdating(false);
+  };
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Stack>
-      <Box h={`${count * 36 + 10}px`} w="800px">
-        <SortableTree
-          treeData={treeData}
-          rowHeight={36}
-          scaffoldBlockPxWidth={120}
-          onChange={(treeData) => setTreeData(treeData)}
-          getNodeKey={({ node }) => node._id}
-          nodeContentRenderer={CustomThemeNodeContentRenderer}
-        />
-      </Box>
-      <RoleAccess accessRule="loggedInUser">
-        <Flex direction="row" justifyContent="center" pt={1} pb={1}>
-          <Link color="blue.500" fontSize="md" fontWeight={600} onClick={() => onOpen()}>
-            + Add SubTopic
-          </Link>
+      {isLoading || isUpdating ? (
+        <Center h="400px" w="100%">
+          <Spinner size="xl" />
+        </Center>
+      ) : (
+        <Box h={`${count * 36 + 10}px`} w="100%">
+          <SortableTree
+            treeData={treeData}
+            onMoveNode={({ node, prevPath, prevTreeIndex, nextTreeIndex, nextPath, nextParentNode }) => {
+              const nodeId = node._id;
+
+              const previousParentId: string =
+                prevPath.length > 1 ? (prevPath[prevPath.length - 2] as string) : domain._id;
+
+              const nextParentId: string = nextPath.length > 1 ? (nextPath[nextPath.length - 2] as string) : domain._id;
+              if (previousParentId === nextParentId && prevTreeIndex === nextTreeIndex) return;
+
+              const siblings: TreeItem[] = nextParentNode ? (nextParentNode.children as TreeItem[]) : treeData;
+
+              const nextRelativeIndex = siblings.findIndex((sibling) => sibling._id === node._id);
+              const prevNode = siblings[nextRelativeIndex - 1];
+
+              const nextNode = siblings[nextRelativeIndex + 1];
+
+              if (nextNode && !prevNode)
+                addPendingUpdate({ nodeId, previousParentId, nextParentId, index: nextNode.index / 2 });
+              if (prevNode && !nextNode)
+                addPendingUpdate({ nodeId, previousParentId, nextParentId, index: prevNode.index + 1000 });
+
+              if (!prevNode && !nextNode) addPendingUpdate({ nodeId, previousParentId, nextParentId, index: 10000000 });
+              if (prevNode && nextNode)
+                addPendingUpdate({
+                  nodeId,
+                  previousParentId,
+                  nextParentId,
+                  index: (prevNode.index + nextNode.index) / 2,
+                });
+            }}
+            canDrag={({ node }) => node.updatable}
+            canDrop={({ node, nextParent }) =>
+              !nextParent || (nextParent.updatable && nextParent.topicType !== TopicType.Domain)
+            }
+            generateNodeProps={({ node, path }) => ({
+              buttons:
+                node.topicType === TopicType.Concept
+                  ? [
+                      <PageLink pageInfo={ConceptPageInfo(domain, node as ConceptLinkDataFragment)} isExternal>
+                        <IconButton aria-label="Go to Topic" icon={<ExternalLinkIcon />} size="xs" variant="ghost" />
+                      </PageLink>,
+                      ...[
+                        node.updatable ? (
+                          <IconButton
+                            aria-label="Edit SubTopic"
+                            icon={<EditIcon />}
+                            onClick={() => console.log(node._id)}
+                            size="xs"
+                            variant="ghost"
+                          />
+                        ) : (
+                          []
+                        ),
+                      ],
+                    ]
+                  : [
+                      <PageLink pageInfo={DomainPageInfo(node as DomainLinkDataFragment)} isExternal>
+                        <IconButton aria-label="Go to Area" icon={<ExternalLinkIcon />} size="xs" variant="ghost" />
+                      </PageLink>,
+                      ...[
+                        node.updatable
+                          ? [
+                              <DeleteButtonWithConfirmation
+                                icon={<BiUnlink />}
+                                size="xs"
+                                variant="ghost"
+                                mode="iconButton"
+                                modalBodyText={`Detach Area "${node.name}" from this topic ?`}
+                                modalHeaderText={`Detach Area "${node.name}" ?`}
+                                confirmButtonText="Detach"
+                                onConfirmation={() => {
+                                  console.log(path);
+                                  detachTopicIsSubTopicOfTopicMutation({
+                                    variables: {
+                                      parentTopicId: path.length > 1 ? (path[path.length - 2] as string) : domain._id,
+                                      subTopicId: node._id,
+                                    },
+                                  });
+                                }}
+                              />,
+                            ]
+                          : [],
+                      ],
+                    ],
+            })}
+            rowHeight={36}
+            scaffoldBlockPxWidth={120}
+            onChange={(treeData) => setTreeData(treeData)}
+            getNodeKey={({ node }) => node._id}
+            nodeContentRenderer={CustomThemeNodeContentRenderer}
+          />
+        </Box>
+      )}
+      <Stack spacing={6} pt={4}>
+        <Flex justifyContent="space-between">
+          <Button
+            w="45%"
+            onClick={() => {
+              setPendingUpdates([]);
+              buildTreeData();
+            }}
+          >
+            Cancel
+          </Button>
+          <Button w="45%" colorScheme="blue" isDisabled={!pendingUpdates.length} onClick={() => runPendingUpdates()}>
+            Save
+            {!!pendingUpdates.length && ` (${pendingUpdates.length} change${pendingUpdates.length === 1 ? '' : 's'})`}
+          </Button>
         </Flex>
-      </RoleAccess>
+        {/* <RoleAccess accessRule="loggedInUser"> */}
+        {/* <Flex direction="row" justifyContent="center" pt={1} pb={1}> */}
+        <Button colorScheme="blue" onClick={() => onOpen()} variant="outline">
+          + Add SubTopic
+        </Button>
+      </Stack>
+      {/* </Flex> */}
+      {/* </RoleAccess> */}
       <AddSubTopicModal
         domain={domain}
         parentTopicId={domain._id}
         isOpen={isOpen}
         onClose={onClose}
+        onAdded={() => onUpdated()}
         onCancel={() => onClose()}
       />
     </Stack>
@@ -171,8 +350,8 @@ const CustomThemeNodeContentRenderer: React.FC<NodeRendererProps> = ({
         <Stack direction="row" spacing={2}>
           <Stack direction="row" spacing={1}>
             {node.topicType === TopicType.Domain && <DomainIcon boxSize={6} />}
-            {node.topicType === TopicType.Concept && <ConceptIcon opacity={0.7} boxSize={6} />}
-            {node.topicType === TopicType.LearningGoal && <LearningGoalIcon boxSize={6} />}
+            {/* {node.topicType === TopicType.Concept && <ConceptIcon opacity={0.7} boxSize={6} />} */}
+            {/* {node.topicType === TopicType.LearningGoal && <LearningGoalIcon boxSize={6} />} */}
             <Text as="span" {...(node.topicType === TopicType.Domain && domainLinkStyleProps)}>
               {typeof nodeTitle === 'function'
                 ? nodeTitle({
@@ -183,15 +362,9 @@ const CustomThemeNodeContentRenderer: React.FC<NodeRendererProps> = ({
                 : nodeTitle}
             </Text>
           </Stack>
-          <IconButton
-            aria-label="Edit SubTopic"
-            // opacity={1}
-            // _hover={{ opacity: 1 }}
-            icon={<EditIcon />}
-            onClick={() => console.log(node._id)}
-            size="xs"
-            variant="ghost"
-          />
+          <Stack direction="row" spacing={1}>
+            {buttons}
+          </Stack>
         </Stack>
       </Center>
     </div>
