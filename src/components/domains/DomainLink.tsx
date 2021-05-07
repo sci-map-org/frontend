@@ -4,7 +4,7 @@ import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.
 import { DomainPageInfo } from '../../pages/RoutesPageInfos';
 import { PageLink, PageLinkProps } from '../navigation/InternalLink';
 
-export const domainLinkStyleProps: Omit<LinkProps & BreadcrumbLinkProps, 'href'> = {
+export const domainLinkStyleProps: Pick<LinkProps & BreadcrumbLinkProps, 'fontWeight' | 'color'> = {
   fontWeight: 700,
   color: 'gray.600',
 };

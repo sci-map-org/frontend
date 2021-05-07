@@ -1,11 +1,9 @@
 import * as Types from '../../../graphql/types';
 
-import { ConceptWithDependenciesDataFragment } from '../../../graphql/concepts/concepts.fragments.generated';
 import * as Operations from './ConceptListPage';
 import * as Apollo from '@apollo/client';
 export type ListConceptsConceptListPageQueryVariables = Types.Exact<{
   domainKey: Types.Scalars['String'];
-  options: Types.DomainConceptsOptions;
 }>;
 
 
@@ -14,19 +12,188 @@ export type ListConceptsConceptListPageQuery = (
   & { getDomainByKey: (
     { __typename?: 'Domain' }
     & Pick<Types.Domain, '_id' | 'key' | 'name'>
-    & { concepts?: Types.Maybe<(
-      { __typename?: 'DomainConceptsResults' }
-      & { items: Array<(
-        { __typename?: 'DomainConceptsItem' }
-        & { concept: (
-          { __typename?: 'Concept' }
-          & ConceptWithDependenciesDataFragment
-        ), relationship: (
-          { __typename?: 'ConceptBelongsToDomain' }
-          & Pick<Types.ConceptBelongsToDomain, 'index'>
-        ) }
-      )> }
-    )> }
+    & { subTopics?: Types.Maybe<Array<(
+      { __typename?: 'TopicIsSubTopicOfTopic' }
+      & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
+      & { subTopic: (
+        { __typename?: 'Domain' }
+        & Pick<Types.Domain, '_id' | 'key' | 'topicType' | 'name' | 'description'>
+        & { subTopics?: Types.Maybe<Array<(
+          { __typename?: 'TopicIsSubTopicOfTopic' }
+          & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
+          & { subTopic: (
+            { __typename?: 'Domain' }
+            & Pick<Types.Domain, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+            & { subTopics?: Types.Maybe<Array<(
+              { __typename?: 'TopicIsSubTopicOfTopic' }
+              & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
+              & { subTopic: (
+                { __typename?: 'Domain' }
+                & Pick<Types.Domain, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+              ) | (
+                { __typename?: 'Concept' }
+                & Pick<Types.Concept, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+              ) | (
+                { __typename?: 'LearningGoal' }
+                & Pick<Types.LearningGoal, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+              ) }
+            )>> }
+          ) | (
+            { __typename?: 'Concept' }
+            & Pick<Types.Concept, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+            & { subTopics?: Types.Maybe<Array<(
+              { __typename?: 'TopicIsSubTopicOfTopic' }
+              & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
+              & { subTopic: (
+                { __typename?: 'Domain' }
+                & Pick<Types.Domain, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+              ) | (
+                { __typename?: 'Concept' }
+                & Pick<Types.Concept, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+              ) | (
+                { __typename?: 'LearningGoal' }
+                & Pick<Types.LearningGoal, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+              ) }
+            )>> }
+          ) | (
+            { __typename?: 'LearningGoal' }
+            & Pick<Types.LearningGoal, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+            & { subTopics?: Types.Maybe<Array<(
+              { __typename?: 'TopicIsSubTopicOfTopic' }
+              & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
+              & { subTopic: (
+                { __typename?: 'Domain' }
+                & Pick<Types.Domain, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+              ) | (
+                { __typename?: 'Concept' }
+                & Pick<Types.Concept, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+              ) | (
+                { __typename?: 'LearningGoal' }
+                & Pick<Types.LearningGoal, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+              ) }
+            )>> }
+          ) }
+        )>> }
+      ) | (
+        { __typename?: 'Concept' }
+        & Pick<Types.Concept, '_id' | 'key' | 'topicType' | 'name' | 'description'>
+        & { subTopics?: Types.Maybe<Array<(
+          { __typename?: 'TopicIsSubTopicOfTopic' }
+          & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
+          & { subTopic: (
+            { __typename?: 'Domain' }
+            & Pick<Types.Domain, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+            & { subTopics?: Types.Maybe<Array<(
+              { __typename?: 'TopicIsSubTopicOfTopic' }
+              & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
+              & { subTopic: (
+                { __typename?: 'Domain' }
+                & Pick<Types.Domain, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+              ) | (
+                { __typename?: 'Concept' }
+                & Pick<Types.Concept, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+              ) | (
+                { __typename?: 'LearningGoal' }
+                & Pick<Types.LearningGoal, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+              ) }
+            )>> }
+          ) | (
+            { __typename?: 'Concept' }
+            & Pick<Types.Concept, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+            & { subTopics?: Types.Maybe<Array<(
+              { __typename?: 'TopicIsSubTopicOfTopic' }
+              & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
+              & { subTopic: (
+                { __typename?: 'Domain' }
+                & Pick<Types.Domain, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+              ) | (
+                { __typename?: 'Concept' }
+                & Pick<Types.Concept, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+              ) | (
+                { __typename?: 'LearningGoal' }
+                & Pick<Types.LearningGoal, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+              ) }
+            )>> }
+          ) | (
+            { __typename?: 'LearningGoal' }
+            & Pick<Types.LearningGoal, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+            & { subTopics?: Types.Maybe<Array<(
+              { __typename?: 'TopicIsSubTopicOfTopic' }
+              & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
+              & { subTopic: (
+                { __typename?: 'Domain' }
+                & Pick<Types.Domain, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+              ) | (
+                { __typename?: 'Concept' }
+                & Pick<Types.Concept, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+              ) | (
+                { __typename?: 'LearningGoal' }
+                & Pick<Types.LearningGoal, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+              ) }
+            )>> }
+          ) }
+        )>> }
+      ) | (
+        { __typename?: 'LearningGoal' }
+        & Pick<Types.LearningGoal, '_id' | 'key' | 'topicType' | 'name' | 'description'>
+        & { subTopics?: Types.Maybe<Array<(
+          { __typename?: 'TopicIsSubTopicOfTopic' }
+          & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
+          & { subTopic: (
+            { __typename?: 'Domain' }
+            & Pick<Types.Domain, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+            & { subTopics?: Types.Maybe<Array<(
+              { __typename?: 'TopicIsSubTopicOfTopic' }
+              & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
+              & { subTopic: (
+                { __typename?: 'Domain' }
+                & Pick<Types.Domain, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+              ) | (
+                { __typename?: 'Concept' }
+                & Pick<Types.Concept, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+              ) | (
+                { __typename?: 'LearningGoal' }
+                & Pick<Types.LearningGoal, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+              ) }
+            )>> }
+          ) | (
+            { __typename?: 'Concept' }
+            & Pick<Types.Concept, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+            & { subTopics?: Types.Maybe<Array<(
+              { __typename?: 'TopicIsSubTopicOfTopic' }
+              & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
+              & { subTopic: (
+                { __typename?: 'Domain' }
+                & Pick<Types.Domain, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+              ) | (
+                { __typename?: 'Concept' }
+                & Pick<Types.Concept, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+              ) | (
+                { __typename?: 'LearningGoal' }
+                & Pick<Types.LearningGoal, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+              ) }
+            )>> }
+          ) | (
+            { __typename?: 'LearningGoal' }
+            & Pick<Types.LearningGoal, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+            & { subTopics?: Types.Maybe<Array<(
+              { __typename?: 'TopicIsSubTopicOfTopic' }
+              & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
+              & { subTopic: (
+                { __typename?: 'Domain' }
+                & Pick<Types.Domain, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+              ) | (
+                { __typename?: 'Concept' }
+                & Pick<Types.Concept, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+              ) | (
+                { __typename?: 'LearningGoal' }
+                & Pick<Types.LearningGoal, 'topicType' | '_id' | 'key' | 'name' | 'description'>
+              ) }
+            )>> }
+          ) }
+        )>> }
+      ) }
+    )>> }
   ) }
 );
 
@@ -45,7 +212,6 @@ export type ListConceptsConceptListPageQuery = (
  * const { data, loading, error } = useListConceptsConceptListPageQuery({
  *   variables: {
  *      domainKey: // value for 'domainKey'
- *      options: // value for 'options'
  *   },
  * });
  */

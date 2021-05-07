@@ -1,12 +1,14 @@
 import { EditIcon } from '@chakra-ui/icons';
-import { Box, Flex, Heading, IconButton, Skeleton, Stack, Text } from '@chakra-ui/react';
+import { Box, Flex, Heading, IconButton, Skeleton, Stack, Text, useDisclosure } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { differenceBy } from 'lodash';
 import Router from 'next/router';
 import { RoleAccess } from '../../../components/auth/RoleAccess';
 import { ConceptKnownCheckbox } from '../../../components/concepts/ConceptKnownCheckbox';
+import { ConceptTypesViewer } from '../../../components/concepts/ConceptType';
 import { EditableConceptTypes } from '../../../components/concepts/ConceptTypesEditor';
 import { DomainConceptsPicker } from '../../../components/concepts/DomainConceptsPicker';
+import { EditConceptModal } from '../../../components/concepts/EditConcept';
 import { NavigationBreadcrumbs } from '../../../components/layout/NavigationBreadcrumbs';
 import { TopicPageLayout } from '../../../components/layout/TopicPageLayout';
 import { DeleteButtonWithConfirmation } from '../../../components/lib/buttons/DeleteButtonWithConfirmation';
@@ -35,33 +37,37 @@ const ConceptPageManagementIcons: React.FC<{ concept: ConceptDataFragment; isDis
   isDisabled,
 }) => {
   const { deleteConcept } = useDeleteConcept();
+  const { isOpen, onClose, onOpen } = useDisclosure();
   return (
-    <Stack spacing={2} mt={2} alignItems="center" direction="row">
-      <ConceptKnownCheckbox size="xs" concept={concept} />
-      <RoleAccess accessRule="contributorOrAdmin">
-        <IconButton
-          aria-label="delete concept"
-          icon={<EditIcon />}
-          size="xs"
-          variant="outline"
-          onClick={() => Router.push(Router.asPath + '/edit')}
-          isDisabled={isDisabled}
-        >
-          Edit
-        </IconButton>
-      </RoleAccess>
-      <RoleAccess accessRule="contributorOrAdmin">
-        <DeleteButtonWithConfirmation
-          modalHeaderText="Delete Concept"
-          size="xs"
-          mode="iconButton"
-          variant="outline"
-          modalBodyText="Confirm deleting this concept ?"
-          isDisabled={isDisabled}
-          onConfirmation={() => deleteConcept({ variables: { _id: concept._id } }).then(() => Router.back())}
-        />
-      </RoleAccess>
-    </Stack>
+    <>
+      <Stack spacing={2} mt={2} alignItems="center" direction="row">
+        <ConceptKnownCheckbox size="xs" concept={concept} />
+        <RoleAccess accessRule="contributorOrAdmin">
+          <IconButton
+            aria-label="delete concept"
+            icon={<EditIcon />}
+            size="xs"
+            variant="outline"
+            onClick={() => onOpen()}
+            isDisabled={isDisabled}
+          >
+            Edit
+          </IconButton>
+        </RoleAccess>
+        <RoleAccess accessRule="contributorOrAdmin">
+          <DeleteButtonWithConfirmation
+            modalHeaderText="Delete Concept"
+            size="xs"
+            mode="iconButton"
+            variant="outline"
+            modalBodyText="Confirm deleting this concept ?"
+            isDisabled={isDisabled}
+            onConfirmation={() => deleteConcept({ variables: { _id: concept._id } }).then(() => Router.back())}
+          />
+        </RoleAccess>
+      </Stack>
+      <EditConceptModal concept={concept} size="md" isOpen={isOpen} onClose={onClose} onCancel={onClose} />
+    </>
   );
 };
 
@@ -228,7 +234,7 @@ export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = 
       }
       renderBlockBelowTitle={
         <Stack pt={2}>
-          <EditableConceptTypes concept={concept} editable={!!currentUser} />
+          <ConceptTypesViewer types={concept.types} />
           {concept.description && (
             <Text fontWeight={250} pb={5}>
               {concept.description}
