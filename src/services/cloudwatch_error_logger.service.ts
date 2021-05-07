@@ -12,18 +12,18 @@ if (typeof window !== 'undefined' && env.NODE_ENV === 'production') {
   const logGroupName = 'sci-map-frontend';
 
   const logger = new Logger(accessKeyId, secretAccessKey, region, logGroupName);
-  logger.install({
-    async messageFormatter(e, info = { type: 'unknown' }) {
-      if (!e.message) {
-        return null;
-      }
+  // logger.install({
+  //   async messageFormatter(e, info = { type: 'unknown' }) {
+  //     if (!e.message) {
+  //       return null;
+  //     }
 
-      return JSON.stringify({
-        message: e.message,
-        timestamp: new Date().getTime(),
-        userAgent: window.navigator.userAgent,
-        ...info,
-      });
-    },
-  });
+  //     return JSON.stringify({
+  //       message: e.message,
+  //       timestamp: new Date().getTime(),
+  //       userAgent: window.navigator.userAgent,
+  //       ...info,
+  //     });
+  //   },
+  // });
 }
