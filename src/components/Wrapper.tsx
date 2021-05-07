@@ -6,6 +6,7 @@ import '../../src/services/cloudwatch_error_logger.service';
 import { Layout } from '../components/layout/Layout';
 import { theme } from '../theme/theme';
 import { UnauthentificatedModalProvider } from './auth/UnauthentificatedModal';
+import 'react-sortable-tree/style.css';
 
 interface WrapperProps {
   apolloClient: ApolloClient<NormalizedCacheObject>;

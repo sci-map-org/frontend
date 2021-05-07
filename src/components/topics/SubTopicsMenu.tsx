@@ -1,4 +1,4 @@
-import { AddIcon, MinusIcon } from '@chakra-ui/icons';
+import { AddIcon, MinusIcon, SettingsIcon } from '@chakra-ui/icons';
 import {
   Box,
   Center,
@@ -19,7 +19,7 @@ import { ConceptLinkData } from '../../graphql/concepts/concepts.fragments';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { DomainLinkData } from '../../graphql/domains/domains.fragments';
 import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
-import { ConceptPageInfo, DomainPageInfo } from '../../pages/RoutesPageInfos';
+import { ConceptListPageInfo, ConceptPageInfo, DomainPageInfo } from '../../pages/RoutesPageInfos';
 import { RoleAccess } from '../auth/RoleAccess';
 import { ConceptKnownCheckbox } from '../concepts/ConceptKnownCheckbox';
 import { PageLink } from '../navigation/InternalLink';
@@ -88,10 +88,23 @@ export const SubTopicsMenu: React.FC<{
       color="gray.500"
       minW={minWidth}
     >
-      <Box bgColor="originalPalette.red" mt="-1px" mx="-1px" borderTopRadius="inherit">
+      <Box position="relative" bgColor="originalPalette.red" mt="-1px" mx="-1px" borderTopRadius="inherit">
         <Text fontSize="lg" textAlign="center" fontWeight={600} pt={2} pb={2} color="white">
           SubTopics
         </Text>
+        <RoleAccess accessRule="contributorOrAdmin">
+          <PageLink pageInfo={ConceptListPageInfo(domain)} position="absolute" top="2px" right="2px">
+            <IconButton
+              aria-label="manage subtopics"
+              size="sm"
+              variant="ghost"
+              color="white"
+              _hover={{}}
+              _focus={{}}
+              icon={<SettingsIcon />}
+            />
+          </PageLink>
+        </RoleAccess>
       </Box>
       <Flex px={2}>
         {!isLoading && !subTopics.length ? (
