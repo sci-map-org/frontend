@@ -1,10 +1,10 @@
 import { Button, IconButton } from '@chakra-ui/button';
 import { useDisclosure } from '@chakra-ui/hooks';
-import { AddIcon, EditIcon, ExternalLinkIcon, MinusIcon } from '@chakra-ui/icons';
+import { AddIcon, ExternalLinkIcon, MinusIcon } from '@chakra-ui/icons';
 import { Box, Center, Flex, Stack, Text } from '@chakra-ui/layout';
 import { Spinner } from '@chakra-ui/spinner';
 import { BiUnlink } from '@react-icons/all-files/bi/BiUnlink';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import SortableTree, { getVisibleNodeCount, NodeRendererProps, TreeItem } from 'react-sortable-tree';
 import { ConceptLinkDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { DomainDataFragment, DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
@@ -13,8 +13,10 @@ import {
   useDetachTopicIsSubTopicOfTopicMutation,
   useUpdateTopicIsSubTopicOfTopicMutation,
 } from '../../graphql/topics/topics.operations.generated';
-import { TopicType } from '../../graphql/types';
+import { TopicType, UserRole } from '../../graphql/types';
+import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { ConceptPageInfo, DomainPageInfo } from '../../pages/RoutesPageInfos';
+import { RoleAccess } from '../auth/RoleAccess';
 import { domainLinkStyleProps } from '../domains/DomainLink';
 import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
 import { DomainIcon } from '../lib/icons/DomainIcon';
@@ -53,12 +55,17 @@ export const ManageSubTopicsTree: React.FC<ManageSubTopicsTreeProps> = ({
   onUpdated,
   isLoading,
 }) => {
+  const { currentUser } = useCurrentUser();
+  const canUpdate = useMemo(
+    () => !!currentUser && (currentUser.role === UserRole.Contributor || currentUser.role === UserRole.Admin),
+    [currentUser]
+  );
   const transformSubTopics = (subTopicItems: SubTopicItem[], updatable: boolean): TreeItem[] => {
     return subTopicItems.map((subTopicItem) => ({
       ...subTopicItem.subTopic,
       title: subTopicItem.subTopic.name,
       index: subTopicItem.index,
-      updatable,
+      updatable: canUpdate && updatable,
       subtitle: subTopicItem.subTopic.description,
       children: subTopicItem.subTopic.subTopics
         ? transformSubTopics(
@@ -118,6 +125,7 @@ export const ManageSubTopicsTree: React.FC<ManageSubTopicsTreeProps> = ({
   };
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
     <Stack>
       {isLoading || isUpdating ? (
@@ -166,25 +174,12 @@ export const ManageSubTopicsTree: React.FC<ManageSubTopicsTreeProps> = ({
               buttons:
                 node.topicType === TopicType.Concept
                   ? [
-                      <PageLink pageInfo={ConceptPageInfo(domain, node as ConceptLinkDataFragment)} isExternal>
+                      <PageLink pageInfo={ConceptPageInfo(domain, node as ConceptLinkDataFragment)} isExternal key="a">
                         <IconButton aria-label="Go to Topic" icon={<ExternalLinkIcon />} size="xs" variant="ghost" />
                       </PageLink>,
-                      ...[
-                        node.updatable ? (
-                          <IconButton
-                            aria-label="Edit SubTopic"
-                            icon={<EditIcon />}
-                            onClick={() => console.log(node._id)}
-                            size="xs"
-                            variant="ghost"
-                          />
-                        ) : (
-                          []
-                        ),
-                      ],
                     ]
                   : [
-                      <PageLink pageInfo={DomainPageInfo(node as DomainLinkDataFragment)} isExternal>
+                      <PageLink pageInfo={DomainPageInfo(node as DomainLinkDataFragment)} isExternal key="b">
                         <IconButton aria-label="Go to Area" icon={<ExternalLinkIcon />} size="xs" variant="ghost" />
                       </PageLink>,
                       ...[
@@ -193,6 +188,7 @@ export const ManageSubTopicsTree: React.FC<ManageSubTopicsTreeProps> = ({
                               <DeleteButtonWithConfirmation
                                 icon={<BiUnlink />}
                                 size="xs"
+                                key="a"
                                 variant="ghost"
                                 mode="iconButton"
                                 modalBodyText={`Detach Area "${node.name}" from this topic ?`}
@@ -222,37 +218,38 @@ export const ManageSubTopicsTree: React.FC<ManageSubTopicsTreeProps> = ({
         </Box>
       )}
       <Stack spacing={6} pt={4}>
-        <Flex justifyContent="space-between">
-          <Button
-            w="45%"
-            onClick={() => {
-              setPendingUpdates([]);
-              buildTreeData();
-            }}
-          >
-            Cancel
+        <RoleAccess accessRule="contributorOrAdmin">
+          <Flex justifyContent="space-between">
+            <Button
+              w="45%"
+              isDisabled={!pendingUpdates.length}
+              onClick={() => {
+                setPendingUpdates([]);
+                buildTreeData();
+              }}
+            >
+              Cancel
+            </Button>
+            <Button w="45%" colorScheme="blue" isDisabled={!pendingUpdates.length} onClick={() => runPendingUpdates()}>
+              Save
+              {!!pendingUpdates.length && ` (${pendingUpdates.length} change${pendingUpdates.length === 1 ? '' : 's'})`}
+            </Button>
+          </Flex>
+        </RoleAccess>
+        <RoleAccess accessRule="loggedInUser">
+          <Button colorScheme="blue" onClick={() => onOpen()} variant="outline">
+            + Add SubTopic
           </Button>
-          <Button w="45%" colorScheme="blue" isDisabled={!pendingUpdates.length} onClick={() => runPendingUpdates()}>
-            Save
-            {!!pendingUpdates.length && ` (${pendingUpdates.length} change${pendingUpdates.length === 1 ? '' : 's'})`}
-          </Button>
-        </Flex>
-        {/* <RoleAccess accessRule="loggedInUser"> */}
-        {/* <Flex direction="row" justifyContent="center" pt={1} pb={1}> */}
-        <Button colorScheme="blue" onClick={() => onOpen()} variant="outline">
-          + Add SubTopic
-        </Button>
+          <AddSubTopicModal
+            domain={domain}
+            parentTopicId={domain._id}
+            isOpen={isOpen}
+            onClose={onClose}
+            onAdded={() => onUpdated()}
+            onCancel={() => onClose()}
+          />
+        </RoleAccess>
       </Stack>
-      {/* </Flex> */}
-      {/* </RoleAccess> */}
-      <AddSubTopicModal
-        domain={domain}
-        parentTopicId={domain._id}
-        isOpen={isOpen}
-        onClose={onClose}
-        onAdded={() => onUpdated()}
-        onCancel={() => onClose()}
-      />
     </Stack>
   );
 };
@@ -371,7 +368,8 @@ const CustomThemeNodeContentRenderer: React.FC<NodeRendererProps> = ({
   );
 
   return (
-    <Box style={{ height: '100%' }} {...otherProps} display="flex" direction="row" alignItems="center">
+    // {...otherProps} (was in the next Box/div, doesn't seem useful)
+    <Box style={{ height: '100%' }} display="flex" direction="row" alignItems="center">
       {toggleChildrenVisibility && node.children && (node.children.length > 0 || typeof node.children === 'function') && (
         <Box>
           <IconButton
