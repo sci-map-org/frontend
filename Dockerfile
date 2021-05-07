@@ -7,7 +7,8 @@ RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 # Installing dependencies, cache node_modules
-COPY yarn.lock package.json patches /usr/src/app/
+COPY patches/ /usr/src/app/patches
+COPY yarn.lock package.json /usr/src/app/
 RUN yarn install --frozen-lockfile
 
 # Copying source files
