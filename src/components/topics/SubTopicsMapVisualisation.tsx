@@ -26,12 +26,13 @@ export const MapVisualisationTopicData = gql`
 
 type NodeElement = SimulationNodeDatum & MapVisualisationTopicDataFragment;
 export interface SubTopicsMapVisualisationProps {
-  domainKey: string;
-  topic: MapVisualisationTopicDataFragment; //only used to force rerendering
+  domainKey?: string;
+  topic?: MapVisualisationTopicDataFragment; //only used to force rerendering
   subTopics: MapVisualisationTopicDataFragment[];
   parentTopics?: MapVisualisationTopicDataFragment[];
   pxWidth: number;
   pxHeight: number;
+  onClick: (node: NodeElement) => void;
 }
 export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps> = ({
   domainKey,
@@ -40,13 +41,16 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
   parentTopics,
   pxWidth,
   pxHeight,
+  onClick,
 }) => {
   const d3Container = useRef<SVGSVGElement>(null);
 
   const nodes: NodeElement[] = useMemo(
     () =>
       subTopics.map((subTopic) => {
-        return { id: subTopic._id, ...subTopic };
+        if (subTopic.topicType === TopicType.Concept && !domainKey)
+          throw new Error('domainKey required if a subtopic is a concept');
+        return { id: subTopic._id, ...subTopic, ...(subTopic.topicType === TopicType.Concept && { domainKey }) };
       }),
     [subTopics]
   );
@@ -58,12 +62,11 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
       }),
     [parentTopics]
   );
-
+  console.log(parentTopics);
   useEffect(() => {
-    console.log(parentTopics);
     if (d3Container && d3Container.current) {
       const colorMap: any = {};
-      console.log('run ' + topic._id);
+
       nodes.forEach((node, i) => {
         colorMap[node._id] = d3ScaleChromatic.schemePastel1[i % 9];
       });
@@ -73,7 +76,7 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
       const container = svg.selectAll('.innerContainer').data([true]).join('g').classed('innerContainer', true);
 
       const parentCircleDistance = 400;
-      const parentCircleRadius = 400;
+      const parentCircleRadius = parentTopics?.length === 1 ? 600 : 400;
       var circleScale = d3Scale
         .scaleLinear()
         .range([0, 2 * Math.PI])
@@ -96,9 +99,7 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
         .attr('fill', (n, i) => d3ScaleChromatic.schemePastel2[i])
         .attr('stroke', 'black')
         .on('click', (event, n) => {
-          console.log(n, domainKey);
-          n.__typename === 'Domain' && routerPushToPage(DomainPageInfo(n));
-          n.__typename === 'Concept' && Router.push(ConceptPagePath(domainKey, n.key));
+          onClick(n);
         })
         .attr('stroke-width', 1);
 
@@ -110,8 +111,7 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
         .attr('text-anchor', 'middle')
 
         .on('click', (event, n) => {
-          n.__typename === 'Domain' && routerPushToPage(DomainPageInfo(n));
-          n.__typename === 'Concept' && Router.push(ConceptPagePath(domainKey, n.key));
+          onClick(n);
         })
         .attr('dx', (n, i) => {
           const x = pxWidth / 2 + parentCircleDistance * Math.cos(circleScale(i));
@@ -124,35 +124,38 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
         .text(function (d) {
           return d.name;
         });
+      let rootCircle: d3Selection.Selection<SVGCircleElement, boolean, SVGSVGElement, unknown> | undefined;
+      let rootCircleLabel: d3Selection.Selection<SVGTextElement, boolean, SVGSVGElement, unknown> | undefined;
+      if (topic) {
+        rootCircle = container
+          .append('circle')
+          .attr('r', (_, _2, circle) => {
+            return 120;
+          })
+          .classed('rootCircle', true)
+          .attr('cx', pxWidth / 2)
+          .attr('cy', pxHeight / 2)
+          .attr('fill', (n) => 'white')
+          .attr('stroke', 'black')
+          .attr('stroke-width', parentCircles.length ? 1 : 0);
 
-      const rootCircle = container
-        .append('circle')
-        .attr('r', (_, _2, circle) => {
-          return 120;
-        })
-        .classed('rootCircle', true)
-        .attr('cx', pxWidth / 2)
-        .attr('cy', pxHeight / 2)
-        .attr('fill', (n) => 'white')
-        .attr('stroke', 'black')
-        .attr('stroke-width', parentCircles.length ? 1 : 0);
-
-      const rootCircleLabel = container
-        .append('text')
-        .attr('x', (_, _2, circle) => {
-          return pxWidth / 2;
-        })
-        .classed('rootCircle', true)
-        .attr('text-anchor', 'middle')
-        .attr('x', pxWidth / 2)
-        .attr('y', pxHeight / 2)
-        .attr('fill', (n) => theme.colors.gray[700])
-        .attr('font-size', theme.fontSizes.lg)
-        .attr('font-weight', 600)
-        .attr('display', parentCircles.length ? 'inherit' : 'none')
-        .text(function (d) {
-          return topic.name;
-        });
+        rootCircleLabel = container
+          .append('text')
+          .attr('x', (_, _2, circle) => {
+            return pxWidth / 2;
+          })
+          .classed('rootCircle', true)
+          .attr('text-anchor', 'middle')
+          .attr('x', pxWidth / 2)
+          .attr('y', pxHeight / 2)
+          .attr('fill', (n) => theme.colors.gray[700])
+          .attr('font-size', theme.fontSizes.lg)
+          .attr('font-weight', 600)
+          .attr('display', parentCircles.length ? 'inherit' : 'none')
+          .text(function (d) {
+            return topic.name;
+          });
+      }
 
       const node = container
         .selectAll('.node')
@@ -160,8 +163,7 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
         .join('g')
         .classed('node', true)
         .on('click', (event, n) => {
-          n.__typename === 'Domain' && routerPushToPage(DomainPageInfo(n));
-          n.__typename === 'Concept' && Router.push(ConceptPagePath(domainKey, n.key));
+          onClick(n);
         });
 
       const getNodeRadius = (n: NodeElement) => (n.size ? 12 + (n.size > 1 ? Math.log(n.size) * 12 : 0) : 12);
@@ -197,7 +199,6 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
         node.each(function (d) {
           if (d.x && d.y) {
             const distance = Math.sqrt(Math.pow(d.x - xCenter, 2) + Math.pow(d.y - yCenter, 2)) + getNodeRadius(d);
-            // console.log(node.nodes().map((n: SVGElement) => n.getBBox()));
             if (distance > maxDistance) maxDistance = distance;
           }
         });
@@ -212,8 +213,8 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
             return x;
           })
           .attr('dy', (n, i) => pxHeight / 2 + labelDistance * Math.sin(angle(i)));
-        rootCircle.attr('r', maxDistance + 30);
-        rootCircleLabel.attr('y', pxHeight / 2 + maxDistance + 48);
+        rootCircle && rootCircle.attr('r', maxDistance + 40);
+        rootCircleLabel && rootCircleLabel.attr('y', pxHeight / 2 + maxDistance + 58);
         node.attr('transform', function (d) {
           return 'translate(' + d.x + ',' + d.y + ')';
         });
@@ -244,6 +245,6 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
         .force('center', d3Force.forceCenter(pxWidth / 2, pxHeight / 2))
         .on('tick', tick);
     }
-  }, [topic._id]);
+  }, [topic?._id]);
   return <svg ref={d3Container} width={`${pxWidth}px`} height={`${pxHeight}px`} fontSize="xs" />;
 };

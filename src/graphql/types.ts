@@ -16,6 +16,7 @@ export type Query = {
   getHomePageData: GetHomePageDataResults;
   getTopLevelDomains: GetTopLevelDomainsResults;
   globalSearch: GlobalSearchResults;
+  getTopicById: ITopic;
   searchTopics: SearchTopicsResult;
   searchSubTopics: SearchTopicsResult;
   checkTopicKeyAvailability: CheckTopicKeyAvailabilityResult;
@@ -42,6 +43,11 @@ export type Query = {
 export type QueryGlobalSearchArgs = {
   query: Scalars['String'];
   options?: Maybe<GlobalSearchOptions>;
+};
+
+
+export type QueryGetTopicByIdArgs = {
+  topicId: Scalars['String'];
 };
 
 
@@ -605,6 +611,21 @@ export type GlobalSearchResults = {
 
 export type GlobalSearchOptions = {
   pagination?: Maybe<PaginationOptions>;
+};
+
+export type ITopic = {
+  _id: Scalars['String'];
+  name: Scalars['String'];
+  key: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  topicType: TopicType;
+  size?: Maybe<Scalars['Float']>;
+  subTopics?: Maybe<Array<TopicIsSubTopicOfTopic>>;
+};
+
+
+export type ITopicSubTopicsArgs = {
+  options: TopicSubTopicsOptions;
 };
 
 export type SearchTopicsResult = {
@@ -1298,21 +1319,6 @@ export type SearchResult = {
 export type PaginationOptions = {
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-};
-
-export type ITopic = {
-  _id: Scalars['String'];
-  name: Scalars['String'];
-  key: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-  topicType: TopicType;
-  size?: Maybe<Scalars['Float']>;
-  subTopics?: Maybe<Array<TopicIsSubTopicOfTopic>>;
-};
-
-
-export type ITopicSubTopicsArgs = {
-  options: TopicSubTopicsOptions;
 };
 
 export type SearchTopicsFilterOptions = {

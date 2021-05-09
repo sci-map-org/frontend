@@ -1,17 +1,18 @@
 import { IconButton } from '@chakra-ui/button';
 import { useDisclosure } from '@chakra-ui/hooks';
-import { Box, Center, Stack, Text } from '@chakra-ui/layout';
+import { Box, Center, Text } from '@chakra-ui/layout';
 import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay } from '@chakra-ui/modal';
 import { CgArrowsExpandRight } from '@react-icons/all-files/cg/CgArrowsExpandRight';
-import gql from 'graphql-tag';
 import dynamic from 'next/dynamic';
+import Router from 'next/router';
 import { useRef } from 'react';
 import { PuffLoader } from 'react-spinners';
+import { routerPushToPage } from '../../pages/PageInfo';
+import { ConceptPagePath, DomainPageInfo } from '../../pages/RoutesPageInfos';
 import { theme } from '../../theme/theme';
 import { useElementSize } from '../../util/useElementSize';
 import { SubTopicsMapVisualisationProps } from './SubTopicsMapVisualisation';
 import { MapVisualisationTopicDataFragment } from './SubTopicsMapVisualisation.generated';
-import { MinimapTopicDataFragment } from './SubTopicsMinimap.generated';
 
 const SubTopicsMapVisualisation = dynamic<SubTopicsMapVisualisationProps>(
   () =>
@@ -82,6 +83,10 @@ export const SubTopicsMinimap: React.FC<SubTopicsMinimapProps> = ({
           parentTopics={parentTopics}
           pxWidth={pxWidth}
           pxHeight={pxHeight}
+          onClick={(n) => {
+            n.__typename === 'Domain' && routerPushToPage(DomainPageInfo(n));
+            n.__typename === 'Concept' && domainKey && Router.push(ConceptPagePath(domainKey, n.key));
+          }}
         />
       ) : (
         <Center w="100%" h="100%">
@@ -152,6 +157,10 @@ const SubTopicsMapModalContent: React.FC<{
           parentTopics={parentTopics}
           pxWidth={modalContainerSize.width}
           pxHeight={modalContainerSize.width}
+          onClick={(n) => {
+            n.__typename === 'Domain' && routerPushToPage(DomainPageInfo(n));
+            n.__typename === 'Concept' && domainKey && Router.push(ConceptPagePath(domainKey, n.key));
+          }}
         />
       )}
     </Box>
