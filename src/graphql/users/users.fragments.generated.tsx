@@ -2,7 +2,7 @@ import * as Types from '../types';
 
 export type CurrentUserDataFragment = (
   { __typename?: 'CurrentUser' }
-  & Pick<Types.CurrentUser, '_id' | 'email' | 'key' | 'role' | 'displayName'>
+  & Pick<Types.CurrentUser, '_id' | 'email' | 'key' | 'role' | 'displayName' | 'bio'>
   & { startedLearningPaths?: Types.Maybe<Array<(
     { __typename?: 'LearningPathStartedItem' }
     & Pick<Types.LearningPathStartedItem, 'startedAt'>
@@ -15,7 +15,7 @@ export type CurrentUserDataFragment = (
 
 export type PublicUserDataFragment = (
   { __typename?: 'User' }
-  & Pick<Types.User, '_id' | 'key' | 'role' | 'displayName'>
+  & Pick<Types.User, '_id' | 'key' | 'role' | 'displayName' | 'bio'>
 );
 
 export type LoginResponseDataFragment = (

@@ -1,5 +1,6 @@
 import { Badge, Box, Center, Heading, Stack, Text } from '@chakra-ui/react';
 import { PageLayout } from '../../components/layout/PageLayout';
+import { EditableTextarea } from '../../components/lib/inputs/EditableTextarea';
 import { EditableTextInput } from '../../components/lib/inputs/EditableTextInput';
 import { UserRole } from '../../graphql/types';
 import { CurrentUserDataFragment } from '../../graphql/users/users.fragments.generated';
@@ -32,6 +33,19 @@ export const CurrentUserProfilePage: React.FC<{ currentUser: CurrentUserDataFrag
             }
             editMode
             color="gray.800"
+          />
+        </Stack>
+        <Stack>
+          <Text fontSize="xl" fontWeight={600}>
+            Bio:
+          </Text>
+          <EditableTextarea
+            fontWeight={300}
+            minRows={2}
+            fontSize="lg"
+            defaultValue={currentUser.bio || undefined}
+            placeholder="Write about yourself..."
+            onSubmit={(bio: string) => updateCurrentUser({ variables: { payload: { bio } } })}
           />
         </Stack>
         <Stack>

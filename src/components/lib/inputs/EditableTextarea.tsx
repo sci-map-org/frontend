@@ -7,7 +7,7 @@ const estimateNbRows = (value?: string) =>
 
 export const EditableTextarea: React.FC<
   Pick<UseEditableProps, 'onSubmit' | 'placeholder' | 'isDisabled'> &
-    FlexProps & { minRows?: number; rows?: number; defaultValue?: string; isLoading?: boolean }
+    Omit<FlexProps, 'onSubmit'> & { minRows?: number; rows?: number; defaultValue?: string; isLoading?: boolean }
 > = ({ defaultValue, onSubmit, isDisabled, placeholder, rows, minRows, isLoading, ...flexProps }) => {
   const [updatedValue, setUpdatedValue] = useState(defaultValue);
   useEffect(() => {
