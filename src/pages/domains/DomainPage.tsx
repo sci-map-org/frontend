@@ -225,7 +225,6 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
             />
             {/* <DomainConceptGraph domain={domain} isLoading={loading} minNbRelationships={5} /> */}
             {/* <DomainLearningPaths domain={domain} /> */}
-            {/* {mockedFeaturesEnabled && <DomainLearningPaths domain={domain} />} */}
           </Flex>
           <Stack
             spacing={4}

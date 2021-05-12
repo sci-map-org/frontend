@@ -1,45 +1,51 @@
-import { Checkbox, Stack, Text } from '@chakra-ui/react';
+import { Badge, Box, Center, Checkbox, EditableInput, Heading, Stack, Text } from '@chakra-ui/react';
 import NoSSR from 'react-no-ssr';
 import { PageLayout } from '../../components/layout/PageLayout';
+import { EditableTextInput } from '../../components/lib/inputs/EditableTextInput';
 import { UserRole } from '../../graphql/types';
 import { CurrentUserDataFragment } from '../../graphql/users/users.fragments.generated';
-import { useMockedFeaturesEnabled } from '../../hooks/useMockedFeaturesEnabled';
 
 export const CurrentUserProfilePage: React.FC<{ currentUser: CurrentUserDataFragment }> = ({ currentUser }) => {
-  const { mockedFeaturesEnabled, setMockedFeaturesEnabled } = useMockedFeaturesEnabled();
   return (
-    <PageLayout title={`My Profile (@${currentUser.key})`} centerChildren>
-      <Stack spacing={10} alignItems="center">
-        <Stack alignItems="center">
-          <Stack alignItems="center">
-            <Text>
-              <b>Display Name:</b> {currentUser.displayName}
-            </Text>
-            <Text>
-              <b>Email:</b> {currentUser.email}
-            </Text>
-            {currentUser.role !== UserRole.User && (
-              <Text>
-                <b>Role:</b> {currentUser.role}
-              </Text>
-            )}
-          </Stack>
+    <PageLayout marginSize="xl">
+      <Center mb={10}>
+        <Heading fontWeight={400}>
+          My Profile (
+          <Text as="span" fontWeight={500} color="blue.600">
+            @{currentUser.key}
+          </Text>
+          )
+        </Heading>
+      </Center>
+      <Stack spacing={6}>
+        <Stack>
+          <Text fontSize="xl" fontWeight={600}>
+            Display Name:
+          </Text>
+          <EditableTextInput
+            fontSize="lg"
+            fontWeight={400}
+            value={currentUser.displayName}
+            onChange={(r) => console.log(r)}
+            editMode
+            color="gray.800"
+          />
         </Stack>
-        {currentUser.role === UserRole.Admin && (
-          <Stack alignItems="center">
-            <Text fontSize="2xl">Settings</Text>
-            <Stack direction="column">
-              <NoSSR>
-                <Checkbox
-                  id="mockedFeaturesEnabled"
-                  isChecked={mockedFeaturesEnabled}
-                  onChange={(e) => setMockedFeaturesEnabled(e.target.checked)}
-                >
-                  Mocked Features Enabled
-                </Checkbox>
-              </NoSSR>
-            </Stack>
-          </Stack>
+        <Stack>
+          <Text fontSize="xl" fontWeight={600}>
+            Email:
+          </Text>
+
+          <Text fontSize="lg" fontWeight={400} color="gray.800">
+            {currentUser.email}
+          </Text>
+        </Stack>
+        {currentUser.role !== UserRole.User && (
+          <Box>
+            <Badge fontSize="md" colorScheme="teal">
+              {currentUser.role}
+            </Badge>
+          </Box>
         )}
       </Stack>
     </PageLayout>
