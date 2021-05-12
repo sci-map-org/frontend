@@ -154,6 +154,7 @@ export type Mutation = {
   triggerResetPassword: TriggerResetPasswordResponse;
   resetPassword: ResetPasswordResponse;
   adminUpdateUser: User;
+  updateCurrentUser: CurrentUser;
   createArticle: Article;
   updateArticle: Article;
   deleteArticle: DeleteArticleResponse;
@@ -254,6 +255,11 @@ export type MutationResetPasswordArgs = {
 export type MutationAdminUpdateUserArgs = {
   id: Scalars['String'];
   payload: AdminUpdateUserPayload;
+};
+
+
+export type MutationUpdateCurrentUserArgs = {
+  payload: UpdateCurrentUserPayload;
 };
 
 
@@ -999,6 +1005,10 @@ export type AdminUpdateUserPayload = {
   email?: Maybe<Scalars['String']>;
   role?: Maybe<UserRole>;
   active?: Maybe<Scalars['Boolean']>;
+};
+
+export type UpdateCurrentUserPayload = {
+  displayName?: Maybe<Scalars['String']>;
 };
 
 export type CreateArticlePayload = {

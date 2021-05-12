@@ -1,11 +1,12 @@
-import { Badge, Box, Center, Checkbox, EditableInput, Heading, Stack, Text } from '@chakra-ui/react';
-import NoSSR from 'react-no-ssr';
+import { Badge, Box, Center, Heading, Stack, Text } from '@chakra-ui/react';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { EditableTextInput } from '../../components/lib/inputs/EditableTextInput';
 import { UserRole } from '../../graphql/types';
 import { CurrentUserDataFragment } from '../../graphql/users/users.fragments.generated';
+import { useUpdateCurrentUserMutation } from '../../graphql/users/users.operations.generated';
 
 export const CurrentUserProfilePage: React.FC<{ currentUser: CurrentUserDataFragment }> = ({ currentUser }) => {
+  const [updateCurrentUser] = useUpdateCurrentUserMutation();
   return (
     <PageLayout marginSize="xl">
       <Center mb={10}>
@@ -26,7 +27,9 @@ export const CurrentUserProfilePage: React.FC<{ currentUser: CurrentUserDataFrag
             fontSize="lg"
             fontWeight={400}
             value={currentUser.displayName}
-            onChange={(r) => console.log(r)}
+            onChange={(newDisplayName) =>
+              updateCurrentUser({ variables: { payload: { displayName: newDisplayName } } })
+            }
             editMode
             color="gray.800"
           />
