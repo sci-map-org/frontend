@@ -28,11 +28,15 @@ export const UserAvatarData = gql`
 `;
 
 export const UserAvatar: React.FC<
-  { user: UserAvatarDataFragment | CurrentUserDataFragment; disablePopover?: boolean } & AvatarProps
-> = ({ user, disablePopover, ...avatarProps }) => {
+  {
+    user: UserAvatarDataFragment | CurrentUserDataFragment;
+    disablePopover?: boolean;
+    isLoading?: boolean;
+  } & AvatarProps
+> = ({ user, disablePopover, isLoading, ...avatarProps }) => {
   const avatar = (
     <Avatar
-      name={user.displayName}
+      {...(!isLoading && { name: user.displayName })}
       {...avatarProps}
       {...(!disablePopover && { _hover: { cursor: 'pointer' } })}
       {...(!!user.profilePictureUrl && { src: user.profilePictureUrl })}
