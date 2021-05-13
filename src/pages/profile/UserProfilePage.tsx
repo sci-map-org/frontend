@@ -34,7 +34,7 @@ export const UserProfilePage: React.FC<{ userKey: string }> = ({ userKey }) => {
       marginSize="2xl"
     >
       <Flex direction={{ base: 'column-reverse', md: 'row' }} justifyContent="space-between" mt={16}>
-        <Stack alignItems="center" mt={{ base: 12, md: 0 }}>
+        <Stack alignItems={{ base: 'center', md: 'flex-start' }} mt={{ base: 12, md: 0 }}>
           <Flex direction="row" alignItems="baseline" mb={6}>
             <Skeleton isLoaded={!loading}>
               <Heading fontWeight={400} color="gray.700">
