@@ -12,6 +12,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
+import { forwardRef } from 'react';
 import { CurrentUserDataFragment } from '../../graphql/users/users.fragments.generated';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { UserProfilePageInfo } from '../../pages/RoutesPageInfos';
@@ -34,31 +35,19 @@ export const UserAvatar: React.FC<
     isLoading?: boolean;
   } & AvatarProps
 > = ({ user, disablePopover, isLoading, ...avatarProps }) => {
-  const avatar = (
-    <Avatar
-      {...(!isLoading && { name: user.displayName })}
-      {...avatarProps}
-      {...(!disablePopover && { _hover: { cursor: 'pointer' } })}
-      {...(!!user.profilePictureUrl && { src: user.profilePictureUrl })}
-      onClick={() => routerPushToPage(UserProfilePageInfo(user))}
-    />
-  );
-
   return disablePopover ? (
-    avatar
+    <UserAvatarPicture user={user} isLoading={isLoading} {...avatarProps} />
   ) : (
     <Popover isLazy trigger="hover">
-      <PopoverTrigger>{avatar}</PopoverTrigger>
+      <PopoverTrigger>
+        <UserAvatarPicture user={user} isLoading={isLoading} {...avatarProps} />
+      </PopoverTrigger>
       <PopoverContent>
         <PopoverArrow />
         <PopoverBody>
           <Flex direction="row" alignItems="center">
             <Center px={1} mr={3}>
-              <Avatar
-                name={user.displayName}
-                size="sm"
-                {...(!!user.profilePictureUrl && { src: user.profilePictureUrl })}
-              />
+              <UserAvatarPicture user={user} isLoading={isLoading} size="sm" />
             </Center>
             <Stack spacing={0}>
               <PageLink pageInfo={UserProfilePageInfo(user)} fontSize="lg" fontWeight={500}>
@@ -74,3 +63,21 @@ export const UserAvatar: React.FC<
     </Popover>
   );
 };
+
+const UserAvatarPicture = forwardRef<
+  HTMLSpanElement,
+  {
+    user: UserAvatarDataFragment | CurrentUserDataFragment;
+    isLoading?: boolean;
+  } & Omit<AvatarProps, 'name'>
+>(({ user, isLoading, ...avatarProps }, ref) => {
+  return (
+    <Avatar
+      ref={ref}
+      {...(!isLoading && { name: user.displayName })}
+      {...avatarProps}
+      {...(!!user.profilePictureUrl && { src: user.profilePictureUrl })}
+      onClick={() => routerPushToPage(UserProfilePageInfo(user))}
+    />
+  );
+});
