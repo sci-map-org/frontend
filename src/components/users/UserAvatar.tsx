@@ -12,6 +12,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
+import { CurrentUserDataFragment } from '../../graphql/users/users.fragments.generated';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { UserProfilePageInfo } from '../../pages/RoutesPageInfos';
 import { PageLink } from '../navigation/InternalLink';
@@ -25,17 +26,23 @@ export const UserAvatarData = gql`
   }
 `;
 
-export const UserAvatar: React.FC<{ user: UserAvatarDataFragment } & AvatarProps> = ({ user, ...avatarProps }) => {
-  return (
+export const UserAvatar: React.FC<
+  { user: UserAvatarDataFragment | CurrentUserDataFragment; disablePopover?: boolean } & AvatarProps
+> = ({ user, disablePopover, ...avatarProps }) => {
+  const avatar = (
+    <Avatar
+      name={user.displayName}
+      {...avatarProps}
+      {...(!disablePopover && { _hover: { cursor: 'pointer' } })}
+      onClick={() => routerPushToPage(UserProfilePageInfo(user))}
+    />
+  );
+
+  return disablePopover ? (
+    avatar
+  ) : (
     <Popover isLazy trigger="hover">
-      <PopoverTrigger>
-        <Avatar
-          name={user.displayName}
-          {...avatarProps}
-          _hover={{ cursor: 'pointer' }}
-          onClick={() => routerPushToPage(UserProfilePageInfo(user))}
-        />
-      </PopoverTrigger>
+      <PopoverTrigger>{avatar}</PopoverTrigger>
       <PopoverContent>
         <PopoverArrow />
         <PopoverBody>
