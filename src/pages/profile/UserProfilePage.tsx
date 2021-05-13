@@ -1,8 +1,9 @@
 import { EditIcon } from '@chakra-ui/icons';
-import { IconButton, Stack, Text } from '@chakra-ui/react';
+import { Badge, Box, Center, Flex, Heading, IconButton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
+import { UserAvatar } from '../../components/users/UserAvatar';
 import { UserRole } from '../../graphql/types';
 import { generatePublicUserData, PublicUserData } from '../../graphql/users/users.fragments';
 import { GetUserUserProfilePageQuery, useGetUserUserProfilePageQuery } from './UserProfilePage.generated';
@@ -23,21 +24,36 @@ export const UserProfilePage: React.FC<{ userKey: string }> = ({ userKey }) => {
   const user = data?.getUser || userDataPlaceholder;
   return (
     <PageLayout
-      title={`Profile of ${user.displayName} (@${userKey})`}
       isLoading={loading}
-      centerChildren
       renderTopRight={
         <RoleAccess accessRule="admin">
           <IconButton size="sm" aria-label="edit_user" icon={<EditIcon />} />
         </RoleAccess>
       }
+      marginSize="2xl"
     >
-      <Stack direction="column" width="40rem" alignItems="center">
-        {user.role !== UserRole.User && (
-          <Text>
-            <b>Role:</b> {user.role}
-          </Text>
-        )}
+      <Stack direction="column">
+        <Center mb={10}>
+          <Heading fontWeight={400}>
+            {user.displayName}(
+            <Text as="span" fontWeight={500} color="blue.600">
+              @{user.key}
+            </Text>
+            )
+          </Heading>
+        </Center>
+        <Flex justifyContent="space-between">
+          <Stack>
+            {user.role !== UserRole.User && (
+              <Box>
+                <Badge fontSize="md" colorScheme="teal">
+                  {user.role}
+                </Badge>
+              </Box>
+            )}
+          </Stack>
+          <UserAvatar size="xl" user={user} />
+        </Flex>
       </Stack>
     </PageLayout>
   );
