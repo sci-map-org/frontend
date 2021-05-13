@@ -15,7 +15,7 @@ export type CurrentUserDataFragment = (
 
 export type PublicUserDataFragment = (
   { __typename?: 'User' }
-  & Pick<Types.User, '_id' | 'key' | 'role' | 'displayName' | 'bio'>
+  & Pick<Types.User, '_id' | 'key' | 'role' | 'displayName' | 'bio' | 'profilePictureUrl'>
 );
 
 export type LoginResponseDataFragment = (

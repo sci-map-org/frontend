@@ -29,6 +29,7 @@ export const PublicUserData = gql`
     role
     displayName
     bio
+    profilePictureUrl
   }
 `;
 
