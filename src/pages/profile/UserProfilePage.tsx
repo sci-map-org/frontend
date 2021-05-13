@@ -24,15 +24,7 @@ export const UserProfilePage: React.FC<{ userKey: string }> = ({ userKey }) => {
   const { data, loading } = useGetUserUserProfilePageQuery({ variables: { key: userKey } });
   const user = data?.getUser || userDataPlaceholder;
   return (
-    <PageLayout
-      isLoading={loading}
-      renderTopRight={
-        <RoleAccess accessRule="admin">
-          <IconButton size="sm" aria-label="edit_user" icon={<EditIcon />} />
-        </RoleAccess>
-      }
-      marginSize="2xl"
-    >
+    <PageLayout isLoading={loading} marginSize="2xl">
       <Flex direction={{ base: 'column-reverse', md: 'row' }} justifyContent="space-between" mt={16}>
         <Stack alignItems={{ base: 'center', md: 'flex-start' }} mt={{ base: 12, md: 0 }}>
           <Flex direction="row" alignItems="baseline" mb={6}>

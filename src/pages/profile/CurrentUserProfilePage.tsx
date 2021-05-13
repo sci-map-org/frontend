@@ -22,8 +22,14 @@ export const CurrentUserProfilePage: React.FC<{ currentUser: CurrentUserDataFrag
         </Heading>
       </Center>
       <Flex justifyContent="space-between" direction={{ base: 'column-reverse', md: 'row' }}>
-        <Stack spacing={6} mt={{ base: 12, md: 0 }} alignItems={{ base: 'center', md: 'stretch' }}>
-          <Stack>
+        <Stack
+          spacing={6}
+          mt={{ base: 12, md: 0 }}
+          alignItems={{ base: 'center', md: 'stretch' }}
+          flexGrow={1}
+          mr={{ base: 0, md: 10 }}
+        >
+          <Stack alignItems={{ base: 'center', md: 'flex-start' }}>
             <Text fontSize="xl" fontWeight={600}>
               Display Name:
             </Text>
@@ -38,20 +44,21 @@ export const CurrentUserProfilePage: React.FC<{ currentUser: CurrentUserDataFrag
               color="gray.800"
             />
           </Stack>
-          <Stack>
+          <Stack flexGrow={1} alignItems={{ base: 'center', md: 'flex-start' }}>
             <Text fontSize="xl" fontWeight={600}>
               Bio:
             </Text>
             <EditableTextarea
               fontWeight={300}
               minRows={2}
+              w="100%"
               fontSize="lg"
               defaultValue={currentUser.bio || undefined}
               placeholder="Write about yourself..."
               onSubmit={(bio: string) => updateCurrentUser({ variables: { payload: { bio } } })}
             />
           </Stack>
-          <Stack>
+          <Stack alignItems={{ base: 'center', md: 'flex-start' }}>
             <Text fontSize="xl" fontWeight={600}>
               Email:
             </Text>

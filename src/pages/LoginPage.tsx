@@ -31,8 +31,8 @@ export const LoginPage: React.FC = () => {
 
   useEffect(() => {
     if (currentUser && !discourseSSO)
-      redirectTo && typeof redirectTo === 'string' ? Router.push(redirectTo) : Router.push('/');
-  }, [redirectTo]);
+      redirectTo && typeof redirectTo === 'string' ? Router.push(decodeURIComponent(redirectTo)) : Router.push('/');
+  }, [redirectTo, currentUser]);
 
   return (
     <PageLayout marginSize="xl" title="Login" centerChildren>
@@ -44,10 +44,10 @@ export const LoginPage: React.FC = () => {
               return;
             }
             console.log(redirectTo);
-            if (redirectTo && typeof redirectTo === 'string') {
-              return router.push(decodeURIComponent(redirectTo));
-            }
-            router.push('/');
+            // if (redirectTo && typeof redirectTo === 'string') {
+            //   return router.push(decodeURIComponent(redirectTo));
+            // }
+            // router.push('/');
           }}
           discourseSSO={discourseSSO}
         />
