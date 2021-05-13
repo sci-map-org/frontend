@@ -636,6 +636,7 @@ export type CurrentUser = {
   email: Scalars['String'];
   displayName: Scalars['String'];
   bio?: Maybe<Scalars['String']>;
+  profilePictureUrl?: Maybe<Scalars['String']>;
   key: Scalars['String'];
   role: UserRole;
   articles?: Maybe<ListArticlesResult>;
@@ -682,6 +683,7 @@ export type User = {
   email: Scalars['String'];
   displayName: Scalars['String'];
   bio?: Maybe<Scalars['String']>;
+  profilePictureUrl?: Maybe<Scalars['String']>;
   role: UserRole;
   key: Scalars['String'];
   articles?: Maybe<ListArticlesResult>;
@@ -1004,6 +1006,7 @@ export type ResetPasswordPayload = {
 export type AdminUpdateUserPayload = {
   displayName?: Maybe<Scalars['String']>;
   bio?: Maybe<Scalars['String']>;
+  profilePictureUrl?: Maybe<Scalars['String']>;
   key?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
   role?: Maybe<UserRole>;
@@ -1012,6 +1015,7 @@ export type AdminUpdateUserPayload = {
 
 export type UpdateCurrentUserPayload = {
   displayName?: Maybe<Scalars['String']>;
+  profilePictureUrl?: Maybe<Scalars['String']>;
   bio?: Maybe<Scalars['String']>;
 };
 

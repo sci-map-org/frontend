@@ -23,6 +23,7 @@ export const UserAvatarData = gql`
     _id
     key
     displayName
+    profilePictureUrl
   }
 `;
 
@@ -34,6 +35,7 @@ export const UserAvatar: React.FC<
       name={user.displayName}
       {...avatarProps}
       {...(!disablePopover && { _hover: { cursor: 'pointer' } })}
+      {...(!!user.profilePictureUrl && { src: user.profilePictureUrl })}
       onClick={() => routerPushToPage(UserProfilePageInfo(user))}
     />
   );
@@ -48,7 +50,11 @@ export const UserAvatar: React.FC<
         <PopoverBody>
           <Flex direction="row" alignItems="center">
             <Center px={1} mr={3}>
-              <Avatar name={user.displayName} size="sm" />
+              <Avatar
+                name={user.displayName}
+                size="sm"
+                {...(!!user.profilePictureUrl && { src: user.profilePictureUrl })}
+              />
             </Center>
             <Stack spacing={0}>
               <PageLink pageInfo={UserProfilePageInfo(user)} fontSize="lg" fontWeight={500}>

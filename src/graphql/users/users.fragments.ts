@@ -10,6 +10,7 @@ export const CurrentUserData = gql`
     role
     displayName
     bio
+    profilePictureUrl
     startedLearningPaths(options: {}) {
       startedAt
       learningPath {
