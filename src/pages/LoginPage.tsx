@@ -43,11 +43,6 @@ export const LoginPage: React.FC = () => {
               window.location.href = redirectUrl;
               return;
             }
-            console.log(redirectTo);
-            // if (redirectTo && typeof redirectTo === 'string') {
-            //   return router.push(decodeURIComponent(redirectTo));
-            // }
-            // router.push('/');
           }}
           discourseSSO={discourseSSO}
         />
