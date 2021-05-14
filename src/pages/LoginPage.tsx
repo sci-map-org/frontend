@@ -17,7 +17,7 @@ export const LoginPageInfo: PageInfo = {
 
 export const LoginPage: React.FC = () => {
   const router = useRouter();
-  const { redirectTo } = router.query;
+  const redirectTo = router.query.redirectTo;
   const { currentUser } = useCurrentUser();
   let discourseSSO: DiscourseSso | undefined = undefined;
   if (
@@ -30,9 +30,9 @@ export const LoginPage: React.FC = () => {
   }
 
   useEffect(() => {
-    if (currentUser && !discourseSSO) router.push('/');
-  }, []);
-  if (currentUser && !discourseSSO) return null;
+    if (currentUser && !discourseSSO)
+      redirectTo && typeof redirectTo === 'string' ? Router.push(decodeURIComponent(redirectTo)) : Router.push('/');
+  }, [redirectTo, currentUser]);
 
   return (
     <PageLayout marginSize="xl" title="Login" centerChildren>
@@ -43,10 +43,6 @@ export const LoginPage: React.FC = () => {
               window.location.href = redirectUrl;
               return;
             }
-            if (redirectTo && typeof redirectTo === 'string') {
-              return router.push(redirectTo);
-            }
-            router.push('/');
           }}
           discourseSSO={discourseSSO}
         />

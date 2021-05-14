@@ -86,8 +86,8 @@ export const Header: React.FC = () => {
       show: 'notLoggedIn',
     },
     {
-      routePath: `/login?redirectTo=${router.asPath}`,
-      asHref: `/login?redirectTo=${router.asPath}`,
+      routePath: `/login?redirectTo=${encodeURIComponent(router.asPath)}`,
+      asHref: `/login?redirectTo=${encodeURIComponent(router.asPath)}`,
       name: 'Login',
       show: 'notLoggedIn',
     },

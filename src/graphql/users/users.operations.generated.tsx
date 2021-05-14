@@ -69,6 +69,19 @@ export type RegisterGoogleMutation = (
   ) }
 );
 
+export type UpdateCurrentUserMutationVariables = Types.Exact<{
+  payload: Types.UpdateCurrentUserPayload;
+}>;
+
+
+export type UpdateCurrentUserMutation = (
+  { __typename?: 'Mutation' }
+  & { updateCurrentUser: (
+    { __typename?: 'CurrentUser' }
+    & CurrentUserDataFragment
+  ) }
+);
+
 
 
 /**
@@ -198,3 +211,28 @@ export function useRegisterGoogleMutation(baseOptions?: Apollo.MutationHookOptio
 export type RegisterGoogleMutationHookResult = ReturnType<typeof useRegisterGoogleMutation>;
 export type RegisterGoogleMutationResult = Apollo.MutationResult<RegisterGoogleMutation>;
 export type RegisterGoogleMutationOptions = Apollo.BaseMutationOptions<RegisterGoogleMutation, RegisterGoogleMutationVariables>;
+export type UpdateCurrentUserMutationFn = Apollo.MutationFunction<UpdateCurrentUserMutation, UpdateCurrentUserMutationVariables>;
+
+/**
+ * __useUpdateCurrentUserMutation__
+ *
+ * To run a mutation, you first call `useUpdateCurrentUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateCurrentUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateCurrentUserMutation, { data, loading, error }] = useUpdateCurrentUserMutation({
+ *   variables: {
+ *      payload: // value for 'payload'
+ *   },
+ * });
+ */
+export function useUpdateCurrentUserMutation(baseOptions?: Apollo.MutationHookOptions<UpdateCurrentUserMutation, UpdateCurrentUserMutationVariables>) {
+        return Apollo.useMutation<UpdateCurrentUserMutation, UpdateCurrentUserMutationVariables>(Operations.updateCurrentUser, baseOptions);
+      }
+export type UpdateCurrentUserMutationHookResult = ReturnType<typeof useUpdateCurrentUserMutation>;
+export type UpdateCurrentUserMutationResult = Apollo.MutationResult<UpdateCurrentUserMutation>;
+export type UpdateCurrentUserMutationOptions = Apollo.BaseMutationOptions<UpdateCurrentUserMutation, UpdateCurrentUserMutationVariables>;

@@ -4,7 +4,7 @@ import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { RoleAccessAllowedRule, userHasAccess } from '../auth/RoleAccess';
 import { NavigationBreadcrumbs, NavigationBreadcrumbsProps } from './NavigationBreadcrumbs';
 
-const marginSizesMapping: { [key in 'sm' | 'md' | 'lg' | 'xl']: { px: FlexProps['px'] } } = {
+const marginSizesMapping: { [key in 'sm' | 'md' | 'lg' | 'xl' | '2xl']: { px: FlexProps['px'] } } = {
   sm: {
     px: { sm: '1%', md: '3%' },
   },
@@ -16,6 +16,9 @@ const marginSizesMapping: { [key in 'sm' | 'md' | 'lg' | 'xl']: { px: FlexProps[
   },
   xl: {
     px: { sm: '5%', md: '16%' },
+  },
+  '2xl': {
+    px: { sm: '7%', md: '25%' },
   },
 };
 
