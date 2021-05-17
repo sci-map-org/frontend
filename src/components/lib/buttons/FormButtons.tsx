@@ -27,7 +27,7 @@ export const FormButtons: React.FC<FormButtonsProps> = ({
         )}
         <Button
           isLoading={isPrimaryLoading}
-          w="50%"
+          w={!onCancel ? '100%' : '50%'}
           colorScheme="brand"
           variant="solid"
           isDisabled={isPrimaryDisabled}
