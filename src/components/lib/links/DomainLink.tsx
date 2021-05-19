@@ -1,8 +1,8 @@
-import { BreadcrumbLinkProps } from '@chakra-ui/react';
+import { BreadcrumbLinkProps, Link } from '@chakra-ui/react';
 import { LinkProps } from 'next/link';
-import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
-import { DomainPageInfo } from '../../pages/RoutesPageInfos';
-import { PageLink, PageLinkProps } from '../navigation/InternalLink';
+import { DomainLinkDataFragment } from '../../../graphql/domains/domains.fragments.generated';
+import { DomainPageInfo } from '../../../pages/RoutesPageInfos';
+import { PageLink, PageLinkProps } from '../../navigation/InternalLink';
 
 export const domainLinkStyleProps: Pick<LinkProps & BreadcrumbLinkProps, 'fontWeight' | 'color'> = {
   fontWeight: 700,
@@ -13,7 +13,11 @@ interface DomainLinkProps extends Omit<PageLinkProps, 'pageInfo'> {
   domain: DomainLinkDataFragment;
 }
 export const DomainLink: React.FC<DomainLinkProps> = ({ domain, children, ...props }) => {
-  return (
+  return props.onClick ? (
+    <Link onClick={props.onClick} {...domainLinkStyleProps} {...props}>
+      {children || domain.name}
+    </Link>
+  ) : (
     <PageLink pageInfo={DomainPageInfo(domain)} {...domainLinkStyleProps} {...props}>
       {children || domain.name}
     </PageLink>

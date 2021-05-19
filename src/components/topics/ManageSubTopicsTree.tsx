@@ -17,7 +17,7 @@ import { TopicType, UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { ConceptPageInfo, DomainPageInfo } from '../../pages/RoutesPageInfos';
 import { RoleAccess } from '../auth/RoleAccess';
-import { domainLinkStyleProps } from '../domains/DomainLink';
+import { domainLinkStyleProps } from '../lib/links/DomainLink';
 import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
 import { DomainIcon } from '../lib/icons/DomainIcon';
 import { PageLink } from '../navigation/InternalLink';

@@ -1,6 +1,6 @@
 // Exist mostly because having pageinfos in Pages creates circular dependencies
 
-import { domainLinkStyleProps } from '../components/domains/DomainLink';
+import { domainLinkStyleProps } from '../components/lib/links/DomainLink';
 import { ConceptLinkDataFragment } from '../graphql/concepts/concepts.fragments.generated';
 import { DomainDataFragment, DomainLinkDataFragment } from '../graphql/domains/domains.fragments.generated';
 import { LearningGoalLinkDataFragment } from '../graphql/learning_goals/learning_goals.fragments.generated';

@@ -1,27 +1,25 @@
+import { Icon } from '@chakra-ui/icons';
+import { Box, Center, Flex, Stack } from '@chakra-ui/layout';
+import { BsArrowReturnLeft } from '@react-icons/all-files/bs/BsArrowReturnLeft';
 import * as d3Force from 'd3-force';
 import { SimulationNodeDatum } from 'd3-force';
 import * as d3ScaleChromatic from 'd3-scale-chromatic';
 import * as d3Selection from 'd3-selection';
 import * as d3Zoom from 'd3-zoom';
-import * as d3Scale from 'd3-scale';
-import Router from 'next/router';
-import { useEffect, useMemo, useRef } from 'react';
-import { TopicType } from '../../graphql/types';
-import { routerPushToPage } from '../../pages/PageInfo';
-import { ConceptPagePath, DomainPageInfo } from '../../pages/RoutesPageInfos';
-import { theme } from '../../theme/theme';
-import { MinimapTopicDataFragment } from './SubTopicsMinimap.generated';
-import { MapVisualisationTopicDataFragment } from './SubTopicsMapVisualisation.generated';
 import gql from 'graphql-tag';
+import { useEffect, useMemo, useRef } from 'react';
+import { TopicLinkData } from '../../graphql/topics/topics.fragments';
+import { TopicType } from '../../graphql/types';
+import { theme } from '../../theme/theme';
+import { TopicLink } from '../lib/links/TopicLink';
+import { MapVisualisationTopicDataFragment } from './SubTopicsMapVisualisation.generated';
 
 export const MapVisualisationTopicData = gql`
   fragment MapVisualisationTopicData on ITopic {
-    _id
-    key
-    topicType
-    name
     size
+    ...TopicLinkData
   }
+  ${TopicLinkData}
 `;
 
 type NodeElement = SimulationNodeDatum & MapVisualisationTopicDataFragment;
@@ -75,88 +73,6 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
       svg.selectAll('.innerContainer').remove();
       const container = svg.selectAll('.innerContainer').data([true]).join('g').classed('innerContainer', true);
 
-      const parentCircleDistance = 400;
-      const parentCircleRadius = parentTopics?.length === 1 ? 600 : 400;
-      var circleScale = d3Scale
-        .scaleLinear()
-        .range([0, 2 * Math.PI])
-        .domain([0, parentCircles.length]);
-
-      const parentCircle = container
-        .selectAll('.parentCircle')
-        .data(parentCircles)
-        .join('circle')
-        .classed('parentCircle', true)
-        .attr('r', parentCircleRadius)
-        .attr('cx', (n, i) => {
-          const x = pxWidth / 2 + (parentCircles.length === 1 ? 0 : parentCircleDistance * Math.cos(circleScale(i)));
-          return x;
-        })
-        .attr(
-          'cy',
-          (n, i) => pxHeight / 2 + (parentCircles.length === 1 ? 0 : parentCircleDistance * Math.sin(circleScale(i)))
-        )
-        .attr('fill', (n, i) => d3ScaleChromatic.schemePastel2[i])
-        .attr('stroke', 'black')
-        .on('click', (event, n) => {
-          onClick(n);
-        })
-        .attr('stroke-width', 1);
-
-      const parentLabel = container
-        .selectAll('.parentLabel')
-        .data(parentCircles)
-        .join('text')
-        .classed('parentLabel', true)
-        .attr('text-anchor', 'middle')
-
-        .on('click', (event, n) => {
-          onClick(n);
-        })
-        .attr('dx', (n, i) => {
-          const x = pxWidth / 2 + parentCircleDistance * Math.cos(circleScale(i));
-          return x;
-        })
-        .attr('dy', (n, i) => pxHeight / 2 + parentCircleDistance * Math.sin(circleScale(i)))
-        // .attr('fill', 'black')
-        .attr('font-weight', 500)
-        .attr('fill', (d) => (d.topicType === TopicType.Domain ? theme.colors.gray[600] : theme.colors.gray[600]))
-        .text(function (d) {
-          return d.name;
-        });
-      let rootCircle: d3Selection.Selection<SVGCircleElement, boolean, SVGSVGElement, unknown> | undefined;
-      let rootCircleLabel: d3Selection.Selection<SVGTextElement, boolean, SVGSVGElement, unknown> | undefined;
-      if (topic) {
-        rootCircle = container
-          .append('circle')
-          .attr('r', (_, _2, circle) => {
-            return 120;
-          })
-          .classed('rootCircle', true)
-          .attr('cx', pxWidth / 2)
-          .attr('cy', pxHeight / 2)
-          .attr('fill', (n) => 'white')
-          .attr('stroke', 'black')
-          .attr('stroke-width', parentCircles.length ? 1 : 0);
-
-        rootCircleLabel = container
-          .append('text')
-          .attr('x', (_, _2, circle) => {
-            return pxWidth / 2;
-          })
-          .classed('rootCircle', true)
-          .attr('text-anchor', 'middle')
-          .attr('x', pxWidth / 2)
-          .attr('y', pxHeight / 2)
-          .attr('fill', (n) => theme.colors.gray[700])
-          .attr('font-size', theme.fontSizes.lg)
-          .attr('font-weight', 600)
-          .attr('display', parentCircles.length ? 'inherit' : 'none')
-          .text(function (d) {
-            return topic.name;
-          });
-      }
-
       const node = container
         .selectAll('.node')
         .data(nodes)
@@ -203,18 +119,6 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
           }
         });
 
-        const labelDistance = parentCircles.length > 1 ? maxDistance + 90 : maxDistance + 120;
-
-        const angle = (i: number) => (parentCircles.length > 1 ? circleScale(i) : Math.PI + Math.PI / 8);
-
-        parentLabel
-          .attr('dx', (n, i) => {
-            const x = pxWidth / 2 + labelDistance * Math.cos(angle(i));
-            return x;
-          })
-          .attr('dy', (n, i) => pxHeight / 2 + labelDistance * Math.sin(angle(i)));
-        rootCircle && rootCircle.attr('r', maxDistance + 40);
-        rootCircleLabel && rootCircleLabel.attr('y', pxHeight / 2 + maxDistance + 58);
         node.attr('transform', function (d) {
           return 'translate(' + d.x + ',' + d.y + ')';
         });
@@ -246,5 +150,23 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
         .on('tick', tick);
     }
   }, [topic?._id]);
-  return <svg ref={d3Container} width={`${pxWidth}px`} height={`${pxHeight}px`} fontSize="xs" />;
+  return (
+    <Box position="relative" width={`${pxWidth}px`} height={`${pxHeight}px`}>
+      <svg ref={d3Container} width={`${pxWidth}px`} height={`${pxHeight}px`} fontSize="xs" />
+      {parentTopics && parentTopics.length && (
+        <Flex direction="row" alignItems="stretch">
+          <Flex>
+            <Icon as={BsArrowReturnLeft} />
+          </Flex>
+          <Stack>
+            {parentTopics.map((parentTopic) => (
+              <Center>
+                <TopicLink topic={parentTopic} onClick={() => onClick(parentTopic)}/>
+              </Center>
+            ))}
+          </Stack>
+        </Flex>
+      )}
+    </Box>
+  );
 };

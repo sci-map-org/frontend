@@ -12,7 +12,7 @@ import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { DomainLearningGoalPageInfo } from '../../pages/RoutesPageInfos';
 import { RoleAccess } from '../auth/RoleAccess';
-import { DomainLink } from '../domains/DomainLink';
+import { DomainLink } from '../lib/links/DomainLink';
 import { DomainSelector } from '../domains/DomainSelector';
 import { EditableTextarea } from '../lib/inputs/EditableTextarea';
 import { EditableTextInput } from '../lib/inputs/EditableTextInput';
