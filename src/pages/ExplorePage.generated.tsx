@@ -1,6 +1,8 @@
 import * as Types from '../graphql/types';
 
-import { DomainDataFragment, DomainLinkDataFragment } from '../graphql/domains/domains.fragments.generated';
+import { DomainLinkDataFragment, DomainDataFragment } from '../graphql/domains/domains.fragments.generated';
+import { ConceptLinkDataFragment } from '../graphql/concepts/concepts.fragments.generated';
+import { LearningGoalLinkDataFragment } from '../graphql/learning_goals/learning_goals.fragments.generated';
 import * as Operations from './ExplorePage';
 import * as Apollo from '@apollo/client';
 export type GetTopicByIdExplorePageQueryVariables = Types.Exact<{
@@ -17,13 +19,16 @@ export type GetTopicByIdExplorePageQuery = (
       { __typename?: 'TopicIsSubTopicOfTopic' }
       & { parentTopic: (
         { __typename?: 'Domain' }
-        & Pick<Types.Domain, '_id' | 'key' | 'name' | 'size' | 'topicType'>
+        & Pick<Types.Domain, 'topicType'>
+        & DomainLinkDataFragment
       ) | (
         { __typename?: 'Concept' }
-        & Pick<Types.Concept, '_id' | 'key' | 'name' | 'size' | 'topicType'>
+        & Pick<Types.Concept, 'topicType'>
+        & ConceptLinkDataFragment
       ) | (
         { __typename?: 'LearningGoal' }
-        & Pick<Types.LearningGoal, '_id' | 'key' | 'name' | 'size' | 'topicType'>
+        & Pick<Types.LearningGoal, 'topicType'>
+        & LearningGoalLinkDataFragment
       ) }
     )>>, subTopics?: Types.Maybe<Array<(
       { __typename?: 'TopicIsSubTopicOfTopic' }
@@ -33,9 +38,13 @@ export type GetTopicByIdExplorePageQuery = (
       ) | (
         { __typename?: 'Concept' }
         & Pick<Types.Concept, '_id' | 'key' | 'name' | 'size' | 'topicType'>
+        & { domain?: Types.Maybe<(
+          { __typename?: 'Domain' }
+          & DomainLinkDataFragment
+        )> }
       ) | (
         { __typename?: 'LearningGoal' }
-        & Pick<Types.LearningGoal, '_id' | 'key' | 'name' | 'size' | 'topicType'>
+        & Pick<Types.LearningGoal, 'type' | '_id' | 'key' | 'name' | 'size' | 'topicType'>
       ) }
     )>> }
   ) | (
@@ -43,18 +52,21 @@ export type GetTopicByIdExplorePageQuery = (
     & Pick<Types.Concept, '_id' | 'key' | 'name' | 'size' | 'topicType'>
     & { domain?: Types.Maybe<(
       { __typename?: 'Domain' }
-      & DomainDataFragment
+      & DomainLinkDataFragment
     )>, parentTopic?: Types.Maybe<(
       { __typename?: 'TopicIsSubTopicOfTopic' }
       & { parentTopic: (
         { __typename?: 'Domain' }
-        & Pick<Types.Domain, '_id' | 'key' | 'name' | 'size' | 'topicType'>
+        & Pick<Types.Domain, 'topicType'>
+        & DomainLinkDataFragment
       ) | (
         { __typename?: 'Concept' }
-        & Pick<Types.Concept, '_id' | 'key' | 'name' | 'size' | 'topicType'>
+        & Pick<Types.Concept, 'topicType'>
+        & ConceptLinkDataFragment
       ) | (
         { __typename?: 'LearningGoal' }
-        & Pick<Types.LearningGoal, '_id' | 'key' | 'name' | 'size' | 'topicType'>
+        & Pick<Types.LearningGoal, 'topicType'>
+        & LearningGoalLinkDataFragment
       ) }
     )>, subTopics?: Types.Maybe<Array<(
       { __typename?: 'TopicIsSubTopicOfTopic' }
@@ -64,15 +76,40 @@ export type GetTopicByIdExplorePageQuery = (
       ) | (
         { __typename?: 'Concept' }
         & Pick<Types.Concept, '_id' | 'key' | 'name' | 'size' | 'topicType'>
+        & { domain?: Types.Maybe<(
+          { __typename?: 'Domain' }
+          & DomainLinkDataFragment
+        )> }
       ) | (
         { __typename?: 'LearningGoal' }
-        & Pick<Types.LearningGoal, '_id' | 'key' | 'name' | 'size' | 'topicType'>
+        & Pick<Types.LearningGoal, 'type' | '_id' | 'key' | 'name' | 'size' | 'topicType'>
       ) }
     )>> }
   ) | (
     { __typename?: 'LearningGoal' }
-    & Pick<Types.LearningGoal, '_id' | 'key' | 'name' | 'size' | 'topicType'>
-    & { subTopics?: Types.Maybe<Array<(
+    & Pick<Types.LearningGoal, 'type' | '_id' | 'key' | 'name' | 'size' | 'topicType'>
+    & { domain?: Types.Maybe<(
+      { __typename?: 'LearningGoalBelongsToDomain' }
+      & { domain: (
+        { __typename?: 'Domain' }
+        & DomainLinkDataFragment
+      ) }
+    )>, parentTopic?: Types.Maybe<(
+      { __typename?: 'TopicIsSubTopicOfTopic' }
+      & { parentTopic: (
+        { __typename?: 'Domain' }
+        & Pick<Types.Domain, 'topicType'>
+        & DomainLinkDataFragment
+      ) | (
+        { __typename?: 'Concept' }
+        & Pick<Types.Concept, 'topicType'>
+        & ConceptLinkDataFragment
+      ) | (
+        { __typename?: 'LearningGoal' }
+        & Pick<Types.LearningGoal, 'topicType'>
+        & LearningGoalLinkDataFragment
+      ) }
+    )>, subTopics?: Types.Maybe<Array<(
       { __typename?: 'TopicIsSubTopicOfTopic' }
       & { subTopic: (
         { __typename?: 'Domain' }
@@ -80,9 +117,13 @@ export type GetTopicByIdExplorePageQuery = (
       ) | (
         { __typename?: 'Concept' }
         & Pick<Types.Concept, '_id' | 'key' | 'name' | 'size' | 'topicType'>
+        & { domain?: Types.Maybe<(
+          { __typename?: 'Domain' }
+          & DomainLinkDataFragment
+        )> }
       ) | (
         { __typename?: 'LearningGoal' }
-        & Pick<Types.LearningGoal, '_id' | 'key' | 'name' | 'size' | 'topicType'>
+        & Pick<Types.LearningGoal, 'type' | '_id' | 'key' | 'name' | 'size' | 'topicType'>
       ) }
     )>> }
   ) }

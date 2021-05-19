@@ -150,11 +150,12 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
         .on('tick', tick);
     }
   }, [topic?._id]);
+
   return (
     <Box position="relative" width={`${pxWidth}px`} height={`${pxHeight}px`}>
       <svg ref={d3Container} width={`${pxWidth}px`} height={`${pxHeight}px`} fontSize="xs" />
-      {parentTopics && parentTopics.length && (
-        <Flex direction="row" alignItems="stretch">
+      {parentTopics && !!parentTopics.length && (
+        <Flex direction="row" alignItems="stretch" position="absolute" top={0}>
           <Flex>
             <Icon as={BsArrowReturnLeft} />
           </Flex>

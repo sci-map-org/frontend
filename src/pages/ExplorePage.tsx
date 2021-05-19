@@ -6,15 +6,21 @@ import { useEffect, useState } from 'react';
 import { PuffLoader } from 'react-spinners';
 import { PageLayout } from '../components/layout/PageLayout';
 import { PageLink } from '../components/navigation/InternalLink';
-import { SubTopicsMapVisualisation } from '../components/topics/SubTopicsMapVisualisation';
+import { MapVisualisationTopicData, SubTopicsMapVisualisation } from '../components/topics/SubTopicsMapVisualisation';
 import { MapVisualisationTopicDataFragment } from '../components/topics/SubTopicsMapVisualisation.generated';
-import { DomainData } from '../graphql/domains/domains.fragments';
+import { ConceptLinkData } from '../graphql/concepts/concepts.fragments';
+import { DomainData, DomainLinkData } from '../graphql/domains/domains.fragments';
 import { DomainLinkDataFragment } from '../graphql/domains/domains.fragments.generated';
+import { LearningGoalLinkData } from '../graphql/learning_goals/learning_goals.fragments';
+import { TopicLinkData } from '../graphql/topics/topics.fragments';
 import { TopicType } from '../graphql/types';
 import { theme } from '../theme/theme';
 import { useGetTopicByIdExplorePageLazyQuery, useGetTopLevelDomainsQuery } from './ExplorePage.generated';
 import { DomainPageInfo } from './RoutesPageInfos';
 
+/**
+ * Not using TopicLinkData because apollo fails: properly queried but data is empty object
+ */
 export const getTopicByIdExplorePage = gql`
   query getTopicByIdExplorePage($topicId: String!) {
     getTopicById(topicId: $topicId) {
@@ -30,38 +36,63 @@ export const getTopicByIdExplorePage = gql`
           name
           size
           topicType
+          ...on Concept {
+            domain {
+              ...DomainLinkData
+            }
+          }
+          ... on LearningGoal {
+            type
+          }
         }
       }
       ... on Domain {
         parentTopics(options: { sorting: { type: index, direction: ASC } }) {
           parentTopic {
-            _id
-            key
-            name
-            size
             topicType
+            ...DomainLinkData
+            ...ConceptLinkData
+            ...LearningGoalLinkData
           }
         }
       }
 
       ... on Concept {
         domain {
-          ...DomainData
+          ...DomainLinkData
         }
         parentTopic {
           parentTopic {
-            _id
-            key
-            name
-            size
             topicType
+            ...DomainLinkData
+            ...ConceptLinkData
+            ...LearningGoalLinkData
+          }
+        }
+      }
+      ... on LearningGoal {
+        type
+        domain {
+          domain {
+            ...DomainLinkData
+          }
+        }
+        parentTopic {
+          parentTopic {
+            topicType
+            ...DomainLinkData
+            ...ConceptLinkData
+            ...LearningGoalLinkData
           }
         }
       }
     }
   }
-  ${DomainData}
+  ${DomainLinkData}  
+  ${ConceptLinkData}
+  ${LearningGoalLinkData}
 `;
+
 export const getTopLevelDomains = gql`
   query getTopLevelDomains {
     getTopLevelDomains {
@@ -86,6 +117,7 @@ type NodeElement = SimulationNodeDatum & {
 };
 
 const rootTopic: MapVisualisationTopicDataFragment = {
+  __typename: 'Domain',
   _id: 'root',
   key: 'root',
   topicType: TopicType.Domain,
@@ -114,12 +146,14 @@ export const ExplorePage: React.FC<{}> = () => {
         d.getTopicById.parentTopics?.length
           ? setParentTopics(d.getTopicById.parentTopics.map((i) => i.parentTopic))
           : setParentTopics([rootTopic]);
-      }
-
-      d &&
+      } 
+      
+      if(d &&
         d.getTopicById.__typename === 'Concept' &&
-        d.getTopicById.parentTopic &&
-        setParentTopics([d.getTopicById.parentTopic.parentTopic]);
+        d.getTopicById.parentTopic){
+          setParentTopics([d.getTopicById.parentTopic.parentTopic]);
+        }
+        
       setSelectedTopic(d.getTopicById);
     },
   });
@@ -136,6 +170,8 @@ export const ExplorePage: React.FC<{}> = () => {
       }
     }
   }, [selectedTopicId]);
+
+
   return (
     <PageLayout marginSize="md">
       <Center>
