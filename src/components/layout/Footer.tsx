@@ -18,7 +18,7 @@ export const Footer: React.FC<{}> = () => {
       >
         <Flex alignItems="center" w="35%" mr={{ base: 2, sm: 4 }}>
           <Text fontSize={{ base: 'md', md: 'lg' }} fontWeight={500}>
-            © 2021 Sci-Map.org
+            © {new Date().getFullYear()} Sci-Map.org
           </Text>
         </Flex>
 
