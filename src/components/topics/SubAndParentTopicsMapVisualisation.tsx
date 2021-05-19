@@ -1,40 +1,19 @@
 import * as d3Force from 'd3-force';
-import { SimulationNodeDatum } from 'd3-force';
+import * as d3Scale from 'd3-scale';
 import * as d3ScaleChromatic from 'd3-scale-chromatic';
 import * as d3Selection from 'd3-selection';
 import * as d3Zoom from 'd3-zoom';
-import * as d3Scale from 'd3-scale';
-import Router from 'next/router';
 import { useEffect, useMemo, useRef } from 'react';
 import { TopicType } from '../../graphql/types';
-import { routerPushToPage } from '../../pages/PageInfo';
-import { ConceptPagePath, DomainPageInfo } from '../../pages/RoutesPageInfos';
 import { theme } from '../../theme/theme';
-import { MinimapTopicDataFragment } from './SubTopicsMinimap.generated';
+import { SubTopicsMapVisualisationProps } from './SubTopicsMapVisualisation';
 import { MapVisualisationTopicDataFragment } from './SubTopicsMapVisualisation.generated';
-import gql from 'graphql-tag';
 
-export const MapVisualisationTopicData = gql`
-  fragment MapVisualisationTopicData on ITopic {
-    _id
-    key
-    topicType
-    name
-    size
-  }
-`;
+type NodeElement = d3Force.SimulationNodeDatum & MapVisualisationTopicDataFragment;
 
-type NodeElement = SimulationNodeDatum & MapVisualisationTopicDataFragment;
-export interface SubTopicsMapVisualisationProps {
-  domainKey?: string;
-  topic?: MapVisualisationTopicDataFragment; //only used to force rerendering
-  subTopics: MapVisualisationTopicDataFragment[];
-  parentTopics?: MapVisualisationTopicDataFragment[];
-  pxWidth: number;
-  pxHeight: number;
-  onClick: (node: NodeElement) => void;
-}
-export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps> = ({
+interface SubAndParentTopicsMapVisualisationProps extends SubTopicsMapVisualisationProps {}
+
+export const SubAndParentTopicsMapVisualisation: React.FC<SubAndParentTopicsMapVisualisationProps> = ({
   domainKey,
   topic,
   subTopics,
