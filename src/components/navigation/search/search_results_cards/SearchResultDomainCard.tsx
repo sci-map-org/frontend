@@ -5,6 +5,7 @@ import { DomainLinkData } from '../../../../graphql/domains/domains.fragments';
 import { ConceptIcon } from '../../../lib/icons/ConceptIcon';
 import { DomainIcon } from '../../../lib/icons/DomainIcon';
 import { ResourceSeriesIcon } from '../../../lib/icons/ResourceSeriesIcon';
+import { SubTopicsCountIcon } from '../../../topics/SubTopicsCountIcon';
 import { SearchResultCardContainer, SearchResultCardContainerProps } from './SearchResultCardContainer';
 import { SearchResultDomainCardDataFragment } from './SearchResultDomainCard.generated';
 
@@ -33,14 +34,7 @@ export const SearchResultDomainCard: React.FC<
         </Text>
         <Stack direction="row">
           {!!domain.conceptTotalCount && (
-            <Tooltip label={`${domain.conceptTotalCount} Concepts in ${domain.name}`}>
-              <Stack direction="row" spacing="2px" ml={8} alignItems="start">
-                <Text fontWeight={500} color="gray.700">
-                  {domain.conceptTotalCount}
-                </Text>
-                <ConceptIcon boxSize={5} color="gray.700" />
-              </Stack>
-            </Tooltip>
+            <SubTopicsCountIcon totalCount={domain.conceptTotalCount} tooltipLabel={`${domain.conceptTotalCount} Concepts in ${domain.name}`}/>
           )}
           {!!domain.learningMaterialsTotalCount && (
             <Tooltip label={`${domain.learningMaterialsTotalCount} Learning Materials in ${domain.name}`}>

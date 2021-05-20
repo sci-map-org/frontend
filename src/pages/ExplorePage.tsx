@@ -6,7 +6,9 @@ import { useEffect, useState } from 'react';
 import { PuffLoader } from 'react-spinners';
 import { PageLayout } from '../components/layout/PageLayout';
 import { ConceptLink } from '../components/lib/links/ConceptLink';
+import { TopicLink } from '../components/lib/links/TopicLink';
 import { PageLink } from '../components/navigation/InternalLink';
+import { SubTopicsCountIcon } from '../components/topics/SubTopicsCountIcon';
 import { MapVisualisationTopicData, SubTopicsMapVisualisation } from '../components/topics/SubTopicsMapVisualisation';
 import { MapVisualisationTopicDataFragment } from '../components/topics/SubTopicsMapVisualisation.generated';
 import { ConceptLinkData } from '../graphql/concepts/concepts.fragments';
@@ -177,31 +179,23 @@ export const ExplorePage: React.FC<{}> = () => {
     <PageLayout marginSize="md">
       <Center>
         <Stack direction="column" spacing={6}>
-          <Box h={20} borderWidth={1} borderRadius={5} borderColor="gray.300" boxShadow="md" pl={2} pt={1}>
+          <Box  borderBottomWidth={3}  borderBottomColor="teal.500"  pb={6} pt={1} borderLeftWidth={2} borderLeftColor="gray.300" pl={4}>
             {!!selectedTopic && selectedTopic._id !== rootTopic._id ? (
-              <Stack direction="column" alignItems="flex-start">
-                {selectedTopic?.__typename === TopicType.Domain && (
-                  <PageLink pageInfo={DomainPageInfo(selectedTopic)} display="flex" alignItems="baseline" isExternal>
-                    <Text fontSize="xl" fontWeight={500} color="blue.600">
-                      {selectedTopic?.name}
-                    </Text>
-                    <ExternalLinkIcon ml={2} color="blue.500" />
-                  </PageLink>
-                )}
-                {selectedTopic?.__typename === TopicType.Concept && selectedTopic.domain && (
-                  <ConceptLink concept={selectedTopic} domain={selectedTopic.domain} display="flex" alignItems="baseline" isExternal>
-                    <Text fontSize="xl" fontWeight={500} color="blue.600">
-                      {selectedTopic?.name}
-                    </Text>
-                    <ExternalLinkIcon ml={2} color="blue.500" />
-                  </ConceptLink>
-                )}
-              </Stack>
+              <Stack direction="column" spacing={3} >
+              <Stack direction="row" alignItems="flex-start" >
+                <TopicLink topic={selectedTopic} fontSize="3xl"/>
+                <ExternalLinkIcon ml={2} boxSize={6} />
+                </Stack>
+                <Stack direction="row" spacing={5}>
+                {subTopics?.length && <SubTopicsCountIcon totalCount={subTopics.length} tooltipLabel={`${subTopics.length} subTopics in ${selectedTopic.name}`} />}
+                </Stack>
+                </Stack>
             ) : (
-              <Text fontSize="xl" fontWeight={500} color="gray.600">
+              <Text fontSize="3xl" fontWeight={700} color="gray.600">
                 Explore
               </Text>
             )}
+            
           </Box>
 
           <Center>
