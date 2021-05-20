@@ -1,5 +1,5 @@
 import { Icon } from '@chakra-ui/icons';
-import { Box, Center, Flex, Stack } from '@chakra-ui/layout';
+import { Box, Flex, Stack } from '@chakra-ui/layout';
 import { BsArrowReturnLeft } from '@react-icons/all-files/bs/BsArrowReturnLeft';
 import * as d3Force from 'd3-force';
 import { SimulationNodeDatum } from 'd3-force';
@@ -155,15 +155,15 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
     <Box position="relative" width={`${pxWidth}px`} height={`${pxHeight}px`}>
       <svg ref={d3Container} width={`${pxWidth}px`} height={`${pxHeight}px`} fontSize="xs" />
       {parentTopics && !!parentTopics.length && (
-        <Flex direction="row" alignItems="stretch" position="absolute" top={0}>
-          <Flex>
-            <Icon as={BsArrowReturnLeft} />
+        <Flex direction="row" alignItems="stretch" position="absolute" top={0} bgColor="white" opacity={0.7} _hover={{opacity: 1}} borderBottomEndRadius={4}>
+          <Flex p={1}>
+            <Icon as={BsArrowReturnLeft} boxSize={6}/>
           </Flex>
-          <Stack>
+          <Stack mr={2} spacing={1}>
             {parentTopics.map((parentTopic) => (
-              <Center>
-                <TopicLink topic={parentTopic} onClick={() => onClick(parentTopic)}/>
-              </Center>
+              <Flex key={parentTopic._id} pl={1} alignItems="center">
+                <TopicLink topic={parentTopic} onClick={() => onClick(parentTopic)} fontSize="md"/>
+              </Flex>
             ))}
           </Stack>
         </Flex>

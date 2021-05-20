@@ -5,6 +5,7 @@ import gql from 'graphql-tag';
 import { useEffect, useState } from 'react';
 import { PuffLoader } from 'react-spinners';
 import { PageLayout } from '../components/layout/PageLayout';
+import { ConceptLink } from '../components/lib/links/ConceptLink';
 import { PageLink } from '../components/navigation/InternalLink';
 import { MapVisualisationTopicData, SubTopicsMapVisualisation } from '../components/topics/SubTopicsMapVisualisation';
 import { MapVisualisationTopicDataFragment } from '../components/topics/SubTopicsMapVisualisation.generated';
@@ -180,12 +181,20 @@ export const ExplorePage: React.FC<{}> = () => {
             {!!selectedTopic && selectedTopic._id !== rootTopic._id ? (
               <Stack direction="column" alignItems="flex-start">
                 {selectedTopic?.__typename === TopicType.Domain && (
-                  <PageLink pageInfo={DomainPageInfo(selectedTopic)} display="flex" alignItems="baseline">
+                  <PageLink pageInfo={DomainPageInfo(selectedTopic)} display="flex" alignItems="baseline" isExternal>
                     <Text fontSize="xl" fontWeight={500} color="blue.600">
                       {selectedTopic?.name}
                     </Text>
                     <ExternalLinkIcon ml={2} color="blue.500" />
                   </PageLink>
+                )}
+                {selectedTopic?.__typename === TopicType.Concept && selectedTopic.domain && (
+                  <ConceptLink concept={selectedTopic} domain={selectedTopic.domain} display="flex" alignItems="baseline" isExternal>
+                    <Text fontSize="xl" fontWeight={500} color="blue.600">
+                      {selectedTopic?.name}
+                    </Text>
+                    <ExternalLinkIcon ml={2} color="blue.500" />
+                  </ConceptLink>
                 )}
               </Stack>
             ) : (
