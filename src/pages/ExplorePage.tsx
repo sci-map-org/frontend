@@ -1,8 +1,10 @@
 import { useDisclosure } from '@chakra-ui/hooks';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Box, Center, Flex, Link, Stack, Text } from '@chakra-ui/layout';
+import { Spinner } from '@chakra-ui/spinner';
 import { SimulationNodeDatum } from 'd3-force';
 import gql from 'graphql-tag';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { PuffLoader } from 'react-spinners';
 import { RoleAccess } from '../components/auth/RoleAccess';
@@ -23,6 +25,7 @@ import { theme } from '../theme/theme';
 import {
   GetTopicByIdExplorePageQuery,
   useGetTopicByIdExplorePageLazyQuery,
+  useGetTopLevelDomainsLazyQuery,
   useGetTopLevelDomainsQuery,
 } from './ExplorePage.generated';
 
@@ -135,25 +138,32 @@ const rootTopic: MapVisualisationTopicDataFragment = {
 };
 export const ExplorePage: React.FC<{}> = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const router = useRouter();
+  const urlSelectedTopicId = router.query.selectedTopicId;
+  if (urlSelectedTopicId && typeof urlSelectedTopicId !== 'string')
+    throw new Error(`Invalid url param urlSelectedTopicId ${urlSelectedTopicId}`);
+  const [selectedTopicId, setSelectedTopicId] = useState<string | undefined>(urlSelectedTopicId);
+
+  const [loadedTopic, setLoadedTopic] = useState<GetTopicByIdExplorePageQuery['getTopicById']>();
+  const [loadedTopicDomain, setLoadedTopicDomain] = useState<DomainLinkDataFragment>();
 
   const [subTopics, setSubtopics] = useState<MapVisualisationTopicDataFragment[]>();
   const [parentTopics, setParentTopics] = useState<MapVisualisationTopicDataFragment[]>();
-  const { data, loading: isTopLevelQueryLoading, refetch: refetchRootTopics } = useGetTopLevelDomainsQuery({
+
+  const [getTopLevelDomainsLazyQuery, { data, loading: isTopLevelQueryLoading }] = useGetTopLevelDomainsLazyQuery({
     onCompleted(d) {
       d && setSubtopics(d.getTopLevelDomains.items);
       setParentTopics([]);
-      setSelectedTopic(rootTopic);
+      setLoadedTopic(rootTopic);
     },
     fetchPolicy: 'network-only',
   });
-  const [selectedDomain, setSelectedDomain] = useState<DomainLinkDataFragment>();
-  const [selectedTopic, setSelectedTopic] = useState<GetTopicByIdExplorePageQuery['getTopicById']>();
-  const [selectedTopicId, setSelectedTopicId] = useState<string>();
+
   const [getTopicById, { loading: isGetTopicLoading, refetch }] = useGetTopicByIdExplorePageLazyQuery({
     fetchPolicy: 'network-only',
     notifyOnNetworkStatusChange: true, //https://github.com/apollographql/react-apollo/issues/3709
     onCompleted(d) {
-      d.getTopicById.__typename === 'Domain' && setSelectedDomain(d.getTopicById);
+      d.getTopicById.__typename === 'Domain' && setLoadedTopicDomain(d.getTopicById);
       d && d.getTopicById.subTopics && setSubtopics(d.getTopicById.subTopics.map((i) => i.subTopic));
       if (d && d.getTopicById.__typename === 'Domain') {
         d.getTopicById.parentTopics?.length
@@ -162,28 +172,41 @@ export const ExplorePage: React.FC<{}> = () => {
       }
 
       if (d && d.getTopicById.__typename === 'Concept' && d.getTopicById.parentTopic) {
-        d.getTopicById.domain && setSelectedDomain(d.getTopicById.domain);
+        d.getTopicById.domain && setLoadedTopicDomain(d.getTopicById.domain);
         setParentTopics([d.getTopicById.parentTopic.parentTopic]);
       }
 
-      setSelectedTopic(d.getTopicById);
+      setLoadedTopic(d.getTopicById);
     },
   });
   const loading = isGetTopicLoading || isTopLevelQueryLoading;
 
   const loadTopic = (topicId?: string) => {
-    if (topicId) {
-      if (topicId === rootTopic._id) {
-        data && setSubtopics(data.getTopLevelDomains.items);
-        setParentTopics([]);
-        setSelectedTopic(rootTopic);
-      } else if (topicId === selectedTopic?._id) {
-        refetch && refetch({ topicId });
-      } else {
-        getTopicById({ variables: { topicId } });
-      }
+    if (!topicId || topicId === rootTopic._id) {
+      getTopLevelDomainsLazyQuery();
+      router.push(
+        {
+          pathname: '/explore',
+          query: {},
+        },
+        undefined,
+        { shallow: true }
+      );
+    } else if (topicId === loadedTopic?._id) {
+      refetch && refetch({ topicId });
+    } else {
+      getTopicById({ variables: { topicId } });
+      router.push(
+        {
+          pathname: '/explore',
+          query: { selectedTopicId: topicId },
+        },
+        undefined,
+        { shallow: true }
+      );
     }
   };
+
   useEffect(() => {
     loadTopic(selectedTopicId);
   }, [selectedTopicId]);
@@ -195,6 +218,7 @@ export const ExplorePage: React.FC<{}> = () => {
           <Box
             borderBottomWidth={3}
             minH="168px"
+            position="relative"
             borderBottomColor="teal.500"
             pb={6}
             pt={1}
@@ -203,32 +227,37 @@ export const ExplorePage: React.FC<{}> = () => {
             pl={4}
             pr={5}
           >
-            {!!selectedTopic && selectedTopic._id !== rootTopic._id ? (
+            {!!loadedTopic && loadedTopic._id !== rootTopic._id ? (
               <Stack direction="column" spacing={1}>
                 <Stack direction="row" alignItems="flex-start" pb={3}>
-                  <TopicLink topic={selectedTopic} fontSize="3xl" isExternal />
+                  <TopicLink topic={loadedTopic} fontSize="3xl" isExternal />
                   <ExternalLinkIcon ml={2} boxSize={6} />
                 </Stack>
                 <Stack direction="row" spacing={8}>
                   {subTopics?.length && (
                     <SubTopicsCountIcon
                       totalCount={subTopics.length}
-                      tooltipLabel={`${subTopics.length} subTopics in ${selectedTopic.name}`}
+                      tooltipLabel={`${subTopics.length} subTopics in ${loadedTopic.name}`}
                     />
                   )}
-                  {selectedTopic.__typename === TopicType.Domain && selectedTopic.learningMaterialsTotalCount && (
+                  {loadedTopic.__typename === TopicType.Domain && loadedTopic.learningMaterialsTotalCount && (
                     <LearningMaterialCountIcon
-                      totalCount={selectedTopic.learningMaterialsTotalCount}
-                      tooltipLabel={`${selectedTopic.learningMaterialsTotalCount} Learning Materials in ${selectedTopic.name}`}
+                      totalCount={loadedTopic.learningMaterialsTotalCount}
+                      tooltipLabel={`${loadedTopic.learningMaterialsTotalCount} Learning Materials in ${loadedTopic.name}`}
                     />
                   )}
                 </Stack>
-                {selectedTopic.description && <TopicDescription topicDescription={selectedTopic.description} />}
+                {loadedTopic.description && <TopicDescription topicDescription={loadedTopic.description} />}
               </Stack>
             ) : (
               <Text fontSize="3xl" fontWeight={700} color="gray.600">
                 Explore
               </Text>
+            )}
+            {isGetTopicLoading && (
+              <Center position="absolute" top={0} right={0} p={2}>
+                <Spinner />
+              </Center>
             )}
           </Box>
 
@@ -243,8 +272,8 @@ export const ExplorePage: React.FC<{}> = () => {
                   subTopics={subTopics}
                   parentTopics={parentTopics}
                   pxWidth={pxWidth}
-                  domainKey={selectedDomain?.key}
-                  topic={selectedTopic}
+                  domainKey={loadedTopicDomain?.key}
+                  topic={loadedTopic}
                   pxHeight={pxHeight}
                   onClick={(topic) => {
                     setSelectedTopicId(topic._id);
@@ -260,14 +289,14 @@ export const ExplorePage: React.FC<{}> = () => {
               </Link>
             </Flex>
           </RoleAccess>
-          {selectedTopic && (
+          {loadedTopic && (
             <AddSubTopicModal
-              domain={selectedDomain}
-              parentTopicId={selectedTopic._id}
+              domain={loadedTopicDomain}
+              parentTopicId={loadedTopic._id}
               isOpen={isOpen}
               onClose={onClose}
               onCancel={() => onClose()}
-              onAdded={() => loadTopic(selectedTopic._id)}
+              onAdded={() => loadTopic(loadedTopic._id)}
             />
           )}
         </Stack>
