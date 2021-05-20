@@ -95,7 +95,7 @@ export const HomePage: React.FC = () => {
         <UserDashboard data={data} loading={loading} />
       )}
 
-      <Flex {...outerLayoutProps} overflow="auto">
+      <Flex {...outerLayoutProps} overflow="auto" py={10}>
         <Flex mb={10} mt={12} w="100%" direction="column" alignItems="stretch">
           <ExploreMap
             mapPxWidth={780}
@@ -105,7 +105,7 @@ export const HomePage: React.FC = () => {
           />
         </Flex>
       </Flex>
-
+      {isReturningUser && <RecommendationsBlock data={data} loading={loading} layoutProps={outerLayoutProps} />}
       <Center mb={10} mt={12}>
         <Flex {...outerLayoutProps} overflow="auto">
           <HomeDomainsRecommendations />
@@ -265,7 +265,7 @@ export const HomePage: React.FC = () => {
           />
         }
       />
-      <RecommendationsBlock data={data} loading={loading} layoutProps={outerLayoutProps} />
+      {!isReturningUser && <RecommendationsBlock data={data} loading={loading} layoutProps={outerLayoutProps} />}
       <Flex justifyContent="center" mt={16}>
         <Stack spacing={8} direction="row">
           <InternalButtonLink size="lg" routePath="/about" asHref="/about" colorScheme="blue" variant="outline">

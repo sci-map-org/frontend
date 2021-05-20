@@ -251,35 +251,36 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
           </Center>
         )}
       </Box>
-
-      <Center>
-        <Box boxShadow="lg" width={mapPxWidth + 'px'} {...mapContainerProps}>
-          {loading || !subTopics ? (
-            <Center w={`${mapPxWidth}px`} h={`${mapPxHeight}px`}>
-              <PuffLoader size={Math.floor(mapPxWidth / 3)} color={theme.colors.blue[500]} />
-            </Center>
-          ) : (
-            <SubTopicsMapVisualisation
-              subTopics={subTopics}
-              parentTopics={parentTopics}
-              pxWidth={mapPxWidth}
-              domainKey={loadedTopicDomain?.key}
-              topic={loadedTopic}
-              pxHeight={mapPxHeight}
-              onClick={(topic) => {
-                setSelectedTopicId(topic._id);
-              }}
-            />
-          )}
-        </Box>
-      </Center>
-      <RoleAccess accessRule="loggedInUser">
-        <Flex direction="row" justifyContent="center" pt={1} pb={1}>
-          <Link color="originalPalette.red" fontSize="md" fontWeight={600} onClick={() => onOpen()}>
-            + Add SubTopic
-          </Link>
-        </Flex>
-      </RoleAccess>
+      <Stack direction="column">
+        <Center>
+          <Box boxShadow="lg" width={mapPxWidth + 'px'} {...mapContainerProps}>
+            {loading || !subTopics ? (
+              <Center w={`${mapPxWidth}px`} h={`${mapPxHeight}px`}>
+                <PuffLoader size={Math.floor(mapPxWidth / 3)} color={theme.colors.blue[500]} />
+              </Center>
+            ) : (
+              <SubTopicsMapVisualisation
+                subTopics={subTopics}
+                parentTopics={parentTopics}
+                pxWidth={mapPxWidth}
+                domainKey={loadedTopicDomain?.key}
+                topic={loadedTopic}
+                pxHeight={mapPxHeight}
+                onClick={(topic) => {
+                  setSelectedTopicId(topic._id);
+                }}
+              />
+            )}
+          </Box>
+        </Center>
+        <RoleAccess accessRule="loggedInUser">
+          <Flex direction="row" justifyContent="center" pt={1} pb={1}>
+            <Link color="originalPalette.red" fontSize="md" fontWeight={600} onClick={() => onOpen()}>
+              + Add SubTopic
+            </Link>
+          </Flex>
+        </RoleAccess>
+      </Stack>
       {loadedTopic && (
         <AddSubTopicModal
           domain={loadedTopicDomain}
