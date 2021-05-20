@@ -193,7 +193,7 @@ export const ExplorePage: React.FC<{}> = () => {
             {!!selectedTopic && selectedTopic._id !== rootTopic._id ? (
               <Stack direction="column" spacing={1}>
                 <Stack direction="row" alignItems="flex-start" pb={3}>
-                  <TopicLink topic={selectedTopic} fontSize="3xl" />
+                  <TopicLink topic={selectedTopic} fontSize="3xl" isExternal />
                   <ExternalLinkIcon ml={2} boxSize={6} />
                 </Stack>
                 <Stack direction="row" spacing={8}>

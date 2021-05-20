@@ -14,8 +14,12 @@ export type InternalLinkProps = {
 } & LinkProps;
 
 export const InternalLink = forwardRef<HTMLAnchorElement, InternalLinkProps>(
-  ({ asHref, routePath, isDisabled, children, query, ...linkProps }, ref) => {
-    return (
+  ({ asHref, routePath, isDisabled, children, query, isExternal, ...linkProps }, ref) => {
+    return isExternal ? (
+      <Link ref={ref} href={asHref} {...linkProps} isExternal>
+        {children}
+      </Link>
+    ) : (
       <NextLink href={{ pathname: routePath, query }} as={asHref} passHref>
         <Link ref={ref} {...linkProps}>
           {children}
