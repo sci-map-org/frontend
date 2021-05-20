@@ -45,3 +45,12 @@ export const registerGoogle = gql`
   }
   ${CurrentUserData}
 `;
+
+export const updateCurrentUser = gql`
+  mutation updateCurrentUser($payload: UpdateCurrentUserPayload!) {
+    updateCurrentUser(payload: $payload) {
+      ...CurrentUserData
+    }
+  }
+  ${CurrentUserData}
+`;

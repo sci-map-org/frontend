@@ -326,7 +326,9 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
         </Flex>
         {!learningPath.resourceItems?.length && (
           <Flex justify="center">
-            <Heading size="md">Start adding resources</Heading>
+            <Heading size="md" color="blue.600">
+              Start adding resources
+            </Heading>
           </Flex>
         )}
         <LearningPathResourceItemsManager
@@ -334,6 +336,7 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
           learningPath={learningPath}
           isLoading={loading}
           currentUserStartedPath={currentUserStartedPath}
+          {...(!learningPath.resourceItems?.length && { resourceSelectorButtonColorScheme: 'blue' })}
         />
         <SimpleGrid pt={5} columns={{ base: 1, md: currentUserCompletedPath ? 2 : 1 }} spacing={10}>
           {currentUserCompletedPath && (

@@ -28,7 +28,7 @@ export const VerifyEmailPage: React.FC = () => {
         duration: 6000,
         isClosable: true,
       });
-      router.push({ pathname: '/login', query: { redirectTo: '/' } });
+      router.push({ pathname: '/login', query: { redirectTo: encodeURI('/') } });
     },
   });
 

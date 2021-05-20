@@ -276,6 +276,7 @@ interface LearningPathResourceItemsProps {
   isLoading?: boolean;
   currentUserStartedPath?: boolean;
   onResourceConsumed?: (resourceId: string, consumed: boolean) => void;
+  resourceSelectorButtonColorScheme?: ButtonProps['colorScheme'];
 }
 
 export const LearningPathResourceItemsManager: React.FC<LearningPathResourceItemsProps> = ({
@@ -284,6 +285,7 @@ export const LearningPathResourceItemsManager: React.FC<LearningPathResourceItem
   isLoading,
   currentUserStartedPath,
   onResourceConsumed,
+  resourceSelectorButtonColorScheme,
 }) => {
   const [updateLearningPath] = useUpdateLearningPathMutation();
   const addResourceItem = (resource: ResourceDataFragment) => {
@@ -373,6 +375,7 @@ export const LearningPathResourceItemsManager: React.FC<LearningPathResourceItem
       isLoading={isLoading}
       currentUserStartedPath={currentUserStartedPath}
       onResourceConsumed={onResourceConsumed}
+      resourceSelectorButtonColorScheme={resourceSelectorButtonColorScheme}
     />
   );
 };

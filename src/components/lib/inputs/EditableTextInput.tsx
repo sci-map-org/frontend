@@ -2,14 +2,16 @@ import { EditIcon } from '@chakra-ui/icons';
 import { Box, Editable, EditableInput, EditablePreview, EditableProps, IconButton, Skeleton } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 
-export const EditableTextInput: React.FC<{
-  value: string;
-  isLoading?: boolean;
-  onChange: (newValue: string) => void;
-  editMode?: boolean;
-  fontSize?: EditableProps['fontSize'];
-  centered?: boolean;
-}> = ({ value, isLoading, onChange, editMode, fontSize = '5xl', centered }) => {
+export const EditableTextInput: React.FC<
+  {
+    value: string;
+    isLoading?: boolean;
+    onChange: (newValue: string) => void;
+    editMode?: boolean;
+    fontSize?: EditableProps['fontSize'];
+    centered?: boolean;
+  } & Pick<EditableProps, 'color' | 'fontWeight'>
+> = ({ value, isLoading, onChange, editMode, fontSize = '5xl', centered, ...editableProps }) => {
   const [updatedValue, setUpdatedValue] = useState(value);
   useEffect(() => {
     setUpdatedValue(value);
@@ -28,6 +30,7 @@ export const EditableTextInput: React.FC<{
         variant="solid"
         display="flex"
         isDisabled={!editMode}
+        {...editableProps}
       >
         {(props: any) => (
           <>

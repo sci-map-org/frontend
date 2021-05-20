@@ -161,6 +161,7 @@ export type Mutation = {
   triggerResetPassword: TriggerResetPasswordResponse;
   resetPassword: ResetPasswordResponse;
   adminUpdateUser: User;
+  updateCurrentUser: CurrentUser;
   createArticle: Article;
   updateArticle: Article;
   deleteArticle: DeleteArticleResponse;
@@ -261,6 +262,11 @@ export type MutationResetPasswordArgs = {
 export type MutationAdminUpdateUserArgs = {
   id: Scalars['String'];
   payload: AdminUpdateUserPayload;
+};
+
+
+export type MutationUpdateCurrentUserArgs = {
+  payload: UpdateCurrentUserPayload;
 };
 
 
@@ -656,6 +662,8 @@ export type CurrentUser = {
   _id: Scalars['String'];
   email: Scalars['String'];
   displayName: Scalars['String'];
+  bio?: Maybe<Scalars['String']>;
+  profilePictureUrl?: Maybe<Scalars['String']>;
   key: Scalars['String'];
   role: UserRole;
   articles?: Maybe<ListArticlesResult>;
@@ -701,6 +709,8 @@ export type User = {
   _id: Scalars['String'];
   email: Scalars['String'];
   displayName: Scalars['String'];
+  bio?: Maybe<Scalars['String']>;
+  profilePictureUrl?: Maybe<Scalars['String']>;
   role: UserRole;
   key: Scalars['String'];
   articles?: Maybe<ListArticlesResult>;
@@ -1022,10 +1032,18 @@ export type ResetPasswordPayload = {
 
 export type AdminUpdateUserPayload = {
   displayName?: Maybe<Scalars['String']>;
+  bio?: Maybe<Scalars['String']>;
+  profilePictureUrl?: Maybe<Scalars['String']>;
   key?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
   role?: Maybe<UserRole>;
   active?: Maybe<Scalars['Boolean']>;
+};
+
+export type UpdateCurrentUserPayload = {
+  displayName?: Maybe<Scalars['String']>;
+  profilePictureUrl?: Maybe<Scalars['String']>;
+  bio?: Maybe<Scalars['String']>;
 };
 
 export type CreateArticlePayload = {

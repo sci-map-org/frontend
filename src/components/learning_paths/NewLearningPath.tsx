@@ -19,63 +19,63 @@ import { CreateLearningPathPayload } from '../../graphql/types';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { LearningPathPageInfo } from '../../pages/RoutesPageInfos';
 import { RoleAccess } from '../auth/RoleAccess';
+import { FormButtons } from '../lib/buttons/FormButtons';
 import { StatelessLearningPathResourceItemsManager } from './LearningPathResourceItems';
 import { useCreateLearningPathMutation } from './NewLearningPath.generated';
 
 interface NewLearningPathProps {
   createLearningPath: (payload: CreateLearningPathPayload) => Promise<LearningPathDataFragment>;
   onLearningPathCreated?: (lp: LearningPathDataFragment) => void;
+  onCancel?: () => void;
 }
 
-export const NewLearningPathForm: React.FC<NewLearningPathProps> = ({ createLearningPath, onLearningPathCreated }) => {
+export const NewLearningPathForm: React.FC<NewLearningPathProps> = ({
+  createLearningPath,
+  onLearningPathCreated,
+  onCancel,
+}) => {
   const [name, setName] = useState('');
-  const [key, setKey] = useState<string>('');
-  const [description, setDescription] = useState<string | undefined>(undefined);
-  const [resourceItems, setResourceItems] = useState<{ resource: ResourcePreviewDataFragment; description?: string }[]>(
-    []
-  );
-
-  const [step, setStep] = useState<1 | 2>(1);
+  const [key, setKey] = useState<string>();
 
   return (
     <Flex direction="column" justifyContent="stretch">
-      {step === 1 && (
-        <NewLearningPathFirstStep
-          name={name}
-          setName={setName}
-          learningPathKey={key}
-          setLearningPathKey={setKey}
-          description={description}
-          setDescription={setDescription}
-        />
-      )}
-      {step === 2 && <NewLearningPathSecondStep resourceItems={resourceItems} setResourceItems={setResourceItems} />}
+      <Stack>
+        <FormControl isRequired>
+          <FormLabel htmlFor="Name">Name</FormLabel>
+          <Input
+            placeholder="My Learning Path"
+            size="md"
+            id="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          ></Input>
+        </FormControl>
+        <RoleAccess accessRule="admin">
+          <FormControl>
+            <FormLabel htmlFor="key">Url key</FormLabel>
+            <Input
+              placeholder="my_learning_path"
+              size="md"
+              id="key"
+              value={key}
+              onChange={(e) => setKey(e.target.value)}
+            ></Input>
+          </FormControl>
+        </RoleAccess>
+      </Stack>
+
       <Flex justifyContent="flex-end" mt={8}>
-        <ButtonGroup spacing={8}>
-          {step === 2 && (
-            <Button size="lg" w="18rem" variant="outline" onClick={() => setStep(1)}>
-              Back
-            </Button>
-          )}
-          <Button
-            size="lg"
-            w="18rem"
-            variant="solid"
-            isDisabled={(step === 2 && !resourceItems.length) || (step === 1 && !name)}
-            colorScheme="brand"
-            onClick={() => {
-              if (step === 1) return setStep(2);
-              createLearningPath({
-                name,
-                description,
-                resourceItems: resourceItems.map((i) => ({ resourceId: i.resource._id, description: i.description })),
-                ...(!!key && { key }),
-              }).then((lp) => onLearningPathCreated && onLearningPathCreated(lp));
-            }}
-          >
-            {step === 1 ? 'Next' : 'Create Learning Path'}
-          </Button>
-        </ButtonGroup>
+        <FormButtons
+          isPrimaryDisabled={!name}
+          onPrimaryClick={() => {
+            createLearningPath({
+              name,
+              key,
+              resourceItems: [],
+            }).then((lp) => onLearningPathCreated && onLearningPathCreated(lp));
+          }}
+          onCancel={onCancel}
+        />
       </Flex>
     </Flex>
   );
@@ -102,62 +102,6 @@ export const NewLearningPath: React.FC<{}> = () => {
       }
       onLearningPathCreated={(lp) => routerPushToPage(LearningPathPageInfo(lp))}
     />
-  );
-};
-
-interface NewLearningPathFirstStepProps {
-  name: string;
-  setName: (newName: string) => void;
-  learningPathKey: string;
-  setLearningPathKey: (newKey: string) => void;
-  description?: string;
-  setDescription: (newDescription?: string) => void;
-}
-
-const NewLearningPathFirstStep: React.FC<NewLearningPathFirstStepProps> = ({
-  name,
-  setName,
-  learningPathKey,
-  setLearningPathKey,
-  description,
-  setDescription,
-}) => {
-  return (
-    <Stack>
-      <FormControl isRequired>
-        <FormLabel htmlFor="Name">Name</FormLabel>
-        <Input
-          placeholder="My Learning Path"
-          size="md"
-          id="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        ></Input>
-      </FormControl>
-      <RoleAccess accessRule="admin">
-        <FormControl>
-          <FormLabel htmlFor="key">Url key</FormLabel>
-          <Input
-            placeholder="my_learning_path"
-            size="md"
-            id="key"
-            value={learningPathKey}
-            onChange={(e) => setLearningPathKey(e.target.value)}
-          ></Input>
-        </FormControl>
-      </RoleAccess>
-
-      <FormControl>
-        <FormLabel htmlFor="Description">Description</FormLabel>
-        <Textarea
-          id="Description"
-          placeholder="Description"
-          size="md"
-          value={description}
-          onChange={(e) => setDescription(e.target.value || undefined)}
-        ></Textarea>
-      </FormControl>
-    </Stack>
   );
 };
 

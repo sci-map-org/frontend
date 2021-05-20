@@ -9,6 +9,8 @@ export const CurrentUserData = gql`
     key
     role
     displayName
+    bio
+    profilePictureUrl
     startedLearningPaths(options: {}) {
       startedAt
       learningPath {
@@ -26,6 +28,8 @@ export const PublicUserData = gql`
     key
     role
     displayName
+    bio
+    profilePictureUrl
   }
 `;
 

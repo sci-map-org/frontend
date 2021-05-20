@@ -1,47 +1,83 @@
-import { Checkbox, Stack, Text } from '@chakra-ui/react';
-import NoSSR from 'react-no-ssr';
+import { Badge, Box, Center, Flex, Heading, Stack, Text } from '@chakra-ui/react';
+import 'react-image-crop/dist/ReactCrop.css';
 import { PageLayout } from '../../components/layout/PageLayout';
+import { EditableTextarea } from '../../components/lib/inputs/EditableTextarea';
+import { EditableTextInput } from '../../components/lib/inputs/EditableTextInput';
+import { UserAvatarEditor } from '../../components/users/UserAvatarEditor';
 import { UserRole } from '../../graphql/types';
 import { CurrentUserDataFragment } from '../../graphql/users/users.fragments.generated';
-import { useMockedFeaturesEnabled } from '../../hooks/useMockedFeaturesEnabled';
+import { useUpdateCurrentUserMutation } from '../../graphql/users/users.operations.generated';
 
 export const CurrentUserProfilePage: React.FC<{ currentUser: CurrentUserDataFragment }> = ({ currentUser }) => {
-  const { mockedFeaturesEnabled, setMockedFeaturesEnabled } = useMockedFeaturesEnabled();
+  const [updateCurrentUser] = useUpdateCurrentUserMutation();
   return (
-    <PageLayout title={`My Profile (@${currentUser.key})`} centerChildren>
-      <Stack spacing={10} alignItems="center">
-        <Stack alignItems="center">
-          <Stack alignItems="center">
-            <Text>
-              <b>Display Name:</b> {currentUser.displayName}
+    <PageLayout marginSize="2xl">
+      <Center mb={10}>
+        <Heading fontWeight={400}>
+          My Profile (
+          <Text as="span" fontWeight={500} color="blue.600">
+            @{currentUser.key}
+          </Text>
+          )
+        </Heading>
+      </Center>
+      <Flex justifyContent="space-between" direction={{ base: 'column-reverse', md: 'row' }}>
+        <Stack
+          spacing={6}
+          mt={{ base: 12, md: 0 }}
+          alignItems={{ base: 'center', md: 'stretch' }}
+          flexGrow={1}
+          mr={{ base: 0, md: 10 }}
+        >
+          <Stack alignItems={{ base: 'center', md: 'flex-start' }}>
+            <Text fontSize="xl" fontWeight={600}>
+              Display Name:
             </Text>
-            <Text>
-              <b>Email:</b> {currentUser.email}
-            </Text>
-            {currentUser.role !== UserRole.User && (
-              <Text>
-                <b>Role:</b> {currentUser.role}
-              </Text>
-            )}
+            <EditableTextInput
+              fontSize="lg"
+              fontWeight={400}
+              value={currentUser.displayName}
+              onChange={(newDisplayName) =>
+                updateCurrentUser({ variables: { payload: { displayName: newDisplayName } } })
+              }
+              editMode
+              color="gray.800"
+            />
           </Stack>
+          <Stack flexGrow={1} alignItems={{ base: 'center', md: 'flex-start' }}>
+            <Text fontSize="xl" fontWeight={600}>
+              Bio:
+            </Text>
+            <EditableTextarea
+              fontWeight={300}
+              minRows={2}
+              w="100%"
+              fontSize="lg"
+              defaultValue={currentUser.bio || undefined}
+              placeholder="Write about yourself..."
+              onSubmit={(bio: string) => updateCurrentUser({ variables: { payload: { bio } } })}
+            />
+          </Stack>
+          <Stack alignItems={{ base: 'center', md: 'flex-start' }}>
+            <Text fontSize="xl" fontWeight={600}>
+              Email:
+            </Text>
+
+            <Text fontSize="lg" fontWeight={400} color="gray.800">
+              {currentUser.email}
+            </Text>
+          </Stack>
+          {currentUser.role !== UserRole.User && (
+            <Box>
+              <Badge fontSize="md" colorScheme="teal">
+                {currentUser.role}
+              </Badge>
+            </Box>
+          )}
         </Stack>
-        {currentUser.role === UserRole.Admin && (
-          <Stack alignItems="center">
-            <Text fontSize="2xl">Settings</Text>
-            <Stack direction="column">
-              <NoSSR>
-                <Checkbox
-                  id="mockedFeaturesEnabled"
-                  isChecked={mockedFeaturesEnabled}
-                  onChange={(e) => setMockedFeaturesEnabled(e.target.checked)}
-                >
-                  Mocked Features Enabled
-                </Checkbox>
-              </NoSSR>
-            </Stack>
-          </Stack>
-        )}
-      </Stack>
+
+        <UserAvatarEditor currentUser={currentUser} />
+      </Flex>
     </PageLayout>
   );
 };
