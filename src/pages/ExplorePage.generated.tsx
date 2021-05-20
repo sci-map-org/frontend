@@ -14,7 +14,7 @@ export type GetTopicByIdExplorePageQuery = (
   { __typename?: 'Query' }
   & { getTopicById: (
     { __typename?: 'Domain' }
-    & Pick<Types.Domain, '_id' | 'key' | 'name' | 'size' | 'topicType'>
+    & Pick<Types.Domain, '_id' | 'key' | 'name' | 'description' | 'size' | 'topicType'>
     & { parentTopics?: Types.Maybe<Array<(
       { __typename?: 'TopicIsSubTopicOfTopic' }
       & { parentTopic: (
@@ -49,7 +49,7 @@ export type GetTopicByIdExplorePageQuery = (
     )>> }
   ) | (
     { __typename?: 'Concept' }
-    & Pick<Types.Concept, '_id' | 'key' | 'name' | 'size' | 'topicType'>
+    & Pick<Types.Concept, '_id' | 'key' | 'name' | 'description' | 'size' | 'topicType'>
     & { domain?: Types.Maybe<(
       { __typename?: 'Domain' }
       & DomainLinkDataFragment
@@ -87,7 +87,7 @@ export type GetTopicByIdExplorePageQuery = (
     )>> }
   ) | (
     { __typename?: 'LearningGoal' }
-    & Pick<Types.LearningGoal, 'type' | '_id' | 'key' | 'name' | 'size' | 'topicType'>
+    & Pick<Types.LearningGoal, 'type' | '_id' | 'key' | 'name' | 'description' | 'size' | 'topicType'>
     & { domain?: Types.Maybe<(
       { __typename?: 'LearningGoalBelongsToDomain' }
       & { domain: (

@@ -1,25 +1,26 @@
-import { ExternalLinkIcon, Icon } from '@chakra-ui/icons';
-import { Box, Center, Flex, Heading, Stack, Text } from '@chakra-ui/layout';
+import { ExternalLinkIcon } from '@chakra-ui/icons';
+import { Box, Center, Stack, Text } from '@chakra-ui/layout';
 import { SimulationNodeDatum } from 'd3-force';
 import gql from 'graphql-tag';
 import { useEffect, useState } from 'react';
 import { PuffLoader } from 'react-spinners';
 import { PageLayout } from '../components/layout/PageLayout';
-import { ConceptLink } from '../components/lib/links/ConceptLink';
 import { TopicLink } from '../components/lib/links/TopicLink';
-import { PageLink } from '../components/navigation/InternalLink';
 import { SubTopicsCountIcon } from '../components/topics/SubTopicsCountIcon';
-import { MapVisualisationTopicData, SubTopicsMapVisualisation } from '../components/topics/SubTopicsMapVisualisation';
+import { SubTopicsMapVisualisation } from '../components/topics/SubTopicsMapVisualisation';
 import { MapVisualisationTopicDataFragment } from '../components/topics/SubTopicsMapVisualisation.generated';
+import { TopicDescription } from '../components/topics/TopicDescription';
 import { ConceptLinkData } from '../graphql/concepts/concepts.fragments';
-import { DomainData, DomainLinkData } from '../graphql/domains/domains.fragments';
+import { DomainLinkData } from '../graphql/domains/domains.fragments';
 import { DomainLinkDataFragment } from '../graphql/domains/domains.fragments.generated';
 import { LearningGoalLinkData } from '../graphql/learning_goals/learning_goals.fragments';
-import { TopicLinkData } from '../graphql/topics/topics.fragments';
 import { TopicType } from '../graphql/types';
 import { theme } from '../theme/theme';
-import { useGetTopicByIdExplorePageLazyQuery, useGetTopLevelDomainsQuery } from './ExplorePage.generated';
-import { DomainPageInfo } from './RoutesPageInfos';
+import {
+  GetTopicByIdExplorePageQuery,
+  useGetTopicByIdExplorePageLazyQuery,
+  useGetTopLevelDomainsQuery,
+} from './ExplorePage.generated';
 
 /**
  * Not using TopicLinkData because apollo fails: properly queried but data is empty object
@@ -30,6 +31,7 @@ export const getTopicByIdExplorePage = gql`
       _id
       key
       name
+      description
       size
       topicType
       subTopics(options: { sorting: { type: index, direction: ASC } }) {
@@ -39,7 +41,7 @@ export const getTopicByIdExplorePage = gql`
           name
           size
           topicType
-          ...on Concept {
+          ... on Concept {
             domain {
               ...DomainLinkData
             }
@@ -91,7 +93,7 @@ export const getTopicByIdExplorePage = gql`
       }
     }
   }
-  ${DomainLinkData}  
+  ${DomainLinkData}
   ${ConceptLinkData}
   ${LearningGoalLinkData}
 `;
@@ -138,7 +140,7 @@ export const ExplorePage: React.FC<{}> = () => {
     fetchPolicy: 'network-only',
   });
   const [selectedDomain, setSelectedDomain] = useState<DomainLinkDataFragment>();
-  const [selectedTopic, setSelectedTopic] = useState<MapVisualisationTopicDataFragment>();
+  const [selectedTopic, setSelectedTopic] = useState<GetTopicByIdExplorePageQuery['getTopicById']>();
   const [selectedTopicId, setSelectedTopicId] = useState<string>();
   const [getTopicById, { loading: isGetTopicLoading }] = useGetTopicByIdExplorePageLazyQuery({
     fetchPolicy: 'network-only',
@@ -149,14 +151,12 @@ export const ExplorePage: React.FC<{}> = () => {
         d.getTopicById.parentTopics?.length
           ? setParentTopics(d.getTopicById.parentTopics.map((i) => i.parentTopic))
           : setParentTopics([rootTopic]);
-      } 
-      
-      if(d &&
-        d.getTopicById.__typename === 'Concept' &&
-        d.getTopicById.parentTopic){
-          setParentTopics([d.getTopicById.parentTopic.parentTopic]);
-        }
-        
+      }
+
+      if (d && d.getTopicById.__typename === 'Concept' && d.getTopicById.parentTopic) {
+        setParentTopics([d.getTopicById.parentTopic.parentTopic]);
+      }
+
       setSelectedTopic(d.getTopicById);
     },
   });
@@ -174,28 +174,41 @@ export const ExplorePage: React.FC<{}> = () => {
     }
   }, [selectedTopicId]);
 
-
   return (
     <PageLayout marginSize="md">
       <Center>
-        <Stack direction="column" spacing={6}>
-          <Box  borderBottomWidth={3}  borderBottomColor="teal.500"  pb={6} pt={1} borderLeftWidth={2} borderLeftColor="gray.300" pl={4}>
+        <Stack direction="column" spacing={6} width={pxWidth + 'px'}>
+          <Box
+            borderBottomWidth={3}
+            borderBottomColor="teal.500"
+            pb={6}
+            pt={1}
+            borderLeftWidth={2}
+            borderLeftColor="gray.300"
+            pl={4}
+            pr={5}
+          >
             {!!selectedTopic && selectedTopic._id !== rootTopic._id ? (
-              <Stack direction="column" spacing={3} >
-              <Stack direction="row" alignItems="flex-start" >
-                <TopicLink topic={selectedTopic} fontSize="3xl"/>
-                <ExternalLinkIcon ml={2} boxSize={6} />
+              <Stack direction="column" spacing={3}>
+                <Stack direction="row" alignItems="flex-start">
+                  <TopicLink topic={selectedTopic} fontSize="3xl" />
+                  <ExternalLinkIcon ml={2} boxSize={6} />
                 </Stack>
                 <Stack direction="row" spacing={5}>
-                {subTopics?.length && <SubTopicsCountIcon totalCount={subTopics.length} tooltipLabel={`${subTopics.length} subTopics in ${selectedTopic.name}`} />}
+                  {subTopics?.length && (
+                    <SubTopicsCountIcon
+                      totalCount={subTopics.length}
+                      tooltipLabel={`${subTopics.length} subTopics in ${selectedTopic.name}`}
+                    />
+                  )}
                 </Stack>
-                </Stack>
+                {selectedTopic.description && <TopicDescription topicDescription={selectedTopic.description} />}
+              </Stack>
             ) : (
               <Text fontSize="3xl" fontWeight={700} color="gray.600">
                 Explore
               </Text>
             )}
-            
           </Box>
 
           <Center>

@@ -2,7 +2,6 @@ import { Flex, Stack, Text } from '@chakra-ui/layout';
 import { Tooltip } from '@chakra-ui/tooltip';
 import gql from 'graphql-tag';
 import { DomainLinkData } from '../../../../graphql/domains/domains.fragments';
-import { ConceptIcon } from '../../../lib/icons/ConceptIcon';
 import { DomainIcon } from '../../../lib/icons/DomainIcon';
 import { ResourceSeriesIcon } from '../../../lib/icons/ResourceSeriesIcon';
 import { SubTopicsCountIcon } from '../../../topics/SubTopicsCountIcon';
@@ -34,7 +33,10 @@ export const SearchResultDomainCard: React.FC<
         </Text>
         <Stack direction="row">
           {!!domain.conceptTotalCount && (
-            <SubTopicsCountIcon totalCount={domain.conceptTotalCount} tooltipLabel={`${domain.conceptTotalCount} Concepts in ${domain.name}`}/>
+            <SubTopicsCountIcon
+              totalCount={domain.conceptTotalCount}
+              tooltipLabel={`${domain.conceptTotalCount} Concepts in ${domain.name}`}
+            />
           )}
           {!!domain.learningMaterialsTotalCount && (
             <Tooltip label={`${domain.learningMaterialsTotalCount} Learning Materials in ${domain.name}`}>
