@@ -19,6 +19,7 @@ import { Accordeon } from '../components/lib/Accordeon';
 import { InternalButtonLink } from '../components/navigation/InternalLink';
 import { GlobalSearchBox } from '../components/navigation/search/GlobalSearchBox';
 import { ResourceMiniCardData } from '../components/resources/ResourceMiniCard';
+import { ExploreMap } from '../components/topics/ExploreMap';
 import { useCurrentUser } from '../graphql/users/users.hooks';
 import { HomeDomainsRecommendations } from './home/HomeDomainsRecommendations';
 import { HomeLearningGoalsRecommendations } from './home/HomeLearningGoalsRecommendations';
@@ -94,7 +95,23 @@ export const HomePage: React.FC = () => {
         <UserDashboard data={data} loading={loading} />
       )}
 
-      <RecommendationsBlock data={data} loading={loading} layoutProps={outerLayoutProps} />
+      <Flex {...outerLayoutProps} overflow="auto">
+        <Flex mb={10} mt={12} w="100%" direction="column" alignItems="stretch">
+          <ExploreMap
+            mapPxWidth={780}
+            mapPxHeight={260}
+            direction="row"
+            mapContainerProps={{ borderWidth: 1, borderColor: 'gray.500' }}
+          />
+        </Flex>
+      </Flex>
+
+      <Center mb={10} mt={12}>
+        <Flex {...outerLayoutProps} overflow="auto">
+          <HomeDomainsRecommendations />
+        </Flex>
+      </Center>
+
       {isReturningUser && <SearchBox leftTopoStainPosition="bottom" layoutProps={outerLayoutProps} />}
       <Box h={8} />
       <HomeContentItem
@@ -248,6 +265,7 @@ export const HomePage: React.FC = () => {
           />
         }
       />
+      <RecommendationsBlock data={data} loading={loading} layoutProps={outerLayoutProps} />
       <Flex justifyContent="center" mt={16}>
         <Stack spacing={8} direction="row">
           <InternalButtonLink size="lg" routePath="/about" asHref="/about" colorScheme="blue" variant="outline">
@@ -301,11 +319,6 @@ const RecommendationsBlock: React.FC<{ data?: GetHomePageDataQuery; loading?: bo
 }) => {
   return (
     <>
-      <Center mb={10} mt={12}>
-        <Flex {...layoutProps} overflow="auto">
-          <HomeDomainsRecommendations />
-        </Flex>
-      </Center>
       <Center mb={3}>
         <Flex direction={{ base: 'column', lg: 'row' }} flexGrow={1} justifyContent="space-between" {...layoutProps}>
           <Flex maxWidth={{ base: '100%', lg: '60%' }} minWidth={{ lg: '40%' }}>

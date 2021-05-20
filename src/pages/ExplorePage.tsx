@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { PageLayout } from '../components/layout/PageLayout';
 import { ExploreMap, rootTopic } from '../components/topics/ExploreMap';
 
-const pxWidth = 500;
+const pxWidth = 800;
 const pxHeight = 500;
 
 export const ExplorePage: React.FC<{}> = () => {
@@ -14,9 +14,10 @@ export const ExplorePage: React.FC<{}> = () => {
 
   return (
     <PageLayout marginSize="md">
-      <Center>
+      <Center minW="1000px">
         <ExploreMap
-          pxWidth={pxWidth}
+          direction="column"
+          mapPxWidth={pxWidth}
           mapPxHeight={pxHeight}
           selectedTopicId={urlSelectedTopicId}
           onTopicChange={(topicId) =>

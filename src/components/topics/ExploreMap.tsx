@@ -1,6 +1,6 @@
 import { useDisclosure } from '@chakra-ui/hooks';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
-import { Box, Center, Flex, Link, Stack, Text } from '@chakra-ui/layout';
+import { Box, Center, Flex, FlexProps, Link, Stack, Text } from '@chakra-ui/layout';
 import { Spinner } from '@chakra-ui/spinner';
 import gql from 'graphql-tag';
 import { useRouter } from 'next/router';
@@ -126,16 +126,20 @@ export const rootTopic: MapVisualisationTopicDataFragment = {
 };
 
 interface ExploreMapProps {
-  pxWidth: number;
+  mapPxWidth: number;
   mapPxHeight: number;
   selectedTopicId?: string;
   onTopicChange?: (topicId: string) => void;
+  direction: 'row' | 'column';
+  mapContainerProps?: FlexProps;
 }
 export const ExploreMap: React.FC<ExploreMapProps> = ({
-  pxWidth,
+  mapPxWidth,
   mapPxHeight,
   selectedTopicId: propSelectedTopicId,
   onTopicChange,
+  direction,
+  mapContainerProps,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const router = useRouter();
@@ -198,7 +202,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
   }, [selectedTopicId]);
 
   return (
-    <Stack direction="column" spacing={6} width={pxWidth + 'px'}>
+    <Stack direction={direction} spacing={6} {...(direction === 'row' && { alignItems: 'center' })}>
       <Box
         borderBottomWidth={3}
         minH="168px"
@@ -210,6 +214,9 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
         borderLeftColor="gray.300"
         pl={4}
         pr={5}
+        flexGrow={1}
+        {...(direction === 'column' && { width: `${mapPxWidth}px` })}
+        {...(direction === 'row' && { maxHeight: `200px` })}
       >
         {!!loadedTopic && loadedTopic._id !== rootTopic._id ? (
           <Stack direction="column" spacing={1}>
@@ -246,16 +253,16 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
       </Box>
 
       <Center>
-        <Box boxShadow="lg">
+        <Box boxShadow="lg" width={mapPxWidth + 'px'} {...mapContainerProps}>
           {loading || !subTopics ? (
-            <Center w={`${pxWidth}px`} h={`${mapPxHeight}px`}>
-              <PuffLoader size={Math.floor(pxWidth / 3)} color={theme.colors.blue[500]} />
+            <Center w={`${mapPxWidth}px`} h={`${mapPxHeight}px`}>
+              <PuffLoader size={Math.floor(mapPxWidth / 3)} color={theme.colors.blue[500]} />
             </Center>
           ) : (
             <SubTopicsMapVisualisation
               subTopics={subTopics}
               parentTopics={parentTopics}
-              pxWidth={pxWidth}
+              pxWidth={mapPxWidth}
               domainKey={loadedTopicDomain?.key}
               topic={loadedTopic}
               pxHeight={mapPxHeight}
