@@ -5,6 +5,7 @@ import gql from 'graphql-tag';
 import { useEffect, useState } from 'react';
 import { PuffLoader } from 'react-spinners';
 import { PageLayout } from '../components/layout/PageLayout';
+import { LearningMaterialCountIcon } from '../components/learning_materials/LearningMaterialCountIcon';
 import { TopicLink } from '../components/lib/links/TopicLink';
 import { SubTopicsCountIcon } from '../components/topics/SubTopicsCountIcon';
 import { SubTopicsMapVisualisation } from '../components/topics/SubTopicsMapVisualisation';
@@ -52,6 +53,7 @@ export const getTopicByIdExplorePage = gql`
         }
       }
       ... on Domain {
+        learningMaterialsTotalCount
         parentTopics(options: { sorting: { type: index, direction: ASC } }) {
           parentTopic {
             topicType
@@ -189,16 +191,22 @@ export const ExplorePage: React.FC<{}> = () => {
             pr={5}
           >
             {!!selectedTopic && selectedTopic._id !== rootTopic._id ? (
-              <Stack direction="column" spacing={3}>
-                <Stack direction="row" alignItems="flex-start">
+              <Stack direction="column" spacing={1}>
+                <Stack direction="row" alignItems="flex-start" pb={3}>
                   <TopicLink topic={selectedTopic} fontSize="3xl" />
                   <ExternalLinkIcon ml={2} boxSize={6} />
                 </Stack>
-                <Stack direction="row" spacing={5}>
+                <Stack direction="row" spacing={8}>
                   {subTopics?.length && (
                     <SubTopicsCountIcon
                       totalCount={subTopics.length}
                       tooltipLabel={`${subTopics.length} subTopics in ${selectedTopic.name}`}
+                    />
+                  )}
+                  {selectedTopic.__typename === TopicType.Domain && selectedTopic.learningMaterialsTotalCount && (
+                    <LearningMaterialCountIcon
+                      totalCount={selectedTopic.learningMaterialsTotalCount}
+                      tooltipLabel={`${selectedTopic.learningMaterialsTotalCount} Learning Materials in ${selectedTopic.name}`}
                     />
                   )}
                 </Stack>

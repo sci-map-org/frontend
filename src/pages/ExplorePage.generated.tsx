@@ -14,7 +14,7 @@ export type GetTopicByIdExplorePageQuery = (
   { __typename?: 'Query' }
   & { getTopicById: (
     { __typename?: 'Domain' }
-    & Pick<Types.Domain, '_id' | 'key' | 'name' | 'description' | 'size' | 'topicType'>
+    & Pick<Types.Domain, 'learningMaterialsTotalCount' | '_id' | 'key' | 'name' | 'description' | 'size' | 'topicType'>
     & { parentTopics?: Types.Maybe<Array<(
       { __typename?: 'TopicIsSubTopicOfTopic' }
       & { parentTopic: (
