@@ -1,12 +1,15 @@
+import { useDisclosure } from '@chakra-ui/hooks';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
-import { Box, Center, Stack, Text } from '@chakra-ui/layout';
+import { Box, Center, Flex, Link, Stack, Text } from '@chakra-ui/layout';
 import { SimulationNodeDatum } from 'd3-force';
 import gql from 'graphql-tag';
 import { useEffect, useState } from 'react';
 import { PuffLoader } from 'react-spinners';
+import { RoleAccess } from '../components/auth/RoleAccess';
 import { PageLayout } from '../components/layout/PageLayout';
 import { LearningMaterialCountIcon } from '../components/learning_materials/LearningMaterialCountIcon';
 import { TopicLink } from '../components/lib/links/TopicLink';
+import { AddSubTopicModal } from '../components/topics/AddSubTopic';
 import { SubTopicsCountIcon } from '../components/topics/SubTopicsCountIcon';
 import { SubTopicsMapVisualisation } from '../components/topics/SubTopicsMapVisualisation';
 import { MapVisualisationTopicDataFragment } from '../components/topics/SubTopicsMapVisualisation.generated';
@@ -131,6 +134,8 @@ const rootTopic: MapVisualisationTopicDataFragment = {
   name: 'Explore',
 };
 export const ExplorePage: React.FC<{}> = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const [subTopics, setSubtopics] = useState<MapVisualisationTopicDataFragment[]>();
   const [parentTopics, setParentTopics] = useState<MapVisualisationTopicDataFragment[]>();
   const { data, loading: isTopLevelQueryLoading, refetch: refetchRootTopics } = useGetTopLevelDomainsQuery({
@@ -144,8 +149,9 @@ export const ExplorePage: React.FC<{}> = () => {
   const [selectedDomain, setSelectedDomain] = useState<DomainLinkDataFragment>();
   const [selectedTopic, setSelectedTopic] = useState<GetTopicByIdExplorePageQuery['getTopicById']>();
   const [selectedTopicId, setSelectedTopicId] = useState<string>();
-  const [getTopicById, { loading: isGetTopicLoading }] = useGetTopicByIdExplorePageLazyQuery({
+  const [getTopicById, { loading: isGetTopicLoading, refetch }] = useGetTopicByIdExplorePageLazyQuery({
     fetchPolicy: 'network-only',
+    notifyOnNetworkStatusChange: true, //https://github.com/apollographql/react-apollo/issues/3709
     onCompleted(d) {
       d.getTopicById.__typename === 'Domain' && setSelectedDomain(d.getTopicById);
       d && d.getTopicById.subTopics && setSubtopics(d.getTopicById.subTopics.map((i) => i.subTopic));
@@ -156,6 +162,7 @@ export const ExplorePage: React.FC<{}> = () => {
       }
 
       if (d && d.getTopicById.__typename === 'Concept' && d.getTopicById.parentTopic) {
+        d.getTopicById.domain && setSelectedDomain(d.getTopicById.domain);
         setParentTopics([d.getTopicById.parentTopic.parentTopic]);
       }
 
@@ -164,16 +171,21 @@ export const ExplorePage: React.FC<{}> = () => {
   });
   const loading = isGetTopicLoading || isTopLevelQueryLoading;
 
-  useEffect(() => {
-    if (selectedTopicId) {
-      if (selectedTopicId === rootTopic._id) {
+  const loadTopic = (topicId?: string) => {
+    if (topicId) {
+      if (topicId === rootTopic._id) {
         data && setSubtopics(data.getTopLevelDomains.items);
         setParentTopics([]);
         setSelectedTopic(rootTopic);
+      } else if (topicId === selectedTopic?._id) {
+        refetch && refetch({ topicId });
       } else {
-        getTopicById({ variables: { topicId: selectedTopicId } });
+        getTopicById({ variables: { topicId } });
       }
     }
+  };
+  useEffect(() => {
+    loadTopic(selectedTopicId);
   }, [selectedTopicId]);
 
   return (
@@ -182,6 +194,7 @@ export const ExplorePage: React.FC<{}> = () => {
         <Stack direction="column" spacing={6} width={pxWidth + 'px'}>
           <Box
             borderBottomWidth={3}
+            minH="168px"
             borderBottomColor="teal.500"
             pb={6}
             pt={1}
@@ -238,11 +251,25 @@ export const ExplorePage: React.FC<{}> = () => {
                   }}
                 />
               )}
-
-              {/* {data && <ExploreMapForceLayout data={data.getTopLevelDomains} pxWidth={pxWidth} pxHeight={pxHeight} />} */}
-              {/* {data && <ExploreMapCirclePacking data={data.getTopLevelDomains} pxWidth={pxWidth} pxHeight={pxHeight} />} */}
             </Box>
           </Center>
+          <RoleAccess accessRule="loggedInUser">
+            <Flex direction="row" justifyContent="center" pt={1} pb={1}>
+              <Link color="originalPalette.red" fontSize="md" fontWeight={600} onClick={() => onOpen()}>
+                + Add SubTopic
+              </Link>
+            </Flex>
+          </RoleAccess>
+          {selectedTopic && (
+            <AddSubTopicModal
+              domain={selectedDomain}
+              parentTopicId={selectedTopic._id}
+              isOpen={isOpen}
+              onClose={onClose}
+              onCancel={() => onClose()}
+              onAdded={() => loadTopic(selectedTopic._id)}
+            />
+          )}
         </Stack>
       </Center>
     </PageLayout>

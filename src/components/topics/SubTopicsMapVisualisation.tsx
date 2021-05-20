@@ -42,7 +42,6 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
   onClick,
 }) => {
   const d3Container = useRef<SVGSVGElement>(null);
-
   const nodes: NodeElement[] = useMemo(
     () =>
       subTopics.map((subTopic) => {
@@ -51,14 +50,6 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
         return { id: subTopic._id, ...subTopic, ...(subTopic.topicType === TopicType.Concept && { domainKey }) };
       }),
     [subTopics]
-  );
-
-  const parentCircles: NodeElement[] = useMemo(
-    () =>
-      (parentTopics || []).map((parentTopic) => {
-        return { id: parentTopic._id, ...parentTopic };
-      }),
-    [parentTopics]
   );
 
   useEffect(() => {
@@ -149,23 +140,34 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
         .force('center', d3Force.forceCenter(pxWidth / 2, pxHeight / 2))
         .on('tick', tick);
     }
-  }, [topic?._id]);
+  }, [topic?._id, nodes.length]);
 
   return (
     <Box position="relative" width={`${pxWidth}px`} height={`${pxHeight}px`}>
       <svg ref={d3Container} width={`${pxWidth}px`} height={`${pxHeight}px`} fontSize="xs" />
       {parentTopics && !!parentTopics.length && (
-        <Flex direction="row" alignItems="stretch" position="absolute" top={0} bgColor="white" opacity={0.7} _hover={{opacity: 1}} borderBottomEndRadius={4}>
+        <Flex
+          direction="row"
+          alignItems="stretch"
+          position="absolute"
+          top={0}
+          bgColor="white"
+          opacity={0.7}
+          _hover={{ opacity: 1 }}
+          borderBottomEndRadius={4}
+        >
           <Flex p={1}>
-            <Icon as={BsArrowReturnLeft} boxSize={6}/>
+            <Icon as={BsArrowReturnLeft} boxSize={6} />
           </Flex>
-          <Stack mr={2} spacing={1}>
-            {parentTopics.map((parentTopic) => (
-              <Flex key={parentTopic._id} pl={1} alignItems="center">
-                <TopicLink topic={parentTopic} onClick={() => onClick(parentTopic)} fontSize="md"/>
-              </Flex>
-            ))}
-          </Stack>
+          <Flex pt={1}>
+            <Stack mr={2} spacing={1} pt={1}>
+              {parentTopics.map((parentTopic) => (
+                <Flex key={parentTopic._id} pl={1} alignItems="center">
+                  <TopicLink topic={parentTopic} onClick={() => onClick(parentTopic)} fontSize="md" />
+                </Flex>
+              ))}
+            </Stack>
+          </Flex>
         </Flex>
       )}
     </Box>

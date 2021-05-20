@@ -13,6 +13,7 @@ Do not use local storage (next.js...)
 Codegen: use same name for the export as the graphql query/mutation name -> c.f. ResourcePage (https://github.com/dotansimha/graphql-code-generator/issues/3244)
 Using @react-icons/all-files as parcel seems to have issues with tree shaking it properly
 react-sortable-tree needs a patch to work with React 17. (https://github.com/frontend-collective/react-sortable-tree/issues/821)
+Nesting fragments too deeply breaks apollo client, some subfields of data are empty object
 
 ## Setup
 
