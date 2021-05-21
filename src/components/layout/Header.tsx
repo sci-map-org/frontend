@@ -32,6 +32,8 @@ import { globalStyleVariables } from '../../theme/theme';
 import { RoleAccess } from '../auth/RoleAccess';
 import { InternalLink, InternalLinkProps, PageLink } from '../navigation/InternalLink';
 import { GlobalSearchBox } from '../navigation/search/GlobalSearchBox';
+import { RiBubbleChartFill } from '@react-icons/all-files/ri/RiBubbleChartFill';
+import { routerPushToPage } from '../../pages/PageInfo';
 
 const HeaderLinkStyle: LinkProps = {
   fontWeight: 'light',
@@ -175,6 +177,14 @@ export const Header: React.FC = () => {
       <Stack direction="row" spacing={4} alignItems="center">
         {showHamburger && (
           <>
+            <IconButton
+              aria-label="explore"
+              size="md"
+              variant="ghost"
+              icon={<RiBubbleChartFill />}
+              p={0}
+              onClick={() => routerPushToPage(ExploreMapPagePageInfo)}
+            />
             <GlobalSearchBox positionSuggestions="left" width={{ base: '120px', sm: '180px', md: '200px' }} />
             <Menu>
               <MenuButton
@@ -184,8 +194,8 @@ export const Header: React.FC = () => {
                 ml={2}
                 _active={{}}
                 _focus={{}}
-                minH={0}
-                h="auto"
+                // minH={0}
+                // h="auto"
                 icon={<HamburgerIcon />}
                 size="md"
                 variant="ghost"
@@ -203,9 +213,11 @@ export const Header: React.FC = () => {
             </Menu>
           </>
         )}
-        <PageLink pageInfo={ExploreMapPagePageInfo} {...HeaderLinkStyle}>
-          Explore
-        </PageLink>
+        {!showHamburger && (
+          <PageLink pageInfo={ExploreMapPagePageInfo} {...HeaderLinkStyle}>
+            Explore
+          </PageLink>
+        )}
         {!showHamburger && (
           <>
             <GlobalSearchBox />

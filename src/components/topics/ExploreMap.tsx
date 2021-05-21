@@ -154,7 +154,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
   const [subTopics, setSubtopics] = useState<MapVisualisationTopicDataFragment[]>();
   const [parentTopics, setParentTopics] = useState<MapVisualisationTopicDataFragment[]>();
 
-  const [getTopLevelDomainsLazyQuery, { data, loading: isTopLevelQueryLoading }] = useGetTopLevelDomainsLazyQuery({
+  const [getTopLevelDomainsLazyQuery, { loading: isTopLevelQueryLoading }] = useGetTopLevelDomainsLazyQuery({
     onCompleted(d) {
       d && setSubtopics(d.getTopLevelDomains.items);
       setParentTopics([]);
@@ -189,8 +189,8 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
     if (!topicId || topicId === rootTopic._id) {
       getTopLevelDomainsLazyQuery();
       onTopicChange && onTopicChange(rootTopic._id);
-    } else if (topicId === loadedTopic?._id) {
-      refetch && refetch({ topicId });
+      // } else if (topicId === loadedTopic?._id) { => needed ?
+      //   refetch && refetch({ topicId });
     } else {
       getTopicById({ variables: { topicId } });
       onTopicChange && onTopicChange(topicId);
