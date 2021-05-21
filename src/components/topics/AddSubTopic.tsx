@@ -1,11 +1,20 @@
+import { CheckIcon, NotAllowedIcon } from '@chakra-ui/icons';
 import {
   Box,
+  Flex,
+  FormControl,
+  FormHelperText,
+  Heading,
+  Input,
+  InputGroup,
+  InputRightElement,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  Spinner,
   Stack,
   Tab,
   TabList,
@@ -13,11 +22,20 @@ import {
   TabPanels,
   Tabs,
   Text,
+  Textarea,
+  Tooltip,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useDebounce } from 'use-debounce';
 import { DomainDataFragment, DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
-import { useAttachTopicIsSubTopicOfTopicMutation } from '../../graphql/topics/topics.operations.generated';
-import { DomainPageInfo } from '../../pages/RoutesPageInfos';
+import {
+  useAttachTopicIsSubTopicOfTopicMutation,
+  useCheckTopicKeyAvailabilityLazyQuery,
+} from '../../graphql/topics/topics.operations.generated';
+import { TopicType } from '../../graphql/types';
+import { ConceptPagePath, DomainPageInfo } from '../../pages/RoutesPageInfos';
+import { generateUrlKey } from '../../services/url.service';
+import { getChakraRelativeSize } from '../../util/chakra.util';
 import { NewConcept } from '../concepts/NewConcept';
 import { DomainSelector } from '../domains/DomainSelector';
 import { FormButtons } from '../lib/buttons/FormButtons';
@@ -33,11 +51,103 @@ interface AddSubTopicProps {
 }
 export const AddSubTopic: React.FC<AddSubTopicProps> = ({ domain, parentTopicId, size = 'md', onCancel, onAdded }) => {
   const [attachTopicIsSubTopicOfTopic] = useAttachTopicIsSubTopicOfTopicMutation();
-  const [selectedDomain, selectDomain] = useState<DomainDataFragment>();
+  // const [selectedDomain, selectDomain] = useState<DomainDataFragment>();
+  const [name, setName] = useState('');
+  const [key, setKey] = useState('');
+  // const [types, setTypes] = useState(defaultPayload?.types || []);
+  const [description, setDescription] = useState<string>();
+  const [selectedDomain, selectDomain] = useState<DomainDataFragment | undefined>(domain);
 
+  const [checkTopicKeyAvailability, { loading, data }] = useCheckTopicKeyAvailabilityLazyQuery({
+    errorPolicy: 'ignore',
+  });
+
+  const [keyValueToCheck] = useDebounce(key, 300);
+
+  useEffect(() => {
+    domain &&
+      checkTopicKeyAvailability({
+        variables: { topicType: TopicType.Concept, domainKey: domain.key, key: keyValueToCheck },
+      });
+  }, [keyValueToCheck]);
   return (
     <Stack spacing={4} direction="column" alignItems="stretch">
-      <Tabs isFitted variant="soft-rounded" colorScheme="deepBlue">
+      <Heading>Add subTopic</Heading>
+      {!domain && (
+        <Flex direction="column">
+          <Text fontWeight={600}>
+            In:{' '}
+            <Text as="span" color="gray.800">
+              {selectedDomain && selectedDomain.name}
+            </Text>
+          </Text>
+          <DomainSelector onSelect={(selectedDomain) => selectDomain(selectedDomain)} />
+        </Flex>
+      )}
+      <Input
+        placeholder="Topic Name"
+        size={size}
+        variant="flushed"
+        value={name}
+        onChange={(e) => {
+          if (key === generateUrlKey(name)) setKey(generateUrlKey(e.target.value));
+          setName(e.target.value);
+        }}
+      ></Input>
+      <FormControl id="key" size={getChakraRelativeSize(size, -1)}>
+        <InputGroup>
+          <Input
+            placeholder="Topic Url Key"
+            size={getChakraRelativeSize(size, -1)}
+            variant="flushed"
+            value={key}
+            onChange={(e) => setKey(e.target.value)}
+          ></Input>
+          {key && (
+            <InputRightElement
+              children={
+                !!loading ? (
+                  <Spinner size="sm" />
+                ) : data?.checkTopicKeyAvailability.available ? (
+                  <CheckIcon color="green.500" />
+                ) : (
+                  <Tooltip
+                    hasArrow
+                    aria-label="Key already in use"
+                    label="key already in use"
+                    placement="top"
+                    bg="red.600"
+                  >
+                    <NotAllowedIcon color="red.500" />
+                  </Tooltip>
+                )
+              }
+            />
+          )}
+        </InputGroup>
+        {key && domain && (
+          <FormHelperText fontSize="xs">
+            Url will look like{' '}
+            <Text as="span" fontWeight={500}>
+              {ConceptPagePath(domain.key, key)}
+            </Text>
+          </FormHelperText>
+        )}
+      </FormControl>
+
+      <Textarea
+        placeholder="Description"
+        size={size}
+        variant="flushed"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+      ></Textarea>
+      {/* Context */}
+      {/* Area or not (if no contect) */}
+      {/* Name with suggestions */}
+      {/*  key, preview*/}
+      {/* Description field + suggestions pulled */}
+      {/* <Tabs isFitted variant="soft-rounded" colorScheme="deepBlue">
         <TabList mb="1em">
           <Tab _focus={{}}>New SubTopic</Tab>
           <Tab _focus={{}}>
@@ -49,6 +159,11 @@ export const AddSubTopic: React.FC<AddSubTopicProps> = ({ domain, parentTopicId,
         </TabList>
         <TabPanels>
           <TabPanel>
+
+
+
+
+
             <NewConcept
               parentTopicId={parentTopicId}
               domain={domain}
@@ -85,7 +200,7 @@ export const AddSubTopic: React.FC<AddSubTopicProps> = ({ domain, parentTopicId,
             />
           </TabPanel>
         </TabPanels>
-      </Tabs>
+      </Tabs> */}
     </Stack>
   );
 };
