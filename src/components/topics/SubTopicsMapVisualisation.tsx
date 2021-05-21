@@ -1,5 +1,5 @@
 import { Icon } from '@chakra-ui/icons';
-import { Box, Flex, Stack } from '@chakra-ui/layout';
+import { Box, Center, Flex, Stack, Text } from '@chakra-ui/layout';
 import { BsArrowReturnLeft } from '@react-icons/all-files/bs/BsArrowReturnLeft';
 import * as d3Force from 'd3-force';
 import { SimulationNodeDatum } from 'd3-force';
@@ -145,6 +145,13 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
   return (
     <Box position="relative" width={`${pxWidth}px`} height={`${pxHeight}px`}>
       <svg ref={d3Container} width={`${pxWidth}px`} height={`${pxHeight}px`} fontSize="xs" />
+      {!nodes.length && (
+        <Center position="absolute" top={0} left={0} width={`${pxWidth}px`} height={`${pxHeight}px`}>
+          <Text fontWeight={600} fontSize="lg" color="originalPalette.red" fontStyle="italic">
+            No SubTopics found
+          </Text>
+        </Center>
+      )}
       {parentTopics && !!parentTopics.length && (
         <Flex
           direction="row"

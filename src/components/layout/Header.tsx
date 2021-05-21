@@ -183,6 +183,8 @@ export const Header: React.FC = () => {
               variant="ghost"
               icon={<RiBubbleChartFill />}
               p={0}
+              _active={{}}
+              _focus={{}}
               onClick={() => routerPushToPage(ExploreMapPagePageInfo)}
             />
             <GlobalSearchBox positionSuggestions="left" width={{ base: '120px', sm: '180px', md: '200px' }} />
@@ -194,8 +196,6 @@ export const Header: React.FC = () => {
                 ml={2}
                 _active={{}}
                 _focus={{}}
-                // minH={0}
-                // h="auto"
                 icon={<HamburgerIcon />}
                 size="md"
                 variant="ghost"
