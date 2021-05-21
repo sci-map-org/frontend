@@ -1,9 +1,9 @@
 import { Center } from '@chakra-ui/layout';
+import { useBreakpointValue } from '@chakra-ui/media-query';
 import { useRouter } from 'next/router';
 import { PageLayout } from '../components/layout/PageLayout';
 import { ExploreMap, rootTopic } from '../components/topics/ExploreMap';
 
-const pxWidth = 800;
 const pxHeight = 500;
 
 export const ExplorePage: React.FC<{}> = () => {
@@ -12,12 +12,13 @@ export const ExplorePage: React.FC<{}> = () => {
   if (urlSelectedTopicId && typeof urlSelectedTopicId !== 'string')
     throw new Error(`Invalid url param urlSelectedTopicId ${urlSelectedTopicId}`);
 
+  const pxWidth = useBreakpointValue<number>({ base: 340, sm: 500, md: 700, lg: 900 });
   return (
     <PageLayout marginSize="md">
-      <Center minW="1000px">
+      <Center>
         <ExploreMap
           direction="column"
-          mapPxWidth={pxWidth}
+          mapPxWidth={pxWidth || 400}
           mapPxHeight={pxHeight}
           selectedTopicId={urlSelectedTopicId}
           onTopicChange={(topicId) =>

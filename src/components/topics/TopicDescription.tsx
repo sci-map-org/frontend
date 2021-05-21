@@ -6,7 +6,7 @@ interface TopicDescriptionProps extends TextProps {
 
 export const TopicDescription: React.FC<TopicDescriptionProps> = ({ topicDescription, ...props }) => {
   return (
-    <Text fontWeight={300} whiteSpace="pre-wrap">
+    <Text fontWeight={300} whiteSpace="pre-wrap" {...props}>
       {topicDescription}
     </Text>
   );

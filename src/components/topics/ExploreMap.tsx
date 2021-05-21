@@ -202,7 +202,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
   }, [selectedTopicId]);
 
   return (
-    <Stack direction={direction} spacing={6} {...(direction === 'row' && { alignItems: 'center' })}>
+    <Stack direction={direction} spacing={6} alignItems="center">
       <Box
         borderBottomWidth={3}
         minH="168px"
@@ -238,7 +238,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
                 />
               )}
             </Stack>
-            {loadedTopic.description && <TopicDescription topicDescription={loadedTopic.description} />}
+            {loadedTopic.description && <TopicDescription topicDescription={loadedTopic.description} noOfLines={2} />}
           </Stack>
         ) : (
           <Text fontSize="3xl" fontWeight={700} color="gray.600">

@@ -85,6 +85,12 @@ export const HomePage: React.FC = () => {
     maxW: { lg: '2000px' },
   };
 
+  const mapProps = useBreakpointValue<{ direction: 'column' | 'row'; mapPxWidth: number; mapPxHeight: number }>({
+    base: { direction: 'column', mapPxWidth: 340, mapPxHeight: 400 },
+    sm: { direction: 'column', mapPxWidth: 420, mapPxHeight: 400 },
+    md: { direction: 'row', mapPxWidth: 400, mapPxHeight: 300 },
+    lg: { direction: 'row', mapPxWidth: 590, mapPxHeight: 360 },
+  });
   return (
     <Flex direction="column" justifyContent="center" alignItems="stretch" overflowX="hidden">
       {!isReturningUser ? (
@@ -95,23 +101,21 @@ export const HomePage: React.FC = () => {
         <UserDashboard data={data} loading={loading} />
       )}
 
-      <Flex {...outerLayoutProps} overflow="auto" py={10}>
-        <Flex mb={10} mt={12} w="100%" direction="column" alignItems="stretch">
+      <Flex {...outerLayoutProps} pt={20} pb={4}>
+        <Flex w="100%" direction="column" alignItems="stretch">
           <ExploreMap
-            mapPxWidth={780}
-            mapPxHeight={260}
-            direction="row"
+            {...(mapProps || { direction: 'column', mapPxWidth: 400, mapPxHeight: 360 })}
             mapContainerProps={{ borderWidth: 1, borderColor: 'gray.500' }}
           />
         </Flex>
       </Flex>
-      {isReturningUser && <RecommendationsBlock data={data} loading={loading} layoutProps={outerLayoutProps} />}
+
       <Center mb={10} mt={12}>
         <Flex {...outerLayoutProps} overflow="auto">
           <HomeDomainsRecommendations />
         </Flex>
       </Center>
-
+      {isReturningUser && <RecommendationsBlock data={data} loading={loading} layoutProps={outerLayoutProps} />}
       {isReturningUser && <SearchBox leftTopoStainPosition="bottom" layoutProps={outerLayoutProps} />}
       <Box h={8} />
       <HomeContentItem
@@ -271,9 +275,11 @@ export const HomePage: React.FC = () => {
           <InternalButtonLink size="lg" routePath="/about" asHref="/about" colorScheme="blue" variant="outline">
             Learn more
           </InternalButtonLink>
-          <InternalButtonLink size="lg" routePath="/register" asHref="/register" colorScheme="teal" variant="solid">
-            Register
-          </InternalButtonLink>
+          {!isReturningUser && (
+            <InternalButtonLink size="lg" routePath="/register" asHref="/register" colorScheme="teal" variant="solid">
+              Register
+            </InternalButtonLink>
+          )}
         </Stack>
       </Flex>
       {!isReturningUser && <SearchBox leftTopoStainPosition="top" layoutProps={outerLayoutProps} />}
