@@ -1,8 +1,8 @@
 import * as Types from '../../../graphql/types';
 
 import { ConceptDataFragment } from '../../../graphql/concepts/concepts.fragments.generated';
+import { MapVisualisationTopicData_Domain_Fragment, MapVisualisationTopicData_Concept_Fragment, MapVisualisationTopicData_LearningGoal_Fragment } from '../../../components/topics/SubTopicsMapVisualisation.generated';
 import { SubTopicsMenuDataFragment } from '../../../components/topics/SubTopicsMenu.generated';
-import { MinimapTopicDataFragment } from '../../../components/topics/SubTopicsMinimap.generated';
 import { ResourcePreviewDataFragment } from '../../../graphql/resources/resources.fragments.generated';
 import { DomainDataFragment, DomainLinkDataFragment } from '../../../graphql/domains/domains.fragments.generated';
 import * as Operations from './ConceptPage';
@@ -26,10 +26,12 @@ export type GetConceptConceptPageQuery = (
     )>>, subTopics?: Types.Maybe<Array<(
       { __typename?: 'TopicIsSubTopicOfTopic' }
       & SubTopicsMenuDataFragment
-      & MinimapTopicDataFragment
     )>>, parentTopic?: Types.Maybe<(
       { __typename?: 'TopicIsSubTopicOfTopic' }
-      & { parentTopic: { __typename?: 'Domain' } | (
+      & { parentTopic: (
+        { __typename?: 'Domain' }
+        & MapVisualisationTopicData_Domain_Fragment
+      ) | (
         { __typename?: 'Concept' }
         & Pick<Types.Concept, '_id' | 'key' | 'name'>
         & { parentTopic?: Types.Maybe<(
@@ -40,7 +42,11 @@ export type GetConceptConceptPageQuery = (
             & Pick<Types.Concept, '_id' | 'key' | 'name'>
           ) | { __typename?: 'LearningGoal' } }
         )> }
-      ) | { __typename?: 'LearningGoal' } }
+        & MapVisualisationTopicData_Concept_Fragment
+      ) | (
+        { __typename?: 'LearningGoal' }
+        & MapVisualisationTopicData_LearningGoal_Fragment
+      ) }
     )>, coveredByResources?: Types.Maybe<(
       { __typename?: 'ConceptCoveredByResourcesResults' }
       & { items: Array<(
@@ -62,6 +68,7 @@ export type GetConceptConceptPageQuery = (
       & DomainDataFragment
     )> }
     & ConceptDataFragment
+    & MapVisualisationTopicData_Concept_Fragment
   ) }
 );
 

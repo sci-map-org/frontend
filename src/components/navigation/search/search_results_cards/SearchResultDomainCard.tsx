@@ -2,9 +2,10 @@ import { Flex, Stack, Text } from '@chakra-ui/layout';
 import { Tooltip } from '@chakra-ui/tooltip';
 import gql from 'graphql-tag';
 import { DomainLinkData } from '../../../../graphql/domains/domains.fragments';
-import { ConceptIcon } from '../../../lib/icons/ConceptIcon';
+import { LearningMaterialCountIcon } from '../../../learning_materials/LearningMaterialCountIcon';
 import { DomainIcon } from '../../../lib/icons/DomainIcon';
 import { ResourceSeriesIcon } from '../../../lib/icons/ResourceSeriesIcon';
+import { SubTopicsCountIcon } from '../../../topics/SubTopicsCountIcon';
 import { SearchResultCardContainer, SearchResultCardContainerProps } from './SearchResultCardContainer';
 import { SearchResultDomainCardDataFragment } from './SearchResultDomainCard.generated';
 
@@ -33,24 +34,16 @@ export const SearchResultDomainCard: React.FC<
         </Text>
         <Stack direction="row">
           {!!domain.conceptTotalCount && (
-            <Tooltip label={`${domain.conceptTotalCount} Concepts in ${domain.name}`}>
-              <Stack direction="row" spacing="2px" ml={8} alignItems="start">
-                <Text fontWeight={500} color="gray.700">
-                  {domain.conceptTotalCount}
-                </Text>
-                <ConceptIcon boxSize={5} color="gray.700" />
-              </Stack>
-            </Tooltip>
+            <SubTopicsCountIcon
+              totalCount={domain.conceptTotalCount}
+              tooltipLabel={`${domain.conceptTotalCount} Concepts in ${domain.name}`}
+            />
           )}
           {!!domain.learningMaterialsTotalCount && (
-            <Tooltip label={`${domain.learningMaterialsTotalCount} Learning Materials in ${domain.name}`}>
-              <Stack direction="row" spacing="2px" ml={8} alignItems="start">
-                <Text fontWeight={500} color="gray.700">
-                  {domain.learningMaterialsTotalCount}
-                </Text>
-                <ResourceSeriesIcon boxSize={6} color="gray.700" />
-              </Stack>
-            </Tooltip>
+            <LearningMaterialCountIcon
+              totalCount={domain.learningMaterialsTotalCount}
+              tooltipLabel={`${domain.learningMaterialsTotalCount} Learning Materials in ${domain.name}`}
+            />
           )}
         </Stack>
       </Flex>

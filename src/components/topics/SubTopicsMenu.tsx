@@ -31,6 +31,8 @@ export const SubTopicsMenuData = gql`
     index
     subTopic {
       _id
+      topicType # for minimap actually
+      size # for minimap actually - required because destructuring the fragments overwrite one of them
       ... on Concept {
         ...ConceptLinkData
         types
@@ -41,6 +43,7 @@ export const SubTopicsMenuData = gql`
           index
           subTopic {
             _id
+            topicType
             ... on Concept {
               ...ConceptLinkData
               types
@@ -51,11 +54,23 @@ export const SubTopicsMenuData = gql`
             ... on Domain {
               ...DomainLinkData
             }
+            ... on LearningGoal {
+              # for minimap
+              key
+              name
+              type
+            }
           }
         }
       }
       ... on Domain {
         ...DomainLinkData
+      }
+      ... on LearningGoal {
+        # for minimap
+        key
+        name
+        type
       }
     }
   }

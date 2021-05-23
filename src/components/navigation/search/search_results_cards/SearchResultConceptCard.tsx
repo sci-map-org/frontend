@@ -1,7 +1,7 @@
 import { Flex, Stack, Text } from '@chakra-ui/layout';
 import gql from 'graphql-tag';
 import { ConceptLinkData } from '../../../../graphql/concepts/concepts.fragments';
-import { DomainLink } from '../../../domains/DomainLink';
+import { DomainLink } from '../../../lib/links/DomainLink';
 import { BoxBlockDefaultClickPropagation } from '../../../lib/BoxBlockDefaultClickPropagation';
 import { SearchResultCardContainer, SearchResultCardContainerProps } from './SearchResultCardContainer';
 import { SearchResultConceptCardDataFragment } from './SearchResultConceptCard.generated';

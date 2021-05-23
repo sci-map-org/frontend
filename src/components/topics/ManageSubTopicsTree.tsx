@@ -17,7 +17,7 @@ import { TopicType, UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { ConceptPageInfo, DomainPageInfo } from '../../pages/RoutesPageInfos';
 import { RoleAccess } from '../auth/RoleAccess';
-import { domainLinkStyleProps } from '../domains/DomainLink';
+import { domainLinkStyleProps } from '../lib/links/DomainLink';
 import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
 import { DomainIcon } from '../lib/icons/DomainIcon';
 import { PageLink } from '../navigation/InternalLink';
@@ -195,7 +195,6 @@ export const ManageSubTopicsTree: React.FC<ManageSubTopicsTreeProps> = ({
                                 modalHeaderText={`Detach Area "${node.name}" ?`}
                                 confirmButtonText="Detach"
                                 onConfirmation={() => {
-                                  console.log(path);
                                   detachTopicIsSubTopicOfTopicMutation({
                                     variables: {
                                       parentTopicId: path.length > 1 ? (path[path.length - 2] as string) : domain._id,

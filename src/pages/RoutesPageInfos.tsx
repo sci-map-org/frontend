@@ -1,6 +1,6 @@
 // Exist mostly because having pageinfos in Pages creates circular dependencies
 
-import { domainLinkStyleProps } from '../components/domains/DomainLink';
+import { domainLinkStyleProps } from '../components/lib/links/DomainLink';
 import { ConceptLinkDataFragment } from '../graphql/concepts/concepts.fragments.generated';
 import { DomainDataFragment, DomainLinkDataFragment } from '../graphql/domains/domains.fragments.generated';
 import { LearningGoalLinkDataFragment } from '../graphql/learning_goals/learning_goals.fragments.generated';
@@ -177,6 +177,13 @@ export const CurrentUserLearningGoalsPageInfo: PageInfo = {
 };
 
 //====Other====
+export const ExploreMapPagePath = '/explore';
+export const ExploreMapPagePageInfo = {
+  name: 'Explore',
+  path: ExploreMapPagePath,
+  routePath: ExploreMapPagePath,
+};
+
 export const ResetPasswordPagePath = '/reset_pwd';
 export const ResetPasswordPageInfo: PageInfo = {
   name: 'Reset Password',

@@ -110,7 +110,7 @@ export const TopicPageLayout: React.FC<TopicPageLayoutProps> = ({
             justifyContent={{ base: 'center', lg: 'flex-start' }}
             alignItems={{ base: 'center', lg: 'flex-start' }}
           >
-            {renderMinimap(300, 200)}
+            {renderMinimap(460, 260)}
           </Flex>
         </Flex>
       )}
