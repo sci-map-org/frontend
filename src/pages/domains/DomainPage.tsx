@@ -102,15 +102,6 @@ export const DomainPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
       }
     },
   });
-  // const [resourcesLoading, setResourcesLoading] = useState(networkStatus === NetworkStatus.loading);
-  // console.log(loading, resourcesLoading, networkStatus);
-  // console.log(loadingR, resourcesLoading);
-  // useEffect(() => {
-  //   setResourcesLoading(
-  //     [NetworkStatus.refetch, NetworkStatus.setVariables, NetworkStatus.loading, NetworkStatus].indexOf(networkStatus) >
-  //       -1
-  //   );
-  // }, [networkStatus]);
 
   const learningMaterials = learningMaterialsData?.getDomainByKey?.learningMaterials?.items || learningMaterialPreviews; // ? after getDomainByKey because of https://github.com/apollographql/apollo-client/issues/6986
 

@@ -58,6 +58,7 @@ export const SubTopicsMenuData = gql`
               # for minimap
               key
               name
+              type
             }
           }
         }
@@ -69,6 +70,7 @@ export const SubTopicsMenuData = gql`
         # for minimap
         key
         name
+        type
       }
     }
   }

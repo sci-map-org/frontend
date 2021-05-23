@@ -32,12 +32,12 @@ export type SubTopicsMenuDataFragment = (
         & ConceptLinkDataFragment
       ) | (
         { __typename?: 'LearningGoal' }
-        & Pick<Types.LearningGoal, 'key' | 'name' | '_id' | 'topicType'>
+        & Pick<Types.LearningGoal, 'key' | 'name' | 'type' | '_id' | 'topicType'>
       ) }
     )>> }
     & ConceptLinkDataFragment
   ) | (
     { __typename?: 'LearningGoal' }
-    & Pick<Types.LearningGoal, 'key' | 'name' | '_id' | 'topicType' | 'size'>
+    & Pick<Types.LearningGoal, 'key' | 'name' | 'type' | '_id' | 'topicType' | 'size'>
   ) }
 );
