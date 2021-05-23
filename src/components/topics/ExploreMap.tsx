@@ -242,7 +242,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
           </Stack>
         ) : (
           <Text fontSize="3xl" fontWeight={700} color="gray.600">
-            Explore
+            Explore Topics
           </Text>
         )}
         {isGetTopicLoading && (
