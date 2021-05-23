@@ -195,7 +195,6 @@ export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = 
   const domain = concept.domain;
   if (!domain) return null;
   const referencingConcepts = concept.referencingConcepts?.map((item) => item.concept) || [];
-  const { currentUser } = useCurrentUser();
   const [addConceptReferencesConceptMutation] = useAddConceptReferencesConceptMutation();
   const [removeConceptReferencesConcept] = useRemoveConceptReferencesConceptMutation();
 

@@ -23,21 +23,6 @@ const SubTopicsMapVisualisation = dynamic<SubTopicsMapVisualisationProps>(
   { ssr: false }
 );
 
-// export const MinimapTopicData = gql`
-//   fragment MinimapTopicData on ITopic {
-//     ...MapVisualisationTopicData
-//     subTopics(options: {}){
-//       index
-//     subTopic {
-//       _id
-//       key
-//       topicType
-//       name
-//       size
-//     }
-//     }
-//   }
-// `;
 interface SubTopicsMinimapProps {
   domainKey: string;
   isLoading: boolean;
