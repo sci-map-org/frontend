@@ -195,7 +195,6 @@ export const ManageSubTopicsTree: React.FC<ManageSubTopicsTreeProps> = ({
                                 modalHeaderText={`Detach Area "${node.name}" ?`}
                                 confirmButtonText="Detach"
                                 onConfirmation={() => {
-                                  console.log(path);
                                   detachTopicIsSubTopicOfTopicMutation({
                                     variables: {
                                       parentTopicId: path.length > 1 ? (path[path.length - 2] as string) : domain._id,

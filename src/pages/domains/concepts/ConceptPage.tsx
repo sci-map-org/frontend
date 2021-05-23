@@ -198,7 +198,7 @@ export const ConceptPage: React.FC<{ domainKey: string; conceptKey: string }> = 
   const { currentUser } = useCurrentUser();
   const [addConceptReferencesConceptMutation] = useAddConceptReferencesConceptMutation();
   const [removeConceptReferencesConcept] = useRemoveConceptReferencesConceptMutation();
-  console.log(concept);
+
   if (error) return <NotFoundPage />;
   if (!concept.domain) throw new Error('Concept has no domain');
   return (
