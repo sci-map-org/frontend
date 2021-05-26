@@ -183,8 +183,8 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
       setLoadedTopic(d.getTopicById);
     },
   });
-  const loading = isGetTopicLoading || isTopLevelQueryLoading;
-
+  // const loading = isGetTopicLoading || isTopLevelQueryLoading;
+  const loading = true;
   const loadTopic = (topicId?: string) => {
     if (!topicId || topicId === rootTopic._id) {
       getTopLevelDomainsLazyQuery();

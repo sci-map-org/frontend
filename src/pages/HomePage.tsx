@@ -12,6 +12,7 @@ import {
   useBreakpointValue,
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
+import dynamic from 'next/dynamic';
 import React, { ReactNode } from 'react';
 import { LearningGoalCardData } from '../components/learning_goals/cards/LearningGoalCard';
 import { LearningPathPreviewCardData } from '../components/learning_paths/LearningPathPreviewCard';
@@ -19,7 +20,7 @@ import { Accordeon } from '../components/lib/Accordeon';
 import { InternalButtonLink } from '../components/navigation/InternalLink';
 import { GlobalSearchBox } from '../components/navigation/search/GlobalSearchBox';
 import { ResourceMiniCardData } from '../components/resources/ResourceMiniCard';
-import { ExploreMap } from '../components/topics/ExploreMap';
+import { ExploreMapProps } from '../components/topics/ExploreMap';
 import { useCurrentUser } from '../graphql/users/users.hooks';
 import { HomeDomainsRecommendations } from './home/HomeDomainsRecommendations';
 import { HomeLearningGoalsRecommendations } from './home/HomeLearningGoalsRecommendations';
@@ -28,6 +29,15 @@ import { HomeUserResourcesHistory } from './home/HomeUserResourcesHistory';
 import { HomeUserStartedGoals } from './home/HomeUserStartedGoals';
 import { HomeUserStartedPaths, StartedLearningPathCardData } from './home/HomeUserStartedPaths';
 import { GetHomePageDataQuery, useGetHomePageDataQuery } from './HomePage.generated';
+
+const ExploreMap = dynamic<ExploreMapProps>(
+  () =>
+    import('../components/topics/ExploreMap').then((res) => {
+      const { ExploreMap } = res;
+      return ExploreMap;
+    }),
+  { ssr: false }
+);
 
 export const getHomePageData = gql`
   query getHomePageData {
@@ -91,6 +101,7 @@ export const HomePage: React.FC = () => {
     md: { direction: 'row', mapPxWidth: 400, mapPxHeight: 300 },
     lg: { direction: 'row', mapPxWidth: 590, mapPxHeight: 360 },
   });
+  console.log(mapProps);
   return (
     <Flex direction="column" justifyContent="center" alignItems="stretch" overflowX="hidden">
       {!isReturningUser ? (
