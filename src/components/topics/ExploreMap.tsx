@@ -125,7 +125,7 @@ export const rootTopic: MapVisualisationTopicDataFragment = {
   name: 'Explore',
 };
 
-interface ExploreMapProps {
+export interface ExploreMapProps {
   mapPxWidth: number;
   mapPxHeight: number;
   selectedTopicId?: string;
@@ -183,8 +183,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
       setLoadedTopic(d.getTopicById);
     },
   });
-  // const loading = isGetTopicLoading || isTopLevelQueryLoading;
-  const loading = true;
+  const loading = isGetTopicLoading || isTopLevelQueryLoading;
   const loadTopic = (topicId?: string) => {
     if (!topicId || topicId === rootTopic._id) {
       getTopLevelDomainsLazyQuery();

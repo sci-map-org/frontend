@@ -101,7 +101,7 @@ export const HomePage: React.FC = () => {
     md: { direction: 'row', mapPxWidth: 400, mapPxHeight: 300 },
     lg: { direction: 'row', mapPxWidth: 590, mapPxHeight: 360 },
   });
-  console.log(mapProps);
+
   return (
     <Flex direction="column" justifyContent="center" alignItems="stretch" overflowX="hidden">
       {!isReturningUser ? (
