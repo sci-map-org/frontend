@@ -1,8 +1,18 @@
 import { Center } from '@chakra-ui/layout';
 import { useBreakpointValue } from '@chakra-ui/media-query';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { PageLayout } from '../components/layout/PageLayout';
-import { ExploreMap, rootTopic } from '../components/topics/ExploreMap';
+import { ExploreMapProps, rootTopic } from '../components/topics/ExploreMap';
+
+const ExploreMap = dynamic<ExploreMapProps>(
+  () =>
+    import('../components/topics/ExploreMap').then((res) => {
+      const { ExploreMap } = res;
+      return ExploreMap;
+    }),
+  { ssr: false }
+);
 
 const pxHeight = 500;
 
