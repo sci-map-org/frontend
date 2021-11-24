@@ -1,26 +1,26 @@
 import gql from 'graphql-tag';
 import {
-  ConceptPageInfo,
-  DomainPageInfo,
   LearningGoalPageInfo,
   LearningPathPageInfo,
   ResourcePageInfo,
+  TopicPageInfo,
 } from '../../../../pages/RoutesPageInfos';
 import { SearchResultCardDataFragment } from './SearchResultCard.generated';
 import { SearchResultLearningGoalCard, SearchResultLearningGoalCardData } from './SearchResultLearningGoalCard';
 import { SearchResultLearningPathCard, SearchResultLearningPathCardData } from './SearchResultLearningPathCard';
 import { SearchResultResourceCard, SearchResultResourceCardData } from './SearchResultResourceCard';
+import { SearchResultTopicCard, SearchResultTopicCardData } from './SearchResultTopicCard';
 
 export const SearchResultCardData = gql`
   fragment SearchResultCardData on SearchResult {
     entity {
-      # ...SearchResultDomainCardData
-      # ...SearchResultConceptCardData
+      ...SearchResultTopicCardData
       ...SearchResultLearningGoalCardData
       ...SearchResultLearningPathCardData
       ...SearchResultResourceCardData
     }
   }
+  ${SearchResultTopicCardData}
   ${SearchResultLearningGoalCardData}
   ${SearchResultLearningPathCardData}
   ${SearchResultResourceCardData}
@@ -31,23 +31,14 @@ export const SearchResultCard: React.FC<{ searchResult: SearchResultCardDataFrag
   isHighlighted,
 }) => {
   switch (searchResult.entity.__typename) {
-    // TODO: Topic case
-    // case 'Domain':
-    //   return (
-    //     <SearchResultDomainCard
-    //       entityPageInfo={DomainPageInfo(searchResult.entity)}
-    //       domain={searchResult.entity}
-    //       isHighlighted={isHighlighted}
-    //     />
-    //   );
-    // case 'Concept':
-    //   return searchResult.entity.domain ? (
-    //     <SearchResultConceptCard
-    //       entityPageInfo={ConceptPageInfo(searchResult.entity.domain, searchResult.entity)}
-    //       concept={searchResult.entity}
-    //       isHighlighted={isHighlighted}
-    //     />
-    //   ) : null;
+    case 'Topic':
+      return (
+        <SearchResultTopicCard
+          entityPageInfo={TopicPageInfo(searchResult.entity)}
+          topic={searchResult.entity}
+          isHighlighted={isHighlighted}
+        />
+      );
     case 'LearningGoal':
       return (
         <SearchResultLearningGoalCard

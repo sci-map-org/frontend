@@ -1,6 +1,6 @@
 import { Icon, IconProps } from '@chakra-ui/icons';
 
-export const ConceptIcon = (
+export const TopicIcon = (
   props: Omit<IconProps, 'css'> // ts bug with emotion, checkout https://github.com/emotion-js/emotion/issues/1640
 ) => (
   <Icon viewBox="0 0 100 100" {...props} fill="currentColor">
