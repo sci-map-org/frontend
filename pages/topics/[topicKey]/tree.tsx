@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 
-import { ManageTopicPage } from '../../../src/pages/topics/ManageTopicPage';
+import { TopicTreePage } from '../../../src/pages/topics/TopicTreePage';
 
 const Page: React.FC = () => {
   const router = useRouter();
@@ -9,7 +9,7 @@ const Page: React.FC = () => {
   
   if (typeof topicKey !== 'string') return null;
 
-  return <ManageTopicPage topicKey={topicKey} />;
+  return <TopicTreePage topicKey={topicKey} />;
 };
 
 export default Page;

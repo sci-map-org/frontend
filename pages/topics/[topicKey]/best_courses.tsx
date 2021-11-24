@@ -5,9 +5,9 @@ import { BestXPage } from '../../../src/pages/domains/BestXPage';
 const Page: React.FC<{}> = () => {
   const router = useRouter();
 
-  const { key } = router.query;
-  if (typeof key !== 'string') return null;
-  return <BestXPage domainKey={key} x={[ResourceType.Podcast, ResourceType.PodcastEpisode]} />;
+  const { topicKey } = router.query;
+  if (typeof topicKey !== 'string') return null;
+  return <BestXPage topicKey={topicKey} x={[ResourceType.Course]} />;
 };
 
 export default Page;

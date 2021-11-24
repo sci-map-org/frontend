@@ -3,7 +3,6 @@ import gql from 'graphql-tag';
 import { useState } from 'react';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { LearningPathPreviewCardData } from '../../components/learning_paths/LearningPathPreviewCard';
-import { PageButtonLink } from '../../components/navigation/InternalLink';
 import { TopicRecommendedLearningMaterials } from '../../components/topics/TopicRecommendedLearningMaterials';
 import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
 import {
@@ -11,7 +10,7 @@ import {
   ResourceType, TopicLearningMaterialsOptions,
   TopicLearningMaterialsSortingType
 } from '../../graphql/types';
-import { AddResourceToDomainPageInfo, DomainPageInfo } from '../RoutesPageInfos';
+import { TopicPageInfo } from '../RoutesPageInfos';
 import { GetBestXPageDataQuery, useGetBestXPageDataQuery } from './BestXPage.generated';
 
 export const getBestXPageData = gql`
@@ -33,33 +32,33 @@ export const getBestXPageData = gql`
   ${LearningPathPreviewCardData}
 `;
 
-export const BestXPage: React.FC<{ domainKey: string; x: ResourceType[] }> = ({ domainKey, x }) => {
+export const BestXPage: React.FC<{ topicKey: string; x: ResourceType[] }> = ({ topicKey, x }) => {
   const [learningMaterialsOptions, setLearningMaterialsOptions] = useState<TopicLearningMaterialsOptions>({
     sortingType: TopicLearningMaterialsSortingType.Rating,
     filter: { completedByUser: false, resourceTypeIn: x, learningMaterialTypeIn: [LearningMaterialType.Resource] },
   });
 
-  const [domainData, setDomainData] = useState<GetBestXPageDataQuery['getDomainByKey']>();
+  const [topicData, setTopicData] = useState<GetBestXPageDataQuery['getTopicByKey']>();
   const { data, loading, refetch: refetchLearningMaterials } = useGetBestXPageDataQuery({
-    variables: { key: domainKey, learningMaterialsOptions: learningMaterialsOptions },
+    variables: { key: topicKey, learningMaterialsOptions: learningMaterialsOptions },
     onCompleted(data) {
-      setDomainData(data.getDomainByKey);
+      setTopicData(data.getTopicByKey);
     },
   });
 
-  const domain = data?.getDomainByKey || domainData;
-  if (!domain) return null;
+  const topic = data?.getTopicByKey || topicData;
+  if (!topic) return null;
 
   return (
-    <PageLayout marginSize="md" breadCrumbsLinks={[DomainPageInfo(domain)]}>
+    <PageLayout marginSize="md" breadCrumbsLinks={[TopicPageInfo(topic)]}>
       <Flex direction="row" w="100%" justifyContent="stretch">
         <Flex direction="column" flexGrow={1}>
           <Heading fontSize="4xl" fontWeight="normal" color="blackAlpha.800">
-            Learn {domain.name}
+            Learn {topic.name}
           </Heading>
-          {domain && domain.description && <Box fontWeight={250}>{domain.description}</Box>}
+          {topic && topic.description && <Box fontWeight={250}>{topic.description}</Box>}
         </Flex>
-        <Flex direction="row" justifyContent="flex-end" alignItems="center">
+        {/* <Flex direction="row" justifyContent="flex-end" alignItems="center">
           <PageButtonLink
             variant="solid"
             colorScheme="blue"
@@ -68,14 +67,14 @@ export const BestXPage: React.FC<{ domainKey: string; x: ResourceType[] }> = ({ 
           >
             Add Resource
           </PageButtonLink>
-        </Flex>
+        </Flex> */}
       </Flex>
       <Box my={8} />
       <Stack spacing={10} direction="row">
         <Flex flexGrow={1}>
           <TopicRecommendedLearningMaterials
-            domain={domain}
-            learningMaterialsPreviews={domain.learningMaterials?.items || []}
+            topic={topic}
+            learningMaterialsPreviews={topic.learningMaterials?.items || []}
             isLoading={loading}
             reloadRecommendedResources={() => refetchLearningMaterials()}
             learningMaterialsOptions={learningMaterialsOptions}
