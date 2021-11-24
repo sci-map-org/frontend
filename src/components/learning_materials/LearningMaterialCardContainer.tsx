@@ -19,9 +19,8 @@ import {
 import { flatten } from 'lodash';
 import React, { forwardRef, ReactNode, useState } from 'react';
 import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
-import { LearningMaterialWithCoveredConceptsByDomainDataFragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
+import { LearningMaterialWithCoveredTopicsDataFragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
-import { ConceptPageInfo } from '../../pages/RoutesPageInfos';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { InternalLink, PageLink } from '../navigation/InternalLink';
@@ -106,20 +105,19 @@ const shortenCoveredConceptsList = (coveredConcepts: Pick<ConceptDataFragment, '
 };
 
 export const LearningMaterialCardCoveredTopics: React.FC<{
-  learningMaterial: LearningMaterialWithCoveredConceptsByDomainDataFragment;
-  domainKey?: string;
+  learningMaterial: LearningMaterialWithCoveredTopicsDataFragment;
   editable?: boolean;
-}> = ({ learningMaterial, domainKey, editable }) => {
+}> = ({ learningMaterial, editable }) => {
   const [coveredConceptsEditorMode, setCoveredConceptsEditorMode] = useState(false);
   const { currentUser } = useCurrentUser();
   const unauthentificatedModalDisclosure = useUnauthentificatedModal();
-  const domainCoveredConcepts = learningMaterial.coveredConceptsByDomain?.filter(
-    (d) => !domainKey || d.domain.key === domainKey
-  );
+  // const domainCoveredConcepts = learningMaterial.coveredSubTopics?.filter(
+  //   (t) => !domainKey || d.domain.key === domainKey
+  // );
 
-  if (!domainCoveredConcepts) return null;
-  const coveredConcepts = flatten(domainCoveredConcepts.map(({ coveredConcepts }) => coveredConcepts));
-  if (!coveredConcepts.length && !editable) return null;
+  if (!learningMaterial.coveredSubTopics?.items.length) return null;
+  // const coveredConcepts = flatten(domainCoveredConcepts.map(({ coveredConcepts }) => coveredConcepts));
+  // if (!coveredConcepts.length && !editable) return null;
 
   return (
     <Popover placement="bottom-end" isLazy>
@@ -129,7 +127,7 @@ export const LearningMaterialCardCoveredTopics: React.FC<{
             About:{' '}
           </Text>
           <Link color="gray.800" fontWeight={300} onClick={() => setCoveredConceptsEditorMode(false)}>
-            {shortenCoveredConceptsList(flatten(coveredConcepts), 32)}
+            {shortenCoveredConceptsList(flatten(learningMaterial.coveredSubTopics.items), 32)}
           </Link>
           {editable && (
             <IconButton
@@ -155,8 +153,9 @@ export const LearningMaterialCardCoveredTopics: React.FC<{
         <PopoverHeader fontWeight={500}>Covered Concepts</PopoverHeader>
         <PopoverCloseButton />
         <PopoverBody pt={1}>
-          {coveredConceptsEditorMode ? (
-            domainCoveredConcepts.length === 1 ? (
+          {/* TODO */}
+          {/* {coveredConceptsEditorMode ? (
+            learningMaterial.coveredSubTopics.items.length === 1 ? (
               <LearningMaterialDomainCoveredConceptsSelector
                 domain={domainCoveredConcepts[0].domain}
                 learningMaterialId={learningMaterial._id}
@@ -177,7 +176,7 @@ export const LearningMaterialCardCoveredTopics: React.FC<{
             </Stack>
           ) : (
             <LearningMaterialCoveredConceptsByDomainViewer learningMaterial={learningMaterial} />
-          )}
+          )} */}
         </PopoverBody>
       </PopoverContent>
     </Popover>

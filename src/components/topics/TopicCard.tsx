@@ -1,8 +1,8 @@
-import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
-import { DomainPageInfo } from '../../pages/RoutesPageInfos';
+import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
+import { TopicPageInfo } from '../../pages/RoutesPageInfos';
 import { PageLink } from '../navigation/InternalLink';
 
-export const DomainCard: React.FC<{ domain: DomainLinkDataFragment }> = ({ domain }) => {
+export const TopicCard: React.FC<{ topic: TopicLinkDataFragment }> = ({ topic }) => {
   return (
     <PageLink
       minW="140px"
@@ -14,11 +14,11 @@ export const DomainCard: React.FC<{ domain: DomainLinkDataFragment }> = ({ domai
       borderRadius={5}
       px={3}
       py={2}
-      pageInfo={DomainPageInfo(domain)}
+      pageInfo={TopicPageInfo(topic)}
       _hover={{}}
       _active={{}}
     >
-      {domain.name}
+      {topic.name}
     </PageLink>
   );
 };

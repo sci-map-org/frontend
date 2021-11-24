@@ -1,15 +1,12 @@
 import gql from 'graphql-tag';
 
-export const LearningMaterialWithCoveredConceptsByDomainData = gql`
-  fragment LearningMaterialWithCoveredConceptsByDomainData on LearningMaterial {
+export const LearningMaterialWithCoveredTopicsData = gql`
+  fragment LearningMaterialWithCoveredTopicsData on LearningMaterial {
     _id
-    # coveredConceptsByDomain {
-    #   domain {
-    #     ...DomainLinkData
-    #   }
-    #   coveredConcepts {
-    #     ...ConceptLinkData
-    #   }
-    # }
+    coveredSubTopics(options: {}) {
+      items {
+        ...TopicLinkData
+      }
+    }
   }
 `;

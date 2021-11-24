@@ -14,16 +14,13 @@ import { SubTopicsCountIcon } from '../../components/topics/SubTopicsCountIcon';
 import { SubTopicsMapVisualisation } from '../../components/topics/SubTopicsMapVisualisation';
 import { MapVisualisationTopicDataFragment } from '../../components/topics/SubTopicsMapVisualisation.generated';
 import { TopicDescription } from '../../components/topics/TopicDescription';
-// import { ConceptLinkData } from '../../graphql/concepts/concepts.fragments';
-// import { DomainLinkData } from '../../graphql/domains/domains.fragments';
 import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { LearningGoalLinkData } from '../../graphql/learning_goals/learning_goals.fragments';
-import { TopicType } from '../../graphql/types';
 import { theme } from '../../theme/theme';
 import {
   GetTopicByIdExplorePageQuery,
   useGetTopicByIdExplorePageLazyQuery,
-  useGetTopLevelDomainsLazyQuery,
+  useGetTopLevelTopicsLazyQuery,
 } from './ExploreMap.generated';
 
 /**
@@ -113,7 +110,7 @@ export const getTopLevelTopics = gql`
 `;
 
 export const rootTopic: MapVisualisationTopicDataFragment = {
-  __typename: 'Domain',
+  __typename: 'Topic',
   _id: 'root',
   key: 'root',
   topicType: TopicType.Domain,

@@ -1,7 +1,7 @@
 import { Badge, Box, Flex, FlexProps, Skeleton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { ReactNode } from 'react';
-import { LearningMaterialWithCoveredConceptsByDomainData } from '../../graphql/learning_materials/learning_materials.fragments';
+import {  LearningMaterialWithCoveredTopicsData } from '../../graphql/learning_materials/learning_materials.fragments';
 import { LearningPathData } from '../../graphql/learning_paths/learning_paths.fragments';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { LearningPathPageInfo } from '../../pages/RoutesPageInfos';
@@ -26,7 +26,7 @@ export const LearningPathPreviewCardData = gql`
       name
     }
     rating
-    ...LearningMaterialWithCoveredConceptsByDomainData
+    ...LearningMaterialWithCoveredTopicsData
     createdBy {
       ...UserAvatarData
     }
@@ -34,7 +34,7 @@ export const LearningPathPreviewCardData = gql`
   ${LearningPathCompletionData}
   ${LearningPathData}
   ${UserAvatarData}
-  ${LearningMaterialWithCoveredConceptsByDomainData}
+  ${LearningMaterialWithCoveredTopicsData}
 `;
 
 interface LearningPathPreviewCardProps {
@@ -74,7 +74,7 @@ export const LearningPathPreviewCard: React.FC<LearningPathPreviewCardProps> = (
           </BoxBlockDefaultClickPropagation>
           <Box flexGrow={1} flexBasis={0} />
 
-          {learningPath.coveredConceptsByDomain && (
+          {learningPath.coveredSubTopics && (
             <BoxBlockDefaultClickPropagation pr={2}>
               <Skeleton isLoaded={!isLoading}>
                 <LearningMaterialCardCoveredTopics learningMaterial={learningPath} />

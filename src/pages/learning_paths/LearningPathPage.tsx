@@ -46,7 +46,7 @@ import { EditableDuration } from '../../components/resources/elements/Duration';
 import { LearningMaterialCoveredTopics } from '../../components/resources/LearningMaterialCoveredTopics';
 import { SquareResourceCardData } from '../../components/resources/SquareResourceCard';
 import { UserAvatar, UserAvatarData } from '../../components/users/UserAvatar';
-import { LearningMaterialWithCoveredConceptsByDomainData } from '../../graphql/learning_materials/learning_materials.fragments';
+import { LearningMaterialWithCoveredConceptsByDomainData, LearningMaterialWithCoveredTopicsData } from '../../graphql/learning_materials/learning_materials.fragments';
 import {
   generateLearningPathData,
   LearningPathWithResourceItemsPreviewData,
@@ -85,12 +85,12 @@ export const getLearningPathPage = gql`
         count
       }
       ...LearningPathCompletionData
-      ...LearningMaterialWithCoveredConceptsByDomainData
+      ...LearningMaterialWithCoveredTopicsData
       ...EditableLearningMaterialPrerequisitesData
       ...LearningMaterialStarsRaterData
     }
   }
-  ${LearningMaterialWithCoveredConceptsByDomainData}
+  ${LearningMaterialWithCoveredTopicsData}
   ${LearningPathWithResourceItemsPreviewData}
   ${SquareResourceCardData}
   ${LearningPathCompletionData}
