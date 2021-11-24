@@ -2,22 +2,21 @@ import * as Types from '../../graphql/types';
 
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { LearningPathPreviewCardDataFragment } from '../../components/learning_paths/LearningPathPreviewCard.generated';
-import { SubTopicsMenuDataFragment } from '../../components/topics/SubTopicsMenu.generated';
 import * as Operations from './BestXPage';
 import * as Apollo from '@apollo/client';
 export type GetBestXPageDataQueryVariables = Types.Exact<{
   key: Types.Scalars['String'];
-  learningMaterialsOptions: Types.DomainLearningMaterialsOptions;
+  learningMaterialsOptions: Types.TopicLearningMaterialsOptions;
 }>;
 
 
 export type GetBestXPageDataQuery = (
   { __typename?: 'Query' }
-  & { getDomainByKey: (
-    { __typename?: 'Domain' }
-    & Pick<Types.Domain, '_id' | 'key' | 'name' | 'description'>
+  & { getTopicByKey: (
+    { __typename?: 'Topic' }
+    & Pick<Types.Topic, '_id' | 'key' | 'name' | 'description'>
     & { learningMaterials?: Types.Maybe<(
-      { __typename?: 'DomainLearningMaterialsResults' }
+      { __typename?: 'TopicLearningMaterialsResults' }
       & { items: Array<(
         { __typename?: 'Resource' }
         & ResourcePreviewDataFragment
@@ -25,10 +24,7 @@ export type GetBestXPageDataQuery = (
         { __typename?: 'LearningPath' }
         & LearningPathPreviewCardDataFragment
       )> }
-    )>, subTopics?: Types.Maybe<Array<(
-      { __typename?: 'TopicIsSubTopicOfTopic' }
-      & SubTopicsMenuDataFragment
-    )>> }
+    )> }
   ) }
 );
 

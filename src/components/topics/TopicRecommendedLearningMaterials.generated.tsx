@@ -2,7 +2,7 @@ import * as Types from '../../graphql/types';
 
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { LearningPathPreviewCardDataFragment } from '../learning_paths/LearningPathPreviewCard.generated';
-import * as Operations from './DomainRecommendedLearningMaterials';
+import * as Operations from './TopicRecommendedLearningMaterials';
 import * as Apollo from '@apollo/client';
 export type GetDomainRecommendedLearningMaterialsQueryVariables = Types.Exact<{
   key: Types.Scalars['String'];

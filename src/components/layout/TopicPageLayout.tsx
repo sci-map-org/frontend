@@ -2,23 +2,20 @@ import { Image } from '@chakra-ui/image';
 import { Flex, Stack, Text } from '@chakra-ui/layout';
 import { Skeleton } from '@chakra-ui/skeleton';
 import { ReactNode } from 'react';
-import { TopicType } from '../../graphql/types';
-import { ConceptIcon } from '../lib/icons/ConceptIcon';
-import { DomainIcon } from '../lib/icons/DomainIcon';
 import { BasePageLayout } from './PageLayout';
 
-const TopicPageTypeIcon: React.FC<{ topicType: TopicType }> = ({ topicType }) => {
-  return (
-    <Stack direction="row" spacing={1} alignItems="center" color="gray.800">
-      {topicType === TopicType.Domain && <DomainIcon boxSize="20px" mb="4px" />}
-      {topicType === TopicType.Concept && <ConceptIcon boxSize="20px" mb="4px" />}
-      <Text fontSize="lg" fontWeight={400}>
-        {topicType === TopicType.Domain && 'Area'}
-        {topicType === TopicType.Concept && 'Topic'}
-      </Text>
-    </Stack>
-  );
-};
+// const TopicPageTypeIcon: React.FC<{ topicType: TopicType }> = ({ topicType }) => {
+//   return (
+//     <Stack direction="row" spacing={1} alignItems="center" color="gray.800">
+//       {topicType === TopicType.Domain && <DomainIcon boxSize="20px" mb="4px" />}
+//       {topicType === TopicType.Concept && <ConceptIcon boxSize="20px" mb="4px" />}
+//       <Text fontSize="lg" fontWeight={400}>
+//         {topicType === TopicType.Domain && 'Area'}
+//         {topicType === TopicType.Concept && 'Topic'}
+//       </Text>
+//     </Stack>
+//   );
+// };
 
 interface TopicPageLayoutProps {
   renderTopLeftNavigation: ReactNode;
@@ -28,7 +25,6 @@ interface TopicPageLayoutProps {
   renderManagementIcons?: ReactNode;
   renderMinimap: (pxWidth: number, pxHeight: number) => ReactNode;
   isLoading?: boolean;
-  topicType: TopicType; // for different aestetic
 }
 
 export const TopicPageLayout: React.FC<TopicPageLayoutProps> = ({
@@ -38,7 +34,6 @@ export const TopicPageLayout: React.FC<TopicPageLayoutProps> = ({
   renderBlockBelowTitle,
   renderMinimap,
   isLoading,
-  topicType,
   children,
 }) => {
   return (
@@ -55,7 +50,6 @@ export const TopicPageLayout: React.FC<TopicPageLayoutProps> = ({
           {...layoutProps}
         >
           <Flex direction="column" flexGrow={1} position="relative" minH="280px" pr={{ md: '200px' }}>
-            {topicType === TopicType.Domain && (
               <>
                 <Image
                   display={{ base: 'none', md: 'initial' }}
@@ -76,8 +70,7 @@ export const TopicPageLayout: React.FC<TopicPageLayoutProps> = ({
                   h={{ base: '300px', md: '500px' }}
                 />
               </>
-            )}
-            {topicType === TopicType.Concept && (
+            {/* {topicType === TopicType.Concept && (
               <Image
                 position="absolute"
                 src="/static/search_stain.svg"
@@ -87,14 +80,14 @@ export const TopicPageLayout: React.FC<TopicPageLayoutProps> = ({
                 opacity={0.6}
                 h={{ base: '320px', md: '350px' }}
               />
-            )}
+            )} */}
             <Flex ml={{ base: 0, md: -6 }} mt={1} maxH={12} overflowY="scroll" position="absolute" zIndex={3}>
               {renderTopLeftNavigation}
             </Flex>
 
             <Stack spacing={0} pt={16} zIndex={2} alignItems="flex-start">
               <Stack direction="row">
-                <TopicPageTypeIcon topicType={topicType} />
+                {/* <TopicPageTypeIcon topicType={topicType} /> */}
                 {renderManagementIcons}
               </Stack>
 

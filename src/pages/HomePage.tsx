@@ -22,7 +22,7 @@ import { GlobalSearchBox } from '../components/navigation/search/GlobalSearchBox
 import { ResourceMiniCardData } from '../components/resources/ResourceMiniCard';
 import { ExploreMapProps } from '../components/topics/ExploreMap';
 import { useCurrentUser } from '../graphql/users/users.hooks';
-import { HomeDomainsRecommendations } from './home/HomeDomainsRecommendations';
+import { HomeDomainsRecommendations } from './home/HomeTopicsRecommendations';
 import { HomeLearningGoalsRecommendations } from './home/HomeLearningGoalsRecommendations';
 import { HomeLearningPathsRecommendations } from './home/HomeLearningPathsRecommendations';
 import { HomeUserResourcesHistory } from './home/HomeUserResourcesHistory';

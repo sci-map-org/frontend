@@ -2,9 +2,9 @@ import { Flex, Heading, Stack } from '@chakra-ui/react';
 import { DomainCard } from '../../components/domains/DomainCard';
 import { PageLink } from '../../components/navigation/InternalLink';
 import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
-import { DomainsListPageInfo } from '../../pages/RoutesPageInfos';
+import { DomainsListPageInfo } from '../RoutesPageInfos';
 
-const recommendedDomains: DomainLinkDataFragment[] = [
+const recommendedTopic: TopicLinkDataFragment[] = [
   {
     _id: 'AvgsEAdEM',
     name: 'Functional programming',
@@ -134,12 +134,12 @@ export const HomeDomainsRecommendations: React.FC<{}> = () => {
         <Heading size="lg" color="gray.700">
           Learn anything
         </Heading>
-        <PageLink mx={1} pageInfo={DomainsListPageInfo} fontWeight={500}>
+        {/* <PageLink mx={1} pageInfo={DomainsListPageInfo} fontWeight={500}>
           See all
-        </PageLink>
+        </PageLink> */}
       </Flex>
       <Stack direction="row" overflowX="auto" spacing={4}>
-        {recommendedDomains.map((domain) => (
+        {recommendedTopics.map((topic) => (
           <DomainCard domain={domain} key={domain._id} />
         ))}
       </Stack>

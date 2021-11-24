@@ -1,49 +1,41 @@
 import { Box, Flex, Heading, Stack } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useState } from 'react';
-import { SubTopicsMenu, SubTopicsMenuData } from '../../components/topics/SubTopicsMenu';
-import { BestXPagesLinks } from '../../components/domains/BestXPagesLinks';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { LearningPathPreviewCardData } from '../../components/learning_paths/LearningPathPreviewCard';
 import { PageButtonLink } from '../../components/navigation/InternalLink';
-import { DomainRecommendedLearningMaterials } from '../../components/resources/DomainRecommendedLearningMaterials';
-import { ConceptData } from '../../graphql/concepts/concepts.fragments';
+import { TopicRecommendedLearningMaterials } from '../../components/topics/TopicRecommendedLearningMaterials';
 import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
 import {
-  DomainLearningMaterialsOptions,
-  DomainLearningMaterialsSortingType,
   LearningMaterialType,
-  ResourceType,
+  ResourceType, TopicLearningMaterialsOptions,
+  TopicLearningMaterialsSortingType
 } from '../../graphql/types';
 import { AddResourceToDomainPageInfo, DomainPageInfo } from '../RoutesPageInfos';
 import { GetBestXPageDataQuery, useGetBestXPageDataQuery } from './BestXPage.generated';
 
-// export const getBestXPageData = gql`
-//   query getBestXPageData($key: String!, $learningMaterialsOptions: DomainLearningMaterialsOptions!) {
-//     getDomainByKey(key: $key) {
-//       _id
-//       key
-//       name
-//       description
-//       learningMaterials(options: $learningMaterialsOptions) {
-//         items {
-//           ...ResourcePreviewData
-//           ...LearningPathPreviewCardData
-//         }
-//       }
-//       subTopics(options: { sorting: { type: index, direction: ASC } }) {
-//         ...SubTopicsMenuData
-//       }
-//     }
-//   }
-//   ${ResourcePreviewData}
-//   ${SubTopicsMenuData}
-//   ${LearningPathPreviewCardData}
-// `;
+export const getBestXPageData = gql`
+  query getBestXPageData($key: String!, $learningMaterialsOptions: TopicLearningMaterialsOptions!) {
+    getTopicByKey(topicKey: $key) {
+      _id
+      key
+      name
+      description
+      learningMaterials(options: $learningMaterialsOptions) {
+        items {
+          ...ResourcePreviewData
+          ...LearningPathPreviewCardData
+        }
+      }
+    }
+  }
+  ${ResourcePreviewData}
+  ${LearningPathPreviewCardData}
+`;
 
 export const BestXPage: React.FC<{ domainKey: string; x: ResourceType[] }> = ({ domainKey, x }) => {
-  const [learningMaterialsOptions, setLearningMaterialsOptions] = useState<DomainLearningMaterialsOptions>({
-    sortingType: DomainLearningMaterialsSortingType.Rating,
+  const [learningMaterialsOptions, setLearningMaterialsOptions] = useState<TopicLearningMaterialsOptions>({
+    sortingType: TopicLearningMaterialsSortingType.Rating,
     filter: { completedByUser: false, resourceTypeIn: x, learningMaterialTypeIn: [LearningMaterialType.Resource] },
   });
 
@@ -81,7 +73,7 @@ export const BestXPage: React.FC<{ domainKey: string; x: ResourceType[] }> = ({ 
       <Box my={8} />
       <Stack spacing={10} direction="row">
         <Flex flexGrow={1}>
-          <DomainRecommendedLearningMaterials
+          <TopicRecommendedLearningMaterials
             domain={domain}
             learningMaterialsPreviews={domain.learningMaterials?.items || []}
             isLoading={loading}
@@ -90,7 +82,7 @@ export const BestXPage: React.FC<{ domainKey: string; x: ResourceType[] }> = ({ 
             setLearningMaterialsOptions={setLearningMaterialsOptions}
           />
         </Flex>
-        <Stack spacing={5} direction="column">
+        {/* <Stack spacing={5} direction="column">
           <SubTopicsMenu
             topicId={domain._id}
             subTopics={domain.subTopics || []}
@@ -99,7 +91,7 @@ export const BestXPage: React.FC<{ domainKey: string; x: ResourceType[] }> = ({ 
             domain={domain}
           />
           <BestXPagesLinks domainKey={domain.key} />
-        </Stack>
+        </Stack> */}
       </Stack>
     </PageLayout>
   );

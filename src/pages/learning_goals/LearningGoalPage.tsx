@@ -15,7 +15,7 @@ import { LearningGoalType, UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { NotFoundPage } from '../NotFoundPage';
 import { routerPushToPage } from '../PageInfo';
-import { DomainLearningGoalPageInfo } from '../RoutesPageInfos';
+// import { DomainLearningGoalPageInfo } from '../RoutesPageInfos';
 import { GetLearningGoalPageDataQuery, useGetLearningGoalPageDataQuery } from './LearningGoalPage.generated';
 
 export const getLearningGoalPageData = gql`
@@ -52,15 +52,15 @@ export const LearningGoalPage: React.FC<{ learningGoalKey: string }> = ({ learni
     currentUserIsOwner && (router.query.editMode === 'true' || (!router.query.editMode && !learningGoal.publishedAt))
   );
 
-  useEffect(() => {
-    if (!loading && learningGoal.domain) {
-      routerPushToPage(DomainLearningGoalPageInfo(learningGoal.domain.domain, learningGoal));
-    } else {
-      if (learningGoal.type === LearningGoalType.SubGoal) {
-        throw new Error('Learning Goal ' + learningGoal._id + ' has no domain attached');
-      }
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!loading && learningGoal.domain) {
+  //     routerPushToPage(DomainLearningGoalPageInfo(learningGoal.domain.domain, learningGoal));
+  //   } else {
+  //     if (learningGoal.type === LearningGoalType.SubGoal) {
+  //       throw new Error('Learning Goal ' + learningGoal._id + ' has no domain attached');
+  //     }
+  //   }
+  // }, []);
 
   if (!loading && !data) return <NotFoundPage />;
   return (

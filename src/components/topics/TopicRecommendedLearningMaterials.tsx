@@ -28,38 +28,39 @@ import { useDebounce } from 'use-debounce';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import {
-  DomainLearningMaterialsFilterOptions,
-  DomainLearningMaterialsOptions,
-  DomainLearningMaterialsSortingType,
   LearningMaterialType,
   ResourceType,
+  TopicLearningMaterialsFilterOptions,
+  TopicLearningMaterialsOptions,
+  TopicLearningMaterialsSortingType,
 } from '../../graphql/types';
 import { theme } from '../../theme/theme';
 import { LearningPathPreviewCard, LearningPathPreviewCardData } from '../learning_paths/LearningPathPreviewCard';
 import { LearningPathPreviewCardDataFragment } from '../learning_paths/LearningPathPreviewCard.generated';
-import { ResourceTypeBadge, resourceTypeColorMapping, resourceTypeToLabel } from './elements/ResourceType';
-import { LearningMaterialPreviewCardList } from './LearningMaterialPreviewCardList';
-import { ResourcePreviewCard } from './ResourcePreviewCard';
+import { ResourceTypeBadge, resourceTypeColorMapping, resourceTypeToLabel } from '../resources/elements/ResourceType';
+import { LearningMaterialPreviewCardList } from '../resources/LearningMaterialPreviewCardList';
+import { ResourcePreviewCard } from '../resources/ResourcePreviewCard';
 
-// export const getDomainRecommendedLearningMaterials = gql`
-//   query getDomainRecommendedLearningMaterials(
-//     $key: String!
-//     $learningMaterialsOptions: DomainLearningMaterialsOptions!
-//   ) {
-//     getDomainByKey(key: $key) {
-//       _id
-//       learningMaterials(options: $learningMaterialsOptions) {
-//         items {
-//           ...ResourcePreviewData
-//           ...LearningPathPreviewCardData
-//         }
-//       }
-//     }
-//   }
-//   ${ResourcePreviewData}
-//   ${LearningPathPreviewCardData}
-// `;
+export const getTopicRecommendedLearningMaterials = gql`
+  query getDomainRecommendedLearningMaterials(
+    $key: String!
+    $learningMaterialsOptions: TopicLearningMaterialsOptions!
+  ) {
+    getTopicByKey(topicKey: $key) {
+      _id
+      learningMaterials(options: $learningMaterialsOptions) {
+        items {
+          ...ResourcePreviewData
+          ...LearningPathPreviewCardData
+        }
+      }
+    }
+  }
+  ${ResourcePreviewData}
+  ${LearningPathPreviewCardData}
+`;
 
 function getLearningMaterialFilterString(types: LearningMaterialFilterType[], maxLength = 3): string {
   if (types.length === 1)
@@ -80,23 +81,23 @@ function getLearningMaterialFilterString(types: LearningMaterialFilterType[], ma
 /**
  * TODO ? could be nice, not 100% required
  */
-function getTitle(options: DomainLearningMaterialsOptions, domainName: string) {
+function getTitle(options: TopicLearningMaterialsOptions, domainName: string) {
   let s1 = '';
   let s2 = '';
   let s3 = '';
   const types = getFilterTypesFromFilterOptions(options.filter);
   switch (options.sortingType) {
-    case DomainLearningMaterialsSortingType.Recommended:
+    case TopicLearningMaterialsSortingType.Recommended:
       s1 = 'Recommended';
       s2 = types.length <= 3 ? getLearningMaterialFilterString(types, 2) : '';
       s3 = 'For You';
       break;
-    case DomainLearningMaterialsSortingType.Rating:
+    case TopicLearningMaterialsSortingType.Rating:
       s1 = 'Best'; // 'Highest rated' | 'Best' |  'Highest Rating' | ?
       s2 = types.length ? getLearningMaterialFilterString(types) : 'Learning Resources';
       s3 = 'in ' + domainName;
       break;
-    case DomainLearningMaterialsSortingType.Newest:
+    case TopicLearningMaterialsSortingType.Newest:
       s1 = 'Recently added'; // 'Newest' | 'Latest' | ?
       s2 = types.length ? getLearningMaterialFilterString(types) : 'Learning Resources';
       s3 = 'in ' + domainName;
@@ -104,23 +105,23 @@ function getTitle(options: DomainLearningMaterialsOptions, domainName: string) {
   }
   return { s1, s2, s3 };
 }
-export const DomainRecommendedLearningMaterials: React.FC<{
-  domain: DomainDataFragment;
+export const TopicRecommendedLearningMaterials: React.FC<{
+  topic: TopicLinkDataFragment;
   learningMaterialsPreviews: (ResourcePreviewDataFragment | LearningPathPreviewCardDataFragment)[];
   isLoading: boolean;
-  learningMaterialsOptions: DomainLearningMaterialsOptions;
-  setLearningMaterialsOptions: (learningMaterialsOptions: DomainLearningMaterialsOptions) => void;
+  learningMaterialsOptions: TopicLearningMaterialsOptions;
+  setLearningMaterialsOptions: (learningMaterialsOptions: TopicLearningMaterialsOptions) => void;
   reloadRecommendedResources: () => void;
 }> = ({
-  domain,
+  topic,
   learningMaterialsPreviews,
   isLoading,
   reloadRecommendedResources,
   learningMaterialsOptions,
   setLearningMaterialsOptions,
 }) => {
-  const { s1, s2, s3 } = useMemo(() => getTitle(learningMaterialsOptions, domain.name), [
-    domain,
+  const { s1, s2, s3 } = useMemo(() => getTitle(learningMaterialsOptions, topic.name), [
+    topic,
     learningMaterialsOptions.sortingType,
     learningMaterialsOptions.filter,
   ]);
@@ -180,14 +181,14 @@ export const DomainRecommendedLearningMaterials: React.FC<{
                 onChange={(e) =>
                   setLearningMaterialsOptions({
                     ...learningMaterialsOptions,
-                    sortingType: e.target.value as DomainLearningMaterialsSortingType,
+                    sortingType: e.target.value as TopicLearningMaterialsSortingType,
                   })
                 }
                 value={learningMaterialsOptions.sortingType}
               >
-                <option value={DomainLearningMaterialsSortingType.Recommended}>Most Relevant</option>
-                <option value={DomainLearningMaterialsSortingType.Rating}>Highest Rating</option>
-                <option value={DomainLearningMaterialsSortingType.Newest}>Newest First</option>
+                <option value={TopicLearningMaterialsSortingType.Recommended}>Most Relevant</option>
+                <option value={TopicLearningMaterialsSortingType.Rating}>Highest Rating</option>
+                <option value={TopicLearningMaterialsSortingType.Newest}>Newest First</option>
               </Select>
             </FormControl>
           </Box>
@@ -298,7 +299,7 @@ const learningMaterialFilterTypeColorMapping: { [key in LearningMaterialFilterTy
 };
 
 function getFilterTypesFromFilterOptions(
-  filterOptions: DomainLearningMaterialsFilterOptions
+  filterOptions: TopicLearningMaterialsFilterOptions
 ): LearningMaterialFilterType[] {
   const containsLearningPath =
     (!filterOptions.learningMaterialTypeIn && filterOptions.resourceTypeIn) ||
@@ -313,7 +314,7 @@ function getFilterTypesFromFilterOptions(
 
 function getFilterOptionsFromFilterTypes(
   filterTypes: LearningMaterialFilterType[]
-): Pick<DomainLearningMaterialsFilterOptions, 'learningMaterialTypeIn' | 'resourceTypeIn'> {
+): Pick<TopicLearningMaterialsFilterOptions, 'learningMaterialTypeIn' | 'resourceTypeIn'> {
   if (!filterTypes.length)
     return {
       learningMaterialTypeIn: undefined,
@@ -340,8 +341,8 @@ function getFilterOptionsFromFilterTypes(
   };
 }
 const LearningMaterialTypeFilter: React.FC<{
-  filterOptions: DomainLearningMaterialsFilterOptions;
-  setFilterOptions: (filterOptions: DomainLearningMaterialsFilterOptions) => void;
+  filterOptions: TopicLearningMaterialsFilterOptions;
+  setFilterOptions: (filterOptions: TopicLearningMaterialsFilterOptions) => void;
 }> = ({ filterOptions, setFilterOptions }) => {
   const selectedTypes = useMemo<LearningMaterialFilterType[]>(() => {
     return getFilterTypesFromFilterOptions(filterOptions);

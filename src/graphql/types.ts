@@ -1412,7 +1412,9 @@ export enum TopicLearningMaterialsSortingType {
 }
 
 export type TopicLearningMaterialsFilterOptions = {
+  resourceTypeIn?: Maybe<Array<ResourceType>>;
   completedByUser: Scalars['Boolean'];
+  learningMaterialTypeIn?: Maybe<Array<LearningMaterialType>>;
 };
 
 export type UserConsumedResourceItem = {
@@ -1459,3 +1461,8 @@ export type LearningGoalRelevantLearningMaterialsItem = {
   learningMaterial: LearningMaterial;
   coverage?: Maybe<Scalars['Float']>;
 };
+
+export enum LearningMaterialType {
+  Resource = 'Resource',
+  LearningPath = 'LearningPath'
+}

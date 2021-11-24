@@ -1,44 +1,40 @@
-import { NetworkStatus } from '@apollo/client';
 import { SettingsIcon } from '@chakra-ui/icons';
 import { Box, Flex, Heading, IconButton, Skeleton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { BestXPagesLinks } from '../../components/domains/BestXPagesLinks';
-import { DomainLearningGoals } from '../../components/domains/DomainLearningGoals';
-import { ParentDomainsNavigationBlock } from '../../components/domains/ParentDomainsNavigationBlock';
 import { TopicPageLayout } from '../../components/layout/TopicPageLayout';
 import { LearningGoalCardData } from '../../components/learning_goals/cards/LearningGoalCard';
 import { LearningPathPreviewCardDataFragment } from '../../components/learning_paths/LearningPathPreviewCard.generated';
 import { LearningPathIcon } from '../../components/lib/icons/LearningPathIcon';
-import { ResourceIcon } from '../../components/lib/icons/ResourceIcon';
-import { PageButtonLink, PageLink } from '../../components/navigation/InternalLink';
-import { DomainRecommendedLearningMaterials } from '../../components/resources/DomainRecommendedLearningMaterials';
+import { PageButtonLink } from '../../components/navigation/InternalLink';
 import { useGetDomainRecommendedLearningMaterialsQuery } from '../../components/resources/DomainRecommendedLearningMaterials.generated';
 import { MapVisualisationTopicData } from '../../components/topics/SubTopicsMapVisualisation';
-import { SubTopicsMinimap } from '../../components/topics/SubTopicsMinimap';
-import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
+import { TopicRecommendedLearningMaterials } from '../../components/topics/TopicRecommendedLearningMaterials';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
-import { DomainLearningMaterialsOptions, DomainLearningMaterialsSortingType, TopicType } from '../../graphql/types';
+import { generateTopicData } from '../../graphql/topics/topics.fragments';
+import { TopicLearningMaterialsOptions, TopicLearningMaterialsSortingType } from '../../graphql/types';
 import { routerPushToPage } from '../PageInfo';
 import {
-  AddResourceToDomainPageInfo,
-  ConceptListPageInfo,
-  ManageDomainPageInfo,
-  NewLearningPathPageInfo,
+  ManageTopicPageInfo,
+  NewLearningPathPageInfo
 } from '../RoutesPageInfos';
-// import { GetDomainByKeyDomainPageQuery, useGetDomainByKeyDomainPageQuery } from './DomainPage.generated';
+import { GetTopicByKeyTopicPageQuery, useGetTopicByKeyTopicPageQuery } from './TopicPage.generated';
 
-export const getTopicByKeyDomainPage = gql`
-  query getTopicByKeyDomainPage($key: String!) {
+export const getTopicByKeyTopicPage = gql`
+  query getTopicByKeyTopicPage($key: String!) {
     getTopicByKey(topicKey: $key) {
+      _id
+      name
+      description
       ...MapVisualisationTopicData
       # subTopics{
       #   ...SubTopicsMenuData
       # }
       parentTopic{
         _id
-
+        name
       }
       # learningGoals {
       #   learningGoal {
@@ -52,22 +48,21 @@ export const getTopicByKeyDomainPage = gql`
   ${LearningGoalCardData}
 `;
 
-// const placeholderDomainData: GetDomainByKeyDomainPageQuery['getDomainByKey'] = {
-//   // ...generateDomainData(),
-//   topicType: TopicType.Domain,
-//   subTopics: [...Array(12)].map(() => ({
-//     subTopic: { ...generateConceptData(), topicType: TopicType.Concept },
-//     index: 0,
-//   })),
-// };
+const placeholderTopicData: GetTopicByKeyTopicPageQuery['getTopicByKey'] = {
+  ...generateTopicData(),
+  // subTopics: [...Array(12)].map(() => ({
+  //   subTopic: { ...generateConceptData(), topicType: TopicType.Concept },
+  //   index: 0,
+  // })),
+};
 
-export const TopicPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
-  const { data, loading, error } = useGetDomainByKeyDomainPageQuery({
-    variables: { key: domainKey },
+export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
+  const { data, loading, error } = useGetTopicByKeyTopicPageQuery({
+    variables: { key: topicKey },
   });
 
-  const [learningMaterialsOptions, setLearningMaterialsOptions] = useState<DomainLearningMaterialsOptions>({
-    sortingType: DomainLearningMaterialsSortingType.Recommended,
+  const [learningMaterialsOptions, setLearningMaterialsOptions] = useState<TopicLearningMaterialsOptions>({
+    sortingType: TopicLearningMaterialsSortingType.Recommended,
     filter: { completedByUser: false },
   });
 
@@ -81,42 +76,44 @@ export const TopicPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
     loading: resourcesLoading,
     refetch: refetchLearningMaterials,
   } = useGetDomainRecommendedLearningMaterialsQuery({
-    variables: { key: domainKey, learningMaterialsOptions: learningMaterialsOptions },
+    variables: { key: topicKey, learningMaterialsOptions: learningMaterialsOptions },
     fetchPolicy: 'no-cache',
     ssr: false,
     notifyOnNetworkStatusChange: true,
     onCompleted(data) {
-      if (data?.getDomainByKey.learningMaterials?.items) {
-        setLearningMaterialPreviews(data?.getDomainByKey.learningMaterials?.items);
+      if (data?.getTopicByKey.learningMaterials?.items) {
+        setLearningMaterialPreviews(data?.getTopicByKey.learningMaterials?.items);
       }
     },
   });
 
-  const learningMaterials = learningMaterialsData?.getDomainByKey?.learningMaterials?.items || learningMaterialPreviews; // ? after getDomainByKey because of https://github.com/apollographql/apollo-client/issues/6986
+  const learningMaterials = learningMaterialsData?.getTopicByKey?.learningMaterials?.items || learningMaterialPreviews; // ? after getDomainByKey because of https://github.com/apollographql/apollo-client/issues/6986
 
-  const domain = data?.getDomainByKey || placeholderDomainData;
+  const topic = data?.getTopicByKey || placeholderTopicData;
 
   if (error) return null;
   return (
     <TopicPageLayout
-      renderTopLeftNavigation={
-        <ParentDomainsNavigationBlock
-          domains={
-            (domain.parentTopics || [])
-              .filter(({ parentTopic }) => parentTopic.__typename === 'Domain')
-              .map(({ parentTopic }) => parentTopic) as DomainLinkDataFragment[] // TODO
-          }
-        />
-      }
+    // TODO
+      renderTopLeftNavigation={<div>{topic.parentTopic?.name}</div>}
+      // renderTopLeftNavigation={
+        // <ParentDomainsNavigationBlock
+        //   domains={
+        //     (domain.parentTopics || [])
+        //       .filter(({ parentTopic }) => parentTopic.__typename === 'Domain')
+        //       .map(({ parentTopic }) => parentTopic) as DomainLinkDataFragment[] // TODO
+        //   }
+        // />
+      // }
       renderManagementIcons={
         <RoleAccess accessRule="contributorOrAdmin">
           <IconButton
             size="xs"
             isDisabled={loading}
             variant="solid"
-            aria-label="manage_domain"
+            aria-label="manage_topic"
             icon={<SettingsIcon />}
-            onClick={() => routerPushToPage(ManageDomainPageInfo(domain))}
+            onClick={() => routerPushToPage(ManageTopicPageInfo(topic))}
           />
         </RoleAccess>
       }
@@ -127,12 +124,13 @@ export const TopicPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
           color="blackAlpha.800"
           backgroundImage="linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0.7), rgba(255,255,255,0.7), rgba(255,255,255,0.1))"
         >
-          Learn <Text as="span">{domain.name}</Text>
+          Learn <Text as="span">{topic.name}</Text>
         </Heading>
       }
       renderBlockBelowTitle={
         <>
-          <Skeleton isLoaded={!loading}>
+          {/* TODO topic tree page */}
+          {/* <Skeleton isLoaded={!loading}>
             <PageLink
               color="gray.600"
               _hover={{ color: 'gray.700', textDecoration: 'none' }}
@@ -143,21 +141,21 @@ export const TopicPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
             >
               {domain.subTopics?.length ? domain.subTopics.length + ' SubTopics ' : 'No SubTopics yet'}
             </PageLink>
-          </Skeleton>
-          {domain && domain.description && (
+          </Skeleton> */}
+          {topic && topic.description && (
             <Skeleton isLoaded={!loading}>
               <Box
                 mt={3}
                 backgroundImage="linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0.7), rgba(255,255,255,0.7), rgba(255,255,255,0.1))"
                 fontWeight={250}
               >
-                {domain.description}
+                {topic.description}
               </Box>
             </Skeleton>
           )}
           <Flex direction="row" w="100%">
             <Stack direction="row" spacing={4} pl={0} pt={10} pb={{ base: 4, lg: 12 }} pr={10} alignItems="flex-start">
-              <PageButtonLink
+              {/* <PageButtonLink
                 leftIcon={<ResourceIcon boxSize={8} />}
                 variant="solid"
                 colorScheme="blue"
@@ -166,7 +164,7 @@ export const TopicPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
                 isDisabled={loading}
               >
                 Add Resource
-              </PageButtonLink>
+              </PageButtonLink> */}
               <PageButtonLink
                 leftIcon={<LearningPathIcon boxSize={7} />}
                 variant="solid"
@@ -181,28 +179,29 @@ export const TopicPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
           </Flex>
         </>
       }
-      renderMinimap={(pxWidth, pxHeight) => (
-        <SubTopicsMinimap
-          domainKey={domain.key}
-          topic={domain}
-          isLoading={!!loading || !!resourcesLoading}
-          subTopics={(domain.subTopics || []).map(({ subTopic }) => subTopic)}
-          parentTopics={(domain.parentTopics || []).map(({ parentTopic }) => parentTopic)}
-          pxWidth={pxWidth}
-          pxHeight={pxHeight}
-        />
-      )}
+      renderMinimap={(pxWidth, pxHeight) => null
+        // TODO
+        // <SubTopicsMinimap
+        //   domainKey={domain.key}
+        //   topic={domain}
+        //   isLoading={!!loading || !!resourcesLoading}
+        //   subTopics={(domain.subTopics || []).map(({ subTopic }) => subTopic)}
+        //   parentTopics={(domain.parentTopics || []).map(({ parentTopic }) => parentTopic)}
+        //   pxWidth={pxWidth}
+        //   pxHeight={pxHeight}
+        // />
+      }
       isLoading={loading}
-      topicType={TopicType.Domain}
+      // topicType={TopicType.Domain}
     >
       <>
-        {(loading || (domain.learningGoals && !!domain.learningGoals.length)) && (
+        {/* {(loading || (topic.learningGoals && !!domain.learningGoals.length)) && (
           <DomainLearningGoals domain={domain} learningGoalItems={domain.learningGoals || []} isLoading={loading} />
-        )}
+        )} */}
         <Flex direction={{ base: 'column-reverse', md: 'row' }} mb="100px" mt={10}>
           <Flex direction="column" flexShrink={1} flexGrow={1}>
-            <DomainRecommendedLearningMaterials
-              domain={domain}
+            <TopicRecommendedLearningMaterials
+              topic={topic}
               learningMaterialsPreviews={learningMaterials}
               isLoading={resourcesLoading}
               reloadRecommendedResources={() => refetchLearningMaterials()}
@@ -212,7 +211,7 @@ export const TopicPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
             {/* <DomainConceptGraph domain={domain} isLoading={loading} minNbRelationships={5} /> */}
             {/* <DomainLearningPaths domain={domain} /> */}
           </Flex>
-          <Stack
+          {/* <Stack
             spacing={4}
             alignItems={{ base: 'start', md: 'stretch' }}
             direction={{ base: 'row', md: 'column' }}
@@ -230,8 +229,8 @@ export const TopicPage: React.FC<{ domainKey: string }> = ({ domainKey }) => {
               isLoading={loading}
               onConceptToggled={() => refetchLearningMaterials()}
             />
-            <BestXPagesLinks domainKey={domain.key} />
-          </Stack>
+          </Stack> */}
+          <BestXPagesLinks topicKey={topic.key} />
         </Flex>
       </>
     </TopicPageLayout>

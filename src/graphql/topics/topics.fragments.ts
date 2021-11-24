@@ -1,7 +1,5 @@
 import gql from 'graphql-tag';
-// import { ConceptLinkData } from '../concepts/concepts.fragments';
-// import { DomainLinkData } from '../domains/domains.fragments';
-// import { LearningGoalLinkData } from '../learning_goals/learning_goals.fragments';
+import { TopicFullDataFragment } from './topics.fragments.generated';
 
 export const TopicLinkData = gql`
   fragment TopicLinkData on Topic {
@@ -10,3 +8,21 @@ export const TopicLinkData = gql`
     name
   }
 `;
+
+export const TopicFullData =  gql`
+  fragment TopicFullData on Topic {
+    _id
+    name
+    key
+    description
+    createdAt
+  }
+`;
+
+export const generateTopicData = (): TopicFullDataFragment => ({
+    _id: Math.random().toString(),
+    name: 'Placeholder Name',
+    key: Math.random().toString(),
+    description: 'One line description',
+    createdAt: new Date().toISOString()
+  });
