@@ -8,7 +8,6 @@ import { PageLayout } from '../../components/layout/PageLayout';
 import { ConceptGroupLearningGoalData } from '../../components/learning_goals/ConceptGroupLearningGoal';
 import { LearningGoalRoadmap, LearningGoalRoadmapData } from '../../components/learning_goals/LearningGoalRoadmap';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
-import { DomainLinkData } from '../../graphql/domains/domains.fragments';
 import { generateLearningGoalData } from '../../graphql/learning_goals/learning_goals.fragments';
 import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
 import { useDeleteLearningGoalMutation } from '../../graphql/learning_goals/learning_goals.operations.generated';
@@ -24,14 +23,13 @@ export const getLearningGoalPageData = gql`
     getLearningGoalByKey(key: $learningGoalKey) {
       ...LearningGoalRoadmapData
       ...ConceptGroupLearningGoalData
-      domain {
-        domain {
-          ...DomainLinkData
-        }
-      }
+      # domain {
+      #   domain {
+      #     ...DomainLinkData
+      #   }
+      # }
     }
   }
-  ${DomainLinkData}
   ${LearningGoalRoadmapData}
   ${ConceptGroupLearningGoalData}
 `;

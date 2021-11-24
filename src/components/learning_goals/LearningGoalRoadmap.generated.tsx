@@ -3,7 +3,6 @@ import * as Types from '../../graphql/types';
 import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
 import { UserAvatarDataFragment } from '../users/UserAvatar.generated';
 import { OtherLearnersViewerUserDataFragment } from '../lib/OtherLearnersViewer.generated';
-import { DomainLinkDataFragment, DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { LearningGoalPublishButtonDataFragment } from './LearningGoalPublishButton.generated';
 import { RoadmapSubGoalsWrapperDataFragment } from './RoadmapSubGoalsWrapper.generated';
 import { StartLearningGoalButtonDataFragment } from './StartLearningGoalButton.generated';
@@ -25,12 +24,6 @@ export type LearningGoalRoadmapDataFragment = (
         & OtherLearnersViewerUserDataFragment
       ) }
     )> }
-  )>, domain?: Types.Maybe<(
-    { __typename?: 'LearningGoalBelongsToDomain' }
-    & { domain: (
-      { __typename?: 'Domain' }
-      & DomainLinkDataFragment
-    ) }
   )> }
   & LearningGoalDataFragment
   & LearningGoalPublishButtonDataFragment

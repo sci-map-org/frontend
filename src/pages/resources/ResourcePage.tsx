@@ -8,7 +8,6 @@ import { ParentDomainsNavigationBlock } from '../../components/domains/ParentDom
 import { PageLayout } from '../../components/layout/PageLayout';
 import {
   EditableLearningMaterialOutcomes,
-  EditableLearningMaterialOutcomesData,
 } from '../../components/learning_materials/EditableLearningMaterialOutcomes';
 import {
   EditableLearningMaterialPrerequisites,
@@ -33,8 +32,6 @@ import { LearningMaterialCoveredTopics } from '../../components/resources/Learni
 import { SquareResourceCardData } from '../../components/resources/SquareResourceCard';
 import { SubResourceSeriesManager } from '../../components/resources/SubResourceSeriesManager';
 import { ResourceSubResourcesManager } from '../../components/resources/SubResourcesManager';
-import { ConceptData, generateConceptData } from '../../graphql/concepts/concepts.fragments';
-import { DomainData, generateDomainData } from '../../graphql/domains/domains.fragments';
 import { generateResourceData, ResourceData } from '../../graphql/resources/resources.fragments';
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { useDeleteResourceMutation } from '../../graphql/resources/resources.operations.generated';
@@ -49,19 +46,19 @@ import { UserAvatar, UserAvatarData } from '../../components/users/UserAvatar';
 
 export const getResourceResourcePage = gql`
   query getResourceResourcePage($id: String!) {
-    getResourceById(id: $id) {
+    getResourceById(resourceId: $id) {
       ...ResourceData
-      creator {
+      createdBy {
         ...UserAvatarData
       }
-      coveredConceptsByDomain {
-        domain {
-          ...DomainData
-        }
-        coveredConcepts {
-          ...ConceptData
-        }
-      }
+      # coveredConceptsByDomain {
+      #   domain {
+      #     ...DomainData
+      #   }
+      #   coveredConcepts {
+      #     ...ConceptData
+      #   }
+      # }
       subResources {
         ...SquareResourceCardData
       }
@@ -84,32 +81,29 @@ export const getResourceResourcePage = gql`
         _id
         name
       }
-      ...EditableLearningMaterialOutcomesData
       ...EditableLearningMaterialPrerequisitesData
       ...LearningMaterialStarsRaterData
     }
   }
   ${SquareResourceCardData}
-  ${DomainData}
   ${ResourceData}
-  ${ConceptData}
   ${UserAvatarData}
-  ${EditableLearningMaterialOutcomesData}
   ${EditableLearningMaterialPrerequisitesData}
   ${LearningMaterialStarsRaterData}
 `;
 
-const domainDataPlaceholder = generateDomainData();
+// TODO
+// const domainDataPlaceholder = generateDomainData();
 const resourceDataPlaceholder: GetResourceResourcePageQuery['getResourceById'] = {
   ...generateResourceData(),
-  coveredConceptsByDomain: [
-    {
-      domain: domainDataPlaceholder,
-      coveredConcepts: [0, 0, 0, 0].map(() => ({
-        ...generateConceptData(),
-      })),
-    },
-  ],
+  // coveredConceptsByDomain: [
+  //   {
+  //     domain: domainDataPlaceholder,
+  //     coveredConcepts: [0, 0, 0, 0].map(() => ({
+  //       ...generateConceptData(),
+  //     })),
+  //   },
+  // ],
 };
 
 export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) => {

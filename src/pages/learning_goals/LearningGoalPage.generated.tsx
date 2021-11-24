@@ -1,7 +1,6 @@
 import * as Types from '../../graphql/types';
 
 import { LearningGoalRoadmapDataFragment } from '../../components/learning_goals/LearningGoalRoadmap.generated';
-import { DomainLinkDataFragment, DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { ConceptGroupLearningGoalDataFragment } from '../../components/learning_goals/ConceptGroupLearningGoal.generated';
 import * as Operations from './LearningGoalPage';
 import * as Apollo from '@apollo/client';
@@ -14,13 +13,6 @@ export type GetLearningGoalPageDataQuery = (
   { __typename?: 'Query' }
   & { getLearningGoalByKey: (
     { __typename?: 'LearningGoal' }
-    & { domain?: Types.Maybe<(
-      { __typename?: 'LearningGoalBelongsToDomain' }
-      & { domain: (
-        { __typename?: 'Domain' }
-        & DomainLinkDataFragment
-      ) }
-    )> }
     & LearningGoalRoadmapDataFragment
     & ConceptGroupLearningGoalDataFragment
   ) }

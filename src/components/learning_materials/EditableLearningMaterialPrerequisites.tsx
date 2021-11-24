@@ -13,11 +13,11 @@ import {
 export const EditableLearningMaterialPrerequisitesData = gql`
   fragment EditableLearningMaterialPrerequisitesData on LearningMaterial {
     _id
-    prerequisites {
-      learningGoal {
-        ...LearningGoalBadgeData
-      }
-    }
+    # prerequisites {
+    #   prerequisite {
+    #     _id
+    #   }
+    # }
   }
   ${LearningGoalBadgeData}
 `;
@@ -55,39 +55,39 @@ export const StatelessEditableLearningMaterialPrerequisites: React.FC<StatelessE
   );
 };
 
-export const addLearningMaterialPrerequisite = gql`
-  mutation addLearningMaterialPrerequisite($learningMaterialId: String!, $prerequisiteLearningGoalId: String!) {
-    addLearningMaterialPrerequisite(
-      learningMaterialId: $learningMaterialId
-      prerequisiteLearningGoalId: $prerequisiteLearningGoalId
-    ) {
-      _id
-      prerequisites {
-        learningGoal {
-          ...LearningGoalBadgeData
-        }
-      }
-    }
-  }
-  ${LearningGoalBadgeData}
-`;
+// export const addLearningMaterialPrerequisite = gql`
+//   mutation addLearningMaterialPrerequisite($learningMaterialId: String!, $prerequisiteLearningGoalId: String!) {
+//     addLearningMaterialPrerequisite(
+//       learningMaterialId: $learningMaterialId
+//       prerequisiteLearningGoalId: $prerequisiteLearningGoalId
+//     ) {
+//       _id
+//       prerequisites {
+//         learningGoal {
+//           ...LearningGoalBadgeData
+//         }
+//       }
+//     }
+//   }
+//   ${LearningGoalBadgeData}
+// `;
 
-export const removeLearningMaterialPrerequisite = gql`
-  mutation removeLearningMaterialPrerequisite($learningMaterialId: String!, $prerequisiteLearningGoalId: String!) {
-    removeLearningMaterialPrerequisite(
-      learningMaterialId: $learningMaterialId
-      prerequisiteLearningGoalId: $prerequisiteLearningGoalId
-    ) {
-      _id
-      prerequisites {
-        learningGoal {
-          ...LearningGoalBadgeData
-        }
-      }
-    }
-  }
-  ${LearningGoalBadgeData}
-`;
+// export const removeLearningMaterialPrerequisite = gql`
+//   mutation removeLearningMaterialPrerequisite($learningMaterialId: String!, $prerequisiteLearningGoalId: String!) {
+//     removeLearningMaterialPrerequisite(
+//       learningMaterialId: $learningMaterialId
+//       prerequisiteLearningGoalId: $prerequisiteLearningGoalId
+//     ) {
+//       _id
+//       prerequisites {
+//         learningGoal {
+//           ...LearningGoalBadgeData
+//         }
+//       }
+//     }
+//   }
+//   ${LearningGoalBadgeData}
+// `;
 
 interface EditableLearningMaterialPrerequisitesProps
   extends Omit<StatelessEditableLearningMaterialPrerequisitesProps, 'onAdded' | 'onRemove'> {

@@ -1,6 +1,5 @@
 import * as Types from '../../graphql/types';
 
-import { ConceptSubGoalCardDataFragment, LearningGoalSubGoalCardDataFragment } from '../learning_goals/SubGoalCard.generated';
 import * as Operations from './SubTopicSelector';
 import * as Apollo from '@apollo/client';
 export type SearchSubTopicsQueryVariables = Types.Exact<{
@@ -14,14 +13,8 @@ export type SearchSubTopicsQuery = (
   & { searchSubTopics: (
     { __typename?: 'SearchTopicsResult' }
     & { items: Array<(
-      { __typename?: 'Domain' }
-      & Pick<Types.Domain, '_id' | 'key' | 'name' | 'description'>
-    ) | (
-      { __typename?: 'Concept' }
-      & ConceptSubGoalCardDataFragment
-    ) | (
-      { __typename?: 'LearningGoal' }
-      & LearningGoalSubGoalCardDataFragment
+      { __typename?: 'Topic' }
+      & Pick<Types.Topic, '_id'>
     )> }
   ) }
 );

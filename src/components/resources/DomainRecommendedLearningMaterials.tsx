@@ -42,24 +42,24 @@ import { ResourceTypeBadge, resourceTypeColorMapping, resourceTypeToLabel } from
 import { LearningMaterialPreviewCardList } from './LearningMaterialPreviewCardList';
 import { ResourcePreviewCard } from './ResourcePreviewCard';
 
-export const getDomainRecommendedLearningMaterials = gql`
-  query getDomainRecommendedLearningMaterials(
-    $key: String!
-    $learningMaterialsOptions: DomainLearningMaterialsOptions!
-  ) {
-    getDomainByKey(key: $key) {
-      _id
-      learningMaterials(options: $learningMaterialsOptions) {
-        items {
-          ...ResourcePreviewData
-          ...LearningPathPreviewCardData
-        }
-      }
-    }
-  }
-  ${ResourcePreviewData}
-  ${LearningPathPreviewCardData}
-`;
+// export const getDomainRecommendedLearningMaterials = gql`
+//   query getDomainRecommendedLearningMaterials(
+//     $key: String!
+//     $learningMaterialsOptions: DomainLearningMaterialsOptions!
+//   ) {
+//     getDomainByKey(key: $key) {
+//       _id
+//       learningMaterials(options: $learningMaterialsOptions) {
+//         items {
+//           ...ResourcePreviewData
+//           ...LearningPathPreviewCardData
+//         }
+//       }
+//     }
+//   }
+//   ${ResourcePreviewData}
+//   ${LearningPathPreviewCardData}
+// `;
 
 function getLearningMaterialFilterString(types: LearningMaterialFilterType[], maxLength = 3): string {
   if (types.length === 1)

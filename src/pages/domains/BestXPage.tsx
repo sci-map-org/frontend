@@ -18,28 +18,28 @@ import {
 import { AddResourceToDomainPageInfo, DomainPageInfo } from '../RoutesPageInfos';
 import { GetBestXPageDataQuery, useGetBestXPageDataQuery } from './BestXPage.generated';
 
-export const getBestXPageData = gql`
-  query getBestXPageData($key: String!, $learningMaterialsOptions: DomainLearningMaterialsOptions!) {
-    getDomainByKey(key: $key) {
-      _id
-      key
-      name
-      description
-      learningMaterials(options: $learningMaterialsOptions) {
-        items {
-          ...ResourcePreviewData
-          ...LearningPathPreviewCardData
-        }
-      }
-      subTopics(options: { sorting: { type: index, direction: ASC } }) {
-        ...SubTopicsMenuData
-      }
-    }
-  }
-  ${ResourcePreviewData}
-  ${SubTopicsMenuData}
-  ${LearningPathPreviewCardData}
-`;
+// export const getBestXPageData = gql`
+//   query getBestXPageData($key: String!, $learningMaterialsOptions: DomainLearningMaterialsOptions!) {
+//     getDomainByKey(key: $key) {
+//       _id
+//       key
+//       name
+//       description
+//       learningMaterials(options: $learningMaterialsOptions) {
+//         items {
+//           ...ResourcePreviewData
+//           ...LearningPathPreviewCardData
+//         }
+//       }
+//       subTopics(options: { sorting: { type: index, direction: ASC } }) {
+//         ...SubTopicsMenuData
+//       }
+//     }
+//   }
+//   ${ResourcePreviewData}
+//   ${SubTopicsMenuData}
+//   ${LearningPathPreviewCardData}
+// `;
 
 export const BestXPage: React.FC<{ domainKey: string; x: ResourceType[] }> = ({ domainKey, x }) => {
   const [learningMaterialsOptions, setLearningMaterialsOptions] = useState<DomainLearningMaterialsOptions>({

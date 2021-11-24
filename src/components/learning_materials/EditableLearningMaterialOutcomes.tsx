@@ -10,17 +10,17 @@ import {
   useRemoveLearningMaterialOutcomeMutation,
 } from './EditableLearningMaterialOutcomes.generated';
 
-export const EditableLearningMaterialOutcomesData = gql`
-  fragment EditableLearningMaterialOutcomesData on LearningMaterial {
-    _id
-    outcomes {
-      learningGoal {
-        ...LearningGoalBadgeData
-      }
-    }
-  }
-  ${LearningGoalBadgeData}
-`;
+// export const EditableLearningMaterialOutcomesData = gql`
+//   fragment EditableLearningMaterialOutcomesData on LearningMaterial {
+//     _id
+//     outcomes {
+//       learningGoal {
+//         ...LearningGoalBadgeData
+//       }
+//     }
+//   }
+//   ${LearningGoalBadgeData}
+// `;
 
 interface StatelessEditableLearningMaterialOutcomesProps {
   learningGoalsOutcomes?: LearningGoalBadgeDataFragment[];
@@ -56,36 +56,36 @@ export const StatelessEditableLearningMaterialOutcomes: React.FC<StatelessEditab
   );
 };
 
-export const addLearningMaterialOutcome = gql`
-  mutation addLearningMaterialOutcome($learningMaterialId: String!, $outcomeLearningGoalId: String!) {
-    addLearningMaterialOutcome(learningMaterialId: $learningMaterialId, outcomeLearningGoalId: $outcomeLearningGoalId) {
-      _id
-      outcomes {
-        learningGoal {
-          ...LearningGoalBadgeData
-        }
-      }
-    }
-  }
-  ${LearningGoalBadgeData}
-`;
+// export const addLearningMaterialOutcome = gql`
+//   mutation addLearningMaterialOutcome($learningMaterialId: String!, $outcomeLearningGoalId: String!) {
+//     addLearningMaterialOutcome(learningMaterialId: $learningMaterialId, outcomeLearningGoalId: $outcomeLearningGoalId) {
+//       _id
+//       outcomes {
+//         learningGoal {
+//           ...LearningGoalBadgeData
+//         }
+//       }
+//     }
+//   }
+//   ${LearningGoalBadgeData}
+// `;
 
-export const removeLearningMaterialOutcome = gql`
-  mutation removeLearningMaterialOutcome($learningMaterialId: String!, $outcomeLearningGoalId: String!) {
-    removeLearningMaterialOutcome(
-      learningMaterialId: $learningMaterialId
-      outcomeLearningGoalId: $outcomeLearningGoalId
-    ) {
-      _id
-      outcomes {
-        learningGoal {
-          ...LearningGoalBadgeData
-        }
-      }
-    }
-  }
-  ${LearningGoalBadgeData}
-`;
+// export const removeLearningMaterialOutcome = gql`
+//   mutation removeLearningMaterialOutcome($learningMaterialId: String!, $outcomeLearningGoalId: String!) {
+//     removeLearningMaterialOutcome(
+//       learningMaterialId: $learningMaterialId
+//       outcomeLearningGoalId: $outcomeLearningGoalId
+//     ) {
+//       _id
+//       outcomes {
+//         learningGoal {
+//           ...LearningGoalBadgeData
+//         }
+//       }
+//     }
+//   }
+//   ${LearningGoalBadgeData}
+// `;
 
 interface EditableLearningMaterialOutcomesProps
   extends Omit<StatelessEditableLearningMaterialOutcomesProps, 'onAdded' | 'onRemove'> {

@@ -4,8 +4,6 @@ import * as Operations from './topics.operations';
 import * as Apollo from '@apollo/client';
 export type CheckTopicKeyAvailabilityQueryVariables = Types.Exact<{
   key: Types.Scalars['String'];
-  topicType: Types.TopicType;
-  domainKey?: Types.Maybe<Types.Scalars['String']>;
 }>;
 
 
@@ -15,14 +13,8 @@ export type CheckTopicKeyAvailabilityQuery = (
     { __typename?: 'CheckTopicKeyAvailabilityResult' }
     & Pick<Types.CheckTopicKeyAvailabilityResult, 'available'>
     & { existingTopic?: Types.Maybe<(
-      { __typename?: 'Domain' }
-      & Pick<Types.Domain, '_id' | 'name'>
-    ) | (
-      { __typename?: 'Concept' }
-      & Pick<Types.Concept, '_id' | 'name'>
-    ) | (
-      { __typename?: 'LearningGoal' }
-      & Pick<Types.LearningGoal, '_id' | 'name'>
+      { __typename?: 'Topic' }
+      & Pick<Types.Topic, '_id' | 'name'>
     )> }
   ) }
 );
@@ -39,107 +31,19 @@ export type AttachTopicIsSubTopicOfTopicMutation = (
   & { attachTopicIsSubTopicOfTopic: (
     { __typename?: 'TopicIsSubTopicOfTopic' }
     & { parentTopic: (
-      { __typename?: 'Domain' }
-      & Pick<Types.Domain, '_id'>
+      { __typename?: 'Topic' }
+      & Pick<Types.Topic, '_id'>
       & { subTopics?: Types.Maybe<Array<(
         { __typename?: 'TopicIsSubTopicOfTopic' }
         & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
         & { subTopic: (
-          { __typename?: 'Domain' }
-          & Pick<Types.Domain, '_id'>
-        ) | (
-          { __typename?: 'Concept' }
-          & Pick<Types.Concept, '_id'>
-        ) | (
-          { __typename?: 'LearningGoal' }
-          & Pick<Types.LearningGoal, '_id'>
-        ) }
-      )>> }
-    ) | (
-      { __typename?: 'Concept' }
-      & Pick<Types.Concept, '_id'>
-      & { subTopics?: Types.Maybe<Array<(
-        { __typename?: 'TopicIsSubTopicOfTopic' }
-        & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
-        & { subTopic: (
-          { __typename?: 'Domain' }
-          & Pick<Types.Domain, '_id'>
-        ) | (
-          { __typename?: 'Concept' }
-          & Pick<Types.Concept, '_id'>
-        ) | (
-          { __typename?: 'LearningGoal' }
-          & Pick<Types.LearningGoal, '_id'>
-        ) }
-      )>> }
-    ) | (
-      { __typename?: 'LearningGoal' }
-      & Pick<Types.LearningGoal, '_id'>
-      & { subTopics?: Types.Maybe<Array<(
-        { __typename?: 'TopicIsSubTopicOfTopic' }
-        & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
-        & { subTopic: (
-          { __typename?: 'Domain' }
-          & Pick<Types.Domain, '_id'>
-        ) | (
-          { __typename?: 'Concept' }
-          & Pick<Types.Concept, '_id'>
-        ) | (
-          { __typename?: 'LearningGoal' }
-          & Pick<Types.LearningGoal, '_id'>
+          { __typename?: 'Topic' }
+          & Pick<Types.Topic, '_id'>
         ) }
       )>> }
     ), subTopic: (
-      { __typename?: 'Domain' }
-      & Pick<Types.Domain, '_id'>
-      & { parentTopics?: Types.Maybe<Array<(
-        { __typename?: 'TopicIsSubTopicOfTopic' }
-        & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
-        & { parentTopic: (
-          { __typename?: 'Domain' }
-          & Pick<Types.Domain, '_id'>
-        ) | (
-          { __typename?: 'Concept' }
-          & Pick<Types.Concept, '_id'>
-        ) | (
-          { __typename?: 'LearningGoal' }
-          & Pick<Types.LearningGoal, '_id'>
-        ) }
-      )>> }
-    ) | (
-      { __typename?: 'Concept' }
-      & Pick<Types.Concept, '_id'>
-      & { parentTopic?: Types.Maybe<(
-        { __typename?: 'TopicIsSubTopicOfTopic' }
-        & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
-        & { parentTopic: (
-          { __typename?: 'Domain' }
-          & Pick<Types.Domain, '_id'>
-        ) | (
-          { __typename?: 'Concept' }
-          & Pick<Types.Concept, '_id'>
-        ) | (
-          { __typename?: 'LearningGoal' }
-          & Pick<Types.LearningGoal, '_id'>
-        ) }
-      )> }
-    ) | (
-      { __typename?: 'LearningGoal' }
-      & Pick<Types.LearningGoal, '_id'>
-      & { parentTopic?: Types.Maybe<(
-        { __typename?: 'TopicIsSubTopicOfTopic' }
-        & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
-        & { parentTopic: (
-          { __typename?: 'Domain' }
-          & Pick<Types.Domain, '_id'>
-        ) | (
-          { __typename?: 'Concept' }
-          & Pick<Types.Concept, '_id'>
-        ) | (
-          { __typename?: 'LearningGoal' }
-          & Pick<Types.LearningGoal, '_id'>
-        ) }
-      )> }
+      { __typename?: 'Topic' }
+      & Pick<Types.Topic, '_id'>
     ) }
   ) }
 );
@@ -156,107 +60,19 @@ export type UpdateTopicIsSubTopicOfTopicMutation = (
   & { updateTopicIsSubTopicOfTopic: (
     { __typename?: 'TopicIsSubTopicOfTopic' }
     & { parentTopic: (
-      { __typename?: 'Domain' }
-      & Pick<Types.Domain, '_id'>
+      { __typename?: 'Topic' }
+      & Pick<Types.Topic, '_id'>
       & { subTopics?: Types.Maybe<Array<(
         { __typename?: 'TopicIsSubTopicOfTopic' }
         & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
         & { subTopic: (
-          { __typename?: 'Domain' }
-          & Pick<Types.Domain, '_id'>
-        ) | (
-          { __typename?: 'Concept' }
-          & Pick<Types.Concept, '_id'>
-        ) | (
-          { __typename?: 'LearningGoal' }
-          & Pick<Types.LearningGoal, '_id'>
-        ) }
-      )>> }
-    ) | (
-      { __typename?: 'Concept' }
-      & Pick<Types.Concept, '_id'>
-      & { subTopics?: Types.Maybe<Array<(
-        { __typename?: 'TopicIsSubTopicOfTopic' }
-        & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
-        & { subTopic: (
-          { __typename?: 'Domain' }
-          & Pick<Types.Domain, '_id'>
-        ) | (
-          { __typename?: 'Concept' }
-          & Pick<Types.Concept, '_id'>
-        ) | (
-          { __typename?: 'LearningGoal' }
-          & Pick<Types.LearningGoal, '_id'>
-        ) }
-      )>> }
-    ) | (
-      { __typename?: 'LearningGoal' }
-      & Pick<Types.LearningGoal, '_id'>
-      & { subTopics?: Types.Maybe<Array<(
-        { __typename?: 'TopicIsSubTopicOfTopic' }
-        & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
-        & { subTopic: (
-          { __typename?: 'Domain' }
-          & Pick<Types.Domain, '_id'>
-        ) | (
-          { __typename?: 'Concept' }
-          & Pick<Types.Concept, '_id'>
-        ) | (
-          { __typename?: 'LearningGoal' }
-          & Pick<Types.LearningGoal, '_id'>
+          { __typename?: 'Topic' }
+          & Pick<Types.Topic, '_id'>
         ) }
       )>> }
     ), subTopic: (
-      { __typename?: 'Domain' }
-      & Pick<Types.Domain, '_id'>
-      & { parentTopics?: Types.Maybe<Array<(
-        { __typename?: 'TopicIsSubTopicOfTopic' }
-        & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
-        & { parentTopic: (
-          { __typename?: 'Domain' }
-          & Pick<Types.Domain, '_id'>
-        ) | (
-          { __typename?: 'Concept' }
-          & Pick<Types.Concept, '_id'>
-        ) | (
-          { __typename?: 'LearningGoal' }
-          & Pick<Types.LearningGoal, '_id'>
-        ) }
-      )>> }
-    ) | (
-      { __typename?: 'Concept' }
-      & Pick<Types.Concept, '_id'>
-      & { parentTopic?: Types.Maybe<(
-        { __typename?: 'TopicIsSubTopicOfTopic' }
-        & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
-        & { parentTopic: (
-          { __typename?: 'Domain' }
-          & Pick<Types.Domain, '_id'>
-        ) | (
-          { __typename?: 'Concept' }
-          & Pick<Types.Concept, '_id'>
-        ) | (
-          { __typename?: 'LearningGoal' }
-          & Pick<Types.LearningGoal, '_id'>
-        ) }
-      )> }
-    ) | (
-      { __typename?: 'LearningGoal' }
-      & Pick<Types.LearningGoal, '_id'>
-      & { parentTopic?: Types.Maybe<(
-        { __typename?: 'TopicIsSubTopicOfTopic' }
-        & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
-        & { parentTopic: (
-          { __typename?: 'Domain' }
-          & Pick<Types.Domain, '_id'>
-        ) | (
-          { __typename?: 'Concept' }
-          & Pick<Types.Concept, '_id'>
-        ) | (
-          { __typename?: 'LearningGoal' }
-          & Pick<Types.LearningGoal, '_id'>
-        ) }
-      )> }
+      { __typename?: 'Topic' }
+      & Pick<Types.Topic, '_id'>
     ) }
   ) }
 );
@@ -272,107 +88,19 @@ export type DetachTopicIsSubTopicOfTopicMutation = (
   & { detachTopicIsSubTopicOfTopic: (
     { __typename?: 'DetachTopicIsSubTopicOfTopicResult' }
     & { parentTopic: (
-      { __typename?: 'Domain' }
-      & Pick<Types.Domain, '_id'>
+      { __typename?: 'Topic' }
+      & Pick<Types.Topic, '_id'>
       & { subTopics?: Types.Maybe<Array<(
         { __typename?: 'TopicIsSubTopicOfTopic' }
         & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
         & { subTopic: (
-          { __typename?: 'Domain' }
-          & Pick<Types.Domain, '_id'>
-        ) | (
-          { __typename?: 'Concept' }
-          & Pick<Types.Concept, '_id'>
-        ) | (
-          { __typename?: 'LearningGoal' }
-          & Pick<Types.LearningGoal, '_id'>
-        ) }
-      )>> }
-    ) | (
-      { __typename?: 'Concept' }
-      & Pick<Types.Concept, '_id'>
-      & { subTopics?: Types.Maybe<Array<(
-        { __typename?: 'TopicIsSubTopicOfTopic' }
-        & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
-        & { subTopic: (
-          { __typename?: 'Domain' }
-          & Pick<Types.Domain, '_id'>
-        ) | (
-          { __typename?: 'Concept' }
-          & Pick<Types.Concept, '_id'>
-        ) | (
-          { __typename?: 'LearningGoal' }
-          & Pick<Types.LearningGoal, '_id'>
-        ) }
-      )>> }
-    ) | (
-      { __typename?: 'LearningGoal' }
-      & Pick<Types.LearningGoal, '_id'>
-      & { subTopics?: Types.Maybe<Array<(
-        { __typename?: 'TopicIsSubTopicOfTopic' }
-        & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
-        & { subTopic: (
-          { __typename?: 'Domain' }
-          & Pick<Types.Domain, '_id'>
-        ) | (
-          { __typename?: 'Concept' }
-          & Pick<Types.Concept, '_id'>
-        ) | (
-          { __typename?: 'LearningGoal' }
-          & Pick<Types.LearningGoal, '_id'>
+          { __typename?: 'Topic' }
+          & Pick<Types.Topic, '_id'>
         ) }
       )>> }
     ), subTopic: (
-      { __typename?: 'Domain' }
-      & Pick<Types.Domain, '_id'>
-      & { parentTopics?: Types.Maybe<Array<(
-        { __typename?: 'TopicIsSubTopicOfTopic' }
-        & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
-        & { parentTopic: (
-          { __typename?: 'Domain' }
-          & Pick<Types.Domain, '_id'>
-        ) | (
-          { __typename?: 'Concept' }
-          & Pick<Types.Concept, '_id'>
-        ) | (
-          { __typename?: 'LearningGoal' }
-          & Pick<Types.LearningGoal, '_id'>
-        ) }
-      )>> }
-    ) | (
-      { __typename?: 'Concept' }
-      & Pick<Types.Concept, '_id'>
-      & { parentTopic?: Types.Maybe<(
-        { __typename?: 'TopicIsSubTopicOfTopic' }
-        & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
-        & { parentTopic: (
-          { __typename?: 'Domain' }
-          & Pick<Types.Domain, '_id'>
-        ) | (
-          { __typename?: 'Concept' }
-          & Pick<Types.Concept, '_id'>
-        ) | (
-          { __typename?: 'LearningGoal' }
-          & Pick<Types.LearningGoal, '_id'>
-        ) }
-      )> }
-    ) | (
-      { __typename?: 'LearningGoal' }
-      & Pick<Types.LearningGoal, '_id'>
-      & { parentTopic?: Types.Maybe<(
-        { __typename?: 'TopicIsSubTopicOfTopic' }
-        & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
-        & { parentTopic: (
-          { __typename?: 'Domain' }
-          & Pick<Types.Domain, '_id'>
-        ) | (
-          { __typename?: 'Concept' }
-          & Pick<Types.Concept, '_id'>
-        ) | (
-          { __typename?: 'LearningGoal' }
-          & Pick<Types.LearningGoal, '_id'>
-        ) }
-      )> }
+      { __typename?: 'Topic' }
+      & Pick<Types.Topic, '_id'>
     ) }
   ) }
 );
@@ -392,8 +120,6 @@ export type DetachTopicIsSubTopicOfTopicMutation = (
  * const { data, loading, error } = useCheckTopicKeyAvailabilityQuery({
  *   variables: {
  *      key: // value for 'key'
- *      topicType: // value for 'topicType'
- *      domainKey: // value for 'domainKey'
  *   },
  * });
  */

@@ -15,8 +15,8 @@ import { TopicLink } from '../lib/links/TopicLink';
 import { MapVisualisationTopicDataFragment } from './SubTopicsMapVisualisation.generated';
 
 export const MapVisualisationTopicData = gql`
-  fragment MapVisualisationTopicData on ITopic {
-    size
+  fragment MapVisualisationTopicData on Topic {
+    # size
     ...TopicLinkData
   }
   ${TopicLinkData}

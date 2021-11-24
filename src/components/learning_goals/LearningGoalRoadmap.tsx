@@ -50,11 +50,11 @@ export const LearningGoalRoadmapData = gql`
       }
       count
     }
-    domain {
-      domain {
-        ...DomainLinkData
-      }
-    }
+    # domain {
+    #   domain {
+    #     ...DomainLinkData
+    #   }
+    # }
     ...LearningGoalPublishButtonData
     ...RoadmapSubGoalsWrapperData
     ...StartLearningGoalButtonData

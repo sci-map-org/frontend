@@ -5,19 +5,19 @@ import { useGetDomainLearningPathsQuery } from './DomainLearningPaths.generated'
 import { LearningPathPreviewCardData } from './LearningPathPreviewCard';
 import { LearningPathPreviewCardList } from './LearningPathPreviewCardList';
 
-export const getDomainLearningPaths = gql`
-  query getDomainLearningPaths($domainKey: String!) {
-    getDomainByKey(key: $domainKey) {
-      _id
-      learningPaths(options: { sorting: { field: createdAt, direction: DESC } }) {
-        items {
-          ...LearningPathPreviewCardData
-        }
-      }
-    }
-  }
-  ${LearningPathPreviewCardData}
-`;
+// export const getDomainLearningPaths = gql`
+//   query getDomainLearningPaths($domainKey: String!) {
+//     getDomainByKey(key: $domainKey) {
+//       _id
+//       learningPaths(options: { sorting: { field: createdAt, direction: DESC } }) {
+//         items {
+//           ...LearningPathPreviewCardData
+//         }
+//       }
+//     }
+//   }
+//   ${LearningPathPreviewCardData}
+// `;
 interface DomainLearningPathsProps {
   domain: DomainDataFragment;
   h?: FlexProps['h'];

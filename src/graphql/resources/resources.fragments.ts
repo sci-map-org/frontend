@@ -1,6 +1,4 @@
 import gql from 'graphql-tag';
-import { ConceptData } from '../concepts/concepts.fragments';
-import { DomainData } from '../domains/domains.fragments';
 import { ResourceMediaType, ResourceType } from '../types';
 import { ResourcePreviewDataFragment, ResourceDataFragment } from './resources.fragments.generated';
 
@@ -55,14 +53,14 @@ export const ResourcePreviewData = gql`
       openedAt
       consumedAt
     }
-    coveredConceptsByDomain {
-      domain {
-        ...DomainData
-      }
-      coveredConcepts {
-        ...ConceptData
-      }
-    }
+    # coveredConceptsByDomain {
+    #   domain {
+    #     ...DomainData
+    #   }
+    #   coveredConcepts {
+    #     ...ConceptData
+    #   }
+    # }
     upvotes
     rating
     subResourceSeries {
@@ -74,8 +72,6 @@ export const ResourcePreviewData = gql`
       name
     }
   }
-  ${ConceptData}
-  ${DomainData}
 `;
 
 export const generateResourcePreviewData = (): ResourcePreviewDataFragment => ({
@@ -90,15 +86,13 @@ export const generateResourcePreviewData = (): ResourcePreviewDataFragment => ({
 export const ResourceWithCoveredConceptsByDomainData = gql`
   fragment ResourceWithCoveredConceptsByDomainData on Resource {
     _id
-    coveredConceptsByDomain {
-      domain {
-        ...DomainData
-      }
-      coveredConcepts {
-        ...ConceptData
-      }
-    }
+    # coveredConceptsByDomain {
+    #   domain {
+    #     ...DomainData
+    #   }
+    #   coveredConcepts {
+    #     ...ConceptData
+    #   }
+    # }
   }
-  ${ConceptData}
-  ${DomainData}
 `;

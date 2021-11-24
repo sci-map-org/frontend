@@ -2,10 +2,7 @@ import * as Types from '../../graphql/types';
 
 import { ResourceDataFragment, ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { UserAvatarDataFragment } from '../../components/users/UserAvatar.generated';
-import { DomainDataFragment, DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
-import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { SquareResourceCardDataFragment } from '../../components/resources/SquareResourceCard.generated';
-import { EditableLearningMaterialOutcomesData_Resource_Fragment, EditableLearningMaterialOutcomesData_LearningPath_Fragment } from '../../components/learning_materials/EditableLearningMaterialOutcomes.generated';
 import { EditableLearningMaterialPrerequisitesData_Resource_Fragment, EditableLearningMaterialPrerequisitesData_LearningPath_Fragment } from '../../components/learning_materials/EditableLearningMaterialPrerequisites.generated';
 import { LearningMaterialStarsRaterData_Resource_Fragment, LearningMaterialStarsRaterData_LearningPath_Fragment } from '../../components/learning_materials/LearningMaterialStarsRating.generated';
 import * as Operations from './ResourcePage';
@@ -19,19 +16,10 @@ export type GetResourceResourcePageQuery = (
   { __typename?: 'Query' }
   & { getResourceById: (
     { __typename?: 'Resource' }
-    & { creator?: Types.Maybe<(
+    & { createdBy?: Types.Maybe<(
       { __typename?: 'User' }
       & UserAvatarDataFragment
-    )>, coveredConceptsByDomain?: Types.Maybe<Array<(
-      { __typename?: 'LearningMaterialCoveredConceptsByDomainItem' }
-      & { domain: (
-        { __typename?: 'Domain' }
-        & DomainDataFragment
-      ), coveredConcepts: Array<(
-        { __typename?: 'Concept' }
-        & ConceptDataFragment
-      )> }
-    )>>, subResources?: Types.Maybe<Array<(
+    )>, subResources?: Types.Maybe<Array<(
       { __typename?: 'Resource' }
       & SquareResourceCardDataFragment
     )>>, subResourceSeries?: Types.Maybe<Array<(
@@ -51,7 +39,6 @@ export type GetResourceResourcePageQuery = (
       & Pick<Types.Resource, '_id' | 'name'>
     )> }
     & ResourceDataFragment
-    & EditableLearningMaterialOutcomesData_Resource_Fragment
     & EditableLearningMaterialPrerequisitesData_Resource_Fragment
     & LearningMaterialStarsRaterData_Resource_Fragment
   ) }

@@ -9,11 +9,11 @@ import { CompletedCheckbox, CompletedCheckboxProps } from '../lib/CompletedCheck
 import { ConceptKnownCheckboxDataFragment } from './ConceptKnownCheckbox.generated';
 
 export const ConceptKnownCheckboxData = gql`
-  fragment ConceptKnownCheckboxData on Concept {
+  fragment ConceptKnownCheckboxData on Topic {
     _id
-    known {
-      level
-    }
+    # known {
+    #   level
+    # }
   }
 `;
 

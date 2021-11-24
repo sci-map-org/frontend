@@ -14,8 +14,8 @@ import { SubTopicsCountIcon } from '../../components/topics/SubTopicsCountIcon';
 import { SubTopicsMapVisualisation } from '../../components/topics/SubTopicsMapVisualisation';
 import { MapVisualisationTopicDataFragment } from '../../components/topics/SubTopicsMapVisualisation.generated';
 import { TopicDescription } from '../../components/topics/TopicDescription';
-import { ConceptLinkData } from '../../graphql/concepts/concepts.fragments';
-import { DomainLinkData } from '../../graphql/domains/domains.fragments';
+// import { ConceptLinkData } from '../../graphql/concepts/concepts.fragments';
+// import { DomainLinkData } from '../../graphql/domains/domains.fragments';
 import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { LearningGoalLinkData } from '../../graphql/learning_goals/learning_goals.fragments';
 import { TopicType } from '../../graphql/types';
@@ -36,82 +36,77 @@ export const getTopicByIdExplorePage = gql`
       key
       name
       description
-      size
-      topicType
-      subTopics(options: { sorting: { type: index, direction: ASC } }) {
+      # size
+      # topicType
+      subTopics {
         subTopic {
           _id
           key
           name
-          size
-          topicType
-          ... on Concept {
-            domain {
-              ...DomainLinkData
-            }
-          }
-          ... on LearningGoal {
-            type
-          }
+          # size
+          # ... on Concept {
+          #   domain {
+          #     ...DomainLinkData
+          #   }
+          # }
+          # ... on LearningGoal {
+          #   type
+          # }
         }
       }
-      ... on Domain {
-        learningMaterialsTotalCount
-        parentTopics(options: { sorting: { type: index, direction: ASC } }) {
-          parentTopic {
-            topicType
-            ...DomainLinkData
-            ...ConceptLinkData
-            ...LearningGoalLinkData
-          }
-        }
-      }
+      # ... on Domain {
+      #   learningMaterialsTotalCount
+      #   parentTopics(options: { sorting: { type: index, direction: ASC } }) {
+      #     parentTopic {
+      #       topicType
+      #       ...DomainLinkData
+      #       ...ConceptLinkData
+      #       ...LearningGoalLinkData
+      #     }
+      #   }
+      # }
 
-      ... on Concept {
-        domain {
-          ...DomainLinkData
-        }
-        parentTopic {
-          parentTopic {
-            topicType
-            ...DomainLinkData
-            ...ConceptLinkData
-            ...LearningGoalLinkData
-          }
-        }
-      }
-      ... on LearningGoal {
-        type
-        domain {
-          domain {
-            ...DomainLinkData
-          }
-        }
-        parentTopic {
-          parentTopic {
-            topicType
-            ...DomainLinkData
-            ...ConceptLinkData
-            ...LearningGoalLinkData
-          }
-        }
-      }
+      # ... on Concept {
+      #   domain {
+      #     ...DomainLinkData
+      #   }
+      #   parentTopic {
+      #     parentTopic {
+      #       topicType
+      #       ...DomainLinkData
+      #       ...ConceptLinkData
+      #       ...LearningGoalLinkData
+      #     }
+      #   }
+      # }
+      # ... on LearningGoal {
+      #   type
+        # domain {
+        #   domain {
+        #     ...DomainLinkData
+        #   }
+        # }
+        # parentTopic {
+        #   parentTopic {
+        #     topicType
+        #     ...DomainLinkData
+        #     ...ConceptLinkData
+        #     ...LearningGoalLinkData
+        #   }
+        # }
+      # }
     }
   }
-  ${DomainLinkData}
-  ${ConceptLinkData}
   ${LearningGoalLinkData}
 `;
 
-export const getTopLevelDomains = gql`
-  query getTopLevelDomains {
-    getTopLevelDomains {
+export const getTopLevelTopics = gql`
+  query getTopLevelTopics {
+    getTopLevelTopics {
       items {
         _id
         key
         name
-        size
-        topicType
       }
     }
   }

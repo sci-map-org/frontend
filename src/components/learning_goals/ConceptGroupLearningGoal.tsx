@@ -2,7 +2,6 @@ import { AddIcon } from '@chakra-ui/icons';
 import { Box, Center, Flex, IconButton, Stack, Text, Wrap, WrapItem } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useMemo } from 'react';
-import { DomainData } from '../../graphql/domains/domains.fragments';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { LearningGoalData } from '../../graphql/learning_goals/learning_goals.fragments';
 import {
@@ -13,7 +12,6 @@ import {
 import { TopicType } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { RoleAccess } from '../auth/RoleAccess';
-import { ConceptBadge, ConceptBadgeData } from '../concepts/ConceptBadge';
 import { SubTopicSelector } from '../domains/SubTopicSelector';
 import { EditableTextarea } from '../lib/inputs/EditableTextarea';
 import { EditableTextInput } from '../lib/inputs/EditableTextInput';
@@ -51,9 +49,9 @@ export const ConceptGroupLearningGoalData = gql`
     }
     requiredSubGoals {
       subGoal {
-        ... on Concept {
-          ...ConceptBadgeData
-        }
+        # ... on Concept {
+        #   ...ConceptBadgeData
+        # }
         ... on LearningGoal {
           ...LearningGoalBadgeData
         }
@@ -68,9 +66,7 @@ export const ConceptGroupLearningGoalData = gql`
   ${StartLearningGoalButtonData}
   ${LearningGoalPublishButtonData}
   ${OtherLearnersViewerUserData}
-  ${ConceptBadgeData}
   ${LearningGoalBadgeData}
-  ${DomainData}
   ${ParentLearningGoalsNavigationBlockData}
   ${LearningGoalRelevantLearningMaterialsData}
 `;
@@ -166,17 +162,18 @@ export const ConceptGroupLearningGoal: React.FC<ConceptGroupLearningGoalProps> =
             <Wrap justify="center" align="center" px={4}>
               {(learningGoal.requiredSubGoals || []).map(({ subGoal }) => (
                 <WrapItem key={subGoal._id}>
-                  {subGoal.__typename === 'Concept' && subGoal.domain && (
-                    <ConceptBadge
-                      concept={subGoal}
-                      removable={editMode}
-                      onRemove={() =>
-                        detachLearningGoalRequiresSubGoal({
-                          variables: { learningGoalId: learningGoal._id, subGoalId: subGoal._id },
-                        })
-                      }
-                    />
-                  )}
+                  {subGoal.__typename === 'Concept' && subGoal.domain && 
+                    subGoal.name
+                    // <TopicBadge
+                    //   concept={subGoal}
+                    //   removable={editMode}
+                    //   onRemove={() =>
+                    //     detachLearningGoalRequiresSubGoal({
+                    //       variables: { learningGoalId: learningGoal._id, subGoalId: subGoal._id },
+                    //     })
+                    //   }
+                    // />
+                  }
                   {subGoal.__typename === 'LearningGoal' && subGoal.domain && (
                     <LearningGoalBadge
                       learningGoal={subGoal}

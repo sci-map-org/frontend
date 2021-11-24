@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 
-import { EditConceptPage } from '../../../../../src/pages/domains/concepts/EditConceptPage';
+// import { EditConceptPage } from '../../../../../src/pages/domains/concepts/EditConceptPage';
 
 const Page: React.FC = () => {
   const router = useRouter();
@@ -9,8 +9,8 @@ const Page: React.FC = () => {
 
   if (!conceptKey || typeof conceptKey !== 'string') return null;
   if (!key || typeof key !== 'string') return null;
-
-  return <EditConceptPage domainKey={key} conceptKey={conceptKey} />;
+  return null
+  // return <EditConceptPage domainKey={key} conceptKey={conceptKey} />;
 };
 
 export default Page;

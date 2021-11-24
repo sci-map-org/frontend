@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
 export const checkTopicKeyAvailability = gql`
-  query checkTopicKeyAvailability($key: String!, $topicType: TopicType!, $domainKey: String) {
-    checkTopicKeyAvailability(key: $key, topicType: $topicType, domainKey: $domainKey) {
+  query checkTopicKeyAvailability($key: String!) {
+    checkTopicKeyAvailability(key: $key) {
       available
       existingTopic {
         _id
@@ -21,7 +21,7 @@ export const attachTopicIsSubTopicOfTopic = gql`
     attachTopicIsSubTopicOfTopic(parentTopicId: $parentTopicId, subTopicId: $subTopicId, payload: $payload) {
       parentTopic {
         _id
-        subTopics(options: { sorting: { type: index, direction: ASC } }) {
+        subTopics{
           index
           subTopic {
             _id
@@ -30,30 +30,30 @@ export const attachTopicIsSubTopicOfTopic = gql`
       }
       subTopic {
         _id
-        ... on Domain {
-          parentTopics(options: { sorting: { type: index, direction: ASC } }) {
-            index
-            parentTopic {
-              _id
-            }
-          }
-        }
-        ... on Concept {
-          parentTopic {
-            index
-            parentTopic {
-              _id
-            }
-          }
-        }
-        ... on LearningGoal {
-          parentTopic {
-            index
-            parentTopic {
-              _id
-            }
-          }
-        }
+        # ... on Domain {
+        #   parentTopics(options: { sorting: { type: index, direction: ASC } }) {
+        #     index
+        #     parentTopic {
+        #       _id
+        #     }
+        #   }
+        # }
+        # ... on Concept {
+        #   parentTopic {
+        #     index
+        #     parentTopic {
+        #       _id
+        #     }
+        #   }
+        # }
+        # ... on LearningGoal {
+        #   parentTopic {
+        #     index
+        #     parentTopic {
+        #       _id
+        #     }
+        #   }
+        # }
       }
     }
   }
@@ -68,7 +68,7 @@ export const updateTopicIsSubTopicOfTopic = gql`
     updateTopicIsSubTopicOfTopic(parentTopicId: $parentTopicId, subTopicId: $subTopicId, payload: $payload) {
       parentTopic {
         _id
-        subTopics(options: { sorting: { type: index, direction: ASC } }) {
+        subTopics{
           index
           subTopic {
             _id
@@ -77,30 +77,30 @@ export const updateTopicIsSubTopicOfTopic = gql`
       }
       subTopic {
         _id
-        ... on Domain {
-          parentTopics(options: { sorting: { type: index, direction: ASC } }) {
-            index
-            parentTopic {
-              _id
-            }
-          }
-        }
-        ... on Concept {
-          parentTopic {
-            index
-            parentTopic {
-              _id
-            }
-          }
-        }
-        ... on LearningGoal {
-          parentTopic {
-            index
-            parentTopic {
-              _id
-            }
-          }
-        }
+        # ... on Domain {
+        #   parentTopics(options: { sorting: { type: index, direction: ASC } }) {
+        #     index
+        #     parentTopic {
+        #       _id
+        #     }
+        #   }
+        # }
+        # ... on Concept {
+        #   parentTopic {
+        #     index
+        #     parentTopic {
+        #       _id
+        #     }
+        #   }
+        # }
+        # ... on LearningGoal {
+        #   parentTopic {
+        #     index
+        #     parentTopic {
+        #       _id
+        #     }
+        #   }
+        # }
       }
     }
   }
@@ -111,7 +111,7 @@ export const detachTopicIsSubTopicOfTopic = gql`
     detachTopicIsSubTopicOfTopic(parentTopicId: $parentTopicId, subTopicId: $subTopicId) {
       parentTopic {
         _id
-        subTopics(options: { sorting: { type: index, direction: ASC } }) {
+        subTopics{
           index
           subTopic {
             _id
@@ -120,30 +120,30 @@ export const detachTopicIsSubTopicOfTopic = gql`
       }
       subTopic {
         _id
-        ... on Domain {
-          parentTopics(options: { sorting: { type: index, direction: ASC } }) {
-            index
-            parentTopic {
-              _id
-            }
-          }
-        }
-        ... on Concept {
-          parentTopic {
-            index
-            parentTopic {
-              _id
-            }
-          }
-        }
-        ... on LearningGoal {
-          parentTopic {
-            index
-            parentTopic {
-              _id
-            }
-          }
-        }
+        # ... on Domain {
+        #   parentTopics(options: { sorting: { type: index, direction: ASC } }) {
+        #     index
+        #     parentTopic {
+        #       _id
+        #     }
+        #   }
+        # }
+        # ... on Concept {
+        #   parentTopic {
+        #     index
+        #     parentTopic {
+        #       _id
+        #     }
+        #   }
+        # }
+        # ... on LearningGoal {
+        #   parentTopic {
+        #     index
+        #     parentTopic {
+        #       _id
+        #     }
+        #   }
+        # }
       }
     }
   }

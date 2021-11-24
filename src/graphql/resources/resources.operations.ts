@@ -14,25 +14,25 @@ export const searchResources = gql`
 
 export const getResourcePreviewData = gql`
   query getResourcePreviewData($id: String!) {
-    getResourceById(id: $id) {
+    getResourceById(resourceId: $id) {
       ...ResourcePreviewData
     }
   }
   ${ResourcePreviewData}
 `;
 
-export const voteResource = gql`
-  mutation voteResource($resourceId: String!, $value: ResourceVoteValue!) {
-    voteResource(resourceId: $resourceId, value: $value) {
-      _id
-      upvotes
-    }
-  }
-`;
+// export const voteResource = gql`
+//   mutation voteResource($resourceId: String!, $value: ResourceVoteValue!) {
+//     voteResource(resourceId: $resourceId, value: $value) {
+//       _id
+//       upvotes
+//     }
+//   }
+// `;
 
 export const deleteResource = gql`
   mutation deleteResource($_id: String!) {
-    deleteResource(_id: $_id) {
+    deleteResource(resourceId: $_id) {
       _id
       success
     }

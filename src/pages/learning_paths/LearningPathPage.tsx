@@ -22,7 +22,6 @@ import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
 import {
   EditableLearningMaterialOutcomes,
-  EditableLearningMaterialOutcomesData,
 } from '../../components/learning_materials/EditableLearningMaterialOutcomes';
 import {
   EditableLearningMaterialPrerequisites,
@@ -47,8 +46,6 @@ import { EditableDuration } from '../../components/resources/elements/Duration';
 import { LearningMaterialCoveredTopics } from '../../components/resources/LearningMaterialCoveredTopics';
 import { SquareResourceCardData } from '../../components/resources/SquareResourceCard';
 import { UserAvatar, UserAvatarData } from '../../components/users/UserAvatar';
-import { generateConceptData } from '../../graphql/concepts/concepts.fragments';
-import { generateDomainData } from '../../graphql/domains/domains.fragments';
 import { LearningMaterialWithCoveredConceptsByDomainData } from '../../graphql/learning_materials/learning_materials.fragments';
 import {
   generateLearningPathData,
@@ -67,7 +64,7 @@ import { ParentDomainsNavigationBlock } from '../../components/domains/ParentDom
 
 export const getLearningPathPage = gql`
   query getLearningPathPage($key: String!) {
-    getLearningPathByKey(key: $key) {
+    getLearningPathByKey(learningPathKey: $key) {
       ...LearningPathWithResourceItemsPreviewData
       complementaryResources {
         ...SquareResourceCardData
@@ -90,7 +87,6 @@ export const getLearningPathPage = gql`
       ...LearningPathCompletionData
       ...LearningMaterialWithCoveredConceptsByDomainData
       ...EditableLearningMaterialPrerequisitesData
-      ...EditableLearningMaterialOutcomesData
       ...LearningMaterialStarsRaterData
     }
   }
@@ -100,7 +96,6 @@ export const getLearningPathPage = gql`
   ${LearningPathCompletionData}
   ${UserAvatarData}
   ${EditableLearningMaterialPrerequisitesData}
-  ${EditableLearningMaterialOutcomesData}
   ${LearningMaterialStarsRaterData}
 `;
 
@@ -111,10 +106,10 @@ const learningPathPlaceholder: GetLearningPathPageQuery['getLearningPathByKey'] 
   public: true,
   rating: 4.5,
   coveredConceptsByDomain: [
-    {
-      domain: generateDomainData(),
-      coveredConcepts: [generateConceptData(), generateConceptData(), generateConceptData()],
-    },
+    // {
+    //   domain: generateDomainData(),
+    //   coveredConcepts: [generateConceptData(), generateConceptData(), generateConceptData()],
+    // },
   ],
   resourceItems: [
     {

@@ -7,8 +7,6 @@ import {
   ResourcePageInfo,
 } from '../../../../pages/RoutesPageInfos';
 import { SearchResultCardDataFragment } from './SearchResultCard.generated';
-import { SearchResultConceptCard, SearchResultConceptCardData } from './SearchResultConceptCard';
-import { SearchResultDomainCardData, SearchResultDomainCard } from './SearchResultDomainCard';
 import { SearchResultLearningGoalCard, SearchResultLearningGoalCardData } from './SearchResultLearningGoalCard';
 import { SearchResultLearningPathCard, SearchResultLearningPathCardData } from './SearchResultLearningPathCard';
 import { SearchResultResourceCard, SearchResultResourceCardData } from './SearchResultResourceCard';
@@ -16,15 +14,13 @@ import { SearchResultResourceCard, SearchResultResourceCardData } from './Search
 export const SearchResultCardData = gql`
   fragment SearchResultCardData on SearchResult {
     entity {
-      ...SearchResultDomainCardData
-      ...SearchResultConceptCardData
+      # ...SearchResultDomainCardData
+      # ...SearchResultConceptCardData
       ...SearchResultLearningGoalCardData
       ...SearchResultLearningPathCardData
       ...SearchResultResourceCardData
     }
   }
-  ${SearchResultDomainCardData}
-  ${SearchResultConceptCardData}
   ${SearchResultLearningGoalCardData}
   ${SearchResultLearningPathCardData}
   ${SearchResultResourceCardData}
@@ -35,22 +31,23 @@ export const SearchResultCard: React.FC<{ searchResult: SearchResultCardDataFrag
   isHighlighted,
 }) => {
   switch (searchResult.entity.__typename) {
-    case 'Domain':
-      return (
-        <SearchResultDomainCard
-          entityPageInfo={DomainPageInfo(searchResult.entity)}
-          domain={searchResult.entity}
-          isHighlighted={isHighlighted}
-        />
-      );
-    case 'Concept':
-      return searchResult.entity.domain ? (
-        <SearchResultConceptCard
-          entityPageInfo={ConceptPageInfo(searchResult.entity.domain, searchResult.entity)}
-          concept={searchResult.entity}
-          isHighlighted={isHighlighted}
-        />
-      ) : null;
+    // TODO: Topic case
+    // case 'Domain':
+    //   return (
+    //     <SearchResultDomainCard
+    //       entityPageInfo={DomainPageInfo(searchResult.entity)}
+    //       domain={searchResult.entity}
+    //       isHighlighted={isHighlighted}
+    //     />
+    //   );
+    // case 'Concept':
+    //   return searchResult.entity.domain ? (
+    //     <SearchResultConceptCard
+    //       entityPageInfo={ConceptPageInfo(searchResult.entity.domain, searchResult.entity)}
+    //       concept={searchResult.entity}
+    //       isHighlighted={isHighlighted}
+    //     />
+    //   ) : null;
     case 'LearningGoal':
       return (
         <SearchResultLearningGoalCard

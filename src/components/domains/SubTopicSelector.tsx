@@ -14,32 +14,31 @@ import { useDebouncedCallback } from 'use-debounce';
 import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { TopicType } from '../../graphql/types';
 import { generateUrlKey } from '../../services/url.service';
-import { ConceptSubGoalCardData, LearningGoalSubGoalCardData } from '../learning_goals/SubGoalCard';
+// import { ConceptSubGoalCardData, LearningGoalSubGoalCardData } from '../learning_goals/SubGoalCard';
 import { EntitySelector } from '../lib/selectors/EntitySelector';
 import { NewTopic } from '../topics/NewTopic';
 import { SearchSubTopicsQuery, useSearchSubTopicsLazyQuery } from './SubTopicSelector.generated';
 
 export const searchSubTopics = gql`
   query searchSubTopics($domainId: String!, $options: SearchTopicsOptions!) {
-    searchSubTopics(domainId: $domainId, options: $options) {
+    searchSubTopics(topicId: $domainId, options: $options) {
       items {
-        ... on Concept {
-          ...ConceptSubGoalCardData
-        }
-        ... on LearningGoal {
-          ...LearningGoalSubGoalCardData
-        }
-        ... on Domain {
-          _id
-          key
-          name
-          description
-        }
+        _id
+        # ... on Concept {
+        #   ...ConceptSubGoalCardData
+        # }
+        # ... on LearningGoal {
+        #   ...LearningGoalSubGoalCardData
+        # }
+        # ... on Domain {
+        #   _id
+        #   key
+        #   name
+        #   description
+        # }
       }
     }
   }
-  ${ConceptSubGoalCardData}
-  ${LearningGoalSubGoalCardData}
 `;
 
 type SubTopicResultItem = SearchSubTopicsQuery['searchSubTopics']['items'][0];

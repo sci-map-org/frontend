@@ -1,7 +1,8 @@
 import { useRouter } from 'next/router';
 
-import ConceptListPage from '../../../../src/pages/domains/concepts/ConceptListPage';
+// import ConceptListPage from '../../../../src/pages/domains/concepts/ConceptListPage';
 
+// TODO
 const Page: React.FC = () => {
   const router = useRouter();
 
@@ -9,7 +10,8 @@ const Page: React.FC = () => {
 
   if (!key || typeof key !== 'string') return null;
 
-  return <ConceptListPage domainKey={key} />;
+  return null
+  // return <ConceptListPage domainKey={key} />;
 };
 
 export default Page;

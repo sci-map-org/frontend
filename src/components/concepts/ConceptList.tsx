@@ -18,13 +18,13 @@ interface ConceptListProps {
   onUpdateConceptIndex?: (concept: ConceptDataFragment) => void;
 }
 
-export const updateConceptBelongsToDomainIndex = gql`
-  mutation updateConceptBelongsToDomainIndex($conceptId: String!, $domainId: String!, $index: Float!) {
-    updateConceptBelongsToDomain(conceptId: $conceptId, domainId: $domainId, payload: { index: $index }) {
-      index
-    }
-  }
-`;
+// export const updateConceptBelongsToDomainIndex = gql`
+//   mutation updateConceptBelongsToDomainIndex($conceptId: String!, $domainId: String!, $index: Float!) {
+//     updateConceptBelongsToDomain(conceptId: $conceptId, domainId: $domainId, payload: { index: $index }) {
+//       index
+//     }
+//   }
+// `;
 
 export const ConceptList: React.FC<ConceptListProps> = ({ domain, domainConceptItems, onUpdateConceptIndex }) => {
   const [updateIndex] = useUpdateConceptBelongsToDomainIndexMutation();
