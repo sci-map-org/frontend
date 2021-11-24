@@ -1,6 +1,7 @@
 import * as Types from '../types';
 
-import { ResourceDataFragment, ResourcePreviewDataFragment } from './resources.fragments.generated';
+import { ResourceDataFragment } from './resources.fragments.generated';
+import { ResourcePreviewCardDataFragment } from '../../components/resources/ResourcePreviewCard.generated';
 import * as Operations from './resources.operations';
 import * as Apollo from '@apollo/client';
 export type SearchResourcesQueryVariables = Types.Exact<{
@@ -29,7 +30,7 @@ export type GetResourcePreviewDataQuery = (
   { __typename?: 'Query' }
   & { getResourceById: (
     { __typename?: 'Resource' }
-    & ResourcePreviewDataFragment
+    & ResourcePreviewCardDataFragment
   ) }
 );
 

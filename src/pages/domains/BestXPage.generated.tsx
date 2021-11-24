@@ -1,6 +1,6 @@
 import * as Types from '../../graphql/types';
 
-import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { ResourcePreviewCardDataFragment } from '../../components/resources/ResourcePreviewCard.generated';
 import { LearningPathPreviewCardDataFragment } from '../../components/learning_paths/LearningPathPreviewCard.generated';
 import * as Operations from './BestXPage';
 import * as Apollo from '@apollo/client';
@@ -19,7 +19,7 @@ export type GetBestXPageDataQuery = (
       { __typename?: 'TopicLearningMaterialsResults' }
       & { items: Array<(
         { __typename?: 'Resource' }
-        & ResourcePreviewDataFragment
+        & ResourcePreviewCardDataFragment
       ) | (
         { __typename?: 'LearningPath' }
         & LearningPathPreviewCardDataFragment

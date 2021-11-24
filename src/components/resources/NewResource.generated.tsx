@@ -1,6 +1,6 @@
 import * as Types from '../../graphql/types';
 
-import { ResourceDataFragment, ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import * as Operations from './NewResource';
 import * as Apollo from '@apollo/client';
 export type CreateResourceMutationVariables = Types.Exact<{

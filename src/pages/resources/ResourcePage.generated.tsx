@@ -1,6 +1,6 @@
 import * as Types from '../../graphql/types';
 
-import { ResourceDataFragment, ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { UserAvatarDataFragment } from '../../components/users/UserAvatar.generated';
 import { SquareResourceCardDataFragment } from '../../components/resources/SquareResourceCard.generated';
 import { EditableLearningMaterialPrerequisitesData_Resource_Fragment, EditableLearningMaterialPrerequisitesData_LearningPath_Fragment } from '../../components/learning_materials/EditableLearningMaterialPrerequisites.generated';

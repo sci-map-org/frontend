@@ -1,6 +1,6 @@
 import * as Types from '../../graphql/types';
 
-import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { ResourcePreviewCardDataFragment } from '../resources/ResourcePreviewCard.generated';
 import { LearningPathPreviewCardDataFragment } from '../learning_paths/LearningPathPreviewCard.generated';
 import * as Operations from './TopicRecommendedLearningMaterials';
 import * as Apollo from '@apollo/client';
@@ -19,7 +19,7 @@ export type GetDomainRecommendedLearningMaterialsQuery = (
       { __typename?: 'TopicLearningMaterialsResults' }
       & { items: Array<(
         { __typename?: 'Resource' }
-        & ResourcePreviewDataFragment
+        & ResourcePreviewCardDataFragment
       ) | (
         { __typename?: 'LearningPath' }
         & LearningPathPreviewCardDataFragment

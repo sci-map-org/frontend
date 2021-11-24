@@ -1,7 +1,7 @@
 import * as Types from '../../graphql/types';
 
 import { LearningPathDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
-import { ResourceDataFragment, ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import * as Operations from './LearningPathComplementaryResourcesManager';
 import * as Apollo from '@apollo/client';
 export type AddComplementaryResourceToLearningPathMutationVariables = Types.Exact<{

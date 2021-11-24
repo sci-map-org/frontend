@@ -1,9 +1,7 @@
-import { AddIcon, SearchIcon } from '@chakra-ui/icons';
+import { SearchIcon } from '@chakra-ui/icons';
 import {
   Badge,
-  Box,
-  Button,
-  Checkbox,
+  Box, Checkbox,
   Flex,
   FormControl,
   FormLabel,
@@ -16,7 +14,7 @@ import {
   Tag,
   TagCloseButton,
   TagLabel,
-  Text,
+  Text
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { values, without } from 'lodash';
@@ -25,8 +23,6 @@ import MultiSelect from 'react-multi-select-component';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 import BeatLoader from 'react-spinners/BeatLoader';
 import { useDebounce } from 'use-debounce';
-import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
-import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
 import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import {
@@ -34,14 +30,14 @@ import {
   ResourceType,
   TopicLearningMaterialsFilterOptions,
   TopicLearningMaterialsOptions,
-  TopicLearningMaterialsSortingType,
+  TopicLearningMaterialsSortingType
 } from '../../graphql/types';
 import { theme } from '../../theme/theme';
 import { LearningPathPreviewCard, LearningPathPreviewCardData } from '../learning_paths/LearningPathPreviewCard';
 import { LearningPathPreviewCardDataFragment } from '../learning_paths/LearningPathPreviewCard.generated';
 import { ResourceTypeBadge, resourceTypeColorMapping, resourceTypeToLabel } from '../resources/elements/ResourceType';
 import { LearningMaterialPreviewCardList } from '../resources/LearningMaterialPreviewCardList';
-import { ResourcePreviewCard } from '../resources/ResourcePreviewCard';
+import { ResourcePreviewCard, ResourcePreviewCardData } from '../resources/ResourcePreviewCard';
 
 export const getTopicRecommendedLearningMaterials = gql`
   query getDomainRecommendedLearningMaterials(
@@ -52,13 +48,13 @@ export const getTopicRecommendedLearningMaterials = gql`
       _id
       learningMaterials(options: $learningMaterialsOptions) {
         items {
-          ...ResourcePreviewData
+          ...ResourcePreviewCardData
           ...LearningPathPreviewCardData
         }
       }
     }
   }
-  ${ResourcePreviewData}
+  ${ResourcePreviewCardData}
   ${LearningPathPreviewCardData}
 `;
 
@@ -203,7 +199,6 @@ export const TopicRecommendedLearningMaterials: React.FC<{
             return (
               <ResourcePreviewCard
                 key={learningMaterial._id}
-                domainKey={domain.key}
                 resource={learningMaterial}
                 onResourceConsumed={() => reloadRecommendedResources()}
                 showCompletedNotificationToast={true}

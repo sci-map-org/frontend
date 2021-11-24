@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 import { ResourceMediaType, ResourceType } from '../types';
-import { ResourcePreviewDataFragment, ResourceDataFragment } from './resources.fragments.generated';
+import { ResourceDataFragment } from './resources.fragments.generated';
 
 export const ResourceData = gql`
   fragment ResourceData on Resource {
@@ -37,62 +37,13 @@ export const generateResourceData = (): ResourceDataFragment => ({
   url: 'https://myresource.url',
 });
 
-export const ResourcePreviewData = gql`
-  fragment ResourcePreviewData on Resource {
+export const ResourceWithCoveredTopicsData = gql`
+  fragment ResourceWithCoveredTopicsData on Resource {
     _id
-    name
-    type
-    mediaType
-    url
-    description
-    durationSeconds
-    tags {
-      name
+    coveredSubTopics(options: {}) {
+      items {
+        ...TopicLinkData
+      }
     }
-    consumed {
-      openedAt
-      consumedAt
-    }
-    # coveredConceptsByDomain {
-    #   domain {
-    #     ...DomainData
-    #   }
-    #   coveredConcepts {
-    #     ...ConceptData
-    #   }
-    # }
-    upvotes
-    rating
-    subResourceSeries {
-      _id
-      name
-    }
-    subResources {
-      _id
-      name
-    }
-  }
-`;
-
-export const generateResourcePreviewData = (): ResourcePreviewDataFragment => ({
-  _id: Math.random().toString(),
-  name: 'My resource name',
-  type: ResourceType.Article,
-  url: 'https://myresource.url',
-  mediaType: ResourceMediaType.Text,
-  upvotes: 32,
-});
-
-export const ResourceWithCoveredConceptsByDomainData = gql`
-  fragment ResourceWithCoveredConceptsByDomainData on Resource {
-    _id
-    # coveredConceptsByDomain {
-    #   domain {
-    #     ...DomainData
-    #   }
-    #   coveredConcepts {
-    #     ...ConceptData
-    #   }
-    # }
   }
 `;

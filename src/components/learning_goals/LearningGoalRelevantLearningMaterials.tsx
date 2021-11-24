@@ -1,9 +1,8 @@
 import { Badge, Center, Flex, Icon, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
-import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
 import { LearningPathPreviewCard, LearningPathPreviewCardData } from '../learning_paths/LearningPathPreviewCard';
 import { LearningMaterialPreviewCardList } from '../resources/LearningMaterialPreviewCardList';
-import { ResourcePreviewCard } from '../resources/ResourcePreviewCard';
+import { ResourcePreviewCard, ResourcePreviewCardData } from '../resources/ResourcePreviewCard';
 import { LearningGoalRelevantLearningMaterialsDataFragment } from './LearningGoalRelevantLearningMaterials.generated';
 import { ImRadioUnchecked } from '@react-icons/all-files/im/ImRadioUnchecked';
 import { ImRadioChecked } from '@react-icons/all-files/im/ImRadioChecked';
@@ -15,14 +14,14 @@ export const LearningGoalRelevantLearningMaterialsData = gql`
     relevantLearningMaterials(options: {}) {
       items {
         learningMaterial {
-          ...ResourcePreviewData
+          ...ResourcePreviewCardData
           ...LearningPathPreviewCardData
         }
         coverage
       }
     }
   }
-  ${ResourcePreviewData}
+  ${ResourcePreviewCardData}
   ${LearningPathPreviewCardData}
 `;
 interface LearningGoalRelevantLearningMaterialsProps {

@@ -1,5 +1,6 @@
 import gql from 'graphql-tag';
-import { ResourceData, ResourcePreviewData } from './resources.fragments';
+import { ResourcePreviewCardData } from '../../components/resources/ResourcePreviewCard';
+import { ResourceData } from './resources.fragments';
 
 export const searchResources = gql`
   query searchResources($query: String!, $options: SearchResourcesOptions!) {
@@ -15,10 +16,10 @@ export const searchResources = gql`
 export const getResourcePreviewData = gql`
   query getResourcePreviewData($id: String!) {
     getResourceById(resourceId: $id) {
-      ...ResourcePreviewData
+      ...ResourcePreviewCardData
     }
   }
-  ${ResourcePreviewData}
+  ${ResourcePreviewCardData}
 `;
 
 // export const voteResource = gql`

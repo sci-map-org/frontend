@@ -3,8 +3,8 @@ import gql from 'graphql-tag';
 import { useState } from 'react';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { LearningPathPreviewCardData } from '../../components/learning_paths/LearningPathPreviewCard';
+import { ResourcePreviewCardData } from '../../components/resources/ResourcePreviewCard';
 import { TopicRecommendedLearningMaterials } from '../../components/topics/TopicRecommendedLearningMaterials';
-import { ResourcePreviewData } from '../../graphql/resources/resources.fragments';
 import {
   LearningMaterialType,
   ResourceType, TopicLearningMaterialsOptions,
@@ -22,13 +22,13 @@ export const getBestXPageData = gql`
       description
       learningMaterials(options: $learningMaterialsOptions) {
         items {
-          ...ResourcePreviewData
+          ...ResourcePreviewCardData
           ...LearningPathPreviewCardData
         }
       }
     }
   }
-  ${ResourcePreviewData}
+  ${ResourcePreviewCardData}
   ${LearningPathPreviewCardData}
 `;
 
