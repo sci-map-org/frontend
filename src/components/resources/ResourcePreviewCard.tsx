@@ -46,41 +46,6 @@ import { ResourceUrlLinkViewer, ResourceUrlLinkWrapper } from './elements/Resour
 import { ResourceYoutubePlayer } from './elements/ResourceYoutubePlayer';
 import { ResourcePreviewCardDataFragment } from './ResourcePreviewCard.generated';
 
-export const ResourcePreviewCardData = gql`
-  fragment ResourcePreviewCardData on Resource {
-    _id
-    name
-    type
-    mediaType
-    url
-    description
-    durationSeconds
-    tags {
-      name
-    }
-    consumed {
-      openedAt
-      consumedAt
-    }
-    coveredSubTopics(options: {}) {
-      items {
-        ...TopicLinkData
-      }
-    }
-    upvotes
-    rating
-    subResourceSeries {
-      _id
-      name
-    }
-    subResources {
-      _id
-      name
-    }
-  }
-  ${TopicLinkData}
-`;
-
 export const generateResourcePreviewData = (): ResourcePreviewCardDataFragment => ({
   _id: Math.random().toString(),
   name: 'My resource name',

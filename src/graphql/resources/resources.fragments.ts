@@ -1,4 +1,5 @@
 import gql from 'graphql-tag';
+import { TopicLinkData } from '../topics/topics.fragments';
 import { ResourceMediaType, ResourceType } from '../types';
 import { ResourceDataFragment } from './resources.fragments.generated';
 
@@ -36,6 +37,41 @@ export const generateResourceData = (): ResourceDataFragment => ({
   mediaType: ResourceMediaType.Text,
   url: 'https://myresource.url',
 });
+
+export const ResourcePreviewCardData = gql`
+  fragment ResourcePreviewCardData on Resource {
+    _id
+    name
+    type
+    mediaType
+    url
+    description
+    durationSeconds
+    tags {
+      name
+    }
+    consumed {
+      openedAt
+      consumedAt
+    }
+    coveredSubTopics(options: {}) {
+      items {
+        ...TopicLinkData
+      }
+    }
+    upvotes
+    rating
+    subResourceSeries {
+      _id
+      name
+    }
+    subResources {
+      _id
+      name
+    }
+  }
+  ${TopicLinkData}
+`;
 
 export const ResourceWithCoveredTopicsData = gql`
   fragment ResourceWithCoveredTopicsData on Resource {

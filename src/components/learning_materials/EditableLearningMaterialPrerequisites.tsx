@@ -6,8 +6,8 @@ import { LearningGoalBadgeData } from '../learning_goals/LearningGoalBadge';
 import { LearningGoalBadgeDataFragment } from '../learning_goals/LearningGoalBadge.generated';
 import {
   EditableLearningMaterialPrerequisitesDataFragment,
-  useAddLearningMaterialPrerequisiteMutation,
-  useRemoveLearningMaterialPrerequisiteMutation,
+  // useAddLearningMaterialPrerequisiteMutation,
+  // useRemoveLearningMaterialPrerequisiteMutation,
 } from './EditableLearningMaterialPrerequisites.generated';
 
 export const EditableLearningMaterialPrerequisitesData = gql`

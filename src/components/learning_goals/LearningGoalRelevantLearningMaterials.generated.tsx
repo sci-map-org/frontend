@@ -1,6 +1,6 @@
 import * as Types from '../../graphql/types';
 
-import { ResourcePreviewCardDataFragment } from '../resources/ResourcePreviewCard.generated';
+import { ResourcePreviewCardDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { LearningPathPreviewCardDataFragment } from '../learning_paths/LearningPathPreviewCard.generated';
 export type LearningGoalRelevantLearningMaterialsDataFragment = (
   { __typename?: 'LearningGoal' }

@@ -20,6 +20,12 @@ export const TopicPageInfo = (topic: TopicLinkDataFragment): PageInfo => ({
   breadcrumbLinkProps: topicLinkStyleProps,
 });
 
+export const NewTopicPagePath = '/topics/new';
+export const NewTopicPageInfo : PageInfo = {
+    name: 'New Topic',
+    path: NewTopicPagePath,
+    routePath: NewTopicPagePath,
+  };
 
 export const ManageTopicPagePath = (topicKey: string) => `/topics/${topicKey}/manage`;
 export const ManageTopicPageInfo = (topic: TopicLinkDataFragment): PageInfo => ({

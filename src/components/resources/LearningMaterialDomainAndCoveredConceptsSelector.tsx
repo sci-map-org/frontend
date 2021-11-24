@@ -2,15 +2,13 @@ import { Box, Flex, IconButton, Skeleton, Stack, Text } from '@chakra-ui/react';
 import { MinusIcon } from '@chakra-ui/icons';
 import { differenceBy } from 'lodash';
 import { useSearchDomainsLazyQuery } from '../../graphql/domains/domains.operations.generated';
-import { LearningMaterialWithCoveredConceptsByDomainDataFragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
+import { LearningMaterialWithCoveredTopicsDataFragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
 import {
   useAttachLearningMaterialToDomainMutation,
   useDetachLearningMaterialFromDomainMutation,
 } from '../../graphql/learning_materials/learning_materials.operations.generated';
 import { EntitySelector } from '../lib/selectors/EntitySelector';
 import { InternalLink, PageLink } from '../navigation/InternalLink';
-import { LearningMaterialDomainCoveredConceptsSelector } from './CoveredConceptsSelector';
-import { DomainPageInfo } from '../../pages/RoutesPageInfos';
 
 export const LearningMaterialDomainAndCoveredConceptsSelector: React.FC<{
   learningMaterial: LearningMaterialWithCoveredConceptsByDomainDataFragment;
@@ -46,13 +44,13 @@ export const LearningMaterialDomainAndCoveredConceptsSelector: React.FC<{
             </Text>
           </Stack>
           <Box pl={5}>
-            <LearningMaterialDomainCoveredConceptsSelector
+            {/* <LearningMaterialDomainCoveredConceptsSelector
               domain={domain}
               learningMaterialId={learningMaterial._id}
               isLoading={isLoading}
               coveredConcepts={coveredConcepts}
               allowCreation={allowConceptCreation}
-            />
+            /> */}
           </Box>
         </Flex>
       ))}

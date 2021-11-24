@@ -1,11 +1,11 @@
 import { Heading, Stack, StackProps } from '@chakra-ui/react';
-import { LearningMaterialWithCoveredConceptsByDomainDataFragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
+import { LearningMaterialWithCoveredTopicsDataFragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
 import { RoleAccess, RoleAccessAllowedRule } from '../auth/RoleAccess';
-import { LearningMaterialCoveredConceptsByDomainViewer } from './LearningMaterialCoveredConceptsByDomainViewer';
+import { LearningMaterialCoveredTopicsViewer } from '../learning_materials/LearningMaterialCoveredTopicsViewer';
 import { LearningMaterialDomainAndCoveredConceptsSelector } from './LearningMaterialDomainAndCoveredConceptsSelector';
 
 export const LearningMaterialCoveredTopics: React.FC<{
-  learningMaterial: LearningMaterialWithCoveredConceptsByDomainDataFragment;
+  learningMaterial: LearningMaterialWithCoveredTopicsDataFragment;
   isLoading?: boolean;
   editMode: boolean | RoleAccessAllowedRule;
   w?: StackProps['w'];
@@ -14,19 +14,19 @@ export const LearningMaterialCoveredTopics: React.FC<{
     <RoleAccess
       accessRule={editMode}
       renderAccessDenied={() =>
-        !!learningMaterial.coveredConceptsByDomain?.length && (
+        !!learningMaterial.coveredSubTopics?.items.length && (
           <CoveredTopicsContainer w={w}>
-            <LearningMaterialCoveredConceptsByDomainViewer learningMaterial={learningMaterial} isLoading={isLoading} />
+            <LearningMaterialCoveredTopicsViewer learningMaterial={learningMaterial} isLoading={isLoading} />
           </CoveredTopicsContainer>
         )
       }
     >
       <CoveredTopicsContainer w={w}>
-        <LearningMaterialDomainAndCoveredConceptsSelector
+        {/* <LearningMaterialDomainAndCoveredConceptsSelector
           allowConceptCreation
           learningMaterial={learningMaterial}
           isLoading={isLoading}
-        />
+        /> */}
       </CoveredTopicsContainer>
     </RoleAccess>
   );

@@ -1,6 +1,6 @@
 import * as Types from '../types';
 
-import { ResourcePreviewCardDataFragment } from '../../components/resources/ResourcePreviewCard.generated';
+import { ResourcePreviewCardDataFragment } from '../resources/resources.fragments.generated';
 export type LearningPathDataFragment = (
   { __typename?: 'LearningPath' }
   & Pick<Types.LearningPath, '_id' | 'key' | 'public' | 'name' | 'description' | 'durationSeconds'>

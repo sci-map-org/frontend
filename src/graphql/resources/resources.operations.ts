@@ -1,6 +1,5 @@
 import gql from 'graphql-tag';
-import { ResourcePreviewCardData } from '../../components/resources/ResourcePreviewCard';
-import { ResourceData } from './resources.fragments';
+import { ResourceData, ResourcePreviewCardData } from './resources.fragments';
 
 export const searchResources = gql`
   query searchResources($query: String!, $options: SearchResourcesOptions!) {

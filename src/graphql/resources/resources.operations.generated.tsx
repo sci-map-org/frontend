@@ -1,7 +1,6 @@
 import * as Types from '../types';
 
-import { ResourceDataFragment } from './resources.fragments.generated';
-import { ResourcePreviewCardDataFragment } from '../../components/resources/ResourcePreviewCard.generated';
+import { ResourceDataFragment, ResourcePreviewCardDataFragment } from './resources.fragments.generated';
 import * as Operations from './resources.operations';
 import * as Apollo from '@apollo/client';
 export type SearchResourcesQueryVariables = Types.Exact<{

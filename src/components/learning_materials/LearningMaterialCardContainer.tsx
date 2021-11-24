@@ -24,8 +24,7 @@ import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { InternalLink, PageLink } from '../navigation/InternalLink';
-import { LearningMaterialDomainCoveredConceptsSelector } from '../resources/CoveredConceptsSelector';
-import { LearningMaterialCoveredConceptsByDomainViewer } from '../resources/LearningMaterialCoveredConceptsByDomainViewer';
+import { LearningMaterialCoveredTopicsViewer } from './LearningMaterialCoveredTopicsViewer';
 import { LearningMaterialDomainAndCoveredConceptsSelector } from '../resources/LearningMaterialDomainAndCoveredConceptsSelector';
 
 interface LearningMaterialCardContainerProps {
@@ -177,6 +176,7 @@ export const LearningMaterialCardCoveredTopics: React.FC<{
           ) : (
             <LearningMaterialCoveredConceptsByDomainViewer learningMaterial={learningMaterial} />
           )} */}
+          <LearningMaterialCoveredTopicsViewer learningMaterial={learningMaterial} />
         </PopoverBody>
       </PopoverContent>
     </Popover>

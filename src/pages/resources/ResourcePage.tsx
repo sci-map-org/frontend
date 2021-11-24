@@ -133,8 +133,9 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
         )
       }
       renderTopRight={<TopRightIconButtons loading={loading} resource={resource} />}
-      renderTopLeft={
-        <ParentDomainsNavigationBlock domains={(resource.coveredConceptsByDomain || []).map(({ domain }) => domain)} />
+      renderTopLeft={"Showed In"
+      // TODO
+        // <ParentDomainsNavigationBlock domains={(resource.coveredConceptsByDomain || []).map(({ domain }) => domain)} />
       }
     >
       <Stack w={['30rem', '36rem', '40rem', '50rem']} spacing={4}>
@@ -150,12 +151,12 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
             </Stack>
           ))}
         <Flex justifyContent="space-between" alignItems="flex-end">
-          {resource.creator && (
+          {resource.createdBy && (
             <Stack direction="row" alignItems="center">
               <Text fontWeight={300} fontSize="md">
                 Added By
               </Text>
-              <UserAvatar user={resource.creator} size="xs" />
+              <UserAvatar user={resource.createdBy} size="xs" />
             </Stack>
           )}
           <Stack direction="row" spacing={2} alignItems="baseline">
@@ -213,21 +214,22 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
           </Stack>
         </Flex>
 
-        {(isResourceSeriesType(resource.type) || resource.subResourceSeries?.length) && (
+        {/* TODO */}
+        {/* {(isResourceSeriesType(resource.type) || resource.subResourceSeries?.length) && (
           <SubResourceSeriesManager
             resourceId={resourceId}
             subResourceSeries={resource.subResourceSeries || undefined}
             domains={resource.coveredConceptsByDomain?.map((i) => i.domain) || []}
           />
-        )}
-
-        {(isResourceGroupType(resource.type) || resource.subResources?.length) && (
+        )} */}
+        {/* TODO */}
+        {/* {(isResourceGroupType(resource.type) || resource.subResources?.length) && (
           <ResourceSubResourcesManager
             resourceId={resourceId}
             subResources={resource.subResources || []}
             domains={resource.coveredConceptsByDomain?.map((i) => i.domain) || []}
           />
-        )}
+        )} */}
       </Stack>
     </PageLayout>
   );
@@ -253,7 +255,7 @@ const TopRightIconButtons: React.FC<{
           currentUser &&
           (currentUser.role === UserRole.Admin ||
             currentUser.role === UserRole.Contributor ||
-            currentUser._id === resource.creator?._id)
+            currentUser._id === resource.createdBy?._id)
         }
       >
         <DeleteButtonWithConfirmation

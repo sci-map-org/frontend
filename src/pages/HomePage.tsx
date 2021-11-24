@@ -114,10 +114,10 @@ export const HomePage: React.FC = () => {
 
       <Flex {...outerLayoutProps} pt={20} pb={4}>
         <Flex w="100%" direction="column" alignItems="stretch">
-          <ExploreMap
+          {/* <ExploreMap
             {...(mapProps || { direction: 'column', mapPxWidth: 400, mapPxHeight: 360 })}
             mapContainerProps={{ borderWidth: 1, borderColor: 'gray.500' }}
-          />
+          /> */}
         </Flex>
       </Flex>
 

@@ -23,7 +23,6 @@ import MultiSelect from 'react-multi-select-component';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 import BeatLoader from 'react-spinners/BeatLoader';
 import { useDebounce } from 'use-debounce';
-import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import {
   LearningMaterialType,
@@ -38,9 +37,10 @@ import { LearningPathPreviewCardDataFragment } from '../learning_paths/LearningP
 import { ResourceTypeBadge, resourceTypeColorMapping, resourceTypeToLabel } from '../resources/elements/ResourceType';
 import { LearningMaterialPreviewCardList } from '../resources/LearningMaterialPreviewCardList';
 import { ResourcePreviewCard, ResourcePreviewCardData } from '../resources/ResourcePreviewCard';
+import { ResourcePreviewCardDataFragment } from '../resources/ResourcePreviewCard.generated';
 
 export const getTopicRecommendedLearningMaterials = gql`
-  query getDomainRecommendedLearningMaterials(
+  query getTopicRecommendedLearningMaterials(
     $key: String!
     $learningMaterialsOptions: TopicLearningMaterialsOptions!
   ) {
@@ -103,7 +103,7 @@ function getTitle(options: TopicLearningMaterialsOptions, domainName: string) {
 }
 export const TopicRecommendedLearningMaterials: React.FC<{
   topic: TopicLinkDataFragment;
-  learningMaterialsPreviews: (ResourcePreviewDataFragment | LearningPathPreviewCardDataFragment)[];
+  learningMaterialsPreviews: (ResourcePreviewCardDataFragment | LearningPathPreviewCardDataFragment)[];
   isLoading: boolean;
   learningMaterialsOptions: TopicLearningMaterialsOptions;
   setLearningMaterialsOptions: (learningMaterialsOptions: TopicLearningMaterialsOptions) => void;

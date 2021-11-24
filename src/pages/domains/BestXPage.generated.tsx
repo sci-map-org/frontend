@@ -1,6 +1,6 @@
 import * as Types from '../../graphql/types';
 
-import { ResourcePreviewCardDataFragment } from '../../components/resources/ResourcePreviewCard.generated';
+import { ResourcePreviewCardDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { LearningPathPreviewCardDataFragment } from '../../components/learning_paths/LearningPathPreviewCard.generated';
 import * as Operations from './BestXPage';
 import * as Apollo from '@apollo/client';

@@ -3,16 +3,14 @@ import { Box, Flex, Heading, IconButton, Skeleton, Stack, Text } from '@chakra-u
 import gql from 'graphql-tag';
 import { useState } from 'react';
 import { RoleAccess } from '../../components/auth/RoleAccess';
-import { BestXPagesLinks } from '../../components/domains/BestXPagesLinks';
+import { BestXPagesLinks } from '../../components/topics/BestXPagesLinks';
 import { TopicPageLayout } from '../../components/layout/TopicPageLayout';
 import { LearningGoalCardData } from '../../components/learning_goals/cards/LearningGoalCard';
 import { LearningPathPreviewCardDataFragment } from '../../components/learning_paths/LearningPathPreviewCard.generated';
 import { LearningPathIcon } from '../../components/lib/icons/LearningPathIcon';
 import { PageButtonLink } from '../../components/navigation/InternalLink';
-import { useGetDomainRecommendedLearningMaterialsQuery } from '../../components/resources/DomainRecommendedLearningMaterials.generated';
 import { MapVisualisationTopicData } from '../../components/topics/SubTopicsMapVisualisation';
 import { TopicRecommendedLearningMaterials } from '../../components/topics/TopicRecommendedLearningMaterials';
-import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { generateTopicData } from '../../graphql/topics/topics.fragments';
 import { TopicLearningMaterialsOptions, TopicLearningMaterialsSortingType } from '../../graphql/types';
 import { routerPushToPage } from '../PageInfo';
@@ -21,6 +19,8 @@ import {
   NewLearningPathPageInfo
 } from '../RoutesPageInfos';
 import { GetTopicByKeyTopicPageQuery, useGetTopicByKeyTopicPageQuery } from './TopicPage.generated';
+import { ResourcePreviewCardDataFragment } from '../../components/resources/ResourcePreviewCard.generated';
+import { useGetTopicRecommendedLearningMaterialsQuery } from '../../components/topics/TopicRecommendedLearningMaterials.generated';
 
 export const getTopicByKeyTopicPage = gql`
   query getTopicByKeyTopicPage($key: String!) {
@@ -67,7 +67,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
   });
 
   const [learningMaterialPreviews, setLearningMaterialPreviews] = useState<
-    (ResourcePreviewDataFragment | LearningPathPreviewCardDataFragment)[]
+    (ResourcePreviewCardDataFragment | LearningPathPreviewCardDataFragment)[]
   >([]);
 
   const {
@@ -75,7 +75,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
     // networkStatus,
     loading: resourcesLoading,
     refetch: refetchLearningMaterials,
-  } = useGetDomainRecommendedLearningMaterialsQuery({
+  } = useGetTopicRecommendedLearningMaterialsQuery({
     variables: { key: topicKey, learningMaterialsOptions: learningMaterialsOptions },
     fetchPolicy: 'no-cache',
     ssr: false,

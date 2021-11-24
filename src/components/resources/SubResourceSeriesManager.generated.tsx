@@ -1,6 +1,6 @@
 import * as Types from '../../graphql/types';
 
-import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { ResourceDataFragment, ResourcePreviewCardDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import * as Operations from './SubResourceSeriesManager';
 import * as Apollo from '@apollo/client';
 export type CreateSubResourceSeriesMutationVariables = Types.Exact<{

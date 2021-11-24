@@ -113,7 +113,6 @@ export const rootTopic: MapVisualisationTopicDataFragment = {
   __typename: 'Topic',
   _id: 'root',
   key: 'root',
-  topicType: TopicType.Domain,
   name: 'Explore',
 };
 
@@ -146,55 +145,55 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
   const [subTopics, setSubtopics] = useState<MapVisualisationTopicDataFragment[]>();
   const [parentTopics, setParentTopics] = useState<MapVisualisationTopicDataFragment[]>();
 
-  const [getTopLevelDomainsLazyQuery, { loading: isTopLevelQueryLoading }] = useGetTopLevelDomainsLazyQuery({
-    onCompleted(d) {
-      d && setSubtopics(d.getTopLevelDomains.items);
-      setParentTopics([]);
-      setLoadedTopic(rootTopic);
-    },
-    fetchPolicy: 'network-only',
-  });
+  // const [getTopLevelDomainsLazyQuery, { loading: isTopLevelQueryLoading }] = useGetTopLevelDomainsLazyQuery({
+  //   onCompleted(d) {
+  //     d && setSubtopics(d.getTopLevelDomains.items);
+  //     setParentTopics([]);
+  //     setLoadedTopic(rootTopic);
+  //   },
+  //   fetchPolicy: 'network-only',
+  // });
 
-  const [getTopicById, { loading: isGetTopicLoading, refetch }] = useGetTopicByIdExplorePageLazyQuery({
-    fetchPolicy: 'network-only',
-    notifyOnNetworkStatusChange: true, //https://github.com/apollographql/react-apollo/issues/3709
-    onCompleted(d) {
-      d.getTopicById.__typename === 'Domain' && setLoadedTopicDomain(d.getTopicById);
-      d && d.getTopicById.subTopics && setSubtopics(d.getTopicById.subTopics.map((i) => i.subTopic));
-      if (d && d.getTopicById.__typename === 'Domain') {
-        d.getTopicById.parentTopics?.length
-          ? setParentTopics(d.getTopicById.parentTopics.map((i) => i.parentTopic))
-          : setParentTopics([rootTopic]);
-      }
+  // const [getTopicById, { loading: isGetTopicLoading, refetch }] = useGetTopicByIdExplorePageLazyQuery({
+  //   fetchPolicy: 'network-only',
+  //   notifyOnNetworkStatusChange: true, //https://github.com/apollographql/react-apollo/issues/3709
+  //   onCompleted(d) {
+  //     d.getTopicById.__typename === 'Domain' && setLoadedTopicDomain(d.getTopicById);
+  //     d && d.getTopicById.subTopics && setSubtopics(d.getTopicById.subTopics.map((i) => i.subTopic));
+  //     if (d && d.getTopicById.__typename === 'Domain') {
+  //       d.getTopicById.parentTopics?.length
+  //         ? setParentTopics(d.getTopicById.parentTopics.map((i) => i.parentTopic))
+  //         : setParentTopics([rootTopic]);
+  //     }
 
-      if (d && d.getTopicById.__typename === 'Concept' && d.getTopicById.parentTopic) {
-        d.getTopicById.domain && setLoadedTopicDomain(d.getTopicById.domain);
-        setParentTopics([d.getTopicById.parentTopic.parentTopic]);
-      }
+  //     if (d && d.getTopicById.__typename === 'Concept' && d.getTopicById.parentTopic) {
+  //       d.getTopicById.domain && setLoadedTopicDomain(d.getTopicById.domain);
+  //       setParentTopics([d.getTopicById.parentTopic.parentTopic]);
+  //     }
 
-      setLoadedTopic(d.getTopicById);
-    },
-  });
-  const loading = isGetTopicLoading || isTopLevelQueryLoading;
-  const loadTopic = (topicId?: string) => {
-    if (!topicId || topicId === rootTopic._id) {
-      getTopLevelDomainsLazyQuery();
-      onTopicChange && onTopicChange(rootTopic._id);
-      // } else if (topicId === loadedTopic?._id) { => needed ?
-      //   refetch && refetch({ topicId });
-    } else {
-      getTopicById({ variables: { topicId } });
-      onTopicChange && onTopicChange(topicId);
-    }
-  };
+  //     setLoadedTopic(d.getTopicById);
+  //   },
+  // });
+  // const loading = isGetTopicLoading || isTopLevelQueryLoading;
+  // const loadTopic = (topicId?: string) => {
+  //   if (!topicId || topicId === rootTopic._id) {
+  //     getTopLevelDomainsLazyQuery();
+  //     onTopicChange && onTopicChange(rootTopic._id);
+  //     // } else if (topicId === loadedTopic?._id) { => needed ?
+  //     //   refetch && refetch({ topicId });
+  //   } else {
+  //     getTopicById({ variables: { topicId } });
+  //     onTopicChange && onTopicChange(topicId);
+  //   }
+  // };
 
-  useEffect(() => {
-    loadTopic(selectedTopicId);
-  }, [selectedTopicId]);
+  // useEffect(() => {
+  //   loadTopic(selectedTopicId);
+  // }, [selectedTopicId]);
 
   return (
     <Stack direction={direction} spacing={6} alignItems="center">
-      <Box
+      {/* <Box
         borderBottomWidth={3}
         minH="168px"
         position="relative"
@@ -281,7 +280,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
           onCancel={() => onClose()}
           onAdded={() => loadTopic(loadedTopic._id)}
         />
-      )}
+      )} */}
     </Stack>
   );
 };

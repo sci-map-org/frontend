@@ -27,7 +27,7 @@ import { useRouter } from 'next/router';
 import { useRef } from 'react';
 import { env } from '../../env';
 import { useCurrentUser, useLogout } from '../../graphql/users/users.hooks';
-import { LearningPathPagePath, NewDomainPagePath, ExploreMapPagePageInfo } from '../../pages/RoutesPageInfos';
+import { LearningPathPagePath, ExploreMapPagePageInfo, NewTopicPagePath } from '../../pages/RoutesPageInfos';
 import { globalStyleVariables } from '../../theme/theme';
 import { RoleAccess } from '../auth/RoleAccess';
 import { InternalLink, InternalLinkProps, PageLink } from '../navigation/InternalLink';
@@ -271,9 +271,9 @@ export const Header: React.FC = () => {
                 </NextLink>
               </RoleAccess>
               <RoleAccess accessRule="contributorOrAdmin">
-                <NextLink href={NewDomainPagePath} as={NewDomainPagePath} passHref>
+                <NextLink href={NewTopicPagePath} as={NewTopicPagePath} passHref>
                   <MenuItem>
-                    <Link>New Area</Link>
+                    <Link>New Topic</Link>
                   </MenuItem>
                 </NextLink>
               </RoleAccess>
