@@ -11,7 +11,7 @@ import {
   SlideFade,
   Stack,
   Text,
-  Tooltip
+  Tooltip,
 } from '@chakra-ui/react';
 import { AiOutlineEye } from '@react-icons/all-files/ai/AiOutlineEye';
 import gql from 'graphql-tag';
@@ -20,17 +20,18 @@ import { useEffect, useMemo, useState } from 'react';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
 import {
-  EditableLearningMaterialPrerequisitesData
+  EditableLearningMaterialPrerequisites,
+  EditableLearningMaterialPrerequisitesData,
 } from '../../components/learning_materials/EditableLearningMaterialPrerequisites';
 import {
   LearningMaterialStarsRater,
-  LearningMaterialStarsRaterData
+  LearningMaterialStarsRaterData,
 } from '../../components/learning_materials/LearningMaterialStarsRating';
 import { EditableLearningMaterialTags } from '../../components/learning_materials/LearningMaterialTagsEditor';
 import { LearningPathComplementaryResourcesManager } from '../../components/learning_paths/LearningPathComplementaryResourcesManager';
 import {
   LearningPathCompletion,
-  LearningPathCompletionData
+  LearningPathCompletionData,
 } from '../../components/learning_paths/LearningPathCompletion';
 import { LearningPathPublishButton } from '../../components/learning_paths/LearningPathPublishButton';
 import { LearningPathResourceItemsManager } from '../../components/learning_paths/LearningPathResourceItems';
@@ -40,14 +41,14 @@ import { EditableTextInput } from '../../components/lib/inputs/EditableTextInput
 import { OtherLearnersViewer } from '../../components/lib/OtherLearnersViewer';
 import { StarsRatingViewer } from '../../components/lib/StarsRating';
 import { EditableDuration } from '../../components/resources/elements/Duration';
-import { LearningMaterialCoveredTopics } from '../../components/resources/LearningMaterialCoveredTopics';
+import { EditableLearningMaterialCoveredTopics } from '../../components/learning_materials/EditableLearningMaterialCoveredTopics';
 import { generateResourcePreviewCardData } from '../../components/resources/ResourcePreviewCard';
 import { SquareResourceCardData } from '../../components/resources/SquareResourceCard';
 import { UserAvatar, UserAvatarData } from '../../components/users/UserAvatar';
 import { LearningMaterialWithCoveredTopicsData } from '../../graphql/learning_materials/learning_materials.fragments';
 import {
   generateLearningPathData,
-  LearningPathWithResourceItemsPreviewData
+  LearningPathWithResourceItemsPreviewData,
 } from '../../graphql/learning_paths/learning_paths.fragments';
 import { LearningPathDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
 import { useDeleteLearningPath } from '../../graphql/learning_paths/learning_paths.hooks';
@@ -100,10 +101,10 @@ const learningPathPlaceholder: GetLearningPathPageQuery['getLearningPathByKey'] 
   public: true,
   rating: 4.5,
   // coveredConceptsByDomain: [
-    // {
-    //   domain: generateDomainData(),
-    //   coveredConcepts: [generateConceptData(), generateConceptData(), generateConceptData()],
-    // },
+  // {
+  //   domain: generateDomainData(),
+  //   coveredConcepts: [generateConceptData(), generateConceptData(), generateConceptData()],
+  // },
   // ],
   resourceItems: [
     {
@@ -168,7 +169,8 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
           setEditMode={setEditMode}
         />
       }
-      renderTopLeft={null
+      renderTopLeft={
+        null
         // TODO: Showed In
       }
     >
@@ -186,8 +188,7 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
         </Center>
         <Flex direction={{ base: 'column', md: 'row' }} alignItems="stretch">
           <Flex direction="column" justifyContent="space-between" alignItems="stretch" minWidth={{ md: '260px' }}>
-            {/* <Stack spacing={2} pb={2}>
-            // TODO
+            <Stack spacing={2} pb={2}>
               <Center>
                 <EditableLearningMaterialPrerequisites
                   editable={editMode}
@@ -195,14 +196,14 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
                   isLoading={loading}
                 />
               </Center>
-              <Center>
+              {/* <Center>
                 <EditableLearningMaterialOutcomes
                   editable={editMode}
                   learningMaterial={learningPath}
                   isLoading={loading}
                 />
-              </Center>
-            </Stack> */}
+              </Center> */}
+            </Stack>
           </Flex>
           <Stack flexGrow={1} px={4}>
             <Center>
@@ -259,9 +260,9 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
             </Skeleton>
           </Stack>
           <Flex minWidth="260px" direction="column" alignItems="center">
-            <LearningMaterialCoveredTopics
-              w="260px"
-              editMode={editMode}
+            <EditableLearningMaterialCoveredTopics
+              // w="260px"
+              editable={editMode}
               isLoading={loading}
               learningMaterial={learningPath}
             />

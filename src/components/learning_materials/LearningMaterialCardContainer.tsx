@@ -18,14 +18,13 @@ import {
 } from '@chakra-ui/react';
 import { flatten } from 'lodash';
 import React, { forwardRef, ReactNode, useState } from 'react';
-import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
 import { LearningMaterialWithCoveredTopicsDataFragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { InternalLink, PageLink } from '../navigation/InternalLink';
-import { LearningMaterialCoveredTopicsViewer } from './LearningMaterialCoveredTopicsViewer';
-import { LearningMaterialDomainAndCoveredConceptsSelector } from '../resources/LearningMaterialDomainAndCoveredConceptsSelector';
+import { EditableLearningMaterialCoveredTopics } from './EditableLearningMaterialCoveredTopics';
+import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
 
 interface LearningMaterialCardContainerProps {
   renderCenterLeft: ReactNode;
@@ -86,8 +85,8 @@ export const LearningMaterialCardContainer = forwardRef<HTMLDivElement, Learning
   }
 );
 
-const shortenCoveredConceptsList = (coveredConcepts: Pick<ConceptDataFragment, 'name'>[], maxLength: number = 40) => {
-  const { s, count } = [...coveredConcepts]
+const shortenCoveredTopicsList = (coveredTopics: TopicLinkDataFragment[], maxLength: number = 40) => {
+  const { s, count } = [...coveredTopics]
     .sort((c1, c2) => c1.name.length - c2.name.length)
     .reduce(
       (o, concept, index) => {
@@ -126,7 +125,7 @@ export const LearningMaterialCardCoveredTopics: React.FC<{
             About:{' '}
           </Text>
           <Link color="gray.800" fontWeight={300} onClick={() => setCoveredConceptsEditorMode(false)}>
-            {shortenCoveredConceptsList(flatten(learningMaterial.coveredSubTopics.items), 32)}
+            {shortenCoveredTopicsList(flatten(learningMaterial.coveredSubTopics.items), 32)}
           </Link>
           {editable && (
             <IconButton
@@ -176,7 +175,8 @@ export const LearningMaterialCardCoveredTopics: React.FC<{
           ) : (
             <LearningMaterialCoveredConceptsByDomainViewer learningMaterial={learningMaterial} />
           )} */}
-          <LearningMaterialCoveredTopicsViewer learningMaterial={learningMaterial} />
+          {/* <LearningMaterialCoveredTopicsViewer learningMaterial={learningMaterial} /> */}
+          <EditableLearningMaterialCoveredTopics learningMaterial={learningMaterial} editable={false} />
         </PopoverBody>
       </PopoverContent>
     </Popover>

@@ -7,12 +7,10 @@ import Router, { useRouter } from 'next/router';
 import { Access } from '../../components/auth/Access';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
-import {
-  EditableLearningMaterialPrerequisitesData
-} from '../../components/learning_materials/EditableLearningMaterialPrerequisites';
+import { EditableLearningMaterialPrerequisitesData } from '../../components/learning_materials/EditableLearningMaterialPrerequisites';
 import {
   LearningMaterialStarsRater,
-  LearningMaterialStarsRaterData
+  LearningMaterialStarsRaterData,
 } from '../../components/learning_materials/LearningMaterialStarsRating';
 import { EditableLearningMaterialTags } from '../../components/learning_materials/LearningMaterialTagsEditor';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
@@ -25,7 +23,7 @@ import { ResourceMediaTypeBadge } from '../../components/resources/elements/Reso
 import { ResourceTypeBadge } from '../../components/resources/elements/ResourceType';
 import { ResourceUrlLink } from '../../components/resources/elements/ResourceUrl';
 import { ResourceYoutubePlayer } from '../../components/resources/elements/ResourceYoutubePlayer';
-import { LearningMaterialCoveredTopics } from '../../components/resources/LearningMaterialCoveredTopics';
+import { EditableLearningMaterialCoveredTopics } from '../../components/learning_materials/EditableLearningMaterialCoveredTopics';
 import { SquareResourceCardData } from '../../components/resources/SquareResourceCard';
 import { UserAvatar, UserAvatarData } from '../../components/users/UserAvatar';
 import { generateResourceData, ResourceData } from '../../graphql/resources/resources.fragments';
@@ -124,8 +122,9 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
         )
       }
       renderTopRight={<TopRightIconButtons loading={loading} resource={resource} />}
-      renderTopLeft={"Showed In"
-      // TODO
+      renderTopLeft={
+        'Showed In'
+        // TODO
         // <ParentDomainsNavigationBlock domains={(resource.coveredConceptsByDomain || []).map(({ domain }) => domain)} />
       }
     >
@@ -187,15 +186,19 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
           </Stack>
 
           {/* <Stack spacing={3}> */}
-            {/* <Center>
+          {/* <Center>
               <EditableLearningMaterialPrerequisites
                 editable={!!currentUser}
                 learningMaterial={resource}
                 isLoading={loading}
               />
             </Center> */}
-            <LearningMaterialCoveredTopics editMode="loggedInUser" isLoading={loading} learningMaterial={resource} />
-            {/* <Center>
+          <EditableLearningMaterialCoveredTopics
+            editable={!!currentUser}
+            isLoading={loading}
+            learningMaterial={resource}
+          />
+          {/* <Center>
               <EditableLearningMaterialOutcomes
                 editable={!!currentUser}
                 learningMaterial={resource}

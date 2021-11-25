@@ -579,6 +579,7 @@ export type Topic = {
   subTopicsTotalCount?: Maybe<Scalars['Int']>;
   learningMaterials?: Maybe<TopicLearningMaterialsResults>;
   learningMaterialsTotalCount?: Maybe<Scalars['Int']>;
+  coveredTopics?: Maybe<Array<LearningMaterialCoversTopic>>;
   prerequisites?: Maybe<Array<TopicHasPrerequisiteTopic>>;
   followUps?: Maybe<Array<TopicHasPrerequisiteTopic>>;
   createdBy?: Maybe<User>;
@@ -1175,6 +1176,14 @@ export type TopicLearningMaterialsOptions = {
   sortingType: TopicLearningMaterialsSortingType;
   query?: Maybe<Scalars['String']>;
   filter: TopicLearningMaterialsFilterOptions;
+};
+
+export type LearningMaterialCoversTopic = {
+  __typename?: 'LearningMaterialCoversTopic';
+  createdAt: Scalars['Date'];
+  createdByUserId?: Maybe<Scalars['String']>;
+  learningMaterial: LearningMaterial;
+  topic: Topic;
 };
 
 export type TopicHasPrerequisiteTopic = {
