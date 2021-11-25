@@ -23,6 +23,7 @@ import MultiSelect from 'react-multi-select-component';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 import BeatLoader from 'react-spinners/BeatLoader';
 import { useDebounce } from 'use-debounce';
+import { ResourcePreviewCardData } from '../../graphql/resources/resources.fragments';
 import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import {
   LearningMaterialType,
@@ -36,7 +37,7 @@ import { LearningPathPreviewCard, LearningPathPreviewCardData } from '../learnin
 import { LearningPathPreviewCardDataFragment } from '../learning_paths/LearningPathPreviewCard.generated';
 import { ResourceTypeBadge, resourceTypeColorMapping, resourceTypeToLabel } from '../resources/elements/ResourceType';
 import { LearningMaterialPreviewCardList } from '../resources/LearningMaterialPreviewCardList';
-import { ResourcePreviewCard, ResourcePreviewCardData } from '../resources/ResourcePreviewCard';
+import { ResourcePreviewCard } from '../resources/ResourcePreviewCard';
 import { ResourcePreviewCardDataFragment } from '../resources/ResourcePreviewCard.generated';
 
 export const getTopicRecommendedLearningMaterials = gql`

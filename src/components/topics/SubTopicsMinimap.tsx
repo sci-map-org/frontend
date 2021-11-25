@@ -8,7 +8,6 @@ import Router from 'next/router';
 import { useRef } from 'react';
 import { PuffLoader } from 'react-spinners';
 import { routerPushToPage } from '../../pages/PageInfo';
-import { ConceptPagePath, DomainPageInfo } from '../../pages/RoutesPageInfos';
 import { theme } from '../../theme/theme';
 import { useElementSize } from '../../util/useElementSize';
 import { SubTopicsMapVisualisationProps } from './SubTopicsMapVisualisation';
@@ -61,18 +60,19 @@ export const SubTopicsMinimap: React.FC<SubTopicsMinimapProps> = ({
           <PuffLoader size={Math.floor(pxWidth / 3)} color={theme.colors.blue[500]} />
         </Center>
       ) : subTopics.length ? (
-        <SubTopicsMapVisualisation
-          topic={topic}
-          domainKey={domainKey}
-          subTopics={subTopics}
-          parentTopics={parentTopics}
-          pxWidth={pxWidth}
-          pxHeight={pxHeight}
-          onClick={(n) => {
-            n.__typename === 'Domain' && routerPushToPage(DomainPageInfo(n));
-            n.__typename === 'Concept' && domainKey && Router.push(ConceptPagePath(domainKey, n.key));
-          }}
-        />
+        <div>Map</div>
+        // <SubTopicsMapVisualisation
+        //   topic={topic}
+        //   domainKey={domainKey}
+        //   subTopics={subTopics}
+        //   parentTopics={parentTopics}
+        //   pxWidth={pxWidth}
+        //   pxHeight={pxHeight}
+        //   onClick={(n) => {
+        //     n.__typename === 'Domain' && routerPushToPage(DomainPageInfo(n));
+        //     n.__typename === 'Concept' && domainKey && Router.push(ConceptPagePath(domainKey, n.key));
+        //   }}
+        // />
       ) : (
         <Center w="100%" h="100%">
           <Text textAlign="center" fontWeight={600} fontStyle="italic" color="gray.400">
@@ -134,19 +134,19 @@ const SubTopicsMapModalContent: React.FC<{
       borderColor="deepBlue.200"
       mb={5}
     >
-      {modalContainerSize && (
-        <SubTopicsMapVisualisation
-          domainKey={domainKey}
-          topic={topic}
-          subTopics={subTopics}
-          parentTopics={parentTopics}
-          pxWidth={modalContainerSize.width}
-          pxHeight={modalContainerSize.width}
-          onClick={(n) => {
-            n.__typename === 'Domain' && routerPushToPage(DomainPageInfo(n));
-            n.__typename === 'Concept' && domainKey && Router.push(ConceptPagePath(domainKey, n.key));
-          }}
-        />
+      {modalContainerSize && (<div>map</div>
+        // <SubTopicsMapVisualisation
+        //   domainKey={domainKey}
+        //   topic={topic}
+        //   subTopics={subTopics}
+        //   parentTopics={parentTopics}
+        //   pxWidth={modalContainerSize.width}
+        //   pxHeight={modalContainerSize.width}
+        //   onClick={(n) => {
+        //     n.__typename === 'Domain' && routerPushToPage(DomainPageInfo(n));
+        //     n.__typename === 'Concept' && domainKey && Router.push(ConceptPagePath(domainKey, n.key));
+        //   }}
+        // />
       )}
     </Box>
   );

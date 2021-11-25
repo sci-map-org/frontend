@@ -9,7 +9,6 @@ import * as d3Zoom from 'd3-zoom';
 import gql from 'graphql-tag';
 import { useEffect, useMemo, useRef } from 'react';
 import { TopicLinkData } from '../../graphql/topics/topics.fragments';
-import { TopicType } from '../../graphql/types';
 import { theme } from '../../theme/theme';
 import { TopicLink } from '../lib/links/TopicLink';
 import { MapVisualisationTopicDataFragment } from './SubTopicsMapVisualisation.generated';

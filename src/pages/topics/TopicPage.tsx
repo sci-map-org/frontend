@@ -45,7 +45,6 @@ export const getTopicByKeyTopicPage = gql`
     }
   }
   ${MapVisualisationTopicData}
-  ${LearningGoalCardData}
 `;
 
 const placeholderTopicData: GetTopicByKeyTopicPageQuery['getTopicByKey'] = {
