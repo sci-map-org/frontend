@@ -3,7 +3,7 @@ import { IconButton, Stack, Tooltip } from '@chakra-ui/react';
 import { AiOutlineEye } from '@react-icons/all-files/ai/AiOutlineEye';
 import gql from 'graphql-tag';
 import Router, { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { ConceptGroupLearningGoalData } from '../../components/learning_goals/ConceptGroupLearningGoal';
 import { LearningGoalRoadmap, LearningGoalRoadmapData } from '../../components/learning_goals/LearningGoalRoadmap';
@@ -14,8 +14,6 @@ import { useDeleteLearningGoalMutation } from '../../graphql/learning_goals/lear
 import { LearningGoalType, UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { NotFoundPage } from '../NotFoundPage';
-import { routerPushToPage } from '../PageInfo';
-// import { DomainLearningGoalPageInfo } from '../RoutesPageInfos';
 import { GetLearningGoalPageDataQuery, useGetLearningGoalPageDataQuery } from './LearningGoalPage.generated';
 
 export const getLearningGoalPageData = gql`
@@ -23,11 +21,6 @@ export const getLearningGoalPageData = gql`
     getLearningGoalByKey(key: $learningGoalKey) {
       ...LearningGoalRoadmapData
       ...ConceptGroupLearningGoalData
-      # domain {
-      #   domain {
-      #     ...DomainLinkData
-      #   }
-      # }
     }
   }
   ${LearningGoalRoadmapData}
@@ -51,16 +44,6 @@ export const LearningGoalPage: React.FC<{ learningGoalKey: string }> = ({ learni
   const [editMode, setEditMode] = useState(
     currentUserIsOwner && (router.query.editMode === 'true' || (!router.query.editMode && !learningGoal.publishedAt))
   );
-
-  // useEffect(() => {
-  //   if (!loading && learningGoal.domain) {
-  //     routerPushToPage(DomainLearningGoalPageInfo(learningGoal.domain.domain, learningGoal));
-  //   } else {
-  //     if (learningGoal.type === LearningGoalType.SubGoal) {
-  //       throw new Error('Learning Goal ' + learningGoal._id + ' has no domain attached');
-  //     }
-  //   }
-  // }, []);
 
   if (!loading && !data) return <NotFoundPage />;
   return (

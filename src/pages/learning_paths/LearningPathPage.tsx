@@ -1,6 +1,5 @@
 import { EditIcon } from '@chakra-ui/icons';
 import {
-  AvatarGroup,
   Badge,
   Box,
   Center,
@@ -12,55 +11,50 @@ import {
   SlideFade,
   Stack,
   Text,
-  Tooltip,
+  Tooltip
 } from '@chakra-ui/react';
+import { AiOutlineEye } from '@react-icons/all-files/ai/AiOutlineEye';
 import gql from 'graphql-tag';
 import Router from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
-import { AiOutlineEye } from '@react-icons/all-files/ai/AiOutlineEye';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
 import {
-  EditableLearningMaterialOutcomes,
-} from '../../components/learning_materials/EditableLearningMaterialOutcomes';
-import {
-  EditableLearningMaterialPrerequisites,
-  EditableLearningMaterialPrerequisitesData,
+  EditableLearningMaterialPrerequisitesData
 } from '../../components/learning_materials/EditableLearningMaterialPrerequisites';
 import {
   LearningMaterialStarsRater,
-  LearningMaterialStarsRaterData,
+  LearningMaterialStarsRaterData
 } from '../../components/learning_materials/LearningMaterialStarsRating';
-import { StarsRatingViewer } from '../../components/lib/StarsRating';
 import { EditableLearningMaterialTags } from '../../components/learning_materials/LearningMaterialTagsEditor';
 import { LearningPathComplementaryResourcesManager } from '../../components/learning_paths/LearningPathComplementaryResourcesManager';
 import {
   LearningPathCompletion,
-  LearningPathCompletionData,
+  LearningPathCompletionData
 } from '../../components/learning_paths/LearningPathCompletion';
+import { LearningPathPublishButton } from '../../components/learning_paths/LearningPathPublishButton';
 import { LearningPathResourceItemsManager } from '../../components/learning_paths/LearningPathResourceItems';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { EditableTextarea } from '../../components/lib/inputs/EditableTextarea';
 import { EditableTextInput } from '../../components/lib/inputs/EditableTextInput';
+import { OtherLearnersViewer } from '../../components/lib/OtherLearnersViewer';
+import { StarsRatingViewer } from '../../components/lib/StarsRating';
 import { EditableDuration } from '../../components/resources/elements/Duration';
 import { LearningMaterialCoveredTopics } from '../../components/resources/LearningMaterialCoveredTopics';
+import { generateResourcePreviewCardData } from '../../components/resources/ResourcePreviewCard';
 import { SquareResourceCardData } from '../../components/resources/SquareResourceCard';
 import { UserAvatar, UserAvatarData } from '../../components/users/UserAvatar';
-import { LearningMaterialWithCoveredConceptsByDomainData, LearningMaterialWithCoveredTopicsData } from '../../graphql/learning_materials/learning_materials.fragments';
+import { LearningMaterialWithCoveredTopicsData } from '../../graphql/learning_materials/learning_materials.fragments';
 import {
   generateLearningPathData,
-  LearningPathWithResourceItemsPreviewData,
+  LearningPathWithResourceItemsPreviewData
 } from '../../graphql/learning_paths/learning_paths.fragments';
 import { LearningPathDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
 import { useDeleteLearningPath } from '../../graphql/learning_paths/learning_paths.hooks';
 import { useUpdateLearningPathMutation } from '../../graphql/learning_paths/learning_paths.operations.generated';
-import { generateResourcePreviewData } from '../../graphql/resources/resources.fragments';
 import { UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { GetLearningPathPageQuery, useGetLearningPathPageQuery } from './LearningPathPage.generated';
-import { LearningPathPublishButton } from '../../components/learning_paths/LearningPathPublishButton';
-import { OtherLearnersViewer } from '../../components/lib/OtherLearnersViewer';
-import { ParentDomainsNavigationBlock } from '../../components/domains/ParentDomainsNavigationBlock';
 
 export const getLearningPathPage = gql`
   query getLearningPathPage($key: String!) {
@@ -105,29 +99,29 @@ const learningPathPlaceholder: GetLearningPathPageQuery['getLearningPathByKey'] 
   tags: [{ name: 'tag 1' }],
   public: true,
   rating: 4.5,
-  coveredConceptsByDomain: [
+  // coveredConceptsByDomain: [
     // {
     //   domain: generateDomainData(),
     //   coveredConcepts: [generateConceptData(), generateConceptData(), generateConceptData()],
     // },
-  ],
+  // ],
   resourceItems: [
     {
       description:
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore',
-      resource: generateResourcePreviewData(),
+      resource: generateResourcePreviewCardData(),
       learningPathId: 'id',
     },
     {
       description:
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore',
-      resource: generateResourcePreviewData(),
+      resource: generateResourcePreviewCardData(),
       learningPathId: 'id',
     },
     {
       description:
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore',
-      resource: generateResourcePreviewData(),
+      resource: generateResourcePreviewCardData(),
       learningPathId: 'id',
     },
   ],
@@ -174,10 +168,8 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
           setEditMode={setEditMode}
         />
       }
-      renderTopLeft={
-        <ParentDomainsNavigationBlock
-          domains={(learningPath.coveredConceptsByDomain || []).map(({ domain }) => domain)}
-        />
+      renderTopLeft={null
+        // TODO: Showed In
       }
     >
       <Stack w="100%">
@@ -194,7 +186,8 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
         </Center>
         <Flex direction={{ base: 'column', md: 'row' }} alignItems="stretch">
           <Flex direction="column" justifyContent="space-between" alignItems="stretch" minWidth={{ md: '260px' }}>
-            <Stack spacing={2} pb={2}>
+            {/* <Stack spacing={2} pb={2}>
+            // TODO
               <Center>
                 <EditableLearningMaterialPrerequisites
                   editable={editMode}
@@ -209,7 +202,7 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
                   isLoading={loading}
                 />
               </Center>
-            </Stack>
+            </Stack> */}
           </Flex>
           <Stack flexGrow={1} px={4}>
             <Center>

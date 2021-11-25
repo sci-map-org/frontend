@@ -1,21 +1,18 @@
-import { ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons';
 import { Box, Button, Center, Flex, Skeleton, Stack, Text } from '@chakra-ui/react';
+import { BsArrow90DegUp } from '@react-icons/all-files/bs/BsArrow90DegUp';
+import { BsArrowLeft } from '@react-icons/all-files/bs/BsArrowLeft';
+import { BsArrowRight } from '@react-icons/all-files/bs/BsArrowRight';
 import gql from 'graphql-tag';
 import Router, { useRouter } from 'next/router';
 import { Access } from '../../components/auth/Access';
 import { RoleAccess } from '../../components/auth/RoleAccess';
-import { ParentDomainsNavigationBlock } from '../../components/domains/ParentDomainsNavigationBlock';
 import { PageLayout } from '../../components/layout/PageLayout';
 import {
-  EditableLearningMaterialOutcomes,
-} from '../../components/learning_materials/EditableLearningMaterialOutcomes';
-import {
-  EditableLearningMaterialPrerequisites,
-  EditableLearningMaterialPrerequisitesData,
+  EditableLearningMaterialPrerequisitesData
 } from '../../components/learning_materials/EditableLearningMaterialPrerequisites';
 import {
   LearningMaterialStarsRater,
-  LearningMaterialStarsRaterData,
+  LearningMaterialStarsRaterData
 } from '../../components/learning_materials/LearningMaterialStarsRating';
 import { EditableLearningMaterialTags } from '../../components/learning_materials/LearningMaterialTagsEditor';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
@@ -30,19 +27,13 @@ import { ResourceUrlLink } from '../../components/resources/elements/ResourceUrl
 import { ResourceYoutubePlayer } from '../../components/resources/elements/ResourceYoutubePlayer';
 import { LearningMaterialCoveredTopics } from '../../components/resources/LearningMaterialCoveredTopics';
 import { SquareResourceCardData } from '../../components/resources/SquareResourceCard';
-import { SubResourceSeriesManager } from '../../components/resources/SubResourceSeriesManager';
-import { ResourceSubResourcesManager } from '../../components/resources/SubResourcesManager';
+import { UserAvatar, UserAvatarData } from '../../components/users/UserAvatar';
 import { generateResourceData, ResourceData } from '../../graphql/resources/resources.fragments';
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { useDeleteResourceMutation } from '../../graphql/resources/resources.operations.generated';
 import { ResourceType, UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
-import { isResourceGroupType, isResourceSeriesType } from '../../services/resources.service';
 import { GetResourceResourcePageQuery, useGetResourceResourcePageQuery } from './ResourcePage.generated';
-import { BsArrowLeft } from '@react-icons/all-files/bs/BsArrowLeft';
-import { BsArrowRight } from '@react-icons/all-files/bs/BsArrowRight';
-import { BsArrow90DegUp } from '@react-icons/all-files/bs/BsArrow90DegUp';
-import { UserAvatar, UserAvatarData } from '../../components/users/UserAvatar';
 
 export const getResourceResourcePage = gql`
   query getResourceResourcePage($id: String!) {
@@ -195,23 +186,23 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
             )}
           </Stack>
 
-          <Stack spacing={3}>
-            <Center>
+          {/* <Stack spacing={3}> */}
+            {/* <Center>
               <EditableLearningMaterialPrerequisites
                 editable={!!currentUser}
                 learningMaterial={resource}
                 isLoading={loading}
               />
-            </Center>
+            </Center> */}
             <LearningMaterialCoveredTopics editMode="loggedInUser" isLoading={loading} learningMaterial={resource} />
-            <Center>
+            {/* <Center>
               <EditableLearningMaterialOutcomes
                 editable={!!currentUser}
                 learningMaterial={resource}
                 isLoading={loading}
               />
             </Center>
-          </Stack>
+          </Stack> */}
         </Flex>
 
         {/* TODO */}

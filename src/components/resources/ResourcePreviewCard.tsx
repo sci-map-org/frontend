@@ -46,7 +46,7 @@ import { ResourceUrlLinkViewer, ResourceUrlLinkWrapper } from './elements/Resour
 import { ResourceYoutubePlayer } from './elements/ResourceYoutubePlayer';
 import { ResourcePreviewCardDataFragment } from './ResourcePreviewCard.generated';
 
-export const generateResourcePreviewData = (): ResourcePreviewCardDataFragment => ({
+export const generateResourcePreviewCardData = (): ResourcePreviewCardDataFragment => ({
   _id: Math.random().toString(),
   name: 'My resource name',
   type: ResourceType.Article,

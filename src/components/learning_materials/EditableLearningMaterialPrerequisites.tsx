@@ -19,7 +19,6 @@ export const EditableLearningMaterialPrerequisitesData = gql`
     #   }
     # }
   }
-  ${LearningGoalBadgeData}
 `;
 
 interface StatelessEditableLearningMaterialPrerequisitesProps {
