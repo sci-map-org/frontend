@@ -11,102 +11,47 @@ import { LearningMaterialCountIcon } from '../../components/learning_materials/L
 import { TopicLink } from '../../components/lib/links/TopicLink';
 import { AddSubTopicModal } from '../../components/topics/AddSubTopic';
 import { SubTopicsCountIcon } from '../../components/topics/SubTopicsCountIcon';
-import { SubTopicsMapVisualisation } from '../../components/topics/SubTopicsMapVisualisation';
+import { MapVisualisationTopicData, SubTopicsMapVisualisation } from '../../components/topics/SubTopicsMapVisualisation';
 import { MapVisualisationTopicDataFragment } from '../../components/topics/SubTopicsMapVisualisation.generated';
 import { TopicDescription } from '../../components/topics/TopicDescription';
-import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
-import { LearningGoalLinkData } from '../../graphql/learning_goals/learning_goals.fragments';
+import { TopicLinkData } from '../../graphql/topics/topics.fragments';
+import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import { theme } from '../../theme/theme';
 import {
   GetTopicByIdExplorePageQuery,
   useGetTopicByIdExplorePageLazyQuery,
-  useGetTopLevelTopicsLazyQuery,
+  useGetTopLevelTopicsLazyQuery
 } from './ExploreMap.generated';
 
-/**
- * Not using TopicLinkData because apollo fails: properly queried but data is empty object
- */
 export const getTopicByIdExplorePage = gql`
   query getTopicByIdExplorePage($topicId: String!) {
     getTopicById(topicId: $topicId) {
-      _id
-      key
-      name
+      ...MapVisualisationTopicData
       description
-      # size
-      # topicType
+      learningMaterialsTotalCount
       subTopics {
         subTopic {
-          _id
-          key
-          name
-          # size
-          # ... on Concept {
-          #   domain {
-          #     ...DomainLinkData
-          #   }
-          # }
-          # ... on LearningGoal {
-          #   type
-          # }
+          ...MapVisualisationTopicData
         }
       }
-      # ... on Domain {
-      #   learningMaterialsTotalCount
-      #   parentTopics(options: { sorting: { type: index, direction: ASC } }) {
-      #     parentTopic {
-      #       topicType
-      #       ...DomainLinkData
-      #       ...ConceptLinkData
-      #       ...LearningGoalLinkData
-      #     }
-      #   }
-      # }
-
-      # ... on Concept {
-      #   domain {
-      #     ...DomainLinkData
-      #   }
-      #   parentTopic {
-      #     parentTopic {
-      #       topicType
-      #       ...DomainLinkData
-      #       ...ConceptLinkData
-      #       ...LearningGoalLinkData
-      #     }
-      #   }
-      # }
-      # ... on LearningGoal {
-      #   type
-        # domain {
-        #   domain {
-        #     ...DomainLinkData
-        #   }
-        # }
-        # parentTopic {
-        #   parentTopic {
-        #     topicType
-        #     ...DomainLinkData
-        #     ...ConceptLinkData
-        #     ...LearningGoalLinkData
-        #   }
-        # }
-      # }
+      parentTopic {
+        ...TopicLinkData
+      }
     }
   }
-  ${LearningGoalLinkData}
+  ${MapVisualisationTopicData}
+  ${TopicLinkData}
 `;
 
 export const getTopLevelTopics = gql`
   query getTopLevelTopics {
     getTopLevelTopics {
       items {
-        _id
-        key
-        name
+        ...MapVisualisationTopicData
       }
     }
   }
+  ${MapVisualisationTopicData}
 `;
 
 export const rootTopic: MapVisualisationTopicDataFragment = {
@@ -140,60 +85,46 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
   const [selectedTopicId, setSelectedTopicId] = useState<string | undefined>(propSelectedTopicId);
 
   const [loadedTopic, setLoadedTopic] = useState<GetTopicByIdExplorePageQuery['getTopicById']>();
-  const [loadedTopicDomain, setLoadedTopicDomain] = useState<DomainLinkDataFragment>();
 
   const [subTopics, setSubtopics] = useState<MapVisualisationTopicDataFragment[]>();
-  const [parentTopics, setParentTopics] = useState<MapVisualisationTopicDataFragment[]>();
+  const [parentTopic, setParentTopic] = useState<TopicLinkDataFragment>();
 
-  // const [getTopLevelDomainsLazyQuery, { loading: isTopLevelQueryLoading }] = useGetTopLevelDomainsLazyQuery({
-  //   onCompleted(d) {
-  //     d && setSubtopics(d.getTopLevelDomains.items);
-  //     setParentTopics([]);
-  //     setLoadedTopic(rootTopic);
-  //   },
-  //   fetchPolicy: 'network-only',
-  // });
+  const [getTopLevelDomainsLazyQuery, { loading: isTopLevelQueryLoading }] = useGetTopLevelTopicsLazyQuery({
+    onCompleted(d) {
+      d && setSubtopics(d.getTopLevelTopics.items);
+      setLoadedTopic(rootTopic);
+    },
+    fetchPolicy: 'network-only',
+  });
 
-  // const [getTopicById, { loading: isGetTopicLoading, refetch }] = useGetTopicByIdExplorePageLazyQuery({
-  //   fetchPolicy: 'network-only',
-  //   notifyOnNetworkStatusChange: true, //https://github.com/apollographql/react-apollo/issues/3709
-  //   onCompleted(d) {
-  //     d.getTopicById.__typename === 'Domain' && setLoadedTopicDomain(d.getTopicById);
-  //     d && d.getTopicById.subTopics && setSubtopics(d.getTopicById.subTopics.map((i) => i.subTopic));
-  //     if (d && d.getTopicById.__typename === 'Domain') {
-  //       d.getTopicById.parentTopics?.length
-  //         ? setParentTopics(d.getTopicById.parentTopics.map((i) => i.parentTopic))
-  //         : setParentTopics([rootTopic]);
-  //     }
+  const [getTopicById, { loading: isGetTopicLoading, refetch }] = useGetTopicByIdExplorePageLazyQuery({
+    fetchPolicy: 'network-only',
+    notifyOnNetworkStatusChange: true, //https://github.com/apollographql/react-apollo/issues/3709
+    onCompleted(d) {
+      d && d.getTopicById.subTopics && setSubtopics(d.getTopicById.subTopics.map((i) => i.subTopic));
+      setParentTopic(d.getTopicById.parentTopic || undefined);
 
-  //     if (d && d.getTopicById.__typename === 'Concept' && d.getTopicById.parentTopic) {
-  //       d.getTopicById.domain && setLoadedTopicDomain(d.getTopicById.domain);
-  //       setParentTopics([d.getTopicById.parentTopic.parentTopic]);
-  //     }
+      setLoadedTopic(d.getTopicById);
+    },
+  });
+  const loading = isGetTopicLoading || isTopLevelQueryLoading;
+  const loadTopic = (topicId?: string) => {
+    if (!topicId || topicId === rootTopic._id) {
+      getTopLevelDomainsLazyQuery();
+      onTopicChange && onTopicChange(rootTopic._id);
+    } else {
+      getTopicById({ variables: { topicId } });
+      onTopicChange && onTopicChange(topicId);
+    }
+  };
 
-  //     setLoadedTopic(d.getTopicById);
-  //   },
-  // });
-  // const loading = isGetTopicLoading || isTopLevelQueryLoading;
-  // const loadTopic = (topicId?: string) => {
-  //   if (!topicId || topicId === rootTopic._id) {
-  //     getTopLevelDomainsLazyQuery();
-  //     onTopicChange && onTopicChange(rootTopic._id);
-  //     // } else if (topicId === loadedTopic?._id) { => needed ?
-  //     //   refetch && refetch({ topicId });
-  //   } else {
-  //     getTopicById({ variables: { topicId } });
-  //     onTopicChange && onTopicChange(topicId);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   loadTopic(selectedTopicId);
-  // }, [selectedTopicId]);
+  useEffect(() => {
+    loadTopic(selectedTopicId);
+  }, [selectedTopicId]);
 
   return (
     <Stack direction={direction} spacing={6} alignItems="center">
-      {/* <Box
+      <Box
         borderBottomWidth={3}
         minH="168px"
         position="relative"
@@ -221,7 +152,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
                   tooltipLabel={`${subTopics.length} subTopics in ${loadedTopic.name}`}
                 />
               )}
-              {loadedTopic.__typename === TopicType.Domain && loadedTopic.learningMaterialsTotalCount && (
+              {loadedTopic.learningMaterialsTotalCount && (
                 <LearningMaterialCountIcon
                   totalCount={loadedTopic.learningMaterialsTotalCount}
                   tooltipLabel={`${loadedTopic.learningMaterialsTotalCount} Learning Materials in ${loadedTopic.name}`}
@@ -251,9 +182,8 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
             ) : (
               <SubTopicsMapVisualisation
                 subTopics={subTopics}
-                parentTopics={parentTopics}
+                parentTopic={parentTopic}
                 pxWidth={mapPxWidth}
-                domainKey={loadedTopicDomain?.key}
                 topic={loadedTopic}
                 pxHeight={mapPxHeight}
                 onClick={(topic) => {
@@ -273,14 +203,13 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
       </Stack>
       {loadedTopic && (
         <AddSubTopicModal
-          domain={loadedTopicDomain}
           parentTopicId={loadedTopic._id}
           isOpen={isOpen}
           onClose={onClose}
           onCancel={() => onClose()}
           onAdded={() => loadTopic(loadedTopic._id)}
         />
-      )} */}
+      )}
     </Stack>
   );
 };

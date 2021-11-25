@@ -85,15 +85,11 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
 
         .attr('dy', (d) => {
           return getNodeRadius(d) +  12;
-          // return getNodeRadius(d) + (d.topicType === TopicType.Domain ? 16 : 12);
         })
         .attr('z-index', 10)
-        // .attr('font-size', (d) => (d.topicType === TopicType.Domain ? '1em' : '0.8em'))
         .attr('font-size', '0.8em')
-        // .attr('font-weight', (d) => (d.topicType === TopicType.Domain ? 500 : 500))
         .attr('font-weight', 500)
         .attr('fill', theme.colors.gray[500])
-        // .attr('fill', (d) => (d.topicType === TopicType.Domain ? theme.colors.gray[700] : theme.colors.gray[500]))
         .text(function (d) {
           return d.name;
         });

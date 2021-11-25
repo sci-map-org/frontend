@@ -1,5 +1,7 @@
 import * as Types from '../../graphql/types';
 
+import { MapVisualisationTopicDataFragment } from './SubTopicsMapVisualisation.generated';
+import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import * as Operations from './ExploreMap';
 import * as Apollo from '@apollo/client';
 export type GetTopicByIdExplorePageQueryVariables = Types.Exact<{
@@ -11,14 +13,18 @@ export type GetTopicByIdExplorePageQuery = (
   { __typename?: 'Query' }
   & { getTopicById: (
     { __typename?: 'Topic' }
-    & Pick<Types.Topic, '_id' | 'key' | 'name' | 'description'>
+    & Pick<Types.Topic, 'description' | 'learningMaterialsTotalCount'>
     & { subTopics?: Types.Maybe<Array<(
       { __typename?: 'TopicIsSubTopicOfTopic' }
       & { subTopic: (
         { __typename?: 'Topic' }
-        & Pick<Types.Topic, '_id' | 'key' | 'name'>
+        & MapVisualisationTopicDataFragment
       ) }
-    )>> }
+    )>>, parentTopic?: Types.Maybe<(
+      { __typename?: 'Topic' }
+      & TopicLinkDataFragment
+    )> }
+    & MapVisualisationTopicDataFragment
   ) }
 );
 
@@ -31,7 +37,7 @@ export type GetTopLevelTopicsQuery = (
     { __typename?: 'GetTopLevelTopicsResults' }
     & { items: Array<(
       { __typename?: 'Topic' }
-      & Pick<Types.Topic, '_id' | 'key' | 'name'>
+      & MapVisualisationTopicDataFragment
     )> }
   ) }
 );

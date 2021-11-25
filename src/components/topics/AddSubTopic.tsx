@@ -1,5 +1,4 @@
 import {
-  Box,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -8,32 +7,21 @@ import {
   ModalOverlay,
   Stack,
   Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
+  TabList, TabPanels,
   Tabs,
-  Text,
+  Text
 } from '@chakra-ui/react';
-import { useState } from 'react';
-import { DomainDataFragment, DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { useAttachTopicIsSubTopicOfTopicMutation } from '../../graphql/topics/topics.operations.generated';
-import { DomainPageInfo } from '../../pages/RoutesPageInfos';
-import { NewConcept } from '../concepts/NewConcept';
-import { DomainSelector } from '../domains/DomainSelector';
-import { FormButtons } from '../lib/buttons/FormButtons';
 import { DomainIcon } from '../lib/icons/DomainIcon';
-import { PageLink } from '../navigation/InternalLink';
 
 interface AddSubTopicProps {
-  domain?: DomainLinkDataFragment;
   parentTopicId: string; // add data ?
   size?: 'sm' | 'md' | 'lg';
   onAdded?: () => void;
   onCancel: () => void;
 }
-export const AddSubTopic: React.FC<AddSubTopicProps> = ({ domain, parentTopicId, size = 'md', onCancel, onAdded }) => {
+export const AddSubTopic: React.FC<AddSubTopicProps> = ({  parentTopicId, size = 'md', onCancel, onAdded }) => {
   const [attachTopicIsSubTopicOfTopic] = useAttachTopicIsSubTopicOfTopicMutation();
-  const [selectedDomain, selectDomain] = useState<DomainDataFragment>();
 
   return (
     <Stack spacing={4} direction="column" alignItems="stretch">
@@ -48,42 +36,42 @@ export const AddSubTopic: React.FC<AddSubTopicProps> = ({ domain, parentTopicId,
           </Tab>
         </TabList>
         <TabPanels>
-          <TabPanel>
-            <NewConcept
+          {/*<TabPanel>
+             <NewConcept
               parentTopicId={parentTopicId}
               domain={domain}
               size={size}
               onCancel={onCancel}
               onCreated={() => onAdded && onAdded()}
             />
-          </TabPanel>
-          <TabPanel>
-            <Box mb={5}>
+          </TabPanel> */}
+          {/* <TabPanel> */}
+            {/* <Box mb={5}>
               <DomainSelector onSelect={(domain) => selectDomain(domain)} />
               {selectedDomain && (
                 <Text fontSize="md" fontWeight={500} my={4}>
                   Selected Area: <PageLink pageInfo={DomainPageInfo(selectedDomain)}>{selectedDomain.name}</PageLink>
                 </Text>
               )}
-            </Box>
-            <FormButtons
+            </Box> */}
+            {/* <FormButtons
               primaryText="Add SubTopic"
               size={size}
               onPrimaryClick={async () => {
-                if (!selectedDomain) return;
+                // if (!selectedDomain) return;
                 const { data } = await attachTopicIsSubTopicOfTopic({
                   variables: {
                     parentTopicId: parentTopicId,
-                    subTopicId: selectedDomain._id,
+                    // subTopicId: selectedDomain._id,
                     payload: {},
                   },
                 });
                 onAdded && onAdded();
               }}
-              isPrimaryDisabled={!selectedDomain}
+              // isPrimaryDisabled={!selectedDomain}
               onCancel={onCancel}
             />
-          </TabPanel>
+          </TabPanel> */}
         </TabPanels>
       </Tabs>
     </Stack>
@@ -99,7 +87,7 @@ export const AddSubTopicModal: React.FC<AddSubTopicModalProps> = ({ isOpen, onCl
     <Modal onClose={onClose} size="xl" isOpen={isOpen}>
       <ModalOverlay>
         <ModalContent>
-          <ModalHeader>{props.domain ? `Add a SubTopic` : 'Create new SubTopic'}</ModalHeader>
+          <ModalHeader>Add SubTopic</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={5}>
             <AddSubTopic
