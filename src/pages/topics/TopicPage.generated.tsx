@@ -1,7 +1,7 @@
 import * as Types from '../../graphql/types';
 
 import { MapVisualisationTopicDataFragment } from '../../components/topics/SubTopicsMapVisualisation.generated';
-import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
+import { ParentTopicsBreadcrumbsDataFragment } from '../../components/topics/ParentTopicsBreadcrumbs.generated';
 import * as Operations from './TopicPage';
 import * as Apollo from '@apollo/client';
 export type GetTopicByKeyTopicPageQueryVariables = Types.Exact<{
@@ -20,11 +20,9 @@ export type GetTopicByKeyTopicPageQuery = (
         { __typename?: 'Topic' }
         & MapVisualisationTopicDataFragment
       ) }
-    )>>, parentTopic?: Types.Maybe<(
-      { __typename?: 'Topic' }
-      & TopicLinkDataFragment
-    )> }
+    )>> }
     & MapVisualisationTopicDataFragment
+    & ParentTopicsBreadcrumbsDataFragment
   ) }
 );
 

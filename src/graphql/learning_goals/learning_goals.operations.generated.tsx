@@ -4,6 +4,23 @@ import { LearningGoalDataFragment } from './learning_goals.fragments.generated';
 import { SubGoalCardDataFragment } from '../../components/learning_goals/SubGoalCard.generated';
 import * as Operations from './learning_goals.operations';
 import * as Apollo from '@apollo/client';
+export type CheckLearningGoalKeyAvailabilityQueryVariables = Types.Exact<{
+  key: Types.Scalars['String'];
+}>;
+
+
+export type CheckLearningGoalKeyAvailabilityQuery = (
+  { __typename?: 'Query' }
+  & { checkLearningGoalKeyAvailability: (
+    { __typename?: 'CheckLearningGoalKeyAvailabilityResult' }
+    & Pick<Types.CheckLearningGoalKeyAvailabilityResult, 'available'>
+    & { existingLearningGoal?: Types.Maybe<(
+      { __typename?: 'LearningGoal' }
+      & Pick<Types.LearningGoal, '_id' | 'name'>
+    )> }
+  ) }
+);
+
 export type CreateLearningGoalMutationVariables = Types.Exact<{
   payload: Types.CreateLearningGoalPayload;
   options?: Types.Maybe<Types.CreateLearningGoalOptions>;
@@ -250,6 +267,32 @@ export type DetachLearningGoalDependencyMutation = (
 );
 
 
+
+/**
+ * __useCheckLearningGoalKeyAvailabilityQuery__
+ *
+ * To run a query within a React component, call `useCheckLearningGoalKeyAvailabilityQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCheckLearningGoalKeyAvailabilityQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCheckLearningGoalKeyAvailabilityQuery({
+ *   variables: {
+ *      key: // value for 'key'
+ *   },
+ * });
+ */
+export function useCheckLearningGoalKeyAvailabilityQuery(baseOptions: Apollo.QueryHookOptions<CheckLearningGoalKeyAvailabilityQuery, CheckLearningGoalKeyAvailabilityQueryVariables>) {
+        return Apollo.useQuery<CheckLearningGoalKeyAvailabilityQuery, CheckLearningGoalKeyAvailabilityQueryVariables>(Operations.checkLearningGoalKeyAvailability, baseOptions);
+      }
+export function useCheckLearningGoalKeyAvailabilityLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CheckLearningGoalKeyAvailabilityQuery, CheckLearningGoalKeyAvailabilityQueryVariables>) {
+          return Apollo.useLazyQuery<CheckLearningGoalKeyAvailabilityQuery, CheckLearningGoalKeyAvailabilityQueryVariables>(Operations.checkLearningGoalKeyAvailability, baseOptions);
+        }
+export type CheckLearningGoalKeyAvailabilityQueryHookResult = ReturnType<typeof useCheckLearningGoalKeyAvailabilityQuery>;
+export type CheckLearningGoalKeyAvailabilityLazyQueryHookResult = ReturnType<typeof useCheckLearningGoalKeyAvailabilityLazyQuery>;
+export type CheckLearningGoalKeyAvailabilityQueryResult = Apollo.QueryResult<CheckLearningGoalKeyAvailabilityQuery, CheckLearningGoalKeyAvailabilityQueryVariables>;
 export type CreateLearningGoalMutationFn = Apollo.MutationFunction<CreateLearningGoalMutation, CreateLearningGoalMutationVariables>;
 
 /**

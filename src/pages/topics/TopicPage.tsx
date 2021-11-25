@@ -22,6 +22,7 @@ import { GetTopicByKeyTopicPageQuery, useGetTopicByKeyTopicPageQuery } from './T
 import { ResourcePreviewCardDataFragment } from '../../components/resources/ResourcePreviewCard.generated';
 import { useGetTopicRecommendedLearningMaterialsQuery } from '../../components/topics/TopicRecommendedLearningMaterials.generated';
 import { SubTopicsMinimap } from '../../components/topics/SubTopicsMinimap';
+import { ParentTopicsBreadcrumbs, ParentTopicsBreadcrumbsData } from '../../components/topics/ParentTopicsBreadcrumbs';
 
 export const getTopicByKeyTopicPage = gql`
   query getTopicByKeyTopicPage($key: String!) {
@@ -35,13 +36,12 @@ export const getTopicByKeyTopicPage = gql`
           ...MapVisualisationTopicData
         }
       }
-      parentTopic{
-        ...TopicLinkData
-      }
+      ...ParentTopicsBreadcrumbsData
     }
   }
   ${MapVisualisationTopicData}
   ${TopicLinkData}
+  ${ParentTopicsBreadcrumbsData}
 `;
 
 const placeholderTopicData: GetTopicByKeyTopicPageQuery['getTopicByKey'] = {
@@ -90,17 +90,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
   if (error) return null;
   return (
     <TopicPageLayout
-    // TODO
-      renderTopLeftNavigation={<div>{topic.parentTopic?.name}</div>}
-      // renderTopLeftNavigation={
-        // <ParentDomainsNavigationBlock
-        //   domains={
-        //     (domain.parentTopics || [])
-        //       .filter(({ parentTopic }) => parentTopic.__typename === 'Domain')
-        //       .map(({ parentTopic }) => parentTopic) as DomainLinkDataFragment[] // TODO
-        //   }
-        // />
-      // }
+      renderTopLeftNavigation={<ParentTopicsBreadcrumbs topic={topic} isLoading={loading}/>}
       renderManagementIcons={
         <RoleAccess accessRule="contributorOrAdmin">
           <IconButton

@@ -2,6 +2,18 @@ import gql from 'graphql-tag';
 import { SubGoalCardData } from '../../components/learning_goals/SubGoalCard';
 import { LearningGoalData } from './learning_goals.fragments';
 
+export const checkLearningGoalKeyAvailability = gql`
+  query checkLearningGoalKeyAvailability($key: String!) {
+    checkLearningGoalKeyAvailability(key: $key) {
+      available
+      existingLearningGoal {
+        _id
+        name
+      }
+    }
+  }
+`;
+
 export const createLearningGoal = gql`
   mutation createLearningGoal($payload: CreateLearningGoalPayload!, $options: CreateLearningGoalOptions) {
     createLearningGoal(payload: $payload, options: $options) {

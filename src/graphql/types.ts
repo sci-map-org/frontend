@@ -34,6 +34,7 @@ export type Query = {
   getLearningPathByKey: LearningPath;
   searchLearningGoals: SearchLearningGoalsResult;
   getLearningGoalByKey: LearningGoal;
+  checkLearningGoalKeyAvailability: CheckLearningGoalKeyAvailabilityResult;
 };
 
 
@@ -126,6 +127,11 @@ export type QuerySearchLearningGoalsArgs = {
 
 
 export type QueryGetLearningGoalByKeyArgs = {
+  key: Scalars['String'];
+};
+
+
+export type QueryCheckLearningGoalKeyAvailabilityArgs = {
   key: Scalars['String'];
 };
 
@@ -824,6 +830,12 @@ export type LearningGoalStartedByArgs = {
 
 export type LearningGoalRelevantLearningMaterialsArgs = {
   options: LearningGoalRelevantLearningMaterialsOptions;
+};
+
+export type CheckLearningGoalKeyAvailabilityResult = {
+  __typename?: 'CheckLearningGoalKeyAvailabilityResult';
+  available: Scalars['Boolean'];
+  existingLearningGoal?: Maybe<LearningGoal>;
 };
 
 export type CreateTopicPayload = {
