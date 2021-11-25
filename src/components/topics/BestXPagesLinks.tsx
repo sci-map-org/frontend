@@ -54,7 +54,7 @@ export const BestXPagesLinks: React.FC<{ topicKey: string }> = ({ topicKey }) =>
               color="blue.800"
               textDecoration="underline"
               key={link.url_suffix}
-              routePath={'/topics/[key]/' + link.url_suffix}
+              routePath={'/topics/[topicKey]/' + link.url_suffix}
               asHref={`/topics/${topicKey}/${link.url_suffix}`}
             >
               {link.name}

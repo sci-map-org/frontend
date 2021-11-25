@@ -11,7 +11,7 @@ import { LearningPathIcon } from '../../components/lib/icons/LearningPathIcon';
 import { PageButtonLink } from '../../components/navigation/InternalLink';
 import { MapVisualisationTopicData } from '../../components/topics/SubTopicsMapVisualisation';
 import { TopicRecommendedLearningMaterials } from '../../components/topics/TopicRecommendedLearningMaterials';
-import { generateTopicData } from '../../graphql/topics/topics.fragments';
+import { generateTopicData, TopicLinkData } from '../../graphql/topics/topics.fragments';
 import { TopicLearningMaterialsOptions, TopicLearningMaterialsSortingType } from '../../graphql/types';
 import { routerPushToPage } from '../PageInfo';
 import {
@@ -21,6 +21,7 @@ import {
 import { GetTopicByKeyTopicPageQuery, useGetTopicByKeyTopicPageQuery } from './TopicPage.generated';
 import { ResourcePreviewCardDataFragment } from '../../components/resources/ResourcePreviewCard.generated';
 import { useGetTopicRecommendedLearningMaterialsQuery } from '../../components/topics/TopicRecommendedLearningMaterials.generated';
+import { SubTopicsMinimap } from '../../components/topics/SubTopicsMinimap';
 
 export const getTopicByKeyTopicPage = gql`
   query getTopicByKeyTopicPage($key: String!) {
@@ -29,22 +30,18 @@ export const getTopicByKeyTopicPage = gql`
       name
       description
       ...MapVisualisationTopicData
-      # subTopics{
-      #   ...SubTopicsMenuData
-      # }
-      parentTopic{
-        _id
-        name
+      subTopics{
+        subTopic {
+          ...MapVisualisationTopicData
+        }
       }
-      # learningGoals {
-      #   learningGoal {
-      #     ...LearningGoalCardData
-      #   }
-      #   index
-      # }
+      parentTopic{
+        ...TopicLinkData
+      }
     }
   }
   ${MapVisualisationTopicData}
+  ${TopicLinkData}
 `;
 
 const placeholderTopicData: GetTopicByKeyTopicPageQuery['getTopicByKey'] = {
@@ -178,20 +175,17 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
           </Flex>
         </>
       }
-      renderMinimap={(pxWidth, pxHeight) => null
-        // TODO
-        // <SubTopicsMinimap
-        //   domainKey={domain.key}
-        //   topic={domain}
-        //   isLoading={!!loading || !!resourcesLoading}
-        //   subTopics={(domain.subTopics || []).map(({ subTopic }) => subTopic)}
-        //   parentTopics={(domain.parentTopics || []).map(({ parentTopic }) => parentTopic)}
-        //   pxWidth={pxWidth}
-        //   pxHeight={pxHeight}
-        // />
+      renderMinimap={(pxWidth, pxHeight) => 
+        <SubTopicsMinimap
+          topic={topic}
+          isLoading={!!loading || !!resourcesLoading}
+          subTopics={(topic.subTopics || []).map(({ subTopic }) => subTopic)}
+          parentTopic={topic.parentTopic || undefined}
+          pxWidth={pxWidth}
+          pxHeight={pxHeight}
+        />
       }
       isLoading={loading}
-      // topicType={TopicType.Domain}
     >
       <>
         {/* {(loading || (topic.learningGoals && !!domain.learningGoals.length)) && (

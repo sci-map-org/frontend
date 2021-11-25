@@ -1,6 +1,7 @@
 import * as Types from '../../graphql/types';
 
 import { MapVisualisationTopicDataFragment } from '../../components/topics/SubTopicsMapVisualisation.generated';
+import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import * as Operations from './TopicPage';
 import * as Apollo from '@apollo/client';
 export type GetTopicByKeyTopicPageQueryVariables = Types.Exact<{
@@ -13,9 +14,15 @@ export type GetTopicByKeyTopicPageQuery = (
   & { getTopicByKey: (
     { __typename?: 'Topic' }
     & Pick<Types.Topic, '_id' | 'name' | 'description'>
-    & { parentTopic?: Types.Maybe<(
+    & { subTopics?: Types.Maybe<Array<(
+      { __typename?: 'TopicIsSubTopicOfTopic' }
+      & { subTopic: (
+        { __typename?: 'Topic' }
+        & MapVisualisationTopicDataFragment
+      ) }
+    )>>, parentTopic?: Types.Maybe<(
       { __typename?: 'Topic' }
-      & Pick<Types.Topic, '_id' | 'name'>
+      & TopicLinkDataFragment
     )> }
     & MapVisualisationTopicDataFragment
   ) }

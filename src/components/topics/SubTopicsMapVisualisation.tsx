@@ -9,33 +9,32 @@ import * as d3Zoom from 'd3-zoom';
 import gql from 'graphql-tag';
 import { useEffect, useMemo, useRef } from 'react';
 import { TopicLinkData } from '../../graphql/topics/topics.fragments';
+import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import { theme } from '../../theme/theme';
 import { TopicLink } from '../lib/links/TopicLink';
 import { MapVisualisationTopicDataFragment } from './SubTopicsMapVisualisation.generated';
 
 export const MapVisualisationTopicData = gql`
   fragment MapVisualisationTopicData on Topic {
-    # size
     ...TopicLinkData
+    subTopicsTotalCount
   }
   ${TopicLinkData}
 `;
 
-type NodeElement = SimulationNodeDatum & MapVisualisationTopicDataFragment;
+type NodeElement = SimulationNodeDatum & MapVisualisationTopicDataFragment & {size?: number};
 export interface SubTopicsMapVisualisationProps {
-  domainKey?: string;
   topic?: MapVisualisationTopicDataFragment; //only used to force rerendering
   subTopics: MapVisualisationTopicDataFragment[];
-  parentTopics?: MapVisualisationTopicDataFragment[];
+  parentTopic?: TopicLinkDataFragment;
   pxWidth: number;
   pxHeight: number;
   onClick: (node: NodeElement) => void;
 }
 export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps> = ({
-  domainKey,
   topic,
   subTopics,
-  parentTopics,
+  parentTopic,
   pxWidth,
   pxHeight,
   onClick,
@@ -44,9 +43,7 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
   const nodes: NodeElement[] = useMemo(
     () =>
       subTopics.map((subTopic) => {
-        if (subTopic.topicType === TopicType.Concept && !domainKey)
-          throw new Error('domainKey required if a subtopic is a concept');
-        return { id: subTopic._id, ...subTopic, ...(subTopic.topicType === TopicType.Concept && { domainKey }) };
+        return { id: subTopic._id, ...subTopic, size: subTopic.subTopicsTotalCount || undefined};
       }),
     [subTopics]
   );
@@ -87,12 +84,16 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
         .attr('dx', 0)
 
         .attr('dy', (d) => {
-          return getNodeRadius(d) + (d.topicType === TopicType.Domain ? 16 : 12);
+          return getNodeRadius(d) +  12;
+          // return getNodeRadius(d) + (d.topicType === TopicType.Domain ? 16 : 12);
         })
         .attr('z-index', 10)
-        .attr('font-size', (d) => (d.topicType === TopicType.Domain ? '1em' : '0.8em'))
-        .attr('font-weight', (d) => (d.topicType === TopicType.Domain ? 500 : 500))
-        .attr('fill', (d) => (d.topicType === TopicType.Domain ? theme.colors.gray[700] : theme.colors.gray[500]))
+        // .attr('font-size', (d) => (d.topicType === TopicType.Domain ? '1em' : '0.8em'))
+        .attr('font-size', '0.8em')
+        // .attr('font-weight', (d) => (d.topicType === TopicType.Domain ? 500 : 500))
+        .attr('font-weight', 500)
+        .attr('fill', theme.colors.gray[500])
+        // .attr('fill', (d) => (d.topicType === TopicType.Domain ? theme.colors.gray[700] : theme.colors.gray[500]))
         .text(function (d) {
           return d.name;
         });
@@ -151,7 +152,7 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
           </Text>
         </Center>
       )}
-      {parentTopics && !!parentTopics.length && (
+      {parentTopic && (
         <Flex
           direction="row"
           alignItems="stretch"
@@ -167,11 +168,9 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
           </Flex>
           <Flex pt={1}>
             <Stack mr={2} spacing={1} pt={1}>
-              {parentTopics.map((parentTopic) => (
-                <Flex key={parentTopic._id} pl={1} alignItems="center">
+                <Flex pl={1} alignItems="center">
                   <TopicLink topic={parentTopic} onClick={() => onClick(parentTopic)} fontSize="md" />
                 </Flex>
-              ))}
             </Stack>
           </Flex>
         </Flex>

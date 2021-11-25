@@ -1,9 +1,8 @@
-import { Box, BoxProps, LinkProps, CloseButton, Stack, Text } from '@chakra-ui/react';
+import { Box, BoxProps, CloseButton, LinkProps, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
-// import { DomainLinkDataFragment } from '../../graphql/domains/domains.fragments.generated';
-// import { ConceptPageInfo } from '../../pages/RoutesPageInfos';
-import { InternalLink, PageLink } from '../navigation/InternalLink';
-// import { ConceptBadgeDataFragment } from './ConceptBadge.generated';
+import { TopicPageInfo } from '../../pages/RoutesPageInfos';
+import { PageLink } from '../navigation/InternalLink';
+import { TopicBadgeDataFragment } from './TopicBadge.generated';
 
 export const TopicBadgeData = gql`
   fragment TopicBadgeData on Topic {
