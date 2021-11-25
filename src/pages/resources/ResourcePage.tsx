@@ -7,7 +7,10 @@ import Router, { useRouter } from 'next/router';
 import { Access } from '../../components/auth/Access';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
-import { EditableLearningMaterialPrerequisitesData } from '../../components/learning_materials/EditableLearningMaterialPrerequisites';
+import {
+  EditableLearningMaterialPrerequisites,
+  EditableLearningMaterialPrerequisitesData,
+} from '../../components/learning_materials/EditableLearningMaterialPrerequisites';
 import {
   LearningMaterialStarsRater,
   LearningMaterialStarsRaterData,
@@ -32,6 +35,7 @@ import { useDeleteResourceMutation } from '../../graphql/resources/resources.ope
 import { ResourceType, UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { GetResourceResourcePageQuery, useGetResourceResourcePageQuery } from './ResourcePage.generated';
+import { LearningMaterialWithCoveredTopicsData } from '../../graphql/learning_materials/learning_materials.fragments';
 
 export const getResourceResourcePage = gql`
   query getResourceResourcePage($id: String!) {
@@ -40,14 +44,6 @@ export const getResourceResourcePage = gql`
       createdBy {
         ...UserAvatarData
       }
-      # coveredConceptsByDomain {
-      #   domain {
-      #     ...DomainData
-      #   }
-      #   coveredConcepts {
-      #     ...ConceptData
-      #   }
-      # }
       subResources {
         ...SquareResourceCardData
       }
@@ -70,6 +66,7 @@ export const getResourceResourcePage = gql`
         _id
         name
       }
+      ...LearningMaterialWithCoveredTopicsData
       ...EditableLearningMaterialPrerequisitesData
       ...LearningMaterialStarsRaterData
     }
@@ -79,6 +76,7 @@ export const getResourceResourcePage = gql`
   ${UserAvatarData}
   ${EditableLearningMaterialPrerequisitesData}
   ${LearningMaterialStarsRaterData}
+  ${LearningMaterialWithCoveredTopicsData}
 `;
 
 // TODO
@@ -185,27 +183,27 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
             )}
           </Stack>
 
-          {/* <Stack spacing={3}> */}
-          {/* <Center>
+          <Stack spacing={3}>
+            <Center>
               <EditableLearningMaterialPrerequisites
                 editable={!!currentUser}
                 learningMaterial={resource}
                 isLoading={loading}
               />
-            </Center> */}
-          <EditableLearningMaterialCoveredTopics
-            editable={!!currentUser}
-            isLoading={loading}
-            learningMaterial={resource}
-          />
-          {/* <Center>
+            </Center>
+            <EditableLearningMaterialCoveredTopics
+              editable={!!currentUser}
+              isLoading={loading}
+              learningMaterial={resource}
+            />
+            {/* <Center>
               <EditableLearningMaterialOutcomes
                 editable={!!currentUser}
                 learningMaterial={resource}
                 isLoading={loading}
               />
-            </Center>
-          </Stack> */}
+          </Center>*/}
+          </Stack>
         </Flex>
 
         {/* TODO */}
