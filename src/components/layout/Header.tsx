@@ -66,11 +66,7 @@ export const Header: React.FC = () => {
   const { onOpen: openOpenLP, onClose: onCloseLP, isOpen: isOpenLp } = useDisclosure();
   const showHamburger = useBreakpointValue({ base: true, md: false });
   const headerHamburgerLinks: (HeaderLinkProps & { name: string; show?: 'notLoggedIn' | 'loggedIn' })[] = [
-    {
-      routePath: '/areas',
-      asHref: '/areas',
-      name: 'Areas',
-    },
+
     {
       routePath: '/about/[key]',
       asHref: '/about/introduction',
