@@ -9,9 +9,11 @@ import { PuffLoader } from 'react-spinners';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { LearningMaterialCountIcon } from '../../components/learning_materials/LearningMaterialCountIcon';
 import { TopicLink } from '../../components/lib/links/TopicLink';
-import { AddSubTopicModal } from '../../components/topics/AddSubTopic';
 import { SubTopicsCountIcon } from '../../components/topics/SubTopicsCountIcon';
-import { MapVisualisationTopicData, SubTopicsMapVisualisation } from '../../components/topics/SubTopicsMapVisualisation';
+import {
+  MapVisualisationTopicData,
+  SubTopicsMapVisualisation,
+} from '../../components/topics/SubTopicsMapVisualisation';
 import { MapVisualisationTopicDataFragment } from '../../components/topics/SubTopicsMapVisualisation.generated';
 import { TopicDescription } from '../../components/topics/TopicDescription';
 import { TopicLinkData } from '../../graphql/topics/topics.fragments';
@@ -20,8 +22,9 @@ import { theme } from '../../theme/theme';
 import {
   GetTopicByIdExplorePageQuery,
   useGetTopicByIdExplorePageLazyQuery,
-  useGetTopLevelTopicsLazyQuery
+  useGetTopLevelTopicsLazyQuery,
 } from './ExploreMap.generated';
+import { NewTopicModal } from './NewTopic';
 
 export const getTopicByIdExplorePage = gql`
   query getTopicByIdExplorePage($topicId: String!) {
@@ -77,7 +80,6 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
   direction,
   mapContainerProps,
 }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const router = useRouter();
   const urlSelectedTopicId = router.query.selectedTopicId;
   if (urlSelectedTopicId && typeof urlSelectedTopicId !== 'string')
@@ -195,13 +197,18 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
         </Center>
         <RoleAccess accessRule="loggedInUser">
           <Flex direction="row" justifyContent="center" pt={1} pb={1}>
-            <Link color="originalPalette.red" fontSize="md" fontWeight={600} onClick={() => onOpen()}>
-              + Add SubTopic
-            </Link>
+            <NewTopicModal
+              parentTopic={loadedTopic}
+              renderButton={(openModal) => (
+                <Link color="originalPalette.red" fontSize="md" fontWeight={600} onClick={() => openModal()}>
+                  + Add SubTopic
+                </Link>
+              )}
+            />
           </Flex>
         </RoleAccess>
       </Stack>
-      {loadedTopic && (
+      {/* {loadedTopic && (
         <AddSubTopicModal
           parentTopicId={loadedTopic._id}
           isOpen={isOpen}
@@ -209,7 +216,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
           onCancel={() => onClose()}
           onAdded={() => loadTopic(loadedTopic._id)}
         />
-      )}
+      )} */}
     </Stack>
   );
 };

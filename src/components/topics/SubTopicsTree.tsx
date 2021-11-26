@@ -18,7 +18,7 @@ import { RoleAccess } from '../auth/RoleAccess';
 import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
 import { TopicIcon } from '../lib/icons/TopicIcon';
 import { PageLink } from '../navigation/InternalLink';
-import { AddSubTopicModal } from './AddSubTopic';
+import { NewTopicModal } from './NewTopic';
 import { SubTopicsTreeDataFragment } from './SubTopicsTree.generated';
 
 export const SubTopicsTreeData = gql`
@@ -235,14 +235,14 @@ export const SubTopicsTree: React.FC<SubTopicsTreeProps> = ({ topic, onUpdated, 
           </Flex>
         </RoleAccess>
         <RoleAccess accessRule="loggedInUser">
-          <AddSubTopicModal
-            parentTopicId={topic._id}
+          <NewTopicModal
+            parentTopic={topic}
             renderButton={(openModal) => (
               <Button colorScheme="blue" onClick={() => openModal()} variant="outline">
                 + Add SubTopic
               </Button>
             )}
-            onAdded={() => onUpdated()}
+            onCreated={() => onUpdated()}
           />
         </RoleAccess>
       </Stack>

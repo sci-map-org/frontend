@@ -1,96 +1,248 @@
-import { Box, Button, Flex, Stack, Text } from '@chakra-ui/react';
-import { values } from 'lodash';
-import { useState } from 'react';
-import { ConceptDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
-import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
-import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
-import { TopicType } from '../../graphql/types';
-import { NewConcept } from '../concepts/NewConcept';
-import { NewDomain } from '../domains/NewDomain';
-import { NewLearningGoal } from '../learning_goals/NewLearningGoal';
+import { useDisclosure } from '@chakra-ui/hooks';
+import { CheckIcon, NotAllowedIcon } from '@chakra-ui/icons';
+import {
+  FormControl,
+  FormHelperText,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
+  Spinner,
+  Stack,
+  Text,
+  Textarea,
+  Tooltip,
+} from '@chakra-ui/react';
+import gql from 'graphql-tag';
+import { ReactNode, useEffect, useState } from 'react';
+import { useDebounce } from 'use-debounce';
+import { TopicFullData, TopicLinkData } from '../../graphql/topics/topics.fragments';
+import { TopicFullDataFragment, TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
+import { useCheckTopicKeyAvailabilityLazyQuery } from '../../graphql/topics/topics.operations.generated';
+import { CreateTopicPayload, Topic } from '../../graphql/types';
+import { generateUrlKey } from '../../services/url.service';
+import { getChakraRelativeSize } from '../../util/chakra.util';
+import { FormButtons } from '../lib/buttons/FormButtons';
+import { useAddSubTopicMutation, useCreateTopicMutation } from './NewTopic.generated';
+
+interface NewTopicFormProps {
+  parentTopic?: TopicLinkDataFragment;
+  topicCreationData: CreateTopicPayload;
+  updateTopicCreationData: (newData: Partial<CreateTopicPayload>) => void;
+  onCreate: () => void;
+  onCancel: () => void;
+  size?: 'md' | 'lg' | 'sm';
+}
+const NewTopicForm: React.FC<NewTopicFormProps> = ({
+  parentTopic,
+  topicCreationData,
+  updateTopicCreationData,
+  onCancel,
+  onCreate,
+  size = 'md',
+}) => {
+  const [checkTopicKeyAvailability, { loading, data }] = useCheckTopicKeyAvailabilityLazyQuery();
+
+  const [keyValueToCheck] = useDebounce(topicCreationData.key, 300);
+
+  useEffect(() => {
+    checkTopicKeyAvailability({ variables: { key: keyValueToCheck } });
+  }, [keyValueToCheck]);
+
+  return (
+    <Stack spacing={4} w="100%">
+      <Input
+        placeholder="Name"
+        size={size}
+        variant="flushed"
+        value={topicCreationData.name}
+        onChange={(e) => {
+          updateTopicCreationData({
+            name: e.target.value,
+            ...(topicCreationData.key === generateUrlKey(topicCreationData.name) && {
+              key: generateUrlKey(e.target.value),
+            }),
+          });
+        }}
+      ></Input>
+      <FormControl id="key" size={size}>
+        <InputGroup>
+          <Input
+            placeholder="Topic Url Key"
+            variant="flushed"
+            value={topicCreationData.key}
+            size={size}
+            onChange={(e) => updateTopicCreationData({ key: generateUrlKey(e.target.value) })}
+          />
+          {topicCreationData.key && (
+            <InputRightElement
+              children={
+                !!loading ? (
+                  <Spinner size="sm" />
+                ) : data?.checkTopicKeyAvailability.available ? (
+                  <CheckIcon color="green.500" />
+                ) : (
+                  <Tooltip
+                    hasArrow
+                    aria-label="Key already in use"
+                    label="key already in use"
+                    placement="top"
+                    bg="red.600"
+                  >
+                    <NotAllowedIcon color="red.500" />
+                  </Tooltip>
+                )
+              }
+            />
+          )}
+        </InputGroup>
+        {topicCreationData.key && (
+          <FormHelperText fontSize="xs">
+            Url will look like{' '}
+            <Text as="span" fontWeight={500}>
+              /topics/{topicCreationData.key}
+            </Text>
+          </FormHelperText>
+        )}
+      </FormControl>
+
+      <Textarea
+        placeholder="Description"
+        size={size}
+        variant="flushed"
+        value={topicCreationData.description || ''}
+        onChange={(e) => updateTopicCreationData({ description: e.target.value })}
+      ></Textarea>
+
+      <FormButtons
+        isPrimaryDisabled={
+          !topicCreationData.name || !topicCreationData.key || !data?.checkTopicKeyAvailability.available
+        }
+        onCancel={onCancel}
+        size={getChakraRelativeSize(size, 1)}
+        onPrimaryClick={onCreate}
+      />
+    </Stack>
+  );
+};
+
+export const createTopic = gql`
+  mutation createTopic($payload: CreateTopicPayload!) {
+    createTopic(payload: $payload) {
+      ...TopicFullData
+    }
+  }
+  ${TopicFullData}
+`;
+
+export const addSubTopic = gql`
+  mutation addSubTopic($parentTopicId: String!, $payload: CreateTopicPayload!) {
+    addSubTopic(parentTopicId: $parentTopicId, payload: $payload) {
+      ...TopicFullData
+      parentTopic {
+        ...TopicLinkData
+      }
+    }
+  }
+  ${TopicFullData}
+  ${TopicLinkData}
+`;
 
 interface NewTopicProps {
+  parentTopic?: TopicLinkDataFragment;
   onCancel: () => void;
-  onCreated?: (
-    createdTopic: DomainDataFragment | ConceptDataFragment | LearningGoalDataFragment,
-    topicType: TopicType
-  ) => void;
-  parentDomain?: DomainDataFragment;
-  defaultPayload?: { name?: string; key?: string };
-  allowedTopicTypes?: TopicType[];
+  onCreated?: (createdTopic: TopicFullDataFragment) => void;
+  defaultCreationData?: { name?: string; key?: string };
   size?: 'sm' | 'md' | 'lg';
 }
-export const NewTopic: React.FC<NewTopicProps> = ({
+
+export const NewTopic: React.FC<NewTopicProps> = ({ onCancel, onCreated, parentTopic, defaultCreationData, size }) => {
+  const [topicCreationData, setTopicCreationData] = useState<CreateTopicPayload>({
+    name: '',
+    key: '',
+    ...defaultCreationData,
+  });
+
+  const [createTopicMutation] = useCreateTopicMutation({
+    onCompleted(data) {
+      onCreated && onCreated(data.createTopic);
+    },
+  });
+  const [addSubTopicMutation] = useAddSubTopicMutation({
+    onCompleted(data) {
+      onCreated && onCreated(data.addSubTopic);
+    },
+  });
+
+  const createTopic = async () => {
+    let createdTopic: Topic;
+    if (parentTopic) {
+      addSubTopicMutation({ variables: { parentTopicId: parentTopic._id, payload: topicCreationData } });
+    } else {
+      createTopicMutation({ variables: { payload: topicCreationData } });
+    }
+  };
+  return (
+    <NewTopicForm
+      parentTopic={parentTopic}
+      topicCreationData={topicCreationData}
+      updateTopicCreationData={(newData) =>
+        setTopicCreationData({
+          ...topicCreationData,
+          ...newData,
+        })
+      }
+      onCreate={() => createTopic()}
+      onCancel={onCancel}
+    />
+  );
+};
+
+interface NewTopicModalProps extends Omit<NewTopicProps, 'onCancel'> {
+  title?: string;
+  onCancel?: () => void;
+  renderButton: (openModal: () => void) => ReactNode;
+}
+
+export const NewTopicModal: React.FC<NewTopicModalProps> = ({
+  title = 'Add SubTopic',
+  renderButton,
   onCancel,
   onCreated,
-  parentDomain,
-  allowedTopicTypes = values(TopicType),
-  defaultPayload,
-  size,
+  ...props
 }) => {
-  const [topicType, setTopicType] = useState<TopicType>();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   return (
-    <Box>
-      {topicType ? (
-        <Stack>
-          <Flex direction="row" alignItems="baseline" justifyContent="center">
-            <Text fontSize="xl">Create new {topicType}</Text>
-            <Button variant="ghost" onClick={() => setTopicType(undefined)}>
-              Change
-            </Button>
-          </Flex>
-          {topicType === TopicType.Domain && (
-            <NewDomain
-              defaultPayload={defaultPayload}
-              onCreated={(createdDomain) => !!onCreated && onCreated(createdDomain, TopicType.Domain)}
-              onCancel={onCancel}
-              parentDomainId={parentDomain?._id}
-              size={size}
-            />
-          )}
-          {topicType === TopicType.Concept && (
-            <NewConcept
-              defaultPayload={defaultPayload}
-              onCreated={(createdConcept) => !!onCreated && onCreated(createdConcept, TopicType.Concept)}
-              onCancel={onCancel}
-              domain={parentDomain}
-              size={size}
-            />
-          )}
-          {topicType === TopicType.LearningGoal && (
-            <NewLearningGoal
-              defaultData={{ ...defaultPayload, domain: parentDomain }}
-              onCancel={onCancel}
-              onCreated={(createdLG) => !!onCreated && onCreated(createdLG, TopicType.LearningGoal)}
-              size={size}
-            />
-          )}
-        </Stack>
-      ) : (
-        <Stack>
-          {allowedTopicTypes.includes(TopicType.Domain) && (
-            <Box>
-              <Button variant="outline" onClick={() => setTopicType(TopicType.Domain)}>
-                Area
-              </Button>
-            </Box>
-          )}
-          {allowedTopicTypes.includes(TopicType.Concept) && (
-            <Box>
-              <Button variant="outline" onClick={() => setTopicType(TopicType.Concept)}>
-                Concept
-              </Button>
-            </Box>
-          )}
-          {allowedTopicTypes.includes(TopicType.LearningGoal) && (
-            <Box>
-              <Button variant="outline" onClick={() => setTopicType(TopicType.LearningGoal)}>
-                Learning Goal
-              </Button>
-            </Box>
-          )}
-        </Stack>
+    <>
+      {renderButton(onOpen)}
+      {isOpen && (
+        <Modal onClose={onClose} size="xl" isOpen={isOpen}>
+          <ModalOverlay>
+            <ModalContent>
+              <ModalHeader>{title}</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody pb={5}>
+                <NewTopic
+                  onCreated={(createdTopic) => {
+                    onClose();
+                    onCreated && onCreated(createdTopic);
+                  }}
+                  onCancel={() => {
+                    onClose();
+                    onCancel && onCancel();
+                  }}
+                  {...props}
+                />
+              </ModalBody>
+            </ModalContent>
+          </ModalOverlay>
+        </Modal>
       )}
-    </Box>
+    </>
   );
 };

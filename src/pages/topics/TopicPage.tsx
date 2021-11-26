@@ -21,7 +21,7 @@ import { useGetTopicRecommendedLearningMaterialsQuery } from '../../components/t
 import { SubTopicsMinimap } from '../../components/topics/SubTopicsMinimap';
 import { ParentTopicsBreadcrumbs, ParentTopicsBreadcrumbsData } from '../../components/topics/ParentTopicsBreadcrumbs';
 import { ResourceIcon } from '../../components/lib/icons/ResourceIcon';
-import { AddSubTopicModal } from '../../components/topics/AddSubTopic';
+import { NewTopicModal } from '../../components/topics/NewTopic';
 
 export const getTopicByKeyTopicPage = gql`
   query getTopicByKeyTopicPage($key: String!) {
@@ -48,7 +48,7 @@ const placeholderTopicData: GetTopicByKeyTopicPageQuery['getTopicByKey'] = {
 };
 
 export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
-  const { data, loading, error } = useGetTopicByKeyTopicPageQuery({
+  const { data, loading, error, refetch } = useGetTopicByKeyTopicPageQuery({
     variables: { key: topicKey },
   });
 
@@ -157,13 +157,14 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
                 Add Learning Path
               </PageButtonLink>
               <RoleAccess accessRule="loggedInUser">
-                <AddSubTopicModal
-                  parentTopicId={topic._id}
+                <NewTopicModal
+                  parentTopic={topic}
                   renderButton={(openModal) => (
                     <Button variant="solid" colorScheme="blue" isDisabled={loading} onClick={openModal}>
                       Add SubTopic
                     </Button>
                   )}
+                  onCreated={() => refetch()}
                 />
               </RoleAccess>
             </Stack>
