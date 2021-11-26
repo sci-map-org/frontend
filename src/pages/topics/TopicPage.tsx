@@ -1,5 +1,5 @@
 import { SettingsIcon } from '@chakra-ui/icons';
-import { Box, Flex, Heading, IconButton, Skeleton, Stack, Text } from '@chakra-ui/react';
+import { Box, Flex, Heading, IconButton, Skeleton, Stack, Text, Button } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useState } from 'react';
 import { RoleAccess } from '../../components/auth/RoleAccess';
@@ -14,15 +14,14 @@ import { TopicRecommendedLearningMaterials } from '../../components/topics/Topic
 import { generateTopicData, TopicLinkData } from '../../graphql/topics/topics.fragments';
 import { TopicLearningMaterialsOptions, TopicLearningMaterialsSortingType } from '../../graphql/types';
 import { routerPushToPage } from '../PageInfo';
-import {
-  ManageTopicPageInfo,
-  NewLearningPathPageInfo
-} from '../RoutesPageInfos';
+import { ManageTopicPageInfo, NewLearningPathPageInfo, NewResourcePageInfo } from '../RoutesPageInfos';
 import { GetTopicByKeyTopicPageQuery, useGetTopicByKeyTopicPageQuery } from './TopicPage.generated';
 import { ResourcePreviewCardDataFragment } from '../../components/resources/ResourcePreviewCard.generated';
 import { useGetTopicRecommendedLearningMaterialsQuery } from '../../components/topics/TopicRecommendedLearningMaterials.generated';
 import { SubTopicsMinimap } from '../../components/topics/SubTopicsMinimap';
 import { ParentTopicsBreadcrumbs, ParentTopicsBreadcrumbsData } from '../../components/topics/ParentTopicsBreadcrumbs';
+import { ResourceIcon } from '../../components/lib/icons/ResourceIcon';
+import { AddSubTopicModal } from '../../components/topics/AddSubTopic';
 
 export const getTopicByKeyTopicPage = gql`
   query getTopicByKeyTopicPage($key: String!) {
@@ -31,7 +30,7 @@ export const getTopicByKeyTopicPage = gql`
       name
       description
       ...MapVisualisationTopicData
-      subTopics{
+      subTopics {
         subTopic {
           ...MapVisualisationTopicData
         }
@@ -46,10 +45,6 @@ export const getTopicByKeyTopicPage = gql`
 
 const placeholderTopicData: GetTopicByKeyTopicPageQuery['getTopicByKey'] = {
   ...generateTopicData(),
-  // subTopics: [...Array(12)].map(() => ({
-  //   subTopic: { ...generateConceptData(), topicType: TopicType.Concept },
-  //   index: 0,
-  // })),
 };
 
 export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
@@ -90,7 +85,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
   if (error) return null;
   return (
     <TopicPageLayout
-      renderTopLeftNavigation={<ParentTopicsBreadcrumbs topic={topic} isLoading={loading}/>}
+      renderTopLeftNavigation={<ParentTopicsBreadcrumbs topic={topic} isLoading={loading} />}
       renderManagementIcons={
         <RoleAccess accessRule="contributorOrAdmin">
           <IconButton
@@ -141,16 +136,16 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
           )}
           <Flex direction="row" w="100%">
             <Stack direction="row" spacing={4} pl={0} pt={10} pb={{ base: 4, lg: 12 }} pr={10} alignItems="flex-start">
-              {/* <PageButtonLink
+              <PageButtonLink
                 leftIcon={<ResourceIcon boxSize={8} />}
                 variant="solid"
                 colorScheme="blue"
-                pageInfo={AddResourceToDomainPageInfo(domain)}
+                pageInfo={NewResourcePageInfo}
                 loggedInOnly
                 isDisabled={loading}
               >
                 Add Resource
-              </PageButtonLink> */}
+              </PageButtonLink>
               <PageButtonLink
                 leftIcon={<LearningPathIcon boxSize={7} />}
                 variant="solid"
@@ -161,11 +156,21 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
               >
                 Add Learning Path
               </PageButtonLink>
+              <RoleAccess accessRule="loggedInUser">
+                <AddSubTopicModal
+                  parentTopicId={topic._id}
+                  renderButton={(openModal) => (
+                    <Button variant="solid" colorScheme="blue" isDisabled={loading} onClick={openModal}>
+                      Add SubTopic
+                    </Button>
+                  )}
+                />
+              </RoleAccess>
             </Stack>
           </Flex>
         </>
       }
-      renderMinimap={(pxWidth, pxHeight) => 
+      renderMinimap={(pxWidth, pxHeight) => (
         <SubTopicsMinimap
           topic={topic}
           isLoading={!!loading || !!resourcesLoading}
@@ -174,7 +179,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
           pxWidth={pxWidth}
           pxHeight={pxHeight}
         />
-      }
+      )}
       isLoading={loading}
     >
       <>

@@ -3,6 +3,7 @@ import * as Types from '../../graphql/types';
 import { ResourceDataFragment, ResourcePreviewCardDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { UserAvatarDataFragment } from '../../components/users/UserAvatar.generated';
 import { SquareResourceCardDataFragment } from '../../components/resources/SquareResourceCard.generated';
+import { LearningMaterialWithCoveredTopicsData_Resource_Fragment, LearningMaterialWithCoveredTopicsData_LearningPath_Fragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
 import { EditableLearningMaterialPrerequisitesData_Resource_Fragment, EditableLearningMaterialPrerequisitesData_LearningPath_Fragment } from '../../components/learning_materials/EditableLearningMaterialPrerequisites.generated';
 import { LearningMaterialStarsRaterData_Resource_Fragment, LearningMaterialStarsRaterData_LearningPath_Fragment } from '../../components/learning_materials/LearningMaterialStarsRating.generated';
 import * as Operations from './ResourcePage';
@@ -39,6 +40,7 @@ export type GetResourceResourcePageQuery = (
       & Pick<Types.Resource, '_id' | 'name'>
     )> }
     & ResourceDataFragment
+    & LearningMaterialWithCoveredTopicsData_Resource_Fragment
     & EditableLearningMaterialPrerequisitesData_Resource_Fragment
     & LearningMaterialStarsRaterData_Resource_Fragment
   ) }

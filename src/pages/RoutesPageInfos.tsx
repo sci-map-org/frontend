@@ -1,8 +1,6 @@
 // Exist mostly because having pageinfos in Pages creates circular dependencies
 
 import { topicLinkStyleProps } from '../components/lib/links/TopicLink';
-import { ConceptLinkDataFragment } from '../graphql/concepts/concepts.fragments.generated';
-import { DomainDataFragment, DomainLinkDataFragment } from '../graphql/domains/domains.fragments.generated';
 import { LearningGoalLinkDataFragment } from '../graphql/learning_goals/learning_goals.fragments.generated';
 import { LearningPathDataFragment } from '../graphql/learning_paths/learning_paths.fragments.generated';
 import { ResourceDataFragment } from '../graphql/resources/resources.fragments.generated';
@@ -21,17 +19,24 @@ export const TopicPageInfo = (topic: TopicLinkDataFragment): PageInfo => ({
 });
 
 export const NewTopicPagePath = '/topics/new';
-export const NewTopicPageInfo : PageInfo = {
-    name: 'New Topic',
-    path: NewTopicPagePath,
-    routePath: NewTopicPagePath,
-  };
+export const NewTopicPageInfo: PageInfo = {
+  name: 'New Topic',
+  path: NewTopicPagePath,
+  routePath: NewTopicPagePath,
+};
 
 export const ManageTopicPagePath = (topicKey: string) => `/topics/${topicKey}/manage`;
 export const ManageTopicPageInfo = (topic: TopicLinkDataFragment): PageInfo => ({
   name: `Manage ${topic.name}`,
   path: ManageTopicPagePath(topic.key),
   routePath: ManageTopicPagePath('[topicKey]'),
+});
+
+export const TopicTreePagePath = (topicKey: string) => `/topics/${topicKey}/tree`;
+export const TopicTreePageInfo = (topic: TopicLinkDataFragment): PageInfo => ({
+  name: `${topic.name} - Tree`,
+  path: TopicTreePagePath(topic.key),
+  routePath: TopicTreePagePath('[topicKey]'),
 });
 
 // // ====Domains====
@@ -101,6 +106,13 @@ export const ManageTopicPageInfo = (topic: TopicLinkDataFragment): PageInfo => (
 // });
 
 //====Resources====
+export const NewResourcePagePath = '/resources/new';
+export const NewResourcePageInfo = {
+  name: `Create Resource`,
+  path: NewResourcePagePath,
+  routePath: NewResourcePagePath,
+};
+
 export const ResourcePagePath = (resourceId: string) => `/resources/${resourceId}`;
 export const ResourcePageInfo = (resource: Pick<ResourceDataFragment, '_id' | 'name'>): PageInfo => ({
   name: `${resource.name}`,
@@ -115,20 +127,20 @@ export const EditResourcePageInfo = (resource: ResourceDataFragment): PageInfo =
   routePath: EditResourcePagePath('[_id]'),
 });
 
-export const AddResourceToDomainPagePath = (domainKey: string) => `/areas/${domainKey}/resources/new`;
+// export const AddResourceToDomainPagePath = (domainKey: string) => `/areas/${domainKey}/resources/new`;
 
-export const AddResourceToDomainPageInfo = (domain: DomainLinkDataFragment) => ({
-  name: `Add Resource to ${domain.name}`,
-  path: AddResourceToDomainPagePath(domain.key),
-  routePath: AddResourceToDomainPagePath('[key]'),
-});
+// export const AddResourceToDomainPageInfo = (domain: DomainLinkDataFragment) => ({
+//   name: `Add Resource to ${domain.name}`,
+//   path: AddResourceToDomainPagePath(domain.key),
+//   routePath: AddResourceToDomainPagePath('[key]'),
+// });
 
-export const DomainResourceListPagePath = (domainKey: string) => `/areas/${domainKey}/resources`;
-export const DomainResourceListPageInfo = (domain: DomainDataFragment): PageInfo => ({
-  name: 'Resources',
-  path: DomainResourceListPagePath(domain.key),
-  routePath: DomainResourceListPagePath('[key]'),
-});
+// export const DomainResourceListPagePath = (domainKey: string) => `/areas/${domainKey}/resources`;
+// export const DomainResourceListPageInfo = (domain: DomainDataFragment): PageInfo => ({
+//   name: 'Resources',
+//   path: DomainResourceListPagePath(domain.key),
+//   routePath: DomainResourceListPagePath('[key]'),
+// });
 
 //====Learning Goals====
 export const NewLearningGoalPagePath = '/goals/new';
@@ -140,9 +152,9 @@ export const NewLearningGoalPageInfo: PageInfo = {
 
 export const LearningGoalPagePath = (learningGoalKey: string) => '/goals/' + learningGoalKey;
 export const LearningGoalPageInfo = (learningGoal: LearningGoalLinkDataFragment): PageInfo => ({
-        name: learningGoal.name,
-        path: LearningGoalPagePath(learningGoal.key),
-        routePath: LearningGoalPagePath('[learningGoalKey]'),
+  name: learningGoal.name,
+  path: LearningGoalPagePath(learningGoal.key),
+  routePath: LearningGoalPagePath('[learningGoalKey]'),
 });
 
 // export const AddLearningGoalToDomainPagePath = (domainKey: string) => `/areas/${domainKey}/goals/new`;

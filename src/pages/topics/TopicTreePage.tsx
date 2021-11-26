@@ -4,10 +4,11 @@ import dynamic from 'next/dynamic';
 import { useMemo } from 'react';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { SubTopicsTreeData, SubTopicsTreeProps } from '../../components/topics/SubTopicsTree';
+import { generateTopicData } from '../../graphql/topics/topics.fragments';
 import { UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { TopicPageInfo, TopicTreePageInfo } from '../RoutesPageInfos';
-import { useGetTopicByKeyTopicTreePageQuery } from './TopicTreePage.generated';
+import { GetTopicByKeyTopicTreePageQuery, useGetTopicByKeyTopicTreePageQuery } from './TopicTreePage.generated';
 
 const SubTopicsTree = dynamic<SubTopicsTreeProps>(
   () =>
@@ -27,6 +28,8 @@ export const getTopicByKeyTopicTreePage = gql`
   ${SubTopicsTreeData}
 `;
 
+const placeholderTopicData: GetTopicByKeyTopicTreePageQuery['getTopicByKey'] = generateTopicData();
+
 export const TopicTreePage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
   const { data, loading, refetch } = useGetTopicByKeyTopicTreePageQuery({
     variables: {
@@ -40,8 +43,8 @@ export const TopicTreePage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
     [currentUser]
   );
 
-  if (!data) return <Box>Topic not found !</Box>; // TODO: handle loading
-  const topic = data.getTopicByKey;
+  if (!data && !loading) return <Box>Topic not found !</Box>;
+  const topic = data?.getTopicByKey || placeholderTopicData;
   return (
     <PageLayout
       breadCrumbsLinks={[TopicPageInfo(topic), TopicTreePageInfo(topic)]}

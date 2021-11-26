@@ -7,10 +7,13 @@ import {
   ModalOverlay,
   Stack,
   Tab,
-  TabList, TabPanels,
+  TabList,
+  TabPanels,
   Tabs,
-  Text
+  Text,
 } from '@chakra-ui/react';
+import { ReactNode } from 'react';
+import { useDisclosure } from '@chakra-ui/hooks';
 import { useAttachTopicIsSubTopicOfTopicMutation } from '../../graphql/topics/topics.operations.generated';
 import { DomainIcon } from '../lib/icons/DomainIcon';
 
@@ -20,12 +23,12 @@ interface AddSubTopicProps {
   onAdded?: () => void;
   onCancel: () => void;
 }
-export const AddSubTopic: React.FC<AddSubTopicProps> = ({  parentTopicId, size = 'md', onCancel, onAdded }) => {
+export const AddSubTopic: React.FC<AddSubTopicProps> = ({ parentTopicId, size = 'md', onCancel, onAdded }) => {
   const [attachTopicIsSubTopicOfTopic] = useAttachTopicIsSubTopicOfTopicMutation();
 
   return (
     <Stack spacing={4} direction="column" alignItems="stretch">
-      <Tabs isFitted variant="soft-rounded" colorScheme="deepBlue">
+      {/* <Tabs isFitted variant="soft-rounded" colorScheme="deepBlue">
         <TabList mb="1em">
           <Tab _focus={{}}>New SubTopic</Tab>
           <Tab _focus={{}}>
@@ -35,8 +38,8 @@ export const AddSubTopic: React.FC<AddSubTopicProps> = ({  parentTopicId, size =
             </Stack>
           </Tab>
         </TabList>
-        <TabPanels>
-          {/*<TabPanel>
+        <TabPanels> */}
+      {/*<TabPanel>
              <NewConcept
               parentTopicId={parentTopicId}
               domain={domain}
@@ -45,8 +48,8 @@ export const AddSubTopic: React.FC<AddSubTopicProps> = ({  parentTopicId, size =
               onCreated={() => onAdded && onAdded()}
             />
           </TabPanel> */}
-          {/* <TabPanel> */}
-            {/* <Box mb={5}>
+      {/* <TabPanel> */}
+      {/* <Box mb={5}>
               <DomainSelector onSelect={(domain) => selectDomain(domain)} />
               {selectedDomain && (
                 <Text fontSize="md" fontWeight={500} my={4}>
@@ -54,7 +57,7 @@ export const AddSubTopic: React.FC<AddSubTopicProps> = ({  parentTopicId, size =
                 </Text>
               )}
             </Box> */}
-            {/* <FormButtons
+      {/* <FormButtons
               primaryText="Add SubTopic"
               size={size}
               onPrimaryClick={async () => {
@@ -72,38 +75,46 @@ export const AddSubTopic: React.FC<AddSubTopicProps> = ({  parentTopicId, size =
               onCancel={onCancel}
             />
           </TabPanel> */}
-        </TabPanels>
-      </Tabs>
+      {/* </TabPanels> */}
+      {/* </Tabs> */}
     </Stack>
   );
 };
 
-interface AddSubTopicModalProps extends AddSubTopicProps {
-  isOpen: boolean;
-  onClose: () => void;
+interface AddSubTopicModalProps extends Omit<AddSubTopicProps, 'onCancel'> {
+  onCancel?: () => void;
+  onAdded?: () => void;
+  renderButton: (openModal: () => void) => ReactNode;
 }
-export const AddSubTopicModal: React.FC<AddSubTopicModalProps> = ({ isOpen, onClose, onAdded, onCancel, ...props }) => {
+
+export const AddSubTopicModal: React.FC<AddSubTopicModalProps> = ({ renderButton, onCancel, onAdded, ...props }) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   return (
-    <Modal onClose={onClose} size="xl" isOpen={isOpen}>
-      <ModalOverlay>
-        <ModalContent>
-          <ModalHeader>Add SubTopic</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={5}>
-            <AddSubTopic
-              onAdded={() => {
-                onClose();
-                onAdded && onAdded();
-              }}
-              onCancel={() => {
-                onClose();
-                onCancel && onCancel();
-              }}
-              {...props}
-            />
-          </ModalBody>
-        </ModalContent>
-      </ModalOverlay>
-    </Modal>
+    <>
+      {renderButton(onOpen)}
+      {isOpen && (
+        <Modal onClose={onClose} size="xl" isOpen={isOpen}>
+          <ModalOverlay>
+            <ModalContent>
+              <ModalHeader>Add SubTopic</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody pb={5}>
+                <AddSubTopic
+                  onAdded={() => {
+                    onClose();
+                    onAdded && onAdded();
+                  }}
+                  onCancel={() => {
+                    onClose();
+                    onCancel && onCancel();
+                  }}
+                  {...props}
+                />
+              </ModalBody>
+            </ModalContent>
+          </ModalOverlay>
+        </Modal>
+      )}
+    </>
   );
 };
