@@ -36,20 +36,21 @@ export const StatelessEditableLearningMaterialCoveredTopics: React.FC<StatelessE
   onRemove,
   onAdded,
 }) => {
-  if (!coveredTopics) return null; // TODO
   return (
     <Stack direction="column" alignItems="center" spacing={1}>
       <Text fontWeight={600} color="gray.500">
         Covered SubTopics
       </Text>
-      <EditableTopicsWrapper
-        editable={editable}
-        // role="prerequisite"
-        isLoading={isLoading}
-        topics={coveredTopics}
-        onAdded={onAdded}
-        onRemove={onRemove}
-      />
+      {coveredTopics && (
+        <EditableTopicsWrapper
+          editable={editable}
+          // role="prerequisite"
+          isLoading={isLoading}
+          topics={coveredTopics}
+          onAdded={onAdded}
+          onRemove={onRemove}
+        />
+      )}
     </Stack>
   );
 };

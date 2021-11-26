@@ -17,7 +17,7 @@ import {
   Text,
   useDisclosure,
   Wrap,
-  WrapItem
+  WrapItem,
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { omit, pick } from 'lodash';
@@ -30,15 +30,17 @@ import {
   CreateSubResourcePayload,
   LearningMaterialTag,
   ResourceMediaType,
-  ResourceType
+  ResourceType,
 } from '../../graphql/types';
 import { validateUrl } from '../../services/url.service';
 import { DomainAndSelectedConcepts } from '../concepts/DomainAndConceptsSelector';
 import { LearningGoalBadgeDataFragment } from '../learning_goals/LearningGoalBadge.generated';
+import { StatelessEditableLearningMaterialCoveredTopics } from '../learning_materials/EditableLearningMaterialCoveredTopics';
 import { StatelessEditableLearningMaterialPrerequisites } from '../learning_materials/EditableLearningMaterialPrerequisites';
 import { LearningMaterialTagsStatelessEditor } from '../learning_materials/LearningMaterialTagsEditor';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { FormButtons } from '../lib/buttons/FormButtons';
+import { TopicBadge } from '../topics/TopicBadge';
 import { DurationFormField, DurationViewer } from './elements/Duration';
 import { ResourceDescriptionInput } from './elements/ResourceDescription';
 import { ResourceMediaTypeSelector } from './elements/ResourceMediaType';
@@ -72,12 +74,7 @@ const typeToMediaTypeMapping: { [key in ResourceType]: ResourceMediaType | null 
 
 type SubResourceCreationData = Omit<
   CreateResourcePayload,
-  | 'tags'
-  | 'subResourceSeries'
-  | 'description'
-  | 'showInTopicsIds'
-  | 'coveredSubTopicsIds'
-  | 'prerequisitesTopicsIds'
+  'tags' | 'subResourceSeries' | 'description' | 'showInTopicsIds' | 'coveredSubTopicsIds' | 'prerequisitesTopicsIds'
 > & {
   description?: string;
   tags: LearningMaterialTag[];
@@ -93,11 +90,7 @@ type ResourceCreationData = SubResourceCreationData & {
 const resourceCreationDataToPayload = (resourceCreationData: ResourceCreationData): CreateResourcePayload => {
   const subResourceSeries: CreateSubResourcePayload[] | undefined = resourceCreationData.subResourceSeries?.map(
     (subResource) => ({
-      ...omit(subResource, [
-        'showInTopics',
-        'prerequisites',
-        'coveredSubTopics',
-      ]),
+      ...omit(subResource, ['showInTopics', 'prerequisites', 'coveredSubTopics']),
       tags: resourceCreationData.tags.map((t) => t.name),
       showInTopicsIds: subResource.showInTopics.map(({ _id }) => _id),
       prerequisitesTopicsIds: subResource.prerequisites.map(({ _id }) => _id),
@@ -105,11 +98,7 @@ const resourceCreationDataToPayload = (resourceCreationData: ResourceCreationDat
     })
   );
   return {
-    ...omit(resourceCreationData, [
-      'showInTopics',
-      'prerequisites',
-      'coveredSubTopics',
-    ]),
+    ...omit(resourceCreationData, ['showInTopics', 'prerequisites', 'coveredSubTopics']),
     tags: resourceCreationData.tags.map((t) => t.name),
     subResourceSeries,
     showInTopicsIds: resourceCreationData.showInTopics.map(({ _id }) => _id),
@@ -199,31 +188,40 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
         onChange={(d) => updateResourceCreationData({ description: d })}
       />
       <Flex direction="row">
-        {/* <Flex w="50%">
-          <DomainAndConceptsSelector
-            selectedDomainsAndConcepts={resourceCreationData.domainsAndCoveredConcepts}
-            onChange={(domainsAndCoveredConcepts) => updateResourceCreationData({ domainsAndCoveredConcepts })}
-            allowConceptCreation
-          />
-        </Flex> */}
-        {/* <Stack spacing={4} w="50%">
-          <StatelessEditableLearningMaterialPrerequisites
+        <Flex w="50%">
+          <StatelessEditableLearningMaterialCoveredTopics
             editable={true}
-            learningGoalsPrerequisites={resourceCreationData.prerequisites}
-            onAdded={(learningGoal) =>
+            coveredTopics={resourceCreationData.coveredSubTopics}
+            onAdded={(topic) =>
+              updateResourceCreationData({ coveredSubTopics: [...resourceCreationData.coveredSubTopics, topic] })
+            }
+            onRemove={(topicId) =>
               updateResourceCreationData({
-                prerequisites: [...resourceCreationData.prerequisites, learningGoal],
+                coveredSubTopics: resourceCreationData.coveredSubTopics.filter(
+                  (coveredTopic) => coveredTopic._id !== topicId
+                ),
               })
             }
-            onRemove={(learningGoalId) => {
+          />
+        </Flex>
+        <Flex w="50%">
+          <StatelessEditableLearningMaterialPrerequisites
+            editable={true}
+            prerequisites={resourceCreationData.prerequisites}
+            onAdded={(topic) =>
+              updateResourceCreationData({
+                prerequisites: [...resourceCreationData.prerequisites, topic],
+              })
+            }
+            onRemove={(topicId) => {
               updateResourceCreationData({
                 prerequisites: resourceCreationData.prerequisites.filter(
-                  (prerequisite) => prerequisite._id !== learningGoalId
+                  (prerequisite) => prerequisite._id !== topicId
                 ),
               });
             }}
           />
-          <StatelessEditableLearningMaterialOutcomes
+          {/* <StatelessEditableLearningMaterialOutcomes
             editable={true}
             learningGoalsOutcomes={resourceCreationData.outcomes}
             onAdded={(learningGoal) =>
@@ -236,8 +234,8 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
                 outcomes: resourceCreationData.outcomes.filter((outcome) => outcome._id !== learningGoalId),
               });
             }}
-          />
-        </Stack> */}
+          /> */}
+        </Flex>
       </Flex>
     </Stack>
   );
@@ -304,13 +302,11 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
             )}
             renderBottom={(subResource) => (
               <Wrap spacing={2}>
-                {/* {subResource.domainsAndCoveredConcepts.map(({ selectedConcepts, domain }) =>
-                  selectedConcepts.map((concept) => (
-                    <WrapItem key={concept._id}>
-                      <ConceptBadge concept={concept} domain={domain} />
-                    </WrapItem>
-                  ))
-                )} */}
+                {subResource.coveredSubTopics.map((topic) => (
+                  <WrapItem key={topic._id}>
+                    <TopicBadge topic={topic} />
+                  </WrapItem>
+                ))}
               </Wrap>
             )}
             renderRight={(subResource, index) => (
