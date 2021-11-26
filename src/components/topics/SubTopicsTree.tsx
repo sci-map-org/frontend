@@ -135,7 +135,7 @@ export const SubTopicsTree: React.FC<SubTopicsTreeProps> = ({ topic, onUpdated, 
   };
 
   return (
-    <Stack>
+    <Stack spacing={4} width="40rem">
       {isLoading || isUpdating ? (
         <Center h="400px" w="100%">
           <Spinner size="xl" />

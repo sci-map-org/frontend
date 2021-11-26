@@ -1,6 +1,7 @@
 import * as Types from '../../graphql/types';
 
 import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
+import { SubTopicsTreeDataFragment } from '../../components/topics/SubTopicsTree.generated';
 import * as Operations from './ManageTopicPage';
 import * as Apollo from '@apollo/client';
 export type GetTopicByKeyManageTopicPageQueryVariables = Types.Exact<{
@@ -23,8 +24,15 @@ export type GetTopicByKeyManageTopicPageQuery = (
     )>>, parentTopic?: Types.Maybe<(
       { __typename?: 'Topic' }
       & TopicLinkDataFragment
-    )> }
+    )>, prerequisites?: Types.Maybe<Array<(
+      { __typename?: 'TopicHasPrerequisiteTopic' }
+      & { prerequisiteTopic: (
+        { __typename?: 'Topic' }
+        & TopicLinkDataFragment
+      ) }
+    )>> }
     & TopicLinkDataFragment
+    & SubTopicsTreeDataFragment
   ) }
 );
 

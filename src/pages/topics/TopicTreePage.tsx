@@ -36,12 +36,6 @@ export const TopicTreePage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
       topicKey,
     },
   });
-  const { currentUser } = useCurrentUser();
-
-  const canUpdate = useMemo(
-    () => !!currentUser && (currentUser.role === UserRole.Contributor || currentUser.role === UserRole.Admin),
-    [currentUser]
-  );
 
   if (!data && !loading) return <Box>Topic not found !</Box>;
   const topic = data?.getTopicByKey || placeholderTopicData;
@@ -52,20 +46,16 @@ export const TopicTreePage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
       centerChildren
       isLoading={loading}
     >
-      <Flex direction="column" mt={4}>
-        <Stack spacing={4} width="36rem">
-          {topic.subTopics && (
-            <SubTopicsTree
-              topic={topic}
-              onUpdated={() => {
-                refetch();
-              }}
-              updatable={canUpdate}
-              isLoading={loading}
-            />
-          )}
-        </Stack>
-      </Flex>
+      {topic.subTopics && (
+        <SubTopicsTree
+          topic={topic}
+          onUpdated={() => {
+            refetch();
+          }}
+          updatable={false}
+          isLoading={loading}
+        />
+      )}
     </PageLayout>
   );
 };

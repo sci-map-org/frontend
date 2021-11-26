@@ -27,14 +27,14 @@ export const NewTopicPageInfo: PageInfo = {
 
 export const ManageTopicPagePath = (topicKey: string) => `/topics/${topicKey}/manage`;
 export const ManageTopicPageInfo = (topic: TopicLinkDataFragment): PageInfo => ({
-  name: `Manage ${topic.name}`,
+  name: `Manage`,
   path: ManageTopicPagePath(topic.key),
   routePath: ManageTopicPagePath('[topicKey]'),
 });
 
 export const TopicTreePagePath = (topicKey: string) => `/topics/${topicKey}/tree`;
 export const TopicTreePageInfo = (topic: TopicLinkDataFragment): PageInfo => ({
-  name: `${topic.name} - Tree`,
+  name: `Tree`,
   path: TopicTreePagePath(topic.key),
   routePath: TopicTreePagePath('[topicKey]'),
 });

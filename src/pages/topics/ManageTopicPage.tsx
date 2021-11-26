@@ -1,13 +1,28 @@
-import { Box, Stack, Text } from '@chakra-ui/react';
+import { EditIcon } from '@chakra-ui/icons';
+import { Box, IconButton, Stack, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
 import gql from 'graphql-tag';
+import dynamic from 'next/dynamic';
+import Router from 'next/router';
+import { useState } from 'react';
+import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
+import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
+import { EditableTopicPrerequisites } from '../../components/topics/EditableTopicPrerequisites';
+import { SubTopicsTreeData, SubTopicsTreeProps } from '../../components/topics/SubTopicsTree';
 import { generateTopicData, TopicLinkData } from '../../graphql/topics/topics.fragments';
-import {
-  useAttachTopicIsSubTopicOfTopicMutation,
-  useDetachTopicIsSubTopicOfTopicMutation,
-} from '../../graphql/topics/topics.operations.generated';
+import { useDeleteTopicMutation } from '../../graphql/topics/topics.operations.generated';
+import { routerPushToPage } from '../PageInfo';
 import { ManageTopicPageInfo, TopicPageInfo } from '../RoutesPageInfos';
 import { GetTopicByKeyManageTopicPageQuery, useGetTopicByKeyManageTopicPageQuery } from './ManageTopicPage.generated';
+
+const SubTopicsTree = dynamic<SubTopicsTreeProps>(
+  () =>
+    import('../../components/topics/SubTopicsTree').then((res) => {
+      const { SubTopicsTree } = res;
+      return SubTopicsTree;
+    }),
+  { ssr: false }
+);
 
 export const getTopicByKeyManageTopicPage = gql`
   query getTopicByKeyManageTopicPage($topicKey: String!) {
@@ -23,21 +38,24 @@ export const getTopicByKeyManageTopicPage = gql`
       parentTopic {
         ...TopicLinkData
       }
+      ...SubTopicsTreeData
+      prerequisites {
+        prerequisiteTopic {
+          ...TopicLinkData
+        }
+      }
     }
   }
   ${TopicLinkData}
+  ${SubTopicsTreeData}
 `;
-
-export const ManageTopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
-  return null;
-};
 
 const placeholderTopicData: GetTopicByKeyManageTopicPageQuery['getTopicByKey'] = generateTopicData();
 
-export const ManageDomainPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
-  const { data, loading } = useGetTopicByKeyManageTopicPageQuery({ variables: { topicKey } });
-  const [attachTopicIsSubTopicOfTopicMutation] = useAttachTopicIsSubTopicOfTopicMutation();
-  const [detachTopicIsSubTopicOfTopicMutation] = useDetachTopicIsSubTopicOfTopicMutation();
+export const ManageTopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
+  const { data, loading, refetch } = useGetTopicByKeyManageTopicPageQuery({ variables: { topicKey } });
+  const [deleteTopicMutation] = useDeleteTopicMutation();
+  const [editMode, setEditMode] = useState(false);
 
   if (!data && !loading) return <Box>Topic not found !</Box>;
 
@@ -48,72 +66,68 @@ export const ManageDomainPage: React.FC<{ topicKey: string }> = ({ topicKey }) =
       isLoading={loading}
       title={`Manage Topic - ${topic.name}`}
       breadCrumbsLinks={[TopicPageInfo(topic), ManageTopicPageInfo(topic)]}
-      // renderTopRight={
-      //   <RoleAccess accessRule="contributorOrAdmin">
-      //     <IconButton
-      //       aria-label="edit area"
-      //       size="sm"
-      //       variant="outline"
-      //       icon={<EditIcon />}
-      //       onClick={() => routerPushToPage(EditDomainPageInfo(domain))}
-      //     />
-      //   </RoleAccess>
-      // }
+      renderTopRight={
+        <Stack direction="row">
+          <RoleAccess accessRule="contributorOrAdmin">
+            <IconButton
+              aria-label="edit topic"
+              size="sm"
+              variant="outline"
+              icon={<EditIcon />}
+              onClick={() => setEditMode(true)}
+            />
+          </RoleAccess>
+          <DeleteButtonWithConfirmation
+            variant="outline"
+            size="sm"
+            modalHeaderText="Delete Topic"
+            modalBodyText={`Confirm deleting the topic "${topic.name}" ?`}
+            isDisabled={loading}
+            onConfirmation={async () => {
+              await deleteTopicMutation({ variables: { topicId: topic._id } });
+              topic.parentTopic ? routerPushToPage(TopicPageInfo(topic.parentTopic)) : Router.push('/');
+            }}
+          />
+        </Stack>
+      }
       accessRule="contributorOrAdmin"
     >
       <Stack spacing={4}>
-        <Box>
-          {/* <PageLink pageInfo={DomainResourceListPageInfo(domain)}>
-            <Text fontSize="lg">
-              Full Resource List
-              <ExternalLinkIcon />
-            </Text>
-          </PageLink> */}
-        </Box>
-        <Box>
+        {/* <Box>
           <b>Description</b>
-          <Text>{topic.description}</Text>
-        </Box>
-        <Box>
-          {/* <DomainsPicker
-            title="Sub Areas"
-            pickedDomainList={
-              (domain.subTopics || [])
-                .map((subDomainItem) => subDomainItem.subTopic)
-                .filter((topic) => topic.__typename === 'Domain') as DomainDataFragment[]
-            }
-            onSelect={(domainToAdd) =>
-              attachTopicIsSubTopicOfTopicMutation({
-                variables: { parentTopicId: domain._id, subTopicId: domainToAdd._id, payload: {} },
-              })
-            }
-            onRemove={(domainToRemove) =>
-              detachTopicIsSubTopicOfTopicMutation({
-                variables: { parentTopicId: domain._id, subTopicId: domainToRemove._id },
-              })
-            }
-          /> */}
-        </Box>
-        <Box>
-          {/* <DomainsPicker
-            title="Parent Areas"
-            pickedDomainList={
-              (domain.parentTopics || [])
-                .map((parentDomainItem) => parentDomainItem.parentTopic)
-                .filter((topic) => topic.__typename === 'Domain') as DomainDataFragment[]
-            }
-            onSelect={(domainToAdd) =>
-              attachTopicIsSubTopicOfTopicMutation({
-                variables: { parentTopicId: domainToAdd._id, subTopicId: domain._id, payload: {} },
-              })
-            }
-            onRemove={(domainToRemove) =>
-              detachTopicIsSubTopicOfTopicMutation({
-                variables: { parentTopicId: domainToRemove._id, subTopicId: domain._id },
-              })
-            }
-          /> */}
-        </Box>
+          {editMode ? (
+            <Textarea
+              placeholder="Description"
+              size="md"
+              variant="flushed"
+              value={topic.description || ''}
+              // onChange={(e) => updateTopicCreationData({ description: e.target.value })}
+            />
+          ) : (
+            <Text>{topic.description}</Text>
+          )}
+        </Box> */}
+        <Tabs isFitted variant="line">
+          <TabList mb="1em">
+            <Tab>Prequisites</Tab>
+            <Tab>SubTopics Tree</Tab>
+          </TabList>
+          <TabPanels>
+            <TabPanel>
+              <EditableTopicPrerequisites topic={topic} editable={true} />
+            </TabPanel>
+            <TabPanel>
+              <SubTopicsTree
+                topic={topic}
+                onUpdated={() => {
+                  refetch();
+                }}
+                updatable={true}
+                isLoading={loading}
+              />
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
       </Stack>
     </PageLayout>
   );

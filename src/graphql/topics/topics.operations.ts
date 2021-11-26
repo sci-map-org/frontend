@@ -1,4 +1,23 @@
 import gql from 'graphql-tag';
+import { TopicFullData } from './topics.fragments';
+
+export const updateTopic = gql`
+  mutation updateTopic($topicId: String!, $payload: UpdateTopicPayload!) {
+    updateTopic(topicId: $topicId, payload: $payload) {
+      ...TopicFullData
+    }
+  }
+  ${TopicFullData}
+`;
+
+export const deleteTopic = gql`
+  mutation deleteTopic($topicId: String!) {
+    deleteTopic(topicId: $topicId) {
+      _id
+      success
+    }
+  }
+`;
 
 export const checkTopicKeyAvailability = gql`
   query checkTopicKeyAvailability($key: String!) {
@@ -21,7 +40,7 @@ export const attachTopicIsSubTopicOfTopic = gql`
     attachTopicIsSubTopicOfTopic(parentTopicId: $parentTopicId, subTopicId: $subTopicId, payload: $payload) {
       parentTopic {
         _id
-        subTopics{
+        subTopics {
           index
           subTopic {
             _id
@@ -68,7 +87,7 @@ export const updateTopicIsSubTopicOfTopic = gql`
     updateTopicIsSubTopicOfTopic(parentTopicId: $parentTopicId, subTopicId: $subTopicId, payload: $payload) {
       parentTopic {
         _id
-        subTopics{
+        subTopics {
           index
           subTopic {
             _id
@@ -111,7 +130,7 @@ export const detachTopicIsSubTopicOfTopic = gql`
     detachTopicIsSubTopicOfTopic(parentTopicId: $parentTopicId, subTopicId: $subTopicId) {
       parentTopic {
         _id
-        subTopics{
+        subTopics {
           index
           subTopic {
             _id

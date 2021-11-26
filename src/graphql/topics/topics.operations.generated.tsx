@@ -1,7 +1,35 @@
 import * as Types from '../types';
 
+import { TopicFullDataFragment, TopicLinkDataFragment } from './topics.fragments.generated';
 import * as Operations from './topics.operations';
 import * as Apollo from '@apollo/client';
+export type UpdateTopicMutationVariables = Types.Exact<{
+  topicId: Types.Scalars['String'];
+  payload: Types.UpdateTopicPayload;
+}>;
+
+
+export type UpdateTopicMutation = (
+  { __typename?: 'Mutation' }
+  & { updateTopic: (
+    { __typename?: 'Topic' }
+    & TopicFullDataFragment
+  ) }
+);
+
+export type DeleteTopicMutationVariables = Types.Exact<{
+  topicId: Types.Scalars['String'];
+}>;
+
+
+export type DeleteTopicMutation = (
+  { __typename?: 'Mutation' }
+  & { deleteTopic: (
+    { __typename?: 'DeleteTopicResponse' }
+    & Pick<Types.DeleteTopicResponse, '_id' | 'success'>
+  ) }
+);
+
 export type CheckTopicKeyAvailabilityQueryVariables = Types.Exact<{
   key: Types.Scalars['String'];
 }>;
@@ -106,6 +134,57 @@ export type DetachTopicIsSubTopicOfTopicMutation = (
 );
 
 
+export type UpdateTopicMutationFn = Apollo.MutationFunction<UpdateTopicMutation, UpdateTopicMutationVariables>;
+
+/**
+ * __useUpdateTopicMutation__
+ *
+ * To run a mutation, you first call `useUpdateTopicMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateTopicMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateTopicMutation, { data, loading, error }] = useUpdateTopicMutation({
+ *   variables: {
+ *      topicId: // value for 'topicId'
+ *      payload: // value for 'payload'
+ *   },
+ * });
+ */
+export function useUpdateTopicMutation(baseOptions?: Apollo.MutationHookOptions<UpdateTopicMutation, UpdateTopicMutationVariables>) {
+        return Apollo.useMutation<UpdateTopicMutation, UpdateTopicMutationVariables>(Operations.updateTopic, baseOptions);
+      }
+export type UpdateTopicMutationHookResult = ReturnType<typeof useUpdateTopicMutation>;
+export type UpdateTopicMutationResult = Apollo.MutationResult<UpdateTopicMutation>;
+export type UpdateTopicMutationOptions = Apollo.BaseMutationOptions<UpdateTopicMutation, UpdateTopicMutationVariables>;
+export type DeleteTopicMutationFn = Apollo.MutationFunction<DeleteTopicMutation, DeleteTopicMutationVariables>;
+
+/**
+ * __useDeleteTopicMutation__
+ *
+ * To run a mutation, you first call `useDeleteTopicMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteTopicMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteTopicMutation, { data, loading, error }] = useDeleteTopicMutation({
+ *   variables: {
+ *      topicId: // value for 'topicId'
+ *   },
+ * });
+ */
+export function useDeleteTopicMutation(baseOptions?: Apollo.MutationHookOptions<DeleteTopicMutation, DeleteTopicMutationVariables>) {
+        return Apollo.useMutation<DeleteTopicMutation, DeleteTopicMutationVariables>(Operations.deleteTopic, baseOptions);
+      }
+export type DeleteTopicMutationHookResult = ReturnType<typeof useDeleteTopicMutation>;
+export type DeleteTopicMutationResult = Apollo.MutationResult<DeleteTopicMutation>;
+export type DeleteTopicMutationOptions = Apollo.BaseMutationOptions<DeleteTopicMutation, DeleteTopicMutationVariables>;
 
 /**
  * __useCheckTopicKeyAvailabilityQuery__
