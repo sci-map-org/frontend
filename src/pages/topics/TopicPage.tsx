@@ -1,27 +1,25 @@
-import { SettingsIcon } from '@chakra-ui/icons';
-import { Box, Flex, Heading, IconButton, Skeleton, Stack, Text, Button } from '@chakra-ui/react';
+import { Box, Button, Flex, Heading, Skeleton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useState } from 'react';
 import { RoleAccess } from '../../components/auth/RoleAccess';
-import { BestXPagesLinks } from '../../components/topics/BestXPagesLinks';
 import { TopicPageLayout } from '../../components/layout/TopicPageLayout';
-import { LearningGoalCardData } from '../../components/learning_goals/cards/LearningGoalCard';
 import { LearningPathPreviewCardDataFragment } from '../../components/learning_paths/LearningPathPreviewCard.generated';
 import { LearningPathIcon } from '../../components/lib/icons/LearningPathIcon';
+import { ResourceIcon } from '../../components/lib/icons/ResourceIcon';
 import { PageButtonLink } from '../../components/navigation/InternalLink';
+import { ResourcePreviewCardDataFragment } from '../../components/resources/ResourcePreviewCard.generated';
+import { BestXPagesLinks } from '../../components/topics/BestXPagesLinks';
+import { NewTopicModal } from '../../components/topics/NewTopic';
+import { ParentTopicsBreadcrumbs, ParentTopicsBreadcrumbsData } from '../../components/topics/ParentTopicsBreadcrumbs';
 import { MapVisualisationTopicData } from '../../components/topics/SubTopicsMapVisualisation';
+import { SubTopicsMinimap } from '../../components/topics/SubTopicsMinimap';
 import { TopicRecommendedLearningMaterials } from '../../components/topics/TopicRecommendedLearningMaterials';
+import { useGetTopicRecommendedLearningMaterialsQuery } from '../../components/topics/TopicRecommendedLearningMaterials.generated';
+import { TopicSubHeader, TopicSubHeaderData } from '../../components/topics/TopicSubHeader';
 import { generateTopicData, TopicLinkData } from '../../graphql/topics/topics.fragments';
 import { TopicLearningMaterialsOptions, TopicLearningMaterialsSortingType } from '../../graphql/types';
-import { routerPushToPage } from '../PageInfo';
-import { ManageTopicPageInfo, NewLearningPathPageInfo, NewResourcePageInfo } from '../RoutesPageInfos';
+import { NewLearningPathPageInfo, NewResourcePageInfo } from '../RoutesPageInfos';
 import { GetTopicByKeyTopicPageQuery, useGetTopicByKeyTopicPageQuery } from './TopicPage.generated';
-import { ResourcePreviewCardDataFragment } from '../../components/resources/ResourcePreviewCard.generated';
-import { useGetTopicRecommendedLearningMaterialsQuery } from '../../components/topics/TopicRecommendedLearningMaterials.generated';
-import { SubTopicsMinimap } from '../../components/topics/SubTopicsMinimap';
-import { ParentTopicsBreadcrumbs, ParentTopicsBreadcrumbsData } from '../../components/topics/ParentTopicsBreadcrumbs';
-import { ResourceIcon } from '../../components/lib/icons/ResourceIcon';
-import { NewTopicModal } from '../../components/topics/NewTopic';
 
 export const getTopicByKeyTopicPage = gql`
   query getTopicByKeyTopicPage($key: String!) {
@@ -36,11 +34,13 @@ export const getTopicByKeyTopicPage = gql`
         }
       }
       ...ParentTopicsBreadcrumbsData
+      ...TopicSubHeaderData
     }
   }
   ${MapVisualisationTopicData}
   ${TopicLinkData}
   ${ParentTopicsBreadcrumbsData}
+  ${TopicSubHeaderData}
 `;
 
 const placeholderTopicData: GetTopicByKeyTopicPageQuery['getTopicByKey'] = {
@@ -86,18 +86,6 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
   return (
     <TopicPageLayout
       renderTopLeftNavigation={<ParentTopicsBreadcrumbs topic={topic} isLoading={loading} />}
-      renderManagementIcons={
-        <RoleAccess accessRule="contributorOrAdmin">
-          <IconButton
-            size="xs"
-            isDisabled={loading}
-            variant="solid"
-            aria-label="manage_topic"
-            icon={<SettingsIcon />}
-            onClick={() => routerPushToPage(ManageTopicPageInfo(topic))}
-          />
-        </RoleAccess>
-      }
       renderTitle={
         <Heading
           fontSize={{ base: '4xl', md: '4xl', lg: '5xl' }}
@@ -110,6 +98,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
       }
       renderBlockBelowTitle={
         <>
+          <TopicSubHeader topic={topic} size="md" />
           {/* TODO topic tree page */}
           {/* <Skeleton isLoaded={!loading}>
             <PageLink
