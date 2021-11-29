@@ -15,7 +15,7 @@ import {
   SubTopicsMapVisualisation,
 } from '../../components/topics/SubTopicsMapVisualisation';
 import { MapVisualisationTopicDataFragment } from '../../components/topics/SubTopicsMapVisualisation.generated';
-import { TopicDescription } from '../../components/topics/TopicDescription';
+import { TopicDescription } from './fields/TopicDescription';
 import { TopicLinkData } from '../../graphql/topics/topics.fragments';
 import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import { theme } from '../../theme/theme';

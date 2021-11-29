@@ -1,33 +1,24 @@
 import { useDisclosure } from '@chakra-ui/hooks';
-import { CheckIcon, NotAllowedIcon } from '@chakra-ui/icons';
 import {
-  FormControl,
-  FormHelperText,
   Input,
-  InputGroup,
-  InputRightElement,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  Spinner,
   Stack,
-  Text,
-  Textarea,
-  Tooltip,
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
-import { ReactNode, useEffect, useState } from 'react';
-import { useDebounce } from 'use-debounce';
+import { ReactNode, useState } from 'react';
 import { TopicFullData, TopicLinkData } from '../../graphql/topics/topics.fragments';
 import { TopicFullDataFragment, TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
-import { useCheckTopicKeyAvailabilityLazyQuery } from '../../graphql/topics/topics.operations.generated';
 import { CreateTopicPayload, Topic } from '../../graphql/types';
 import { generateUrlKey } from '../../services/url.service';
 import { getChakraRelativeSize } from '../../util/chakra.util';
 import { FormButtons } from '../lib/buttons/FormButtons';
+import { TopicDescriptionField } from './fields/TopicDescription';
+import { TopicUrlKeyField, useCheckTopicKeyAvailability } from './fields/TopicUrlKey';
 import { useAddSubTopicMutation, useCreateTopicMutation } from './NewTopic.generated';
 
 interface NewTopicFormProps {
@@ -46,13 +37,7 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
   onCreate,
   size = 'md',
 }) => {
-  const [checkTopicKeyAvailability, { loading, data }] = useCheckTopicKeyAvailabilityLazyQuery();
-
-  const [keyValueToCheck] = useDebounce(topicCreationData.key, 300);
-
-  useEffect(() => {
-    checkTopicKeyAvailability({ variables: { key: keyValueToCheck } });
-  }, [keyValueToCheck]);
+  const { isChecking, isAvailable } = useCheckTopicKeyAvailability(topicCreationData.key);
 
   return (
     <Stack spacing={4} w="100%">
@@ -70,59 +55,22 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
           });
         }}
       ></Input>
-      <FormControl id="key" size={size}>
-        <InputGroup>
-          <Input
-            placeholder="Topic Url Key"
-            variant="flushed"
-            value={topicCreationData.key}
-            size={size}
-            onChange={(e) => updateTopicCreationData({ key: generateUrlKey(e.target.value) })}
-          />
-          {topicCreationData.key && (
-            <InputRightElement
-              children={
-                !!loading ? (
-                  <Spinner size="sm" />
-                ) : data?.checkTopicKeyAvailability.available ? (
-                  <CheckIcon color="green.500" />
-                ) : (
-                  <Tooltip
-                    hasArrow
-                    aria-label="Key already in use"
-                    label="key already in use"
-                    placement="top"
-                    bg="red.600"
-                  >
-                    <NotAllowedIcon color="red.500" />
-                  </Tooltip>
-                )
-              }
-            />
-          )}
-        </InputGroup>
-        {topicCreationData.key && (
-          <FormHelperText fontSize="xs">
-            Url will look like{' '}
-            <Text as="span" fontWeight={500}>
-              /topics/{topicCreationData.key}
-            </Text>
-          </FormHelperText>
-        )}
-      </FormControl>
-
-      <Textarea
-        placeholder="Description"
+      <TopicUrlKeyField
         size={size}
-        variant="flushed"
-        value={topicCreationData.description || ''}
-        onChange={(e) => updateTopicCreationData({ description: e.target.value })}
-      ></Textarea>
+        value={topicCreationData.key}
+        onChange={(newKeyValue) => updateTopicCreationData({ key: generateUrlKey(newKeyValue) })}
+        isChecking={isChecking}
+        isAvailable={isAvailable}
+      />
+
+      <TopicDescriptionField
+        size={size}
+        value={topicCreationData.description}
+        onChange={(newDescription) => updateTopicCreationData({ description: newDescription })}
+      />
 
       <FormButtons
-        isPrimaryDisabled={
-          !topicCreationData.name || !topicCreationData.key || !data?.checkTopicKeyAvailability.available
-        }
+        isPrimaryDisabled={!topicCreationData.name || !topicCreationData.key || !isAvailable}
         onCancel={onCancel}
         size={getChakraRelativeSize(size, 1)}
         onPrimaryClick={onCreate}
@@ -180,7 +128,6 @@ export const NewTopic: React.FC<NewTopicProps> = ({ onCancel, onCreated, parentT
   });
 
   const createTopic = async () => {
-    let createdTopic: Topic;
     if (parentTopic) {
       addSubTopicMutation({ variables: { parentTopicId: parentTopic._id, payload: topicCreationData } });
     } else {
