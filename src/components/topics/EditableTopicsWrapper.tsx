@@ -11,7 +11,7 @@ interface EditableTopicsWrapperProps {
   onRemove: (topicId: string) => void;
   onAdded: (topic: TopicBadgeDataFragment) => void;
   editable?: boolean;
-  //   role: 'outcome' | 'prerequisite';
+  displayMode?: 'column' | 'row';
   inputPlaceholder?: string;
   isLoading?: boolean;
 }
@@ -20,7 +20,7 @@ export const EditableTopicsWrapper: React.FC<EditableTopicsWrapperProps> = ({
   onRemove,
   onAdded,
   editable,
-  //   role,
+  displayMode = 'column',
   inputPlaceholder,
   isLoading,
 }) => {
@@ -29,7 +29,7 @@ export const EditableTopicsWrapper: React.FC<EditableTopicsWrapperProps> = ({
   useHandleClickOutside(wrapperRef, () => setEditMode(false));
   return (
     <Flex ref={wrapperRef} direction="column" alignItems="center" maxW="300px">
-      <Stack direction="column" alignItems="center" spacing={1}>
+      <Stack direction={displayMode} alignItems="center" spacing={1}>
         {topics.map((topic) => (
           <TopicBadge
             // role={role}

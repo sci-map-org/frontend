@@ -1,6 +1,7 @@
-import { Stack, Text } from '@chakra-ui/react';
+import { Stack, Text, Image } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
+import { DirectionSignIcon } from '../lib/icons/DirectionSignIcon';
 import { EditableTopicsWrapper } from '../topics/EditableTopicsWrapper';
 import { TopicBadgeData } from '../topics/TopicBadge';
 import {
@@ -28,6 +29,7 @@ interface StatelessEditablePartOfTopicsProps {
   isLoading?: boolean;
   onRemove: (topiclId: string) => void;
   onAdded: (topic: TopicLinkDataFragment) => void;
+  align: 'right' | 'center';
 }
 export const StatelessEditablePartOfTopics: React.FC<StatelessEditablePartOfTopicsProps> = ({
   partOfTopics,
@@ -35,15 +37,20 @@ export const StatelessEditablePartOfTopics: React.FC<StatelessEditablePartOfTopi
   isLoading,
   onRemove,
   onAdded,
+  align,
 }) => {
   if (!partOfTopics?.length && !editable) return null;
   return (
-    <Stack direction="column" alignItems="center" spacing={1}>
-      <Text fontWeight={600} color="gray.500">
-        {partOfTopics && partOfTopics.length ? 'Part Of' : 'No Part Of'}
-      </Text>
+    <Stack direction="column" alignItems={align === 'right' ? 'flex-end' : 'center'} spacing={2}>
+      <Stack direction="row" alignItems="flex-end">
+        <DirectionSignIcon boxSize="24px" />
+        <Text fontWeight={600} fontSize="lg" color="gray.700">
+          {partOfTopics && partOfTopics.length ? 'Also Part Of' : 'No Part Of'}
+        </Text>
+      </Stack>
       {partOfTopics && (
         <EditableTopicsWrapper
+          displayMode="row"
           editable={editable}
           isLoading={isLoading}
           topics={partOfTopics}

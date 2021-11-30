@@ -186,7 +186,7 @@ export const ManageTopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) =>
               </Flex>
               <Flex direction="row" justifyContent="space-evenly">
                 <EditableTopicPrerequisites topic={topic} editable={true} />
-                <EditablePartOfTopics topic={topic} editable={true} />
+                <EditablePartOfTopics topic={topic} editable={true} align="center" />
               </Flex>
             </Stack>
           </TabPanel>

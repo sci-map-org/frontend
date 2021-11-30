@@ -9,6 +9,7 @@ import { ResourceIcon } from '../../components/lib/icons/ResourceIcon';
 import { PageButtonLink } from '../../components/navigation/InternalLink';
 import { ResourcePreviewCardDataFragment } from '../../components/resources/ResourcePreviewCard.generated';
 import { BestXPagesLinks } from '../../components/topics/BestXPagesLinks';
+import { EditablePartOfTopics, EditablePartOfTopicsData } from '../../components/topics/EditablePartOfTopics';
 import { NewTopicModal } from '../../components/topics/NewTopic';
 import { ParentTopicsBreadcrumbs, ParentTopicsBreadcrumbsData } from '../../components/topics/ParentTopicsBreadcrumbs';
 import { MapVisualisationTopicData } from '../../components/topics/SubTopicsMapVisualisation';
@@ -35,12 +36,14 @@ export const getTopicByKeyTopicPage = gql`
       }
       ...ParentTopicsBreadcrumbsData
       ...TopicSubHeaderData
+      ...EditablePartOfTopicsData
     }
   }
   ${MapVisualisationTopicData}
   ${TopicLinkData}
   ${ParentTopicsBreadcrumbsData}
   ${TopicSubHeaderData}
+  ${EditablePartOfTopicsData}
 `;
 
 const placeholderTopicData: GetTopicByKeyTopicPageQuery['getTopicByKey'] = {
@@ -86,6 +89,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
   return (
     <TopicPageLayout
       renderTopLeftNavigation={<ParentTopicsBreadcrumbs topic={topic} isLoading={loading} />}
+      renderTopRightNavigation={<EditablePartOfTopics topic={topic} editable={false} align="right" />}
       renderTitle={
         <Heading
           fontSize={{ base: '4xl', md: '4xl', lg: '5xl' }}
