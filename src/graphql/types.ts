@@ -149,6 +149,7 @@ export type Mutation = {
   deleteTopic: DeleteTopicResponse;
   setTopicsKnown: Array<Topic>;
   setTopicsUnknown: Array<Topic>;
+  updateTopicContext: Topic;
   login: LoginResponse;
   loginGoogle: LoginResponse;
   register: CurrentUser;
@@ -238,6 +239,12 @@ export type MutationSetTopicsKnownArgs = {
 
 export type MutationSetTopicsUnknownArgs = {
   topicIds: Array<Scalars['String']>;
+};
+
+
+export type MutationUpdateTopicContextArgs = {
+  topicId: Scalars['String'];
+  contextTopicId?: Maybe<Scalars['String']>;
 };
 
 

@@ -8,6 +8,7 @@ import { PageLayout } from '../../components/layout/PageLayout';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { Field } from '../../components/lib/Field';
 import { FormFieldLabel, PageTitle } from '../../components/lib/Typography';
+import { EditablePartOfTopics, EditablePartOfTopicsData } from '../../components/topics/EditablePartOfTopics';
 import { EditableTopicPrerequisites } from '../../components/topics/EditableTopicPrerequisites';
 import { TopicDescription, TopicDescriptionField } from '../../components/topics/fields/TopicDescription';
 import { TopicUrlKeyField, useCheckTopicKeyAvailability } from '../../components/topics/fields/TopicUrlKey';
@@ -48,10 +49,12 @@ export const getTopicByKeyManageTopicPage = gql`
           ...TopicLinkData
         }
       }
+      ...EditablePartOfTopicsData
     }
   }
   ${TopicLinkData}
   ${SubTopicsTreeData}
+  ${EditablePartOfTopicsData}
 `;
 
 const placeholderTopicData: GetTopicByKeyManageTopicPageQuery['getTopicByKey'] = generateTopicData();
@@ -181,8 +184,9 @@ export const ManageTopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) =>
                   )}
                 </Stack>
               </Flex>
-              <Flex justifyContent="center">
+              <Flex direction="row" justifyContent="space-evenly">
                 <EditableTopicPrerequisites topic={topic} editable={true} />
+                <EditablePartOfTopics topic={topic} editable={true} />
               </Flex>
             </Stack>
           </TabPanel>
