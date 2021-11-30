@@ -6,6 +6,7 @@ import { EditIcon } from '@chakra-ui/icons';
 import { LearningGoalSelector } from './LearningGoalSelector';
 import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
 import { LearningGoalType } from '../../graphql/types';
+import { useHandleClickOutside } from '../../hooks/useHanldeClickOutside';
 
 interface EditableLearningGoalsProps {
   learningGoals: LearningGoalBadgeDataFragment[];
@@ -27,21 +28,8 @@ export const EditableLearningGoals: React.FC<EditableLearningGoalsProps> = ({
 }) => {
   const [editMode, setEditMode] = useState(false);
   const wrapperRef = useRef(null);
-  const useOutsideAlerter = (ref: React.MutableRefObject<any>) => {
-    useEffect(() => {
-      function handleClickOutside(event: any) {
-        if (ref.current && !ref.current.contains(event.target)) {
-          setEditMode(false);
-        }
-      }
 
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
-      };
-    }, [ref]);
-  };
-  useOutsideAlerter(wrapperRef);
+  useHandleClickOutside(wrapperRef, () => setEditMode(false));
   return (
     <Flex ref={wrapperRef} direction="column" alignItems="center" maxW="300px">
       <Stack direction="column" alignItems="center" spacing={1}>

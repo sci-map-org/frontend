@@ -1,5 +1,29 @@
 import gql from 'graphql-tag';
-import { TopicFullData } from './topics.fragments';
+import { TopicFullData, TopicLinkData } from './topics.fragments';
+
+export const searchTopics = gql`
+  query searchTopics($options: SearchTopicsOptions!) {
+    searchTopics(options: $options) {
+      items {
+        _id
+        ...TopicLinkData
+      }
+    }
+  }
+  ${TopicLinkData}
+`;
+
+export const searchSubTopics = gql`
+  query searchSubTopics($topicId: String!, $options: SearchTopicsOptions!) {
+    searchSubTopics(topicId: $topicId, options: $options) {
+      items {
+        _id
+        ...TopicLinkData
+      }
+    }
+  }
+  ${TopicLinkData}
+`;
 
 export const updateTopic = gql`
   mutation updateTopic($topicId: String!, $payload: UpdateTopicPayload!) {

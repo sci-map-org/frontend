@@ -20,6 +20,7 @@ export type Query = {
   getTopicByKey: Topic;
   searchTopics: SearchTopicsResult;
   searchSubTopics: SearchTopicsResult;
+  autocompleteTopicName: SearchTopicsResult;
   checkTopicKeyAvailability: CheckTopicKeyAvailabilityResult;
   currentUser?: Maybe<CurrentUser>;
   getUser: User;
@@ -62,6 +63,11 @@ export type QuerySearchTopicsArgs = {
 export type QuerySearchSubTopicsArgs = {
   topicId: Scalars['String'];
   options: SearchTopicsOptions;
+};
+
+
+export type QueryAutocompleteTopicNameArgs = {
+  partialName: Scalars['String'];
 };
 
 
@@ -193,6 +199,9 @@ export type Mutation = {
   attachTopicIsSubTopicOfTopic: TopicIsSubTopicOfTopic;
   updateTopicIsSubTopicOfTopic: TopicIsSubTopicOfTopic;
   detachTopicIsSubTopicOfTopic: DetachTopicIsSubTopicOfTopicResult;
+  attachTopicIsPartOfTopic: TopicIsPartOfTopic;
+  updateTopicIsPartOfTopic: TopicIsPartOfTopic;
+  detachTopicIsPartOfTopic: DetachTopicIsPartOfTopicResult;
   attachLearningMaterialCoversTopics: LearningMaterial;
   detachLearningMaterialCoversTopics: LearningMaterial;
   addLearningMaterialHasPrerequisiteTopic: LearningMaterial;
@@ -522,6 +531,26 @@ export type MutationDetachTopicIsSubTopicOfTopicArgs = {
 };
 
 
+export type MutationAttachTopicIsPartOfTopicArgs = {
+  partOfTopicId: Scalars['String'];
+  subTopicId: Scalars['String'];
+  payload: AttachTopicIsPartOfTopicPayload;
+};
+
+
+export type MutationUpdateTopicIsPartOfTopicArgs = {
+  partOfTopicId: Scalars['String'];
+  subTopicId: Scalars['String'];
+  payload: UpdateTopicIsPartOfTopicPayload;
+};
+
+
+export type MutationDetachTopicIsPartOfTopicArgs = {
+  partOfTopicId: Scalars['String'];
+  subTopicId: Scalars['String'];
+};
+
+
 export type MutationAttachLearningMaterialCoversTopicsArgs = {
   learningMaterialId: Scalars['String'];
   topicsIds: Array<Scalars['String']>;
@@ -575,6 +604,7 @@ export type Topic = {
   key: Scalars['String'];
   description?: Maybe<Scalars['String']>;
   parentTopic?: Maybe<Topic>;
+  partOfTopics?: Maybe<Array<TopicIsPartOfTopic>>;
   subTopics?: Maybe<Array<TopicIsSubTopicOfTopic>>;
   subTopicsTotalCount?: Maybe<Scalars['Int']>;
   learningMaterials?: Maybe<TopicLearningMaterialsResults>;
@@ -1137,6 +1167,7 @@ export type TopicIsSubTopicOfTopic = {
   index: Scalars['Float'];
   createdAt: Scalars['Date'];
   createdByUserId?: Maybe<Scalars['String']>;
+  relationshipType: SubTopicRelationshipType;
   subTopic: Topic;
   parentTopic: Topic;
 };
@@ -1152,6 +1183,29 @@ export type UpdateTopicIsSubTopicOfTopicPayload = {
 export type DetachTopicIsSubTopicOfTopicResult = {
   __typename?: 'DetachTopicIsSubTopicOfTopicResult';
   parentTopic: Topic;
+  subTopic: Topic;
+};
+
+export type TopicIsPartOfTopic = {
+  __typename?: 'TopicIsPartOfTopic';
+  index: Scalars['Float'];
+  createdAt: Scalars['Date'];
+  createdByUserId?: Maybe<Scalars['String']>;
+  subTopic: Topic;
+  partOfTopic: Topic;
+};
+
+export type AttachTopicIsPartOfTopicPayload = {
+  index?: Maybe<Scalars['Float']>;
+};
+
+export type UpdateTopicIsPartOfTopicPayload = {
+  index?: Maybe<Scalars['Float']>;
+};
+
+export type DetachTopicIsPartOfTopicResult = {
+  __typename?: 'DetachTopicIsPartOfTopicResult';
+  partOfTopic: Topic;
   subTopic: Topic;
 };
 
@@ -1414,6 +1468,11 @@ export type CreateLearningPathResourceItem = {
 };
 
 export type SubGoal = LearningGoal | Topic;
+
+export enum SubTopicRelationshipType {
+  IsSubtopicOf = 'IS_SUBTOPIC_OF',
+  IsPartOf = 'IS_PART_OF'
+}
 
 export type SearchResultEntity = Topic | LearningGoal | Resource | LearningPath;
 

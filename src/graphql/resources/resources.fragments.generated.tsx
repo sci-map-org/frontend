@@ -1,6 +1,6 @@
 import * as Types from '../types';
 
-import { TopicLinkDataFragment } from '../topics/topics.fragments.generated';
+import { TopicLinkDataFragment, TopicFullDataFragment } from '../topics/topics.fragments.generated';
 export type ResourceDataFragment = (
   { __typename?: 'Resource' }
   & Pick<Types.Resource, '_id' | 'name' | 'type' | 'mediaType' | 'url' | 'description' | 'durationSeconds' | 'rating'>

@@ -1,47 +1,13 @@
-import {
-  Box,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  useDisclosure,
-} from '@chakra-ui/react';
-import gql from 'graphql-tag';
+import { Box } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
-import { TopicLinkData } from '../../graphql/topics/topics.fragments';
 import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
+import {
+  useSearchTopicsLazyQuery,
+  useSearchSubTopicsLazyQuery,
+} from '../../graphql/topics/topics.operations.generated';
 import { SearchTopicsOptions } from '../../graphql/types';
-import { generateUrlKey } from '../../services/url.service';
 import { EntitySelector } from '../lib/selectors/EntitySelector';
-import { NewTopic } from '../topics/NewTopic';
-import { useSearchSubTopicsLazyQuery, useSearchTopicsLazyQuery } from './TopicSelector.generated';
-
-export const searchTopics = gql`
-  query searchTopics($options: SearchTopicsOptions!) {
-    searchTopics(options: $options) {
-      items {
-        _id
-        ...TopicLinkData
-      }
-    }
-  }
-  ${TopicLinkData}
-`;
-
-export const searchSubTopics = gql`
-  query searchSubTopics($topicId: String!, $options: SearchTopicsOptions!) {
-    searchSubTopics(topicId: $topicId, options: $options) {
-      items {
-        _id
-        ...TopicLinkData
-      }
-    }
-  }
-  ${TopicLinkData}
-`;
 
 type TopicResultItem = TopicLinkDataFragment;
 

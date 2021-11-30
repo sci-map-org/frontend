@@ -23,6 +23,7 @@ import {
   useAddTagsToLearningMaterialMutation,
   useRemoveTagsFromLearningMaterialMutation,
 } from './LearningMaterialTagsEditor.generated';
+import { useHandleClickOutside } from '../../hooks/useHanldeClickOutside';
 
 export const SelectedTagsViewer: React.FC<{
   selectedTags?: LearningMaterialTag[] | null;
@@ -160,21 +161,7 @@ export const EditableLearningMaterialTags: React.FC<{
   const { currentUser } = useCurrentUser();
   const unauthentificatedModalDisclosure = useUnauthentificatedModal();
   const [tagEditorMode, setTagEditorMode] = useState(false);
-  const useOutsideAlerter = (ref: React.MutableRefObject<any>) => {
-    useEffect(() => {
-      function handleClickOutside(event: any) {
-        if (ref.current && !ref.current.contains(event.target)) {
-          setTagEditorMode(false);
-        }
-      }
-
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
-      };
-    }, [ref]);
-  };
-  useOutsideAlerter(wrapperRef);
+  useHandleClickOutside(wrapperRef, () => setTagEditorMode(false));
   return tagEditorMode ? (
     <Skeleton ref={wrapperRef} isLoaded={!isLoading}>
       <LearningMaterialTagsEditor justify={justify} size="sm" learningMaterial={learningMaterial} inputWidth="100px" />

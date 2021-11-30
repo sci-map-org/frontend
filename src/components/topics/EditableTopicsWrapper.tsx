@@ -1,10 +1,9 @@
-import { Flex, IconButton, Stack, Tooltip } from '@chakra-ui/react';
-import { useEffect, useRef, useState } from 'react';
 import { EditIcon } from '@chakra-ui/icons';
-import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
-import { LearningGoalType, Topic } from '../../graphql/types';
-import { TopicBadgeDataFragment } from './TopicBadge.generated';
+import { Flex, IconButton, Stack, Tooltip } from '@chakra-ui/react';
+import { useRef, useState } from 'react';
+import { useHandleClickOutside } from '../../hooks/useHanldeClickOutside';
 import { TopicBadge } from './TopicBadge';
+import { TopicBadgeDataFragment } from './TopicBadge.generated';
 import { TopicSelector } from './TopicSelector';
 
 interface EditableTopicsWrapperProps {
@@ -27,21 +26,7 @@ export const EditableTopicsWrapper: React.FC<EditableTopicsWrapperProps> = ({
 }) => {
   const [editMode, setEditMode] = useState(false);
   const wrapperRef = useRef(null);
-  const useOutsideAlerter = (ref: React.MutableRefObject<any>) => {
-    useEffect(() => {
-      function handleClickOutside(event: any) {
-        if (ref.current && !ref.current.contains(event.target)) {
-          setEditMode(false);
-        }
-      }
-
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
-      };
-    }, [ref]);
-  };
-  useOutsideAlerter(wrapperRef);
+  useHandleClickOutside(wrapperRef, () => setEditMode(false));
   return (
     <Flex ref={wrapperRef} direction="column" alignItems="center" maxW="300px">
       <Stack direction="column" alignItems="center" spacing={1}>

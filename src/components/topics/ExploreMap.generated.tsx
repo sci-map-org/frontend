@@ -1,7 +1,7 @@
 import * as Types from '../../graphql/types';
 
 import { MapVisualisationTopicDataFragment } from './SubTopicsMapVisualisation.generated';
-import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
+import { TopicLinkDataFragment, TopicFullDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import * as Operations from './ExploreMap';
 import * as Apollo from '@apollo/client';
 export type GetTopicByIdExplorePageQueryVariables = Types.Exact<{

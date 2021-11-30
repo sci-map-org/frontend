@@ -7,7 +7,11 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  ModalFooter,
+  Box,
+  Button,
   Stack,
+  Text,
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { ReactNode, useState } from 'react';
@@ -18,6 +22,7 @@ import { generateUrlKey } from '../../services/url.service';
 import { getChakraRelativeSize } from '../../util/chakra.util';
 import { FormButtons } from '../lib/buttons/FormButtons';
 import { TopicDescriptionField } from './fields/TopicDescription';
+import { TopicNameField } from './fields/TopicName';
 import { TopicUrlKeyField, useCheckTopicKeyAvailability } from './fields/TopicUrlKey';
 import { useAddSubTopicMutation, useCreateTopicMutation } from './NewTopic.generated';
 
@@ -38,23 +43,28 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
   size = 'md',
 }) => {
   const { isChecking, isAvailable } = useCheckTopicKeyAvailability(topicCreationData.key);
+  const [existingSameNameTopic, setExistingSameNameTopic] = useState<TopicLinkDataFragment>();
 
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const openDesembiguationModal = (topic: TopicLinkDataFragment) => {
+    setExistingSameNameTopic(topic);
+    onOpen();
+  };
   return (
     <Stack spacing={4} w="100%">
-      <Input
-        placeholder="Name"
-        size={size}
-        variant="flushed"
+      <TopicNameField
+        onSelect={(selectedTopic) => openDesembiguationModal(selectedTopic)}
         value={topicCreationData.name}
-        onChange={(e) => {
+        onChange={(newNameValue) => {
           updateTopicCreationData({
-            name: e.target.value,
+            name: newNameValue,
             ...(topicCreationData.key === generateUrlKey(topicCreationData.name) && {
-              key: generateUrlKey(e.target.value),
+              key: generateUrlKey(newNameValue),
             }),
           });
         }}
-      ></Input>
+      />
       <TopicUrlKeyField
         size={size}
         value={topicCreationData.key}
@@ -75,6 +85,34 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
         size={getChakraRelativeSize(size, 1)}
         onPrimaryClick={onCreate}
       />
+      <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Modal Title</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            Topics with the name <b>{topicCreationData.name}</b> already exist in different contexts. Do you want to
+            connect an existing one as a SubTopic of Computer Science as well or create a new one ?
+            <Stack>
+              <Stack direction="row">
+                <Box>
+                  {/* TODO: on hover, show tooltip with path ? */}
+                  <Text fontWeight={600}>Topic 1</Text>{' '}
+                  <Text fontWeight={600} color="gray.500">
+                    (Topic 1)
+                  </Text>
+                </Box>
+                <Button colorScheme="blue" onClick={onClose}>
+                  Connect as SubTopic
+                </Button>
+              </Stack>
+              <Box>
+                <Text fontWeight={600}>Create new SubTopic {topicCreationData.name} (ctx: Context)</Text>
+              </Box>
+            </Stack>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </Stack>
   );
 };
