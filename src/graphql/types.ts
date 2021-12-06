@@ -22,6 +22,8 @@ export type Query = {
   searchSubTopics: SearchTopicsResult;
   autocompleteTopicName: SearchTopicsResult;
   checkTopicKeyAvailability: CheckTopicKeyAvailabilityResult;
+  getTopicValidContexts: GetTopicValidContextsResult;
+  getTopicValidContextsFromDisambiguation: GetTopicValidContextsFromDisambiguation;
   currentUser?: Maybe<CurrentUser>;
   getUser: User;
   getArticleByKey: Article;
@@ -73,6 +75,18 @@ export type QueryAutocompleteTopicNameArgs = {
 
 export type QueryCheckTopicKeyAvailabilityArgs = {
   key: Scalars['String'];
+};
+
+
+export type QueryGetTopicValidContextsArgs = {
+  parentTopicId: Scalars['String'];
+  existingSameNameTopicId: Scalars['String'];
+};
+
+
+export type QueryGetTopicValidContextsFromDisambiguationArgs = {
+  parentTopicId: Scalars['String'];
+  disambiguationTopicId: Scalars['String'];
 };
 
 
@@ -218,6 +232,7 @@ export type MutationCreateTopicArgs = {
 export type MutationAddSubTopicArgs = {
   parentTopicId: Scalars['String'];
   payload: CreateTopicPayload;
+  contextOptions?: Maybe<CreateTopicContextOptions>;
 };
 
 
@@ -609,6 +624,12 @@ export type Topic = {
   _id: Scalars['String'];
   name: Scalars['String'];
   key: Scalars['String'];
+  context?: Maybe<Scalars['String']>;
+  isDisambiguation?: Maybe<Scalars['Boolean']>;
+  contextTopic?: Maybe<Topic>;
+  otherContextsTopics?: Maybe<Array<Topic>>;
+  disambiguationTopic?: Maybe<Topic>;
+  contextualisedTopics?: Maybe<Array<Topic>>;
   description?: Maybe<Scalars['String']>;
   parentTopic?: Maybe<Topic>;
   partOfTopics?: Maybe<Array<TopicIsPartOfTopic>>;
@@ -641,6 +662,17 @@ export type CheckTopicKeyAvailabilityResult = {
   __typename?: 'CheckTopicKeyAvailabilityResult';
   available: Scalars['Boolean'];
   existingTopic?: Maybe<Topic>;
+};
+
+export type GetTopicValidContextsResult = {
+  __typename?: 'GetTopicValidContextsResult';
+  validContexts?: Maybe<Array<Topic>>;
+  validSameNameTopicContexts?: Maybe<Array<Topic>>;
+};
+
+export type GetTopicValidContextsFromDisambiguation = {
+  __typename?: 'GetTopicValidContextsFromDisambiguation';
+  validContexts?: Maybe<Array<Topic>>;
 };
 
 export type CurrentUser = {
@@ -879,6 +911,11 @@ export type CreateTopicPayload = {
   name: Scalars['String'];
   key: Scalars['String'];
   description?: Maybe<Scalars['String']>;
+};
+
+export type CreateTopicContextOptions = {
+  disambiguationTopicId: Scalars['String'];
+  contextTopicId: Scalars['String'];
 };
 
 export type UpdateTopicPayload = {

@@ -3,6 +3,7 @@ import * as Types from '../../graphql/types';
 import { MapVisualisationTopicDataFragment } from '../../components/topics/SubTopicsMapVisualisation.generated';
 import { ParentTopicsBreadcrumbsDataFragment } from '../../components/topics/ParentTopicsBreadcrumbs.generated';
 import { TopicSubHeaderDataFragment } from '../../components/topics/TopicSubHeader.generated';
+import { EditablePartOfTopicsDataFragment } from '../../components/topics/EditablePartOfTopics.generated';
 import * as Operations from './TopicPage';
 import * as Apollo from '@apollo/client';
 export type GetTopicByKeyTopicPageQueryVariables = Types.Exact<{
@@ -25,6 +26,7 @@ export type GetTopicByKeyTopicPageQuery = (
     & MapVisualisationTopicDataFragment
     & ParentTopicsBreadcrumbsDataFragment
     & TopicSubHeaderDataFragment
+    & EditablePartOfTopicsDataFragment
   ) }
 );
 

@@ -1,35 +1,26 @@
 import { useDisclosure } from '@chakra-ui/hooks';
-import {
-  Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  ModalFooter,
-  Box,
-  Button,
-  Stack,
-  Text,
-} from '@chakra-ui/react';
+import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Stack } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { ReactNode, useState } from 'react';
 import { TopicFullData, TopicLinkData } from '../../graphql/topics/topics.fragments';
 import { TopicFullDataFragment, TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
-import { CreateTopicPayload, Topic } from '../../graphql/types';
+import { CreateTopicContextOptions, CreateTopicPayload } from '../../graphql/types';
 import { generateUrlKey } from '../../services/url.service';
 import { getChakraRelativeSize } from '../../util/chakra.util';
 import { FormButtons } from '../lib/buttons/FormButtons';
 import { TopicDescriptionField } from './fields/TopicDescription';
-import { TopicNameField } from './fields/TopicName';
+import { TopicNameField } from './fields/TopicNameField';
 import { TopicUrlKeyField, useCheckTopicKeyAvailability } from './fields/TopicUrlKey';
 import { useAddSubTopicMutation, useCreateTopicMutation } from './NewTopic.generated';
 
+type TopicCreationData = CreateTopicPayload & {
+  contextTopic?: TopicLinkDataFragment;
+  disambiguationTopic?: TopicLinkDataFragment;
+};
 interface NewTopicFormProps {
   parentTopic?: TopicLinkDataFragment;
-  topicCreationData: CreateTopicPayload;
-  updateTopicCreationData: (newData: Partial<CreateTopicPayload>) => void;
+  topicCreationData: TopicCreationData;
+  updateTopicCreationData: (newData: Partial<TopicCreationData>) => void;
   onCreate: () => void;
   onCancel: () => void;
   size?: 'md' | 'lg' | 'sm';
@@ -43,18 +34,10 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
   size = 'md',
 }) => {
   const { isChecking, isAvailable } = useCheckTopicKeyAvailability(topicCreationData.key);
-  const [existingSameNameTopic, setExistingSameNameTopic] = useState<TopicLinkDataFragment>();
-
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
-  const openDesembiguationModal = (topic: TopicLinkDataFragment) => {
-    setExistingSameNameTopic(topic);
-    onOpen();
-  };
   return (
     <Stack spacing={4} w="100%">
       <TopicNameField
-        onSelect={(selectedTopic) => openDesembiguationModal(selectedTopic)}
+        parentTopic={parentTopic}
         value={topicCreationData.name}
         onChange={(newNameValue) => {
           updateTopicCreationData({
@@ -64,6 +47,17 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
             }),
           });
         }}
+        setContextAndDisambiguationTopic={(
+          contextTopic: TopicLinkDataFragment,
+          disambiguationTopic: TopicLinkDataFragment
+        ) => {
+          updateTopicCreationData({
+            contextTopic,
+            disambiguationTopic,
+            key: generateUrlKey(`${topicCreationData.key}_(${contextTopic.key})`),
+          });
+        }}
+        onCloseTopicCreation={onCancel}
       />
       <TopicUrlKeyField
         size={size}
@@ -85,34 +79,6 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
         size={getChakraRelativeSize(size, 1)}
         onPrimaryClick={onCreate}
       />
-      <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            Topics with the name <b>{topicCreationData.name}</b> already exist in different contexts. Do you want to
-            connect an existing one as a SubTopic of Computer Science as well or create a new one ?
-            <Stack>
-              <Stack direction="row">
-                <Box>
-                  {/* TODO: on hover, show tooltip with path ? */}
-                  <Text fontWeight={600}>Topic 1</Text>{' '}
-                  <Text fontWeight={600} color="gray.500">
-                    (Topic 1)
-                  </Text>
-                </Box>
-                <Button colorScheme="blue" onClick={onClose}>
-                  Connect as SubTopic
-                </Button>
-              </Stack>
-              <Box>
-                <Text fontWeight={600}>Create new SubTopic {topicCreationData.name} (ctx: Context)</Text>
-              </Box>
-            </Stack>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
     </Stack>
   );
 };
@@ -127,8 +93,12 @@ export const createTopic = gql`
 `;
 
 export const addSubTopic = gql`
-  mutation addSubTopic($parentTopicId: String!, $payload: CreateTopicPayload!) {
-    addSubTopic(parentTopicId: $parentTopicId, payload: $payload) {
+  mutation addSubTopic(
+    $parentTopicId: String!
+    $payload: CreateTopicPayload!
+    $contextOptions: CreateTopicContextOptions
+  ) {
+    addSubTopic(parentTopicId: $parentTopicId, payload: $payload, contextOptions: $contextOptions) {
       ...TopicFullData
       parentTopic {
         ...TopicLinkData
@@ -148,7 +118,7 @@ interface NewTopicProps {
 }
 
 export const NewTopic: React.FC<NewTopicProps> = ({ onCancel, onCreated, parentTopic, defaultCreationData, size }) => {
-  const [topicCreationData, setTopicCreationData] = useState<CreateTopicPayload>({
+  const [topicCreationData, setTopicCreationData] = useState<TopicCreationData>({
     name: '',
     key: '',
     ...defaultCreationData,
@@ -166,10 +136,24 @@ export const NewTopic: React.FC<NewTopicProps> = ({ onCancel, onCreated, parentT
   });
 
   const createTopic = async () => {
+    const payload: CreateTopicPayload = {
+      name: topicCreationData.name,
+      key: topicCreationData.key,
+      description: topicCreationData.description,
+    };
+    const contextOptions: CreateTopicContextOptions | undefined =
+      topicCreationData.contextTopic && topicCreationData.disambiguationTopic
+        ? {
+            contextTopicId: topicCreationData.contextTopic._id,
+            disambiguationTopicId: topicCreationData.disambiguationTopic._id,
+          }
+        : undefined;
     if (parentTopic) {
-      addSubTopicMutation({ variables: { parentTopicId: parentTopic._id, payload: topicCreationData } });
+      addSubTopicMutation({
+        variables: { parentTopicId: parentTopic._id, payload, contextOptions },
+      });
     } else {
-      createTopicMutation({ variables: { payload: topicCreationData } });
+      createTopicMutation({ variables: { payload } });
     }
   };
   return (
@@ -206,7 +190,7 @@ export const NewTopicModal: React.FC<NewTopicModalProps> = ({
     <>
       {renderButton(onOpen)}
       {isOpen && (
-        <Modal onClose={onClose} size="xl" isOpen={isOpen}>
+        <Modal onClose={onClose} size="5xl" isOpen={isOpen}>
           <ModalOverlay>
             <ModalContent>
               <ModalHeader>{title}</ModalHeader>

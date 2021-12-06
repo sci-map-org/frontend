@@ -191,3 +191,29 @@ export const detachTopicIsSubTopicOfTopic = gql`
     }
   }
 `;
+
+// export const attachTopicIsPartOfTopic = gql`
+//   mutation attachTopicIsPartOfTopic(
+//     $partOfTopicId: String!
+//     $subTopicId: String!
+//     $payload: AttachTopicIsPartOfTopicPayload!
+//   ) {
+//     attachTopicIsPartOfTopic(partOfTopicId: $partOfTopicId, subTopicId: $subTopicId, payload: $payload) {
+//       partOfTopic {
+//         _id
+//         subTopics {
+//           subTopic {
+//             _id
+//           }
+//         }
+//       }
+//       subTopic {
+//         partOfTopics {
+//           partOfTopic {
+//             _id
+//           }
+//         }
+//       }
+//     }
+//   }
+// `;

@@ -19,6 +19,7 @@ export type CreateTopicMutation = (
 export type AddSubTopicMutationVariables = Types.Exact<{
   parentTopicId: Types.Scalars['String'];
   payload: Types.CreateTopicPayload;
+  contextOptions?: Types.Maybe<Types.CreateTopicContextOptions>;
 }>;
 
 
@@ -77,6 +78,7 @@ export type AddSubTopicMutationFn = Apollo.MutationFunction<AddSubTopicMutation,
  *   variables: {
  *      parentTopicId: // value for 'parentTopicId'
  *      payload: // value for 'payload'
+ *      contextOptions: // value for 'contextOptions'
  *   },
  * });
  */
