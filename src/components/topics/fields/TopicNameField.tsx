@@ -21,6 +21,7 @@ import Autosuggest from 'react-autosuggest';
 import { useDebouncedCallback } from 'use-debounce';
 import { TopicLinkData } from '../../../graphql/topics/topics.fragments';
 import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
+import { SubTopicRelationshipType } from '../../../graphql/types';
 import { useHandleClickOutside } from '../../../hooks/useHanldeClickOutside';
 import { HelperText } from '../../lib/HelperText';
 import {
@@ -169,7 +170,11 @@ interface TopicNameFieldProps {
   onCancelTopicCreation: () => void;
   // onTopicCreated: (createdTopic: TopicLinkDataFragment) => void;
   // onSubTopicAdded: (addedSubTopic: TopicLinkDataFragment) => void;
-  onAddPartOfSubTopic: (parentTopic: TopicLinkDataFragment, subTopic: TopicLinkDataFragment) => void;
+  onConnectSubTopic: (
+    parentTopic: TopicLinkDataFragment,
+    subTopic: TopicLinkDataFragment,
+    relationshipType: SubTopicRelationshipType
+  ) => void;
   setContextAndDisambiguationTopic: (
     contextTopic: TopicLinkDataFragment,
     disambiguationTopic: TopicLinkDataFragment
@@ -181,7 +186,7 @@ export const TopicNameField: React.FC<TopicNameFieldProps> = ({
   onChange,
   parentTopic,
   onCancelTopicCreation,
-  onAddPartOfSubTopic,
+  onConnectSubTopic,
   // onTopicCreated,
   // onSubTopicAdded,
   setContextAndDisambiguationTopic,
@@ -214,8 +219,7 @@ export const TopicNameField: React.FC<TopicNameFieldProps> = ({
 
             onClose();
           }}
-          onAddPartOfSubTopic={onAddPartOfSubTopic}
-          // onSubTopicAdded={onSubTopicAdded}
+          onConnectSubTopic={onConnectSubTopic}
         />
       )}
     </>
@@ -272,14 +276,18 @@ const DisambiguationModal: React.FC<{
     disambiguationTopic: TopicLinkDataFragment,
     contextTopic: TopicLinkDataFragment
   ) => void;
-  onAddPartOfSubTopic: (parenTopic: TopicLinkDataFragment, subTopicToAdd: TopicLinkDataFragment) => void;
+  onConnectSubTopic: (
+    parentTopic: TopicLinkDataFragment,
+    subTopic: TopicLinkDataFragment,
+    relationshipType: SubTopicRelationshipType
+  ) => void;
 }> = ({
   parentTopic,
   existingSameNameTopic,
   isOpen,
   onCloseDisambiguationModal,
   onCancelTopicCreation,
-  onAddPartOfSubTopic,
+  onConnectSubTopic,
   onCreateContextualisedTopic,
 }) => {
   // from existing same name topic (which is not disambiguation), find the disambiguation then query all its
@@ -290,21 +298,23 @@ const DisambiguationModal: React.FC<{
     variables: { topicId: existingSameNameTopic._id },
   });
 
-  // const [attachTopicIsSubTopicOfTopicMutation] = useAttachTopicIsSubTopicOfTopicMutation();
   // handle case no disambiguation
   // handle case no parent topic id
 
   if (!parentTopic) return null;
   if (!data) return null;
 
-  const existingSameNameTopicWithSameParent:
-    | TopicLinkDataFragment
-    | undefined = data.getTopicById.disambiguationTopic?.contextualisedTopics?.find((contextualisedTopic) => {
-    return (
-      contextualisedTopic.parentTopic?._id === parentTopic._id ||
-      !!contextualisedTopic.partOfTopics?.find(({ partOfTopic }) => partOfTopic._id === parentTopic._id)
-    );
-  });
+  const existingSameNameTopicWithSameParent: TopicLinkDataFragment | undefined =
+    data.getTopicById.parentTopic?._id === parentTopic._id ||
+    !!data.getTopicById.partOfTopics?.find(({ partOfTopic }) => partOfTopic._id === parentTopic._id)
+      ? data.getTopicById // case no disabiguation topic, we just check the same topic's parent
+      : data.getTopicById.disambiguationTopic?.contextualisedTopics?.find((contextualisedTopic) => {
+          //case has disambiguation
+          return (
+            contextualisedTopic.parentTopic?._id === parentTopic._id ||
+            !!contextualisedTopic.partOfTopics?.find(({ partOfTopic }) => partOfTopic._id === parentTopic._id)
+          );
+        });
 
   return (
     <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onCloseDisambiguationModal} size="2xl">
@@ -340,7 +350,7 @@ const DisambiguationModal: React.FC<{
                   existingSameNameTopic={data.getTopicById}
                   disambiguationTopic={data.getTopicById.disambiguationTopic}
                   onConnectAsSubTopic={(subTopic) => {
-                    onAddPartOfSubTopic(parentTopic, subTopic);
+                    onConnectSubTopic(parentTopic, subTopic, SubTopicRelationshipType.IsPartOf);
                     onCloseDisambiguationModal();
                   }}
                   onCreateContextualisedTopic={onCreateContextualisedTopic}
@@ -350,10 +360,15 @@ const DisambiguationModal: React.FC<{
                 <NoDisambiguationTopicModalContent
                   existingSameNameTopic={data.getTopicById}
                   parentTopic={parentTopic}
-                  onConnectAsSubTopic={(topicToConnect) => {
-                    // if has parentTopic, add IS_SUBTOPIC_OF
-                    // else add IS_PART_OF
-                    console.log('connect subtopic');
+                  onConnectAsSubTopic={(topicToConnect, topicToConnectParent) => {
+                    if (!!topicToConnectParent) {
+                      // if has parentTopic, add IS_PART_OF
+                      onConnectSubTopic(parentTopic, topicToConnect, SubTopicRelationshipType.IsPartOf);
+                    } else {
+                      // else add IS_SUBTOPIC_OF
+                      onConnectSubTopic(parentTopic, topicToConnect, SubTopicRelationshipType.IsSubtopicOf);
+                    }
+                    onCloseDisambiguationModal();
                   }}
                   onCreateContextualisedTopic={(contextTopic, sameNameTopic, existingSameNameTopicContextTopic) => {
                     // create disambiguationTopic
@@ -522,7 +537,7 @@ export const getTopicsValidContexts = gql`
 const NoDisambiguationTopicModalContent: React.FC<{
   existingSameNameTopic: GetTopicByIdDisambiguationModalQuery['getTopicById'];
   parentTopic: TopicLinkDataFragment;
-  onConnectAsSubTopic: (topicToConnect: TopicLinkDataFragment) => void;
+  onConnectAsSubTopic: (topicToConnect: TopicLinkDataFragment, topicToConnectParent?: TopicLinkDataFragment) => void;
   onCreateContextualisedTopic: (
     contextTopic: TopicLinkDataFragment,
     existingSameNameTopic: TopicLinkDataFragment,
@@ -567,7 +582,11 @@ const NoDisambiguationTopicModalContent: React.FC<{
             </Text>{' '}
             as well ?
           </Text>
-          <Button colorScheme="blue" onClick={() => onConnectAsSubTopic(existingSameNameTopic)} size="sm">
+          <Button
+            colorScheme="blue"
+            onClick={() => onConnectAsSubTopic(existingSameNameTopic, existingSameNameTopic.parentTopic || undefined)}
+            size="sm"
+          >
             Connect as SubTopic
           </Button>
         </Stack>

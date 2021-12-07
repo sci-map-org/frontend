@@ -4,7 +4,8 @@ import gql from 'graphql-tag';
 import { ReactNode, useState } from 'react';
 import { TopicFullData, TopicLinkData } from '../../graphql/topics/topics.fragments';
 import { TopicFullDataFragment, TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
-import { CreateTopicContextOptions, CreateTopicPayload } from '../../graphql/types';
+import { useAttachTopicIsSubTopicOfTopicMutation } from '../../graphql/topics/topics.operations.generated';
+import { CreateTopicContextOptions, CreateTopicPayload, SubTopicRelationshipType } from '../../graphql/types';
 import { generateUrlKey } from '../../services/url.service';
 import { getChakraRelativeSize } from '../../util/chakra.util';
 import { FormButtons } from '../lib/buttons/FormButtons';
@@ -23,7 +24,11 @@ interface NewTopicFormProps {
   topicCreationData: TopicCreationData;
   updateTopicCreationData: (newData: Partial<TopicCreationData>) => void;
   onCreate: () => void;
-  onAddPartOfSubTopic: (parentTopic: TopicLinkDataFragment, subTopic: TopicLinkDataFragment) => void;
+  onConnectSubTopic: (
+    parentTopic: TopicLinkDataFragment,
+    subTopic: TopicLinkDataFragment,
+    relationshipType: SubTopicRelationshipType
+  ) => void;
   onCancel: () => void;
   size?: 'md' | 'lg' | 'sm';
 }
@@ -33,7 +38,7 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
   updateTopicCreationData,
   onCancel,
   onCreate,
-  onAddPartOfSubTopic,
+  onConnectSubTopic,
   size = 'md',
 }) => {
   const { isChecking, isAvailable } = useCheckTopicKeyAvailability(topicCreationData.key);
@@ -61,7 +66,7 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
           });
         }}
         onCancelTopicCreation={onCancel}
-        onAddPartOfSubTopic={onAddPartOfSubTopic}
+        onConnectSubTopic={onConnectSubTopic}
       />
       <TopicUrlKeyField
         size={size}
@@ -147,6 +152,7 @@ export const NewTopic: React.FC<NewTopicProps> = ({
     },
   });
 
+  const [attachTopicIsSubTopicOfTopicMutation] = useAttachTopicIsSubTopicOfTopicMutation();
   const [attachTopicIsPartOfTopicMutation] = useAttachTopicIsPartOfTopicMutation();
   const createTopic = async () => {
     const payload: CreateTopicPayload = {
@@ -180,14 +186,24 @@ export const NewTopic: React.FC<NewTopicProps> = ({
         })
       }
       onCreate={() => createTopic()}
-      onAddPartOfSubTopic={async (parentTopic, subTopic) => {
-        await attachTopicIsPartOfTopicMutation({
-          variables: {
-            partOfTopicId: parentTopic._id,
-            subTopicId: subTopic._id,
-            payload: {},
-          },
-        });
+      onConnectSubTopic={async (parentTopic, subTopic, relationshipType) => {
+        if (relationshipType === SubTopicRelationshipType.IsPartOf) {
+          await attachTopicIsPartOfTopicMutation({
+            variables: {
+              partOfTopicId: parentTopic._id,
+              subTopicId: subTopic._id,
+              payload: {},
+            },
+          });
+        } else {
+          await attachTopicIsSubTopicOfTopicMutation({
+            variables: {
+              parentTopicId: parentTopic._id,
+              subTopicId: subTopic._id,
+              payload: {},
+            },
+          });
+        }
         onSubTopicConnected && onSubTopicConnected(subTopic);
       }}
       onCancel={onCancel}
