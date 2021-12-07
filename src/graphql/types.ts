@@ -158,6 +158,7 @@ export type QueryCheckLearningGoalKeyAvailabilityArgs = {
 export type Mutation = {
   __typename?: 'Mutation';
   createTopic: Topic;
+  createDisambiguationFromTopic: Topic;
   addSubTopic: Topic;
   updateTopic: Topic;
   deleteTopic: DeleteTopicResponse;
@@ -226,6 +227,12 @@ export type Mutation = {
 
 export type MutationCreateTopicArgs = {
   payload: CreateTopicPayload;
+};
+
+
+export type MutationCreateDisambiguationFromTopicArgs = {
+  existingTopicId: Scalars['String'];
+  existingTopicContextTopicId: Scalars['String'];
 };
 
 

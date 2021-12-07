@@ -28,6 +28,7 @@ import {
   GetTopicByIdDisambiguationModalQuery,
   TopicSuggestionDataFragment,
   useAutocompleteTopicNameLazyQuery,
+  useCreateDisambiguationFromTopicMutation,
   useGetTopicByIdDisambiguationModalQuery,
   useGetTopicsValidContextsQuery,
   useGetTopicValidContextsFromDisambiguationQuery,
@@ -266,6 +267,18 @@ export const getTopicByIdDisambiguationModal = gql`
   ${TopicLinkData}
 `;
 
+export const createDisambiguationFromTopic = gql`
+  mutation createDisambiguationFromTopic($existingTopicId: String!, $existingTopicContextTopicId: String!) {
+    createDisambiguationFromTopic(
+      existingTopicId: $existingTopicId
+      existingTopicContextTopicId: $existingTopicContextTopicId
+    ) {
+      ...TopicLinkData
+    }
+  }
+  ${TopicLinkData}
+`;
+
 const DisambiguationModal: React.FC<{
   parentTopic?: TopicLinkDataFragment;
   existingSameNameTopic: TopicLinkDataFragment;
@@ -297,6 +310,8 @@ const DisambiguationModal: React.FC<{
   const { data, loading } = useGetTopicByIdDisambiguationModalQuery({
     variables: { topicId: existingSameNameTopic._id },
   });
+
+  const [createDisambiguationFromTopicMutation] = useCreateDisambiguationFromTopicMutation();
 
   // handle case no disambiguation
   // handle case no parent topic id
@@ -370,10 +385,22 @@ const DisambiguationModal: React.FC<{
                     }
                     onCloseDisambiguationModal();
                   }}
-                  onCreateContextualisedTopic={(contextTopic, sameNameTopic, existingSameNameTopicContextTopic) => {
-                    // create disambiguationTopic
-                    // attach existing to it
-                    console.log('create disambiguation + create topic + attach disambiguations + attach contexts');
+                  onCreateContextualisedTopicAndDisambiguation={async (
+                    contextTopic,
+                    sameNameTopic,
+                    existingSameNameTopicContextTopic
+                  ) => {
+                    const { data: createdDisambiguationTopicData } = await createDisambiguationFromTopicMutation({
+                      variables: {
+                        existingTopicId: sameNameTopic._id,
+                        existingTopicContextTopicId: existingSameNameTopicContextTopic._id,
+                      },
+                    });
+                    if (!createdDisambiguationTopicData) throw new Error('Should have created a disambiguation topic');
+                    onCreateContextualisedTopic(
+                      createdDisambiguationTopicData.createDisambiguationFromTopic,
+                      contextTopic
+                    );
                   }}
                 />
               )}
@@ -488,7 +515,7 @@ const HasDisambiguationTopicModalContent: React.FC<HasDisambiguationTopicModalCo
               {/* TODO: on hover, show tooltip with path ? */}
               <Text fontWeight={600}>{existingSameNameTopic.name}</Text>
               <SelectContextTopic
-                validContexts={data.getTopicValidContextsFromDisambiguation.validContexts}
+                contexts={data.getTopicValidContextsFromDisambiguation.validContexts}
                 selectedContext={newTopicSelectedContext}
                 onSelect={setNewTopicSelectedContext}
               />
@@ -538,12 +565,12 @@ const NoDisambiguationTopicModalContent: React.FC<{
   existingSameNameTopic: GetTopicByIdDisambiguationModalQuery['getTopicById'];
   parentTopic: TopicLinkDataFragment;
   onConnectAsSubTopic: (topicToConnect: TopicLinkDataFragment, topicToConnectParent?: TopicLinkDataFragment) => void;
-  onCreateContextualisedTopic: (
+  onCreateContextualisedTopicAndDisambiguation: (
     contextTopic: TopicLinkDataFragment,
     existingSameNameTopic: TopicLinkDataFragment,
     existingSameNameTopicContextTopic: TopicLinkDataFragment
   ) => void;
-}> = ({ existingSameNameTopic, parentTopic, onConnectAsSubTopic, onCreateContextualisedTopic }) => {
+}> = ({ existingSameNameTopic, parentTopic, onConnectAsSubTopic, onCreateContextualisedTopicAndDisambiguation }) => {
   const [newTopicSelectedContext, setNewTopicSelectedContext] = useState<TopicLinkDataFragment>();
   const [existingTopicSelectedContext, setExistingTopicSelectedContext] = useState<TopicLinkDataFragment>();
 
@@ -556,9 +583,18 @@ const NoDisambiguationTopicModalContent: React.FC<{
       result.getTopicValidContexts.validContexts &&
         setNewTopicSelectedContext(result.getTopicValidContexts.validContexts[0]);
       result.getTopicValidContexts.validSameNameTopicContexts &&
-        setNewTopicSelectedContext(result.getTopicValidContexts.validSameNameTopicContexts[0]);
+        setExistingTopicSelectedContext(result.getTopicValidContexts.validSameNameTopicContexts[0]);
     },
   });
+
+  const validContexts = (data?.getTopicValidContexts.validContexts || []).map((c) => ({
+    ...c,
+    disabled: existingTopicSelectedContext?._id === c._id,
+  }));
+  const validSameNameTopicContexts = (data?.getTopicValidContexts.validSameNameTopicContexts || []).map((c) => ({
+    ...c,
+    disabled: newTopicSelectedContext?._id === c._id,
+  }));
   if (!data) return null;
   return existingSameNameTopic.parentTopic ? (
     <Stack alignItems="stretch">
@@ -608,7 +644,7 @@ const NoDisambiguationTopicModalContent: React.FC<{
             <Text whiteSpace="nowrap">New Subtopic Context: </Text>
 
             <SelectContextTopic
-              validContexts={data.getTopicValidContexts.validContexts || []}
+              contexts={validContexts}
               selectedContext={newTopicSelectedContext}
               onSelect={setNewTopicSelectedContext}
             />
@@ -617,7 +653,7 @@ const NoDisambiguationTopicModalContent: React.FC<{
             <Text whiteSpace="nowrap">Existing Topic Context: </Text>
 
             <SelectContextTopic
-              validContexts={data.getTopicValidContexts.validSameNameTopicContexts || []}
+              contexts={validSameNameTopicContexts}
               selectedContext={existingTopicSelectedContext}
               onSelect={setExistingTopicSelectedContext}
             />
@@ -628,7 +664,11 @@ const NoDisambiguationTopicModalContent: React.FC<{
             onClick={() =>
               existingTopicSelectedContext &&
               newTopicSelectedContext &&
-              onCreateContextualisedTopic(newTopicSelectedContext, existingSameNameTopic, existingTopicSelectedContext)
+              onCreateContextualisedTopicAndDisambiguation(
+                newTopicSelectedContext,
+                existingSameNameTopic,
+                existingTopicSelectedContext
+              )
             }
             size="sm"
           >
@@ -682,10 +722,10 @@ const NewTopicHasExistingSameNameTopicModal: React.FC<{
 };
 
 const SelectContextTopic: React.FC<{
-  validContexts: TopicLinkDataFragment[];
+  contexts: Array<TopicLinkDataFragment & { disabled?: boolean }>;
   selectedContext?: TopicLinkDataFragment;
   onSelect: (selectedContext: TopicLinkDataFragment) => void;
-}> = ({ validContexts, selectedContext, onSelect }) => {
+}> = ({ contexts, selectedContext, onSelect }) => {
   return (
     <Stack direction="row" alignItems="baseline">
       <Text as="span" fontSize="sm" fontWeight={600} color="gray.500">
@@ -697,13 +737,13 @@ const SelectContextTopic: React.FC<{
         color="gray.500"
         value={selectedContext?._id}
         onChange={(e) => {
-          const selected = validContexts.find((validContext) => validContext._id === e.target.value);
+          const selected = contexts.find((validContext) => validContext._id === e.target.value);
           if (!selected) throw new Error('error selecting context');
           onSelect(selected);
         }}
       >
-        {validContexts.map((validContext) => (
-          <option key={validContext._id} value={validContext._id}>
+        {contexts.map((validContext) => (
+          <option key={validContext._id} value={validContext._id} disabled={validContext.disabled}>
             {validContext.name}
           </option>
         ))}
