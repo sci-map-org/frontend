@@ -38,7 +38,13 @@ export type GetTopicByIdDisambiguationModalQuery = (
       { __typename?: 'Topic' }
       & { contextualisedTopics?: Types.Maybe<Array<(
         { __typename?: 'Topic' }
-        & { parentTopic?: Types.Maybe<(
+        & { partOfTopics?: Types.Maybe<Array<(
+          { __typename?: 'TopicIsPartOfTopic' }
+          & { partOfTopic: (
+            { __typename?: 'Topic' }
+            & TopicLinkDataFragment
+          ) }
+        )>>, parentTopic?: Types.Maybe<(
           { __typename?: 'Topic' }
           & { parentTopic?: Types.Maybe<(
             { __typename?: 'Topic' }
@@ -59,7 +65,13 @@ export type GetTopicByIdDisambiguationModalQuery = (
         & TopicLinkDataFragment
       )> }
       & TopicLinkDataFragment
-    )> }
+    )>, partOfTopics?: Types.Maybe<Array<(
+      { __typename?: 'TopicIsPartOfTopic' }
+      & { partOfTopic: (
+        { __typename?: 'Topic' }
+        & TopicLinkDataFragment
+      ) }
+    )>> }
     & TopicLinkDataFragment
   ) }
 );

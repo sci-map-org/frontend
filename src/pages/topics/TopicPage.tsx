@@ -158,6 +158,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
                     </Button>
                   )}
                   onCreated={() => refetch()}
+                  onSubTopicConnected={() => refetch()}
                 />
               </RoleAccess>
             </Stack>

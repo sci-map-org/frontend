@@ -8,6 +8,7 @@ import { CreateTopicContextOptions, CreateTopicPayload } from '../../graphql/typ
 import { generateUrlKey } from '../../services/url.service';
 import { getChakraRelativeSize } from '../../util/chakra.util';
 import { FormButtons } from '../lib/buttons/FormButtons';
+import { useAttachTopicIsPartOfTopicMutation } from './EditablePartOfTopics.generated';
 import { TopicDescriptionField } from './fields/TopicDescription';
 import { TopicNameField } from './fields/TopicNameField';
 import { TopicUrlKeyField, useCheckTopicKeyAvailability } from './fields/TopicUrlKey';
@@ -22,6 +23,7 @@ interface NewTopicFormProps {
   topicCreationData: TopicCreationData;
   updateTopicCreationData: (newData: Partial<TopicCreationData>) => void;
   onCreate: () => void;
+  onAddPartOfSubTopic: (parentTopic: TopicLinkDataFragment, subTopic: TopicLinkDataFragment) => void;
   onCancel: () => void;
   size?: 'md' | 'lg' | 'sm';
 }
@@ -31,6 +33,7 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
   updateTopicCreationData,
   onCancel,
   onCreate,
+  onAddPartOfSubTopic,
   size = 'md',
 }) => {
   const { isChecking, isAvailable } = useCheckTopicKeyAvailability(topicCreationData.key);
@@ -57,7 +60,8 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
             key: generateUrlKey(`${topicCreationData.key}_(${contextTopic.key})`),
           });
         }}
-        onCloseTopicCreation={onCancel}
+        onCancelTopicCreation={onCancel}
+        onAddPartOfSubTopic={onAddPartOfSubTopic}
       />
       <TopicUrlKeyField
         size={size}
@@ -113,11 +117,19 @@ interface NewTopicProps {
   parentTopic?: TopicLinkDataFragment;
   onCancel: () => void;
   onCreated?: (createdTopic: TopicFullDataFragment) => void;
+  onSubTopicConnected?: (connectedSubTopic: TopicLinkDataFragment) => void;
   defaultCreationData?: { name?: string; key?: string };
   size?: 'sm' | 'md' | 'lg';
 }
 
-export const NewTopic: React.FC<NewTopicProps> = ({ onCancel, onCreated, parentTopic, defaultCreationData, size }) => {
+export const NewTopic: React.FC<NewTopicProps> = ({
+  onCancel,
+  onCreated,
+  parentTopic,
+  defaultCreationData,
+  size,
+  onSubTopicConnected,
+}) => {
   const [topicCreationData, setTopicCreationData] = useState<TopicCreationData>({
     name: '',
     key: '',
@@ -135,6 +147,7 @@ export const NewTopic: React.FC<NewTopicProps> = ({ onCancel, onCreated, parentT
     },
   });
 
+  const [attachTopicIsPartOfTopicMutation] = useAttachTopicIsPartOfTopicMutation();
   const createTopic = async () => {
     const payload: CreateTopicPayload = {
       name: topicCreationData.name,
@@ -167,6 +180,16 @@ export const NewTopic: React.FC<NewTopicProps> = ({ onCancel, onCreated, parentT
         })
       }
       onCreate={() => createTopic()}
+      onAddPartOfSubTopic={async (parentTopic, subTopic) => {
+        await attachTopicIsPartOfTopicMutation({
+          variables: {
+            partOfTopicId: parentTopic._id,
+            subTopicId: subTopic._id,
+            payload: {},
+          },
+        });
+        onSubTopicConnected && onSubTopicConnected(subTopic);
+      }}
       onCancel={onCancel}
     />
   );
@@ -183,6 +206,7 @@ export const NewTopicModal: React.FC<NewTopicModalProps> = ({
   renderButton,
   onCancel,
   onCreated,
+  onSubTopicConnected,
   ...props
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -204,6 +228,10 @@ export const NewTopicModal: React.FC<NewTopicModalProps> = ({
                   onCancel={() => {
                     onClose();
                     onCancel && onCancel();
+                  }}
+                  onSubTopicConnected={(connectedSubTopic) => {
+                    onClose();
+                    onSubTopicConnected && onSubTopicConnected(connectedSubTopic);
                   }}
                   {...props}
                 />
