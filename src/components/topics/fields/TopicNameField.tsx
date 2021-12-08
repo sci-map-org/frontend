@@ -24,6 +24,7 @@ import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.
 import { SubTopicRelationshipType } from '../../../graphql/types';
 import { useHandleClickOutside } from '../../../hooks/useHanldeClickOutside';
 import { HelperText } from '../../lib/HelperText';
+import { TopicLink } from '../../lib/links/TopicLink';
 import {
   GetTopicByIdDisambiguationModalQuery,
   TopicSuggestionDataFragment,
@@ -58,11 +59,18 @@ interface TopicNameAutocompleteProps {
   value: string;
   onChange: (newValue: string) => void;
   onSelect: (topic: TopicLinkDataFragment) => void;
+  placeholder?: string;
+  isDisabled?: boolean;
 }
 
-export const TopicNameAutocomplete: React.FC<TopicNameAutocompleteProps> = ({ value, onChange, onSelect }) => {
+export const TopicNameAutocomplete: React.FC<TopicNameAutocompleteProps> = ({
+  placeholder = 'Topic Name',
+  isDisabled,
+  value,
+  onChange,
+  onSelect,
+}) => {
   const [searchResults, setSearchResults] = useState<TopicResultItem[]>([]);
-  const [shouldRenderSuggestions, setShouldRenderSuggestions] = useState(true);
   const suggestions = uniqBy(searchResults, 'name');
 
   const [autocompleteTopicNameLazyQuery, { data: topicsSearchData }] = useAutocompleteTopicNameLazyQuery();
@@ -81,23 +89,17 @@ export const TopicNameAutocomplete: React.FC<TopicNameAutocompleteProps> = ({ va
   };
 
   const inputProps = {
-    placeholder: 'Topic Name', //TODO
+    placeholder,
     value,
-    isDisabled: false, // TODO
+    isDisabled, // TODO
     onChange: (_event: any, { newValue }: { newValue: string }) => {
-      !shouldRenderSuggestions && setShouldRenderSuggestions(true);
       onChange(newValue);
     },
   };
 
   let inputRef = useRef<HTMLDivElement>(null);
   useHandleClickOutside(inputRef, () => {
-    if (
-      suggestions.length &&
-      value.toLocaleLowerCase() === suggestions[0].name.toLocaleLowerCase() &&
-      shouldRenderSuggestions
-    ) {
-      console.log('trigger modal');
+    if (suggestions.length && value.toLocaleLowerCase() === suggestions[0].name.toLocaleLowerCase()) {
       onSelect(suggestions[0]);
     }
   });
@@ -106,7 +108,7 @@ export const TopicNameAutocomplete: React.FC<TopicNameAutocompleteProps> = ({ va
   return (
     <Box w={width} ref={inputRef}>
       <Autosuggest
-        shouldRenderSuggestions={() => shouldRenderSuggestions}
+        focusInputOnSuggestionClick={false}
         suggestions={suggestions}
         inputProps={inputProps}
         onSuggestionsFetchRequested={({ value: v }) => fetchEntitySuggestions(v)}
@@ -114,10 +116,8 @@ export const TopicNameAutocomplete: React.FC<TopicNameAutocompleteProps> = ({ va
         onSuggestionSelected={(e, { suggestion }) => {
           e.preventDefault();
 
-          //   if ('new' in suggestion) onCreate && onCreate(suggestion);
           onChange(suggestion.name);
           onSelect(suggestion);
-          setShouldRenderSuggestions(false);
         }}
         renderSuggestion={(suggestion, { isHighlighted }) => (
           <Flex
@@ -169,8 +169,6 @@ interface TopicNameFieldProps {
   onChange: (value: string) => void;
   parentTopic?: TopicLinkDataFragment;
   onCancelTopicCreation: () => void;
-  // onTopicCreated: (createdTopic: TopicLinkDataFragment) => void;
-  // onSubTopicAdded: (addedSubTopic: TopicLinkDataFragment) => void;
   onConnectSubTopic: (
     parentTopic: TopicLinkDataFragment,
     subTopic: TopicLinkDataFragment,
@@ -188,8 +186,6 @@ export const TopicNameField: React.FC<TopicNameFieldProps> = ({
   parentTopic,
   onCancelTopicCreation,
   onConnectSubTopic,
-  // onTopicCreated,
-  // onSubTopicAdded,
   setContextAndDisambiguationTopic,
 }) => {
   const [existingSameNameTopic, setExistingSameNameTopic] = useState<TopicLinkDataFragment>();
@@ -316,12 +312,11 @@ const DisambiguationModal: React.FC<{
   // handle case no disambiguation
   // handle case no parent topic id
 
-  if (!parentTopic) return null;
   if (!data) return null;
 
-  const existingSameNameTopicWithSameParent: TopicLinkDataFragment | undefined =
-    data.getTopicById.parentTopic?._id === parentTopic._id ||
-    !!data.getTopicById.partOfTopics?.find(({ partOfTopic }) => partOfTopic._id === parentTopic._id)
+  const existingSameNameTopicWithSameParent: TopicLinkDataFragment | undefined = parentTopic
+    ? data.getTopicById.parentTopic?._id === parentTopic._id ||
+      !!data.getTopicById.partOfTopics?.find(({ partOfTopic }) => partOfTopic._id === parentTopic._id)
       ? data.getTopicById // case no disabiguation topic, we just check the same topic's parent
       : data.getTopicById.disambiguationTopic?.contextualisedTopics?.find((contextualisedTopic) => {
           //case has disambiguation
@@ -329,7 +324,8 @@ const DisambiguationModal: React.FC<{
             contextualisedTopic.parentTopic?._id === parentTopic._id ||
             !!contextualisedTopic.partOfTopics?.find(({ partOfTopic }) => partOfTopic._id === parentTopic._id)
           );
-        });
+        })
+    : undefined;
 
   return (
     <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onCloseDisambiguationModal} size="2xl">
@@ -344,7 +340,7 @@ const DisambiguationModal: React.FC<{
             </Center>
           ) : (
             <>
-              {existingSameNameTopicWithSameParent && (
+              {existingSameNameTopicWithSameParent && parentTopic && (
                 <Stack w="100%" alignItems="center" spacing={5}>
                   <Text textAlign="center">
                     {existingSameNameTopicWithSameParent.name} is already a subTopic of {parentTopic.name}!
@@ -706,17 +702,22 @@ const NewTopicHasExistingSameNameTopicModal: React.FC<{
   onCancelTopicCreation: () => void;
 }> = ({ existingSameNameTopic, onCancelTopicCreation }) => {
   return (
-    <Stack>
-      <Text>
+    <Stack alignItems="center" spacing={4}>
+      <Text textAlign="center">
         <b>{existingSameNameTopic.name}</b> already exists under{' '}
         <Text as="span" fontWeight={600}>
           {existingSameNameTopic.parentTopic?.parentTopic?.name}{' '}
           {!!existingSameNameTopic.parentTopic?.name && '/ ' + existingSameNameTopic.parentTopic?.name}.
-        </Text>
+        </Text>{' '}
+        / <TopicLink topic={existingSameNameTopic} />.
+      </Text>
+      <Text textAlign="center">
         You can not create a new, unclassified topic with the same name. If this existing topic does not correspond to
         the one you want to create, add this new topic as a subtopic of an already existing one.
       </Text>
-      <Button onClick={() => onCancelTopicCreation()}>Close</Button>
+      <Button colorScheme="blue" onClick={() => onCancelTopicCreation()}>
+        Close
+      </Button>
     </Stack>
   );
 };

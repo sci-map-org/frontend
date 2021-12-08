@@ -1,9 +1,11 @@
 import * as Types from '../../graphql/types';
 
 import { MapVisualisationTopicDataFragment } from '../../components/topics/SubTopicsMapVisualisation.generated';
+import { TopicLinkDataFragment, TopicFullDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import { ParentTopicsBreadcrumbsDataFragment } from '../../components/topics/ParentTopicsBreadcrumbs.generated';
 import { TopicSubHeaderDataFragment } from '../../components/topics/TopicSubHeader.generated';
 import { EditablePartOfTopicsDataFragment } from '../../components/topics/EditablePartOfTopics.generated';
+import { SeeAlsoDataFragment } from '../../components/topics/SeeAlso.generated';
 import * as Operations from './TopicPage';
 import * as Apollo from '@apollo/client';
 export type GetTopicByKeyTopicPageQueryVariables = Types.Exact<{
@@ -15,18 +17,22 @@ export type GetTopicByKeyTopicPageQuery = (
   { __typename?: 'Query' }
   & { getTopicByKey: (
     { __typename?: 'Topic' }
-    & Pick<Types.Topic, '_id' | 'name' | 'description'>
+    & Pick<Types.Topic, '_id' | 'name' | 'description' | 'isDisambiguation'>
     & { subTopics?: Types.Maybe<Array<(
       { __typename?: 'TopicIsSubTopicOfTopic' }
       & { subTopic: (
         { __typename?: 'Topic' }
         & MapVisualisationTopicDataFragment
       ) }
+    )>>, contextualisedTopics?: Types.Maybe<Array<(
+      { __typename?: 'Topic' }
+      & TopicLinkDataFragment
     )>> }
     & MapVisualisationTopicDataFragment
     & ParentTopicsBreadcrumbsDataFragment
     & TopicSubHeaderDataFragment
     & EditablePartOfTopicsDataFragment
+    & SeeAlsoDataFragment
   ) }
 );
 

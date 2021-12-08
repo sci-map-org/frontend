@@ -2,16 +2,20 @@ import { Box, Button, Flex, Heading, Skeleton, Stack, Text } from '@chakra-ui/re
 import gql from 'graphql-tag';
 import { useState } from 'react';
 import { RoleAccess } from '../../components/auth/RoleAccess';
+import { PageLayout } from '../../components/layout/PageLayout';
 import { TopicPageLayout } from '../../components/layout/TopicPageLayout';
 import { LearningPathPreviewCardDataFragment } from '../../components/learning_paths/LearningPathPreviewCard.generated';
 import { LearningPathIcon } from '../../components/lib/icons/LearningPathIcon';
 import { ResourceIcon } from '../../components/lib/icons/ResourceIcon';
+import { TopicLink } from '../../components/lib/links/TopicLink';
+import { PageTitle } from '../../components/lib/Typography';
 import { PageButtonLink } from '../../components/navigation/InternalLink';
 import { ResourcePreviewCardDataFragment } from '../../components/resources/ResourcePreviewCard.generated';
 import { BestXPagesLinks } from '../../components/topics/BestXPagesLinks';
 import { EditablePartOfTopics, EditablePartOfTopicsData } from '../../components/topics/EditablePartOfTopics';
 import { NewTopicModal } from '../../components/topics/NewTopic';
 import { ParentTopicsBreadcrumbs, ParentTopicsBreadcrumbsData } from '../../components/topics/ParentTopicsBreadcrumbs';
+import { SeeAlso, SeeAlsoData } from '../../components/topics/SeeAlso';
 import { MapVisualisationTopicData } from '../../components/topics/SubTopicsMapVisualisation';
 import { SubTopicsMinimap } from '../../components/topics/SubTopicsMinimap';
 import { TopicRecommendedLearningMaterials } from '../../components/topics/TopicRecommendedLearningMaterials';
@@ -28,15 +32,20 @@ export const getTopicByKeyTopicPage = gql`
       _id
       name
       description
+      isDisambiguation
       ...MapVisualisationTopicData
       subTopics {
         subTopic {
           ...MapVisualisationTopicData
         }
       }
+      contextualisedTopics {
+        ...TopicLinkData
+      }
       ...ParentTopicsBreadcrumbsData
       ...TopicSubHeaderData
       ...EditablePartOfTopicsData
+      ...SeeAlsoData
     }
   }
   ${MapVisualisationTopicData}
@@ -44,6 +53,7 @@ export const getTopicByKeyTopicPage = gql`
   ${ParentTopicsBreadcrumbsData}
   ${TopicSubHeaderData}
   ${EditablePartOfTopicsData}
+  ${SeeAlsoData}
 `;
 
 const placeholderTopicData: GetTopicByKeyTopicPageQuery['getTopicByKey'] = {
@@ -86,6 +96,42 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
   const topic = data?.getTopicByKey || placeholderTopicData;
 
   if (error) return null;
+
+  if (topic.isDisambiguation)
+    return (
+      <PageLayout>
+        <Box mt={8}>
+          <Text fontSize="2xl" fontWeight={600} color="teal.600">
+            Disambiguation:
+          </Text>
+          <PageTitle pl={12}>{topic.name}</PageTitle>
+        </Box>
+        <Box mt={16}>
+          <Text>
+            <Text as="span" fontWeight={600} fontStyle="italic">
+              {topic.name}
+            </Text>{' '}
+            may refer to:
+          </Text>
+          <Stack ml={8} mt={2}>
+            {topic.contextualisedTopics?.map((contextualisedTopic) => (
+              <TopicLink
+                fontSize="xl"
+                color="gray.800"
+                key={contextualisedTopic._id}
+                topic={contextualisedTopic}
+                size="lg"
+              >
+                {contextualisedTopic.name}{' '}
+                <Text color="gray.500" as="span">
+                  ({contextualisedTopic.context})
+                </Text>
+              </TopicLink>
+            ))}
+          </Stack>
+        </Box>
+      </PageLayout>
+    );
   return (
     <TopicPageLayout
       renderTopLeftNavigation={<ParentTopicsBreadcrumbs topic={topic} isLoading={loading} />}
@@ -213,7 +259,10 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
               onConceptToggled={() => refetchLearningMaterials()}
             />
           </Stack> */}
-          <BestXPagesLinks topicKey={topic.key} />
+          <Stack>
+            <SeeAlso topic={topic} />
+            <BestXPagesLinks topicKey={topic.key} />
+          </Stack>
         </Flex>
       </>
     </TopicPageLayout>
