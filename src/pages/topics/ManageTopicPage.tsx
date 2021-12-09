@@ -12,7 +12,7 @@ import { EditablePartOfTopics, EditablePartOfTopicsData } from '../../components
 import { EditableTopicPrerequisites } from '../../components/topics/EditableTopicPrerequisites';
 import { TopicDescription, TopicDescriptionField } from '../../components/topics/fields/TopicDescription';
 import { TopicUrlKeyField, useCheckTopicKeyAvailability } from '../../components/topics/fields/TopicUrlKey';
-import { SubTopicsTreeData, SubTopicsTreeProps } from '../../components/topics/SubTopicsTree';
+import { SubTopicsTreeData, SubTopicsTreeProps } from '../../components/topics/tree/SubTopicsTree';
 import { generateTopicData, TopicLinkData } from '../../graphql/topics/topics.fragments';
 import { useDeleteTopicMutation, useUpdateTopicMutation } from '../../graphql/topics/topics.operations.generated';
 import { UpdateTopicPayload } from '../../graphql/types';
@@ -22,7 +22,7 @@ import { GetTopicByKeyManageTopicPageQuery, useGetTopicByKeyManageTopicPageQuery
 
 const SubTopicsTree = dynamic<SubTopicsTreeProps>(
   () =>
-    import('../../components/topics/SubTopicsTree').then((res) => {
+    import('../../components/topics/tree/SubTopicsTree').then((res) => {
       const { SubTopicsTree } = res;
       return SubTopicsTree;
     }),

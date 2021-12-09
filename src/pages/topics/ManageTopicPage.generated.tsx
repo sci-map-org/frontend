@@ -1,7 +1,7 @@
 import * as Types from '../../graphql/types';
 
 import { TopicLinkDataFragment, TopicFullDataFragment } from '../../graphql/topics/topics.fragments.generated';
-import { SubTopicsTreeDataFragment } from '../../components/topics/SubTopicsTree.generated';
+import { SubTopicsTreeDataFragment } from '../../components/topics/tree/SubTopicsTree.generated';
 import { EditablePartOfTopicsDataFragment } from '../../components/topics/EditablePartOfTopics.generated';
 import * as Operations from './ManageTopicPage';
 import * as Apollo from '@apollo/client';

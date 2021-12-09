@@ -107,16 +107,16 @@ export type GetTopicValidContextsFromDisambiguationQuery = (
   ) }
 );
 
-export type GetTopicsValidContextsQueryVariables = Types.Exact<{
+export type GetTopicValidContextsFromSameNameQueryVariables = Types.Exact<{
   parentTopicId: Types.Scalars['String'];
   existingSameNameTopicId: Types.Scalars['String'];
 }>;
 
 
-export type GetTopicsValidContextsQuery = (
+export type GetTopicValidContextsFromSameNameQuery = (
   { __typename?: 'Query' }
-  & { getTopicValidContexts: (
-    { __typename?: 'GetTopicValidContextsResult' }
+  & { getTopicValidContextsFromSameName: (
+    { __typename?: 'GetTopicValidContextsFromSameName' }
     & { validContexts?: Types.Maybe<Array<(
       { __typename?: 'Topic' }
       & TopicLinkDataFragment
@@ -235,28 +235,28 @@ export type GetTopicValidContextsFromDisambiguationLazyQueryHookResult = ReturnT
 export type GetTopicValidContextsFromDisambiguationQueryResult = Apollo.QueryResult<GetTopicValidContextsFromDisambiguationQuery, GetTopicValidContextsFromDisambiguationQueryVariables>;
 
 /**
- * __useGetTopicsValidContextsQuery__
+ * __useGetTopicValidContextsFromSameNameQuery__
  *
- * To run a query within a React component, call `useGetTopicsValidContextsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetTopicsValidContextsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetTopicValidContextsFromSameNameQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTopicValidContextsFromSameNameQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetTopicsValidContextsQuery({
+ * const { data, loading, error } = useGetTopicValidContextsFromSameNameQuery({
  *   variables: {
  *      parentTopicId: // value for 'parentTopicId'
  *      existingSameNameTopicId: // value for 'existingSameNameTopicId'
  *   },
  * });
  */
-export function useGetTopicsValidContextsQuery(baseOptions: Apollo.QueryHookOptions<GetTopicsValidContextsQuery, GetTopicsValidContextsQueryVariables>) {
-        return Apollo.useQuery<GetTopicsValidContextsQuery, GetTopicsValidContextsQueryVariables>(Operations.getTopicsValidContexts, baseOptions);
+export function useGetTopicValidContextsFromSameNameQuery(baseOptions: Apollo.QueryHookOptions<GetTopicValidContextsFromSameNameQuery, GetTopicValidContextsFromSameNameQueryVariables>) {
+        return Apollo.useQuery<GetTopicValidContextsFromSameNameQuery, GetTopicValidContextsFromSameNameQueryVariables>(Operations.getTopicValidContextsFromSameName, baseOptions);
       }
-export function useGetTopicsValidContextsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTopicsValidContextsQuery, GetTopicsValidContextsQueryVariables>) {
-          return Apollo.useLazyQuery<GetTopicsValidContextsQuery, GetTopicsValidContextsQueryVariables>(Operations.getTopicsValidContexts, baseOptions);
+export function useGetTopicValidContextsFromSameNameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTopicValidContextsFromSameNameQuery, GetTopicValidContextsFromSameNameQueryVariables>) {
+          return Apollo.useLazyQuery<GetTopicValidContextsFromSameNameQuery, GetTopicValidContextsFromSameNameQueryVariables>(Operations.getTopicValidContextsFromSameName, baseOptions);
         }
-export type GetTopicsValidContextsQueryHookResult = ReturnType<typeof useGetTopicsValidContextsQuery>;
-export type GetTopicsValidContextsLazyQueryHookResult = ReturnType<typeof useGetTopicsValidContextsLazyQuery>;
-export type GetTopicsValidContextsQueryResult = Apollo.QueryResult<GetTopicsValidContextsQuery, GetTopicsValidContextsQueryVariables>;
+export type GetTopicValidContextsFromSameNameQueryHookResult = ReturnType<typeof useGetTopicValidContextsFromSameNameQuery>;
+export type GetTopicValidContextsFromSameNameLazyQueryHookResult = ReturnType<typeof useGetTopicValidContextsFromSameNameLazyQuery>;
+export type GetTopicValidContextsFromSameNameQueryResult = Apollo.QueryResult<GetTopicValidContextsFromSameNameQuery, GetTopicValidContextsFromSameNameQueryVariables>;

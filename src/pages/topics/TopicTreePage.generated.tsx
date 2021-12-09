@@ -1,6 +1,6 @@
 import * as Types from '../../graphql/types';
 
-import { SubTopicsTreeDataFragment } from '../../components/topics/SubTopicsTree.generated';
+import { SubTopicsTreeDataFragment } from '../../components/topics/tree/SubTopicsTree.generated';
 import * as Operations from './TopicTreePage';
 import * as Apollo from '@apollo/client';
 export type GetTopicByKeyTopicTreePageQueryVariables = Types.Exact<{

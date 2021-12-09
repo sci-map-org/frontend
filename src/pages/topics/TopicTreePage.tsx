@@ -3,7 +3,7 @@ import gql from 'graphql-tag';
 import dynamic from 'next/dynamic';
 import { useMemo } from 'react';
 import { PageLayout } from '../../components/layout/PageLayout';
-import { SubTopicsTreeData, SubTopicsTreeProps } from '../../components/topics/SubTopicsTree';
+import { SubTopicsTreeData, SubTopicsTreeProps } from '../../components/topics/tree/SubTopicsTree';
 import { generateTopicData } from '../../graphql/topics/topics.fragments';
 import { UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
@@ -12,7 +12,7 @@ import { GetTopicByKeyTopicTreePageQuery, useGetTopicByKeyTopicTreePageQuery } f
 
 const SubTopicsTree = dynamic<SubTopicsTreeProps>(
   () =>
-    import('../../components/topics/SubTopicsTree').then((res) => {
+    import('../../components/topics/tree/SubTopicsTree').then((res) => {
       const { SubTopicsTree } = res;
       return SubTopicsTree;
     }),

@@ -23,6 +23,7 @@ export type Query = {
   autocompleteTopicName: SearchTopicsResult;
   checkTopicKeyAvailability: CheckTopicKeyAvailabilityResult;
   getTopicValidContexts: GetTopicValidContextsResult;
+  getTopicValidContextsFromSameName: GetTopicValidContextsFromSameName;
   getTopicValidContextsFromDisambiguation: GetTopicValidContextsFromDisambiguation;
   currentUser?: Maybe<CurrentUser>;
   getUser: User;
@@ -79,6 +80,12 @@ export type QueryCheckTopicKeyAvailabilityArgs = {
 
 
 export type QueryGetTopicValidContextsArgs = {
+  parentTopicId: Scalars['String'];
+  topicId: Scalars['String'];
+};
+
+
+export type QueryGetTopicValidContextsFromSameNameArgs = {
   parentTopicId: Scalars['String'];
   existingSameNameTopicId: Scalars['String'];
 };
@@ -673,6 +680,11 @@ export type CheckTopicKeyAvailabilityResult = {
 
 export type GetTopicValidContextsResult = {
   __typename?: 'GetTopicValidContextsResult';
+  validContexts?: Maybe<Array<Topic>>;
+};
+
+export type GetTopicValidContextsFromSameName = {
+  __typename?: 'GetTopicValidContextsFromSameName';
   validContexts?: Maybe<Array<Topic>>;
   validSameNameTopicContexts?: Maybe<Array<Topic>>;
 };

@@ -31,7 +31,7 @@ import {
   useAutocompleteTopicNameLazyQuery,
   useCreateDisambiguationFromTopicMutation,
   useGetTopicByIdDisambiguationModalQuery,
-  useGetTopicsValidContextsQuery,
+  useGetTopicValidContextsFromSameNameQuery,
   useGetTopicValidContextsFromDisambiguationQuery,
 } from './TopicNameField.generated';
 
@@ -543,9 +543,12 @@ const HasDisambiguationTopicModalContent: React.FC<HasDisambiguationTopicModalCo
   );
 };
 
-export const getTopicsValidContexts = gql`
-  query getTopicsValidContexts($parentTopicId: String!, $existingSameNameTopicId: String!) {
-    getTopicValidContexts(parentTopicId: $parentTopicId, existingSameNameTopicId: $existingSameNameTopicId) {
+export const getTopicValidContextsFromSameName = gql`
+  query getTopicValidContextsFromSameName($parentTopicId: String!, $existingSameNameTopicId: String!) {
+    getTopicValidContextsFromSameName(
+      parentTopicId: $parentTopicId
+      existingSameNameTopicId: $existingSameNameTopicId
+    ) {
       validContexts {
         ...TopicLinkData
       }
@@ -570,27 +573,29 @@ const NoDisambiguationTopicModalContent: React.FC<{
   const [newTopicSelectedContext, setNewTopicSelectedContext] = useState<TopicLinkDataFragment>();
   const [existingTopicSelectedContext, setExistingTopicSelectedContext] = useState<TopicLinkDataFragment>();
 
-  const { data } = useGetTopicsValidContextsQuery({
+  const { data } = useGetTopicValidContextsFromSameNameQuery({
     variables: {
       parentTopicId: parentTopic._id,
       existingSameNameTopicId: existingSameNameTopic._id,
     },
     onCompleted(result) {
-      result.getTopicValidContexts.validContexts &&
-        setNewTopicSelectedContext(result.getTopicValidContexts.validContexts[0]);
-      result.getTopicValidContexts.validSameNameTopicContexts &&
-        setExistingTopicSelectedContext(result.getTopicValidContexts.validSameNameTopicContexts[0]);
+      result.getTopicValidContextsFromSameName.validContexts &&
+        setNewTopicSelectedContext(result.getTopicValidContextsFromSameName.validContexts[0]);
+      result.getTopicValidContextsFromSameName.validSameNameTopicContexts &&
+        setExistingTopicSelectedContext(result.getTopicValidContextsFromSameName.validSameNameTopicContexts[0]);
     },
   });
 
-  const validContexts = (data?.getTopicValidContexts.validContexts || []).map((c) => ({
+  const validContexts = (data?.getTopicValidContextsFromSameName.validContexts || []).map((c) => ({
     ...c,
     disabled: existingTopicSelectedContext?._id === c._id,
   }));
-  const validSameNameTopicContexts = (data?.getTopicValidContexts.validSameNameTopicContexts || []).map((c) => ({
-    ...c,
-    disabled: newTopicSelectedContext?._id === c._id,
-  }));
+  const validSameNameTopicContexts = (data?.getTopicValidContextsFromSameName.validSameNameTopicContexts || []).map(
+    (c) => ({
+      ...c,
+      disabled: newTopicSelectedContext?._id === c._id,
+    })
+  );
   if (!data) return null;
   return existingSameNameTopic.parentTopic ? (
     <Stack alignItems="stretch">
