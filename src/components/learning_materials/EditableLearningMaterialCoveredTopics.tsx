@@ -2,9 +2,9 @@ import { Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { LearningMaterialWithCoveredTopicsData } from '../../graphql/learning_materials/learning_materials.fragments';
 import { LearningMaterialWithCoveredTopicsDataFragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
+import { TopicLinkData } from '../../graphql/topics/topics.fragments';
 import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import { EditableTopicsWrapper } from '../topics/EditableTopicsWrapper';
-import { TopicBadgeData } from '../topics/TopicBadge';
 import {
   useAttachLearningMaterialCoversTopicsMutation,
   useDetachLearningMaterialCoversTopicsMutation,
@@ -15,11 +15,11 @@ export const EditableLearningMaterialPrerequisitesData = gql`
     _id
     prerequisites {
       topic {
-        ...TopicBadgeData
+        ...TopicLinkData
       }
     }
   }
-  ${TopicBadgeData}
+  ${TopicLinkData}
 `;
 
 interface StatelessEditableLearningMaterialCoveredTopicsProps {

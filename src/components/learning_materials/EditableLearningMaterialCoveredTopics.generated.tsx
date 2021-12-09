@@ -1,6 +1,6 @@
 import * as Types from '../../graphql/types';
 
-import { TopicBadgeDataFragment } from '../topics/TopicBadge.generated';
+import { TopicLinkDataFragment, TopicFullDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import { LearningMaterialWithCoveredTopicsData_Resource_Fragment, LearningMaterialWithCoveredTopicsData_LearningPath_Fragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
 import * as Operations from './EditableLearningMaterialCoveredTopics';
 import * as Apollo from '@apollo/client';
@@ -11,7 +11,7 @@ export type EditableLearningMaterialPrerequisitesData_Resource_Fragment = (
     { __typename?: 'LearningMaterialHasPrerequisiteTopic' }
     & { topic: (
       { __typename?: 'Topic' }
-      & TopicBadgeDataFragment
+      & TopicLinkDataFragment
     ) }
   )>> }
 );
@@ -23,7 +23,7 @@ export type EditableLearningMaterialPrerequisitesData_LearningPath_Fragment = (
     { __typename?: 'LearningMaterialHasPrerequisiteTopic' }
     & { topic: (
       { __typename?: 'Topic' }
-      & TopicBadgeDataFragment
+      & TopicLinkDataFragment
     ) }
   )>> }
 );

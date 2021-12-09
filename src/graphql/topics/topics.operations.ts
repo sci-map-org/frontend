@@ -73,30 +73,9 @@ export const attachTopicIsSubTopicOfTopic = gql`
       }
       subTopic {
         _id
-        # ... on Domain {
-        #   parentTopics(options: { sorting: { type: index, direction: ASC } }) {
-        #     index
-        #     parentTopic {
-        #       _id
-        #     }
-        #   }
-        # }
-        # ... on Concept {
-        #   parentTopic {
-        #     index
-        #     parentTopic {
-        #       _id
-        #     }
-        #   }
-        # }
-        # ... on LearningGoal {
-        #   parentTopic {
-        #     index
-        #     parentTopic {
-        #       _id
-        #     }
-        #   }
-        # }
+        parentTopic {
+          _id
+        }
       }
     }
   }
@@ -120,30 +99,9 @@ export const updateTopicIsSubTopicOfTopic = gql`
       }
       subTopic {
         _id
-        # ... on Domain {
-        #   parentTopics(options: { sorting: { type: index, direction: ASC } }) {
-        #     index
-        #     parentTopic {
-        #       _id
-        #     }
-        #   }
-        # }
-        # ... on Concept {
-        #   parentTopic {
-        #     index
-        #     parentTopic {
-        #       _id
-        #     }
-        #   }
-        # }
-        # ... on LearningGoal {
-        #   parentTopic {
-        #     index
-        #     parentTopic {
-        #       _id
-        #     }
-        #   }
-        # }
+        parentTopic {
+          _id
+        }
       }
     }
   }
@@ -163,57 +121,93 @@ export const detachTopicIsSubTopicOfTopic = gql`
       }
       subTopic {
         _id
-        # ... on Domain {
-        #   parentTopics(options: { sorting: { type: index, direction: ASC } }) {
-        #     index
-        #     parentTopic {
-        #       _id
-        #     }
-        #   }
-        # }
-        # ... on Concept {
-        #   parentTopic {
-        #     index
-        #     parentTopic {
-        #       _id
-        #     }
-        #   }
-        # }
-        # ... on LearningGoal {
-        #   parentTopic {
-        #     index
-        #     parentTopic {
-        #       _id
-        #     }
-        #   }
-        # }
+        parentTopic {
+          _id
+        }
       }
     }
   }
 `;
+export const attachTopicIsPartOfTopic = gql`
+  mutation attachTopicIsPartOfTopic(
+    $partOfTopicId: String!
+    $subTopicId: String!
+    $payload: AttachTopicIsPartOfTopicPayload!
+  ) {
+    attachTopicIsPartOfTopic(partOfTopicId: $partOfTopicId, subTopicId: $subTopicId, payload: $payload) {
+      partOfTopic {
+        ...TopicLinkData
+        subTopics {
+          relationshipType
+          index
+          subTopic {
+            ...TopicLinkData
+          }
+        }
+      }
+      subTopic {
+        ...TopicLinkData
+        partOfTopics {
+          partOfTopic {
+            ...TopicLinkData
+          }
+        }
+      }
+    }
+  }
+  ${TopicLinkData}
+`;
 
-// export const attachTopicIsPartOfTopic = gql`
-//   mutation attachTopicIsPartOfTopic(
-//     $partOfTopicId: String!
-//     $subTopicId: String!
-//     $payload: AttachTopicIsPartOfTopicPayload!
-//   ) {
-//     attachTopicIsPartOfTopic(partOfTopicId: $partOfTopicId, subTopicId: $subTopicId, payload: $payload) {
-//       partOfTopic {
-//         _id
-//         subTopics {
-//           subTopic {
-//             _id
-//           }
-//         }
-//       }
-//       subTopic {
-//         partOfTopics {
-//           partOfTopic {
-//             _id
-//           }
-//         }
-//       }
-//     }
-//   }
-// `;
+export const detachTopicIsPartOfTopic = gql`
+  mutation detachTopicIsPartOfTopic($partOfTopicId: String!, $subTopicId: String!) {
+    detachTopicIsPartOfTopic(partOfTopicId: $partOfTopicId, subTopicId: $subTopicId) {
+      partOfTopic {
+        ...TopicLinkData
+        subTopics {
+          relationshipType
+          index
+          subTopic {
+            ...TopicLinkData
+          }
+        }
+      }
+      subTopic {
+        ...TopicLinkData
+        partOfTopics {
+          partOfTopic {
+            ...TopicLinkData
+          }
+        }
+      }
+    }
+  }
+  ${TopicLinkData}
+`;
+
+export const updateTopicIsPartOfTopic = gql`
+  mutation updateTopicIsPartOfTopic(
+    $partOfTopicId: String!
+    $subTopicId: String!
+    $payload: UpdateTopicIsPartOfTopicPayload!
+  ) {
+    updateTopicIsPartOfTopic(partOfTopicId: $partOfTopicId, subTopicId: $subTopicId, payload: $payload) {
+      partOfTopic {
+        _id
+        subTopics {
+          index
+          subTopic {
+            _id
+          }
+        }
+      }
+      subTopic {
+        _id
+        partOfTopics {
+          partOfTopic {
+            _id
+          }
+        }
+      }
+    }
+  }
+`;

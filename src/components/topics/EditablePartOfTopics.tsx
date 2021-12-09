@@ -1,30 +1,29 @@
 import { Stack, Text, Image } from '@chakra-ui/react';
 import gql from 'graphql-tag';
+import { TopicLinkData } from '../../graphql/topics/topics.fragments';
 import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
-import { DirectionSignIcon } from '../lib/icons/DirectionSignIcon';
-import { EditableTopicsWrapper } from '../topics/EditableTopicsWrapper';
-import { TopicBadgeData } from '../topics/TopicBadge';
 import {
-  EditablePartOfTopicsDataFragment,
   useAttachTopicIsPartOfTopicMutation,
   useDetachTopicIsPartOfTopicMutation,
-} from './EditablePartOfTopics.generated';
-import { TopicBadgeDataFragment } from './TopicBadge.generated';
+} from '../../graphql/topics/topics.operations.generated';
+import { DirectionSignIcon } from '../lib/icons/DirectionSignIcon';
+import { EditableTopicsWrapper } from '../topics/EditableTopicsWrapper';
+import { EditablePartOfTopicsDataFragment } from './EditablePartOfTopics.generated';
 
 export const EditablePartOfTopicsData = gql`
   fragment EditablePartOfTopicsData on Topic {
     _id
     partOfTopics {
       partOfTopic {
-        ...TopicBadgeData
+        ...TopicLinkData
       }
     }
   }
-  ${TopicBadgeData}
+  ${TopicLinkData}
 `;
 
 interface StatelessEditablePartOfTopicsProps {
-  partOfTopics?: TopicBadgeDataFragment[];
+  partOfTopics?: TopicLinkDataFragment[];
   editable?: boolean;
   isLoading?: boolean;
   onRemove: (topiclId: string) => void;
@@ -61,41 +60,6 @@ export const StatelessEditablePartOfTopics: React.FC<StatelessEditablePartOfTopi
     </Stack>
   );
 };
-
-export const attachTopicIsPartOfTopic = gql`
-  mutation attachTopicIsPartOfTopic(
-    $partOfTopicId: String!
-    $subTopicId: String!
-    $payload: AttachTopicIsPartOfTopicPayload!
-  ) {
-    attachTopicIsPartOfTopic(partOfTopicId: $partOfTopicId, subTopicId: $subTopicId, payload: $payload) {
-      partOfTopic {
-        _id
-      }
-      subTopic {
-        ...EditablePartOfTopicsData
-      }
-    }
-  }
-  ${TopicBadgeData}
-  ${EditablePartOfTopicsData}
-`;
-
-export const detachTopicIsPartOfTopic = gql`
-  mutation detachTopicIsPartOfTopic($partOfTopicId: String!, $subTopicId: String!) {
-    detachTopicIsPartOfTopic(partOfTopicId: $partOfTopicId, subTopicId: $subTopicId) {
-      partOfTopic {
-        ...TopicBadgeData
-      }
-      subTopic {
-        ...TopicBadgeData
-        ...EditablePartOfTopicsData
-      }
-    }
-  }
-  ${TopicBadgeData}
-  ${EditablePartOfTopicsData}
-`;
 
 interface EditablePartOfTopicsProps extends Omit<StatelessEditablePartOfTopicsProps, 'onAdded' | 'onRemove'> {
   topic: EditablePartOfTopicsDataFragment;

@@ -1,8 +1,8 @@
 import { Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
+import { TopicLinkData } from '../../graphql/topics/topics.fragments';
 import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import { EditableTopicsWrapper } from '../topics/EditableTopicsWrapper';
-import { TopicBadgeData } from '../topics/TopicBadge';
 import {
   EditableLearningMaterialPrerequisitesDataFragment,
   useAddLearningMaterialHasPrerequisiteTopicMutation,
@@ -14,11 +14,11 @@ export const EditableLearningMaterialPrerequisitesData = gql`
     _id
     prerequisites {
       topic {
-        ...TopicBadgeData
+        ...TopicLinkData
       }
     }
   }
-  ${TopicBadgeData}
+  ${TopicLinkData}
 `;
 
 interface StatelessEditableLearningMaterialPrerequisitesProps {
@@ -63,12 +63,12 @@ export const addLearningMaterialHasPrerequisiteTopic = gql`
       _id
       prerequisites {
         topic {
-          ...TopicBadgeData
+          ...TopicLinkData
         }
       }
     }
   }
-  ${TopicBadgeData}
+  ${TopicLinkData}
 `;
 
 export const removeLearningMaterialHasPrerequisiteTopic = gql`
@@ -80,12 +80,12 @@ export const removeLearningMaterialHasPrerequisiteTopic = gql`
       _id
       prerequisites {
         topic {
-          ...TopicBadgeData
+          ...TopicLinkData
         }
       }
     }
   }
-  ${TopicBadgeData}
+  ${TopicLinkData}
 `;
 
 interface EditableLearningMaterialPrerequisitesProps

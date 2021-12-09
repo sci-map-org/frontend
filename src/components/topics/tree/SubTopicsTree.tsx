@@ -1,33 +1,29 @@
-import { Button, IconButton } from '@chakra-ui/button';
-import { AddIcon, ExternalLinkIcon, MinusIcon } from '@chakra-ui/icons';
-import { Box, Center, Flex, Stack, Text } from '@chakra-ui/layout';
+import { Button } from '@chakra-ui/button';
+import { Box, Center, Flex, Stack } from '@chakra-ui/layout';
 import { Spinner } from '@chakra-ui/spinner';
-import { BiUnlink } from '@react-icons/all-files/bi/BiUnlink';
 import gql from 'graphql-tag';
 import React, { useEffect, useState } from 'react';
-import SortableTree, { getVisibleNodeCount, NodeRendererProps, TreeItem } from 'react-sortable-tree';
+import SortableTree, { getVisibleNodeCount, TreeItem } from 'react-sortable-tree';
 import { TopicLinkData } from '../../../graphql/topics/topics.fragments';
-import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
 import {
+  useAttachTopicIsPartOfTopicMutation,
   useAttachTopicIsSubTopicOfTopicMutation,
+  useDetachTopicIsPartOfTopicMutation,
   useDetachTopicIsSubTopicOfTopicMutation,
+  useUpdateTopicIsPartOfTopicMutation,
   useUpdateTopicIsSubTopicOfTopicMutation,
 } from '../../../graphql/topics/topics.operations.generated';
-import { TopicPageInfo } from '../../../pages/RoutesPageInfos';
+import { SubTopicRelationshipType } from '../../../graphql/types';
 import { DeepMergeTwoTypes } from '../../../util/types.util';
 import { RoleAccess } from '../../auth/RoleAccess';
-import { DeleteButtonWithConfirmation } from '../../lib/buttons/DeleteButtonWithConfirmation';
-import { TopicIcon } from '../../lib/icons/TopicIcon';
-import { PageLink } from '../../navigation/InternalLink';
 import { NewTopicModal } from './../NewTopic';
 import { SubTopicsTreeDataFragment } from './SubTopicsTree.generated';
-import { CustomNodeRendererConnector, SubTopicsTreeNode, SubTopicsTreeNodeData } from './SubTopicsTreeNode';
+import { CustomNodeRendererConnector, SubTopicsTreeNodeData } from './SubTopicsTreeNode';
 import { SubTopicsTreeNodeDataFragment } from './SubTopicsTreeNode.generated';
 
 export const SubTopicsTreeData = gql`
   fragment SubTopicsTreeData on Topic {
     ...TopicLinkData
-    # description
     subTopics {
       ...SubTopicsTreeNodeData
       subTopic {
@@ -63,25 +59,47 @@ type SubTopicItem = DeepMergeTwoTypes<
 
 type PendingUpdate = {
   nodeId: string;
-  previousParentId: string;
-  nextParentId: string;
+  previousParentNodeId: string;
+  nextParentNodeId: string;
   index: number;
 };
 
+export const createNodeId = (topicId: string, relation: SubTopicRelationshipType) => {
+  return `${relation}~${topicId}`;
+};
+
+export const getTopicIdFromNodeId = (nodeId: string) => {
+  return nodeId.split('~')[1];
+};
+
+export const getRelationshipTypeFromNodeId = (nodeId: string): SubTopicRelationshipType => {
+  return nodeId.split('~')[0] as SubTopicRelationshipType;
+};
 export const SubTopicsTree: React.FC<SubTopicsTreeProps> = ({ topic, onUpdated, isLoading, updatable }) => {
+  const baseTopicNodeId = createNodeId(topic._id, SubTopicRelationshipType.IsSubtopicOf);
+
+  // const transformSubTopics = (subTopicItems: SubTopicItem[], canUpdate: boolean): TreeItem[] => {
   const transformSubTopics = (subTopicItems: SubTopicItem[], canUpdate: boolean): TreeItem[] => {
-    return subTopicItems.map((subTopicItem) => ({
-      subTopicItem,
-      baseTopicId: topic._id,
-      title: subTopicItem.subTopic.name,
-      index: subTopicItem.index,
-      updatable: canUpdate && updatable,
-      // subtitle: subTopicItem.subTopic.description,
-      children: subTopicItem.subTopic.subTopics
-        ? transformSubTopics(subTopicItem.subTopic.subTopics, updatable)
-        : undefined,
-      expanded: true,
-    }));
+    return subTopicItems.map((subTopicItem) => {
+      return {
+        subTopicItem,
+        nodeId: createNodeId(
+          subTopicItem.subTopic._id as string,
+          subTopicItem.relationshipType as SubTopicRelationshipType
+        ),
+        baseTopicNodeId,
+        title: subTopicItem.subTopic.name,
+        index: subTopicItem.index,
+        updatable: canUpdate && updatable,
+        children:
+          subTopicItem.subTopic.subTopics && subTopicItem.relationshipType === SubTopicRelationshipType.IsSubtopicOf
+            ? // Don't expand on links, otherwise it adds some complication with
+              // none unique keys/portions of the tree that should be synchronised
+              transformSubTopics(subTopicItem.subTopic.subTopics, updatable)
+            : undefined,
+        expanded: true,
+      };
+    });
   };
 
   const [treeData, setTreeData] = useState<TreeItem[]>([]);
@@ -102,23 +120,67 @@ export const SubTopicsTree: React.FC<SubTopicsTreeProps> = ({ topic, onUpdated, 
   const addPendingUpdate = async (update: PendingUpdate) => setPendingUpdates([...pendingUpdates, update]);
 
   const [updateTopicIsSubTopicOfTopicMutation] = useUpdateTopicIsSubTopicOfTopicMutation();
+  const [updateTopicIsPartOfTopicMutation] = useUpdateTopicIsPartOfTopicMutation();
   const [attachTopicIsSubTopicOfTopicMutation] = useAttachTopicIsSubTopicOfTopicMutation();
+  const [attachTopicIsPartOfTopicMutation] = useAttachTopicIsPartOfTopicMutation();
   const [detachTopicIsSubTopicOfTopicMutation] = useDetachTopicIsSubTopicOfTopicMutation();
-  const runUpdate = async ({ previousParentId, nextParentId, nodeId, index }: PendingUpdate) => {
-    if (previousParentId === nextParentId) {
-      await updateTopicIsSubTopicOfTopicMutation({
-        variables: { parentTopicId: previousParentId, subTopicId: nodeId, payload: { index } },
-        fetchPolicy: 'no-cache',
-      });
+  const [detachTopicIsPartOfTopicMutation] = useDetachTopicIsPartOfTopicMutation();
+  const runUpdate = async ({ previousParentNodeId, nextParentNodeId, nodeId, index }: PendingUpdate) => {
+    const relationshipType = getRelationshipTypeFromNodeId(nodeId);
+    if (previousParentNodeId === nextParentNodeId) {
+      if (relationshipType === SubTopicRelationshipType.IsSubtopicOf) {
+        await updateTopicIsSubTopicOfTopicMutation({
+          variables: {
+            parentTopicId: getTopicIdFromNodeId(previousParentNodeId),
+            subTopicId: getTopicIdFromNodeId(nodeId),
+            payload: { index },
+          },
+          fetchPolicy: 'no-cache',
+        });
+      } else {
+        await updateTopicIsPartOfTopicMutation({
+          variables: {
+            partOfTopicId: getTopicIdFromNodeId(previousParentNodeId),
+            subTopicId: getTopicIdFromNodeId(nodeId),
+            payload: { index },
+          },
+          fetchPolicy: 'no-cache',
+        });
+      }
     } else {
-      await detachTopicIsSubTopicOfTopicMutation({
-        variables: { parentTopicId: previousParentId, subTopicId: nodeId },
-        fetchPolicy: 'no-cache',
-      });
-      await attachTopicIsSubTopicOfTopicMutation({
-        variables: { parentTopicId: nextParentId, subTopicId: nodeId, payload: { index } },
-        fetchPolicy: 'no-cache',
-      });
+      if (relationshipType === SubTopicRelationshipType.IsSubtopicOf) {
+        await detachTopicIsSubTopicOfTopicMutation({
+          variables: {
+            parentTopicId: getTopicIdFromNodeId(previousParentNodeId),
+            subTopicId: getTopicIdFromNodeId(nodeId),
+          },
+          fetchPolicy: 'no-cache',
+        });
+        await attachTopicIsSubTopicOfTopicMutation({
+          variables: {
+            parentTopicId: getTopicIdFromNodeId(nextParentNodeId),
+            subTopicId: getTopicIdFromNodeId(nodeId),
+            payload: { index },
+          },
+          fetchPolicy: 'no-cache',
+        });
+      } else {
+        await detachTopicIsPartOfTopicMutation({
+          variables: {
+            partOfTopicId: getTopicIdFromNodeId(previousParentNodeId),
+            subTopicId: getTopicIdFromNodeId(nodeId),
+          },
+          fetchPolicy: 'no-cache',
+        });
+        await attachTopicIsPartOfTopicMutation({
+          variables: {
+            partOfTopicId: getTopicIdFromNodeId(nextParentNodeId),
+            subTopicId: getTopicIdFromNodeId(nodeId),
+            payload: { index },
+          },
+          fetchPolicy: 'no-cache',
+        });
+      }
     }
   };
   const runPendingUpdates = async () => {
@@ -132,83 +194,67 @@ export const SubTopicsTree: React.FC<SubTopicsTreeProps> = ({ topic, onUpdated, 
   };
 
   return (
-    <Stack spacing={4} width="40rem">
+    <Stack spacing={4} width="1300px">
       {isLoading || isUpdating ? (
         <Center h="400px" w="100%">
           <Spinner size="xl" />
         </Center>
       ) : (
-        <Box h={`${count * 36 + 10}px`} w="100%">
+        <Box h={`${count * 72 + 10}px`} w="100%">
           <SortableTree
             treeData={treeData}
+            rowHeight={72}
+            scaffoldBlockPxWidth={140}
             onMoveNode={({ node, prevPath, prevTreeIndex, nextTreeIndex, nextPath, nextParentNode }) => {
-              const nodeId = node._id;
+              const nodeId = node.nodeId;
+              const previousParentNodeId: string =
+                prevPath.length > 1 ? (prevPath[prevPath.length - 2] as string) : baseTopicNodeId;
 
-              const previousParentId: string =
-                prevPath.length > 1 ? (prevPath[prevPath.length - 2] as string) : topic._id;
-
-              const nextParentId: string = nextPath.length > 1 ? (nextPath[nextPath.length - 2] as string) : topic._id;
-              if (previousParentId === nextParentId && prevTreeIndex === nextTreeIndex) return;
+              const nextParentNodeId: string =
+                nextPath.length > 1 ? (nextPath[nextPath.length - 2] as string) : baseTopicNodeId;
+              if (previousParentNodeId === nextParentNodeId && prevTreeIndex === nextTreeIndex) return;
 
               const siblings: TreeItem[] = nextParentNode ? (nextParentNode.children as TreeItem[]) : treeData;
 
-              const nextRelativeIndex = siblings.findIndex((sibling) => sibling._id === node._id);
+              const nextRelativeIndex = siblings.findIndex((sibling) => sibling.nodeId === node.nodeId);
               const prevNode = siblings[nextRelativeIndex - 1];
 
               const nextNode = siblings[nextRelativeIndex + 1];
 
               if (nextNode && !prevNode)
-                addPendingUpdate({ nodeId, previousParentId, nextParentId, index: nextNode.index / 2 });
+                addPendingUpdate({
+                  nodeId,
+                  previousParentNodeId,
+                  nextParentNodeId,
+                  index: nextNode.subTopicItem.index / 2,
+                });
               if (prevNode && !nextNode)
-                addPendingUpdate({ nodeId, previousParentId, nextParentId, index: prevNode.index + 1000 });
+                addPendingUpdate({
+                  nodeId,
+                  previousParentNodeId,
+                  nextParentNodeId,
+                  index: prevNode.subTopicItem.index + 1000,
+                });
 
-              if (!prevNode && !nextNode) addPendingUpdate({ nodeId, previousParentId, nextParentId, index: 10000000 });
+              if (!prevNode && !nextNode)
+                addPendingUpdate({ nodeId, previousParentNodeId, nextParentNodeId, index: 10000000 });
               if (prevNode && nextNode)
                 addPendingUpdate({
                   nodeId,
-                  previousParentId,
-                  nextParentId,
-                  index: (prevNode.index + nextNode.index) / 2,
+                  previousParentNodeId,
+                  nextParentNodeId,
+                  index: (prevNode.subTopicItem.index + nextNode.subTopicItem.index) / 2,
                 });
             }}
             canDrag={({ node }) => node.updatable}
-            canDrop={({ node, nextParent }) => !nextParent || nextParent.updatable}
-            // generateNodeProps={({ node, path }) => ({
-            //   buttons: [
-            //     <PageLink pageInfo={TopicPageInfo(node as TopicLinkDataFragment)} isExternal key="a">
-            //       <IconButton aria-label="Go to Topic" icon={<ExternalLinkIcon />} size="xs" variant="ghost" />
-            //     </PageLink>,
-            //     ...[
-            //       node.updatable
-            //         ? [
-            //             <DeleteButtonWithConfirmation
-            //               icon={<BiUnlink />}
-            //               size="xs"
-            //               key="a"
-            //               variant="ghost"
-            //               mode="iconButton"
-            //               modalBodyText={`Detach Area "${node.name}" from this topic ?`}
-            //               modalHeaderText={`Detach Area "${node.name}" ?`}
-            //               confirmButtonText="Detach"
-            //               onConfirmation={() => {
-            //                 detachTopicIsSubTopicOfTopicMutation({
-            //                   variables: {
-            //                     parentTopicId: path.length > 1 ? (path[path.length - 2] as string) : topic._id,
-            //                     subTopicId: node._id,
-            //                   },
-            //                 });
-            //               }}
-            //             />,
-            //           ]
-            //         : [],
-            //     ],
-            //   ],
-            // })}
-            rowHeight={72}
-            scaffoldBlockPxWidth={140}
+            canDrop={({ node, nextParent }) =>
+              !nextParent ||
+              (nextParent.updatable && nextParent.subTopicItem.relationshipType !== SubTopicRelationshipType.IsPartOf)
+            }
             onChange={(treeData) => setTreeData(treeData)}
             getNodeKey={({ node }) => {
-              return node.subTopicItem.subTopic._id;
+              const subTopicItem: SubTopicsTreeNodeDataFragment = node.subTopicItem;
+              return createNodeId(subTopicItem.subTopic._id, subTopicItem.relationshipType);
             }}
             nodeContentRenderer={CustomNodeRendererConnector}
           />
@@ -256,186 +302,3 @@ export const SubTopicsTree: React.FC<SubTopicsTreeProps> = ({ topic, onUpdated, 
     </Stack>
   );
 };
-
-// function isDescendant(older: TreeItem, younger: TreeItem): boolean {
-//   return (
-//     !!older.children &&
-//     typeof older.children !== 'function' &&
-//     older.children.some((child) => child === younger || isDescendant(child, younger))
-//   );
-// }
-
-// const CustomThemeNodeContentRenderer: React.FC<NodeRendererProps> = ({
-//   buttons = [],
-//   canDrag = false,
-//   canDrop = false,
-//   className = '',
-//   draggedNode = null,
-//   icons = [],
-//   isSearchFocus = false,
-//   isSearchMatch = false,
-//   parentNode = null, // Needed for dndManager
-//   style = {},
-//   subtitle = null,
-//   swapDepth = null,
-//   swapFrom = null,
-//   swapLength = null,
-//   title = null,
-//   toggleChildrenVisibility = null,
-//   scaffoldBlockPxWidth,
-//   connectDragPreview,
-//   connectDragSource,
-//   isDragging,
-//   node,
-//   path,
-//   treeIndex,
-//   didDrop,
-//   lowerSiblingCounts,
-//   listIndex,
-//   treeId, // Not needed, but preserved for other renderers
-//   isOver, // Not needed, but preserved for other renderers
-//   ...otherProps
-// }) => {
-//   const nodeTitle = title || node.title;
-
-//   const isDraggedDescendant = draggedNode && isDescendant(draggedNode, node);
-//   const isLandingPadActive = !didDrop && isDragging;
-
-//   const nodeContent = connectDragPreview(
-//     <div>
-//       <Center
-//         pl={2}
-//         height="100%"
-//         whiteSpace="nowrap"
-//         display="flex"
-//         boxSizing="border-box"
-//         {...(isLandingPadActive
-//           ? {
-//               border: 'none !important',
-//               boxShadow: 'none !important',
-//               outline: 'none !important', // ? what does this do ?
-//               _before: {
-//                 backgroundColor: 'blue.200',
-//                 border: '2px dashed white',
-//                 content: '""',
-//                 position: 'absolute',
-//                 top: 0,
-//                 right: 0,
-//                 bottom: 0,
-//                 left: 0,
-//                 zIndex: -1,
-//               },
-//             }
-//           : {})}
-//         {...(isLandingPadActive && !canDrop
-//           ? {
-//               border: 'none !important',
-//               boxShadow: 'none !important',
-//               outline: 'none !important', // ? what does this do ?
-//               _before: {
-//                 backgroundColor: 'red.200',
-//                 border: '2px dashed white',
-//                 content: '""',
-//                 position: 'absolute',
-//                 top: 0,
-//                 right: 0,
-//                 bottom: 0,
-//                 left: 0,
-//                 zIndex: -1,
-//               },
-//             }
-//           : {})}
-//         opacity={isDraggedDescendant ? 0.5 : 1}
-//       >
-//         <Stack direction="row" spacing={2}>
-//           <Stack direction="row" spacing={1}>
-//             <TopicIcon boxSize={6} />
-//             {/* {node.topicType === TopicType.Concept && <ConceptIcon opacity={0.7} boxSize={6} />} */}
-//             {/* {node.topicType === TopicType.LearningGoal && <LearningGoalIcon boxSize={6} />} */}
-//             {/* {...(node.topicType === TopicType.Domain && domainLinkStyleProps)} */}
-//             <Text as="span">
-//               {typeof nodeTitle === 'function'
-//                 ? nodeTitle({
-//                     node,
-//                     path,
-//                     treeIndex,
-//                   })
-//                 : nodeTitle}
-//             </Text>
-//           </Stack>
-//           <Stack direction="row" spacing={1}>
-//             {buttons}
-//           </Stack>
-//         </Stack>
-//       </Center>
-//     </div>
-//   );
-
-//   return (
-//     // {...otherProps} (was in the next Box/div, doesn't seem useful)
-//     <Box style={{ height: '100%' }} display="flex" direction="row" alignItems="center">
-//       {toggleChildrenVisibility && node.children && (node.children.length > 0 || typeof node.children === 'function') && (
-//         <Box>
-//           <IconButton
-//             type="button"
-//             icon={node.expanded ? <MinusIcon /> : <AddIcon />}
-//             size="xs"
-//             variant="outline"
-//             bgColor="white"
-//             aria-label={node.expanded ? 'Collapse' : 'Expand'}
-//             position="absolute"
-//             top="50%"
-//             transform="translate(-50%, -50%)"
-//             style={{ left: -0.5 * scaffoldBlockPxWidth }}
-//             onClick={() =>
-//               toggleChildrenVisibility({
-//                 node,
-//                 path,
-//                 treeIndex,
-//               })
-//             }
-//           />
-
-//           {node.expanded && !isDragging && (
-//             <Box
-//               style={{ width: scaffoldBlockPxWidth }}
-//               height="100%"
-//               display="inline-block"
-//               position="absolute"
-//               _after={{
-//                 content: '""',
-//                 position: 'absolute',
-//                 backgroundColor: linesColor,
-//                 width: '1px',
-//                 left: '50%',
-//                 bottom: 0,
-//                 height: rowPadding,
-//               }}
-//             />
-//           )}
-//         </Box>
-//       )}
-
-//       <Box
-//         padding={`${rowPadding} ${rowPadding} ${rowPadding} 0`}
-//         height="100%"
-//         box-sizing="border-box"
-//         cursor="move"
-//         _hover={{
-//           opacity: 0.75,
-//         }}
-//         _active={{
-//           opacity: 1,
-//         }}
-//         {...(!canDrag && {
-//           cursor: 'default',
-//           _hover: {
-//             opacity: 1,
-//           },
-//         })}
-//       >
-//         {canDrag ? connectDragSource(nodeContent, { dropEffect: 'copy' }) : nodeContent}
-//       </Box>
-//     </Box>
-//   );
-// };

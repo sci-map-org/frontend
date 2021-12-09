@@ -1,40 +1,26 @@
 import { Box, BoxProps, CloseButton, LinkProps, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
+import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import { TopicPageInfo } from '../../pages/RoutesPageInfos';
 import { PageLink } from '../navigation/InternalLink';
-import { TopicBadgeDataFragment } from './TopicBadge.generated';
 
-export const TopicBadgeData = gql`
-  fragment TopicBadgeData on Topic {
-    _id
-    key
-    name
-    # domain {
-    #   _id
-    #   key
-    #   name
-    # }
-    # known {
-    #   level
-    # }
-  }
-`;
 interface TopicBadgeProps {
   size?: 'md' | 'sm' | 'xs';
-  topic: TopicBadgeDataFragment;
+  topic: TopicLinkDataFragment;
   onRemove?: () => void;
   removable?: boolean;
   clickable?: boolean;
 }
 
-const badgeStyleProps = (topic: TopicBadgeDataFragment, size: 'md' | 'sm' | 'xs'): LinkProps & BoxProps => ({
+const badgeStyleProps = (topic: TopicLinkDataFragment, size: 'md' | 'sm' | 'xs'): LinkProps & BoxProps => ({
   borderRadius: 11,
   px: { xs: '3px', sm: '4px', md: '6px' }[size],
   // bgColor: topic.known ? 'teal.50' : 'white',
   color: 'gray.800',
   fontWeight: 400,
   borderWidth: '1px',
-  borderColor: topic.known ? 'teal.800' : 'gray.800',
+  borderColor: 'gray.800',
+  // borderColor: topic.known ? 'teal.800' : 'gray.800',
   textAlign: 'center',
   fontSize: size,
 });
@@ -46,7 +32,6 @@ export const TopicBadge: React.FC<TopicBadgeProps> = ({
   clickable = true,
   size = 'md',
 }) => {
-
   const content = (
     <Stack spacing={1} direction="row" alignItems="center">
       {removable && (

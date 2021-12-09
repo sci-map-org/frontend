@@ -1,6 +1,6 @@
 import * as Types from '../../graphql/types';
 
-import { TopicBadgeDataFragment } from './TopicBadge.generated';
+import { TopicLinkDataFragment, TopicFullDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import * as Operations from './EditableTopicPrerequisites';
 import * as Apollo from '@apollo/client';
 export type EditableTopicPrerequisitesDataFragment = (
@@ -10,7 +10,7 @@ export type EditableTopicPrerequisitesDataFragment = (
     { __typename?: 'TopicHasPrerequisiteTopic' }
     & { prerequisiteTopic: (
       { __typename?: 'Topic' }
-      & TopicBadgeDataFragment
+      & TopicLinkDataFragment
     ) }
   )>> }
 );
@@ -32,7 +32,7 @@ export type AddTopicHasPrerequisiteTopicMutation = (
         { __typename?: 'TopicHasPrerequisiteTopic' }
         & { prerequisiteTopic: (
           { __typename?: 'Topic' }
-          & TopicBadgeDataFragment
+          & TopicLinkDataFragment
         ) }
       )>> }
     ) }
@@ -56,7 +56,7 @@ export type RemoveTopicHasPrerequisiteTopicMutation = (
         { __typename?: 'TopicHasPrerequisiteTopic' }
         & { prerequisiteTopic: (
           { __typename?: 'Topic' }
-          & TopicBadgeDataFragment
+          & TopicLinkDataFragment
         ) }
       )>> }
     ) }

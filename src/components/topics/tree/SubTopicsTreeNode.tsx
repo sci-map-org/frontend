@@ -1,22 +1,29 @@
 import { IconButton } from '@chakra-ui/button';
-import { AddIcon, ExternalLinkIcon, MinusIcon, SettingsIcon } from '@chakra-ui/icons';
+import { AddIcon, ExternalLinkIcon, Icon, MinusIcon, SettingsIcon } from '@chakra-ui/icons';
 import { Box, Flex, Stack, Text } from '@chakra-ui/layout';
 import { BiLink } from '@react-icons/all-files/bi/BiLink';
 import { BiUnlink } from '@react-icons/all-files/bi/BiUnlink';
+import { BiDuplicate } from '@react-icons/all-files/bi/BiDuplicate';
 import gql from 'graphql-tag';
 import { isDescendant, NodeRendererProps } from 'react-sortable-tree';
 import { TopicLinkData } from '../../../graphql/topics/topics.fragments';
+import { SubTopicRelationshipType } from '../../../graphql/types';
 import { routerPushToPage } from '../../../pages/PageInfo';
 import { ManageTopicPageInfo, TopicPageInfo } from '../../../pages/RoutesPageInfos';
 import { DeleteButtonWithConfirmation } from '../../lib/buttons/DeleteButtonWithConfirmation';
 import { PageLink } from '../../navigation/InternalLink';
-import { useDetachTopicIsPartOfTopicMutation } from '../EditablePartOfTopics.generated';
+
 import { SubTopicsTreeNodeDataFragment } from './SubTopicsTreeNode.generated';
+import { getTopicIdFromNodeId } from './SubTopicsTree';
+import {
+  useAttachTopicIsPartOfTopicMutation,
+  useDetachTopicIsPartOfTopicMutation,
+} from '../../../graphql/topics/topics.operations.generated';
 
 export const CustomNodeRendererConnector: React.FC<NodeRendererProps> = ({ node, treeId, ...props }) => {
   return (
     <SubTopicsTreeNode
-      baseTopicId={node.baseTopicId}
+      baseTopicNodeId={node.baseTopicNodeId}
       treeId={treeId}
       nodeTopicRelation={node.subTopicItem as SubTopicsTreeNodeDataFragment}
       node={node}
@@ -37,7 +44,7 @@ export const SubTopicsTreeNodeData = gql`
 `;
 
 interface SubTopicsTreeNodeProps extends NodeRendererProps {
-  baseTopicId: string;
+  baseTopicNodeId: string;
   nodeTopicRelation: SubTopicsTreeNodeDataFragment;
   //   subTopics?: SubTopicsTreeNodeDataFragment[]
 }
@@ -48,7 +55,7 @@ const linesColor = 'gray.400';
 export const SubTopicsTreeNode: React.FC<SubTopicsTreeNodeProps> = ({
   node,
   nodeTopicRelation,
-  baseTopicId,
+  baseTopicNodeId,
   didDrop,
   canDrop,
   isDragging,
@@ -63,33 +70,38 @@ export const SubTopicsTreeNode: React.FC<SubTopicsTreeNodeProps> = ({
 }) => {
   const isDraggedDescendant = draggedNode && isDescendant(draggedNode, node);
   const isLandingPadActive = !didDrop && isDragging;
+  const [attachTopicIsPartOfTopicMutation] = useAttachTopicIsPartOfTopicMutation();
   const [detachTopicIsPartOfTopicMutation] = useDetachTopicIsPartOfTopicMutation();
 
   const nodeContent = connectDragPreview(
     //   Mandatory to have native html elements
     <div>
       <Flex
-        borderWidth={2}
-        borderColor="gray.600"
-        flexDir="row"
-        alignItems="stretch"
-        borderRadius={4}
-        whiteSpace="nowrap"
         position="relative"
         display="flex"
-        // height="100%"
-        // boxSizing="content-box"
+        flexDir="row"
+        borderWidth={2}
+        borderColor="gray.600"
+        {...(canDrag && {
+          _hover: {
+            // borderColor: 'gray.500',
+            boxShadow: 'md',
+          },
+        })}
+        borderRadius={4}
+        alignItems="stretch"
+        pt="2px"
+        pl="4px"
+        pb="2px"
+        pr="1px"
+        // whiteSpace="nowrap"
         {...(isLandingPadActive && {
-          //   border: 'none !important',
           boxShadow: 'none !important',
-          outline: 'none !important', // ? what does this do ?
+          //   outline: 'none !important', // ? what does this do ?
           _before: {
             backgroundColor: 'blue.200',
-            // border: '2px dashed white',
             content: '""',
             position: 'absolute',
-            // borderRadius: 4,
-            // my: rowPadding, //
             height: '100%',
             top: 0,
             right: 0,
@@ -100,12 +112,9 @@ export const SubTopicsTreeNode: React.FC<SubTopicsTreeNodeProps> = ({
         })}
         {...(isLandingPadActive &&
           !canDrop && {
-            //   border: 'none !important',
             boxShadow: 'none !important',
-            //   outline: 'none !important', // ? what does this do ?
             _before: {
               backgroundColor: 'red.200',
-              // border: '2px dashed white',
               height: '100%',
               content: '""',
               position: 'absolute',
@@ -118,8 +127,7 @@ export const SubTopicsTreeNode: React.FC<SubTopicsTreeNodeProps> = ({
           })}
         opacity={isDraggedDescendant ? 0.5 : 1}
       >
-        {/* <Stack direction="row" spacing={2}> */}
-        <Stack direction="column" spacing={0}>
+        <Stack direction="column" spacing={1}>
           <PageLink pageInfo={TopicPageInfo(nodeTopicRelation.subTopic)} isExternal _focus={{}} _active={{}}>
             <Stack direction="row" spacing={1} alignItems="baseline">
               <Text as="span">{nodeTopicRelation.subTopic.name}</Text>
@@ -127,68 +135,72 @@ export const SubTopicsTreeNode: React.FC<SubTopicsTreeNodeProps> = ({
             </Stack>
           </PageLink>
           <Stack direction="row" spacing={1}>
-            <BiLink color="blue.500" />
+            {nodeTopicRelation.relationshipType === SubTopicRelationshipType.IsPartOf && (
+              <Icon as={BiLink} color="blue.500" />
+            )}
           </Stack>
         </Stack>
-        <Flex flexDir="column" justifyContent="space-between" p={1} pl={2}>
+        <Flex flexDir="column" justifyContent="space-between" pl={2}>
           <IconButton
             aria-label="manage topic"
             size="xs"
+            fontSize="1em"
+            isRound
             variant="ghost"
             icon={<SettingsIcon />}
             onClick={() => routerPushToPage(ManageTopicPageInfo(nodeTopicRelation.subTopic))}
           />
-          <DeleteButtonWithConfirmation
-            icon={<BiUnlink />}
-            size="xs"
-            key="a"
-            variant="ghost"
-            mode="iconButton"
-            modalBodyText={`Detach Area "${node.name}" from this topic ?`}
-            modalHeaderText={`Detach Area "${node.name}" ?`}
-            confirmButtonText="Detach"
-            onConfirmation={() => {
-              detachTopicIsPartOfTopicMutation({
-                variables: {
-                  partOfTopicId: path.length > 1 ? (path[path.length - 2] as string) : baseTopicId,
-                  subTopicId: node._id,
-                },
-              });
-            }}
-          />
-        </Flex>
-        {/* <PageLink pageInfo={TopicPageInfo(nodeTopicRelation.subTopic)} isExternal>
-              <IconButton aria-label="Go to Topic" icon={<ExternalLinkIcon />} size="xs" variant="ghost" />
-            </PageLink> */}
-        {/* 
-        <DeleteButtonWithConfirmation
+          {nodeTopicRelation.relationshipType === SubTopicRelationshipType.IsPartOf ? (
+            <DeleteButtonWithConfirmation
               icon={<BiUnlink />}
               size="xs"
-              key="a"
+              isRound
+              fontSize="1em"
               variant="ghost"
               mode="iconButton"
-              modalBodyText={`Detach Area "${node.name}" from this topic ?`}
-              modalHeaderText={`Detach Area "${node.name}" ?`}
-            confirmButtonText="Detach" */}
-        {/* //   onConfirmation={() => {
-            //     detachTopicIsSubTopicOfTopicMutation({
-            //       variables: {
-            //         parentTopicId: path.length > 1 ? (path[path.length - 2] as string) : topic._id,
-            //         subTopicId: node._id,
-            //       },
-            //     });
-            //   }}
-            // /> */}
-        {/* </Stack> */}
+              modalBodyText={`Remove virtual link "${nodeTopicRelation.subTopic.name}" ?`}
+              modalHeaderText={`Detach "${nodeTopicRelation.subTopic.name}" ?`}
+              confirmButtonText="Detach"
+              onConfirmation={() => {
+                detachTopicIsPartOfTopicMutation({
+                  variables: {
+                    partOfTopicId: getTopicIdFromNodeId(
+                      path.length > 1 ? (path[path.length - 2] as string) : baseTopicNodeId
+                    ),
+                    subTopicId: nodeTopicRelation.subTopic._id,
+                  },
+                });
+              }}
+            />
+          ) : (
+            <IconButton
+              aria-label="create virtual"
+              icon={<BiDuplicate />}
+              size="xs"
+              isRound
+              fontSize="1em"
+              variant="ghost"
+              onClick={() => {
+                attachTopicIsPartOfTopicMutation({
+                  variables: {
+                    partOfTopicId: getTopicIdFromNodeId(
+                      path.length > 1 ? (path[path.length - 2] as string) : baseTopicNodeId
+                    ),
+                    subTopicId: nodeTopicRelation.subTopic._id,
+                    payload: { index: nodeTopicRelation.index + 1 },
+                  },
+                });
+              }}
+            />
+          )}
+        </Flex>
       </Flex>
     </div>
   );
 
   return (
-    // {...otherProps} (was in the next Box/div, doesn't seem useful)
-    <Box h="100%" display="flex" direction="row" alignItems="center">
+    <Box h="100%" display="flex" flexDirection="row" alignItems="center">
       {toggleChildrenVisibility && node.children && (node.children.length > 0 || typeof node.children === 'function') && (
-        // <Box>
         <IconButton
           type="button"
           icon={node.expanded ? <MinusIcon /> : <AddIcon />}
@@ -196,7 +208,6 @@ export const SubTopicsTreeNode: React.FC<SubTopicsTreeNodeProps> = ({
           isRound
           _focus={{}}
           _hover={{}}
-          // _active={{}}
           variant="outline"
           bgColor="white"
           aria-label={node.expanded ? 'Collapse' : 'Expand'}
@@ -214,34 +225,11 @@ export const SubTopicsTreeNode: React.FC<SubTopicsTreeNodeProps> = ({
         />
       )}
 
-      {/* {node.expanded && !isDragging && (
-            <Box
-              style={{ width: scaffoldBlockPxWidth }}
-              height="100%"
-              display="inline-block"
-              position="absolute"
-              _after={{
-                content: '""',
-                position: 'absolute',
-                // backgroundColor: linesColor,
-                width: '1px',
-                left: '50%',
-                bottom: 0,
-                height: rowPadding,
-              }}
-            />
-          )} */}
-      {/* // </Box> */}
-
       <Box
-        // padding={`${rowPadding} ${rowPadding} ${rowPadding} 0`}
-        // py={rowPadding}
-        // height="100%"
-        // boxSizing="border-box"
         cursor="move"
-        _hover={{
-          opacity: 0.75,
-        }}
+        // _hover={{
+        //   opacity: 0.9,
+        // }}
         _active={{
           opacity: 1,
         }}

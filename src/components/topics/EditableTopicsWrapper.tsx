@@ -1,15 +1,16 @@
 import { EditIcon } from '@chakra-ui/icons';
 import { Flex, IconButton, Stack, Tooltip } from '@chakra-ui/react';
 import { useRef, useState } from 'react';
+import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import { useHandleClickOutside } from '../../hooks/useHanldeClickOutside';
 import { TopicBadge } from './TopicBadge';
-import { TopicBadgeDataFragment } from './TopicBadge.generated';
+
 import { TopicSelector } from './TopicSelector';
 
 interface EditableTopicsWrapperProps {
-  topics: TopicBadgeDataFragment[];
+  topics: TopicLinkDataFragment[];
   onRemove: (topicId: string) => void;
-  onAdded: (topic: TopicBadgeDataFragment) => void;
+  onAdded: (topic: TopicLinkDataFragment) => void;
   editable?: boolean;
   displayMode?: 'column' | 'row';
   inputPlaceholder?: string;
