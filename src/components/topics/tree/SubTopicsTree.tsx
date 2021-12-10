@@ -1,25 +1,54 @@
+import { useApolloClient } from '@apollo/client';
 import { Button } from '@chakra-ui/button';
-import { Box, Center, Flex, Stack } from '@chakra-ui/layout';
+import { useDisclosure } from '@chakra-ui/hooks';
+import { Box, Center, Flex, Stack, Text } from '@chakra-ui/layout';
+import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay } from '@chakra-ui/modal';
 import { Spinner } from '@chakra-ui/spinner';
 import gql from 'graphql-tag';
-import React, { useEffect, useState } from 'react';
-import SortableTree, { getVisibleNodeCount, TreeItem } from 'react-sortable-tree';
+import React, { useEffect, useMemo, useState } from 'react';
+import SortableTree, {
+  addNodeUnderParent,
+  find,
+  getVisibleNodeCount,
+  removeNode,
+  TreeItem,
+  TreeNode,
+} from 'react-sortable-tree';
 import { TopicLinkData } from '../../../graphql/topics/topics.fragments';
+import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
 import {
   useAttachTopicIsPartOfTopicMutation,
   useAttachTopicIsSubTopicOfTopicMutation,
   useDetachTopicIsPartOfTopicMutation,
   useDetachTopicIsSubTopicOfTopicMutation,
+  useUpdateTopicContextMutation,
   useUpdateTopicIsPartOfTopicMutation,
   useUpdateTopicIsSubTopicOfTopicMutation,
 } from '../../../graphql/topics/topics.operations.generated';
 import { SubTopicRelationshipType } from '../../../graphql/types';
 import { DeepMergeTwoTypes } from '../../../util/types.util';
 import { RoleAccess } from '../../auth/RoleAccess';
+import { SelectContextTopic } from '../fields/TopicNameField';
 import { NewTopicModal } from './../NewTopic';
-import { SubTopicsTreeDataFragment } from './SubTopicsTree.generated';
+import {
+  GetTopicValidContextsQuery,
+  GetTopicValidContextsQueryVariables,
+  SubTopicsTreeDataFragment,
+  useGetTopicValidContextsLazyQuery,
+} from './SubTopicsTree.generated';
 import { CustomNodeRendererConnector, SubTopicsTreeNodeData } from './SubTopicsTreeNode';
 import { SubTopicsTreeNodeDataFragment } from './SubTopicsTreeNode.generated';
+
+export const getTopicValidContexts = gql`
+  query getTopicValidContexts($parentTopicId: String!, $topicId: String!) {
+    getTopicValidContexts(parentTopicId: $parentTopicId, topicId: $topicId) {
+      validContexts {
+        ...TopicLinkData
+      }
+    }
+  }
+  ${TopicLinkData}
+`;
 
 export const SubTopicsTreeData = gql`
   fragment SubTopicsTreeData on Topic {
@@ -48,20 +77,33 @@ export interface SubTopicsTreeProps {
   updatable: boolean;
 }
 
-type SubTopicItem = DeepMergeTwoTypes<
-  SubTopicsTreeNodeDataFragment,
-  {
-    subTopic: {
-      subTopics?: SubTopicItem[] | null;
-    };
-  }
->;
+type SubTopicItem = SubTopicsTreeNodeDataFragment & {
+  subTopic: SubTopicsTreeNodeDataFragment['subTopic'] & {
+    subTopics?: SubTopicItem[] | null;
+  };
+};
+let t: SubTopicItem;
 
 type PendingUpdate = {
-  nodeId: string;
-  previousParentNodeId: string;
-  nextParentNodeId: string;
+  node: TopicTreeItem;
+  previousParentNode: TopicTreeItem;
+  nextParentNode: TopicTreeItem;
   index: number;
+  newContextTopicId?: string;
+};
+
+type TopicTreeItem = TreeItem & {
+  subTopicItem: SubTopicItem;
+  nodeId: string;
+  baseTopicNodeId: string;
+  index: number;
+  updatable: boolean;
+};
+
+const getNodeKey = (treeNode: TreeNode): string => {
+  const node = treeNode.node as TopicTreeItem;
+
+  return node.nodeId;
 };
 
 export const createNodeId = (topicId: string, relation: SubTopicRelationshipType) => {
@@ -76,13 +118,33 @@ export const getRelationshipTypeFromNodeId = (nodeId: string): SubTopicRelations
   return nodeId.split('~')[0] as SubTopicRelationshipType;
 };
 export const SubTopicsTree: React.FC<SubTopicsTreeProps> = ({ topic, onUpdated, isLoading, updatable }) => {
-  const baseTopicNodeId = createNodeId(topic._id, SubTopicRelationshipType.IsSubtopicOf);
+  const baseTopicNodeId = useMemo(() => createNodeId(topic._id, SubTopicRelationshipType.IsSubtopicOf), [topic._id]);
 
-  // const transformSubTopics = (subTopicItems: SubTopicItem[], canUpdate: boolean): TreeItem[] => {
-  const transformSubTopics = (subTopicItems: SubTopicItem[], canUpdate: boolean): TreeItem[] => {
+  const baseTopicFakeNode: TopicTreeItem = useMemo(
+    () => ({
+      nodeId: baseTopicNodeId,
+      baseTopicNodeId,
+      subTopicItem: {
+        subTopic: topic,
+        index: 0,
+        relationshipType: SubTopicRelationshipType.IsSubtopicOf,
+      },
+      index: 0,
+      updatable: false,
+    }),
+    [baseTopicNodeId]
+  );
+
+  const [selectValidContextModalProps, setSelectValidContextModalProps] = useState<
+    Omit<SelectValidContextModalProps, 'onSelectValidContext' | 'isOpen' | 'onCancel'>
+  >();
+  const client = useApolloClient();
+
+  const transformSubTopics = (subTopicItems: SubTopicItem[], canUpdate: boolean): TopicTreeItem[] => {
     return subTopicItems.map((subTopicItem) => {
       return {
         subTopicItem,
+
         nodeId: createNodeId(
           subTopicItem.subTopic._id as string,
           subTopicItem.relationshipType as SubTopicRelationshipType
@@ -102,7 +164,7 @@ export const SubTopicsTree: React.FC<SubTopicsTreeProps> = ({ topic, onUpdated, 
     });
   };
 
-  const [treeData, setTreeData] = useState<TreeItem[]>([]);
+  const [treeData, setTreeData] = useState<TopicTreeItem[]>([]);
   const buildTreeData = () => {
     const subTopicsData = topic.subTopics ? transformSubTopics(topic.subTopics, true) : [];
     setTreeData(subTopicsData);
@@ -125,14 +187,26 @@ export const SubTopicsTree: React.FC<SubTopicsTreeProps> = ({ topic, onUpdated, 
   const [attachTopicIsPartOfTopicMutation] = useAttachTopicIsPartOfTopicMutation();
   const [detachTopicIsSubTopicOfTopicMutation] = useDetachTopicIsSubTopicOfTopicMutation();
   const [detachTopicIsPartOfTopicMutation] = useDetachTopicIsPartOfTopicMutation();
-  const runUpdate = async ({ previousParentNodeId, nextParentNodeId, nodeId, index }: PendingUpdate) => {
-    const relationshipType = getRelationshipTypeFromNodeId(nodeId);
-    if (previousParentNodeId === nextParentNodeId) {
+
+  const [updateTopicContextMutation] = useUpdateTopicContextMutation();
+
+  const runUpdate = async ({ previousParentNode, nextParentNode, node, index, newContextTopicId }: PendingUpdate) => {
+    if (newContextTopicId) {
+      await updateTopicContextMutation({
+        variables: {
+          topicId: getTopicIdFromNodeId(node.nodeId),
+          contextTopicId: newContextTopicId,
+        },
+      });
+    }
+    const relationshipType = getRelationshipTypeFromNodeId(node.nodeId);
+
+    if (previousParentNode.nodeId === nextParentNode.nodeId) {
       if (relationshipType === SubTopicRelationshipType.IsSubtopicOf) {
         await updateTopicIsSubTopicOfTopicMutation({
           variables: {
-            parentTopicId: getTopicIdFromNodeId(previousParentNodeId),
-            subTopicId: getTopicIdFromNodeId(nodeId),
+            parentTopicId: getTopicIdFromNodeId(previousParentNode.nodeId),
+            subTopicId: getTopicIdFromNodeId(node.nodeId),
             payload: { index },
           },
           fetchPolicy: 'no-cache',
@@ -140,8 +214,8 @@ export const SubTopicsTree: React.FC<SubTopicsTreeProps> = ({ topic, onUpdated, 
       } else {
         await updateTopicIsPartOfTopicMutation({
           variables: {
-            partOfTopicId: getTopicIdFromNodeId(previousParentNodeId),
-            subTopicId: getTopicIdFromNodeId(nodeId),
+            partOfTopicId: getTopicIdFromNodeId(previousParentNode.nodeId),
+            subTopicId: getTopicIdFromNodeId(node.nodeId),
             payload: { index },
           },
           fetchPolicy: 'no-cache',
@@ -151,15 +225,15 @@ export const SubTopicsTree: React.FC<SubTopicsTreeProps> = ({ topic, onUpdated, 
       if (relationshipType === SubTopicRelationshipType.IsSubtopicOf) {
         await detachTopicIsSubTopicOfTopicMutation({
           variables: {
-            parentTopicId: getTopicIdFromNodeId(previousParentNodeId),
-            subTopicId: getTopicIdFromNodeId(nodeId),
+            parentTopicId: getTopicIdFromNodeId(previousParentNode.nodeId),
+            subTopicId: getTopicIdFromNodeId(node.nodeId),
           },
           fetchPolicy: 'no-cache',
         });
         await attachTopicIsSubTopicOfTopicMutation({
           variables: {
-            parentTopicId: getTopicIdFromNodeId(nextParentNodeId),
-            subTopicId: getTopicIdFromNodeId(nodeId),
+            parentTopicId: getTopicIdFromNodeId(nextParentNode.nodeId),
+            subTopicId: getTopicIdFromNodeId(node.nodeId),
             payload: { index },
           },
           fetchPolicy: 'no-cache',
@@ -167,15 +241,15 @@ export const SubTopicsTree: React.FC<SubTopicsTreeProps> = ({ topic, onUpdated, 
       } else {
         await detachTopicIsPartOfTopicMutation({
           variables: {
-            partOfTopicId: getTopicIdFromNodeId(previousParentNodeId),
-            subTopicId: getTopicIdFromNodeId(nodeId),
+            partOfTopicId: getTopicIdFromNodeId(previousParentNode.nodeId),
+            subTopicId: getTopicIdFromNodeId(node.nodeId),
           },
           fetchPolicy: 'no-cache',
         });
         await attachTopicIsPartOfTopicMutation({
           variables: {
-            partOfTopicId: getTopicIdFromNodeId(nextParentNodeId),
-            subTopicId: getTopicIdFromNodeId(nodeId),
+            partOfTopicId: getTopicIdFromNodeId(nextParentNode.nodeId),
+            subTopicId: getTopicIdFromNodeId(node.nodeId),
             payload: { index },
           },
           fetchPolicy: 'no-cache',
@@ -193,112 +267,273 @@ export const SubTopicsTree: React.FC<SubTopicsTreeProps> = ({ topic, onUpdated, 
     setIsUpdating(false);
   };
 
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const checkIfContextStillValid = async ({
+    node,
+    previousParentNode,
+    nextParentNode,
+    index,
+  }: PendingUpdate): Promise<boolean> => {
+    const { data } = await client.query<GetTopicValidContextsQuery, GetTopicValidContextsQueryVariables>({
+      query: getTopicValidContexts,
+      variables: {
+        parentTopicId: getTopicIdFromNodeId(nextParentNode.nodeId),
+        topicId: getTopicIdFromNodeId(node.nodeId),
+      },
+    });
+    if (!node.subTopicItem.subTopic.contextTopic?._id) throw new Error('Context topic should exists');
+    if (!data.getTopicValidContexts.validContexts) throw new Error('No valid contexts returned');
+    const currentContextStillValid = data.getTopicValidContexts.validContexts?.find((validContext) => {
+      return validContext._id === node.subTopicItem.subTopic.contextTopic?._id;
+    });
+    if (!currentContextStillValid) {
+      // open the modal and stuff
+      setSelectValidContextModalProps({
+        validContexts: data.getTopicValidContexts.validContexts,
+        currentContext: node.subTopicItem.subTopic.contextTopic,
+        pendingUpdate: {
+          node,
+          previousParentNode,
+          nextParentNode,
+          index,
+        },
+      });
+      return false;
+    }
+    return true;
+  };
+
+  const getNodeById = (nodeId: string): { node: TopicTreeItem; path: string[] } => {
+    if (nodeId === baseTopicFakeNode.nodeId) return { node: baseTopicFakeNode, path: [] };
+    const { matches } = find({
+      treeData,
+      getNodeKey, // required but not used ???
+      searchMethod: (n) => n.node.nodeId === nodeId,
+    });
+
+    if (!matches.length) throw new Error(`${nodeId} not found`);
+    return {
+      node: matches[0].node as TopicTreeItem,
+      path: matches[0].path as string[],
+    };
+  };
+
   return (
-    <Stack spacing={4} width="1300px">
-      {isLoading || isUpdating ? (
-        <Center h="400px" w="100%">
-          <Spinner size="xl" />
-        </Center>
-      ) : (
-        <Box h={`${count * 72 + 10}px`} w="100%">
-          <SortableTree
-            treeData={treeData}
-            rowHeight={72}
-            scaffoldBlockPxWidth={140}
-            onMoveNode={({ node, prevPath, prevTreeIndex, nextTreeIndex, nextPath, nextParentNode }) => {
-              const nodeId = node.nodeId;
-              const previousParentNodeId: string =
-                prevPath.length > 1 ? (prevPath[prevPath.length - 2] as string) : baseTopicNodeId;
+    <>
+      <Stack spacing={4} width="1300px">
+        {isLoading || isUpdating ? (
+          <Center h="400px" w="100%">
+            <Spinner size="xl" />
+          </Center>
+        ) : (
+          <Box h={`${count * 72 + 10}px`} w="100%">
+            <SortableTree
+              treeData={treeData}
+              rowHeight={72}
+              scaffoldBlockPxWidth={140}
+              onMoveNode={async ({ node: nodeUntyped, prevPath, prevTreeIndex, nextTreeIndex, nextPath }) => {
+                const node = nodeUntyped as TopicTreeItem;
 
-              const nextParentNodeId: string =
-                nextPath.length > 1 ? (nextPath[nextPath.length - 2] as string) : baseTopicNodeId;
-              if (previousParentNodeId === nextParentNodeId && prevTreeIndex === nextTreeIndex) return;
+                const previousParentNodeId: string =
+                  prevPath.length > 1 ? (prevPath[prevPath.length - 2] as string) : baseTopicNodeId;
+                const { node: previousParentNode } = getNodeById(previousParentNodeId);
 
-              const siblings: TreeItem[] = nextParentNode ? (nextParentNode.children as TreeItem[]) : treeData;
+                // const nextParentNodeId = nextParentNode.nodeId
+                const nextParentNodeId: string =
+                  nextPath.length > 1 ? (nextPath[nextPath.length - 2] as string) : baseTopicNodeId;
+                const { node: nextParentNode } = getNodeById(nextParentNodeId);
 
-              const nextRelativeIndex = siblings.findIndex((sibling) => sibling.nodeId === node.nodeId);
-              const prevNode = siblings[nextRelativeIndex - 1];
+                if (previousParentNodeId === nextParentNodeId && prevTreeIndex === nextTreeIndex) return;
 
-              const nextNode = siblings[nextRelativeIndex + 1];
+                const siblings: TopicTreeItem[] =
+                  nextParentNode.nodeId === baseTopicNodeId ? treeData : (nextParentNode.children as TopicTreeItem[]);
 
-              if (nextNode && !prevNode)
+                const nextRelativeIndex = siblings.findIndex((sibling) => sibling.nodeId === node.nodeId);
+                const prevNode = siblings[nextRelativeIndex - 1];
+
+                const nextNode = siblings[nextRelativeIndex + 1];
+
+                let index: number;
+                if (prevNode && nextNode) index = (prevNode.subTopicItem.index + nextNode.subTopicItem.index) / 2;
+                else if (!prevNode && nextNode) index = nextNode.subTopicItem.index / 2;
+                else if (prevNode && !nextNode) index = prevNode.subTopicItem.index + 1000;
+                else index = 10000000;
+
+                if (
+                  nextParentNodeId !== previousParentNodeId &&
+                  getRelationshipTypeFromNodeId(node.nodeId) === SubTopicRelationshipType.IsSubtopicOf &&
+                  !!node.subTopicItem.subTopic.context
+                ) {
+                  // the topic has a context, we're changing its parent and the topic is a subtopic, so we need to check the context.
+                  const isValid = await checkIfContextStillValid({
+                    node: node as TopicTreeItem,
+                    previousParentNode,
+                    nextParentNode,
+                    index,
+                  });
+                  if (!isValid) return;
+                }
+
                 addPendingUpdate({
-                  nodeId,
-                  previousParentNodeId,
-                  nextParentNodeId,
-                  index: nextNode.subTopicItem.index / 2,
+                  node,
+                  previousParentNode,
+                  nextParentNode,
+                  index,
                 });
-              if (prevNode && !nextNode)
-                addPendingUpdate({
-                  nodeId,
-                  previousParentNodeId,
-                  nextParentNodeId,
-                  index: prevNode.subTopicItem.index + 1000,
-                });
-
-              if (!prevNode && !nextNode)
-                addPendingUpdate({ nodeId, previousParentNodeId, nextParentNodeId, index: 10000000 });
-              if (prevNode && nextNode)
-                addPendingUpdate({
-                  nodeId,
-                  previousParentNodeId,
-                  nextParentNodeId,
-                  index: (prevNode.subTopicItem.index + nextNode.subTopicItem.index) / 2,
-                });
-            }}
-            canDrag={({ node }) => node.updatable}
-            canDrop={({ node, nextParent }) =>
-              !nextParent ||
-              (nextParent.updatable && nextParent.subTopicItem.relationshipType !== SubTopicRelationshipType.IsPartOf)
+              }}
+              canDrag={({ node }) => node.updatable}
+              canDrop={({ node, nextParent }) =>
+                !nextParent ||
+                (nextParent.updatable && nextParent.subTopicItem.relationshipType !== SubTopicRelationshipType.IsPartOf)
+              }
+              onChange={(treeData) => setTreeData(treeData as TopicTreeItem[])}
+              getNodeKey={({ node }) => {
+                const subTopicItem: SubTopicsTreeNodeDataFragment = node.subTopicItem;
+                return createNodeId(subTopicItem.subTopic._id, subTopicItem.relationshipType);
+              }}
+              nodeContentRenderer={CustomNodeRendererConnector}
+            />
+          </Box>
+        )}
+        <Stack spacing={6} pt={4}>
+          {updatable && (
+            <RoleAccess accessRule="contributorOrAdmin">
+              <Flex justifyContent="space-between">
+                <Button
+                  w="45%"
+                  isDisabled={!pendingUpdates.length}
+                  onClick={() => {
+                    setPendingUpdates([]);
+                    buildTreeData();
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  w="45%"
+                  colorScheme="blue"
+                  isDisabled={!pendingUpdates.length}
+                  onClick={() => runPendingUpdates()}
+                >
+                  Save
+                  {!!pendingUpdates.length &&
+                    ` (${pendingUpdates.length} change${pendingUpdates.length === 1 ? '' : 's'})`}
+                </Button>
+              </Flex>
+            </RoleAccess>
+          )}
+          <RoleAccess accessRule="loggedInUser">
+            <NewTopicModal
+              parentTopic={topic}
+              renderButton={(openModal) => (
+                <Button colorScheme="blue" onClick={() => openModal()} variant="outline">
+                  + Add SubTopic
+                </Button>
+              )}
+              onCreated={() => onUpdated()}
+            />
+          </RoleAccess>
+        </Stack>
+      </Stack>
+      {selectValidContextModalProps && (
+        <SelectValidContextModal
+          // isOpen={isOpen}
+          onSelectValidContext={(selectedContext, pendingUpdate) => {
+            // add pending update (including new context) -> how to avoid updating it several time ?
+            addPendingUpdate({
+              ...pendingUpdate,
+              newContextTopicId: selectedContext._id,
+            });
+            setSelectValidContextModalProps(undefined);
+          }}
+          onCancel={({ node, previousParentNode }) => {
+            const res = removeNode({ treeData, path: getNodeById(node.nodeId).path, getNodeKey });
+            if (!res) throw new Error('Failed to remove node');
+            if (res) {
+              const { treeData: updatedTreeData } = addNodeUnderParent({
+                parentKey: previousParentNode.nodeId,
+                treeData: res.treeData,
+                getNodeKey,
+                newNode: node,
+              });
+              setTreeData(updatedTreeData as TopicTreeItem[]);
             }
-            onChange={(treeData) => setTreeData(treeData)}
-            getNodeKey={({ node }) => {
-              const subTopicItem: SubTopicsTreeNodeDataFragment = node.subTopicItem;
-              return createNodeId(subTopicItem.subTopic._id, subTopicItem.relationshipType);
-            }}
-            nodeContentRenderer={CustomNodeRendererConnector}
-          />
-        </Box>
+            setSelectValidContextModalProps(undefined);
+          }}
+          {...selectValidContextModalProps}
+        />
       )}
-      <Stack spacing={6} pt={4}>
-        {updatable && (
-          <RoleAccess accessRule="contributorOrAdmin">
-            <Flex justifyContent="space-between">
-              <Button
-                w="45%"
-                isDisabled={!pendingUpdates.length}
-                onClick={() => {
-                  setPendingUpdates([]);
-                  buildTreeData();
-                }}
-              >
+    </>
+  );
+};
+
+interface SelectValidContextModalProps {
+  pendingUpdate: PendingUpdate;
+  validContexts: TopicLinkDataFragment[];
+  onSelectValidContext: (selectedContext: TopicLinkDataFragment, pendingUpdate: PendingUpdate) => void;
+  // node: TopicTreeItem;
+  currentContext: TopicLinkDataFragment;
+  // isOpen: boolean;
+  onCancel: (pendingUpdate: PendingUpdate) => void;
+  // previousParent: TopicTreeItem;
+  // nextParent: TopicTreeItem;
+  // index: number;
+}
+
+const SelectValidContextModal: React.FC<SelectValidContextModalProps> = ({
+  validContexts,
+  onSelectValidContext,
+  pendingUpdate,
+  currentContext,
+  onCancel,
+}) => {
+  const { node, previousParentNode, nextParentNode } = pendingUpdate;
+  const [selectedContext, setSelectedContext] = useState<TopicLinkDataFragment>(validContexts[0]);
+  return (
+    <Modal blockScrollOnMount={false} isOpen={true} onClose={() => onCancel(pendingUpdate)} size="2xl">
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Select valid context for {node.subTopicItem.subTopic.name}</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody px={8} pt={8} pb={16} display="flex" alignItems="stretch" justifyContent="stretch">
+          <Stack>
+            <Text>
+              By moving the topic <b>{node.subTopicItem.subTopic.name}</b> from within{' '}
+              <b>{previousParentNode.subTopicItem.subTopic.name}</b> to{' '}
+              <b>{nextParentNode.subTopicItem.subTopic.name}</b>, its current context{' '}
+              <Text as="span" fontWeight={600} color="gray.400">
+                ({currentContext.name})
+              </Text>{' '}
+              is not valid anymore. Please select a new context:
+            </Text>
+            <Center>
+              <Stack direction="row" alignItems="center">
+                <Text whiteSpace="nowrap" fontWeight={600} color="gray.600">
+                  New Context:
+                </Text>
+                <SelectContextTopic
+                  contexts={validContexts}
+                  selectedContext={selectedContext}
+                  onSelect={setSelectedContext}
+                />
+              </Stack>
+            </Center>
+            <Stack direction="row" justifyContent="flex-end">
+              <Button colorScheme="red" onClick={() => onCancel(pendingUpdate)}>
                 Cancel
               </Button>
               <Button
-                w="45%"
                 colorScheme="blue"
-                isDisabled={!pendingUpdates.length}
-                onClick={() => runPendingUpdates()}
+                isDisabled={!selectedContext}
+                onClick={() => selectedContext && onSelectValidContext(selectedContext, pendingUpdate)}
               >
-                Save
-                {!!pendingUpdates.length &&
-                  ` (${pendingUpdates.length} change${pendingUpdates.length === 1 ? '' : 's'})`}
+                Select Context
               </Button>
-            </Flex>
-          </RoleAccess>
-        )}
-        <RoleAccess accessRule="loggedInUser">
-          <NewTopicModal
-            parentTopic={topic}
-            renderButton={(openModal) => (
-              <Button colorScheme="blue" onClick={() => openModal()} variant="outline">
-                + Add SubTopic
-              </Button>
-            )}
-            onCreated={() => onUpdated()}
-          />
-        </RoleAccess>
-      </Stack>
-    </Stack>
+            </Stack>
+          </Stack>
+        </ModalBody>
+      </ModalContent>
+    </Modal>
   );
 };

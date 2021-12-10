@@ -38,6 +38,9 @@ export const SubTopicsTreeNodeData = gql`
     relationshipType
     subTopic {
       ...TopicLinkData
+      contextTopic {
+        ...TopicLinkData
+      }
     }
   }
   ${TopicLinkData}

@@ -287,6 +287,24 @@ export type UpdateTopicIsPartOfTopicMutation = (
   ) }
 );
 
+export type UpdateTopicContextMutationVariables = Types.Exact<{
+  topicId: Types.Scalars['String'];
+  contextTopicId: Types.Scalars['String'];
+}>;
+
+
+export type UpdateTopicContextMutation = (
+  { __typename?: 'Mutation' }
+  & { updateTopicContext: (
+    { __typename?: 'Topic' }
+    & { contextTopic?: Types.Maybe<(
+      { __typename?: 'Topic' }
+      & TopicLinkDataFragment
+    )> }
+    & TopicLinkDataFragment
+  ) }
+);
+
 
 
 /**
@@ -578,3 +596,29 @@ export function useUpdateTopicIsPartOfTopicMutation(baseOptions?: Apollo.Mutatio
 export type UpdateTopicIsPartOfTopicMutationHookResult = ReturnType<typeof useUpdateTopicIsPartOfTopicMutation>;
 export type UpdateTopicIsPartOfTopicMutationResult = Apollo.MutationResult<UpdateTopicIsPartOfTopicMutation>;
 export type UpdateTopicIsPartOfTopicMutationOptions = Apollo.BaseMutationOptions<UpdateTopicIsPartOfTopicMutation, UpdateTopicIsPartOfTopicMutationVariables>;
+export type UpdateTopicContextMutationFn = Apollo.MutationFunction<UpdateTopicContextMutation, UpdateTopicContextMutationVariables>;
+
+/**
+ * __useUpdateTopicContextMutation__
+ *
+ * To run a mutation, you first call `useUpdateTopicContextMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateTopicContextMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateTopicContextMutation, { data, loading, error }] = useUpdateTopicContextMutation({
+ *   variables: {
+ *      topicId: // value for 'topicId'
+ *      contextTopicId: // value for 'contextTopicId'
+ *   },
+ * });
+ */
+export function useUpdateTopicContextMutation(baseOptions?: Apollo.MutationHookOptions<UpdateTopicContextMutation, UpdateTopicContextMutationVariables>) {
+        return Apollo.useMutation<UpdateTopicContextMutation, UpdateTopicContextMutationVariables>(Operations.updateTopicContext, baseOptions);
+      }
+export type UpdateTopicContextMutationHookResult = ReturnType<typeof useUpdateTopicContextMutation>;
+export type UpdateTopicContextMutationResult = Apollo.MutationResult<UpdateTopicContextMutation>;
+export type UpdateTopicContextMutationOptions = Apollo.BaseMutationOptions<UpdateTopicContextMutation, UpdateTopicContextMutationVariables>;

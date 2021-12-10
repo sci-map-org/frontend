@@ -211,3 +211,15 @@ export const updateTopicIsPartOfTopic = gql`
     }
   }
 `;
+
+export const updateTopicContext = gql`
+  mutation updateTopicContext($topicId: String!, $contextTopicId: String!) {
+    updateTopicContext(topicId: $topicId, contextTopicId: $contextTopicId) {
+      ...TopicLinkData
+      contextTopic {
+        ...TopicLinkData
+      }
+    }
+  }
+  ${TopicLinkData}
+`;

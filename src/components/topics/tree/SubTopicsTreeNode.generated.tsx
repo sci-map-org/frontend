@@ -6,6 +6,10 @@ export type SubTopicsTreeNodeDataFragment = (
   & Pick<Types.TopicIsSubTopicOfTopic, 'index' | 'relationshipType'>
   & { subTopic: (
     { __typename?: 'Topic' }
+    & { contextTopic?: Types.Maybe<(
+      { __typename?: 'Topic' }
+      & TopicLinkDataFragment
+    )> }
     & TopicLinkDataFragment
   ) }
 );

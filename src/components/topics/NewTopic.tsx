@@ -4,12 +4,14 @@ import gql from 'graphql-tag';
 import { ReactNode, useState } from 'react';
 import { TopicFullData, TopicLinkData } from '../../graphql/topics/topics.fragments';
 import { TopicFullDataFragment, TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
-import { useAttachTopicIsSubTopicOfTopicMutation } from '../../graphql/topics/topics.operations.generated';
+import {
+  useAttachTopicIsPartOfTopicMutation,
+  useAttachTopicIsSubTopicOfTopicMutation,
+} from '../../graphql/topics/topics.operations.generated';
 import { CreateTopicContextOptions, CreateTopicPayload, SubTopicRelationshipType } from '../../graphql/types';
 import { generateUrlKey } from '../../services/url.service';
 import { getChakraRelativeSize } from '../../util/chakra.util';
 import { FormButtons } from '../lib/buttons/FormButtons';
-import { useAttachTopicIsPartOfTopicMutation } from './EditablePartOfTopics.generated';
 import { TopicDescriptionField } from './fields/TopicDescription';
 import { TopicNameField } from './fields/TopicNameField';
 import { TopicUrlKeyField, useCheckTopicKeyAvailability } from './fields/TopicUrlKey';
@@ -62,7 +64,7 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
           updateTopicCreationData({
             contextTopic,
             disambiguationTopic,
-            key: generateUrlKey(`${topicCreationData.key}_(${contextTopic.key})`),
+            // key: generateUrlKey(`${topicCreationData.key}_(${contextTopic.key})`),
           });
         }}
         onCancelTopicCreation={onCancel}

@@ -510,11 +510,20 @@ const HasDisambiguationTopicModalContent: React.FC<HasDisambiguationTopicModalCo
             <Stack direction="row" alignItems="baseline">
               {/* TODO: on hover, show tooltip with path ? */}
               <Text fontWeight={600}>{existingSameNameTopic.name}</Text>
-              <SelectContextTopic
-                contexts={data.getTopicValidContextsFromDisambiguation.validContexts}
-                selectedContext={newTopicSelectedContext}
-                onSelect={setNewTopicSelectedContext}
-              />
+
+              <Stack direction="row" alignItems="baseline">
+                <Text as="span" fontSize="sm" fontWeight={600} color="gray.500">
+                  (Ctx:
+                </Text>
+                <SelectContextTopic
+                  contexts={data.getTopicValidContextsFromDisambiguation.validContexts}
+                  selectedContext={newTopicSelectedContext}
+                  onSelect={setNewTopicSelectedContext}
+                />
+                <Text as="span" fontSize="sm" fontWeight={600} color="gray.500">
+                  )
+                </Text>
+              </Stack>
             </Stack>
             <Text fontSize="sm" fontWeight={400}>
               {parentTopic.name} / {existingSameNameTopic.name}
@@ -727,37 +736,41 @@ const NewTopicHasExistingSameNameTopicModal: React.FC<{
   );
 };
 
-const SelectContextTopic: React.FC<{
+export const SelectContextTopic: React.FC<{
   contexts: Array<TopicLinkDataFragment & { disabled?: boolean }>;
   selectedContext?: TopicLinkDataFragment;
   onSelect: (selectedContext: TopicLinkDataFragment) => void;
 }> = ({ contexts, selectedContext, onSelect }) => {
   return (
-    <Stack direction="row" alignItems="baseline">
-      <Text as="span" fontSize="sm" fontWeight={600} color="gray.500">
-        (Ctx:
-      </Text>
-      <Select
-        size="sm"
-        fontWeight={600}
-        color="gray.500"
-        value={selectedContext?._id}
-        onChange={(e) => {
-          const selected = contexts.find((validContext) => validContext._id === e.target.value);
-          if (!selected) throw new Error('error selecting context');
-          onSelect(selected);
-        }}
-      >
-        {contexts.map((validContext) => (
-          <option key={validContext._id} value={validContext._id} disabled={validContext.disabled}>
-            {validContext.name}
-          </option>
-        ))}
-      </Select>
-      <Text as="span" fontSize="sm" fontWeight={600} color="gray.500">
-        )
-      </Text>
-    </Stack>
+    // <Stack direction="row" alignItems="baseline">
+    //   <Text as="span" fontSize="sm" fontWeight={600} color="gray.500">
+    //     (Ctx:
+    //   </Text>
+    // <Text as="span" fontSize="sm" fontWeight={600} color="gray.500">
+    //   )
+    // </Text>
+    // </Stack>
+    <Select
+      size="sm"
+      fontWeight={600}
+      color="gray.500"
+      value={selectedContext?._id}
+      onChange={(e) => {
+        const selected = contexts.find((validContext) => validContext._id === e.target.value);
+        if (!selected) throw new Error('error selecting context');
+        onSelect(selected);
+      }}
+    >
+      {contexts.map((validContext) => (
+        <option key={validContext._id} value={validContext._id} disabled={validContext.disabled}>
+          {validContext.name}
+        </option>
+      ))}
+    </Select>
+    // <Text as="span" fontSize="sm" fontWeight={600} color="gray.500">
+    //   )
+    // </Text>
+    // </Stack>
   );
 };
 
