@@ -3,12 +3,13 @@ import gql from 'graphql-tag';
 import { useState } from 'react';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { LearningPathPreviewCardData } from '../../components/learning_paths/LearningPathPreviewCard';
-import { ResourcePreviewCardData } from '../../components/resources/ResourcePreviewCard';
 import { TopicRecommendedLearningMaterials } from '../../components/topics/TopicRecommendedLearningMaterials';
+import { ResourcePreviewCardData } from '../../graphql/resources/resources.fragments';
 import {
   LearningMaterialType,
-  ResourceType, TopicLearningMaterialsOptions,
-  TopicLearningMaterialsSortingType
+  ResourceType,
+  TopicLearningMaterialsOptions,
+  TopicLearningMaterialsSortingType,
 } from '../../graphql/types';
 import { TopicPageInfo } from '../RoutesPageInfos';
 import { GetBestXPageDataQuery, useGetBestXPageDataQuery } from './BestXPage.generated';

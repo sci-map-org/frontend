@@ -11,7 +11,7 @@ import {
   LearningGoalPageInfo,
   LearningPathPageInfo,
   ResourcePageInfo,
-  TopicPageInfo
+  TopicPageInfo,
 } from '../../../pages/RoutesPageInfos';
 import { theme } from '../../../theme/theme';
 import { GlobalSearchQuery, useGlobalSearchLazyQuery } from './GlobalSearchBox.generated';
@@ -104,9 +104,6 @@ export const GlobalSearchBox: React.FC<GlobalSearchBoxProps> = ({
         onSuggestionSelected={(e, { suggestion }) => {
           e.preventDefault();
           if (suggestion.entity.__typename === 'Topic') routerPushToPage(TopicPageInfo(suggestion.entity));
-          if (suggestion.entity.__typename === 'LearningGoal') {
-            if (suggestion.entity) routerPushToPage(LearningGoalPageInfo(suggestion.entity));
-          }
           if (suggestion.entity.__typename === 'Resource') routerPushToPage(ResourcePageInfo(suggestion.entity));
           if (suggestion.entity.__typename === 'LearningPath')
             routerPushToPage(LearningPathPageInfo(suggestion.entity));

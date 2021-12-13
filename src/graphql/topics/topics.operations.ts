@@ -223,3 +223,27 @@ export const updateTopicContext = gql`
   }
   ${TopicLinkData}
 `;
+
+// TODO
+
+// export const setConceptsKnown = gql`
+//   mutation setConceptsKnown($payload: SetConceptKnownPayload!) {
+//     setConceptsKnown(payload: $payload) {
+//       _id
+//       known {
+//         level
+//       }
+//     }
+//   }
+// `;
+
+// export const setConceptsUnknown = gql`
+//   mutation setConceptsUnknown($conceptIds: [String!]!) {
+//     setConceptsUnknown(conceptIds: $conceptIds) {
+//       _id
+//       known {
+//         level
+//       }
+//     }
+//   }
+// `;

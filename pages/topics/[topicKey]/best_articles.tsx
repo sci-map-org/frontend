@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { ResourceType } from '../../../src/graphql/types';
-import { BestXPage } from '../../../src/pages/domains/BestXPage';
+import { BestXPage } from '../../../src/pages/topics/BestXPage';
 
 const Page: React.FC<{}> = () => {
   const router = useRouter();

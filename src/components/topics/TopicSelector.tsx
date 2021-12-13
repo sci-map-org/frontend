@@ -12,12 +12,9 @@ import { EntitySelector } from '../lib/selectors/EntitySelector';
 type TopicResultItem = TopicLinkDataFragment;
 
 interface TopicSelectorProps {
-  //   domain: DomainDataFragment;
   onSelect: (topic: TopicResultItem) => void;
   placeholder?: string;
   onlySubTopicsOf?: string; // Search only topics that descend from this topic
-  //   popoverTitle?: string;
-  //   allowedSubTopicTypes?: TopicType[];
 }
 
 export const TopicSelector: React.FC<TopicSelectorProps> = ({
@@ -54,6 +51,7 @@ export const TopicSelector: React.FC<TopicSelectorProps> = ({
     if (!!topicsSearchData?.searchTopics.items) setSearchResults(topicsSearchData.searchTopics.items);
   }, [topicsSearchData]);
 
+  // TODO: accept topic creation
   //   const { isOpen, onOpen, onClose } = useDisclosure();
   //   const [createSubTopicDefaultPayload, setCreateSubTopicDefaultPayload] = useState<{ name?: string; key?: string }>({});
 
@@ -76,50 +74,6 @@ export const TopicSelector: React.FC<TopicSelectorProps> = ({
           onSelect={onSelect}
         />
       </Box>
-      {/* <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <NewTopic
-              defaultPayload={createSubTopicDefaultPayload}
-              onCreated={(createdTopic) => {
-                onSelect(createdTopic);
-                onClose();
-              }}
-              size="sm"
-              parentDomain={domain}
-              onCancel={() => onClose()}
-              allowedTopicTypes={allowedSubTopicTypes}
-            />
-          </ModalBody>
-        </ModalContent>
-      </Modal> */}
-      {/* // <Popover returnFocusOnClose={false} isOpen={isOpen} onClose={onClose} placement="bottom" closeOnBlur={false} isLazy> */}
-      {/* <PopoverTrigger> */}
-
-      {/* </PopoverTrigger> */}
-
-      {/* <PopoverContent>
-          <PopoverHeader fontWeight="semibold">{popoverTitle || 'Create Learning Goal'}</PopoverHeader>
-          <PopoverArrow />
-          <PopoverCloseButton />
-          <PopoverBody>
-            <NewTopic
-              defaultPayload={createSubTopicDefaultPayload}
-              onCreated={(createdTopic) => {
-                onSelect(createdTopic);
-                onClose();
-              }}
-              size="sm"
-              parentDomain={domain}
-              onCancel={() => onClose()}
-              allowedTopicTypes={allowedSubTopicTypes}
-            />
-          </PopoverBody>
-        </PopoverContent> */}
-      {/* </Popover> */}
     </>
   );
 };

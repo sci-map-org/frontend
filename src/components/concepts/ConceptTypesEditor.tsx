@@ -94,3 +94,5 @@
 //     </Stack>
 //   );
 // };
+
+export default {};
