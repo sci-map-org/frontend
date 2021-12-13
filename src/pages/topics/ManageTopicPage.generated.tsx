@@ -25,6 +25,9 @@ export type GetTopicByKeyManageTopicPageQuery = (
     )>>, parentTopic?: Types.Maybe<(
       { __typename?: 'Topic' }
       & TopicLinkDataFragment
+    )>, contextTopic?: Types.Maybe<(
+      { __typename?: 'Topic' }
+      & TopicLinkDataFragment
     )>, prerequisites?: Types.Maybe<Array<(
       { __typename?: 'TopicHasPrerequisiteTopic' }
       & { prerequisiteTopic: (

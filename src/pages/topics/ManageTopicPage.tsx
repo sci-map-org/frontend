@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Input, Stack, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
+import { Box, Button, Flex, Input, Stack, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { pick } from 'lodash';
 import dynamic from 'next/dynamic';
@@ -11,10 +11,17 @@ import { FormFieldLabel, PageTitle } from '../../components/lib/Typography';
 import { EditablePartOfTopics, EditablePartOfTopicsData } from '../../components/topics/EditablePartOfTopics';
 import { EditableTopicPrerequisites } from '../../components/topics/EditableTopicPrerequisites';
 import { TopicDescription, TopicDescriptionField } from '../../components/topics/fields/TopicDescription';
+import { SelectContextTopic } from '../../components/topics/fields/TopicNameField';
 import { TopicUrlKeyField, useCheckTopicKeyAvailability } from '../../components/topics/fields/TopicUrlKey';
 import { SubTopicsTreeData, SubTopicsTreeProps } from '../../components/topics/tree/SubTopicsTree';
+import { useGetTopicValidContextsQuery } from '../../components/topics/tree/SubTopicsTree.generated';
 import { generateTopicData, TopicLinkData } from '../../graphql/topics/topics.fragments';
-import { useDeleteTopicMutation, useUpdateTopicMutation } from '../../graphql/topics/topics.operations.generated';
+import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
+import {
+  useDeleteTopicMutation,
+  useUpdateTopicContextMutation,
+  useUpdateTopicMutation,
+} from '../../graphql/topics/topics.operations.generated';
 import { UpdateTopicPayload } from '../../graphql/types';
 import { routerPushToPage } from '../PageInfo';
 import { ManageTopicPageInfo, ManageTopicPagePath, TopicPageInfo } from '../RoutesPageInfos';
@@ -41,6 +48,9 @@ export const getTopicByKeyManageTopicPage = gql`
         }
       }
       parentTopic {
+        ...TopicLinkData
+      }
+      contextTopic {
         ...TopicLinkData
       }
       ...SubTopicsTreeData
@@ -187,6 +197,10 @@ export const ManageTopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) =>
               <Flex direction="row" justifyContent="space-evenly">
                 <EditableTopicPrerequisites topic={topic} editable={true} />
                 <EditablePartOfTopics topic={topic} editable={true} align="center" />
+
+                {topic.parentTopic && topic.contextTopic && (
+                  <TopicContextEditor parentTopic={topic.parentTopic} contextTopic={topic.contextTopic} topic={topic} />
+                )}
               </Flex>
             </Stack>
           </TabPanel>
@@ -203,5 +217,54 @@ export const ManageTopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) =>
         </TabPanels>
       </Tabs>
     </PageLayout>
+  );
+};
+
+const TopicContextEditor: React.FC<{
+  topic: TopicLinkDataFragment;
+  parentTopic: TopicLinkDataFragment;
+  contextTopic: TopicLinkDataFragment;
+}> = ({ topic, parentTopic, contextTopic }) => {
+  const { data } = useGetTopicValidContextsQuery({
+    variables: { parentTopicId: parentTopic._id, topicId: topic._id },
+    onCompleted(r) {
+      if (!r.getTopicValidContexts.validContexts?.length) throw new Error(`No valid contexts found for ${topic._id}`);
+    },
+  });
+  const [updateTopicContextMutation] = useUpdateTopicContextMutation();
+  const [newContext, setNewContext] = useState<TopicLinkDataFragment>();
+
+  return (
+    <Stack alignItems="flex-end">
+      <Stack direction="row" alignItems="baseline">
+        <Text fontWeight={600} color="gray.500">
+          Context:{' '}
+        </Text>
+        {data?.getTopicValidContexts.validContexts && (
+          <>
+            <SelectContextTopic
+              contexts={data.getTopicValidContexts.validContexts}
+              selectedContext={newContext || contextTopic}
+              onSelect={(context) => setNewContext(context)}
+            />
+          </>
+        )}
+      </Stack>
+      {newContext && newContext._id !== contextTopic?._id && (
+        <Button
+          colorScheme="blue"
+          onClick={async () => {
+            const { data } = await updateTopicContextMutation({
+              variables: { topicId: topic._id, contextTopicId: newContext._id },
+            });
+            data && routerPushToPage(ManageTopicPageInfo(data.updateTopicContext));
+            setNewContext(undefined);
+          }}
+          size="sm"
+        >
+          Save
+        </Button>
+      )}
+    </Stack>
   );
 };

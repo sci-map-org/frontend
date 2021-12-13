@@ -273,7 +273,7 @@ export type MutationSetTopicsUnknownArgs = {
 
 export type MutationUpdateTopicContextArgs = {
   topicId: Scalars['String'];
-  contextTopicId: Scalars['String'];
+  contextTopicId?: Maybe<Scalars['String']>;
 };
 
 

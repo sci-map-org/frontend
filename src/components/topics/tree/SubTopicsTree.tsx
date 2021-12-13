@@ -327,77 +327,80 @@ export const SubTopicsTree: React.FC<SubTopicsTreeProps> = ({ topic, onUpdated, 
             <Spinner size="xl" />
           </Center>
         ) : (
-          <Box h={`${count * 72 + 10}px`} w="100%">
-            <SortableTree
-              treeData={treeData}
-              rowHeight={72}
-              scaffoldBlockPxWidth={140}
-              onMoveNode={async ({ node: nodeUntyped, prevPath, prevTreeIndex, nextTreeIndex, nextPath }) => {
-                const node = nodeUntyped as TopicTreeItem;
+          treeData.length && (
+            <Box h={`${count * 72 + 10}px`} w="100%">
+              <SortableTree
+                treeData={treeData}
+                rowHeight={72}
+                scaffoldBlockPxWidth={140}
+                onMoveNode={async ({ node: nodeUntyped, prevPath, prevTreeIndex, nextTreeIndex, nextPath }) => {
+                  const node = nodeUntyped as TopicTreeItem;
 
-                const previousParentNodeId: string =
-                  prevPath.length > 1 ? (prevPath[prevPath.length - 2] as string) : baseTopicNodeId;
-                const { node: previousParentNode } = getNodeById(previousParentNodeId);
+                  const previousParentNodeId: string =
+                    prevPath.length > 1 ? (prevPath[prevPath.length - 2] as string) : baseTopicNodeId;
+                  const { node: previousParentNode } = getNodeById(previousParentNodeId);
 
-                // const nextParentNodeId = nextParentNode.nodeId
-                const nextParentNodeId: string =
-                  nextPath.length > 1 ? (nextPath[nextPath.length - 2] as string) : baseTopicNodeId;
-                const { node: nextParentNode } = getNodeById(nextParentNodeId);
+                  // const nextParentNodeId = nextParentNode.nodeId
+                  const nextParentNodeId: string =
+                    nextPath.length > 1 ? (nextPath[nextPath.length - 2] as string) : baseTopicNodeId;
+                  const { node: nextParentNode } = getNodeById(nextParentNodeId);
 
-                if (previousParentNodeId === nextParentNodeId && prevTreeIndex === nextTreeIndex) return;
+                  if (previousParentNodeId === nextParentNodeId && prevTreeIndex === nextTreeIndex) return;
 
-                const siblings: TopicTreeItem[] =
-                  nextParentNode.nodeId === baseTopicNodeId ? treeData : (nextParentNode.children as TopicTreeItem[]);
+                  const siblings: TopicTreeItem[] =
+                    nextParentNode.nodeId === baseTopicNodeId ? treeData : (nextParentNode.children as TopicTreeItem[]);
 
-                const nextRelativeIndex = siblings.findIndex((sibling) => sibling.nodeId === node.nodeId);
-                const prevNode = siblings[nextRelativeIndex - 1];
+                  const nextRelativeIndex = siblings.findIndex((sibling) => sibling.nodeId === node.nodeId);
+                  const prevNode = siblings[nextRelativeIndex - 1];
 
-                const nextNode = siblings[nextRelativeIndex + 1];
+                  const nextNode = siblings[nextRelativeIndex + 1];
 
-                let index: number;
-                if (prevNode && nextNode) index = (prevNode.subTopicItem.index + nextNode.subTopicItem.index) / 2;
-                else if (!prevNode && nextNode) index = nextNode.subTopicItem.index / 2;
-                else if (prevNode && !nextNode) index = prevNode.subTopicItem.index + 1000;
-                else index = 10000000;
+                  let index: number;
+                  if (prevNode && nextNode) index = (prevNode.subTopicItem.index + nextNode.subTopicItem.index) / 2;
+                  else if (!prevNode && nextNode) index = nextNode.subTopicItem.index / 2;
+                  else if (prevNode && !nextNode) index = prevNode.subTopicItem.index + 1000;
+                  else index = 10000000;
 
-                if (
-                  nextParentNodeId !== previousParentNodeId &&
-                  getRelationshipTypeFromNodeId(node.nodeId) === SubTopicRelationshipType.IsSubtopicOf &&
-                  !!node.subTopicItem.subTopic.context
-                ) {
-                  // the topic has a context, we're changing its parent and the topic is a subtopic, so we need to check the context.
-                  const isValid = await checkIfContextStillValid({
-                    node: node as TopicTreeItem,
+                  if (
+                    nextParentNodeId !== previousParentNodeId &&
+                    getRelationshipTypeFromNodeId(node.nodeId) === SubTopicRelationshipType.IsSubtopicOf &&
+                    !!node.subTopicItem.subTopic.context
+                  ) {
+                    // the topic has a context, we're changing its parent and the topic is a subtopic, so we need to check the context.
+                    const isValid = await checkIfContextStillValid({
+                      node: node as TopicTreeItem,
+                      previousParentNode,
+                      nextParentNode,
+                      index,
+                    });
+                    if (!isValid) return;
+                  }
+
+                  addPendingUpdate({
+                    node,
                     previousParentNode,
                     nextParentNode,
                     index,
                   });
-                  if (!isValid) return;
+                }}
+                canDrag={({ node }) => node.updatable}
+                canDrop={({ node, nextParent }) =>
+                  !nextParent ||
+                  (nextParent.updatable &&
+                    nextParent.subTopicItem.relationshipType !== SubTopicRelationshipType.IsPartOf)
                 }
-
-                addPendingUpdate({
-                  node,
-                  previousParentNode,
-                  nextParentNode,
-                  index,
-                });
-              }}
-              canDrag={({ node }) => node.updatable}
-              canDrop={({ node, nextParent }) =>
-                !nextParent ||
-                (nextParent.updatable && nextParent.subTopicItem.relationshipType !== SubTopicRelationshipType.IsPartOf)
-              }
-              onChange={(treeData) => setTreeData(treeData as TopicTreeItem[])}
-              getNodeKey={({ node }) => {
-                const subTopicItem: SubTopicsTreeNodeDataFragment = node.subTopicItem;
-                return createNodeId(subTopicItem.subTopic._id, subTopicItem.relationshipType);
-              }}
-              nodeContentRenderer={CustomNodeRendererConnector}
-            />
-          </Box>
+                onChange={(treeData) => setTreeData(treeData as TopicTreeItem[])}
+                getNodeKey={({ node }) => {
+                  const subTopicItem: SubTopicsTreeNodeDataFragment = node.subTopicItem;
+                  return createNodeId(subTopicItem.subTopic._id, subTopicItem.relationshipType);
+                }}
+                nodeContentRenderer={CustomNodeRendererConnector}
+              />
+            </Box>
+          )
         )}
         <Stack spacing={6} pt={4}>
-          {updatable && (
+          {updatable && treeData.length && (
             <RoleAccess accessRule="contributorOrAdmin">
               <Flex justifyContent="space-between">
                 <Button
