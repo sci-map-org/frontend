@@ -340,7 +340,6 @@ export const SubTopicsTree: React.FC<SubTopicsTreeProps> = ({ topic, onUpdated, 
                     prevPath.length > 1 ? (prevPath[prevPath.length - 2] as string) : baseTopicNodeId;
                   const { node: previousParentNode } = getNodeById(previousParentNodeId);
 
-                  // const nextParentNodeId = nextParentNode.nodeId
                   const nextParentNodeId: string =
                     nextPath.length > 1 ? (nextPath[nextPath.length - 2] as string) : baseTopicNodeId;
                   const { node: nextParentNode } = getNodeById(nextParentNodeId);

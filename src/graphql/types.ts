@@ -273,7 +273,7 @@ export type MutationSetTopicsUnknownArgs = {
 
 export type MutationUpdateTopicContextArgs = {
   topicId: Scalars['String'];
-  contextTopicId?: Maybe<Scalars['String']>;
+  contextTopicId: Scalars['String'];
 };
 
 
@@ -615,7 +615,6 @@ export type MutationRemoveLearningMaterialHasPrerequisiteTopicArgs = {
 export type GetHomePageDataResults = {
   __typename?: 'GetHomePageDataResults';
   currentUser?: Maybe<CurrentUser>;
-  recommendedLearningGoals: Array<LearningGoal>;
   recommendedLearningPaths: Array<LearningPath>;
 };
 
@@ -706,8 +705,6 @@ export type CurrentUser = {
   articles?: Maybe<ListArticlesResult>;
   createdLearningPaths?: Maybe<Array<LearningPath>>;
   startedLearningPaths?: Maybe<Array<LearningPathStartedItem>>;
-  createdLearningGoals?: Maybe<Array<LearningGoalCreatedItem>>;
-  startedLearningGoals?: Maybe<Array<LearningGoalStartedItem>>;
   consumedResources?: Maybe<UserConsumedResourcesResult>;
 };
 
@@ -724,16 +721,6 @@ export type CurrentUserCreatedLearningPathsArgs = {
 
 export type CurrentUserStartedLearningPathsArgs = {
   options: UserLearningPathsOptions;
-};
-
-
-export type CurrentUserCreatedLearningGoalsArgs = {
-  options: UserLearningGoalsOptions;
-};
-
-
-export type CurrentUserStartedLearningGoalsArgs = {
-  options: UserLearningGoalsOptions;
 };
 
 
@@ -1318,22 +1305,6 @@ export type LearningPathStartedItem = {
   completedAt?: Maybe<Scalars['Date']>;
 };
 
-export type LearningGoalCreatedItem = {
-  __typename?: 'LearningGoalCreatedItem';
-  learningGoal: LearningGoal;
-  createdAt: Scalars['Date'];
-};
-
-export type UserLearningGoalsOptions = {
-  pagination?: Maybe<PaginationOptions>;
-};
-
-export type LearningGoalStartedItem = {
-  __typename?: 'LearningGoalStartedItem';
-  learningGoal: LearningGoal;
-  startedAt: Scalars['Date'];
-};
-
 export type UserConsumedResourcesResult = {
   __typename?: 'UserConsumedResourcesResult';
   items: Array<UserConsumedResourceItem>;
@@ -1537,7 +1508,7 @@ export enum SubTopicRelationshipType {
   IsPartOf = 'IS_PART_OF'
 }
 
-export type SearchResultEntity = Topic | LearningGoal | Resource | LearningPath;
+export type SearchResultEntity = Topic | Resource | LearningPath;
 
 export enum TopicLearningMaterialsSortingType {
   Recommended = 'recommended',

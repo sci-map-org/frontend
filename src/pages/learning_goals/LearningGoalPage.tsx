@@ -16,16 +16,16 @@ import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { NotFoundPage } from '../NotFoundPage';
 import { GetLearningGoalPageDataQuery, useGetLearningGoalPageDataQuery } from './LearningGoalPage.generated';
 
-export const getLearningGoalPageData = gql`
-  query getLearningGoalPageData($learningGoalKey: String!) {
-    getLearningGoalByKey(key: $learningGoalKey) {
-      ...LearningGoalRoadmapData
-      ...ConceptGroupLearningGoalData
-    }
-  }
-  ${LearningGoalRoadmapData}
-  ${ConceptGroupLearningGoalData}
-`;
+// export const getLearningGoalPageData = gql`
+//   query getLearningGoalPageData($learningGoalKey: String!) {
+//     getLearningGoalByKey(key: $learningGoalKey) {
+//       ...LearningGoalRoadmapData
+//       ...ConceptGroupLearningGoalData
+//     }
+//   }
+//   ${LearningGoalRoadmapData}
+//   ${ConceptGroupLearningGoalData}
+// `;
 
 const learningGoalPlaceholderData: GetLearningGoalPageDataQuery['getLearningGoalByKey'] = {
   ...generateLearningGoalData(),

@@ -88,14 +88,6 @@ export const startLearningGoal = gql`
           startedAt
         }
       }
-      currentUser {
-        startedLearningGoals(options: {}) {
-          startedAt
-          learningGoal {
-            _id
-          }
-        }
-      }
     }
   }
 `;

@@ -162,8 +162,8 @@ export const ConceptGroupLearningGoal: React.FC<ConceptGroupLearningGoalProps> =
             <Wrap justify="center" align="center" px={4}>
               {(learningGoal.requiredSubGoals || []).map(({ subGoal }) => (
                 <WrapItem key={subGoal._id}>
-                  {subGoal.__typename === 'Concept' && subGoal.domain && 
-                    subGoal.name
+                  {
+                    subGoal.__typename === 'Concept' && subGoal.domain && subGoal.name
                     // <TopicBadge
                     //   concept={subGoal}
                     //   removable={editMode}

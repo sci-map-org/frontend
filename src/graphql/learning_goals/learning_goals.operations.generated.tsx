@@ -121,16 +121,6 @@ export type StartLearningGoalMutation = (
         { __typename?: 'LearningGoalStarted' }
         & Pick<Types.LearningGoalStarted, 'startedAt'>
       )> }
-    ), currentUser: (
-      { __typename?: 'CurrentUser' }
-      & { startedLearningGoals?: Types.Maybe<Array<(
-        { __typename?: 'LearningGoalStartedItem' }
-        & Pick<Types.LearningGoalStartedItem, 'startedAt'>
-        & { learningGoal: (
-          { __typename?: 'LearningGoal' }
-          & Pick<Types.LearningGoal, '_id'>
-        ) }
-      )>> }
     ) }
   ) }
 );

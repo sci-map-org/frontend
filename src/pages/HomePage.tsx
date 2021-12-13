@@ -9,12 +9,11 @@ import {
   Img,
   Stack,
   Text,
-  useBreakpointValue,
+  useBreakpointValue
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import dynamic from 'next/dynamic';
 import React, { ReactNode } from 'react';
-import { LearningGoalCardData } from '../components/learning_goals/cards/LearningGoalCard';
 import { LearningPathPreviewCardData } from '../components/learning_paths/LearningPathPreviewCard';
 import { Accordeon } from '../components/lib/Accordeon';
 import { InternalButtonLink } from '../components/navigation/InternalLink';
@@ -22,16 +21,11 @@ import { GlobalSearchBox } from '../components/navigation/search/GlobalSearchBox
 import { ResourceMiniCardData } from '../components/resources/ResourceMiniCard';
 import { ExploreMapProps } from '../components/topics/ExploreMap';
 import { useCurrentUser } from '../graphql/users/users.hooks';
-import { HomeTopicsRecommendations } from './home/HomeTopicsRecommendations';
-import { HomeLearningGoalsRecommendations } from './home/HomeLearningGoalsRecommendations';
 import { HomeLearningPathsRecommendations } from './home/HomeLearningPathsRecommendations';
+import { HomeTopicsRecommendations } from './home/HomeTopicsRecommendations';
 import { HomeUserResourcesHistory } from './home/HomeUserResourcesHistory';
-import { HomeUserStartedGoals } from './home/HomeUserStartedGoals';
 import { HomeUserStartedPaths, StartedLearningPathCardData } from './home/HomeUserStartedPaths';
 import { GetHomePageDataQuery, useGetHomePageDataQuery } from './HomePage.generated';
-
-const ExploreMap = dynamic<ExploreMapProps>(
-  () =>
     import('../components/topics/ExploreMap').then((res) => {
       const { ExploreMap } = res;
       return ExploreMap;
@@ -53,12 +47,6 @@ export const getHomePageData = gql`
             ...StartedLearningPathCardData
           }
         }
-        startedLearningGoals(options: {}) {
-          startedAt
-          learningGoal {
-            ...LearningGoalCardData
-          }
-        }
         consumedResources(options: { sorting: lastOpened, pagination: {}, filter: {} }) {
           count
           items {
@@ -70,16 +58,15 @@ export const getHomePageData = gql`
           }
         }
       }
-      recommendedLearningGoals {
-        ...LearningGoalCardData
-      }
+      # recommendedLearningGoals {
+      #   ...LearningGoalCardData
+      # }
       recommendedLearningPaths {
         ...LearningPathPreviewCardData
       }
     }
   }
   ${LearningPathPreviewCardData}
-  ${LearningGoalCardData}
   ${StartedLearningPathCardData}
   ${ResourceMiniCardData}
 `;
@@ -301,29 +288,21 @@ export const HomePage: React.FC = () => {
 
 const UserDashboard: React.FC<{ data?: GetHomePageDataQuery; loading?: boolean }> = ({ data, loading }) => {
   return (
-    <Flex direction="column" px="5%" mt={8}>
-      <Box>
-        <HomeUserStartedGoals
-          startedGoals={(data?.getHomePageData.currentUser?.startedLearningGoals || []).map((i) => i.learningGoal)}
+    <Flex direction={{ base: 'column', md: 'row' }} justifyContent="space-between" mt={8} px="5%">
+      <Box w={{ base: '100%', md: '45%' }}>
+        <HomeUserStartedPaths
+          startedPaths={(data?.getHomePageData.currentUser?.startedLearningPaths || []).map((i) => i.learningPath)}
           isLoading={loading}
         />
       </Box>
-      <Flex direction={{ base: 'column', md: 'row' }} justifyContent="space-between" mt={8}>
-        <Box w={{ base: '100%', md: '45%' }}>
-          <HomeUserStartedPaths
-            startedPaths={(data?.getHomePageData.currentUser?.startedLearningPaths || []).map((i) => i.learningPath)}
-            isLoading={loading}
-          />
-        </Box>
 
-        <Flex w={20} h={8}></Flex>
+      <Flex w={20} h={8}></Flex>
 
-        <Flex w={{ base: '100%', md: '45%' }}>
-          <HomeUserResourcesHistory
-            consumedResourcesItems={data?.getHomePageData.currentUser?.consumedResources?.items || []}
-            isLoading={loading}
-          />
-        </Flex>
+      <Flex w={{ base: '100%', md: '45%' }}>
+        <HomeUserResourcesHistory
+          consumedResourcesItems={data?.getHomePageData.currentUser?.consumedResources?.items || []}
+          isLoading={loading}
+        />
       </Flex>
     </Flex>
   );
@@ -336,19 +315,11 @@ const RecommendationsBlock: React.FC<{ data?: GetHomePageDataQuery; loading?: bo
 }) => {
   return (
     <>
-      <Center mb={3}>
-        <Flex direction={{ base: 'column', lg: 'row' }} flexGrow={1} justifyContent="space-between" {...layoutProps}>
-          <Flex maxWidth={{ base: '100%', lg: '60%' }} minWidth={{ lg: '40%' }}>
-            <HomeLearningGoalsRecommendations learningGoals={data?.getHomePageData.recommendedLearningGoals || []} />
-          </Flex>
-          <Flex w={20} h={8}></Flex>
-          <Flex minWidth={{ lg: '40%' }} maxWidth={{ lg: '60%' }} flexGrow={2}>
-            <HomeLearningPathsRecommendations
-              learningPaths={data?.getHomePageData.recommendedLearningPaths || []}
-              isLoading={loading}
-            />
-          </Flex>
-        </Flex>
+      <Center mb={3} {...layoutProps}>
+        <HomeLearningPathsRecommendations
+          learningPaths={data?.getHomePageData.recommendedLearningPaths || []}
+          isLoading={loading}
+        />
       </Center>
     </>
   );

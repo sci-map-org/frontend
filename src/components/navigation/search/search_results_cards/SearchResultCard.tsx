@@ -15,13 +15,11 @@ export const SearchResultCardData = gql`
   fragment SearchResultCardData on SearchResult {
     entity {
       ...SearchResultTopicCardData
-      ...SearchResultLearningGoalCardData
       ...SearchResultLearningPathCardData
       ...SearchResultResourceCardData
     }
   }
   ${SearchResultTopicCardData}
-  ${SearchResultLearningGoalCardData}
   ${SearchResultLearningPathCardData}
   ${SearchResultResourceCardData}
 `;

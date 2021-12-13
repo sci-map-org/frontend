@@ -1,6 +1,5 @@
 import * as Types from '../../../graphql/types';
 
-import { LearningGoalCardDataFragment } from '../../../components/learning_goals/cards/LearningGoalCard.generated';
 import * as Operations from './CurrentUserLearningGoalsPage';
 import * as Apollo from '@apollo/client';
 export type GetCurrentUserLearningGoalsPageQueryVariables = Types.Exact<{ [key: string]: never; }>;
@@ -11,21 +10,6 @@ export type GetCurrentUserLearningGoalsPageQuery = (
   & { currentUser?: Types.Maybe<(
     { __typename?: 'CurrentUser' }
     & Pick<Types.CurrentUser, '_id'>
-    & { startedLearningGoals?: Types.Maybe<Array<(
-      { __typename?: 'LearningGoalStartedItem' }
-      & Pick<Types.LearningGoalStartedItem, 'startedAt'>
-      & { learningGoal: (
-        { __typename?: 'LearningGoal' }
-        & LearningGoalCardDataFragment
-      ) }
-    )>>, createdLearningGoals?: Types.Maybe<Array<(
-      { __typename?: 'LearningGoalCreatedItem' }
-      & Pick<Types.LearningGoalCreatedItem, 'createdAt'>
-      & { learningGoal: (
-        { __typename?: 'LearningGoal' }
-        & LearningGoalCardDataFragment
-      ) }
-    )>> }
   )> }
 );
 
