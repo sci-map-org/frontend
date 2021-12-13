@@ -1,6 +1,6 @@
 import * as Types from '../../graphql/types';
 
-import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { ResourcePreviewCardDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { LearningPathPreviewCardDataFragment } from '../learning_paths/LearningPathPreviewCard.generated';
 export type LearningGoalRelevantLearningMaterialsDataFragment = (
   { __typename?: 'LearningGoal' }
@@ -12,7 +12,7 @@ export type LearningGoalRelevantLearningMaterialsDataFragment = (
       & Pick<Types.LearningGoalRelevantLearningMaterialsItem, 'coverage'>
       & { learningMaterial: (
         { __typename?: 'Resource' }
-        & ResourcePreviewDataFragment
+        & ResourcePreviewCardDataFragment
       ) | (
         { __typename?: 'LearningPath' }
         & LearningPathPreviewCardDataFragment

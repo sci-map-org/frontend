@@ -38,7 +38,7 @@ export const completeLearningPath = gql`
 
 export const updateLearningPath = gql`
   mutation updateLearningPath($_id: String!, $payload: UpdateLearningPathPayload!) {
-    updateLearningPath(_id: $_id, payload: $payload) {
+    updateLearningPath(learningPathId: $_id, payload: $payload) {
       ...LearningPathWithResourceItemsPreviewData
     }
   }
@@ -47,7 +47,7 @@ export const updateLearningPath = gql`
 
 export const deleteLearningPath = gql`
   mutation deleteLearningPath($_id: String!) {
-    deleteLearningPath(_id: $_id) {
+    deleteLearningPath(learningPathId: $_id) {
       _id
       success
     }

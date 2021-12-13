@@ -17,9 +17,11 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
+import gql from 'graphql-tag';
 import React, { forwardRef, ReactElement, ReactNode } from 'react';
-import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
-import { ResourceType } from '../../graphql/types';
+import { ResourceLinkDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { TopicLinkData } from '../../graphql/topics/topics.fragments';
+import { ResourceMediaType, ResourceType } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { EditResourcePageInfo, ResourcePageInfo } from '../../pages/RoutesPageInfos';
@@ -42,10 +44,18 @@ import { ResourceDescription } from './elements/ResourceDescription';
 import { ResourceTypeIcon } from './elements/ResourceType';
 import { ResourceUrlLinkViewer, ResourceUrlLinkWrapper } from './elements/ResourceUrl';
 import { ResourceYoutubePlayer } from './elements/ResourceYoutubePlayer';
+import { ResourcePreviewCardDataFragment } from './ResourcePreviewCard.generated';
 
+export const generateResourcePreviewCardData = (): ResourcePreviewCardDataFragment => ({
+  _id: Math.random().toString(),
+  name: 'My resource name',
+  type: ResourceType.Article,
+  url: 'https://myresource.url',
+  mediaType: ResourceMediaType.Text,
+  upvotes: 32,
+});
 interface ResourcePreviewCardProps {
-  domainKey?: string;
-  resource: ResourcePreviewDataFragment;
+  resource: ResourcePreviewCardDataFragment;
   onResourceConsumed?: (resourceId: string, consumed: boolean) => void;
   isLoading?: boolean;
   inCompactList?: boolean;
@@ -59,7 +69,6 @@ interface ResourcePreviewCardProps {
 export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCardProps>(
   (
     {
-      domainKey,
       resource,
       onResourceConsumed,
       isLoading,
@@ -89,7 +98,7 @@ export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCar
         firstItemInCompactList={firstItemInCompactList}
         onClick={() => !isLoading && routerPushToPage(ResourcePageInfo(resource))}
         renderRight={null}
-        renderBottom={<BottomBlock resource={resource} domainKey={domainKey} isLoading={isLoading} />}
+        renderBottom={<BottomBlock resource={resource} isLoading={isLoading} />}
       >
         <Flex direction="row" flexGrow={1} pt="4px">
           <Flex direction="column" flexGrow={1} justifyContent="center">
@@ -123,7 +132,7 @@ export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCar
 );
 
 const MainContentBlock: React.FC<{
-  resource: ResourcePreviewDataFragment;
+  resource: ResourcePreviewCardDataFragment;
   isLoading?: boolean;
   expandByDefault?: boolean;
 }> = ({ resource, isLoading, expandByDefault }) => {
@@ -165,7 +174,7 @@ const MainContentBlock: React.FC<{
   );
 };
 
-const TitleLink: React.FC<{ resource: ResourcePreviewDataFragment; isLoading?: boolean }> = ({
+const TitleLink: React.FC<{ resource: ResourcePreviewCardDataFragment; isLoading?: boolean }> = ({
   resource,
   isLoading,
 }) => {
@@ -188,10 +197,9 @@ const TitleLink: React.FC<{ resource: ResourcePreviewDataFragment; isLoading?: b
 };
 
 const BottomBlock: React.FC<{
-  domainKey?: string;
-  resource: ResourcePreviewDataFragment;
+  resource: ResourcePreviewCardDataFragment;
   isLoading?: boolean;
-}> = ({ domainKey, resource, isLoading }) => {
+}> = ({ resource, isLoading }) => {
   const { currentUser } = useCurrentUser();
   return (
     <Flex pb={2} pt={2} flexWrap="wrap">
@@ -220,10 +228,10 @@ const BottomBlock: React.FC<{
         </Stack>
       </BoxBlockDefaultClickPropagation>
       <Flex flexShrink={0} direction="column" justifyContent="center">
-        {resource.coveredConceptsByDomain && (
+        {!!resource.coveredSubTopics?.items && (
           <Skeleton isLoaded={!isLoading}>
             <BoxBlockDefaultClickPropagation>
-              <LearningMaterialCardCoveredTopics learningMaterial={resource} domainKey={domainKey} editable />
+              <LearningMaterialCardCoveredTopics learningMaterial={resource} editable />
             </BoxBlockDefaultClickPropagation>
           </Skeleton>
         )}
@@ -233,7 +241,7 @@ const BottomBlock: React.FC<{
 };
 
 const SubResourcesButtonPopover: React.FC<{
-  subResources: Pick<ResourcePreviewDataFragment, '_id' | 'name'>[];
+  subResources: Pick<ResourceLinkDataFragment, '_id' | 'name'>[];
   leftIcon: ReactElement;
   buttonText: string;
   headerTitle: string;
@@ -267,7 +275,7 @@ const SubResourcesButtonPopover: React.FC<{
 };
 
 const RightBlock: React.FC<{
-  resource: ResourcePreviewDataFragment;
+  resource: ResourcePreviewCardDataFragment;
   isLoading?: boolean;
   onResourceConsumed?: (resourceId: string, consumed: boolean) => void;
 }> = ({ resource, isLoading }) => {

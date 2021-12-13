@@ -14,27 +14,26 @@ export const getCurrentUserLearningGoalsPage = gql`
   query getCurrentUserLearningGoalsPage {
     currentUser {
       _id
-      startedLearningGoals(options: {}) {
-        startedAt
-        learningGoal {
-          ...LearningGoalCardData
-        }
-      }
-      createdLearningGoals(options: {}) {
-        createdAt
-        learningGoal {
-          ...LearningGoalCardData
-        }
-      }
+      # startedLearningGoals(options: {}) {
+      #   startedAt
+      #   learningGoal {
+      #     ...LearningGoalCardData
+      #   }
+      # }
+      # createdLearningGoals(options: {}) {
+      #   createdAt
+      #   learningGoal {
+      #     ...LearningGoalCardData
+      #   }
+      # }
     }
   }
-  ${LearningGoalCardData}
 `;
 
 const placeholderData: GetCurrentUserLearningGoalsPageQuery = {
   currentUser: {
     _id: '_id',
-    startedLearningGoals: [],
+    // startedLearningGoals: [],
   },
 };
 
@@ -50,27 +49,27 @@ export const CurrentUserLearningGoalsPage: React.FC<{}> = () => {
         Started Goals
       </Text>
 
-      {currentUser && currentUser.startedLearningGoals && (
+      {/* {currentUser && currentUser.startedLearningGoals && (
         <LearningGoalCardWrapper
           learningGoalItems={currentUser.startedLearningGoals}
           renderCard={({ learningGoal }, mouseHover) => (
             <LearningGoalCard learningGoal={learningGoal} mouseHover={mouseHover} />
           )}
         />
-      )}
+      )} */}
 
       <Text fontSize="3xl" mt={12} color="gray.700">
         Created Goals
       </Text>
 
-      {currentUser && currentUser.createdLearningGoals && (
+      {/* {currentUser && currentUser.createdLearningGoals && (
         <LearningGoalCardWrapper
           learningGoalItems={currentUser.createdLearningGoals}
           renderCard={({ learningGoal }, mouseHover) => (
             <LearningGoalCard learningGoal={learningGoal} mouseHover={mouseHover} />
           )}
         />
-      )}
+      )} */}
 
       <Center mt={6}>
         <PageButtonLink pageInfo={NewLearningGoalPageInfo} colorScheme="blue">

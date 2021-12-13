@@ -1,6 +1,5 @@
 import { AddIcon } from '@chakra-ui/icons';
 import { IconButton, Stack, Text, Wrap, WrapItem } from '@chakra-ui/react';
-import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { ResourceSelectorModal } from './ResourceSelector';
 import { SquareResourceCard, SquareResourceCardContainer } from './SquareResourceCard';
@@ -12,7 +11,6 @@ interface SquareResourceCardWrapperProps {
   onAdd?: (resource: ResourceDataFragment) => void;
   editable?: boolean;
   isLoading?: boolean;
-  defaultAttachedDomains?: DomainDataFragment[];
 }
 
 export const SquareResourceCardWrapper: React.FC<SquareResourceCardWrapperProps> = ({
@@ -21,7 +19,6 @@ export const SquareResourceCardWrapper: React.FC<SquareResourceCardWrapperProps>
   onAdd,
   editable,
   isLoading,
-  defaultAttachedDomains,
 }) => {
   return (
     <Wrap>
@@ -34,7 +31,6 @@ export const SquareResourceCardWrapper: React.FC<SquareResourceCardWrapperProps>
         <WrapItem>
           <ResourceSelectorModal
             onSelect={(subResource) => onAdd(subResource)}
-            defaultAttachedDomains={defaultAttachedDomains}
             renderTrigger={({ openModal }) => (
               <SquareResourceCardContainer onClick={() => openModal()}>
                 <Stack align="center" spacing={2}>

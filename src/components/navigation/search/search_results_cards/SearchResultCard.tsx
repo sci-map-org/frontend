@@ -1,31 +1,25 @@
 import gql from 'graphql-tag';
 import {
-  ConceptPageInfo,
-  DomainPageInfo,
   LearningGoalPageInfo,
   LearningPathPageInfo,
   ResourcePageInfo,
+  TopicPageInfo,
 } from '../../../../pages/RoutesPageInfos';
 import { SearchResultCardDataFragment } from './SearchResultCard.generated';
-import { SearchResultConceptCard, SearchResultConceptCardData } from './SearchResultConceptCard';
-import { SearchResultDomainCardData, SearchResultDomainCard } from './SearchResultDomainCard';
 import { SearchResultLearningGoalCard, SearchResultLearningGoalCardData } from './SearchResultLearningGoalCard';
 import { SearchResultLearningPathCard, SearchResultLearningPathCardData } from './SearchResultLearningPathCard';
 import { SearchResultResourceCard, SearchResultResourceCardData } from './SearchResultResourceCard';
+import { SearchResultTopicCard, SearchResultTopicCardData } from './SearchResultTopicCard';
 
 export const SearchResultCardData = gql`
   fragment SearchResultCardData on SearchResult {
     entity {
-      ...SearchResultDomainCardData
-      ...SearchResultConceptCardData
-      ...SearchResultLearningGoalCardData
+      ...SearchResultTopicCardData
       ...SearchResultLearningPathCardData
       ...SearchResultResourceCardData
     }
   }
-  ${SearchResultDomainCardData}
-  ${SearchResultConceptCardData}
-  ${SearchResultLearningGoalCardData}
+  ${SearchResultTopicCardData}
   ${SearchResultLearningPathCardData}
   ${SearchResultResourceCardData}
 `;
@@ -35,27 +29,11 @@ export const SearchResultCard: React.FC<{ searchResult: SearchResultCardDataFrag
   isHighlighted,
 }) => {
   switch (searchResult.entity.__typename) {
-    case 'Domain':
+    case 'Topic':
       return (
-        <SearchResultDomainCard
-          entityPageInfo={DomainPageInfo(searchResult.entity)}
-          domain={searchResult.entity}
-          isHighlighted={isHighlighted}
-        />
-      );
-    case 'Concept':
-      return searchResult.entity.domain ? (
-        <SearchResultConceptCard
-          entityPageInfo={ConceptPageInfo(searchResult.entity.domain, searchResult.entity)}
-          concept={searchResult.entity}
-          isHighlighted={isHighlighted}
-        />
-      ) : null;
-    case 'LearningGoal':
-      return (
-        <SearchResultLearningGoalCard
-          entityPageInfo={LearningGoalPageInfo(searchResult.entity)}
-          learningGoal={searchResult.entity}
+        <SearchResultTopicCard
+          entityPageInfo={TopicPageInfo(searchResult.entity)}
+          topic={searchResult.entity}
           isHighlighted={isHighlighted}
         />
       );

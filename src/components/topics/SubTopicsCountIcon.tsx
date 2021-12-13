@@ -1,6 +1,6 @@
 import { Stack, Text } from "@chakra-ui/layout"
 import { Tooltip } from "@chakra-ui/tooltip"
-import { ConceptIcon } from "../lib/icons/ConceptIcon"
+import { TopicIcon } from "../lib/icons/TopicIcon"
 
 interface SubTopicsCountIconProps{
     totalCount: number
@@ -13,7 +13,7 @@ export const SubTopicsCountIcon: React.FC<SubTopicsCountIconProps> = ({totalCoun
       <Text fontWeight={500} color="gray.700">
         {totalCount}
       </Text>
-      <ConceptIcon boxSize={5} color="gray.700" />
+      <TopicIcon boxSize={5} color="gray.700" />
     </Stack>
   </Tooltip>)
 }

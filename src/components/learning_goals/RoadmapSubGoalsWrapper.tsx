@@ -51,7 +51,7 @@ export const RoadmapSubGoalsWrapper: React.FC<RoadmapSubGoalsWrapperProps> = ({
               xl: `calc(25% - ${spacing})`,
             }}
             h="160px"
-            key={requiredSubGoalItem.subGoal._id}
+            // key={requiredSubGoalItem.subGoal._id}
           >
             {/* <SubGoalCard
               editMode={editMode}

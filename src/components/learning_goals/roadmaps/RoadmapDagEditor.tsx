@@ -60,26 +60,26 @@ export const RoadmapDagEditor: React.FC<RoadmapDagEditorProps> = ({ learningGoal
         subGoalsItems={subGoalsItems}
         renderingStage={renderingStage}
         renderNode={({ meta }, { nodePxWidth, nodePxHeight }, size) => {
-          if (meta.data.subGoal.__typename === 'LearningGoal') {
-            return (
-              <Box w={`${nodePxWidth}px`} h={`${nodePxHeight}px`} key={meta.data.subGoal._id}>
-                <LearningGoalSubGoalCardEditor
-                  learningGoal={meta.data.subGoal}
-                  status={meta.status}
-                  size={size}
-                  onRemove={async (subGoalId) => {
-                    await detachLearningGoalRequiresSubGoal({
-                      variables: { learningGoalId: learningGoalId, subGoalId: subGoalId },
-                    });
-                    rerenderDag();
-                  }}
-                  onEdit={(subGoalId) => editSubGoal(subGoalId)}
-                />
-              </Box>
-            );
-          } else {
-            return <Box />;
-          }
+          // if (meta.data.subGoal.__typename === 'LearningGoal') {
+          //   return (
+          //     <Box w={`${nodePxWidth}px`} h={`${nodePxHeight}px`} key={meta.data.subGoal._id}>
+          //       {/* <LearningGoalSubGoalCardEditor
+          //         learningGoal={meta.data.subGoal}
+          //         status={meta.status}
+          //         size={size}
+          //         onRemove={async (subGoalId) => {
+          //           await detachLearningGoalRequiresSubGoal({
+          //             variables: { learningGoalId: learningGoalId, subGoalId: subGoalId },
+          //           });
+          //           rerenderDag();
+          //         }}
+          //         onEdit={(subGoalId) => editSubGoal(subGoalId)}
+          //       /> */}
+          //     </Box>
+          //   );
+          // } else {
+          return <Box />;
+          // }
         }}
       />
       <Center mt={3}>
@@ -190,7 +190,7 @@ const SubGoalItemEditor: React.FC<{
         <Text fontWeight={600} color="gray.500">
           Depends On:
         </Text>
-        <EntitySelector
+        {/* <EntitySelector
           entitySuggestions={subGoalsItems
             .filter(
               ({ subGoal: suggestedSubGoal }) =>
@@ -210,7 +210,7 @@ const SubGoalItemEditor: React.FC<{
           }
           placeholder="Select subgoal"
           width="120px"
-        />
+        /> */}
       </Stack>
       <Stack>
         {dependsOnLearningGoals.map((dependency) =>

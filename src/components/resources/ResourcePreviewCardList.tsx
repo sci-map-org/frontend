@@ -1,14 +1,13 @@
 import { Flex, Spinner, Text } from '@chakra-ui/react';
-import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { ResourcePreviewCardDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { ResourcePreviewCard } from './ResourcePreviewCard';
 
 export const ResourcePreviewCardList: React.FC<{
-  domainKey: string;
-  resourcePreviews: ResourcePreviewDataFragment[];
+  resourcePreviews: ResourcePreviewCardDataFragment[];
   isLoading?: boolean;
   onResourceConsumed?: (resourceId: string, consumed: boolean) => void;
   showCompletedNotificationToast?: boolean;
-}> = ({ resourcePreviews, domainKey, isLoading, onResourceConsumed, showCompletedNotificationToast }) => {
+}> = ({ resourcePreviews, isLoading, onResourceConsumed, showCompletedNotificationToast }) => {
   if (!isLoading && !resourcePreviews.length)
     return (
       <Flex
@@ -45,7 +44,6 @@ export const ResourcePreviewCardList: React.FC<{
             inCompactList
             firstItemInCompactList={idx === 0}
             key={preview._id}
-            domainKey={domainKey}
             resource={preview}
             onResourceConsumed={onResourceConsumed}
             showCompletedNotificationToast={showCompletedNotificationToast}

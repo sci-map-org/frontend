@@ -2,13 +2,11 @@ import { CloseIcon, EditIcon } from '@chakra-ui/icons';
 import { Center, Flex, IconButton, LinkProps, Wrap, WrapItem } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { ReactElement, useMemo, useRef, useState } from 'react';
-import { ConceptData } from '../../graphql/concepts/concepts.fragments';
-import { DomainData } from '../../graphql/domains/domains.fragments';
 import { LearningGoalLinkData } from '../../graphql/learning_goals/learning_goals.fragments';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { LearningGoalPageInfo } from '../../pages/RoutesPageInfos';
 import { getChakraRelativeSize } from '../../util/chakra.util';
-import { ConceptBadge } from '../concepts/ConceptBadge';
+// import { ConceptBadge } from '../concepts/TopicBadge';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
 import { SubGoalStatus } from '../lib/DagreViewer';
@@ -18,18 +16,18 @@ import { LearningGoalBadge, LearningGoalBadgeData } from './LearningGoalBadge';
 import { LearningGoalCircularProgress, LearningGoalCircularProgressData } from './LearningGoalCircularProgress';
 import { LearningGoalSubGoalCardDataFragment } from './SubGoalCard.generated';
 
-export const ConceptSubGoalCardData = gql`
-  fragment ConceptSubGoalCardData on Concept {
-    _id
-    key
-    name
-    domain {
-      _id
-      key
-      name
-    }
-  }
-`;
+// export const ConceptSubGoalCardData = gql`
+//   fragment ConceptSubGoalCardData on Concept {
+//     _id
+//     key
+//     name
+//     domain {
+//       _id
+//       key
+//       name
+//     }
+//   }
+// `;
 
 export const LearningGoalSubGoalCardData = gql`
   fragment LearningGoalSubGoalCardData on LearningGoal {
@@ -42,11 +40,8 @@ export const LearningGoalSubGoalCardData = gql`
         ... on LearningGoal {
           ...LearningGoalBadgeData
         }
-        ... on Concept {
-          ...ConceptData
-          domain {
-            ...DomainData
-          }
+        ... on Topic {
+          _id
         }
       }
     }
@@ -57,8 +52,6 @@ export const LearningGoalSubGoalCardData = gql`
       parentLearningGoalId
     }
   }
-  ${ConceptData}
-  ${DomainData}
   ${LearningGoalLinkData}
   ${LearningGoalBadgeData}
   ${LearningGoalCircularProgressData}
@@ -67,14 +60,15 @@ export const LearningGoalSubGoalCardData = gql`
 export const SubGoalCardData = gql`
   fragment SubGoalCardData on SubGoalItem {
     subGoal {
-      ...LearningGoalSubGoalCardData
-      ...ConceptSubGoalCardData
+      ... on Topic {
+        _id
+      }
+      # ...LearningGoalSubGoalCardData
+      # ...ConceptSubGoalCardData
     }
     strength
     # to change to subgoal / make it compatible
   }
-  ${LearningGoalSubGoalCardData}
-  ${ConceptSubGoalCardData}
 `;
 
 // interface SubGoalCardProps {
@@ -193,7 +187,7 @@ export const LearningGoalSubGoalCard: React.FC<LearningGoalSubGoalCardProps> = (
                 <LearningGoalCircularProgress pxSize={{ sm: 15, md: 20, lg: 30 }[size]} learningGoal={learningGoal} />
               </Center>
             )}
-            {mouseHover && learningGoal.requiredSubGoals && !!learningGoal.requiredSubGoals.length && (
+            {/* {mouseHover && learningGoal.requiredSubGoals && !!learningGoal.requiredSubGoals.length && (
               <Wrap pt={2} pb={3} justifySelf="end" spacing={1}>
                 {learningGoal.requiredSubGoals.map((subGoalItem) => (
                   <WrapItem key={subGoalItem.subGoal._id}>
@@ -214,7 +208,7 @@ export const LearningGoalSubGoalCard: React.FC<LearningGoalSubGoalCardProps> = (
                   </WrapItem>
                 ))}
               </Wrap>
-            )}
+            )} */}
           </Flex>
         </>
       )}

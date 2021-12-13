@@ -6,7 +6,7 @@ import { LearningPathWithResourceItemsPreviewDataFragment } from '../../graphql/
 import { useUpdateLearningPathMutation } from '../../graphql/learning_paths/learning_paths.operations.generated';
 import {
   ResourceDataFragment,
-  ResourcePreviewDataFragment,
+  ResourcePreviewCardDataFragment,
 } from '../../graphql/resources/resources.fragments.generated';
 import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
 import { EditableTextarea } from '../lib/inputs/EditableTextarea';
@@ -36,10 +36,10 @@ const getArrowHeight = (resourceItemIndex: number, previewCardsHeight: number[])
 };
 
 interface StatelessLearningPathResourceItemsProps {
-  resourceItems: { description?: string | null; resource: ResourcePreviewDataFragment }[];
+  resourceItems: { description?: string | null; resource: ResourcePreviewCardDataFragment }[];
   updateDescription: (resourceId: string, description: string) => void;
-  addResourceItem: (resource: ResourcePreviewDataFragment) => void;
-  removeResourceItem: (resource: ResourcePreviewDataFragment) => void;
+  addResourceItem: (resource: ResourcePreviewCardDataFragment) => void;
+  removeResourceItem: (resource: ResourcePreviewCardDataFragment) => void;
   reorderResourceItems: (originIndex: number, destinationIndex: number) => void;
   confirmDeletion?: boolean;
   editMode?: boolean;
@@ -177,7 +177,7 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
 };
 
 interface LearningPathResourceItemProps {
-  resourceItem: { description?: string | null; resource: ResourcePreviewDataFragment };
+  resourceItem: { description?: string | null; resource: ResourcePreviewCardDataFragment };
   updateDescription: (description: string) => void;
   onResourceConsumed?: (resourceId: string, consumed: boolean) => void;
   isLoading?: boolean;

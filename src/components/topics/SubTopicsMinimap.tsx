@@ -4,11 +4,11 @@ import { Box, Center, Text } from '@chakra-ui/layout';
 import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay } from '@chakra-ui/modal';
 import { CgArrowsExpandRight } from '@react-icons/all-files/cg/CgArrowsExpandRight';
 import dynamic from 'next/dynamic';
-import Router from 'next/router';
 import { useRef } from 'react';
 import { PuffLoader } from 'react-spinners';
+import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import { routerPushToPage } from '../../pages/PageInfo';
-import { ConceptPagePath, DomainPageInfo } from '../../pages/RoutesPageInfos';
+import { TopicPageInfo } from '../../pages/RoutesPageInfos';
 import { theme } from '../../theme/theme';
 import { useElementSize } from '../../util/useElementSize';
 import { SubTopicsMapVisualisationProps } from './SubTopicsMapVisualisation';
@@ -24,20 +24,18 @@ const SubTopicsMapVisualisation = dynamic<SubTopicsMapVisualisationProps>(
 );
 
 interface SubTopicsMinimapProps {
-  domainKey: string;
   isLoading: boolean;
   topic: MapVisualisationTopicDataFragment;
   subTopics: MapVisualisationTopicDataFragment[];
-  parentTopics?: MapVisualisationTopicDataFragment[];
+  parentTopic?: TopicLinkDataFragment;
   pxWidth?: number;
   pxHeight?: number;
 }
 
 export const SubTopicsMinimap: React.FC<SubTopicsMinimapProps> = ({
-  domainKey,
   topic,
   subTopics,
-  parentTopics,
+  parentTopic,
   isLoading,
   pxWidth = 300,
   pxHeight = 200,
@@ -63,15 +61,11 @@ export const SubTopicsMinimap: React.FC<SubTopicsMinimapProps> = ({
       ) : subTopics.length ? (
         <SubTopicsMapVisualisation
           topic={topic}
-          domainKey={domainKey}
           subTopics={subTopics}
-          parentTopics={parentTopics}
+          parentTopic={parentTopic}
           pxWidth={pxWidth}
           pxHeight={pxHeight}
-          onClick={(n) => {
-            n.__typename === 'Domain' && routerPushToPage(DomainPageInfo(n));
-            n.__typename === 'Concept' && domainKey && Router.push(ConceptPagePath(domainKey, n.key));
-          }}
+          onClick={(n) => routerPushToPage(TopicPageInfo(n))}
         />
       ) : (
         <Center w="100%" h="100%">
@@ -102,9 +96,8 @@ export const SubTopicsMinimap: React.FC<SubTopicsMinimapProps> = ({
           <ModalCloseButton />
           <ModalBody justifyContent="stretch" alignItems="stretch">
             <SubTopicsMapModalContent
-              parentTopics={parentTopics}
+              parentTopic={parentTopic}
               topic={topic}
-              domainKey={domainKey}
               subTopics={subTopics}
             />
           </ModalBody>
@@ -116,10 +109,9 @@ export const SubTopicsMinimap: React.FC<SubTopicsMinimapProps> = ({
 
 const SubTopicsMapModalContent: React.FC<{
   subTopics: MapVisualisationTopicDataFragment[];
-  parentTopics?: MapVisualisationTopicDataFragment[];
-  domainKey: string;
   topic: MapVisualisationTopicDataFragment;
-}> = ({ subTopics, domainKey, topic, parentTopics }) => {
+  parentTopic?: TopicLinkDataFragment;
+}> = ({ subTopics, topic, parentTopic }) => {
   const modalContainerRef = useRef<HTMLDivElement>(null);
   const modalContainerSize = useElementSize(modalContainerRef);
 
@@ -136,16 +128,12 @@ const SubTopicsMapModalContent: React.FC<{
     >
       {modalContainerSize && (
         <SubTopicsMapVisualisation
-          domainKey={domainKey}
           topic={topic}
           subTopics={subTopics}
-          parentTopics={parentTopics}
+          parentTopic={parentTopic}
           pxWidth={modalContainerSize.width}
           pxHeight={modalContainerSize.width}
-          onClick={(n) => {
-            n.__typename === 'Domain' && routerPushToPage(DomainPageInfo(n));
-            n.__typename === 'Concept' && domainKey && Router.push(ConceptPagePath(domainKey, n.key));
-          }}
+          onClick={(n) => routerPushToPage(TopicPageInfo(n))}
         />
       )}
     </Box>

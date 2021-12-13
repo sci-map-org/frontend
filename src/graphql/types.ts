@@ -14,29 +14,31 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query';
   getHomePageData: GetHomePageDataResults;
-  getTopLevelDomains: GetTopLevelDomainsResults;
+  getTopLevelTopics: GetTopLevelTopicsResults;
   globalSearch: GlobalSearchResults;
-  getTopicById: ITopic;
+  getTopicById: Topic;
+  getTopicByKey: Topic;
   searchTopics: SearchTopicsResult;
   searchSubTopics: SearchTopicsResult;
+  autocompleteTopicName: SearchTopicsResult;
   checkTopicKeyAvailability: CheckTopicKeyAvailabilityResult;
+  getTopicValidContexts: GetTopicValidContextsResult;
+  getTopicValidContextsFromSameName: GetTopicValidContextsFromSameName;
+  getTopicValidContextsFromDisambiguation: GetTopicValidContextsFromDisambiguation;
   currentUser?: Maybe<CurrentUser>;
   getUser: User;
   getArticleByKey: Article;
   listArticles: ListArticlesResult;
-  searchDomains: SearchDomainsResult;
-  getDomainByKey: Domain;
   searchLearningMaterialTags: Array<LearningMaterialTagSearchResult>;
   searchResources: SearchResourcesResult;
   getResourceById: Resource;
+  getResourceByKey: Resource;
   analyzeResourceUrl: AnalyzeResourceUrlResult;
-  getConcept: Concept;
-  getDomainConceptByKey: Concept;
-  getLearningPath: LearningPath;
+  getLearningPathById: LearningPath;
   getLearningPathByKey: LearningPath;
   searchLearningGoals: SearchLearningGoalsResult;
   getLearningGoalByKey: LearningGoal;
-  getDomainLearningGoalByKey: DomainAndLearningGoalResult;
+  checkLearningGoalKeyAvailability: CheckLearningGoalKeyAvailabilityResult;
 };
 
 
@@ -51,21 +53,47 @@ export type QueryGetTopicByIdArgs = {
 };
 
 
+export type QueryGetTopicByKeyArgs = {
+  topicKey: Scalars['String'];
+};
+
+
 export type QuerySearchTopicsArgs = {
   options: SearchTopicsOptions;
 };
 
 
 export type QuerySearchSubTopicsArgs = {
-  domainId: Scalars['String'];
+  topicId: Scalars['String'];
   options: SearchTopicsOptions;
+};
+
+
+export type QueryAutocompleteTopicNameArgs = {
+  partialName: Scalars['String'];
 };
 
 
 export type QueryCheckTopicKeyAvailabilityArgs = {
   key: Scalars['String'];
-  topicType: TopicType;
-  domainKey?: Maybe<Scalars['String']>;
+};
+
+
+export type QueryGetTopicValidContextsArgs = {
+  parentTopicId: Scalars['String'];
+  topicId: Scalars['String'];
+};
+
+
+export type QueryGetTopicValidContextsFromSameNameArgs = {
+  parentTopicId: Scalars['String'];
+  existingSameNameTopicId: Scalars['String'];
+};
+
+
+export type QueryGetTopicValidContextsFromDisambiguationArgs = {
+  parentTopicId: Scalars['String'];
+  disambiguationTopicId: Scalars['String'];
 };
 
 
@@ -84,16 +112,6 @@ export type QueryListArticlesArgs = {
 };
 
 
-export type QuerySearchDomainsArgs = {
-  options: SearchDomainsOptions;
-};
-
-
-export type QueryGetDomainByKeyArgs = {
-  key: Scalars['String'];
-};
-
-
 export type QuerySearchLearningMaterialTagsArgs = {
   options: SearchLearningMaterialTagsOptions;
 };
@@ -106,7 +124,12 @@ export type QuerySearchResourcesArgs = {
 
 
 export type QueryGetResourceByIdArgs = {
-  id: Scalars['String'];
+  resourceId: Scalars['String'];
+};
+
+
+export type QueryGetResourceByKeyArgs = {
+  resourceKey: Scalars['String'];
 };
 
 
@@ -115,24 +138,13 @@ export type QueryAnalyzeResourceUrlArgs = {
 };
 
 
-export type QueryGetConceptArgs = {
-  _id: Scalars['String'];
-};
-
-
-export type QueryGetDomainConceptByKeyArgs = {
-  domainKey: Scalars['String'];
-  conceptKey: Scalars['String'];
-};
-
-
-export type QueryGetLearningPathArgs = {
-  _id: Scalars['String'];
+export type QueryGetLearningPathByIdArgs = {
+  learningPathId: Scalars['String'];
 };
 
 
 export type QueryGetLearningPathByKeyArgs = {
-  key: Scalars['String'];
+  learningPathKey: Scalars['String'];
 };
 
 
@@ -146,13 +158,20 @@ export type QueryGetLearningGoalByKeyArgs = {
 };
 
 
-export type QueryGetDomainLearningGoalByKeyArgs = {
-  domainKey: Scalars['String'];
-  learningGoalKey: Scalars['String'];
+export type QueryCheckLearningGoalKeyAvailabilityArgs = {
+  key: Scalars['String'];
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createTopic: Topic;
+  createDisambiguationFromTopic: Topic;
+  addSubTopic: Topic;
+  updateTopic: Topic;
+  deleteTopic: DeleteTopicResponse;
+  setTopicsKnown: Array<Topic>;
+  setTopicsUnknown: Array<Topic>;
+  updateTopicContext: Topic;
   login: LoginResponse;
   loginGoogle: LoginResponse;
   register: CurrentUser;
@@ -165,33 +184,19 @@ export type Mutation = {
   createArticle: Article;
   updateArticle: Article;
   deleteArticle: DeleteArticleResponse;
-  createDomain: Domain;
-  updateDomain: Domain;
-  deleteDomain: DeleteDomainResponse;
   addTagsToLearningMaterial: LearningMaterial;
   removeTagsFromLearningMaterial: LearningMaterial;
-  attachLearningMaterialToDomain: LearningMaterial;
-  detachLearningMaterialFromDomain: LearningMaterial;
-  attachLearningMaterialCoversConcepts: LearningMaterial;
-  detachLearningMaterialCoversConcepts: LearningMaterial;
+  recommendLearningMaterial: LearningMaterial;
+  showLearningMaterialInTopic: LearningMaterial;
+  hideLearningMaterialFromTopic: LearningMaterial;
   rateLearningMaterial: LearningMaterial;
-  addLearningMaterialPrerequisite: LearningMaterial;
-  removeLearningMaterialPrerequisite: LearningMaterial;
-  addLearningMaterialOutcome: LearningMaterial;
-  removeLearningMaterialOutcome: LearningMaterial;
   createResource: Resource;
   updateResource: Resource;
   deleteResource: DeleteResourceResponse;
   setResourcesConsumed: Array<Resource>;
-  voteResource: Resource;
   addSubResource: SubResourceCreatedResult;
   createSubResourceSeries: SubResourceSeriesCreatedResult;
   addSubResourceToSeries: SubResourceSeriesCreatedResult;
-  addConceptToDomain: AddConceptToDomainResult;
-  updateConcept: Concept;
-  deleteConcept: DeleteConceptResult;
-  setConceptsKnown: Array<Concept>;
-  setConceptsUnknown: Array<Concept>;
   createLearningPath: LearningPath;
   updateLearningPath: LearningPath;
   deleteLearningPath: DeleteLearningPathResult;
@@ -200,8 +205,6 @@ export type Mutation = {
   startLearningPath: LearningPathStartedResult;
   completeLearningPath: LearningPathCompletedResult;
   createLearningGoal: LearningGoal;
-  attachLearningGoalToDomain: DomainAndLearningGoalResult;
-  detachLearningGoalFromDomain: DomainAndLearningGoalResult;
   updateLearningGoal: LearningGoal;
   deleteLearningGoal: DeleteLearningGoalMutationResult;
   attachLearningGoalRequiresSubGoal: AttachLearningGoalRequiresSubGoalResult;
@@ -211,13 +214,66 @@ export type Mutation = {
   startLearningGoal: LearningGoalStartedResult;
   publishLearningGoal: LearningGoalPublishedResult;
   indexLearningGoal: LearningGoalIndexedResult;
+  showLearningGoalInTopic: ShowLearningGoalInTopicResult;
+  hideLearningGoalFromTopic: ShowLearningGoalInTopicResult;
   rateLearningGoal: LearningGoal;
-  updateConceptBelongsToDomain: ConceptBelongsToDomain;
-  addConceptReferencesConcept: UpdateConceptReferencesConceptResult;
-  removeConceptReferencesConcept: UpdateConceptReferencesConceptResult;
+  addTopicHasPrerequisiteTopic: AddTopicHasPrerequisiteTopicResult;
+  removeTopicHasPrerequisiteTopic: RemoveTopicHasPrerequisiteTopicResult;
   attachTopicIsSubTopicOfTopic: TopicIsSubTopicOfTopic;
   updateTopicIsSubTopicOfTopic: TopicIsSubTopicOfTopic;
   detachTopicIsSubTopicOfTopic: DetachTopicIsSubTopicOfTopicResult;
+  attachTopicIsPartOfTopic: TopicIsPartOfTopic;
+  updateTopicIsPartOfTopic: TopicIsPartOfTopic;
+  detachTopicIsPartOfTopic: DetachTopicIsPartOfTopicResult;
+  attachLearningMaterialCoversTopics: LearningMaterial;
+  detachLearningMaterialCoversTopics: LearningMaterial;
+  addLearningMaterialHasPrerequisiteTopic: LearningMaterial;
+  removeLearningMaterialHasPrerequisiteTopic: LearningMaterial;
+};
+
+
+export type MutationCreateTopicArgs = {
+  payload: CreateTopicPayload;
+};
+
+
+export type MutationCreateDisambiguationFromTopicArgs = {
+  existingTopicId: Scalars['String'];
+  existingTopicContextTopicId: Scalars['String'];
+};
+
+
+export type MutationAddSubTopicArgs = {
+  parentTopicId: Scalars['String'];
+  payload: CreateTopicPayload;
+  contextOptions?: Maybe<CreateTopicContextOptions>;
+};
+
+
+export type MutationUpdateTopicArgs = {
+  topicId: Scalars['String'];
+  payload: UpdateTopicPayload;
+};
+
+
+export type MutationDeleteTopicArgs = {
+  topicId: Scalars['String'];
+};
+
+
+export type MutationSetTopicsKnownArgs = {
+  payload: SetTopicsKnownPayload;
+};
+
+
+export type MutationSetTopicsUnknownArgs = {
+  topicIds: Array<Scalars['String']>;
+};
+
+
+export type MutationUpdateTopicContextArgs = {
+  topicId: Scalars['String'];
+  contextTopicId: Scalars['String'];
 };
 
 
@@ -286,22 +342,6 @@ export type MutationDeleteArticleArgs = {
 };
 
 
-export type MutationCreateDomainArgs = {
-  payload: CreateDomainPayload;
-};
-
-
-export type MutationUpdateDomainArgs = {
-  id: Scalars['String'];
-  payload: UpdateDomainPayload;
-};
-
-
-export type MutationDeleteDomainArgs = {
-  id: Scalars['String'];
-};
-
-
 export type MutationAddTagsToLearningMaterialArgs = {
   learningMaterialId: Scalars['String'];
   tags: Array<Scalars['String']>;
@@ -314,27 +354,20 @@ export type MutationRemoveTagsFromLearningMaterialArgs = {
 };
 
 
-export type MutationAttachLearningMaterialToDomainArgs = {
-  domainId: Scalars['String'];
+export type MutationRecommendLearningMaterialArgs = {
   learningMaterialId: Scalars['String'];
 };
 
 
-export type MutationDetachLearningMaterialFromDomainArgs = {
-  domainId: Scalars['String'];
+export type MutationShowLearningMaterialInTopicArgs = {
+  topicId: Scalars['String'];
   learningMaterialId: Scalars['String'];
 };
 
 
-export type MutationAttachLearningMaterialCoversConceptsArgs = {
+export type MutationHideLearningMaterialFromTopicArgs = {
+  topicId: Scalars['String'];
   learningMaterialId: Scalars['String'];
-  conceptIds: Array<Scalars['String']>;
-};
-
-
-export type MutationDetachLearningMaterialCoversConceptsArgs = {
-  learningMaterialId: Scalars['String'];
-  conceptIds: Array<Scalars['String']>;
 };
 
 
@@ -344,54 +377,24 @@ export type MutationRateLearningMaterialArgs = {
 };
 
 
-export type MutationAddLearningMaterialPrerequisiteArgs = {
-  learningMaterialId: Scalars['String'];
-  prerequisiteLearningGoalId: Scalars['String'];
-};
-
-
-export type MutationRemoveLearningMaterialPrerequisiteArgs = {
-  learningMaterialId: Scalars['String'];
-  prerequisiteLearningGoalId: Scalars['String'];
-};
-
-
-export type MutationAddLearningMaterialOutcomeArgs = {
-  learningMaterialId: Scalars['String'];
-  outcomeLearningGoalId: Scalars['String'];
-};
-
-
-export type MutationRemoveLearningMaterialOutcomeArgs = {
-  learningMaterialId: Scalars['String'];
-  outcomeLearningGoalId: Scalars['String'];
-};
-
-
 export type MutationCreateResourceArgs = {
   payload: CreateResourcePayload;
 };
 
 
 export type MutationUpdateResourceArgs = {
-  _id: Scalars['String'];
+  resourceId: Scalars['String'];
   payload: UpdateResourcePayload;
 };
 
 
 export type MutationDeleteResourceArgs = {
-  _id: Scalars['String'];
+  resourceId: Scalars['String'];
 };
 
 
 export type MutationSetResourcesConsumedArgs = {
   payload: SetResourcesConsumedPayload;
-};
-
-
-export type MutationVoteResourceArgs = {
-  resourceId: Scalars['String'];
-  value: ResourceVoteValue;
 };
 
 
@@ -414,47 +417,19 @@ export type MutationAddSubResourceToSeriesArgs = {
 };
 
 
-export type MutationAddConceptToDomainArgs = {
-  domainId: Scalars['String'];
-  parentTopicId: Scalars['String'];
-  payload: AddConceptToDomainPayload;
-};
-
-
-export type MutationUpdateConceptArgs = {
-  _id: Scalars['String'];
-  payload: UpdateConceptPayload;
-};
-
-
-export type MutationDeleteConceptArgs = {
-  _id: Scalars['String'];
-};
-
-
-export type MutationSetConceptsKnownArgs = {
-  payload: SetConceptKnownPayload;
-};
-
-
-export type MutationSetConceptsUnknownArgs = {
-  conceptIds: Array<Scalars['String']>;
-};
-
-
 export type MutationCreateLearningPathArgs = {
   payload: CreateLearningPathPayload;
 };
 
 
 export type MutationUpdateLearningPathArgs = {
-  _id: Scalars['String'];
+  learningPathId: Scalars['String'];
   payload: UpdateLearningPathPayload;
 };
 
 
 export type MutationDeleteLearningPathArgs = {
-  _id: Scalars['String'];
+  learningPathId: Scalars['String'];
 };
 
 
@@ -484,19 +459,6 @@ export type MutationCompleteLearningPathArgs = {
 export type MutationCreateLearningGoalArgs = {
   payload: CreateLearningGoalPayload;
   options?: Maybe<CreateLearningGoalOptions>;
-};
-
-
-export type MutationAttachLearningGoalToDomainArgs = {
-  learningGoalId: Scalars['String'];
-  domainId: Scalars['String'];
-  payload: AttachLearningGoalToDomainPayload;
-};
-
-
-export type MutationDetachLearningGoalFromDomainArgs = {
-  learningGoalId: Scalars['String'];
-  domainId: Scalars['String'];
 };
 
 
@@ -553,28 +515,35 @@ export type MutationIndexLearningGoalArgs = {
 };
 
 
+export type MutationShowLearningGoalInTopicArgs = {
+  topicId: Scalars['String'];
+  learningGoalId: Scalars['String'];
+  payload: ShowLearningGoalInTopicPayload;
+};
+
+
+export type MutationHideLearningGoalFromTopicArgs = {
+  topicId: Scalars['String'];
+  learningGoalId: Scalars['String'];
+};
+
+
 export type MutationRateLearningGoalArgs = {
   learningGoalId: Scalars['String'];
   value: Scalars['Float'];
 };
 
 
-export type MutationUpdateConceptBelongsToDomainArgs = {
-  conceptId: Scalars['String'];
-  domainId: Scalars['String'];
-  payload: UpdateConceptBelongsToDomainPayload;
+export type MutationAddTopicHasPrerequisiteTopicArgs = {
+  topicId: Scalars['String'];
+  prerequisiteTopicId: Scalars['String'];
+  strength?: Maybe<Scalars['Float']>;
 };
 
 
-export type MutationAddConceptReferencesConceptArgs = {
-  conceptId: Scalars['String'];
-  referencedConceptId: Scalars['String'];
-};
-
-
-export type MutationRemoveConceptReferencesConceptArgs = {
-  conceptId: Scalars['String'];
-  referencedConceptId: Scalars['String'];
+export type MutationRemoveTopicHasPrerequisiteTopicArgs = {
+  topicId: Scalars['String'];
+  prerequisiteTopicId: Scalars['String'];
 };
 
 
@@ -598,16 +567,60 @@ export type MutationDetachTopicIsSubTopicOfTopicArgs = {
 };
 
 
+export type MutationAttachTopicIsPartOfTopicArgs = {
+  partOfTopicId: Scalars['String'];
+  subTopicId: Scalars['String'];
+  payload: AttachTopicIsPartOfTopicPayload;
+};
+
+
+export type MutationUpdateTopicIsPartOfTopicArgs = {
+  partOfTopicId: Scalars['String'];
+  subTopicId: Scalars['String'];
+  payload: UpdateTopicIsPartOfTopicPayload;
+};
+
+
+export type MutationDetachTopicIsPartOfTopicArgs = {
+  partOfTopicId: Scalars['String'];
+  subTopicId: Scalars['String'];
+};
+
+
+export type MutationAttachLearningMaterialCoversTopicsArgs = {
+  learningMaterialId: Scalars['String'];
+  topicsIds: Array<Scalars['String']>;
+};
+
+
+export type MutationDetachLearningMaterialCoversTopicsArgs = {
+  learningMaterialId: Scalars['String'];
+  topicsIds: Array<Scalars['String']>;
+};
+
+
+export type MutationAddLearningMaterialHasPrerequisiteTopicArgs = {
+  learningMaterialId: Scalars['String'];
+  prerequisiteTopicId: Scalars['String'];
+  strength?: Maybe<Scalars['Float']>;
+};
+
+
+export type MutationRemoveLearningMaterialHasPrerequisiteTopicArgs = {
+  learningMaterialId: Scalars['String'];
+  prerequisiteTopicId: Scalars['String'];
+};
+
+
 export type GetHomePageDataResults = {
   __typename?: 'GetHomePageDataResults';
   currentUser?: Maybe<CurrentUser>;
-  recommendedLearningGoals: Array<LearningGoal>;
   recommendedLearningPaths: Array<LearningPath>;
 };
 
-export type GetTopLevelDomainsResults = {
-  __typename?: 'GetTopLevelDomainsResults';
-  items: Array<Domain>;
+export type GetTopLevelTopicsResults = {
+  __typename?: 'GetTopLevelTopicsResults';
+  items: Array<Topic>;
 };
 
 export type GlobalSearchResults = {
@@ -619,43 +632,66 @@ export type GlobalSearchOptions = {
   pagination?: Maybe<PaginationOptions>;
 };
 
-export type ITopic = {
+export type Topic = {
+  __typename?: 'Topic';
   _id: Scalars['String'];
   name: Scalars['String'];
   key: Scalars['String'];
+  context?: Maybe<Scalars['String']>;
+  isDisambiguation?: Maybe<Scalars['Boolean']>;
+  contextTopic?: Maybe<Topic>;
+  otherContextsTopics?: Maybe<Array<Topic>>;
+  disambiguationTopic?: Maybe<Topic>;
+  contextualisedTopics?: Maybe<Array<Topic>>;
   description?: Maybe<Scalars['String']>;
-  topicType: TopicType;
-  size?: Maybe<Scalars['Float']>;
+  parentTopic?: Maybe<Topic>;
+  partOfTopics?: Maybe<Array<TopicIsPartOfTopic>>;
   subTopics?: Maybe<Array<TopicIsSubTopicOfTopic>>;
+  subTopicsTotalCount?: Maybe<Scalars['Int']>;
+  learningMaterials?: Maybe<TopicLearningMaterialsResults>;
+  learningMaterialsTotalCount?: Maybe<Scalars['Int']>;
+  prerequisites?: Maybe<Array<TopicHasPrerequisiteTopic>>;
+  followUps?: Maybe<Array<TopicHasPrerequisiteTopic>>;
+  createdBy?: Maybe<User>;
+  createdAt: Scalars['Date'];
 };
 
 
-export type ITopicSubTopicsArgs = {
-  options: TopicSubTopicsOptions;
+export type TopicLearningMaterialsArgs = {
+  options: TopicLearningMaterialsOptions;
 };
 
 export type SearchTopicsResult = {
   __typename?: 'SearchTopicsResult';
-  items: Array<ITopic>;
+  items: Array<Topic>;
 };
 
 export type SearchTopicsOptions = {
   query: Scalars['String'];
   pagination: PaginationOptions;
-  filter?: Maybe<SearchTopicsFilterOptions>;
 };
 
 export type CheckTopicKeyAvailabilityResult = {
   __typename?: 'CheckTopicKeyAvailabilityResult';
   available: Scalars['Boolean'];
-  existingTopic?: Maybe<ITopic>;
+  existingTopic?: Maybe<Topic>;
 };
 
-export enum TopicType {
-  Domain = 'Domain',
-  Concept = 'Concept',
-  LearningGoal = 'LearningGoal'
-}
+export type GetTopicValidContextsResult = {
+  __typename?: 'GetTopicValidContextsResult';
+  validContexts?: Maybe<Array<Topic>>;
+};
+
+export type GetTopicValidContextsFromSameName = {
+  __typename?: 'GetTopicValidContextsFromSameName';
+  validContexts?: Maybe<Array<Topic>>;
+  validSameNameTopicContexts?: Maybe<Array<Topic>>;
+};
+
+export type GetTopicValidContextsFromDisambiguation = {
+  __typename?: 'GetTopicValidContextsFromDisambiguation';
+  validContexts?: Maybe<Array<Topic>>;
+};
 
 export type CurrentUser = {
   __typename?: 'CurrentUser';
@@ -669,8 +705,6 @@ export type CurrentUser = {
   articles?: Maybe<ListArticlesResult>;
   createdLearningPaths?: Maybe<Array<LearningPath>>;
   startedLearningPaths?: Maybe<Array<LearningPathStartedItem>>;
-  createdLearningGoals?: Maybe<Array<LearningGoalCreatedItem>>;
-  startedLearningGoals?: Maybe<Array<LearningGoalStartedItem>>;
   consumedResources?: Maybe<UserConsumedResourcesResult>;
 };
 
@@ -687,16 +721,6 @@ export type CurrentUserCreatedLearningPathsArgs = {
 
 export type CurrentUserStartedLearningPathsArgs = {
   options: UserLearningPathsOptions;
-};
-
-
-export type CurrentUserCreatedLearningGoalsArgs = {
-  options: UserLearningGoalsOptions;
-};
-
-
-export type CurrentUserStartedLearningGoalsArgs = {
-  options: UserLearningGoalsOptions;
 };
 
 
@@ -741,65 +765,6 @@ export type ListArticlesOptions = {
   pagination?: Maybe<PaginationOptions>;
 };
 
-export type SearchDomainsResult = {
-  __typename?: 'SearchDomainsResult';
-  items: Array<Domain>;
-};
-
-export type SearchDomainsOptions = {
-  query?: Maybe<Scalars['String']>;
-  pagination: PaginationOptions;
-};
-
-export type Domain = ITopic & {
-  __typename?: 'Domain';
-  _id: Scalars['String'];
-  name: Scalars['String'];
-  key: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-  topicType: TopicType;
-  size?: Maybe<Scalars['Float']>;
-  subTopics?: Maybe<Array<TopicIsSubTopicOfTopic>>;
-  parentTopics?: Maybe<Array<TopicIsSubTopicOfTopic>>;
-  concepts?: Maybe<DomainConceptsResults>;
-  conceptTotalCount?: Maybe<Scalars['Int']>;
-  resources?: Maybe<DomainResourcesResults>;
-  learningPaths?: Maybe<DomainLearningPathsResults>;
-  learningMaterials?: Maybe<DomainLearningMaterialsResults>;
-  learningMaterialsTotalCount?: Maybe<Scalars['Int']>;
-  learningGoals?: Maybe<Array<LearningGoalBelongsToDomain>>;
-};
-
-
-export type DomainSubTopicsArgs = {
-  options: TopicSubTopicsOptions;
-};
-
-
-export type DomainParentTopicsArgs = {
-  options: TopicSubTopicsOptions;
-};
-
-
-export type DomainConceptsArgs = {
-  options: DomainConceptsOptions;
-};
-
-
-export type DomainResourcesArgs = {
-  options: DomainResourcesOptions;
-};
-
-
-export type DomainLearningPathsArgs = {
-  options: DomainLearningPathsOptions;
-};
-
-
-export type DomainLearningMaterialsArgs = {
-  options: DomainLearningMaterialsOptions;
-};
-
 export type LearningMaterialTagSearchResult = {
   __typename?: 'LearningMaterialTagSearchResult';
   name: Scalars['String'];
@@ -833,23 +798,23 @@ export type Resource = LearningMaterial & {
   description?: Maybe<Scalars['String']>;
   durationSeconds?: Maybe<Scalars['Int']>;
   consumed?: Maybe<ConsumedResource>;
-  creator?: Maybe<User>;
-  coveredConcepts?: Maybe<LearningMaterialCoveredConceptsResults>;
-  coveredConceptsByDomain?: Maybe<Array<LearningMaterialCoveredConceptsByDomainItem>>;
-  domains?: Maybe<Array<Domain>>;
   subResources?: Maybe<Array<Resource>>;
   parentResources?: Maybe<Array<Resource>>;
   subResourceSeries?: Maybe<Array<Resource>>;
   seriesParentResource?: Maybe<Resource>;
   nextResource?: Maybe<Resource>;
   previousResource?: Maybe<Resource>;
-  prerequisites?: Maybe<Array<LearningMaterialPrerequisiteItem>>;
-  outcomes?: Maybe<Array<LearningMaterialOutcomeItem>>;
+  coveredSubTopics?: Maybe<LearningMaterialCoveredSubTopicsResults>;
+  coveredSubTopicsTree?: Maybe<Array<Topic>>;
+  showedIn?: Maybe<Array<Topic>>;
+  prerequisites?: Maybe<Array<LearningMaterialHasPrerequisiteTopic>>;
+  createdBy?: Maybe<User>;
+  createdAt: Scalars['Date'];
 };
 
 
-export type ResourceCoveredConceptsArgs = {
-  options: LearningMaterialCoveredConceptsOptions;
+export type ResourceCoveredSubTopicsArgs = {
+  options: LearningMaterialCoveredSubTopicsOptions;
 };
 
 export type AnalyzeResourceUrlResult = {
@@ -857,64 +822,36 @@ export type AnalyzeResourceUrlResult = {
   resourceData?: Maybe<ResourceData>;
 };
 
-export type Concept = ITopic & {
-  __typename?: 'Concept';
-  _id: Scalars['String'];
-  key: Scalars['String'];
-  name: Scalars['String'];
-  types: Array<ConceptType>;
-  description?: Maybe<Scalars['String']>;
-  topicType: TopicType;
-  domain?: Maybe<Domain>;
-  parentTopic?: Maybe<TopicIsSubTopicOfTopic>;
-  subTopics?: Maybe<Array<TopicIsSubTopicOfTopic>>;
-  size?: Maybe<Scalars['Float']>;
-  coveredByResources?: Maybe<ConceptCoveredByResourcesResults>;
-  known?: Maybe<KnownConcept>;
-  referencingConcepts?: Maybe<Array<ConceptReferencesConceptItem>>;
-  referencedByConcepts?: Maybe<Array<ConceptReferencesConceptItem>>;
-};
-
-
-export type ConceptSubTopicsArgs = {
-  options: TopicSubTopicsOptions;
-};
-
-
-export type ConceptCoveredByResourcesArgs = {
-  options: ConceptCoveredByResourcesOptions;
-};
-
 export type LearningPath = LearningMaterial & {
   __typename?: 'LearningPath';
   _id: Scalars['String'];
   key: Scalars['String'];
   name: Scalars['String'];
-  public: Scalars['Boolean'];
   description?: Maybe<Scalars['String']>;
+  public: Scalars['Boolean'];
   durationSeconds?: Maybe<Scalars['Int']>;
   resourceItems?: Maybe<Array<LearningPathResourceItem>>;
   complementaryResources?: Maybe<Array<Resource>>;
   tags?: Maybe<Array<LearningMaterialTag>>;
   rating?: Maybe<Scalars['Float']>;
-  coveredConcepts?: Maybe<LearningMaterialCoveredConceptsResults>;
-  coveredConceptsByDomain?: Maybe<Array<LearningMaterialCoveredConceptsByDomainItem>>;
-  domains?: Maybe<Array<Domain>>;
   started?: Maybe<LearningPathStarted>;
-  createdBy?: Maybe<User>;
   startedBy?: Maybe<LearningPathStartedByResults>;
-  prerequisites?: Maybe<Array<LearningMaterialPrerequisiteItem>>;
-  outcomes?: Maybe<Array<LearningMaterialOutcomeItem>>;
-};
-
-
-export type LearningPathCoveredConceptsArgs = {
-  options: LearningMaterialCoveredConceptsOptions;
+  coveredSubTopics?: Maybe<LearningMaterialCoveredSubTopicsResults>;
+  coveredSubTopicsTree?: Maybe<Array<Topic>>;
+  showedIn?: Maybe<Array<Topic>>;
+  prerequisites?: Maybe<Array<LearningMaterialHasPrerequisiteTopic>>;
+  createdBy?: Maybe<User>;
+  createdAt: Scalars['Date'];
 };
 
 
 export type LearningPathStartedByArgs = {
   options: LearningPathStartedByOptions;
+};
+
+
+export type LearningPathCoveredSubTopicsArgs = {
+  options: LearningMaterialCoveredSubTopicsOptions;
 };
 
 export type SearchLearningGoalsResult = {
@@ -927,22 +864,19 @@ export type SearchLearningGoalsOptions = {
   pagination: PaginationOptions;
 };
 
-export type LearningGoal = ITopic & {
+export type LearningGoal = {
   __typename?: 'LearningGoal';
   _id: Scalars['String'];
   key: Scalars['String'];
   type: LearningGoalType;
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
-  topicType: TopicType;
   publishedAt?: Maybe<Scalars['Date']>;
   hidden: Scalars['Boolean'];
   rating?: Maybe<Scalars['Float']>;
   progress?: Maybe<LearningGoalProgress>;
   createdBy?: Maybe<User>;
-  domain?: Maybe<LearningGoalBelongsToDomain>;
-  subTopics?: Maybe<Array<TopicIsSubTopicOfTopic>>;
-  parentTopic?: Maybe<TopicIsSubTopicOfTopic>;
+  showedIn?: Maybe<Array<Topic>>;
   size?: Maybe<Scalars['Float']>;
   requiredInGoals?: Maybe<Array<RequiredInGoalItem>>;
   requiredSubGoals?: Maybe<Array<SubGoalItem>>;
@@ -951,11 +885,6 @@ export type LearningGoal = ITopic & {
   started?: Maybe<LearningGoalStarted>;
   startedBy?: Maybe<LearningGoalStartedByResults>;
   relevantLearningMaterials?: Maybe<LearningGoalRelevantLearningMaterialsResults>;
-};
-
-
-export type LearningGoalSubTopicsArgs = {
-  options: TopicSubTopicsOptions;
 };
 
 
@@ -978,10 +907,37 @@ export type LearningGoalRelevantLearningMaterialsArgs = {
   options: LearningGoalRelevantLearningMaterialsOptions;
 };
 
-export type DomainAndLearningGoalResult = {
-  __typename?: 'DomainAndLearningGoalResult';
-  domain: Domain;
-  learningGoal: LearningGoal;
+export type CheckLearningGoalKeyAvailabilityResult = {
+  __typename?: 'CheckLearningGoalKeyAvailabilityResult';
+  available: Scalars['Boolean'];
+  existingLearningGoal?: Maybe<LearningGoal>;
+};
+
+export type CreateTopicPayload = {
+  name: Scalars['String'];
+  key: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+};
+
+export type CreateTopicContextOptions = {
+  disambiguationTopicId: Scalars['String'];
+  contextTopicId: Scalars['String'];
+};
+
+export type UpdateTopicPayload = {
+  name?: Maybe<Scalars['String']>;
+  key?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+};
+
+export type DeleteTopicResponse = {
+  __typename?: 'DeleteTopicResponse';
+  _id: Scalars['String'];
+  success: Scalars['Boolean'];
+};
+
+export type SetTopicsKnownPayload = {
+  topics: Array<SetTopicKnownPayloadTopicsField>;
 };
 
 export type LoginResponse = {
@@ -1063,38 +1019,23 @@ export type DeleteArticleResponse = {
   success: Scalars['Boolean'];
 };
 
-export type CreateDomainPayload = {
-  name: Scalars['String'];
-  key: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-};
-
-export type UpdateDomainPayload = {
-  name?: Maybe<Scalars['String']>;
-  key?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-};
-
-export type DeleteDomainResponse = {
-  __typename?: 'DeleteDomainResponse';
-  _id: Scalars['String'];
-  success: Scalars['Boolean'];
-};
-
 export type LearningMaterial = {
   _id: Scalars['String'];
+  name: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
   tags?: Maybe<Array<LearningMaterialTag>>;
   rating?: Maybe<Scalars['Float']>;
-  coveredConcepts?: Maybe<LearningMaterialCoveredConceptsResults>;
-  coveredConceptsByDomain?: Maybe<Array<LearningMaterialCoveredConceptsByDomainItem>>;
-  domains?: Maybe<Array<Domain>>;
-  prerequisites?: Maybe<Array<LearningMaterialPrerequisiteItem>>;
-  outcomes?: Maybe<Array<LearningMaterialOutcomeItem>>;
+  coveredSubTopics?: Maybe<LearningMaterialCoveredSubTopicsResults>;
+  coveredSubTopicsTree?: Maybe<Array<Topic>>;
+  showedIn?: Maybe<Array<Topic>>;
+  prerequisites?: Maybe<Array<LearningMaterialHasPrerequisiteTopic>>;
+  createdBy?: Maybe<User>;
+  createdAt: Scalars['Date'];
 };
 
 
-export type LearningMaterialCoveredConceptsArgs = {
-  options: LearningMaterialCoveredConceptsOptions;
+export type LearningMaterialCoveredSubTopicsArgs = {
+  options: LearningMaterialCoveredSubTopicsOptions;
 };
 
 export type CreateResourcePayload = {
@@ -1105,9 +1046,9 @@ export type CreateResourcePayload = {
   description?: Maybe<Scalars['String']>;
   durationSeconds?: Maybe<Scalars['Int']>;
   tags?: Maybe<Array<Scalars['String']>>;
-  domainsAndCoveredConcepts?: Maybe<Array<DomainAndCoveredConcepts>>;
-  prerequisitesLearningGoalsIds?: Maybe<Array<Scalars['String']>>;
-  outcomesLearningGoalsIds?: Maybe<Array<Scalars['String']>>;
+  showInTopicsIds: Array<Scalars['String']>;
+  coveredSubTopicsIds?: Maybe<Array<Scalars['String']>>;
+  prerequisitesTopicsIds?: Maybe<Array<Scalars['String']>>;
   subResourceSeries?: Maybe<Array<CreateSubResourcePayload>>;
 };
 
@@ -1130,11 +1071,6 @@ export type SetResourcesConsumedPayload = {
   resources: Array<SetResourcesConsumedPayloadResourcesField>;
 };
 
-export enum ResourceVoteValue {
-  Up = 'up',
-  Down = 'down'
-}
-
 export type SubResourceCreatedResult = {
   __typename?: 'SubResourceCreatedResult';
   parentResource: Resource;
@@ -1145,39 +1081,6 @@ export type SubResourceSeriesCreatedResult = {
   __typename?: 'SubResourceSeriesCreatedResult';
   seriesParentResource: Resource;
   subResource: Resource;
-};
-
-export type AddConceptToDomainResult = {
-  __typename?: 'AddConceptToDomainResult';
-  concept: Concept;
-  domain: Domain;
-  parentTopic: ITopic;
-};
-
-export type AddConceptToDomainPayload = {
-  key?: Maybe<Scalars['String']>;
-  name: Scalars['String'];
-  types: Array<ConceptType>;
-  description?: Maybe<Scalars['String']>;
-  index?: Maybe<Scalars['Float']>;
-};
-
-export type UpdateConceptPayload = {
-  key?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  types?: Maybe<Array<ConceptType>>;
-  description?: Maybe<Scalars['String']>;
-};
-
-export type DeleteConceptResult = {
-  __typename?: 'DeleteConceptResult';
-  success: Scalars['Boolean'];
-  _id: Scalars['String'];
-  domain?: Maybe<Domain>;
-};
-
-export type SetConceptKnownPayload = {
-  concepts: Array<SetConceptKnownPayloadConceptsField>;
 };
 
 export type CreateLearningPathPayload = {
@@ -1231,11 +1134,7 @@ export type CreateLearningGoalPayload = {
 
 export type CreateLearningGoalOptions = {
   public?: Maybe<Scalars['Boolean']>;
-  domainId?: Maybe<Scalars['String']>;
-};
-
-export type AttachLearningGoalToDomainPayload = {
-  index?: Maybe<Scalars['Float']>;
+  topicId?: Maybe<Scalars['String']>;
 };
 
 export type UpdateLearningGoalPayload = {
@@ -1290,19 +1189,27 @@ export type LearningGoalIndexedResult = {
   learningGoal: LearningGoal;
 };
 
-export type ConceptBelongsToDomain = {
-  __typename?: 'ConceptBelongsToDomain';
-  index: Scalars['Float'];
+export type ShowLearningGoalInTopicResult = {
+  __typename?: 'ShowLearningGoalInTopicResult';
+  learningGoal: LearningGoal;
+  topic: Topic;
 };
 
-export type UpdateConceptBelongsToDomainPayload = {
+export type ShowLearningGoalInTopicPayload = {
   index?: Maybe<Scalars['Float']>;
 };
 
-export type UpdateConceptReferencesConceptResult = {
-  __typename?: 'UpdateConceptReferencesConceptResult';
-  concept: Concept;
-  referencedConcept: Concept;
+export type AddTopicHasPrerequisiteTopicResult = {
+  __typename?: 'AddTopicHasPrerequisiteTopicResult';
+  topic: Topic;
+  strength: Scalars['Float'];
+  prerequisiteTopic: Topic;
+};
+
+export type RemoveTopicHasPrerequisiteTopicResult = {
+  __typename?: 'RemoveTopicHasPrerequisiteTopicResult';
+  topic: Topic;
+  prerequisiteTopic: Topic;
 };
 
 export type TopicIsSubTopicOfTopic = {
@@ -1310,8 +1217,9 @@ export type TopicIsSubTopicOfTopic = {
   index: Scalars['Float'];
   createdAt: Scalars['Date'];
   createdByUserId?: Maybe<Scalars['String']>;
-  subTopic: ITopic;
-  parentTopic: ITopic;
+  relationshipType: SubTopicRelationshipType;
+  subTopic: Topic;
+  parentTopic: Topic;
 };
 
 export type AttachTopicIsSubTopicOfTopicPayload = {
@@ -1324,8 +1232,31 @@ export type UpdateTopicIsSubTopicOfTopicPayload = {
 
 export type DetachTopicIsSubTopicOfTopicResult = {
   __typename?: 'DetachTopicIsSubTopicOfTopicResult';
-  parentTopic: ITopic;
-  subTopic: ITopic;
+  parentTopic: Topic;
+  subTopic: Topic;
+};
+
+export type TopicIsPartOfTopic = {
+  __typename?: 'TopicIsPartOfTopic';
+  index: Scalars['Float'];
+  createdAt: Scalars['Date'];
+  createdByUserId?: Maybe<Scalars['String']>;
+  subTopic: Topic;
+  partOfTopic: Topic;
+};
+
+export type AttachTopicIsPartOfTopicPayload = {
+  index?: Maybe<Scalars['Float']>;
+};
+
+export type UpdateTopicIsPartOfTopicPayload = {
+  index?: Maybe<Scalars['Float']>;
+};
+
+export type DetachTopicIsPartOfTopicResult = {
+  __typename?: 'DetachTopicIsPartOfTopicResult';
+  partOfTopic: Topic;
+  subTopic: Topic;
 };
 
 export type SearchResult = {
@@ -1339,8 +1270,22 @@ export type PaginationOptions = {
   offset?: Maybe<Scalars['Int']>;
 };
 
-export type SearchTopicsFilterOptions = {
-  topicTypeIn?: Maybe<Array<TopicType>>;
+export type TopicLearningMaterialsResults = {
+  __typename?: 'TopicLearningMaterialsResults';
+  items: Array<LearningMaterial>;
+};
+
+export type TopicLearningMaterialsOptions = {
+  sortingType: TopicLearningMaterialsSortingType;
+  query?: Maybe<Scalars['String']>;
+  filter: TopicLearningMaterialsFilterOptions;
+};
+
+export type TopicHasPrerequisiteTopic = {
+  __typename?: 'TopicHasPrerequisiteTopic';
+  followUpTopic: Topic;
+  strength: Scalars['Float'];
+  prerequisiteTopic: Topic;
 };
 
 export enum UserRole {
@@ -1358,22 +1303,6 @@ export type LearningPathStartedItem = {
   learningPath: LearningPath;
   startedAt: Scalars['Date'];
   completedAt?: Maybe<Scalars['Date']>;
-};
-
-export type LearningGoalCreatedItem = {
-  __typename?: 'LearningGoalCreatedItem';
-  learningGoal: LearningGoal;
-  createdAt: Scalars['Date'];
-};
-
-export type UserLearningGoalsOptions = {
-  pagination?: Maybe<PaginationOptions>;
-};
-
-export type LearningGoalStartedItem = {
-  __typename?: 'LearningGoalStartedItem';
-  learningGoal: LearningGoal;
-  startedAt: Scalars['Date'];
 };
 
 export type UserConsumedResourcesResult = {
@@ -1394,60 +1323,6 @@ export enum ArticleContentType {
 
 export type ListArticlesFilter = {
   contentType?: Maybe<ArticleContentType>;
-};
-
-export type TopicSubTopicsOptions = {
-  sorting: TopicSubTopicsSortingOptions;
-  topicTypeIn?: Maybe<Array<TopicType>>;
-};
-
-export type DomainConceptsResults = {
-  __typename?: 'DomainConceptsResults';
-  items: Array<DomainConceptsItem>;
-};
-
-export type DomainConceptsOptions = {
-  pagination?: Maybe<PaginationOptions>;
-  sorting?: Maybe<DomainConceptSortingOptions>;
-};
-
-export type DomainResourcesResults = {
-  __typename?: 'DomainResourcesResults';
-  items: Array<Resource>;
-};
-
-export type DomainResourcesOptions = {
-  sortingType: DomainResourcesSortingType;
-  query?: Maybe<Scalars['String']>;
-  filter: DomainResourcesFilterOptions;
-};
-
-export type DomainLearningPathsResults = {
-  __typename?: 'DomainLearningPathsResults';
-  items: Array<LearningPath>;
-};
-
-export type DomainLearningPathsOptions = {
-  pagination?: Maybe<PaginationOptions>;
-  sorting: DomainLearningPathsSortingOptions;
-};
-
-export type DomainLearningMaterialsResults = {
-  __typename?: 'DomainLearningMaterialsResults';
-  items: Array<LearningMaterial>;
-};
-
-export type DomainLearningMaterialsOptions = {
-  sortingType: DomainLearningMaterialsSortingType;
-  query?: Maybe<Scalars['String']>;
-  filter: DomainLearningMaterialsFilterOptions;
-};
-
-export type LearningGoalBelongsToDomain = {
-  __typename?: 'LearningGoalBelongsToDomain';
-  index: Scalars['Float'];
-  domain: Domain;
-  learningGoal: LearningGoal;
 };
 
 export enum ResourceType {
@@ -1493,35 +1368,22 @@ export type ConsumedResource = {
   consumedAt?: Maybe<Scalars['Date']>;
 };
 
-export type LearningMaterialCoveredConceptsResults = {
-  __typename?: 'LearningMaterialCoveredConceptsResults';
-  items: Array<Concept>;
+export type LearningMaterialCoveredSubTopicsResults = {
+  __typename?: 'LearningMaterialCoveredSubTopicsResults';
+  items: Array<Topic>;
 };
 
-export type LearningMaterialCoveredConceptsOptions = {
+export type LearningMaterialCoveredSubTopicsOptions = {
   pagination?: Maybe<PaginationOptions>;
 };
 
-export type LearningMaterialCoveredConceptsByDomainItem = {
-  __typename?: 'LearningMaterialCoveredConceptsByDomainItem';
-  domain: Domain;
-  coveredConcepts: Array<Concept>;
-};
-
-export type LearningMaterialPrerequisiteItem = {
-  __typename?: 'LearningMaterialPrerequisiteItem';
-  learningGoal: LearningGoal;
+export type LearningMaterialHasPrerequisiteTopic = {
+  __typename?: 'LearningMaterialHasPrerequisiteTopic';
   strength: Scalars['Float'];
-  createdBy: Scalars['String'];
+  createdByUserId: Scalars['String'];
   createdAt: Scalars['Date'];
-};
-
-export type LearningMaterialOutcomeItem = {
-  __typename?: 'LearningMaterialOutcomeItem';
-  learningGoal: LearningGoal;
-  strength: Scalars['Float'];
-  createdBy: Scalars['String'];
-  createdAt: Scalars['Date'];
+  topic: Topic;
+  learningMaterial: LearningMaterial;
 };
 
 export type ResourceData = {
@@ -1532,38 +1394,6 @@ export type ResourceData = {
   description?: Maybe<Scalars['String']>;
   durationSeconds?: Maybe<Scalars['Int']>;
   subResourceSeries?: Maybe<Array<SubResourceExtractedData>>;
-};
-
-export enum ConceptType {
-  Concept = 'concept',
-  Question = 'question',
-  Problem = 'problem',
-  Theory = 'theory',
-  Method = 'method',
-  Technic = 'technic',
-  Person = 'person',
-  Fact = 'fact',
-  Event = 'event'
-}
-
-export type ConceptCoveredByResourcesResults = {
-  __typename?: 'ConceptCoveredByResourcesResults';
-  items: Array<Resource>;
-};
-
-export type ConceptCoveredByResourcesOptions = {
-  pagination?: Maybe<PaginationOptions>;
-};
-
-export type KnownConcept = {
-  __typename?: 'KnownConcept';
-  level: Scalars['Float'];
-};
-
-export type ConceptReferencesConceptItem = {
-  __typename?: 'ConceptReferencesConceptItem';
-  concept: Concept;
-  relationship: ConceptReferencesConcept;
 };
 
 export type LearningPathResourceItem = {
@@ -1642,9 +1472,9 @@ export type LearningGoalRelevantLearningMaterialsOptions = {
   pagination?: Maybe<PaginationOptions>;
 };
 
-export type DomainAndCoveredConcepts = {
-  domainId: Scalars['String'];
-  conceptsIds: Array<Scalars['String']>;
+export type SetTopicKnownPayloadTopicsField = {
+  topicId: Scalars['String'];
+  level?: Maybe<Scalars['Float']>;
 };
 
 export type CreateSubResourcePayload = {
@@ -1655,9 +1485,9 @@ export type CreateSubResourcePayload = {
   description?: Maybe<Scalars['String']>;
   durationSeconds?: Maybe<Scalars['Int']>;
   tags?: Maybe<Array<Scalars['String']>>;
-  domainsAndCoveredConcepts?: Maybe<Array<DomainAndCoveredConcepts>>;
-  prerequisitesLearningGoalsIds?: Maybe<Array<Scalars['String']>>;
-  outcomesLearningGoalsIds?: Maybe<Array<Scalars['String']>>;
+  showInTopicsIds: Array<Scalars['String']>;
+  coveredSubTopicsIds?: Maybe<Array<Scalars['String']>>;
+  prerequisitesTopicsIds?: Maybe<Array<Scalars['String']>>;
 };
 
 export type SetResourcesConsumedPayloadResourcesField = {
@@ -1666,19 +1496,31 @@ export type SetResourcesConsumedPayloadResourcesField = {
   opened?: Maybe<Scalars['Boolean']>;
 };
 
-export type SetConceptKnownPayloadConceptsField = {
-  conceptId: Scalars['String'];
-  level?: Maybe<Scalars['Float']>;
-};
-
 export type CreateLearningPathResourceItem = {
   resourceId: Scalars['String'];
   description?: Maybe<Scalars['String']>;
 };
 
-export type SubGoal = LearningGoal | Concept;
+export type SubGoal = LearningGoal | Topic;
 
-export type SearchResultEntity = Domain | Concept | LearningGoal | Resource | LearningPath;
+export enum SubTopicRelationshipType {
+  IsSubtopicOf = 'IS_SUBTOPIC_OF',
+  IsPartOf = 'IS_PART_OF'
+}
+
+export type SearchResultEntity = Topic | Resource | LearningPath;
+
+export enum TopicLearningMaterialsSortingType {
+  Recommended = 'recommended',
+  Rating = 'rating',
+  Newest = 'newest'
+}
+
+export type TopicLearningMaterialsFilterOptions = {
+  resourceTypeIn?: Maybe<Array<ResourceType>>;
+  completedByUser: Scalars['Boolean'];
+  learningMaterialTypeIn?: Maybe<Array<LearningMaterialType>>;
+};
 
 export type UserConsumedResourceItem = {
   __typename?: 'UserConsumedResourceItem';
@@ -1696,50 +1538,6 @@ export enum UserConsumedResourcesSortingType {
   LastOpened = 'lastOpened'
 }
 
-export type TopicSubTopicsSortingOptions = {
-  type: TopicSubTopicsSortingType;
-  direction: SortingDirection;
-};
-
-export type DomainConceptsItem = {
-  __typename?: 'DomainConceptsItem';
-  concept: Concept;
-  relationship: ConceptBelongsToDomain;
-};
-
-export type DomainConceptSortingOptions = {
-  entity: DomainConceptSortingEntities;
-  field: DomainConceptSortingFields;
-  direction: SortingDirection;
-};
-
-export enum DomainResourcesSortingType {
-  Recommended = 'recommended',
-  Newest = 'newest'
-}
-
-export type DomainResourcesFilterOptions = {
-  resourceTypeIn?: Maybe<Array<ResourceType>>;
-  consumedByUser: Scalars['Boolean'];
-};
-
-export type DomainLearningPathsSortingOptions = {
-  field: DomainLearningPathsSortingFields;
-  direction: SortingDirection;
-};
-
-export enum DomainLearningMaterialsSortingType {
-  Recommended = 'recommended',
-  Rating = 'rating',
-  Newest = 'newest'
-}
-
-export type DomainLearningMaterialsFilterOptions = {
-  resourceTypeIn?: Maybe<Array<ResourceType>>;
-  completedByUser: Scalars['Boolean'];
-  learningMaterialTypeIn?: Maybe<Array<LearningMaterialType>>;
-};
-
 export type SubResourceExtractedData = {
   __typename?: 'SubResourceExtractedData';
   name: Scalars['String'];
@@ -1748,11 +1546,6 @@ export type SubResourceExtractedData = {
   url: Scalars['String'];
   description?: Maybe<Scalars['String']>;
   durationSeconds?: Maybe<Scalars['Int']>;
-};
-
-export type ConceptReferencesConcept = {
-  __typename?: 'ConceptReferencesConcept';
-  strength: Scalars['Float'];
 };
 
 export type LearningPathStartedByItem = {
@@ -1773,29 +1566,6 @@ export type LearningGoalRelevantLearningMaterialsItem = {
   learningMaterial: LearningMaterial;
   coverage?: Maybe<Scalars['Float']>;
 };
-
-export enum TopicSubTopicsSortingType {
-  Index = 'index'
-}
-
-export enum SortingDirection {
-  Asc = 'ASC',
-  Desc = 'DESC'
-}
-
-export enum DomainConceptSortingEntities {
-  Concept = 'concept',
-  Relationship = 'relationship'
-}
-
-export enum DomainConceptSortingFields {
-  Id = '_id',
-  Index = 'index'
-}
-
-export enum DomainLearningPathsSortingFields {
-  CreatedAt = 'createdAt'
-}
 
 export enum LearningMaterialType {
   Resource = 'Resource',

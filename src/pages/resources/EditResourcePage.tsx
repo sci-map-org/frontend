@@ -12,7 +12,7 @@ import {
 
 export const updateResourceResourcePage = gql`
   mutation updateResourceResourcePage($id: String!, $payload: UpdateResourcePayload!) {
-    updateResource(_id: $id, payload: $payload) {
+    updateResource(resourceId: $id, payload: $payload) {
       ...ResourceData
     }
   }
@@ -21,9 +21,9 @@ export const updateResourceResourcePage = gql`
 
 export const getResourceEditResourcePage = gql`
   query getResourceEditResourcePage($id: String!) {
-    getResourceById(id: $id) {
+    getResourceById(resourceId: $id) {
       ...ResourceData
-      creator {
+      createdBy {
         _id
       }
     }

@@ -27,7 +27,7 @@ import { useRouter } from 'next/router';
 import { useRef } from 'react';
 import { env } from '../../env';
 import { useCurrentUser, useLogout } from '../../graphql/users/users.hooks';
-import { LearningPathPagePath, NewDomainPagePath, ExploreMapPagePageInfo } from '../../pages/RoutesPageInfos';
+import { LearningPathPagePath, ExploreMapPagePageInfo, NewTopicPagePath } from '../../pages/RoutesPageInfos';
 import { globalStyleVariables } from '../../theme/theme';
 import { RoleAccess } from '../auth/RoleAccess';
 import { InternalLink, InternalLinkProps, PageLink } from '../navigation/InternalLink';
@@ -66,11 +66,6 @@ export const Header: React.FC = () => {
   const { onOpen: openOpenLP, onClose: onCloseLP, isOpen: isOpenLp } = useDisclosure();
   const showHamburger = useBreakpointValue({ base: true, md: false });
   const headerHamburgerLinks: (HeaderLinkProps & { name: string; show?: 'notLoggedIn' | 'loggedIn' })[] = [
-    {
-      routePath: '/areas',
-      asHref: '/areas',
-      name: 'Areas',
-    },
     {
       routePath: '/about/[key]',
       asHref: '/about/introduction',
@@ -251,11 +246,6 @@ export const Header: React.FC = () => {
                   <Link>My Paths</Link>
                 </MenuItem>
               </NextLink>
-              <NextLink href="/profile/goals" as={`/profile/goals`} passHref>
-                <MenuItem>
-                  <Link>My Goals</Link>
-                </MenuItem>
-              </NextLink>
               <RoleAccess accessRule="admin">
                 <NextLink href="/articles/new" as="/articles/new" passHref>
                   <MenuItem>
@@ -271,9 +261,9 @@ export const Header: React.FC = () => {
                 </NextLink>
               </RoleAccess>
               <RoleAccess accessRule="contributorOrAdmin">
-                <NextLink href={NewDomainPagePath} as={NewDomainPagePath} passHref>
+                <NextLink href={NewTopicPagePath} as={NewTopicPagePath} passHref>
                   <MenuItem>
-                    <Link>New Area</Link>
+                    <Link>New Topic</Link>
                   </MenuItem>
                 </NextLink>
               </RoleAccess>

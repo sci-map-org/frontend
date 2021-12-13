@@ -1,16 +1,16 @@
 import * as Types from '../../graphql/types';
 
-import { LearningGoalBadgeDataFragment } from '../learning_goals/LearningGoalBadge.generated';
+import { TopicLinkDataFragment, TopicFullDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import * as Operations from './EditableLearningMaterialPrerequisites';
 import * as Apollo from '@apollo/client';
 export type EditableLearningMaterialPrerequisitesData_Resource_Fragment = (
   { __typename?: 'Resource' }
   & Pick<Types.Resource, '_id'>
   & { prerequisites?: Types.Maybe<Array<(
-    { __typename?: 'LearningMaterialPrerequisiteItem' }
-    & { learningGoal: (
-      { __typename?: 'LearningGoal' }
-      & LearningGoalBadgeDataFragment
+    { __typename?: 'LearningMaterialHasPrerequisiteTopic' }
+    & { topic: (
+      { __typename?: 'Topic' }
+      & TopicLinkDataFragment
     ) }
   )>> }
 );
@@ -19,128 +19,128 @@ export type EditableLearningMaterialPrerequisitesData_LearningPath_Fragment = (
   { __typename?: 'LearningPath' }
   & Pick<Types.LearningPath, '_id'>
   & { prerequisites?: Types.Maybe<Array<(
-    { __typename?: 'LearningMaterialPrerequisiteItem' }
-    & { learningGoal: (
-      { __typename?: 'LearningGoal' }
-      & LearningGoalBadgeDataFragment
+    { __typename?: 'LearningMaterialHasPrerequisiteTopic' }
+    & { topic: (
+      { __typename?: 'Topic' }
+      & TopicLinkDataFragment
     ) }
   )>> }
 );
 
 export type EditableLearningMaterialPrerequisitesDataFragment = EditableLearningMaterialPrerequisitesData_Resource_Fragment | EditableLearningMaterialPrerequisitesData_LearningPath_Fragment;
 
-export type AddLearningMaterialPrerequisiteMutationVariables = Types.Exact<{
+export type AddLearningMaterialHasPrerequisiteTopicMutationVariables = Types.Exact<{
   learningMaterialId: Types.Scalars['String'];
-  prerequisiteLearningGoalId: Types.Scalars['String'];
+  prerequisiteTopicId: Types.Scalars['String'];
 }>;
 
 
-export type AddLearningMaterialPrerequisiteMutation = (
+export type AddLearningMaterialHasPrerequisiteTopicMutation = (
   { __typename?: 'Mutation' }
-  & { addLearningMaterialPrerequisite: (
+  & { addLearningMaterialHasPrerequisiteTopic: (
     { __typename?: 'Resource' }
     & Pick<Types.Resource, '_id'>
     & { prerequisites?: Types.Maybe<Array<(
-      { __typename?: 'LearningMaterialPrerequisiteItem' }
-      & { learningGoal: (
-        { __typename?: 'LearningGoal' }
-        & LearningGoalBadgeDataFragment
+      { __typename?: 'LearningMaterialHasPrerequisiteTopic' }
+      & { topic: (
+        { __typename?: 'Topic' }
+        & TopicLinkDataFragment
       ) }
     )>> }
   ) | (
     { __typename?: 'LearningPath' }
     & Pick<Types.LearningPath, '_id'>
     & { prerequisites?: Types.Maybe<Array<(
-      { __typename?: 'LearningMaterialPrerequisiteItem' }
-      & { learningGoal: (
-        { __typename?: 'LearningGoal' }
-        & LearningGoalBadgeDataFragment
+      { __typename?: 'LearningMaterialHasPrerequisiteTopic' }
+      & { topic: (
+        { __typename?: 'Topic' }
+        & TopicLinkDataFragment
       ) }
     )>> }
   ) }
 );
 
-export type RemoveLearningMaterialPrerequisiteMutationVariables = Types.Exact<{
+export type RemoveLearningMaterialHasPrerequisiteTopicMutationVariables = Types.Exact<{
   learningMaterialId: Types.Scalars['String'];
-  prerequisiteLearningGoalId: Types.Scalars['String'];
+  prerequisiteTopicId: Types.Scalars['String'];
 }>;
 
 
-export type RemoveLearningMaterialPrerequisiteMutation = (
+export type RemoveLearningMaterialHasPrerequisiteTopicMutation = (
   { __typename?: 'Mutation' }
-  & { removeLearningMaterialPrerequisite: (
+  & { removeLearningMaterialHasPrerequisiteTopic: (
     { __typename?: 'Resource' }
     & Pick<Types.Resource, '_id'>
     & { prerequisites?: Types.Maybe<Array<(
-      { __typename?: 'LearningMaterialPrerequisiteItem' }
-      & { learningGoal: (
-        { __typename?: 'LearningGoal' }
-        & LearningGoalBadgeDataFragment
+      { __typename?: 'LearningMaterialHasPrerequisiteTopic' }
+      & { topic: (
+        { __typename?: 'Topic' }
+        & TopicLinkDataFragment
       ) }
     )>> }
   ) | (
     { __typename?: 'LearningPath' }
     & Pick<Types.LearningPath, '_id'>
     & { prerequisites?: Types.Maybe<Array<(
-      { __typename?: 'LearningMaterialPrerequisiteItem' }
-      & { learningGoal: (
-        { __typename?: 'LearningGoal' }
-        & LearningGoalBadgeDataFragment
+      { __typename?: 'LearningMaterialHasPrerequisiteTopic' }
+      & { topic: (
+        { __typename?: 'Topic' }
+        & TopicLinkDataFragment
       ) }
     )>> }
   ) }
 );
 
 
-export type AddLearningMaterialPrerequisiteMutationFn = Apollo.MutationFunction<AddLearningMaterialPrerequisiteMutation, AddLearningMaterialPrerequisiteMutationVariables>;
+export type AddLearningMaterialHasPrerequisiteTopicMutationFn = Apollo.MutationFunction<AddLearningMaterialHasPrerequisiteTopicMutation, AddLearningMaterialHasPrerequisiteTopicMutationVariables>;
 
 /**
- * __useAddLearningMaterialPrerequisiteMutation__
+ * __useAddLearningMaterialHasPrerequisiteTopicMutation__
  *
- * To run a mutation, you first call `useAddLearningMaterialPrerequisiteMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAddLearningMaterialPrerequisiteMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useAddLearningMaterialHasPrerequisiteTopicMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddLearningMaterialHasPrerequisiteTopicMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [addLearningMaterialPrerequisiteMutation, { data, loading, error }] = useAddLearningMaterialPrerequisiteMutation({
+ * const [addLearningMaterialHasPrerequisiteTopicMutation, { data, loading, error }] = useAddLearningMaterialHasPrerequisiteTopicMutation({
  *   variables: {
  *      learningMaterialId: // value for 'learningMaterialId'
- *      prerequisiteLearningGoalId: // value for 'prerequisiteLearningGoalId'
+ *      prerequisiteTopicId: // value for 'prerequisiteTopicId'
  *   },
  * });
  */
-export function useAddLearningMaterialPrerequisiteMutation(baseOptions?: Apollo.MutationHookOptions<AddLearningMaterialPrerequisiteMutation, AddLearningMaterialPrerequisiteMutationVariables>) {
-        return Apollo.useMutation<AddLearningMaterialPrerequisiteMutation, AddLearningMaterialPrerequisiteMutationVariables>(Operations.addLearningMaterialPrerequisite, baseOptions);
+export function useAddLearningMaterialHasPrerequisiteTopicMutation(baseOptions?: Apollo.MutationHookOptions<AddLearningMaterialHasPrerequisiteTopicMutation, AddLearningMaterialHasPrerequisiteTopicMutationVariables>) {
+        return Apollo.useMutation<AddLearningMaterialHasPrerequisiteTopicMutation, AddLearningMaterialHasPrerequisiteTopicMutationVariables>(Operations.addLearningMaterialHasPrerequisiteTopic, baseOptions);
       }
-export type AddLearningMaterialPrerequisiteMutationHookResult = ReturnType<typeof useAddLearningMaterialPrerequisiteMutation>;
-export type AddLearningMaterialPrerequisiteMutationResult = Apollo.MutationResult<AddLearningMaterialPrerequisiteMutation>;
-export type AddLearningMaterialPrerequisiteMutationOptions = Apollo.BaseMutationOptions<AddLearningMaterialPrerequisiteMutation, AddLearningMaterialPrerequisiteMutationVariables>;
-export type RemoveLearningMaterialPrerequisiteMutationFn = Apollo.MutationFunction<RemoveLearningMaterialPrerequisiteMutation, RemoveLearningMaterialPrerequisiteMutationVariables>;
+export type AddLearningMaterialHasPrerequisiteTopicMutationHookResult = ReturnType<typeof useAddLearningMaterialHasPrerequisiteTopicMutation>;
+export type AddLearningMaterialHasPrerequisiteTopicMutationResult = Apollo.MutationResult<AddLearningMaterialHasPrerequisiteTopicMutation>;
+export type AddLearningMaterialHasPrerequisiteTopicMutationOptions = Apollo.BaseMutationOptions<AddLearningMaterialHasPrerequisiteTopicMutation, AddLearningMaterialHasPrerequisiteTopicMutationVariables>;
+export type RemoveLearningMaterialHasPrerequisiteTopicMutationFn = Apollo.MutationFunction<RemoveLearningMaterialHasPrerequisiteTopicMutation, RemoveLearningMaterialHasPrerequisiteTopicMutationVariables>;
 
 /**
- * __useRemoveLearningMaterialPrerequisiteMutation__
+ * __useRemoveLearningMaterialHasPrerequisiteTopicMutation__
  *
- * To run a mutation, you first call `useRemoveLearningMaterialPrerequisiteMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRemoveLearningMaterialPrerequisiteMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useRemoveLearningMaterialHasPrerequisiteTopicMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveLearningMaterialHasPrerequisiteTopicMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [removeLearningMaterialPrerequisiteMutation, { data, loading, error }] = useRemoveLearningMaterialPrerequisiteMutation({
+ * const [removeLearningMaterialHasPrerequisiteTopicMutation, { data, loading, error }] = useRemoveLearningMaterialHasPrerequisiteTopicMutation({
  *   variables: {
  *      learningMaterialId: // value for 'learningMaterialId'
- *      prerequisiteLearningGoalId: // value for 'prerequisiteLearningGoalId'
+ *      prerequisiteTopicId: // value for 'prerequisiteTopicId'
  *   },
  * });
  */
-export function useRemoveLearningMaterialPrerequisiteMutation(baseOptions?: Apollo.MutationHookOptions<RemoveLearningMaterialPrerequisiteMutation, RemoveLearningMaterialPrerequisiteMutationVariables>) {
-        return Apollo.useMutation<RemoveLearningMaterialPrerequisiteMutation, RemoveLearningMaterialPrerequisiteMutationVariables>(Operations.removeLearningMaterialPrerequisite, baseOptions);
+export function useRemoveLearningMaterialHasPrerequisiteTopicMutation(baseOptions?: Apollo.MutationHookOptions<RemoveLearningMaterialHasPrerequisiteTopicMutation, RemoveLearningMaterialHasPrerequisiteTopicMutationVariables>) {
+        return Apollo.useMutation<RemoveLearningMaterialHasPrerequisiteTopicMutation, RemoveLearningMaterialHasPrerequisiteTopicMutationVariables>(Operations.removeLearningMaterialHasPrerequisiteTopic, baseOptions);
       }
-export type RemoveLearningMaterialPrerequisiteMutationHookResult = ReturnType<typeof useRemoveLearningMaterialPrerequisiteMutation>;
-export type RemoveLearningMaterialPrerequisiteMutationResult = Apollo.MutationResult<RemoveLearningMaterialPrerequisiteMutation>;
-export type RemoveLearningMaterialPrerequisiteMutationOptions = Apollo.BaseMutationOptions<RemoveLearningMaterialPrerequisiteMutation, RemoveLearningMaterialPrerequisiteMutationVariables>;
+export type RemoveLearningMaterialHasPrerequisiteTopicMutationHookResult = ReturnType<typeof useRemoveLearningMaterialHasPrerequisiteTopicMutation>;
+export type RemoveLearningMaterialHasPrerequisiteTopicMutationResult = Apollo.MutationResult<RemoveLearningMaterialHasPrerequisiteTopicMutation>;
+export type RemoveLearningMaterialHasPrerequisiteTopicMutationOptions = Apollo.BaseMutationOptions<RemoveLearningMaterialHasPrerequisiteTopicMutation, RemoveLearningMaterialHasPrerequisiteTopicMutationVariables>;

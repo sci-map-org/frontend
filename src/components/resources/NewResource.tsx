@@ -22,9 +22,9 @@ import {
 import gql from 'graphql-tag';
 import { omit, pick } from 'lodash';
 import React, { ReactElement, useEffect, useState } from 'react';
-import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { ResourceData } from '../../graphql/resources/resources.fragments';
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import {
   CreateResourcePayload,
   CreateSubResourcePayload,
@@ -33,14 +33,13 @@ import {
   ResourceType,
 } from '../../graphql/types';
 import { validateUrl } from '../../services/url.service';
-import { ConceptBadge } from '../concepts/ConceptBadge';
-import { DomainAndConceptsSelector, DomainAndSelectedConcepts } from '../concepts/DomainAndConceptsSelector';
 import { LearningGoalBadgeDataFragment } from '../learning_goals/LearningGoalBadge.generated';
-import { StatelessEditableLearningMaterialOutcomes } from '../learning_materials/EditableLearningMaterialOutcomes';
+import { StatelessEditableLearningMaterialCoveredTopics } from '../learning_materials/EditableLearningMaterialCoveredTopics';
 import { StatelessEditableLearningMaterialPrerequisites } from '../learning_materials/EditableLearningMaterialPrerequisites';
 import { LearningMaterialTagsStatelessEditor } from '../learning_materials/LearningMaterialTagsEditor';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { FormButtons } from '../lib/buttons/FormButtons';
+import { TopicBadge } from '../topics/TopicBadge';
 import { DurationFormField, DurationViewer } from './elements/Duration';
 import { ResourceDescriptionInput } from './elements/ResourceDescription';
 import { ResourceMediaTypeSelector } from './elements/ResourceMediaType';
@@ -74,18 +73,13 @@ const typeToMediaTypeMapping: { [key in ResourceType]: ResourceMediaType | null 
 
 type SubResourceCreationData = Omit<
   CreateResourcePayload,
-  | 'domainsAndCoveredConcepts'
-  | 'tags'
-  | 'subResourceSeries'
-  | 'description'
-  | 'outcomesLearningGoalsIds'
-  | 'prerequisitesLearningGoalsIds'
+  'tags' | 'subResourceSeries' | 'description' | 'showInTopicsIds' | 'coveredSubTopicsIds' | 'prerequisitesTopicsIds'
 > & {
   description?: string;
   tags: LearningMaterialTag[];
-  domainsAndCoveredConcepts: DomainAndSelectedConcepts[];
-  prerequisites: LearningGoalBadgeDataFragment[];
-  outcomes: LearningGoalBadgeDataFragment[];
+  showInTopics: TopicLinkDataFragment[];
+  coveredSubTopics: TopicLinkDataFragment[];
+  prerequisites: TopicLinkDataFragment[];
 };
 
 type ResourceCreationData = SubResourceCreationData & {
@@ -95,26 +89,20 @@ type ResourceCreationData = SubResourceCreationData & {
 const resourceCreationDataToPayload = (resourceCreationData: ResourceCreationData): CreateResourcePayload => {
   const subResourceSeries: CreateSubResourcePayload[] | undefined = resourceCreationData.subResourceSeries?.map(
     (subResource) => ({
-      ...omit(subResource, ['domainsAndCoveredConcepts', 'prerequisites', 'outcomes']),
+      ...omit(subResource, ['showInTopics', 'prerequisites', 'coveredSubTopics']),
       tags: resourceCreationData.tags.map((t) => t.name),
-      domainsAndCoveredConcepts: subResource.domainsAndCoveredConcepts.map(({ domain, selectedConcepts }) => ({
-        domainId: domain._id,
-        conceptsIds: selectedConcepts.map((s) => s._id),
-      })),
-      prerequisitesLearningGoalsIds: subResource.prerequisites.map(({ _id }) => _id),
-      outcomesLearningGoalsIds: subResource.outcomes.map(({ _id }) => _id),
+      showInTopicsIds: subResource.showInTopics.map(({ _id }) => _id),
+      prerequisitesTopicsIds: subResource.prerequisites.map(({ _id }) => _id),
+      coveredSubTopicsIds: subResource.coveredSubTopics.map(({ _id }) => _id),
     })
   );
   return {
-    ...omit(resourceCreationData, ['prerequisites', 'outcomes']),
+    ...omit(resourceCreationData, ['showInTopics', 'prerequisites', 'coveredSubTopics']),
     tags: resourceCreationData.tags.map((t) => t.name),
     subResourceSeries,
-    domainsAndCoveredConcepts: resourceCreationData.domainsAndCoveredConcepts.map(({ domain, selectedConcepts }) => ({
-      domainId: domain._id,
-      conceptsIds: selectedConcepts.map((s) => s._id),
-    })),
-    prerequisitesLearningGoalsIds: resourceCreationData.prerequisites.map(({ _id }) => _id),
-    outcomesLearningGoalsIds: resourceCreationData.outcomes.map(({ _id }) => _id),
+    showInTopicsIds: resourceCreationData.showInTopics.map(({ _id }) => _id),
+    prerequisitesTopicsIds: resourceCreationData.prerequisites.map(({ _id }) => _id),
+    coveredSubTopicsIds: resourceCreationData.coveredSubTopics.map(({ _id }) => _id),
   };
 };
 interface StatelessNewResourceFormProps {
@@ -151,17 +139,17 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
               ...(!!analyzedResourceData.description &&
                 !resourceCreationData.description && { description: analyzedResourceData.description }),
               ...(!!analyzedResourceData.durationSeconds && { durationSeconds: analyzedResourceData.durationSeconds }),
+              showInTopics: [],
+              prerequisites: [],
+              coveredSubTopics: [],
               ...(!!analyzedResourceData.subResourceSeries && {
                 subResourceSeries: analyzedResourceData.subResourceSeries.map((sub) => ({
                   ...pick(sub, ['name', 'url', 'type', 'mediaType', 'durationSeconds']),
                   tags: [],
-                  domainsAndCoveredConcepts: resourceCreationData.domainsAndCoveredConcepts.map((s) => ({
-                    domain: s.domain,
-                    selectedConcepts: [],
-                  })),
                   description: sub.description || undefined,
                   prerequisites: [],
-                  outcomes: [],
+                  coveredSubTopics: [],
+                  showInTopics: [],
                 })),
               }),
             });
@@ -200,30 +188,39 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
       />
       <Flex direction="row">
         <Flex w="50%">
-          <DomainAndConceptsSelector
-            selectedDomainsAndConcepts={resourceCreationData.domainsAndCoveredConcepts}
-            onChange={(domainsAndCoveredConcepts) => updateResourceCreationData({ domainsAndCoveredConcepts })}
-            allowConceptCreation
-          />
-        </Flex>
-        <Stack spacing={4} w="50%">
-          <StatelessEditableLearningMaterialPrerequisites
+          <StatelessEditableLearningMaterialCoveredTopics
             editable={true}
-            learningGoalsPrerequisites={resourceCreationData.prerequisites}
-            onAdded={(learningGoal) =>
+            coveredTopics={resourceCreationData.coveredSubTopics}
+            onAdded={(topic) =>
+              updateResourceCreationData({ coveredSubTopics: [...resourceCreationData.coveredSubTopics, topic] })
+            }
+            onRemove={(topicId) =>
               updateResourceCreationData({
-                prerequisites: [...resourceCreationData.prerequisites, learningGoal],
+                coveredSubTopics: resourceCreationData.coveredSubTopics.filter(
+                  (coveredTopic) => coveredTopic._id !== topicId
+                ),
               })
             }
-            onRemove={(learningGoalId) => {
+          />
+        </Flex>
+        <Flex w="50%">
+          <StatelessEditableLearningMaterialPrerequisites
+            editable={true}
+            prerequisites={resourceCreationData.prerequisites}
+            onAdded={(topic) =>
+              updateResourceCreationData({
+                prerequisites: [...resourceCreationData.prerequisites, topic],
+              })
+            }
+            onRemove={(topicId) => {
               updateResourceCreationData({
                 prerequisites: resourceCreationData.prerequisites.filter(
-                  (prerequisite) => prerequisite._id !== learningGoalId
+                  (prerequisite) => prerequisite._id !== topicId
                 ),
               });
             }}
           />
-          <StatelessEditableLearningMaterialOutcomes
+          {/* <StatelessEditableLearningMaterialOutcomes
             editable={true}
             learningGoalsOutcomes={resourceCreationData.outcomes}
             onAdded={(learningGoal) =>
@@ -236,8 +233,8 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
                 outcomes: resourceCreationData.outcomes.filter((outcome) => outcome._id !== learningGoalId),
               });
             }}
-          />
-        </Stack>
+          /> */}
+        </Flex>
       </Flex>
     </Stack>
   );
@@ -257,9 +254,9 @@ const defaultResourceData: ResourceCreationData = {
   url: '',
   durationSeconds: null,
   tags: [],
-  domainsAndCoveredConcepts: [],
+  showInTopics: [],
   prerequisites: [],
-  outcomes: [],
+  coveredSubTopics: [],
 };
 
 export const NewResourceForm: React.FC<NewResourceFormProps> = ({
@@ -304,13 +301,11 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
             )}
             renderBottom={(subResource) => (
               <Wrap spacing={2}>
-                {subResource.domainsAndCoveredConcepts.map(({ selectedConcepts, domain }) =>
-                  selectedConcepts.map((concept) => (
-                    <WrapItem key={concept._id}>
-                      <ConceptBadge concept={concept} domain={domain} />
-                    </WrapItem>
-                  ))
-                )}
+                {subResource.coveredSubTopics.map((topic) => (
+                  <WrapItem key={topic._id}>
+                    <TopicBadge topic={topic} />
+                  </WrapItem>
+                ))}
               </Wrap>
             )}
             renderRight={(subResource, index) => (

@@ -2,7 +2,6 @@ import * as Types from '../../graphql/types';
 
 import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
 import { OtherLearnersViewerUserDataFragment } from '../lib/OtherLearnersViewer.generated';
-import { ConceptBadgeDataFragment } from '../concepts/ConceptBadge.generated';
 import { LearningGoalBadgeDataFragment } from './LearningGoalBadge.generated';
 import { StartLearningGoalButtonDataFragment } from './StartLearningGoalButton.generated';
 import { LearningGoalPublishButtonDataFragment } from './LearningGoalPublishButton.generated';
@@ -29,10 +28,7 @@ export type ConceptGroupLearningGoalDataFragment = (
     & { subGoal: (
       { __typename?: 'LearningGoal' }
       & LearningGoalBadgeDataFragment
-    ) | (
-      { __typename?: 'Concept' }
-      & ConceptBadgeDataFragment
-    ) }
+    ) | { __typename?: 'Topic' } }
   )>> }
   & LearningGoalDataFragment
   & StartLearningGoalButtonDataFragment

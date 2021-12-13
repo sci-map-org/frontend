@@ -14,7 +14,7 @@ import gql from 'graphql-tag';
 import { useState } from 'react';
 import { LearningPathData } from '../../graphql/learning_paths/learning_paths.fragments';
 import { LearningPathDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
-import { ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { ResourcePreviewCardDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { CreateLearningPathPayload } from '../../graphql/types';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { LearningPathPageInfo } from '../../pages/RoutesPageInfos';
@@ -106,8 +106,8 @@ export const NewLearningPath: React.FC<{}> = () => {
 };
 
 interface NewLearningPathSecondStepProps {
-  resourceItems: { resource: ResourcePreviewDataFragment; description?: string }[];
-  setResourceItems: (newResourceItems: { resource: ResourcePreviewDataFragment; description?: string }[]) => void;
+  resourceItems: { resource: ResourcePreviewCardDataFragment; description?: string }[];
+  setResourceItems: (newResourceItems: { resource: ResourcePreviewCardDataFragment; description?: string }[]) => void;
 }
 const NewLearningPathSecondStep: React.FC<NewLearningPathSecondStepProps> = ({ resourceItems, setResourceItems }) => {
   const updateResourceItemDescription = (resourceId: string, description: string) => {

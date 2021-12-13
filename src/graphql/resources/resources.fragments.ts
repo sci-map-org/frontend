@@ -1,8 +1,7 @@
 import gql from 'graphql-tag';
-import { ConceptData } from '../concepts/concepts.fragments';
-import { DomainData } from '../domains/domains.fragments';
+import { TopicLinkData } from '../topics/topics.fragments';
 import { ResourceMediaType, ResourceType } from '../types';
-import { ResourcePreviewDataFragment, ResourceDataFragment } from './resources.fragments.generated';
+import { ResourceDataFragment } from './resources.fragments.generated';
 
 export const ResourceData = gql`
   fragment ResourceData on Resource {
@@ -39,8 +38,8 @@ export const generateResourceData = (): ResourceDataFragment => ({
   url: 'https://myresource.url',
 });
 
-export const ResourcePreviewData = gql`
-  fragment ResourcePreviewData on Resource {
+export const ResourcePreviewCardData = gql`
+  fragment ResourcePreviewCardData on Resource {
     _id
     name
     type
@@ -55,12 +54,9 @@ export const ResourcePreviewData = gql`
       openedAt
       consumedAt
     }
-    coveredConceptsByDomain {
-      domain {
-        ...DomainData
-      }
-      coveredConcepts {
-        ...ConceptData
+    coveredSubTopics(options: {}) {
+      items {
+        ...TopicLinkData
       }
     }
     upvotes
@@ -74,31 +70,16 @@ export const ResourcePreviewData = gql`
       name
     }
   }
-  ${ConceptData}
-  ${DomainData}
+  ${TopicLinkData}
 `;
 
-export const generateResourcePreviewData = (): ResourcePreviewDataFragment => ({
-  _id: Math.random().toString(),
-  name: 'My resource name',
-  type: ResourceType.Article,
-  url: 'https://myresource.url',
-  mediaType: ResourceMediaType.Text,
-  upvotes: 32,
-});
-
-export const ResourceWithCoveredConceptsByDomainData = gql`
-  fragment ResourceWithCoveredConceptsByDomainData on Resource {
+export const ResourceWithCoveredTopicsData = gql`
+  fragment ResourceWithCoveredTopicsData on Resource {
     _id
-    coveredConceptsByDomain {
-      domain {
-        ...DomainData
-      }
-      coveredConcepts {
-        ...ConceptData
+    coveredSubTopics(options: {}) {
+      items {
+        ...TopicLinkData
       }
     }
   }
-  ${ConceptData}
-  ${DomainData}
 `;

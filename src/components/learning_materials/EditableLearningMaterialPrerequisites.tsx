@@ -1,36 +1,35 @@
 import { Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
-import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
-import { EditableLearningGoals } from '../learning_goals/EditableLearningGoals';
-import { LearningGoalBadgeData } from '../learning_goals/LearningGoalBadge';
-import { LearningGoalBadgeDataFragment } from '../learning_goals/LearningGoalBadge.generated';
+import { TopicLinkData } from '../../graphql/topics/topics.fragments';
+import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
+import { EditableTopicsWrapper } from '../topics/EditableTopicsWrapper';
 import {
   EditableLearningMaterialPrerequisitesDataFragment,
-  useAddLearningMaterialPrerequisiteMutation,
-  useRemoveLearningMaterialPrerequisiteMutation,
+  useAddLearningMaterialHasPrerequisiteTopicMutation,
+  useRemoveLearningMaterialHasPrerequisiteTopicMutation,
 } from './EditableLearningMaterialPrerequisites.generated';
 
 export const EditableLearningMaterialPrerequisitesData = gql`
   fragment EditableLearningMaterialPrerequisitesData on LearningMaterial {
     _id
     prerequisites {
-      learningGoal {
-        ...LearningGoalBadgeData
+      topic {
+        ...TopicLinkData
       }
     }
   }
-  ${LearningGoalBadgeData}
+  ${TopicLinkData}
 `;
 
 interface StatelessEditableLearningMaterialPrerequisitesProps {
-  learningGoalsPrerequisites?: LearningGoalBadgeDataFragment[];
+  prerequisites?: TopicLinkDataFragment[];
   editable?: boolean;
   isLoading?: boolean;
-  onRemove: (learningGoalId: string) => void;
-  onAdded: (learningGoal: LearningGoalDataFragment) => void;
+  onRemove: (topiclId: string) => void;
+  onAdded: (topic: TopicLinkDataFragment) => void;
 }
 export const StatelessEditableLearningMaterialPrerequisites: React.FC<StatelessEditableLearningMaterialPrerequisitesProps> = ({
-  learningGoalsPrerequisites,
+  prerequisites,
   editable,
   isLoading,
   onRemove,
@@ -39,14 +38,14 @@ export const StatelessEditableLearningMaterialPrerequisites: React.FC<StatelessE
   return (
     <Stack direction="column" alignItems="center" spacing={1}>
       <Text fontWeight={600} color="gray.500">
-        {learningGoalsPrerequisites && learningGoalsPrerequisites.length ? 'Prerequisites' : 'No Prerequisites'}
+        {prerequisites && prerequisites.length ? 'Prerequisites' : 'No Prerequisites'}
       </Text>
-      {learningGoalsPrerequisites && (
-        <EditableLearningGoals
+      {prerequisites && (
+        <EditableTopicsWrapper
           editable={editable}
-          role="prerequisite"
+          // role="prerequisite"
           isLoading={isLoading}
-          learningGoals={learningGoalsPrerequisites}
+          topics={prerequisites}
           onAdded={onAdded}
           onRemove={onRemove}
         />
@@ -55,38 +54,38 @@ export const StatelessEditableLearningMaterialPrerequisites: React.FC<StatelessE
   );
 };
 
-export const addLearningMaterialPrerequisite = gql`
-  mutation addLearningMaterialPrerequisite($learningMaterialId: String!, $prerequisiteLearningGoalId: String!) {
-    addLearningMaterialPrerequisite(
+export const addLearningMaterialHasPrerequisiteTopic = gql`
+  mutation addLearningMaterialHasPrerequisiteTopic($learningMaterialId: String!, $prerequisiteTopicId: String!) {
+    addLearningMaterialHasPrerequisiteTopic(
       learningMaterialId: $learningMaterialId
-      prerequisiteLearningGoalId: $prerequisiteLearningGoalId
+      prerequisiteTopicId: $prerequisiteTopicId
     ) {
       _id
       prerequisites {
-        learningGoal {
-          ...LearningGoalBadgeData
+        topic {
+          ...TopicLinkData
         }
       }
     }
   }
-  ${LearningGoalBadgeData}
+  ${TopicLinkData}
 `;
 
-export const removeLearningMaterialPrerequisite = gql`
-  mutation removeLearningMaterialPrerequisite($learningMaterialId: String!, $prerequisiteLearningGoalId: String!) {
-    removeLearningMaterialPrerequisite(
+export const removeLearningMaterialHasPrerequisiteTopic = gql`
+  mutation removeLearningMaterialHasPrerequisiteTopic($learningMaterialId: String!, $prerequisiteTopicId: String!) {
+    removeLearningMaterialHasPrerequisiteTopic(
       learningMaterialId: $learningMaterialId
-      prerequisiteLearningGoalId: $prerequisiteLearningGoalId
+      prerequisiteTopicId: $prerequisiteTopicId
     ) {
       _id
       prerequisites {
-        learningGoal {
-          ...LearningGoalBadgeData
+        topic {
+          ...TopicLinkData
         }
       }
     }
   }
-  ${LearningGoalBadgeData}
+  ${TopicLinkData}
 `;
 
 interface EditableLearningMaterialPrerequisitesProps
@@ -97,22 +96,22 @@ export const EditableLearningMaterialPrerequisites: React.FC<EditableLearningMat
   learningMaterial,
   ...props
 }) => {
-  const [addLearningMaterialPrerequisiteMutation] = useAddLearningMaterialPrerequisiteMutation();
-  const [removeLearningMaterialPrerequisiteMutation] = useRemoveLearningMaterialPrerequisiteMutation();
+  const [addLearningMaterialHasPrerequisiteTopicMutation] = useAddLearningMaterialHasPrerequisiteTopicMutation();
+  const [removeLearningMaterialHasPrerequisiteTopicMutation] = useRemoveLearningMaterialHasPrerequisiteTopicMutation();
 
   return (
     <StatelessEditableLearningMaterialPrerequisites
-      learningGoalsPrerequisites={learningMaterial.prerequisites?.map((prereq) => prereq.learningGoal)}
-      onAdded={(learningGoal) =>
-        addLearningMaterialPrerequisiteMutation({
-          variables: { learningMaterialId: learningMaterial._id, prerequisiteLearningGoalId: learningGoal._id },
+      prerequisites={learningMaterial.prerequisites?.map(({ topic }) => topic)}
+      onAdded={(topic) =>
+        addLearningMaterialHasPrerequisiteTopicMutation({
+          variables: { learningMaterialId: learningMaterial._id, prerequisiteTopicId: topic._id },
         })
       }
-      onRemove={(learningGoalId) =>
-        removeLearningMaterialPrerequisiteMutation({
+      onRemove={(topicId) =>
+        removeLearningMaterialHasPrerequisiteTopicMutation({
           variables: {
             learningMaterialId: learningMaterial._id,
-            prerequisiteLearningGoalId: learningGoalId,
+            prerequisiteTopicId: topicId,
           },
         })
       }

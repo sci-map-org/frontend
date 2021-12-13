@@ -1,27 +1,26 @@
-import { Flex, FlexProps, Text } from '@chakra-ui/react';
-import gql from 'graphql-tag';
-import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
-import { useGetDomainLearningPathsQuery } from './DomainLearningPaths.generated';
-import { LearningPathPreviewCardData } from './LearningPathPreviewCard';
-import { LearningPathPreviewCardList } from './LearningPathPreviewCardList';
+// import { Flex, FlexProps, Text } from '@chakra-ui/react';
+// import gql from 'graphql-tag';
+// import { useGetDomainLearningPathsQuery } from './DomainLearningPaths.generated';
+// import { LearningPathPreviewCardData } from './LearningPathPreviewCard';
+// import { LearningPathPreviewCardList } from './LearningPathPreviewCardList';
 
-export const getDomainLearningPaths = gql`
-  query getDomainLearningPaths($domainKey: String!) {
-    getDomainByKey(key: $domainKey) {
-      _id
-      learningPaths(options: { sorting: { field: createdAt, direction: DESC } }) {
-        items {
-          ...LearningPathPreviewCardData
-        }
-      }
-    }
-  }
-  ${LearningPathPreviewCardData}
-`;
-interface DomainLearningPathsProps {
-  domain: DomainDataFragment;
-  h?: FlexProps['h'];
-}
+// export const getDomainLearningPaths = gql`
+//   query getDomainLearningPaths($domainKey: String!) {
+//     getDomainByKey(key: $domainKey) {
+//       _id
+//       learningPaths(options: { sorting: { field: createdAt, direction: DESC } }) {
+//         items {
+//           ...LearningPathPreviewCardData
+//         }
+//       }
+//     }
+//   }
+//   ${LearningPathPreviewCardData}
+// `;
+// interface DomainLearningPathsProps {
+//   domain: DomainDataFragment;
+//   h?: FlexProps['h'];
+// }
 // export const DomainLearningPaths: React.FC<DomainLearningPathsProps> = ({ domain, h }) => {
 //   const { data } = useGetDomainLearningPathsQuery({ variables: { domainKey: domain.key } });
 //   const learningPaths = data?.getDomainByKey.learningPaths?.items;
@@ -35,3 +34,5 @@ interface DomainLearningPathsProps {
 //     </Flex>
 //   );
 // };
+
+export default {};

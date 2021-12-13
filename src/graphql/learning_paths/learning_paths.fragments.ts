@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { ResourcePreviewData } from '../resources/resources.fragments';
+import { ResourcePreviewCardData } from '../resources/resources.fragments';
 import { LearningPathDataFragment } from './learning_paths.fragments.generated';
 
 export const LearningPathData = gql`
@@ -26,13 +26,13 @@ export const LearningPathWithResourceItemsPreviewData = gql`
     ...LearningPathData
     resourceItems {
       resource {
-        ...ResourcePreviewData
+        ...ResourcePreviewCardData
       }
       description
     }
   }
   ${LearningPathData}
-  ${ResourcePreviewData}
+  ${ResourcePreviewCardData}
 `;
 
 export const generateLearningPathData = (): LearningPathDataFragment => ({

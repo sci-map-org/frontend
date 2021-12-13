@@ -1,7 +1,6 @@
 import * as Types from '../types';
 
-import { DomainDataFragment, DomainLinkDataFragment } from '../domains/domains.fragments.generated';
-import { ConceptDataFragment } from '../concepts/concepts.fragments.generated';
+import { TopicLinkDataFragment, TopicFullDataFragment } from '../topics/topics.fragments.generated';
 export type ResourceDataFragment = (
   { __typename?: 'Resource' }
   & Pick<Types.Resource, '_id' | 'name' | 'type' | 'mediaType' | 'url' | 'description' | 'durationSeconds' | 'rating'>
@@ -19,7 +18,7 @@ export type ResourceLinkDataFragment = (
   & Pick<Types.Resource, '_id' | 'name'>
 );
 
-export type ResourcePreviewDataFragment = (
+export type ResourcePreviewCardDataFragment = (
   { __typename?: 'Resource' }
   & Pick<Types.Resource, '_id' | 'name' | 'type' | 'mediaType' | 'url' | 'description' | 'durationSeconds' | 'upvotes' | 'rating'>
   & { tags?: Types.Maybe<Array<(
@@ -28,16 +27,13 @@ export type ResourcePreviewDataFragment = (
   )>>, consumed?: Types.Maybe<(
     { __typename?: 'ConsumedResource' }
     & Pick<Types.ConsumedResource, 'openedAt' | 'consumedAt'>
-  )>, coveredConceptsByDomain?: Types.Maybe<Array<(
-    { __typename?: 'LearningMaterialCoveredConceptsByDomainItem' }
-    & { domain: (
-      { __typename?: 'Domain' }
-      & DomainDataFragment
-    ), coveredConcepts: Array<(
-      { __typename?: 'Concept' }
-      & ConceptDataFragment
+  )>, coveredSubTopics?: Types.Maybe<(
+    { __typename?: 'LearningMaterialCoveredSubTopicsResults' }
+    & { items: Array<(
+      { __typename?: 'Topic' }
+      & TopicLinkDataFragment
     )> }
-  )>>, subResourceSeries?: Types.Maybe<Array<(
+  )>, subResourceSeries?: Types.Maybe<Array<(
     { __typename?: 'Resource' }
     & Pick<Types.Resource, '_id' | 'name'>
   )>>, subResources?: Types.Maybe<Array<(
@@ -46,17 +42,14 @@ export type ResourcePreviewDataFragment = (
   )>> }
 );
 
-export type ResourceWithCoveredConceptsByDomainDataFragment = (
+export type ResourceWithCoveredTopicsDataFragment = (
   { __typename?: 'Resource' }
   & Pick<Types.Resource, '_id'>
-  & { coveredConceptsByDomain?: Types.Maybe<Array<(
-    { __typename?: 'LearningMaterialCoveredConceptsByDomainItem' }
-    & { domain: (
-      { __typename?: 'Domain' }
-      & DomainDataFragment
-    ), coveredConcepts: Array<(
-      { __typename?: 'Concept' }
-      & ConceptDataFragment
+  & { coveredSubTopics?: Types.Maybe<(
+    { __typename?: 'LearningMaterialCoveredSubTopicsResults' }
+    & { items: Array<(
+      { __typename?: 'Topic' }
+      & TopicLinkDataFragment
     )> }
-  )>> }
+  )> }
 );

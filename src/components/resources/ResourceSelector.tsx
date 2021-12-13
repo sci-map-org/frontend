@@ -15,10 +15,9 @@ import {
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import { PropsWithChildren, ReactElement } from 'react';
-import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import {
   ResourceDataFragment,
-  ResourcePreviewDataFragment,
+  ResourcePreviewCardDataFragment,
 } from '../../graphql/resources/resources.fragments.generated';
 import { NewResourceModal } from './NewResource';
 import { ResourceFinder } from './ResourceFinder';
@@ -32,12 +31,10 @@ import { getResourcePreviewData } from '../../graphql/resources/resources.operat
 
 interface GenericResourceSelectorProps<ResourceFragmentType> {
   onSelect: (resource: ResourceFragmentType) => void;
-  defaultAttachedDomains?: DomainDataFragment[];
   increaseResourceType: (resourceData: ResourceDataFragment) => ResourceFragmentType | Promise<ResourceFragmentType>;
 }
 export function GenericResourceSelector<ResourceFragmentType>({
   onSelect,
-  defaultAttachedDomains,
   increaseResourceType,
 }: PropsWithChildren<GenericResourceSelectorProps<ResourceFragmentType>>) {
   return (
@@ -54,12 +51,6 @@ export function GenericResourceSelector<ResourceFragmentType>({
             renderButton={(onClick) => (
               <IconButton aria-label="Create resource" icon={<AddIcon />} size="lg" isRound mb={3} onClick={onClick} />
             )}
-            defaultResourceCreationData={{
-              domainsAndCoveredConcepts: (defaultAttachedDomains || []).map((domain) => ({
-                domain,
-                selectedConcepts: [],
-              })),
-            }}
             onResourceCreated={async (resourceData) => onSelect(await increaseResourceType(resourceData))}
           />
         </Stack>
@@ -113,13 +104,13 @@ export const ResourceSelectorModal: React.FC<Omit<
 };
 
 export const PreviewResourceSelectorModal: React.FC<Omit<
-  GenericResourceSelectorModalProps<ResourcePreviewDataFragment>,
+  GenericResourceSelectorModalProps<ResourcePreviewCardDataFragment>,
   'increaseResourceType'
 >> = ({ ...props }) => {
   const client = useApolloClient();
 
   return (
-    <GenericResourceSelectorModal<ResourcePreviewDataFragment>
+    <GenericResourceSelectorModal<ResourcePreviewCardDataFragment>
       {...props}
       increaseResourceType={async (resourceData) => {
         const { data } = await client.query<GetResourcePreviewDataQuery, GetResourcePreviewDataQueryVariables>({

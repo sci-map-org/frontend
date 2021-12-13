@@ -60,7 +60,7 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
             currentUser &&
             (currentUser.role === UserRole.Admin ||
               currentUser.role === UserRole.Contributor ||
-              currentUser._id === resource.creator?._id)
+              currentUser._id === resource.createdBy?._id)
           }
           renderAccessDenied={() => <Box />}
         >

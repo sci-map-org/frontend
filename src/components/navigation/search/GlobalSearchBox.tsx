@@ -1,5 +1,5 @@
 import { SearchIcon } from '@chakra-ui/icons';
-import { Input, InputGroup, InputLeftElement, InputRightElement, InputProps } from '@chakra-ui/input';
+import { Input, InputGroup, InputLeftElement, InputProps, InputRightElement } from '@chakra-ui/input';
 import { Box, BoxProps } from '@chakra-ui/layout';
 import gql from 'graphql-tag';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -8,11 +8,10 @@ import { BeatLoader } from 'react-spinners';
 import { useDebouncedCallback } from 'use-debounce';
 import { routerPushToPage } from '../../../pages/PageInfo';
 import {
-  ConceptPageInfo,
-  DomainPageInfo,
   LearningGoalPageInfo,
   LearningPathPageInfo,
   ResourcePageInfo,
+  TopicPageInfo,
 } from '../../../pages/RoutesPageInfos';
 import { theme } from '../../../theme/theme';
 import { GlobalSearchQuery, useGlobalSearchLazyQuery } from './GlobalSearchBox.generated';
@@ -104,15 +103,7 @@ export const GlobalSearchBox: React.FC<GlobalSearchBoxProps> = ({
         }}
         onSuggestionSelected={(e, { suggestion }) => {
           e.preventDefault();
-          if (suggestion.entity.__typename === 'Domain') routerPushToPage(DomainPageInfo(suggestion.entity));
-          if (suggestion.entity.__typename === 'Concept') {
-            if (suggestion.entity.domain)
-              routerPushToPage(ConceptPageInfo(suggestion.entity.domain, suggestion.entity));
-            else throw new Error('Concept missing domain');
-          }
-          if (suggestion.entity.__typename === 'LearningGoal') {
-            if (suggestion.entity) routerPushToPage(LearningGoalPageInfo(suggestion.entity));
-          }
+          if (suggestion.entity.__typename === 'Topic') routerPushToPage(TopicPageInfo(suggestion.entity));
           if (suggestion.entity.__typename === 'Resource') routerPushToPage(ResourcePageInfo(suggestion.entity));
           if (suggestion.entity.__typename === 'LearningPath')
             routerPushToPage(LearningPathPageInfo(suggestion.entity));

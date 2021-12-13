@@ -1,15 +1,12 @@
-import { ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons';
 import { Box, Button, Center, Flex, Skeleton, Stack, Text } from '@chakra-ui/react';
+import { BsArrow90DegUp } from '@react-icons/all-files/bs/BsArrow90DegUp';
+import { BsArrowLeft } from '@react-icons/all-files/bs/BsArrowLeft';
+import { BsArrowRight } from '@react-icons/all-files/bs/BsArrowRight';
 import gql from 'graphql-tag';
 import Router, { useRouter } from 'next/router';
 import { Access } from '../../components/auth/Access';
 import { RoleAccess } from '../../components/auth/RoleAccess';
-import { ParentDomainsNavigationBlock } from '../../components/domains/ParentDomainsNavigationBlock';
 import { PageLayout } from '../../components/layout/PageLayout';
-import {
-  EditableLearningMaterialOutcomes,
-  EditableLearningMaterialOutcomesData,
-} from '../../components/learning_materials/EditableLearningMaterialOutcomes';
 import {
   EditableLearningMaterialPrerequisites,
   EditableLearningMaterialPrerequisitesData,
@@ -29,38 +26,23 @@ import { ResourceMediaTypeBadge } from '../../components/resources/elements/Reso
 import { ResourceTypeBadge } from '../../components/resources/elements/ResourceType';
 import { ResourceUrlLink } from '../../components/resources/elements/ResourceUrl';
 import { ResourceYoutubePlayer } from '../../components/resources/elements/ResourceYoutubePlayer';
-import { LearningMaterialCoveredTopics } from '../../components/resources/LearningMaterialCoveredTopics';
+import { EditableLearningMaterialCoveredTopics } from '../../components/learning_materials/EditableLearningMaterialCoveredTopics';
 import { SquareResourceCardData } from '../../components/resources/SquareResourceCard';
-import { SubResourceSeriesManager } from '../../components/resources/SubResourceSeriesManager';
-import { ResourceSubResourcesManager } from '../../components/resources/SubResourcesManager';
-import { ConceptData, generateConceptData } from '../../graphql/concepts/concepts.fragments';
-import { DomainData, generateDomainData } from '../../graphql/domains/domains.fragments';
+import { UserAvatar, UserAvatarData } from '../../components/users/UserAvatar';
 import { generateResourceData, ResourceData } from '../../graphql/resources/resources.fragments';
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { useDeleteResourceMutation } from '../../graphql/resources/resources.operations.generated';
 import { ResourceType, UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
-import { isResourceGroupType, isResourceSeriesType } from '../../services/resources.service';
 import { GetResourceResourcePageQuery, useGetResourceResourcePageQuery } from './ResourcePage.generated';
-import { BsArrowLeft } from '@react-icons/all-files/bs/BsArrowLeft';
-import { BsArrowRight } from '@react-icons/all-files/bs/BsArrowRight';
-import { BsArrow90DegUp } from '@react-icons/all-files/bs/BsArrow90DegUp';
-import { UserAvatar, UserAvatarData } from '../../components/users/UserAvatar';
+import { LearningMaterialWithCoveredTopicsData } from '../../graphql/learning_materials/learning_materials.fragments';
 
 export const getResourceResourcePage = gql`
   query getResourceResourcePage($id: String!) {
-    getResourceById(id: $id) {
+    getResourceById(resourceId: $id) {
       ...ResourceData
-      creator {
+      createdBy {
         ...UserAvatarData
-      }
-      coveredConceptsByDomain {
-        domain {
-          ...DomainData
-        }
-        coveredConcepts {
-          ...ConceptData
-        }
       }
       subResources {
         ...SquareResourceCardData
@@ -84,32 +66,31 @@ export const getResourceResourcePage = gql`
         _id
         name
       }
-      ...EditableLearningMaterialOutcomesData
+      ...LearningMaterialWithCoveredTopicsData
       ...EditableLearningMaterialPrerequisitesData
       ...LearningMaterialStarsRaterData
     }
   }
   ${SquareResourceCardData}
-  ${DomainData}
   ${ResourceData}
-  ${ConceptData}
   ${UserAvatarData}
-  ${EditableLearningMaterialOutcomesData}
   ${EditableLearningMaterialPrerequisitesData}
   ${LearningMaterialStarsRaterData}
+  ${LearningMaterialWithCoveredTopicsData}
 `;
 
-const domainDataPlaceholder = generateDomainData();
+// TODO
+// const domainDataPlaceholder = generateDomainData();
 const resourceDataPlaceholder: GetResourceResourcePageQuery['getResourceById'] = {
   ...generateResourceData(),
-  coveredConceptsByDomain: [
-    {
-      domain: domainDataPlaceholder,
-      coveredConcepts: [0, 0, 0, 0].map(() => ({
-        ...generateConceptData(),
-      })),
-    },
-  ],
+  // coveredConceptsByDomain: [
+  //   {
+  //     domain: domainDataPlaceholder,
+  //     coveredConcepts: [0, 0, 0, 0].map(() => ({
+  //       ...generateConceptData(),
+  //     })),
+  //   },
+  // ],
 };
 
 export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) => {
@@ -140,7 +121,9 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
       }
       renderTopRight={<TopRightIconButtons loading={loading} resource={resource} />}
       renderTopLeft={
-        <ParentDomainsNavigationBlock domains={(resource.coveredConceptsByDomain || []).map(({ domain }) => domain)} />
+        'Showed In'
+        // TODO
+        // <ParentDomainsNavigationBlock domains={(resource.coveredConceptsByDomain || []).map(({ domain }) => domain)} />
       }
     >
       <Stack w={['30rem', '36rem', '40rem', '50rem']} spacing={4}>
@@ -156,12 +139,12 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
             </Stack>
           ))}
         <Flex justifyContent="space-between" alignItems="flex-end">
-          {resource.creator && (
+          {resource.createdBy && (
             <Stack direction="row" alignItems="center">
               <Text fontWeight={300} fontSize="md">
                 Added By
               </Text>
-              <UserAvatar user={resource.creator} size="xs" />
+              <UserAvatar user={resource.createdBy} size="xs" />
             </Stack>
           )}
           <Stack direction="row" spacing={2} alignItems="baseline">
@@ -208,32 +191,37 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
                 isLoading={loading}
               />
             </Center>
-            <LearningMaterialCoveredTopics editMode="loggedInUser" isLoading={loading} learningMaterial={resource} />
-            <Center>
+            <EditableLearningMaterialCoveredTopics
+              editable={!!currentUser}
+              isLoading={loading}
+              learningMaterial={resource}
+            />
+            {/* <Center>
               <EditableLearningMaterialOutcomes
                 editable={!!currentUser}
                 learningMaterial={resource}
                 isLoading={loading}
               />
-            </Center>
+          </Center>*/}
           </Stack>
         </Flex>
 
-        {(isResourceSeriesType(resource.type) || resource.subResourceSeries?.length) && (
+        {/* TODO */}
+        {/* {(isResourceSeriesType(resource.type) || resource.subResourceSeries?.length) && (
           <SubResourceSeriesManager
             resourceId={resourceId}
             subResourceSeries={resource.subResourceSeries || undefined}
             domains={resource.coveredConceptsByDomain?.map((i) => i.domain) || []}
           />
-        )}
-
-        {(isResourceGroupType(resource.type) || resource.subResources?.length) && (
+        )} */}
+        {/* TODO */}
+        {/* {(isResourceGroupType(resource.type) || resource.subResources?.length) && (
           <ResourceSubResourcesManager
             resourceId={resourceId}
             subResources={resource.subResources || []}
             domains={resource.coveredConceptsByDomain?.map((i) => i.domain) || []}
           />
-        )}
+        )} */}
       </Stack>
     </PageLayout>
   );
@@ -259,7 +247,7 @@ const TopRightIconButtons: React.FC<{
           currentUser &&
           (currentUser.role === UserRole.Admin ||
             currentUser.role === UserRole.Contributor ||
-            currentUser._id === resource.creator?._id)
+            currentUser._id === resource.createdBy?._id)
         }
       >
         <DeleteButtonWithConfirmation

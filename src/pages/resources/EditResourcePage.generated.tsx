@@ -1,6 +1,6 @@
 import * as Types from '../../graphql/types';
 
-import { ResourceDataFragment, ResourcePreviewDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { ResourceDataFragment, ResourcePreviewCardDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import * as Operations from './EditResourcePage';
 import * as Apollo from '@apollo/client';
 export type UpdateResourceResourcePageMutationVariables = Types.Exact<{
@@ -26,7 +26,7 @@ export type GetResourceEditResourcePageQuery = (
   { __typename?: 'Query' }
   & { getResourceById: (
     { __typename?: 'Resource' }
-    & { creator?: Types.Maybe<(
+    & { createdBy?: Types.Maybe<(
       { __typename?: 'User' }
       & Pick<Types.User, '_id'>
     )> }

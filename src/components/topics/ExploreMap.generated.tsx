@@ -1,8 +1,7 @@
 import * as Types from '../../graphql/types';
 
-import { DomainLinkDataFragment, DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
-import { ConceptLinkDataFragment } from '../../graphql/concepts/concepts.fragments.generated';
-import { LearningGoalLinkDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
+import { MapVisualisationTopicDataFragment } from './SubTopicsMapVisualisation.generated';
+import { TopicLinkDataFragment, TopicFullDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import * as Operations from './ExploreMap';
 import * as Apollo from '@apollo/client';
 export type GetTopicByIdExplorePageQueryVariables = Types.Exact<{
@@ -13,132 +12,32 @@ export type GetTopicByIdExplorePageQueryVariables = Types.Exact<{
 export type GetTopicByIdExplorePageQuery = (
   { __typename?: 'Query' }
   & { getTopicById: (
-    { __typename?: 'Domain' }
-    & Pick<Types.Domain, 'learningMaterialsTotalCount' | '_id' | 'key' | 'name' | 'description' | 'size' | 'topicType'>
-    & { parentTopics?: Types.Maybe<Array<(
-      { __typename?: 'TopicIsSubTopicOfTopic' }
-      & { parentTopic: (
-        { __typename?: 'Domain' }
-        & Pick<Types.Domain, 'topicType'>
-        & DomainLinkDataFragment
-      ) | (
-        { __typename?: 'Concept' }
-        & Pick<Types.Concept, 'topicType'>
-        & ConceptLinkDataFragment
-      ) | (
-        { __typename?: 'LearningGoal' }
-        & Pick<Types.LearningGoal, 'topicType'>
-        & LearningGoalLinkDataFragment
-      ) }
-    )>>, subTopics?: Types.Maybe<Array<(
+    { __typename?: 'Topic' }
+    & Pick<Types.Topic, 'description' | 'learningMaterialsTotalCount'>
+    & { subTopics?: Types.Maybe<Array<(
       { __typename?: 'TopicIsSubTopicOfTopic' }
       & { subTopic: (
-        { __typename?: 'Domain' }
-        & Pick<Types.Domain, '_id' | 'key' | 'name' | 'size' | 'topicType'>
-      ) | (
-        { __typename?: 'Concept' }
-        & Pick<Types.Concept, '_id' | 'key' | 'name' | 'size' | 'topicType'>
-        & { domain?: Types.Maybe<(
-          { __typename?: 'Domain' }
-          & DomainLinkDataFragment
-        )> }
-      ) | (
-        { __typename?: 'LearningGoal' }
-        & Pick<Types.LearningGoal, 'type' | '_id' | 'key' | 'name' | 'size' | 'topicType'>
+        { __typename?: 'Topic' }
+        & MapVisualisationTopicDataFragment
       ) }
-    )>> }
-  ) | (
-    { __typename?: 'Concept' }
-    & Pick<Types.Concept, '_id' | 'key' | 'name' | 'description' | 'size' | 'topicType'>
-    & { domain?: Types.Maybe<(
-      { __typename?: 'Domain' }
-      & DomainLinkDataFragment
-    )>, parentTopic?: Types.Maybe<(
-      { __typename?: 'TopicIsSubTopicOfTopic' }
-      & { parentTopic: (
-        { __typename?: 'Domain' }
-        & Pick<Types.Domain, 'topicType'>
-        & DomainLinkDataFragment
-      ) | (
-        { __typename?: 'Concept' }
-        & Pick<Types.Concept, 'topicType'>
-        & ConceptLinkDataFragment
-      ) | (
-        { __typename?: 'LearningGoal' }
-        & Pick<Types.LearningGoal, 'topicType'>
-        & LearningGoalLinkDataFragment
-      ) }
-    )>, subTopics?: Types.Maybe<Array<(
-      { __typename?: 'TopicIsSubTopicOfTopic' }
-      & { subTopic: (
-        { __typename?: 'Domain' }
-        & Pick<Types.Domain, '_id' | 'key' | 'name' | 'size' | 'topicType'>
-      ) | (
-        { __typename?: 'Concept' }
-        & Pick<Types.Concept, '_id' | 'key' | 'name' | 'size' | 'topicType'>
-        & { domain?: Types.Maybe<(
-          { __typename?: 'Domain' }
-          & DomainLinkDataFragment
-        )> }
-      ) | (
-        { __typename?: 'LearningGoal' }
-        & Pick<Types.LearningGoal, 'type' | '_id' | 'key' | 'name' | 'size' | 'topicType'>
-      ) }
-    )>> }
-  ) | (
-    { __typename?: 'LearningGoal' }
-    & Pick<Types.LearningGoal, 'type' | '_id' | 'key' | 'name' | 'description' | 'size' | 'topicType'>
-    & { domain?: Types.Maybe<(
-      { __typename?: 'LearningGoalBelongsToDomain' }
-      & { domain: (
-        { __typename?: 'Domain' }
-        & DomainLinkDataFragment
-      ) }
-    )>, parentTopic?: Types.Maybe<(
-      { __typename?: 'TopicIsSubTopicOfTopic' }
-      & { parentTopic: (
-        { __typename?: 'Domain' }
-        & Pick<Types.Domain, 'topicType'>
-        & DomainLinkDataFragment
-      ) | (
-        { __typename?: 'Concept' }
-        & Pick<Types.Concept, 'topicType'>
-        & ConceptLinkDataFragment
-      ) | (
-        { __typename?: 'LearningGoal' }
-        & Pick<Types.LearningGoal, 'topicType'>
-        & LearningGoalLinkDataFragment
-      ) }
-    )>, subTopics?: Types.Maybe<Array<(
-      { __typename?: 'TopicIsSubTopicOfTopic' }
-      & { subTopic: (
-        { __typename?: 'Domain' }
-        & Pick<Types.Domain, '_id' | 'key' | 'name' | 'size' | 'topicType'>
-      ) | (
-        { __typename?: 'Concept' }
-        & Pick<Types.Concept, '_id' | 'key' | 'name' | 'size' | 'topicType'>
-        & { domain?: Types.Maybe<(
-          { __typename?: 'Domain' }
-          & DomainLinkDataFragment
-        )> }
-      ) | (
-        { __typename?: 'LearningGoal' }
-        & Pick<Types.LearningGoal, 'type' | '_id' | 'key' | 'name' | 'size' | 'topicType'>
-      ) }
-    )>> }
+    )>>, parentTopic?: Types.Maybe<(
+      { __typename?: 'Topic' }
+      & TopicLinkDataFragment
+    )> }
+    & MapVisualisationTopicDataFragment
   ) }
 );
 
-export type GetTopLevelDomainsQueryVariables = Types.Exact<{ [key: string]: never; }>;
+export type GetTopLevelTopicsQueryVariables = Types.Exact<{ [key: string]: never; }>;
 
 
-export type GetTopLevelDomainsQuery = (
+export type GetTopLevelTopicsQuery = (
   { __typename?: 'Query' }
-  & { getTopLevelDomains: (
-    { __typename?: 'GetTopLevelDomainsResults' }
+  & { getTopLevelTopics: (
+    { __typename?: 'GetTopLevelTopicsResults' }
     & { items: Array<(
-      { __typename?: 'Domain' }
-      & Pick<Types.Domain, '_id' | 'key' | 'name' | 'size' | 'topicType'>
+      { __typename?: 'Topic' }
+      & MapVisualisationTopicDataFragment
     )> }
   ) }
 );
@@ -172,26 +71,26 @@ export type GetTopicByIdExplorePageLazyQueryHookResult = ReturnType<typeof useGe
 export type GetTopicByIdExplorePageQueryResult = Apollo.QueryResult<GetTopicByIdExplorePageQuery, GetTopicByIdExplorePageQueryVariables>;
 
 /**
- * __useGetTopLevelDomainsQuery__
+ * __useGetTopLevelTopicsQuery__
  *
- * To run a query within a React component, call `useGetTopLevelDomainsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetTopLevelDomainsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetTopLevelTopicsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTopLevelTopicsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetTopLevelDomainsQuery({
+ * const { data, loading, error } = useGetTopLevelTopicsQuery({
  *   variables: {
  *   },
  * });
  */
-export function useGetTopLevelDomainsQuery(baseOptions?: Apollo.QueryHookOptions<GetTopLevelDomainsQuery, GetTopLevelDomainsQueryVariables>) {
-        return Apollo.useQuery<GetTopLevelDomainsQuery, GetTopLevelDomainsQueryVariables>(Operations.getTopLevelDomains, baseOptions);
+export function useGetTopLevelTopicsQuery(baseOptions?: Apollo.QueryHookOptions<GetTopLevelTopicsQuery, GetTopLevelTopicsQueryVariables>) {
+        return Apollo.useQuery<GetTopLevelTopicsQuery, GetTopLevelTopicsQueryVariables>(Operations.getTopLevelTopics, baseOptions);
       }
-export function useGetTopLevelDomainsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTopLevelDomainsQuery, GetTopLevelDomainsQueryVariables>) {
-          return Apollo.useLazyQuery<GetTopLevelDomainsQuery, GetTopLevelDomainsQueryVariables>(Operations.getTopLevelDomains, baseOptions);
+export function useGetTopLevelTopicsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTopLevelTopicsQuery, GetTopLevelTopicsQueryVariables>) {
+          return Apollo.useLazyQuery<GetTopLevelTopicsQuery, GetTopLevelTopicsQueryVariables>(Operations.getTopLevelTopics, baseOptions);
         }
-export type GetTopLevelDomainsQueryHookResult = ReturnType<typeof useGetTopLevelDomainsQuery>;
-export type GetTopLevelDomainsLazyQueryHookResult = ReturnType<typeof useGetTopLevelDomainsLazyQuery>;
-export type GetTopLevelDomainsQueryResult = Apollo.QueryResult<GetTopLevelDomainsQuery, GetTopLevelDomainsQueryVariables>;
+export type GetTopLevelTopicsQueryHookResult = ReturnType<typeof useGetTopLevelTopicsQuery>;
+export type GetTopLevelTopicsLazyQueryHookResult = ReturnType<typeof useGetTopLevelTopicsLazyQuery>;
+export type GetTopLevelTopicsQueryResult = Apollo.QueryResult<GetTopLevelTopicsQuery, GetTopLevelTopicsQueryVariables>;

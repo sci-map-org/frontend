@@ -1,7 +1,6 @@
 import * as Types from '../graphql/types';
 
 import { StartedLearningPathCardDataFragment } from './home/HomeUserStartedPaths.generated';
-import { LearningGoalCardDataFragment } from '../components/learning_goals/cards/LearningGoalCard.generated';
 import { ResourceMiniCardDataFragment } from '../components/resources/ResourceMiniCard.generated';
 import { LearningPathPreviewCardDataFragment } from '../components/learning_paths/LearningPathPreviewCard.generated';
 import * as Operations from './HomePage';
@@ -23,13 +22,6 @@ export type GetHomePageDataQuery = (
           { __typename?: 'LearningPath' }
           & StartedLearningPathCardDataFragment
         ) }
-      )>>, startedLearningGoals?: Types.Maybe<Array<(
-        { __typename?: 'LearningGoalStartedItem' }
-        & Pick<Types.LearningGoalStartedItem, 'startedAt'>
-        & { learningGoal: (
-          { __typename?: 'LearningGoal' }
-          & LearningGoalCardDataFragment
-        ) }
       )>>, consumedResources?: Types.Maybe<(
         { __typename?: 'UserConsumedResourcesResult' }
         & Pick<Types.UserConsumedResourcesResult, 'count'>
@@ -42,9 +34,6 @@ export type GetHomePageDataQuery = (
           ) }
         )> }
       )> }
-    )>, recommendedLearningGoals: Array<(
-      { __typename?: 'LearningGoal' }
-      & LearningGoalCardDataFragment
     )>, recommendedLearningPaths: Array<(
       { __typename?: 'LearningPath' }
       & LearningPathPreviewCardDataFragment

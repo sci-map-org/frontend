@@ -1,35 +1,28 @@
 import * as Types from '../types';
 
-import { DomainLinkDataFragment, DomainDataFragment } from '../domains/domains.fragments.generated';
-import { ConceptLinkDataFragment } from '../concepts/concepts.fragments.generated';
-export type LearningMaterialWithCoveredConceptsByDomainData_Resource_Fragment = (
+import { TopicLinkDataFragment, TopicFullDataFragment } from '../topics/topics.fragments.generated';
+export type LearningMaterialWithCoveredTopicsData_Resource_Fragment = (
   { __typename?: 'Resource' }
   & Pick<Types.Resource, '_id'>
-  & { coveredConceptsByDomain?: Types.Maybe<Array<(
-    { __typename?: 'LearningMaterialCoveredConceptsByDomainItem' }
-    & { domain: (
-      { __typename?: 'Domain' }
-      & DomainLinkDataFragment
-    ), coveredConcepts: Array<(
-      { __typename?: 'Concept' }
-      & ConceptLinkDataFragment
+  & { coveredSubTopics?: Types.Maybe<(
+    { __typename?: 'LearningMaterialCoveredSubTopicsResults' }
+    & { items: Array<(
+      { __typename?: 'Topic' }
+      & TopicLinkDataFragment
     )> }
-  )>> }
+  )> }
 );
 
-export type LearningMaterialWithCoveredConceptsByDomainData_LearningPath_Fragment = (
+export type LearningMaterialWithCoveredTopicsData_LearningPath_Fragment = (
   { __typename?: 'LearningPath' }
   & Pick<Types.LearningPath, '_id'>
-  & { coveredConceptsByDomain?: Types.Maybe<Array<(
-    { __typename?: 'LearningMaterialCoveredConceptsByDomainItem' }
-    & { domain: (
-      { __typename?: 'Domain' }
-      & DomainLinkDataFragment
-    ), coveredConcepts: Array<(
-      { __typename?: 'Concept' }
-      & ConceptLinkDataFragment
+  & { coveredSubTopics?: Types.Maybe<(
+    { __typename?: 'LearningMaterialCoveredSubTopicsResults' }
+    & { items: Array<(
+      { __typename?: 'Topic' }
+      & TopicLinkDataFragment
     )> }
-  )>> }
+  )> }
 );
 
-export type LearningMaterialWithCoveredConceptsByDomainDataFragment = LearningMaterialWithCoveredConceptsByDomainData_Resource_Fragment | LearningMaterialWithCoveredConceptsByDomainData_LearningPath_Fragment;
+export type LearningMaterialWithCoveredTopicsDataFragment = LearningMaterialWithCoveredTopicsData_Resource_Fragment | LearningMaterialWithCoveredTopicsData_LearningPath_Fragment;

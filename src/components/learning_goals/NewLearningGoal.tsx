@@ -36,15 +36,15 @@ import {
 } from '@chakra-ui/react';
 import { ReactElement, useEffect, useState } from 'react';
 import { useDebounce } from 'use-debounce';
-import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
-import { useCreateLearningGoalMutation } from '../../graphql/learning_goals/learning_goals.operations.generated';
+import {
+  useCheckLearningGoalKeyAvailabilityLazyQuery,
+  useCreateLearningGoalMutation,
+} from '../../graphql/learning_goals/learning_goals.operations.generated';
 import { useCheckTopicKeyAvailabilityLazyQuery } from '../../graphql/topics/topics.operations.generated';
-import { LearningGoalType, TopicType } from '../../graphql/types';
-import { DomainPageInfo } from '../../pages/RoutesPageInfos';
+import { LearningGoalType } from '../../graphql/types';
 import { getChakraRelativeSize } from '../../util/chakra.util';
 import { RoleAccess } from '../auth/RoleAccess';
-import { DomainSelector } from '../domains/DomainSelector';
 import { FormButtons } from '../lib/buttons/FormButtons';
 import { PageLink } from '../navigation/InternalLink';
 
@@ -53,7 +53,7 @@ interface NewLearningGoalData {
   key: string;
   type: LearningGoalType;
   description?: string;
-  domain?: DomainDataFragment;
+  // TODO: Show in
   public?: boolean;
 }
 interface NewLearningGoalFormProps {
@@ -70,21 +70,21 @@ export const NewLearningGoalForm: React.FC<NewLearningGoalFormProps> = ({
   allowDomainChange,
   size = 'md',
 }) => {
-  const [domain, setDomain] = useState<DomainDataFragment | undefined>(defaultData?.domain);
+  // const [domain, setDomain] = useState<DomainDataFragment | undefined>(defaultData?.domain);
   const [name, setName] = useState(defaultData?.name || '');
   const [key, setKey] = useState('');
   const [description, setDescription] = useState(defaultData?.description || '');
   const [type, setType] = useState(defaultData?.type || LearningGoalType.Roadmap);
-  const [checkTopicKeyAvailability, { loading, data }] = useCheckTopicKeyAvailabilityLazyQuery({
+  const [checkLearningGoalKeyAvailability, { loading, data }] = useCheckLearningGoalKeyAvailabilityLazyQuery({
     errorPolicy: 'ignore',
   });
   const [keyValueToCheck] = useDebounce(key, 300);
   useEffect(() => {
-    checkTopicKeyAvailability({ variables: { topicType: TopicType.LearningGoal, key: keyValueToCheck } });
+    checkLearningGoalKeyAvailability({ variables: { key: keyValueToCheck } });
   }, [keyValueToCheck]);
   return (
     <Stack spacing={4} direction="column" alignItems="stretch">
-      <Stack>
+      {/* <Stack>
         <Flex direction="column">
           <Text fontWeight={600}>
             In:{' '}
@@ -105,14 +105,14 @@ export const NewLearningGoalForm: React.FC<NewLearningGoalFormProps> = ({
           </Text>
           {allowDomainChange && <DomainSelector onSelect={(selectedDomain) => setDomain(selectedDomain)} />}
         </Flex>
-        {type === LearningGoalType.SubGoal && !domain && (
+         {type === LearningGoalType.SubGoal && !domain && (
           <Alert status="error">
             <AlertIcon />
             <AlertTitle mr={2}>No domain selected</AlertTitle>
             <AlertDescription>You must select a domain to create a Concept Group</AlertDescription>
           </Alert>
-        )}
-      </Stack>
+        )} 
+      </Stack> */}
       <Center>
         <ButtonGroup size="sm" isAttached variant="outline">
           <Button
@@ -184,7 +184,7 @@ export const NewLearningGoalForm: React.FC<NewLearningGoalFormProps> = ({
                       children={
                         !!loading ? (
                           <Spinner size="sm" />
-                        ) : data?.checkTopicKeyAvailability.available ? (
+                        ) : data?.checkLearningGoalKeyAvailability.available ? (
                           <CheckIcon color="green.500" />
                         ) : (
                           <Tooltip
@@ -201,25 +201,25 @@ export const NewLearningGoalForm: React.FC<NewLearningGoalFormProps> = ({
                     />
                   )}
                 </InputGroup>
-                {key && (
+                {/* {key && (
                   <FormHelperText fontSize="xs">
                     Url will look like{' '}
                     <Text as="span" fontWeight={500}>
                       {domain && `/areas/${domain.key}`}/goals/{key}
                     </Text>
                   </FormHelperText>
-                )}
+                )} */}
               </FormControl>
             </AccordionPanel>
           </AccordionItem>
         </Accordion>
       </RoleAccess>
       <FormButtons
-        isPrimaryDisabled={!name || (!!key && !data?.checkTopicKeyAvailability.available)}
+        isPrimaryDisabled={!name || (!!key && !data?.checkLearningGoalKeyAvailability.available)}
         onCancel={() => onCancel()}
         size={getChakraRelativeSize(size, 1)}
         onPrimaryClick={() => {
-          onCreate({ name, key, description: description || undefined, type, public: defaultData?.public, domain });
+          onCreate({ name, key, description: description || undefined, type, public: defaultData?.public });
         }}
       />
     </Stack>
@@ -233,11 +233,11 @@ export const NewLearningGoal: React.FC<NewLearningGoalProps> = ({ onCreated, ...
 
   return (
     <NewLearningGoalForm
-      onCreate={async ({ name, key, description, type, public: isPublic, domain }) => {
+      onCreate={async ({ name, key, description, type, public: isPublic }) => {
         const { data } = await createLearningGoal({
           variables: {
             payload: { name, key, description, type },
-            options: { public: !!isPublic, domainId: domain?._id },
+            options: { public: !!isPublic },
           },
         });
         if (data) {

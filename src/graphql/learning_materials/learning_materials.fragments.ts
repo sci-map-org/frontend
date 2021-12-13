@@ -1,19 +1,14 @@
 import gql from 'graphql-tag';
-import { ConceptLinkData } from '../concepts/concepts.fragments';
-import { DomainLinkData } from '../domains/domains.fragments';
+import { TopicLinkData } from '../topics/topics.fragments';
 
-export const LearningMaterialWithCoveredConceptsByDomainData = gql`
-  fragment LearningMaterialWithCoveredConceptsByDomainData on LearningMaterial {
+export const LearningMaterialWithCoveredTopicsData = gql`
+  fragment LearningMaterialWithCoveredTopicsData on LearningMaterial {
     _id
-    coveredConceptsByDomain {
-      domain {
-        ...DomainLinkData
-      }
-      coveredConcepts {
-        ...ConceptLinkData
+    coveredSubTopics(options: {}) {
+      items {
+        ...TopicLinkData
       }
     }
   }
-  ${DomainLinkData}
-  ${ConceptLinkData}
+  ${TopicLinkData}
 `;

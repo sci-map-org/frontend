@@ -1,6 +1,5 @@
 import { Heading, Stack } from '@chakra-ui/react';
 import gql from 'graphql-tag';
-import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { ResourceData } from '../../graphql/resources/resources.fragments';
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
@@ -10,7 +9,6 @@ import { useAddSubResourceMutation } from './SubResourcesManager.generated';
 
 interface StatelessSubResourcesManagerProps {
   subResources: SquareResourceCardDataFragment[];
-  domains?: DomainDataFragment[];
   addSubResource?: (subResource: ResourceDataFragment) => void;
   removeSubResource?: (subResource: SquareResourceCardDataFragment) => void;
   editable?: boolean;
@@ -19,7 +17,6 @@ interface StatelessSubResourcesManagerProps {
 
 export const StatelessSubResourcesManager: React.FC<StatelessSubResourcesManagerProps> = ({
   subResources,
-  domains,
   addSubResource,
   removeSubResource,
   editable,
@@ -35,7 +32,6 @@ export const StatelessSubResourcesManager: React.FC<StatelessSubResourcesManager
         resources={subResources}
         onRemove={removeSubResource}
         onAdd={addSubResource}
-        defaultAttachedDomains={domains}
         editable={editable}
         isLoading={isLoading}
       />
@@ -66,13 +62,11 @@ export const addSubResource = gql`
 interface ResourceSubResourcesManagerProps {
   resourceId: string;
   subResources: SquareResourceCardDataFragment[];
-  domains?: DomainDataFragment[];
 }
 
 export const ResourceSubResourcesManager: React.FC<ResourceSubResourcesManagerProps> = ({
   resourceId,
   subResources,
-  domains,
 }) => {
   const [addSubResource] = useAddSubResourceMutation();
   const { currentUser } = useCurrentUser();
@@ -82,7 +76,6 @@ export const ResourceSubResourcesManager: React.FC<ResourceSubResourcesManagerPr
       addSubResource={(subResource) =>
         addSubResource({ variables: { subResourceId: subResource._id, parentResourceId: resourceId } })
       }
-      domains={domains}
       editable={!!currentUser}
     />
   );

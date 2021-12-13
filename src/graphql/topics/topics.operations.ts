@@ -1,8 +1,51 @@
 import gql from 'graphql-tag';
+import { TopicFullData, TopicLinkData } from './topics.fragments';
+
+export const searchTopics = gql`
+  query searchTopics($options: SearchTopicsOptions!) {
+    searchTopics(options: $options) {
+      items {
+        _id
+        ...TopicLinkData
+      }
+    }
+  }
+  ${TopicLinkData}
+`;
+
+export const searchSubTopics = gql`
+  query searchSubTopics($topicId: String!, $options: SearchTopicsOptions!) {
+    searchSubTopics(topicId: $topicId, options: $options) {
+      items {
+        _id
+        ...TopicLinkData
+      }
+    }
+  }
+  ${TopicLinkData}
+`;
+
+export const updateTopic = gql`
+  mutation updateTopic($topicId: String!, $payload: UpdateTopicPayload!) {
+    updateTopic(topicId: $topicId, payload: $payload) {
+      ...TopicFullData
+    }
+  }
+  ${TopicFullData}
+`;
+
+export const deleteTopic = gql`
+  mutation deleteTopic($topicId: String!) {
+    deleteTopic(topicId: $topicId) {
+      _id
+      success
+    }
+  }
+`;
 
 export const checkTopicKeyAvailability = gql`
-  query checkTopicKeyAvailability($key: String!, $topicType: TopicType!, $domainKey: String) {
-    checkTopicKeyAvailability(key: $key, topicType: $topicType, domainKey: $domainKey) {
+  query checkTopicKeyAvailability($key: String!) {
+    checkTopicKeyAvailability(key: $key) {
       available
       existingTopic {
         _id
@@ -21,7 +64,7 @@ export const attachTopicIsSubTopicOfTopic = gql`
     attachTopicIsSubTopicOfTopic(parentTopicId: $parentTopicId, subTopicId: $subTopicId, payload: $payload) {
       parentTopic {
         _id
-        subTopics(options: { sorting: { type: index, direction: ASC } }) {
+        subTopics {
           index
           subTopic {
             _id
@@ -30,29 +73,8 @@ export const attachTopicIsSubTopicOfTopic = gql`
       }
       subTopic {
         _id
-        ... on Domain {
-          parentTopics(options: { sorting: { type: index, direction: ASC } }) {
-            index
-            parentTopic {
-              _id
-            }
-          }
-        }
-        ... on Concept {
-          parentTopic {
-            index
-            parentTopic {
-              _id
-            }
-          }
-        }
-        ... on LearningGoal {
-          parentTopic {
-            index
-            parentTopic {
-              _id
-            }
-          }
+        parentTopic {
+          _id
         }
       }
     }
@@ -68,7 +90,7 @@ export const updateTopicIsSubTopicOfTopic = gql`
     updateTopicIsSubTopicOfTopic(parentTopicId: $parentTopicId, subTopicId: $subTopicId, payload: $payload) {
       parentTopic {
         _id
-        subTopics(options: { sorting: { type: index, direction: ASC } }) {
+        subTopics {
           index
           subTopic {
             _id
@@ -77,29 +99,8 @@ export const updateTopicIsSubTopicOfTopic = gql`
       }
       subTopic {
         _id
-        ... on Domain {
-          parentTopics(options: { sorting: { type: index, direction: ASC } }) {
-            index
-            parentTopic {
-              _id
-            }
-          }
-        }
-        ... on Concept {
-          parentTopic {
-            index
-            parentTopic {
-              _id
-            }
-          }
-        }
-        ... on LearningGoal {
-          parentTopic {
-            index
-            parentTopic {
-              _id
-            }
-          }
+        parentTopic {
+          _id
         }
       }
     }
@@ -111,7 +112,7 @@ export const detachTopicIsSubTopicOfTopic = gql`
     detachTopicIsSubTopicOfTopic(parentTopicId: $parentTopicId, subTopicId: $subTopicId) {
       parentTopic {
         _id
-        subTopics(options: { sorting: { type: index, direction: ASC } }) {
+        subTopics {
           index
           subTopic {
             _id
@@ -120,31 +121,129 @@ export const detachTopicIsSubTopicOfTopic = gql`
       }
       subTopic {
         _id
-        ... on Domain {
-          parentTopics(options: { sorting: { type: index, direction: ASC } }) {
-            index
-            parentTopic {
-              _id
-            }
+        parentTopic {
+          _id
+        }
+      }
+    }
+  }
+`;
+export const attachTopicIsPartOfTopic = gql`
+  mutation attachTopicIsPartOfTopic(
+    $partOfTopicId: String!
+    $subTopicId: String!
+    $payload: AttachTopicIsPartOfTopicPayload!
+  ) {
+    attachTopicIsPartOfTopic(partOfTopicId: $partOfTopicId, subTopicId: $subTopicId, payload: $payload) {
+      partOfTopic {
+        ...TopicLinkData
+        subTopics {
+          relationshipType
+          index
+          subTopic {
+            ...TopicLinkData
           }
         }
-        ... on Concept {
-          parentTopic {
-            index
-            parentTopic {
-              _id
-            }
+      }
+      subTopic {
+        ...TopicLinkData
+        partOfTopics {
+          partOfTopic {
+            ...TopicLinkData
           }
         }
-        ... on LearningGoal {
-          parentTopic {
-            index
-            parentTopic {
-              _id
-            }
+      }
+    }
+  }
+  ${TopicLinkData}
+`;
+
+export const detachTopicIsPartOfTopic = gql`
+  mutation detachTopicIsPartOfTopic($partOfTopicId: String!, $subTopicId: String!) {
+    detachTopicIsPartOfTopic(partOfTopicId: $partOfTopicId, subTopicId: $subTopicId) {
+      partOfTopic {
+        ...TopicLinkData
+        subTopics {
+          relationshipType
+          index
+          subTopic {
+            ...TopicLinkData
+          }
+        }
+      }
+      subTopic {
+        ...TopicLinkData
+        partOfTopics {
+          partOfTopic {
+            ...TopicLinkData
+          }
+        }
+      }
+    }
+  }
+  ${TopicLinkData}
+`;
+
+export const updateTopicIsPartOfTopic = gql`
+  mutation updateTopicIsPartOfTopic(
+    $partOfTopicId: String!
+    $subTopicId: String!
+    $payload: UpdateTopicIsPartOfTopicPayload!
+  ) {
+    updateTopicIsPartOfTopic(partOfTopicId: $partOfTopicId, subTopicId: $subTopicId, payload: $payload) {
+      partOfTopic {
+        _id
+        subTopics {
+          index
+          subTopic {
+            _id
+          }
+        }
+      }
+      subTopic {
+        _id
+        partOfTopics {
+          partOfTopic {
+            _id
           }
         }
       }
     }
   }
 `;
+
+export const updateTopicContext = gql`
+  mutation updateTopicContext($topicId: String!, $contextTopicId: String!) {
+    updateTopicContext(topicId: $topicId, contextTopicId: $contextTopicId) {
+      ...TopicLinkData
+      contextTopic {
+        ...TopicLinkData
+      }
+    }
+  }
+  ${TopicLinkData}
+`;
+
+// TODO
+
+// export const setConceptsKnown = gql`
+//   mutation setConceptsKnown($payload: SetConceptKnownPayload!) {
+//     setConceptsKnown(payload: $payload) {
+//       _id
+//       known {
+//         level
+//       }
+//     }
+//   }
+// `;
+
+// export const setConceptsUnknown = gql`
+//   mutation setConceptsUnknown($conceptIds: [String!]!) {
+//     setConceptsUnknown(conceptIds: $conceptIds) {
+//       _id
+//       known {
+//         level
+//       }
+//     }
+//   }
+// `;

@@ -13,9 +13,9 @@ import {
   Text,
   TextProps,
 } from '@chakra-ui/react';
+import gql from 'graphql-tag';
 import { useEffect } from 'react';
 import { BeatLoader } from 'react-spinners';
-import { ResourcePreviewDataFragment } from '../../../graphql/resources/resources.fragments.generated';
 import {
   useAnalyzeResourceUrlLazyQuery,
   useSetResourceOpenedMutation,
@@ -23,10 +23,22 @@ import {
 import { AnalyzeResourceUrlResult } from '../../../graphql/types';
 import { toUrlPreview, validateUrl } from '../../../services/url.service';
 import { theme } from '../../../theme/theme';
+import { ResourceUrlDataFragment } from './ResourceUrl.generated';
+
+export const ResourceUrlData = gql`
+  fragment ResourceUrlData on Resource {
+    _id
+    consumed {
+      openedAt
+      lastOpenedAt
+      consumedAt
+    }
+    url
+}`
 
 export const ResourceUrlLinkWrapper: React.FC<
   {
-    resource: Pick<ResourcePreviewDataFragment, '_id' | 'consumed' | 'url'>;
+    resource: ResourceUrlDataFragment;
     isLoading?: boolean;
   } & Omit<LinkProps, 'href' | 'onClick' | 'isExternal' | 'resource'>
 > = ({ resource, isLoading, children, ...linkProps }) => {
@@ -49,7 +61,7 @@ export const ResourceUrlLinkWrapper: React.FC<
 
 export const ResourceUrlLinkViewer: React.FC<
   {
-    resource: Pick<ResourcePreviewDataFragment, '_id' | 'consumed' | 'url'>;
+    resource: ResourceUrlDataFragment;
     maxLength?: number;
   } & Omit<TextProps, 'resource'>
 > = ({ resource, maxLength, ...props }) => {
@@ -67,7 +79,7 @@ export const ResourceUrlLinkViewer: React.FC<
 };
 export const ResourceUrlLink: React.FC<
   {
-    resource: Pick<ResourcePreviewDataFragment, '_id' | 'consumed' | 'url'>;
+    resource: ResourceUrlDataFragment;
     isLoading?: boolean;
     maxLength?: number;
   } & Omit<LinkProps, 'href' | 'onClick' | 'isExternal' | 'resource'>

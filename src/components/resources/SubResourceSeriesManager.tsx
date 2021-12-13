@@ -2,11 +2,10 @@ import { AddIcon } from '@chakra-ui/icons';
 import { Flex, Heading, IconButton, Stack } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { last } from 'lodash';
-import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { ResourceData } from '../../graphql/resources/resources.fragments';
 import {
   ResourceDataFragment,
-  ResourcePreviewDataFragment,
+  ResourcePreviewCardDataFragment,
 } from '../../graphql/resources/resources.fragments.generated';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { StarsRatingViewer } from '../lib/StarsRating';
@@ -21,15 +20,13 @@ import {
 } from './SubResourceSeriesManager.generated';
 
 interface StatelessSubResourceSeriesManagerProps {
-  subResourceSeries?: ResourcePreviewDataFragment[];
+  subResourceSeries?: ResourcePreviewCardDataFragment[];
   onSelect: (selectedResource: ResourceDataFragment) => void;
-  domains?: DomainDataFragment[];
   editable?: boolean;
 }
 export const StatelessSubResourceSeriesManager: React.FC<StatelessSubResourceSeriesManagerProps> = ({
   subResourceSeries,
   onSelect,
-  domains,
   editable,
 }) => {
   if (!editable && (!subResourceSeries || !subResourceSeries.length)) return null;
@@ -39,7 +36,6 @@ export const StatelessSubResourceSeriesManager: React.FC<StatelessSubResourceSer
         <Flex direction="column" alignItems="center">
           <Heading size="md">Start resource series</Heading>
           <ResourceSelectorModal
-            defaultAttachedDomains={domains}
             onSelect={onSelect}
             renderTrigger={({ openModal }) => (
               <IconButton
@@ -78,7 +74,6 @@ export const StatelessSubResourceSeriesManager: React.FC<StatelessSubResourceSer
           />
           <Flex direction="column" alignItems="center">
             <ResourceSelectorModal
-              defaultAttachedDomains={domains}
               onSelect={onSelect}
               renderTrigger={({ openModal }) => (
                 <IconButton
@@ -135,13 +130,11 @@ export const addSubResourceToSeries = gql`
 
 interface SubResourceSeriesManagerProps {
   resourceId: string;
-  subResourceSeries?: ResourcePreviewDataFragment[];
-  domains?: DomainDataFragment[];
+  subResourceSeries?: ResourcePreviewCardDataFragment[];
 }
 
 export const SubResourceSeriesManager: React.FC<SubResourceSeriesManagerProps> = ({
   resourceId,
-  domains,
   subResourceSeries,
 }) => {
   const [addSubResourceToSeriesMutation] = useAddSubResourceToSeriesMutation();
