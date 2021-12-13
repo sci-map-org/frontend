@@ -9,7 +9,7 @@ import {
   Img,
   Stack,
   Text,
-  useBreakpointValue
+  useBreakpointValue,
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import dynamic from 'next/dynamic';
@@ -26,12 +26,14 @@ import { HomeTopicsRecommendations } from './home/HomeTopicsRecommendations';
 import { HomeUserResourcesHistory } from './home/HomeUserResourcesHistory';
 import { HomeUserStartedPaths, StartedLearningPathCardData } from './home/HomeUserStartedPaths';
 import { GetHomePageDataQuery, useGetHomePageDataQuery } from './HomePage.generated';
-    import('../components/topics/ExploreMap').then((res) => {
-      const { ExploreMap } = res;
-      return ExploreMap;
-    }),
-  { ssr: false }
-);
+
+// import('../components/topics/ExploreMap').then(
+//   (res) => {
+//     const { ExploreMap } = res;
+//     return ExploreMap;
+//   },
+//   { ssr: false }
+// );
 
 export const getHomePageData = gql`
   query getHomePageData {
@@ -58,9 +60,7 @@ export const getHomePageData = gql`
           }
         }
       }
-      # recommendedLearningGoals {
-      #   ...LearningGoalCardData
-      # }
+
       recommendedLearningPaths {
         ...LearningPathPreviewCardData
       }
