@@ -29,3 +29,4 @@
 //     </PageLayout>
 //   );
 // };
+export default {};

@@ -65,3 +65,4 @@
 //     </PageLayout>
 //   );
 // };
+export default {};

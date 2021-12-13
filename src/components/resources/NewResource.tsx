@@ -33,7 +33,6 @@ import {
   ResourceType,
 } from '../../graphql/types';
 import { validateUrl } from '../../services/url.service';
-import { DomainAndSelectedConcepts } from '../concepts/DomainAndConceptsSelector';
 import { LearningGoalBadgeDataFragment } from '../learning_goals/LearningGoalBadge.generated';
 import { StatelessEditableLearningMaterialCoveredTopics } from '../learning_materials/EditableLearningMaterialCoveredTopics';
 import { StatelessEditableLearningMaterialPrerequisites } from '../learning_materials/EditableLearningMaterialPrerequisites';

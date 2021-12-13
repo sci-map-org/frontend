@@ -89,3 +89,5 @@
 //     </PageLayout>
 //   );
 // };
+
+export default {};

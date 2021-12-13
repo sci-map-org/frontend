@@ -1,19 +1,11 @@
 import { Box, Button, Center, Flex, Skeleton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useMemo, useState } from 'react';
-import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { LearningGoalData } from '../../graphql/learning_goals/learning_goals.fragments';
-import {
-  useAttachLearningGoalToDomainMutation,
-  useDetachLearningGoalFromDomainMutation,
-  useUpdateLearningGoalMutation,
-} from '../../graphql/learning_goals/learning_goals.operations.generated';
+import { useUpdateLearningGoalMutation } from '../../graphql/learning_goals/learning_goals.operations.generated';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { routerPushToPage } from '../../pages/PageInfo';
-import { DomainLearningGoalPageInfo } from '../../pages/RoutesPageInfos';
 import { RoleAccess } from '../auth/RoleAccess';
-import { DomainLink } from '../lib/links/DomainLink';
-import { DomainSelector } from '../domains/DomainSelector';
 import { EditableTextarea } from '../lib/inputs/EditableTextarea';
 import { EditableTextInput } from '../lib/inputs/EditableTextInput';
 import { OtherLearnersViewer, OtherLearnersViewerUserData } from '../lib/OtherLearnersViewer';
@@ -218,13 +210,13 @@ export const LearningGoalRoadmap: React.FC<LearningGoalRoadmapProps> = ({ learni
           <RoadmapDagViewer subGoalsItems={learningGoal.requiredSubGoals} />
         ))}
       {editMode && <LearningGoalDomainEditor learningGoal={learningGoal} />}
-      {editMode && learningGoal.domain && (
+      {/* {editMode && learningGoal.domain && (
         <Box py={5}>
           <RoleAccess accessRule="contributorOrAdmin">
             <LearningGoalTypeEditor learningGoal={learningGoal} />
           </RoleAccess>
         </Box>
-      )}
+      )} */}
     </Flex>
   );
 };
@@ -233,15 +225,15 @@ interface LearningGoalDomainEditorProps {
   learningGoal: LearningGoalRoadmapDataFragment;
 }
 const LearningGoalDomainEditor: React.FC<LearningGoalDomainEditorProps> = ({ learningGoal }) => {
-  const [selectedDomain, setSelectedDomain] = useState<DomainDataFragment>();
-  const [attachLearningGoalToDomain] = useAttachLearningGoalToDomainMutation();
-  const [detachLearningGoalFromDomain] = useDetachLearningGoalFromDomainMutation();
+  // const [selectedDomain, setSelectedDomain] = useState<DomainDataFragment>();
+  // const [attachLearningGoalToDomain] = useAttachLearningGoalToDomainMutation();
+  // const [detachLearningGoalFromDomain] = useDetachLearningGoalFromDomainMutation();
   return (
     <Stack mt={10}>
       <Text fontSize="lg" fontWeight={600}>
         Change domain:{' '}
       </Text>
-      <Stack direction="row">
+      {/* <Stack direction="row">
         {learningGoal.domain ? (
           <>
             <Text>Current domain: </Text>
@@ -250,8 +242,8 @@ const LearningGoalDomainEditor: React.FC<LearningGoalDomainEditorProps> = ({ lea
         ) : (
           `No domain selected`
         )}
-      </Stack>
-      <Stack direction="row" alignItems="baseline">
+      </Stack> */}
+      {/* <Stack direction="row" alignItems="baseline">
         <DomainSelector onSelect={(domain) => setSelectedDomain(domain)} />
         {selectedDomain && (
           <>
@@ -259,29 +251,29 @@ const LearningGoalDomainEditor: React.FC<LearningGoalDomainEditorProps> = ({ lea
             <DomainLink domain={selectedDomain} />
           </>
         )}
-      </Stack>
-      {selectedDomain && (
+      </Stack> */}
+      {/* {selectedDomain && (
         <Box py={2}>
           <Button
             colorScheme="blue"
             size="sm"
-            onClick={async () => {
-              if (learningGoal.domain) {
-                await detachLearningGoalFromDomain({
-                  variables: { learningGoalId: learningGoal._id, domainId: learningGoal.domain?.domain._id },
-                });
-              }
-              await attachLearningGoalToDomain({
-                variables: { learningGoalId: learningGoal._id, domainId: selectedDomain._id, payload: {} },
-              });
-              setSelectedDomain(undefined);
-              routerPushToPage(DomainLearningGoalPageInfo(selectedDomain, learningGoal));
-            }}
+            // onClick={async () => {
+            //   if (learningGoal.domain) {
+            //     await detachLearningGoalFromDomain({
+            //       variables: { learningGoalId: learningGoal._id, domainId: learningGoal.domain?.domain._id },
+            //     });
+            //   }
+            //   await attachLearningGoalToDomain({
+            //     variables: { learningGoalId: learningGoal._id, domainId: selectedDomain._id, payload: {} },
+            //   });
+            //   setSelectedDomain(undefined);
+            //   // routerPushToPage(DomainLearningGoalPageInfo(selectedDomain, learningGoal));
+            // }}
           >
             Confirm change
           </Button>
         </Box>
-      )}
+      )} */}
     </Stack>
   );
 };

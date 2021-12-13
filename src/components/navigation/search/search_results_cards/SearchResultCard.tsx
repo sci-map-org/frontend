@@ -37,14 +37,6 @@ export const SearchResultCard: React.FC<{ searchResult: SearchResultCardDataFrag
           isHighlighted={isHighlighted}
         />
       );
-    case 'LearningGoal':
-      return (
-        <SearchResultLearningGoalCard
-          entityPageInfo={LearningGoalPageInfo(searchResult.entity)}
-          learningGoal={searchResult.entity}
-          isHighlighted={isHighlighted}
-        />
-      );
     case 'LearningPath':
       return (
         <SearchResultLearningPathCard

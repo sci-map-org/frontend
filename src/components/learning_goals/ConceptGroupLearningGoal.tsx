@@ -2,17 +2,14 @@ import { AddIcon } from '@chakra-ui/icons';
 import { Box, Center, Flex, IconButton, Stack, Text, Wrap, WrapItem } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useMemo } from 'react';
-import { DomainDataFragment } from '../../graphql/domains/domains.fragments.generated';
 import { LearningGoalData } from '../../graphql/learning_goals/learning_goals.fragments';
 import {
   useAttachLearningGoalRequiresSubGoalMutation,
   useDetachLearningGoalRequiresSubGoalMutation,
   useUpdateLearningGoalMutation,
 } from '../../graphql/learning_goals/learning_goals.operations.generated';
-import { TopicType } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { RoleAccess } from '../auth/RoleAccess';
-import { SubTopicSelector } from '../domains/SubTopicSelector';
 import { EditableTextarea } from '../lib/inputs/EditableTextarea';
 import { EditableTextInput } from '../lib/inputs/EditableTextInput';
 import { OtherLearnersViewerUserData } from '../lib/OtherLearnersViewer';
@@ -73,14 +70,14 @@ export const ConceptGroupLearningGoalData = gql`
 
 interface ConceptGroupLearningGoalProps {
   learningGoal: ConceptGroupLearningGoalDataFragment;
-  domain: DomainDataFragment;
+  // domain: DomainDataFragment;
   editMode?: boolean;
   isLoading?: boolean;
   refetch: () => void;
 }
 export const ConceptGroupLearningGoal: React.FC<ConceptGroupLearningGoalProps> = ({
   learningGoal,
-  domain,
+  // domain,
   editMode,
   isLoading,
   refetch,
@@ -159,11 +156,11 @@ export const ConceptGroupLearningGoal: React.FC<ConceptGroupLearningGoalProps> =
             <Text my={2}>Topics Covered</Text>
           </Center>
           <Stack spacing={0}>
-            <Wrap justify="center" align="center" px={4}>
+            {/* <Wrap justify="center" align="center" px={4}>
               {(learningGoal.requiredSubGoals || []).map(({ subGoal }) => (
                 <WrapItem key={subGoal._id}>
                   {
-                    subGoal.__typename === 'Concept' && subGoal.domain && subGoal.name
+                    // subGoal.__typename === 'Concept' && subGoal.domain && subGoal.name
                     // <TopicBadge
                     //   concept={subGoal}
                     //   removable={editMode}
@@ -187,10 +184,10 @@ export const ConceptGroupLearningGoal: React.FC<ConceptGroupLearningGoalProps> =
                   )}
                 </WrapItem>
               ))}
-            </Wrap>
+            </Wrap> */}
             {editMode && (
               <Center>
-                <SubTopicSelector
+                {/* <SubTopicSelector
                   domain={domain}
                   onSelect={(selected) =>
                     attachLearningGoalRequiresSubGoal({
@@ -204,7 +201,7 @@ export const ConceptGroupLearningGoal: React.FC<ConceptGroupLearningGoalProps> =
                   placeholder="Add new Topic"
                   popoverTitle="Add new Topic"
                   allowedSubTopicTypes={[TopicType.Concept, TopicType.LearningGoal]}
-                />
+                /> */}
               </Center>
             )}
           </Stack>
@@ -214,7 +211,7 @@ export const ConceptGroupLearningGoal: React.FC<ConceptGroupLearningGoalProps> =
 
       <LearningGoalRelevantLearningMaterials learningGoal={learningGoal} isLoading={isLoading} />
       <Center pt={4}>
-        <NewResourceModal
+        {/* <NewResourceModal
           defaultResourceCreationData={{
             outcomes: [learningGoal],
           }}
@@ -230,15 +227,15 @@ export const ConceptGroupLearningGoal: React.FC<ConceptGroupLearningGoalProps> =
               isDisabled={isLoading}
             />
           )}
-        />
+        /> */}
       </Center>
-      {editMode && domain && (
+      {/* {editMode && domain && (
         <Box py={5}>
           <RoleAccess accessRule="contributorOrAdmin">
             <LearningGoalTypeEditor learningGoal={learningGoal} />
           </RoleAccess>
         </Box>
-      )}
+      )} */}
     </Stack>
   );
 };

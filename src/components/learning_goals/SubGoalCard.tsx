@@ -29,38 +29,33 @@ import { LearningGoalSubGoalCardDataFragment } from './SubGoalCard.generated';
 //   }
 // `;
 
-// export const LearningGoalSubGoalCardData = gql`
-//   fragment LearningGoalSubGoalCardData on LearningGoal {
-//     ...LearningGoalLinkData
-//     description
-//     ...LearningGoalCircularProgressData
-//     requiredSubGoals {
-//       strength
-//       subGoal {
-//         ... on LearningGoal {
-//           ...LearningGoalBadgeData
-//         }
-//         ... on Concept {
-//           ...ConceptData
-//           domain {
-//             ...DomainData
-//           }
-//         }
-//       }
-//     }
-//     dependsOnLearningGoals {
-//       learningGoal {
-//         _id
-//       }
-//       parentLearningGoalId
-//     }
-//   }
-//   ${ConceptData}
-//   ${DomainData}
-//   ${LearningGoalLinkData}
-//   ${LearningGoalBadgeData}
-//   ${LearningGoalCircularProgressData}
-// `;
+export const LearningGoalSubGoalCardData = gql`
+  fragment LearningGoalSubGoalCardData on LearningGoal {
+    ...LearningGoalLinkData
+    description
+    ...LearningGoalCircularProgressData
+    requiredSubGoals {
+      strength
+      subGoal {
+        ... on LearningGoal {
+          ...LearningGoalBadgeData
+        }
+        ... on Topic {
+          _id
+        }
+      }
+    }
+    dependsOnLearningGoals {
+      learningGoal {
+        _id
+      }
+      parentLearningGoalId
+    }
+  }
+  ${LearningGoalLinkData}
+  ${LearningGoalBadgeData}
+  ${LearningGoalCircularProgressData}
+`;
 
 export const SubGoalCardData = gql`
   fragment SubGoalCardData on SubGoalItem {
@@ -192,7 +187,7 @@ export const LearningGoalSubGoalCard: React.FC<LearningGoalSubGoalCardProps> = (
                 <LearningGoalCircularProgress pxSize={{ sm: 15, md: 20, lg: 30 }[size]} learningGoal={learningGoal} />
               </Center>
             )}
-            {mouseHover && learningGoal.requiredSubGoals && !!learningGoal.requiredSubGoals.length && (
+            {/* {mouseHover && learningGoal.requiredSubGoals && !!learningGoal.requiredSubGoals.length && (
               <Wrap pt={2} pb={3} justifySelf="end" spacing={1}>
                 {learningGoal.requiredSubGoals.map((subGoalItem) => (
                   <WrapItem key={subGoalItem.subGoal._id}>
@@ -213,7 +208,7 @@ export const LearningGoalSubGoalCard: React.FC<LearningGoalSubGoalCardProps> = (
                   </WrapItem>
                 ))}
               </Wrap>
-            )}
+            )} */}
           </Flex>
         </>
       )}

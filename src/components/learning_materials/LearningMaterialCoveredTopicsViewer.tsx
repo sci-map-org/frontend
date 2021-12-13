@@ -22,3 +22,5 @@
 //     </Stack>
 //   );
 // };
+
+export default {};

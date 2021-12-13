@@ -2,8 +2,8 @@ import { Flex, IconButton, Skeleton, Text } from '@chakra-ui/react';
 import { ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import React from 'react';
-import { useVoteResourceMutation } from '../../../graphql/resources/resources.operations.generated';
-import { ResourceVoteValue } from '../../../graphql/types';
+// import { useVoteResourceMutation } from '../../../graphql/resources/resources.operations.generated';
+// import { ResourceVoteValue } from '../../../graphql/types';
 import { useCurrentUser } from '../../../graphql/users/users.hooks';
 import { useUnauthentificatedModal } from '../../auth/UnauthentificatedModal';
 import { ResourceUpvoterDataFragment } from './ResourceUpvoter.generated';
@@ -19,7 +19,7 @@ export const ResourceUpvoter: React.FC<{ resource: ResourceUpvoterDataFragment; 
   resource,
   isLoading,
 }) => {
-  const [voteResource] = useVoteResourceMutation();
+  // const [voteResource] = useVoteResourceMutation();
   const unauthentificatedModalDisclosure = useUnauthentificatedModal();
   const { currentUser } = useCurrentUser();
   return (
@@ -32,8 +32,8 @@ export const ResourceUpvoter: React.FC<{ resource: ResourceUpvoterDataFragment; 
         my={0}
         isDisabled={isLoading}
         onClick={() => {
-          if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
-          voteResource({ variables: { resourceId: resource._id, value: ResourceVoteValue.Up } });
+          // if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
+          // voteResource({ variables: { resourceId: resource._id, value: ResourceVoteValue.Up } });
         }}
       />
       <Skeleton isLoaded={!isLoading}>
@@ -47,8 +47,8 @@ export const ResourceUpvoter: React.FC<{ resource: ResourceUpvoterDataFragment; 
         my={0}
         isDisabled={isLoading}
         onClick={() => {
-          if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
-          voteResource({ variables: { resourceId: resource._id, value: ResourceVoteValue.Down } });
+          // if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
+          // voteResource({ variables: { resourceId: resource._id, value: ResourceVoteValue.Down } });
         }}
       />
     </Flex>

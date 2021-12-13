@@ -78,3 +78,5 @@
 //     </Flex>
 //   );
 // };
+
+export default {};

@@ -2,11 +2,12 @@ import { Badge, Center, Flex, Icon, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { LearningPathPreviewCard, LearningPathPreviewCardData } from '../learning_paths/LearningPathPreviewCard';
 import { LearningMaterialPreviewCardList } from '../resources/LearningMaterialPreviewCardList';
-import { ResourcePreviewCard, ResourcePreviewCardData } from '../resources/ResourcePreviewCard';
+import { ResourcePreviewCard } from '../resources/ResourcePreviewCard';
 import { LearningGoalRelevantLearningMaterialsDataFragment } from './LearningGoalRelevantLearningMaterials.generated';
 import { ImRadioUnchecked } from '@react-icons/all-files/im/ImRadioUnchecked';
 import { ImRadioChecked } from '@react-icons/all-files/im/ImRadioChecked';
 import { useMemo } from 'react';
+import { ResourcePreviewCardData } from '../../graphql/resources/resources.fragments';
 
 export const LearningGoalRelevantLearningMaterialsData = gql`
   fragment LearningGoalRelevantLearningMaterialsData on LearningGoal {

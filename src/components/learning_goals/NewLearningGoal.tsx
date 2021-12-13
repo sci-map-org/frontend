@@ -37,12 +37,14 @@ import {
 import { ReactElement, useEffect, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
-import { useCheckLearningGoalKeyAvailabilityLazyQuery, useCreateLearningGoalMutation } from '../../graphql/learning_goals/learning_goals.operations.generated';
+import {
+  useCheckLearningGoalKeyAvailabilityLazyQuery,
+  useCreateLearningGoalMutation,
+} from '../../graphql/learning_goals/learning_goals.operations.generated';
 import { useCheckTopicKeyAvailabilityLazyQuery } from '../../graphql/topics/topics.operations.generated';
 import { LearningGoalType } from '../../graphql/types';
 import { getChakraRelativeSize } from '../../util/chakra.util';
 import { RoleAccess } from '../auth/RoleAccess';
-import { DomainSelector } from '../domains/DomainSelector';
 import { FormButtons } from '../lib/buttons/FormButtons';
 import { PageLink } from '../navigation/InternalLink';
 
@@ -78,7 +80,7 @@ export const NewLearningGoalForm: React.FC<NewLearningGoalFormProps> = ({
   });
   const [keyValueToCheck] = useDebounce(key, 300);
   useEffect(() => {
-    checkLearningGoalKeyAvailability({ variables: {  key: keyValueToCheck } });
+    checkLearningGoalKeyAvailability({ variables: { key: keyValueToCheck } });
   }, [keyValueToCheck]);
   return (
     <Stack spacing={4} direction="column" alignItems="stretch">

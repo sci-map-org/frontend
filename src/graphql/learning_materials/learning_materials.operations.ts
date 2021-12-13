@@ -1,5 +1,3 @@
-import gql from "graphql-tag";
-
 // TODO
 // export const attachLearningMaterialToDomain = gql`
 //   mutation attachLearningMaterialToDomain($domainId: String!, $learningMaterialId: String!) {
@@ -35,7 +33,6 @@ import gql from "graphql-tag";
 //   }
 // `;
 
-
 // TODO
 // export const attachLearningMaterialCoversConcepts = gql`
 // mutation attachLearningMaterialCoversConcepts($learningMaterialId: String!, $conceptIds: [String!]!) {
@@ -70,3 +67,5 @@ import gql from "graphql-tag";
 //   }
 // }
 // `;
+
+export default {};
