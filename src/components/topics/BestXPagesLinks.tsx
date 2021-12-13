@@ -38,6 +38,7 @@ export const BestXPagesLinks: React.FC<{ topicKey: string }> = ({ topicKey }) =>
       pb={3}
       borderWidth={1}
       borderColor="gray.200"
+      minW="180px"
     >
       <Text fontSize="xl" textAlign="center" fontWeight={600} color="gray.600">
         Quick Links

@@ -224,9 +224,6 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
       isLoading={loading}
     >
       <>
-        {/* {(loading || (topic.learningGoals && !!domain.learningGoals.length)) && (
-          <DomainLearningGoals domain={domain} learningGoalItems={domain.learningGoals || []} isLoading={loading} />
-        )} */}
         <Flex direction={{ base: 'column-reverse', md: 'row' }} mb="100px" mt={10}>
           <Flex direction="column" flexShrink={1} flexGrow={1}>
             <TopicRecommendedLearningMaterials
@@ -237,8 +234,6 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
               learningMaterialsOptions={learningMaterialsOptions}
               setLearningMaterialsOptions={setLearningMaterialsOptions}
             />
-            {/* <DomainConceptGraph domain={domain} isLoading={loading} minNbRelationships={5} /> */}
-            {/* <DomainLearningPaths domain={domain} /> */}
           </Flex>
           {/* <Stack
             spacing={4}
@@ -259,7 +254,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
               onConceptToggled={() => refetchLearningMaterials()}
             />
           </Stack> */}
-          <Stack>
+          <Stack ml={{ base: 0, md: 10 }} mb={10} direction={{ base: 'row', md: 'column' }}>
             <SeeAlso topic={topic} />
             <BestXPagesLinks topicKey={topic.key} />
           </Stack>
