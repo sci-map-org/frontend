@@ -133,61 +133,63 @@ export const SubTopicsTreeNode: React.FC<SubTopicsTreeNodeProps> = ({
             )}
           </Stack>
         </Stack>
-        <Flex flexDir="column" justifyContent="space-between" pl={2}>
-          <IconButton
-            aria-label="manage topic"
-            size="xs"
-            fontSize="1em"
-            isRound
-            variant="ghost"
-            icon={<SettingsIcon />}
-            onClick={() => routerPushToPage(ManageTopicPageInfo(nodeTopicRelation.subTopic))}
-          />
-          {nodeTopicRelation.relationshipType === SubTopicRelationshipType.IsPartOf ? (
-            <DeleteButtonWithConfirmation
-              icon={<BiUnlink />}
-              size="xs"
-              isRound
-              fontSize="1em"
-              variant="ghost"
-              mode="iconButton"
-              modalBodyText={`Remove virtual link "${nodeTopicRelation.subTopic.name}" ?`}
-              modalHeaderText={`Detach "${nodeTopicRelation.subTopic.name}" ?`}
-              confirmButtonText="Detach"
-              onConfirmation={async () => {
-                await detachTopicIsPartOfTopicMutation({
-                  variables: {
-                    partOfTopicId: getTopicIdFromNodeId(
-                      path.length > 1 ? (path[path.length - 2] as string) : baseTopicNodeId
-                    ),
-                    subTopicId: nodeTopicRelation.subTopic._id,
-                  },
-                });
-                onTreeUpdated();
-              }}
-            />
-          ) : (
+        {node.updatable && (
+          <Flex flexDir="column" justifyContent="space-between" pl={2}>
             <IconButton
-              aria-label="create virtual"
-              icon={<BiDuplicate />}
+              aria-label="manage topic"
               size="xs"
-              isRound
               fontSize="1em"
+              isRound
               variant="ghost"
-              onClick={() => {
-                attachTopicIsPartOfTopicMutation({
-                  variables: {
-                    partOfTopicId: getTopicIdFromNodeId(
-                      path.length > 1 ? (path[path.length - 2] as string) : baseTopicNodeId
-                    ),
-                    subTopicId: nodeTopicRelation.subTopic._id,
-                    payload: { index: nodeTopicRelation.index + 1 },
-                  },
-                });
-              }}
+              icon={<SettingsIcon />}
+              onClick={() => routerPushToPage(ManageTopicPageInfo(nodeTopicRelation.subTopic))}
             />
-          )}
-        </Flex>
+            {nodeTopicRelation.relationshipType === SubTopicRelationshipType.IsPartOf ? (
+              <DeleteButtonWithConfirmation
+                icon={<BiUnlink />}
+                size="xs"
+                isRound
+                fontSize="1em"
+                variant="ghost"
+                mode="iconButton"
+                modalBodyText={`Remove virtual link "${nodeTopicRelation.subTopic.name}" ?`}
+                modalHeaderText={`Detach "${nodeTopicRelation.subTopic.name}" ?`}
+                confirmButtonText="Detach"
+                onConfirmation={async () => {
+                  await detachTopicIsPartOfTopicMutation({
+                    variables: {
+                      partOfTopicId: getTopicIdFromNodeId(
+                        path.length > 1 ? (path[path.length - 2] as string) : baseTopicNodeId
+                      ),
+                      subTopicId: nodeTopicRelation.subTopic._id,
+                    },
+                  });
+                  onTreeUpdated();
+                }}
+              />
+            ) : (
+              <IconButton
+                aria-label="create virtual"
+                icon={<BiDuplicate />}
+                size="xs"
+                isRound
+                fontSize="1em"
+                variant="ghost"
+                onClick={() => {
+                  attachTopicIsPartOfTopicMutation({
+                    variables: {
+                      partOfTopicId: getTopicIdFromNodeId(
+                        path.length > 1 ? (path[path.length - 2] as string) : baseTopicNodeId
+                      ),
+                      subTopicId: nodeTopicRelation.subTopic._id,
+                      payload: { index: nodeTopicRelation.index + 1 },
+                    },
+                  });
+                }}
+              />
+            )}
+          </Flex>
+        )}
       </Flex>
     </div>
   );

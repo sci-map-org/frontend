@@ -448,7 +448,6 @@ export const SubTopicsTree: React.FC<SubTopicsTreeProps> = ({ topic, onUpdated, 
       </Stack>
       {selectValidContextModalProps && (
         <SelectValidContextModal
-          // isOpen={isOpen}
           onSelectValidContext={(selectedContext, pendingUpdate) => {
             // add pending update (including new context) -> how to avoid updating it several time ?
             addPendingUpdate({

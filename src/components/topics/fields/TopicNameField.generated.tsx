@@ -6,6 +6,13 @@ import * as Apollo from '@apollo/client';
 export type TopicSuggestionDataFragment = (
   { __typename?: 'Topic' }
   & Pick<Types.Topic, 'context'>
+  & { disambiguationTopic?: Types.Maybe<(
+    { __typename?: 'Topic' }
+    & { contextualisedTopics?: Types.Maybe<Array<(
+      { __typename?: 'Topic' }
+      & Pick<Types.Topic, '_id'>
+    )>> }
+  )> }
   & TopicLinkDataFragment
 );
 

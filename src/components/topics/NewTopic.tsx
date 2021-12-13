@@ -67,7 +67,6 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
             // key: generateUrlKey(`${topicCreationData.key}_(${contextTopic.key})`),
           });
         }}
-        onCancelTopicCreation={onCancel}
         onConnectSubTopic={onConnectSubTopic}
       />
       <TopicUrlKeyField

@@ -39,6 +39,11 @@ export const TopicSuggestionData = gql`
   fragment TopicSuggestionData on Topic {
     context
     ...TopicLinkData
+    disambiguationTopic {
+      contextualisedTopics {
+        _id
+      }
+    }
   }
   ${TopicLinkData}
 `;
@@ -122,6 +127,7 @@ export const TopicNameAutocomplete: React.FC<TopicNameAutocompleteProps> = ({
         renderSuggestion={(suggestion, { isHighlighted }) => (
           <Flex
             direction="row"
+            alignItems="baseline"
             px={5}
             py={1}
             borderBottomWidth={1}
@@ -129,11 +135,12 @@ export const TopicNameAutocomplete: React.FC<TopicNameAutocompleteProps> = ({
             {...(isHighlighted && { backgroundColor: 'gray.100' })}
           >
             <Text fontWeight={500}>{suggestion.name}</Text>
-            {suggestion.context && (
-              <Text fontWeight={600} px={2} color="gray.500">
-                ({suggestion.context})
-              </Text>
-            )}
+            {suggestion.disambiguationTopic?.contextualisedTopics?.length &&
+              suggestion.disambiguationTopic.contextualisedTopics.length > 1 && (
+                <Text fontWeight={600} px={2} color="gray.500" fontSize="sm">
+                  ({suggestion.disambiguationTopic?.contextualisedTopics?.length} existing topics)
+                </Text>
+              )}
           </Flex>
         )}
         renderSuggestionsContainer={({ containerProps, children }) =>
@@ -168,7 +175,6 @@ interface TopicNameFieldProps {
   value: string;
   onChange: (value: string) => void;
   parentTopic?: TopicLinkDataFragment;
-  onCancelTopicCreation: () => void;
   onConnectSubTopic: (
     parentTopic: TopicLinkDataFragment,
     subTopic: TopicLinkDataFragment,
@@ -184,7 +190,6 @@ export const TopicNameField: React.FC<TopicNameFieldProps> = ({
   value,
   onChange,
   parentTopic,
-  onCancelTopicCreation,
   onConnectSubTopic,
   setContextAndDisambiguationTopic,
 }) => {
@@ -206,17 +211,19 @@ export const TopicNameField: React.FC<TopicNameFieldProps> = ({
           parentTopic={parentTopic}
           existingSameNameTopic={existingSameNameTopic}
           isOpen={isOpen}
-          onCloseDisambiguationModal={onClose}
-          onCancelTopicCreation={() => {
+          onCancel={() => {
+            onChange('');
             onClose();
-            onCancelTopicCreation();
           }}
           onCreateContextualisedTopic={(disambiguationTopic, contextTopic) => {
             setContextAndDisambiguationTopic(contextTopic, disambiguationTopic);
 
             onClose();
           }}
-          onConnectSubTopic={onConnectSubTopic}
+          onConnectSubTopic={(...args) => {
+            onConnectSubTopic(...args);
+            onClose();
+          }}
         />
       )}
     </>
@@ -279,8 +286,7 @@ const DisambiguationModal: React.FC<{
   parentTopic?: TopicLinkDataFragment;
   existingSameNameTopic: TopicLinkDataFragment;
   isOpen: boolean;
-  onCloseDisambiguationModal: () => void;
-  onCancelTopicCreation: () => void;
+  onCancel: () => void;
   onCreateContextualisedTopic: (
     disambiguationTopic: TopicLinkDataFragment,
     contextTopic: TopicLinkDataFragment
@@ -290,15 +296,7 @@ const DisambiguationModal: React.FC<{
     subTopic: TopicLinkDataFragment,
     relationshipType: SubTopicRelationshipType
   ) => void;
-}> = ({
-  parentTopic,
-  existingSameNameTopic,
-  isOpen,
-  onCloseDisambiguationModal,
-  onCancelTopicCreation,
-  onConnectSubTopic,
-  onCreateContextualisedTopic,
-}) => {
+}> = ({ parentTopic, existingSameNameTopic, isOpen, onCancel, onConnectSubTopic, onCreateContextualisedTopic }) => {
   // from existing same name topic (which is not disambiguation), find the disambiguation then query all its
   // const selected
 
@@ -328,7 +326,7 @@ const DisambiguationModal: React.FC<{
     : undefined;
 
   return (
-    <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onCloseDisambiguationModal} size="2xl">
+    <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onCancel} size="2xl">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Disambiguation</ModalHeader>
@@ -343,12 +341,13 @@ const DisambiguationModal: React.FC<{
               {existingSameNameTopicWithSameParent && parentTopic && (
                 <Stack w="100%" alignItems="center" spacing={5}>
                   <Text textAlign="center">
-                    {existingSameNameTopicWithSameParent.name} is already a subTopic of {parentTopic.name}!
+                    <b>{existingSameNameTopicWithSameParent.name}</b> is already a subTopic of {parentTopic.name}
                   </Text>
                   <Button
-                    colorScheme="blue"
+                    colorScheme="red"
+                    size="sm"
                     onClick={() => {
-                      onCancelTopicCreation();
+                      onCancel();
                     }}
                   >
                     Close
@@ -360,11 +359,11 @@ const DisambiguationModal: React.FC<{
                   parentTopic={parentTopic}
                   existingSameNameTopic={data.getTopicById}
                   disambiguationTopic={data.getTopicById.disambiguationTopic}
-                  onConnectAsSubTopic={(subTopic) => {
-                    onConnectSubTopic(parentTopic, subTopic, SubTopicRelationshipType.IsPartOf);
-                    onCloseDisambiguationModal();
-                  }}
+                  onConnectAsSubTopic={(subTopic) =>
+                    onConnectSubTopic(parentTopic, subTopic, SubTopicRelationshipType.IsPartOf)
+                  }
                   onCreateContextualisedTopic={onCreateContextualisedTopic}
+                  onCancel={onCancel}
                 />
               )}
               {parentTopic && !existingSameNameTopicWithSameParent && !data.getTopicById.disambiguationTopic && (
@@ -379,7 +378,6 @@ const DisambiguationModal: React.FC<{
                       // else add IS_SUBTOPIC_OF
                       onConnectSubTopic(parentTopic, topicToConnect, SubTopicRelationshipType.IsSubtopicOf);
                     }
-                    onCloseDisambiguationModal();
                   }}
                   onCreateContextualisedTopicAndDisambiguation={async (
                     contextTopic,
@@ -398,13 +396,11 @@ const DisambiguationModal: React.FC<{
                       contextTopic
                     );
                   }}
+                  onCancel={onCancel}
                 />
               )}
               {!parentTopic && !existingSameNameTopicWithSameParent && (
-                <NewTopicHasExistingSameNameTopicModal
-                  onCancelTopicCreation={onCancelTopicCreation}
-                  existingSameNameTopic={data.getTopicById}
-                />
+                <NewTopicHasExistingSameNameTopicModal onCancel={onCancel} existingSameNameTopic={data.getTopicById} />
               )}
             </>
           )}
@@ -437,6 +433,7 @@ interface HasDisambiguationTopicModalContentProps {
     disambiguationTopic: TopicLinkDataFragment,
     contextTopic: TopicLinkDataFragment
   ) => void;
+  onCancel: () => void;
 }
 const HasDisambiguationTopicModalContent: React.FC<HasDisambiguationTopicModalContentProps> = ({
   parentTopic,
@@ -444,6 +441,7 @@ const HasDisambiguationTopicModalContent: React.FC<HasDisambiguationTopicModalCo
   disambiguationTopic,
   onConnectAsSubTopic,
   onCreateContextualisedTopic,
+  onCancel,
 }) => {
   const [newTopicSelectedContext, setNewTopicSelectedContext] = useState<TopicLinkDataFragment>();
   const { data } = useGetTopicValidContextsFromDisambiguationQuery({
@@ -548,6 +546,11 @@ const HasDisambiguationTopicModalContent: React.FC<HasDisambiguationTopicModalCo
           </Text>
         </HelperText>
       </Section>
+      <Flex direction="row" justifyContent="flex-end">
+        <Button size="sm" onClick={() => onCancel()} colorScheme="red">
+          Cancel
+        </Button>
+      </Flex>
     </Stack>
   );
 };
@@ -578,7 +581,14 @@ const NoDisambiguationTopicModalContent: React.FC<{
     existingSameNameTopic: TopicLinkDataFragment,
     existingSameNameTopicContextTopic: TopicLinkDataFragment
   ) => void;
-}> = ({ existingSameNameTopic, parentTopic, onConnectAsSubTopic, onCreateContextualisedTopicAndDisambiguation }) => {
+  onCancel: () => void;
+}> = ({
+  existingSameNameTopic,
+  parentTopic,
+  onConnectAsSubTopic,
+  onCreateContextualisedTopicAndDisambiguation,
+  onCancel,
+}) => {
   const [newTopicSelectedContext, setNewTopicSelectedContext] = useState<TopicLinkDataFragment>();
   const [existingTopicSelectedContext, setExistingTopicSelectedContext] = useState<TopicLinkDataFragment>();
 
@@ -615,7 +625,7 @@ const NoDisambiguationTopicModalContent: React.FC<{
           {!!existingSameNameTopic.parentTopic?.name && '/ ' + existingSameNameTopic.parentTopic?.name}
         </Text>
       </Text>
-      <Flex justifyContent="flex-end" borderWidth={2} borderRadius={4} p={4} borderColor="teal.600">
+      <Section>
         <Stack direction="row" alignItems="center">
           <Text>
             Add{' '}
@@ -636,65 +646,73 @@ const NoDisambiguationTopicModalContent: React.FC<{
             Connect as SubTopic
           </Button>
         </Stack>
-      </Flex>
-      <Stack direction="column" alignItems="stretch" borderWidth={2} borderRadius={4} p={4} borderColor="teal.600">
-        <Text alignItems="center">
-          Create new subTopic{' '}
-          <Text as="span" fontWeight={600} color="gray.700">
-            {existingSameNameTopic.name}
-          </Text>{' '}
-          under{' '}
-          <Text as="span" fontWeight={600} color="gray.500">
-            {parentTopic.name}
-          </Text>{' '}
-          ?
-        </Text>
-        <Stack alignItems="flex-end">
-          <Stack direction="row" alignItems="center">
-            <Text whiteSpace="nowrap">New Subtopic Context: </Text>
-
-            <SelectContextTopic
-              contexts={validContexts}
-              selectedContext={newTopicSelectedContext}
-              onSelect={setNewTopicSelectedContext}
-            />
-          </Stack>
-          <Stack direction="row" alignItems="center">
-            <Text whiteSpace="nowrap">Existing Topic Context: </Text>
-
-            <SelectContextTopic
-              contexts={validSameNameTopicContexts}
-              selectedContext={existingTopicSelectedContext}
-              onSelect={setExistingTopicSelectedContext}
-            />
-          </Stack>
-          <Button
-            colorScheme="blue"
-            disabled={!existingTopicSelectedContext || !newTopicSelectedContext}
-            onClick={() =>
-              existingTopicSelectedContext &&
-              newTopicSelectedContext &&
-              onCreateContextualisedTopicAndDisambiguation(
-                newTopicSelectedContext,
-                existingSameNameTopic,
-                existingTopicSelectedContext
-              )
-            }
-            size="sm"
-          >
-            Create new and attach contexts
-          </Button>
-        </Stack>
-        <Flex>
-          <HelperText mt={5}>
-            <Text as="span" fontWeight={600}>
-              Context
+      </Section>
+      <Section>
+        <Stack direction="column" alignItems="stretch">
+          <Text alignItems="center">
+            Create new subTopic{' '}
+            <Text as="span" fontWeight={600} color="gray.700">
+              {existingSameNameTopic.name}
             </Text>{' '}
-            is used to easily differentiate between topics having the same name, for instance for when they appear as
-            search results.
-          </HelperText>
-        </Flex>
-      </Stack>
+            under{' '}
+            <Text as="span" fontWeight={600} color="gray.500">
+              {parentTopic.name}
+            </Text>{' '}
+            ?
+          </Text>
+          <Stack alignItems="flex-end">
+            <Stack direction="row" alignItems="center">
+              <Text whiteSpace="nowrap">New Subtopic Context: </Text>
+
+              <SelectContextTopic
+                contexts={validContexts}
+                selectedContext={newTopicSelectedContext}
+                onSelect={setNewTopicSelectedContext}
+              />
+            </Stack>
+            <Stack direction="row" alignItems="center">
+              <Text whiteSpace="nowrap">Existing Topic Context: </Text>
+
+              <SelectContextTopic
+                contexts={validSameNameTopicContexts}
+                selectedContext={existingTopicSelectedContext}
+                onSelect={setExistingTopicSelectedContext}
+              />
+            </Stack>
+            <Button
+              colorScheme="blue"
+              disabled={!existingTopicSelectedContext || !newTopicSelectedContext}
+              onClick={() =>
+                existingTopicSelectedContext &&
+                newTopicSelectedContext &&
+                onCreateContextualisedTopicAndDisambiguation(
+                  newTopicSelectedContext,
+                  existingSameNameTopic,
+                  existingTopicSelectedContext
+                )
+              }
+              size="sm"
+            >
+              Create new and attach contexts
+            </Button>
+          </Stack>
+
+          <Flex>
+            <HelperText mt={5}>
+              <Text as="span" fontWeight={600}>
+                Context
+              </Text>{' '}
+              is used to easily differentiate between topics having the same name, for instance for when they appear as
+              search results.
+            </HelperText>
+          </Flex>
+        </Stack>
+      </Section>
+      <Flex direction="row" justifyContent="flex-end">
+        <Button size="sm" onClick={() => onCancel()} colorScheme="red">
+          Cancel
+        </Button>
+      </Flex>
     </Stack>
   ) : (
     <Stack alignItems="stretch">
@@ -703,9 +721,14 @@ const NoDisambiguationTopicModalContent: React.FC<{
         {parentTopic.name} ?
       </Text>
       <Flex justifyContent="flex-end">
-        <Button colorScheme="blue" onClick={async () => onConnectAsSubTopic(existingSameNameTopic)} size="sm">
-          Connect as SubTopic
-        </Button>
+        <Stack direction="row" alignItems="center">
+          <Button colorScheme="red" onClick={() => onCancel()} size="sm">
+            Close
+          </Button>
+          <Button colorScheme="blue" onClick={async () => onConnectAsSubTopic(existingSameNameTopic)} size="sm">
+            Connect as SubTopic
+          </Button>
+        </Stack>
       </Flex>
     </Stack>
   );
@@ -713,8 +736,8 @@ const NoDisambiguationTopicModalContent: React.FC<{
 
 const NewTopicHasExistingSameNameTopicModal: React.FC<{
   existingSameNameTopic: GetTopicByIdDisambiguationModalQuery['getTopicById'];
-  onCancelTopicCreation: () => void;
-}> = ({ existingSameNameTopic, onCancelTopicCreation }) => {
+  onCancel: () => void;
+}> = ({ existingSameNameTopic, onCancel }) => {
   return (
     <Stack alignItems="center" spacing={4}>
       <Text textAlign="center">
@@ -729,7 +752,7 @@ const NewTopicHasExistingSameNameTopicModal: React.FC<{
         You can not create a new, unclassified topic with the same name. If this existing topic does not correspond to
         the one you want to create, add this new topic as a subtopic of an already existing one.
       </Text>
-      <Button colorScheme="blue" onClick={() => onCancelTopicCreation()}>
+      <Button colorScheme="blue" onClick={() => onCancel()}>
         Close
       </Button>
     </Stack>
@@ -742,14 +765,6 @@ export const SelectContextTopic: React.FC<{
   onSelect: (selectedContext: TopicLinkDataFragment) => void;
 }> = ({ contexts, selectedContext, onSelect }) => {
   return (
-    // <Stack direction="row" alignItems="baseline">
-    //   <Text as="span" fontSize="sm" fontWeight={600} color="gray.500">
-    //     (Ctx:
-    //   </Text>
-    // <Text as="span" fontSize="sm" fontWeight={600} color="gray.500">
-    //   )
-    // </Text>
-    // </Stack>
     <Select
       size="sm"
       fontWeight={600}
@@ -767,10 +782,6 @@ export const SelectContextTopic: React.FC<{
         </option>
       ))}
     </Select>
-    // <Text as="span" fontSize="sm" fontWeight={600} color="gray.500">
-    //   )
-    // </Text>
-    // </Stack>
   );
 };
 
