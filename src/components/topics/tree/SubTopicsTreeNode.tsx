@@ -20,18 +20,6 @@ import {
   useDetachTopicIsPartOfTopicMutation,
 } from '../../../graphql/topics/topics.operations.generated';
 
-export const CustomNodeRendererConnector: React.FC<NodeRendererProps> = ({ node, treeId, ...props }) => {
-  return (
-    <SubTopicsTreeNode
-      baseTopicNodeId={node.baseTopicNodeId}
-      treeId={treeId}
-      nodeTopicRelation={node.subTopicItem as SubTopicsTreeNodeDataFragment}
-      node={node}
-      {...props}
-    />
-  );
-};
-
 export const SubTopicsTreeNodeData = gql`
   fragment SubTopicsTreeNodeData on TopicIsSubTopicOfTopic {
     index
@@ -49,6 +37,7 @@ export const SubTopicsTreeNodeData = gql`
 interface SubTopicsTreeNodeProps extends NodeRendererProps {
   baseTopicNodeId: string;
   nodeTopicRelation: SubTopicsTreeNodeDataFragment;
+  onTreeUpdated: () => void;
   //   subTopics?: SubTopicsTreeNodeDataFragment[]
 }
 
@@ -59,6 +48,7 @@ export const SubTopicsTreeNode: React.FC<SubTopicsTreeNodeProps> = ({
   node,
   nodeTopicRelation,
   baseTopicNodeId,
+  onTreeUpdated,
   didDrop,
   canDrop,
   isDragging,
@@ -164,8 +154,8 @@ export const SubTopicsTreeNode: React.FC<SubTopicsTreeNodeProps> = ({
               modalBodyText={`Remove virtual link "${nodeTopicRelation.subTopic.name}" ?`}
               modalHeaderText={`Detach "${nodeTopicRelation.subTopic.name}" ?`}
               confirmButtonText="Detach"
-              onConfirmation={() => {
-                detachTopicIsPartOfTopicMutation({
+              onConfirmation={async () => {
+                await detachTopicIsPartOfTopicMutation({
                   variables: {
                     partOfTopicId: getTopicIdFromNodeId(
                       path.length > 1 ? (path[path.length - 2] as string) : baseTopicNodeId
@@ -173,6 +163,7 @@ export const SubTopicsTreeNode: React.FC<SubTopicsTreeNodeProps> = ({
                     subTopicId: nodeTopicRelation.subTopic._id,
                   },
                 });
+                onTreeUpdated();
               }}
             />
           ) : (

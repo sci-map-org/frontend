@@ -10,6 +10,7 @@ import SortableTree, {
   addNodeUnderParent,
   find,
   getVisibleNodeCount,
+  NodeRendererProps,
   removeNode,
   TreeItem,
   TreeNode,
@@ -26,7 +27,6 @@ import {
   useUpdateTopicIsSubTopicOfTopicMutation,
 } from '../../../graphql/topics/topics.operations.generated';
 import { SubTopicRelationshipType } from '../../../graphql/types';
-import { DeepMergeTwoTypes } from '../../../util/types.util';
 import { RoleAccess } from '../../auth/RoleAccess';
 import { SelectContextTopic } from '../fields/TopicNameField';
 import { NewTopicModal } from './../NewTopic';
@@ -34,9 +34,8 @@ import {
   GetTopicValidContextsQuery,
   GetTopicValidContextsQueryVariables,
   SubTopicsTreeDataFragment,
-  useGetTopicValidContextsLazyQuery,
 } from './SubTopicsTree.generated';
-import { CustomNodeRendererConnector, SubTopicsTreeNodeData } from './SubTopicsTreeNode';
+import { SubTopicsTreeNode, SubTopicsTreeNodeData } from './SubTopicsTreeNode';
 import { SubTopicsTreeNodeDataFragment } from './SubTopicsTreeNode.generated';
 
 export const getTopicValidContexts = gql`
@@ -393,7 +392,16 @@ export const SubTopicsTree: React.FC<SubTopicsTreeProps> = ({ topic, onUpdated, 
                   const subTopicItem: SubTopicsTreeNodeDataFragment = node.subTopicItem;
                   return createNodeId(subTopicItem.subTopic._id, subTopicItem.relationshipType);
                 }}
-                nodeContentRenderer={CustomNodeRendererConnector}
+                nodeContentRenderer={({ node, treeId, ...props }: NodeRendererProps) => (
+                  <SubTopicsTreeNode
+                    baseTopicNodeId={node.baseTopicNodeId}
+                    treeId={treeId}
+                    nodeTopicRelation={node.subTopicItem as SubTopicsTreeNodeDataFragment}
+                    node={node}
+                    onTreeUpdated={onUpdated}
+                    {...props}
+                  />
+                )}
               />
             </Box>
           )
