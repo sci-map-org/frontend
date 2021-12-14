@@ -2,6 +2,7 @@ import { Box, Button, Flex, Heading, Skeleton, Stack, Text } from '@chakra-ui/re
 import gql from 'graphql-tag';
 import { useState } from 'react';
 import { RoleAccess } from '../../components/auth/RoleAccess';
+import { useUnauthentificatedModal } from '../../components/auth/UnauthentificatedModal';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { TopicPageLayout } from '../../components/layout/TopicPageLayout';
 import { LearningPathPreviewCardDataFragment } from '../../components/learning_paths/LearningPathPreviewCard.generated';
@@ -10,6 +11,7 @@ import { ResourceIcon } from '../../components/lib/icons/ResourceIcon';
 import { TopicLink } from '../../components/lib/links/TopicLink';
 import { PageTitle } from '../../components/lib/Typography';
 import { PageButtonLink } from '../../components/navigation/InternalLink';
+import { NewResourceModal } from '../../components/resources/NewResource';
 import { ResourcePreviewCardDataFragment } from '../../components/resources/ResourcePreviewCard.generated';
 import { BestXPagesLinks } from '../../components/topics/BestXPagesLinks';
 import { EditablePartOfTopics, EditablePartOfTopicsData } from '../../components/topics/EditablePartOfTopics';
@@ -23,6 +25,7 @@ import { useGetTopicRecommendedLearningMaterialsQuery } from '../../components/t
 import { TopicSubHeader, TopicSubHeaderData } from '../../components/topics/TopicSubHeader';
 import { generateTopicData, TopicLinkData } from '../../graphql/topics/topics.fragments';
 import { TopicLearningMaterialsOptions, TopicLearningMaterialsSortingType } from '../../graphql/types';
+import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { NewLearningPathPageInfo, NewResourcePageInfo } from '../RoutesPageInfos';
 import { GetTopicByKeyTopicPageQuery, useGetTopicByKeyTopicPageQuery } from './TopicPage.generated';
 
@@ -73,6 +76,9 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
   const [learningMaterialPreviews, setLearningMaterialPreviews] = useState<
     (ResourcePreviewCardDataFragment | LearningPathPreviewCardDataFragment)[]
   >([]);
+
+  const { currentUser } = useCurrentUser();
+  const { onOpen: onOpenUnauthentificatedModal } = useUnauthentificatedModal();
 
   const {
     data: learningMaterialsData,
@@ -175,16 +181,26 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
           )}
           <Flex direction="row" w="100%">
             <Stack direction="row" spacing={4} pl={0} pt={10} pb={{ base: 4, lg: 12 }} pr={10} alignItems="flex-start">
-              <PageButtonLink
-                leftIcon={<ResourceIcon boxSize={8} />}
-                variant="solid"
-                colorScheme="blue"
-                pageInfo={NewResourcePageInfo}
-                loggedInOnly
-                isDisabled={loading}
-              >
-                Add Resource
-              </PageButtonLink>
+              <NewResourceModal
+                defaultResourceCreationData={{
+                  showInTopics: [topic],
+                }}
+                onResourceCreated={() => refetchLearningMaterials()}
+                renderButton={(openModal) => (
+                  <Button
+                    leftIcon={<ResourceIcon boxSize={6} />}
+                    variant="solid"
+                    colorScheme="blue"
+                    isDisabled={loading}
+                    onClick={() => {
+                      if (!currentUser) return onOpenUnauthentificatedModal();
+                      openModal();
+                    }}
+                  >
+                    Add Resource
+                  </Button>
+                )}
+              />
               <PageButtonLink
                 leftIcon={<LearningPathIcon boxSize={7} />}
                 variant="solid"

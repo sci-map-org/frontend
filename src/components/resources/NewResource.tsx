@@ -432,7 +432,7 @@ export const NewResourceModal: React.FC<{ renderButton: (onClick: () => void) =>
   return (
     <>
       {renderButton(onOpen)}
-      <Modal onClose={onClose} size="xl" isOpen={isOpen}>
+      <Modal onClose={onClose} size="5xl" isOpen={isOpen}>
         <ModalOverlay>
           <ModalContent>
             <ModalHeader>Create new Resource</ModalHeader>
