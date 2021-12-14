@@ -159,6 +159,7 @@ export type CreateTopicContextOptions = {
 };
 
 export type CreateTopicPayload = {
+  aliases?: InputMaybe<Array<Scalars['String']>>;
   description?: InputMaybe<Scalars['String']>;
   key: Scalars['String'];
   name: Scalars['String'];
@@ -1395,6 +1396,7 @@ export enum SubTopicRelationshipType {
 export type Topic = {
   __typename?: 'Topic';
   _id: Scalars['String'];
+  aliases?: Maybe<Array<Scalars['String']>>;
   context?: Maybe<Scalars['String']>;
   contextTopic?: Maybe<Topic>;
   contextualisedTopics?: Maybe<Array<Topic>>;
@@ -1527,6 +1529,7 @@ export type UpdateTopicIsSubTopicOfTopicPayload = {
 };
 
 export type UpdateTopicPayload = {
+  aliases?: InputMaybe<Array<Scalars['String']>>;
   description?: InputMaybe<Scalars['String']>;
   key?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;

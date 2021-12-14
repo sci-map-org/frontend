@@ -35,7 +35,10 @@ import { TopicUrlKeyField, useCheckTopicKeyAvailability } from './fields/TopicUr
 import { useAddSubTopicMutation, useCreateTopicMutation } from './NewTopic.generated';
 import { CloseIcon } from '@chakra-ui/icons';
 
-type TopicCreationData = CreateTopicPayload & {
+type TopicCreationData = {
+  name: string;
+  key: string;
+  description?: string;
   aliases: TopicNameAlias[];
   contextTopic?: TopicLinkDataFragment;
   disambiguationTopic?: TopicLinkDataFragment;
@@ -212,6 +215,7 @@ export const NewTopic: React.FC<NewTopicProps> = ({
       name: topicCreationData.name,
       key: topicCreationData.key,
       description: topicCreationData.description,
+      aliases: topicCreationData.aliases.map(({ value }) => value),
     };
     const contextOptions: CreateTopicContextOptions | undefined =
       topicCreationData.contextTopic && topicCreationData.disambiguationTopic
