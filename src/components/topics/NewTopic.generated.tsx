@@ -1,39 +1,23 @@
 import * as Types from '../../graphql/types';
 
-import { TopicFullDataFragment, TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import * as Operations from './NewTopic';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type CreateTopicMutationVariables = Types.Exact<{
   payload: Types.CreateTopicPayload;
 }>;
 
 
-export type CreateTopicMutation = (
-  { __typename?: 'Mutation' }
-  & { createTopic: (
-    { __typename?: 'Topic' }
-    & TopicFullDataFragment
-  ) }
-);
+export type CreateTopicMutation = { __typename?: 'Mutation', createTopic: { __typename?: 'Topic', _id: string, name: string, key: string, context?: string | null | undefined, isDisambiguation?: boolean | null | undefined, description?: string | null | undefined, createdAt: any } };
 
 export type AddSubTopicMutationVariables = Types.Exact<{
   parentTopicId: Types.Scalars['String'];
   payload: Types.CreateTopicPayload;
-  contextOptions?: Types.Maybe<Types.CreateTopicContextOptions>;
+  contextOptions?: Types.InputMaybe<Types.CreateTopicContextOptions>;
 }>;
 
 
-export type AddSubTopicMutation = (
-  { __typename?: 'Mutation' }
-  & { addSubTopic: (
-    { __typename?: 'Topic' }
-    & { parentTopic?: Types.Maybe<(
-      { __typename?: 'Topic' }
-      & TopicLinkDataFragment
-    )> }
-    & TopicFullDataFragment
-  ) }
-);
+export type AddSubTopicMutation = { __typename?: 'Mutation', addSubTopic: { __typename?: 'Topic', _id: string, name: string, key: string, context?: string | null | undefined, isDisambiguation?: boolean | null | undefined, description?: string | null | undefined, createdAt: any, parentTopic?: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } | null | undefined } };
 
 
 export type CreateTopicMutationFn = Apollo.MutationFunction<CreateTopicMutation, CreateTopicMutationVariables>;
@@ -56,7 +40,8 @@ export type CreateTopicMutationFn = Apollo.MutationFunction<CreateTopicMutation,
  * });
  */
 export function useCreateTopicMutation(baseOptions?: Apollo.MutationHookOptions<CreateTopicMutation, CreateTopicMutationVariables>) {
-        return Apollo.useMutation<CreateTopicMutation, CreateTopicMutationVariables>(Operations.createTopic, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateTopicMutation, CreateTopicMutationVariables>(Operations.createTopic, options);
       }
 export type CreateTopicMutationHookResult = ReturnType<typeof useCreateTopicMutation>;
 export type CreateTopicMutationResult = Apollo.MutationResult<CreateTopicMutation>;
@@ -83,7 +68,8 @@ export type AddSubTopicMutationFn = Apollo.MutationFunction<AddSubTopicMutation,
  * });
  */
 export function useAddSubTopicMutation(baseOptions?: Apollo.MutationHookOptions<AddSubTopicMutation, AddSubTopicMutationVariables>) {
-        return Apollo.useMutation<AddSubTopicMutation, AddSubTopicMutationVariables>(Operations.addSubTopic, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddSubTopicMutation, AddSubTopicMutationVariables>(Operations.addSubTopic, options);
       }
 export type AddSubTopicMutationHookResult = ReturnType<typeof useAddSubTopicMutation>;
 export type AddSubTopicMutationResult = Apollo.MutationResult<AddSubTopicMutation>;

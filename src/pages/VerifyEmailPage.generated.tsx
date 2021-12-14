@@ -2,18 +2,13 @@ import * as Types from '../graphql/types';
 
 import * as Operations from './VerifyEmailPage';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type VerifyEmailAddressMutationVariables = Types.Exact<{
   token: Types.Scalars['String'];
 }>;
 
 
-export type VerifyEmailAddressMutation = (
-  { __typename?: 'Mutation' }
-  & { verifyEmailAddress: (
-    { __typename?: 'VerifyEmailResponse' }
-    & Pick<Types.VerifyEmailResponse, 'email'>
-  ) }
-);
+export type VerifyEmailAddressMutation = { __typename?: 'Mutation', verifyEmailAddress: { __typename?: 'VerifyEmailResponse', email: string } };
 
 
 export type VerifyEmailAddressMutationFn = Apollo.MutationFunction<VerifyEmailAddressMutation, VerifyEmailAddressMutationVariables>;
@@ -36,7 +31,8 @@ export type VerifyEmailAddressMutationFn = Apollo.MutationFunction<VerifyEmailAd
  * });
  */
 export function useVerifyEmailAddressMutation(baseOptions?: Apollo.MutationHookOptions<VerifyEmailAddressMutation, VerifyEmailAddressMutationVariables>) {
-        return Apollo.useMutation<VerifyEmailAddressMutation, VerifyEmailAddressMutationVariables>(Operations.verifyEmailAddress, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<VerifyEmailAddressMutation, VerifyEmailAddressMutationVariables>(Operations.verifyEmailAddress, options);
       }
 export type VerifyEmailAddressMutationHookResult = ReturnType<typeof useVerifyEmailAddressMutation>;
 export type VerifyEmailAddressMutationResult = Apollo.MutationResult<VerifyEmailAddressMutation>;

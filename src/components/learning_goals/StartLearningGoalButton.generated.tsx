@@ -1,10 +1,3 @@
 import * as Types from '../../graphql/types';
 
-export type StartLearningGoalButtonDataFragment = (
-  { __typename?: 'LearningGoal' }
-  & Pick<Types.LearningGoal, '_id'>
-  & { started?: Types.Maybe<(
-    { __typename?: 'LearningGoalStarted' }
-    & Pick<Types.LearningGoalStarted, 'startedAt'>
-  )> }
-);
+export type StartLearningGoalButtonDataFragment = { __typename?: 'LearningGoal', _id: string, started?: { __typename?: 'LearningGoalStarted', startedAt: any } | null | undefined };

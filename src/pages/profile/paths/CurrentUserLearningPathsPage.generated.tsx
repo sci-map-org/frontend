@@ -1,29 +1,12 @@
 import * as Types from '../../../graphql/types';
 
-import { LearningPathPreviewCardDataFragment } from '../../../components/learning_paths/LearningPathPreviewCard.generated';
 import * as Operations from './CurrentUserLearningPathsPage';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type GetCurrentUserLearningPathsPageQueryVariables = Types.Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserLearningPathsPageQuery = (
-  { __typename?: 'Query' }
-  & { currentUser?: Types.Maybe<(
-    { __typename?: 'CurrentUser' }
-    & Pick<Types.CurrentUser, '_id'>
-    & { startedLearningPaths?: Types.Maybe<Array<(
-      { __typename?: 'LearningPathStartedItem' }
-      & Pick<Types.LearningPathStartedItem, 'startedAt'>
-      & { learningPath: (
-        { __typename?: 'LearningPath' }
-        & LearningPathPreviewCardDataFragment
-      ) }
-    )>>, createdLearningPaths?: Types.Maybe<Array<(
-      { __typename?: 'LearningPath' }
-      & LearningPathPreviewCardDataFragment
-    )>> }
-  )> }
-);
+export type GetCurrentUserLearningPathsPageQuery = { __typename?: 'Query', currentUser?: { __typename?: 'CurrentUser', _id: string, startedLearningPaths?: Array<{ __typename?: 'LearningPathStartedItem', startedAt: any, learningPath: { __typename?: 'LearningPath', rating?: number | null | undefined, _id: string, key: string, public: boolean, name: string, description?: string | null | undefined, durationSeconds?: number | null | undefined, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined, createdBy?: { __typename?: 'User', _id: string, key: string, displayName: string, profilePictureUrl?: string | null | undefined } | null | undefined, started?: { __typename?: 'LearningPathStarted', startedAt: any, completedAt?: any | null | undefined } | null | undefined, resourceItems?: Array<{ __typename?: 'LearningPathResourceItem', resource: { __typename?: 'Resource', _id: string, durationSeconds?: number | null | undefined, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined } }> | null | undefined, coveredSubTopics?: { __typename?: 'LearningMaterialCoveredSubTopicsResults', items: Array<{ __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined }> } | null | undefined } }> | null | undefined, createdLearningPaths?: Array<{ __typename?: 'LearningPath', rating?: number | null | undefined, _id: string, key: string, public: boolean, name: string, description?: string | null | undefined, durationSeconds?: number | null | undefined, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined, createdBy?: { __typename?: 'User', _id: string, key: string, displayName: string, profilePictureUrl?: string | null | undefined } | null | undefined, started?: { __typename?: 'LearningPathStarted', startedAt: any, completedAt?: any | null | undefined } | null | undefined, resourceItems?: Array<{ __typename?: 'LearningPathResourceItem', resource: { __typename?: 'Resource', _id: string, durationSeconds?: number | null | undefined, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined } }> | null | undefined, coveredSubTopics?: { __typename?: 'LearningMaterialCoveredSubTopicsResults', items: Array<{ __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined }> } | null | undefined }> | null | undefined } | null | undefined };
 
 
 
@@ -43,10 +26,12 @@ export type GetCurrentUserLearningPathsPageQuery = (
  * });
  */
 export function useGetCurrentUserLearningPathsPageQuery(baseOptions?: Apollo.QueryHookOptions<GetCurrentUserLearningPathsPageQuery, GetCurrentUserLearningPathsPageQueryVariables>) {
-        return Apollo.useQuery<GetCurrentUserLearningPathsPageQuery, GetCurrentUserLearningPathsPageQueryVariables>(Operations.getCurrentUserLearningPathsPage, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCurrentUserLearningPathsPageQuery, GetCurrentUserLearningPathsPageQueryVariables>(Operations.getCurrentUserLearningPathsPage, options);
       }
 export function useGetCurrentUserLearningPathsPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCurrentUserLearningPathsPageQuery, GetCurrentUserLearningPathsPageQueryVariables>) {
-          return Apollo.useLazyQuery<GetCurrentUserLearningPathsPageQuery, GetCurrentUserLearningPathsPageQueryVariables>(Operations.getCurrentUserLearningPathsPage, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCurrentUserLearningPathsPageQuery, GetCurrentUserLearningPathsPageQueryVariables>(Operations.getCurrentUserLearningPathsPage, options);
         }
 export type GetCurrentUserLearningPathsPageQueryHookResult = ReturnType<typeof useGetCurrentUserLearningPathsPageQuery>;
 export type GetCurrentUserLearningPathsPageLazyQueryHookResult = ReturnType<typeof useGetCurrentUserLearningPathsPageLazyQuery>;

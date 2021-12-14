@@ -1,45 +1,12 @@
 import * as Types from '../graphql/types';
 
-import { StartedLearningPathCardDataFragment } from './home/HomeUserStartedPaths.generated';
-import { ResourceMiniCardDataFragment } from '../components/resources/ResourceMiniCard.generated';
-import { LearningPathPreviewCardDataFragment } from '../components/learning_paths/LearningPathPreviewCard.generated';
 import * as Operations from './HomePage';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type GetHomePageDataQueryVariables = Types.Exact<{ [key: string]: never; }>;
 
 
-export type GetHomePageDataQuery = (
-  { __typename?: 'Query' }
-  & { getHomePageData: (
-    { __typename?: 'GetHomePageDataResults' }
-    & { currentUser?: Types.Maybe<(
-      { __typename?: 'CurrentUser' }
-      & Pick<Types.CurrentUser, '_id' | 'key' | 'email' | 'displayName'>
-      & { startedLearningPaths?: Types.Maybe<Array<(
-        { __typename?: 'LearningPathStartedItem' }
-        & Pick<Types.LearningPathStartedItem, 'startedAt'>
-        & { learningPath: (
-          { __typename?: 'LearningPath' }
-          & StartedLearningPathCardDataFragment
-        ) }
-      )>>, consumedResources?: Types.Maybe<(
-        { __typename?: 'UserConsumedResourcesResult' }
-        & Pick<Types.UserConsumedResourcesResult, 'count'>
-        & { items: Array<(
-          { __typename?: 'UserConsumedResourceItem' }
-          & Pick<Types.UserConsumedResourceItem, 'consumedAt' | 'openedAt'>
-          & { resource: (
-            { __typename?: 'Resource' }
-            & ResourceMiniCardDataFragment
-          ) }
-        )> }
-      )> }
-    )>, recommendedLearningPaths: Array<(
-      { __typename?: 'LearningPath' }
-      & LearningPathPreviewCardDataFragment
-    )> }
-  ) }
-);
+export type GetHomePageDataQuery = { __typename?: 'Query', getHomePageData: { __typename?: 'GetHomePageDataResults', currentUser?: { __typename?: 'CurrentUser', _id: string, key: string, email: string, displayName: string, startedLearningPaths?: Array<{ __typename?: 'LearningPathStartedItem', startedAt: any, learningPath: { __typename?: 'LearningPath', _id: string, key: string, name: string, public: boolean, rating?: number | null | undefined, description?: string | null | undefined, durationSeconds?: number | null | undefined, started?: { __typename?: 'LearningPathStarted', startedAt: any, completedAt?: any | null | undefined } | null | undefined, resourceItems?: Array<{ __typename?: 'LearningPathResourceItem', resource: { __typename?: 'Resource', _id: string, durationSeconds?: number | null | undefined, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined } }> | null | undefined } }> | null | undefined, consumedResources?: { __typename?: 'UserConsumedResourcesResult', count: number, items: Array<{ __typename?: 'UserConsumedResourceItem', consumedAt?: any | null | undefined, openedAt?: any | null | undefined, resource: { __typename?: 'Resource', _id: string, name: string, type: Types.ResourceType, url: string, rating?: number | null | undefined, consumed?: { __typename?: 'ConsumedResource', consumedAt?: any | null | undefined, openedAt?: any | null | undefined } | null | undefined } }> } | null | undefined } | null | undefined, recommendedLearningPaths: Array<{ __typename?: 'LearningPath', rating?: number | null | undefined, _id: string, key: string, public: boolean, name: string, description?: string | null | undefined, durationSeconds?: number | null | undefined, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined, createdBy?: { __typename?: 'User', _id: string, key: string, displayName: string, profilePictureUrl?: string | null | undefined } | null | undefined, started?: { __typename?: 'LearningPathStarted', startedAt: any, completedAt?: any | null | undefined } | null | undefined, resourceItems?: Array<{ __typename?: 'LearningPathResourceItem', resource: { __typename?: 'Resource', _id: string, durationSeconds?: number | null | undefined, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined } }> | null | undefined, coveredSubTopics?: { __typename?: 'LearningMaterialCoveredSubTopicsResults', items: Array<{ __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined }> } | null | undefined }> } };
 
 
 
@@ -59,10 +26,12 @@ export type GetHomePageDataQuery = (
  * });
  */
 export function useGetHomePageDataQuery(baseOptions?: Apollo.QueryHookOptions<GetHomePageDataQuery, GetHomePageDataQueryVariables>) {
-        return Apollo.useQuery<GetHomePageDataQuery, GetHomePageDataQueryVariables>(Operations.getHomePageData, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetHomePageDataQuery, GetHomePageDataQueryVariables>(Operations.getHomePageData, options);
       }
 export function useGetHomePageDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetHomePageDataQuery, GetHomePageDataQueryVariables>) {
-          return Apollo.useLazyQuery<GetHomePageDataQuery, GetHomePageDataQueryVariables>(Operations.getHomePageData, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetHomePageDataQuery, GetHomePageDataQueryVariables>(Operations.getHomePageData, options);
         }
 export type GetHomePageDataQueryHookResult = ReturnType<typeof useGetHomePageDataQuery>;
 export type GetHomePageDataLazyQueryHookResult = ReturnType<typeof useGetHomePageDataLazyQuery>;

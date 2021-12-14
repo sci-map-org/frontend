@@ -1,25 +1,7 @@
 import * as Types from '../types';
 
-import { ResourcePreviewCardDataFragment } from '../resources/resources.fragments.generated';
-export type LearningPathDataFragment = (
-  { __typename?: 'LearningPath' }
-  & Pick<Types.LearningPath, '_id' | 'key' | 'public' | 'name' | 'description' | 'durationSeconds'>
-);
+export type LearningPathDataFragment = { __typename?: 'LearningPath', _id: string, key: string, public: boolean, name: string, description?: string | null | undefined, durationSeconds?: number | null | undefined };
 
-export type LearningPathLinkDataFragment = (
-  { __typename?: 'LearningPath' }
-  & Pick<Types.LearningPath, '_id' | 'key' | 'name'>
-);
+export type LearningPathLinkDataFragment = { __typename?: 'LearningPath', _id: string, key: string, name: string };
 
-export type LearningPathWithResourceItemsPreviewDataFragment = (
-  { __typename?: 'LearningPath' }
-  & { resourceItems?: Types.Maybe<Array<(
-    { __typename?: 'LearningPathResourceItem' }
-    & Pick<Types.LearningPathResourceItem, 'description'>
-    & { resource: (
-      { __typename?: 'Resource' }
-      & ResourcePreviewCardDataFragment
-    ) }
-  )>> }
-  & LearningPathDataFragment
-);
+export type LearningPathWithResourceItemsPreviewDataFragment = { __typename?: 'LearningPath', _id: string, key: string, public: boolean, name: string, description?: string | null | undefined, durationSeconds?: number | null | undefined, resourceItems?: Array<{ __typename?: 'LearningPathResourceItem', description?: string | null | undefined, resource: { __typename?: 'Resource', _id: string, name: string, type: Types.ResourceType, mediaType: Types.ResourceMediaType, url: string, description?: string | null | undefined, durationSeconds?: number | null | undefined, upvotes?: number | null | undefined, rating?: number | null | undefined, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined, coveredSubTopics?: { __typename?: 'LearningMaterialCoveredSubTopicsResults', items: Array<{ __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined }> } | null | undefined, subResourceSeries?: Array<{ __typename?: 'Resource', _id: string, name: string }> | null | undefined, subResources?: Array<{ __typename?: 'Resource', _id: string, name: string }> | null | undefined } }> | null | undefined };

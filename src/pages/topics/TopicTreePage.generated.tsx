@@ -1,20 +1,14 @@
 import * as Types from '../../graphql/types';
 
-import { SubTopicsTreeDataFragment } from '../../components/topics/tree/SubTopicsTree.generated';
 import * as Operations from './TopicTreePage';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type GetTopicByKeyTopicTreePageQueryVariables = Types.Exact<{
   topicKey: Types.Scalars['String'];
 }>;
 
 
-export type GetTopicByKeyTopicTreePageQuery = (
-  { __typename?: 'Query' }
-  & { getTopicByKey: (
-    { __typename?: 'Topic' }
-    & SubTopicsTreeDataFragment
-  ) }
-);
+export type GetTopicByKeyTopicTreePageQuery = { __typename?: 'Query', getTopicByKey: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined, subTopics?: Array<{ __typename?: 'TopicIsSubTopicOfTopic', index: number, relationshipType: Types.SubTopicRelationshipType, subTopic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined, subTopics?: Array<{ __typename?: 'TopicIsSubTopicOfTopic', index: number, relationshipType: Types.SubTopicRelationshipType, subTopic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined, subTopics?: Array<{ __typename?: 'TopicIsSubTopicOfTopic', index: number, relationshipType: Types.SubTopicRelationshipType, subTopic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined, contextTopic?: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } | null | undefined } }> | null | undefined, contextTopic?: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } | null | undefined } }> | null | undefined, contextTopic?: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } | null | undefined } }> | null | undefined } };
 
 
 
@@ -35,10 +29,12 @@ export type GetTopicByKeyTopicTreePageQuery = (
  * });
  */
 export function useGetTopicByKeyTopicTreePageQuery(baseOptions: Apollo.QueryHookOptions<GetTopicByKeyTopicTreePageQuery, GetTopicByKeyTopicTreePageQueryVariables>) {
-        return Apollo.useQuery<GetTopicByKeyTopicTreePageQuery, GetTopicByKeyTopicTreePageQueryVariables>(Operations.getTopicByKeyTopicTreePage, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTopicByKeyTopicTreePageQuery, GetTopicByKeyTopicTreePageQueryVariables>(Operations.getTopicByKeyTopicTreePage, options);
       }
 export function useGetTopicByKeyTopicTreePageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTopicByKeyTopicTreePageQuery, GetTopicByKeyTopicTreePageQueryVariables>) {
-          return Apollo.useLazyQuery<GetTopicByKeyTopicTreePageQuery, GetTopicByKeyTopicTreePageQueryVariables>(Operations.getTopicByKeyTopicTreePage, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTopicByKeyTopicTreePageQuery, GetTopicByKeyTopicTreePageQueryVariables>(Operations.getTopicByKeyTopicTreePage, options);
         }
 export type GetTopicByKeyTopicTreePageQueryHookResult = ReturnType<typeof useGetTopicByKeyTopicTreePageQuery>;
 export type GetTopicByKeyTopicTreePageLazyQueryHookResult = ReturnType<typeof useGetTopicByKeyTopicTreePageLazyQuery>;

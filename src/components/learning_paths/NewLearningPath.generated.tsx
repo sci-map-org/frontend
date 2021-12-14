@@ -1,20 +1,14 @@
 import * as Types from '../../graphql/types';
 
-import { LearningPathDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
 import * as Operations from './NewLearningPath';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type CreateLearningPathMutationVariables = Types.Exact<{
   payload: Types.CreateLearningPathPayload;
 }>;
 
 
-export type CreateLearningPathMutation = (
-  { __typename?: 'Mutation' }
-  & { createLearningPath: (
-    { __typename?: 'LearningPath' }
-    & LearningPathDataFragment
-  ) }
-);
+export type CreateLearningPathMutation = { __typename?: 'Mutation', createLearningPath: { __typename?: 'LearningPath', _id: string, key: string, public: boolean, name: string, description?: string | null | undefined, durationSeconds?: number | null | undefined } };
 
 
 export type CreateLearningPathMutationFn = Apollo.MutationFunction<CreateLearningPathMutation, CreateLearningPathMutationVariables>;
@@ -37,7 +31,8 @@ export type CreateLearningPathMutationFn = Apollo.MutationFunction<CreateLearnin
  * });
  */
 export function useCreateLearningPathMutation(baseOptions?: Apollo.MutationHookOptions<CreateLearningPathMutation, CreateLearningPathMutationVariables>) {
-        return Apollo.useMutation<CreateLearningPathMutation, CreateLearningPathMutationVariables>(Operations.createLearningPath, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateLearningPathMutation, CreateLearningPathMutationVariables>(Operations.createLearningPath, options);
       }
 export type CreateLearningPathMutationHookResult = ReturnType<typeof useCreateLearningPathMutation>;
 export type CreateLearningPathMutationResult = Apollo.MutationResult<CreateLearningPathMutation>;

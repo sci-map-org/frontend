@@ -2,34 +2,20 @@ import * as Types from '../graphql/types';
 
 import * as Operations from './ResetPasswordPage';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type ResetPasswordMutationVariables = Types.Exact<{
   payload: Types.ResetPasswordPayload;
 }>;
 
 
-export type ResetPasswordMutation = (
-  { __typename?: 'Mutation' }
-  & { resetPassword: (
-    { __typename?: 'ResetPasswordResponse' }
-    & { currentUser: (
-      { __typename?: 'CurrentUser' }
-      & Pick<Types.CurrentUser, '_id'>
-    ) }
-  ) }
-);
+export type ResetPasswordMutation = { __typename?: 'Mutation', resetPassword: { __typename?: 'ResetPasswordResponse', currentUser: { __typename?: 'CurrentUser', _id: string } } };
 
 export type TriggerResetPasswordMutationVariables = Types.Exact<{
   email: Types.Scalars['String'];
 }>;
 
 
-export type TriggerResetPasswordMutation = (
-  { __typename?: 'Mutation' }
-  & { triggerResetPassword: (
-    { __typename?: 'TriggerResetPasswordResponse' }
-    & Pick<Types.TriggerResetPasswordResponse, 'success' | 'errorMessage'>
-  ) }
-);
+export type TriggerResetPasswordMutation = { __typename?: 'Mutation', triggerResetPassword: { __typename?: 'TriggerResetPasswordResponse', success: boolean, errorMessage?: string | null | undefined } };
 
 
 export type ResetPasswordMutationFn = Apollo.MutationFunction<ResetPasswordMutation, ResetPasswordMutationVariables>;
@@ -52,7 +38,8 @@ export type ResetPasswordMutationFn = Apollo.MutationFunction<ResetPasswordMutat
  * });
  */
 export function useResetPasswordMutation(baseOptions?: Apollo.MutationHookOptions<ResetPasswordMutation, ResetPasswordMutationVariables>) {
-        return Apollo.useMutation<ResetPasswordMutation, ResetPasswordMutationVariables>(Operations.resetPassword, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ResetPasswordMutation, ResetPasswordMutationVariables>(Operations.resetPassword, options);
       }
 export type ResetPasswordMutationHookResult = ReturnType<typeof useResetPasswordMutation>;
 export type ResetPasswordMutationResult = Apollo.MutationResult<ResetPasswordMutation>;
@@ -77,7 +64,8 @@ export type TriggerResetPasswordMutationFn = Apollo.MutationFunction<TriggerRese
  * });
  */
 export function useTriggerResetPasswordMutation(baseOptions?: Apollo.MutationHookOptions<TriggerResetPasswordMutation, TriggerResetPasswordMutationVariables>) {
-        return Apollo.useMutation<TriggerResetPasswordMutation, TriggerResetPasswordMutationVariables>(Operations.triggerResetPassword, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<TriggerResetPasswordMutation, TriggerResetPasswordMutationVariables>(Operations.triggerResetPassword, options);
       }
 export type TriggerResetPasswordMutationHookResult = ReturnType<typeof useTriggerResetPasswordMutation>;
 export type TriggerResetPasswordMutationResult = Apollo.MutationResult<TriggerResetPasswordMutation>;

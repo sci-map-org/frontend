@@ -1,34 +1,3 @@
 import * as Types from '../../graphql/types';
 
-import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
-import { UserAvatarDataFragment } from '../users/UserAvatar.generated';
-import { OtherLearnersViewerUserDataFragment } from '../lib/OtherLearnersViewer.generated';
-import { LearningGoalPublishButtonDataFragment } from './LearningGoalPublishButton.generated';
-import { RoadmapSubGoalsWrapperDataFragment } from './RoadmapSubGoalsWrapper.generated';
-import { StartLearningGoalButtonDataFragment } from './StartLearningGoalButton.generated';
-import { LearningGoalLinearProgressDataFragment } from './LearningGoalLinearProgress.generated';
-import { ParentLearningGoalsNavigationBlockDataFragment } from './ParentLearningGoalsNavigationBlock.generated';
-export type LearningGoalRoadmapDataFragment = (
-  { __typename?: 'LearningGoal' }
-  & Pick<Types.LearningGoal, '_id' | 'rating'>
-  & { createdBy?: Types.Maybe<(
-    { __typename?: 'User' }
-    & UserAvatarDataFragment
-  )>, startedBy?: Types.Maybe<(
-    { __typename?: 'LearningGoalStartedByResults' }
-    & Pick<Types.LearningGoalStartedByResults, 'count'>
-    & { items: Array<(
-      { __typename?: 'LearningGoalStartedByItem' }
-      & { user: (
-        { __typename?: 'User' }
-        & OtherLearnersViewerUserDataFragment
-      ) }
-    )> }
-  )> }
-  & LearningGoalDataFragment
-  & LearningGoalPublishButtonDataFragment
-  & RoadmapSubGoalsWrapperDataFragment
-  & StartLearningGoalButtonDataFragment
-  & LearningGoalLinearProgressDataFragment
-  & ParentLearningGoalsNavigationBlockDataFragment
-);
+export type LearningGoalRoadmapDataFragment = { __typename?: 'LearningGoal', _id: string, rating?: number | null | undefined, key: string, name: string, hidden: boolean, type: Types.LearningGoalType, description?: string | null | undefined, publishedAt?: any | null | undefined, createdBy?: { __typename?: 'User', _id: string, key: string, displayName: string, profilePictureUrl?: string | null | undefined } | null | undefined, startedBy?: { __typename?: 'LearningGoalStartedByResults', count: number, items: Array<{ __typename?: 'LearningGoalStartedByItem', user: { __typename?: 'User', _id: string, key: string, displayName: string, profilePictureUrl?: string | null | undefined } }> } | null | undefined, requiredSubGoals?: Array<{ __typename?: 'SubGoalItem', strength: number, subGoal: { __typename?: 'LearningGoal' } | { __typename?: 'Topic', _id: string } }> | null | undefined, started?: { __typename?: 'LearningGoalStarted', startedAt: any } | null | undefined, progress?: { __typename?: 'LearningGoalProgress', level: number } | null | undefined, requiredInGoals?: Array<{ __typename?: 'RequiredInGoalItem', strength: number, goal: { __typename?: 'LearningGoal', _id: string, key: string, name: string, type: Types.LearningGoalType } }> | null | undefined };

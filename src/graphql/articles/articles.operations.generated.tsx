@@ -1,33 +1,21 @@
 import * as Types from '../types';
 
-import { ArticleViewerDataFragment, ArticlePreviewDataFragment } from './articles.fragments.generated';
 import * as Operations from './articles.operations';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type CreateArticleMutationVariables = Types.Exact<{
   payload: Types.CreateArticlePayload;
 }>;
 
 
-export type CreateArticleMutation = (
-  { __typename?: 'Mutation' }
-  & { createArticle: (
-    { __typename?: 'Article' }
-    & Pick<Types.Article, '_id' | 'key' | 'contentType' | 'title' | 'content'>
-  ) }
-);
+export type CreateArticleMutation = { __typename?: 'Mutation', createArticle: { __typename?: 'Article', _id: string, key: string, contentType: Types.ArticleContentType, title: string, content: string } };
 
 export type GetArticleByKeyQueryVariables = Types.Exact<{
   key: Types.Scalars['String'];
 }>;
 
 
-export type GetArticleByKeyQuery = (
-  { __typename?: 'Query' }
-  & { getArticleByKey: (
-    { __typename?: 'Article' }
-    & ArticleViewerDataFragment
-  ) }
-);
+export type GetArticleByKeyQuery = { __typename?: 'Query', getArticleByKey: { __typename?: 'Article', _id: string, key: string, title: string, content: string, contentType: Types.ArticleContentType, author?: { __typename?: 'User', key: string, displayName: string } | null | undefined } };
 
 export type UpdateArticleMutationVariables = Types.Exact<{
   id: Types.Scalars['String'];
@@ -35,26 +23,14 @@ export type UpdateArticleMutationVariables = Types.Exact<{
 }>;
 
 
-export type UpdateArticleMutation = (
-  { __typename?: 'Mutation' }
-  & { updateArticle: (
-    { __typename?: 'Article' }
-    & ArticleViewerDataFragment
-  ) }
-);
+export type UpdateArticleMutation = { __typename?: 'Mutation', updateArticle: { __typename?: 'Article', _id: string, key: string, title: string, content: string, contentType: Types.ArticleContentType, author?: { __typename?: 'User', key: string, displayName: string } | null | undefined } };
 
 export type DeleteArticleMutationVariables = Types.Exact<{
   id: Types.Scalars['String'];
 }>;
 
 
-export type DeleteArticleMutation = (
-  { __typename?: 'Mutation' }
-  & { deleteArticle: (
-    { __typename?: 'DeleteArticleResponse' }
-    & Pick<Types.DeleteArticleResponse, '_id' | 'success'>
-  ) }
-);
+export type DeleteArticleMutation = { __typename?: 'Mutation', deleteArticle: { __typename?: 'DeleteArticleResponse', _id: string, success: boolean } };
 
 export type ListUserArticlePreviewsQueryVariables = Types.Exact<{
   userKey: Types.Scalars['String'];
@@ -62,20 +38,7 @@ export type ListUserArticlePreviewsQueryVariables = Types.Exact<{
 }>;
 
 
-export type ListUserArticlePreviewsQuery = (
-  { __typename?: 'Query' }
-  & { getUser: (
-    { __typename?: 'User' }
-    & Pick<Types.User, 'displayName'>
-    & { articles?: Types.Maybe<(
-      { __typename?: 'ListArticlesResult' }
-      & { items: Array<(
-        { __typename?: 'Article' }
-        & ArticlePreviewDataFragment
-      )> }
-    )> }
-  ) }
-);
+export type ListUserArticlePreviewsQuery = { __typename?: 'Query', getUser: { __typename?: 'User', displayName: string, articles?: { __typename?: 'ListArticlesResult', items: Array<{ __typename?: 'Article', _id: string, key: string, title: string, contentType: Types.ArticleContentType, author?: { __typename?: 'User', key: string } | null | undefined }> } | null | undefined } };
 
 
 export type CreateArticleMutationFn = Apollo.MutationFunction<CreateArticleMutation, CreateArticleMutationVariables>;
@@ -98,7 +61,8 @@ export type CreateArticleMutationFn = Apollo.MutationFunction<CreateArticleMutat
  * });
  */
 export function useCreateArticleMutation(baseOptions?: Apollo.MutationHookOptions<CreateArticleMutation, CreateArticleMutationVariables>) {
-        return Apollo.useMutation<CreateArticleMutation, CreateArticleMutationVariables>(Operations.createArticle, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateArticleMutation, CreateArticleMutationVariables>(Operations.createArticle, options);
       }
 export type CreateArticleMutationHookResult = ReturnType<typeof useCreateArticleMutation>;
 export type CreateArticleMutationResult = Apollo.MutationResult<CreateArticleMutation>;
@@ -121,10 +85,12 @@ export type CreateArticleMutationOptions = Apollo.BaseMutationOptions<CreateArti
  * });
  */
 export function useGetArticleByKeyQuery(baseOptions: Apollo.QueryHookOptions<GetArticleByKeyQuery, GetArticleByKeyQueryVariables>) {
-        return Apollo.useQuery<GetArticleByKeyQuery, GetArticleByKeyQueryVariables>(Operations.getArticleByKey, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetArticleByKeyQuery, GetArticleByKeyQueryVariables>(Operations.getArticleByKey, options);
       }
 export function useGetArticleByKeyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetArticleByKeyQuery, GetArticleByKeyQueryVariables>) {
-          return Apollo.useLazyQuery<GetArticleByKeyQuery, GetArticleByKeyQueryVariables>(Operations.getArticleByKey, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetArticleByKeyQuery, GetArticleByKeyQueryVariables>(Operations.getArticleByKey, options);
         }
 export type GetArticleByKeyQueryHookResult = ReturnType<typeof useGetArticleByKeyQuery>;
 export type GetArticleByKeyLazyQueryHookResult = ReturnType<typeof useGetArticleByKeyLazyQuery>;
@@ -150,7 +116,8 @@ export type UpdateArticleMutationFn = Apollo.MutationFunction<UpdateArticleMutat
  * });
  */
 export function useUpdateArticleMutation(baseOptions?: Apollo.MutationHookOptions<UpdateArticleMutation, UpdateArticleMutationVariables>) {
-        return Apollo.useMutation<UpdateArticleMutation, UpdateArticleMutationVariables>(Operations.updateArticle, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateArticleMutation, UpdateArticleMutationVariables>(Operations.updateArticle, options);
       }
 export type UpdateArticleMutationHookResult = ReturnType<typeof useUpdateArticleMutation>;
 export type UpdateArticleMutationResult = Apollo.MutationResult<UpdateArticleMutation>;
@@ -175,7 +142,8 @@ export type DeleteArticleMutationFn = Apollo.MutationFunction<DeleteArticleMutat
  * });
  */
 export function useDeleteArticleMutation(baseOptions?: Apollo.MutationHookOptions<DeleteArticleMutation, DeleteArticleMutationVariables>) {
-        return Apollo.useMutation<DeleteArticleMutation, DeleteArticleMutationVariables>(Operations.deleteArticle, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteArticleMutation, DeleteArticleMutationVariables>(Operations.deleteArticle, options);
       }
 export type DeleteArticleMutationHookResult = ReturnType<typeof useDeleteArticleMutation>;
 export type DeleteArticleMutationResult = Apollo.MutationResult<DeleteArticleMutation>;
@@ -199,10 +167,12 @@ export type DeleteArticleMutationOptions = Apollo.BaseMutationOptions<DeleteArti
  * });
  */
 export function useListUserArticlePreviewsQuery(baseOptions: Apollo.QueryHookOptions<ListUserArticlePreviewsQuery, ListUserArticlePreviewsQueryVariables>) {
-        return Apollo.useQuery<ListUserArticlePreviewsQuery, ListUserArticlePreviewsQueryVariables>(Operations.listUserArticlePreviews, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ListUserArticlePreviewsQuery, ListUserArticlePreviewsQueryVariables>(Operations.listUserArticlePreviews, options);
       }
 export function useListUserArticlePreviewsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ListUserArticlePreviewsQuery, ListUserArticlePreviewsQueryVariables>) {
-          return Apollo.useLazyQuery<ListUserArticlePreviewsQuery, ListUserArticlePreviewsQueryVariables>(Operations.listUserArticlePreviews, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ListUserArticlePreviewsQuery, ListUserArticlePreviewsQueryVariables>(Operations.listUserArticlePreviews, options);
         }
 export type ListUserArticlePreviewsQueryHookResult = ReturnType<typeof useListUserArticlePreviewsQuery>;
 export type ListUserArticlePreviewsLazyQueryHookResult = ReturnType<typeof useListUserArticlePreviewsLazyQuery>;

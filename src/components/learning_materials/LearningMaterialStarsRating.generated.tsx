@@ -2,23 +2,10 @@ import * as Types from '../../graphql/types';
 
 import * as Operations from './LearningMaterialStarsRating';
 import * as Apollo from '@apollo/client';
-export type LearningMaterialStarsRaterData_LearningPath_Fragment = (
-  { __typename?: 'LearningPath' }
-  & Pick<Types.LearningPath, '_id'>
-  & { started?: Types.Maybe<(
-    { __typename?: 'LearningPathStarted' }
-    & Pick<Types.LearningPathStarted, 'startedAt' | 'completedAt'>
-  )> }
-);
+const defaultOptions =  {}
+export type LearningMaterialStarsRaterData_LearningPath_Fragment = { __typename?: 'LearningPath', _id: string, started?: { __typename?: 'LearningPathStarted', startedAt: any, completedAt?: any | null | undefined } | null | undefined };
 
-export type LearningMaterialStarsRaterData_Resource_Fragment = (
-  { __typename?: 'Resource' }
-  & Pick<Types.Resource, '_id'>
-  & { consumed?: Types.Maybe<(
-    { __typename?: 'ConsumedResource' }
-    & Pick<Types.ConsumedResource, 'consumedAt' | 'openedAt'>
-  )> }
-);
+export type LearningMaterialStarsRaterData_Resource_Fragment = { __typename?: 'Resource', _id: string, consumed?: { __typename?: 'ConsumedResource', consumedAt?: any | null | undefined, openedAt?: any | null | undefined } | null | undefined };
 
 export type LearningMaterialStarsRaterDataFragment = LearningMaterialStarsRaterData_LearningPath_Fragment | LearningMaterialStarsRaterData_Resource_Fragment;
 
@@ -28,16 +15,7 @@ export type RateLearningMaterialMutationVariables = Types.Exact<{
 }>;
 
 
-export type RateLearningMaterialMutation = (
-  { __typename?: 'Mutation' }
-  & { rateLearningMaterial: (
-    { __typename?: 'LearningPath' }
-    & Pick<Types.LearningPath, '_id' | 'rating'>
-  ) | (
-    { __typename?: 'Resource' }
-    & Pick<Types.Resource, '_id' | 'rating'>
-  ) }
-);
+export type RateLearningMaterialMutation = { __typename?: 'Mutation', rateLearningMaterial: { __typename?: 'LearningPath', _id: string, rating?: number | null | undefined } | { __typename?: 'Resource', _id: string, rating?: number | null | undefined } };
 
 
 export type RateLearningMaterialMutationFn = Apollo.MutationFunction<RateLearningMaterialMutation, RateLearningMaterialMutationVariables>;
@@ -61,7 +39,8 @@ export type RateLearningMaterialMutationFn = Apollo.MutationFunction<RateLearnin
  * });
  */
 export function useRateLearningMaterialMutation(baseOptions?: Apollo.MutationHookOptions<RateLearningMaterialMutation, RateLearningMaterialMutationVariables>) {
-        return Apollo.useMutation<RateLearningMaterialMutation, RateLearningMaterialMutationVariables>(Operations.rateLearningMaterial, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RateLearningMaterialMutation, RateLearningMaterialMutationVariables>(Operations.rateLearningMaterial, options);
       }
 export type RateLearningMaterialMutationHookResult = ReturnType<typeof useRateLearningMaterialMutation>;
 export type RateLearningMaterialMutationResult = Apollo.MutationResult<RateLearningMaterialMutation>;

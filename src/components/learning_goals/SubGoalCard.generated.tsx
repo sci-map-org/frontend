@@ -1,38 +1,5 @@
 import * as Types from '../../graphql/types';
 
-import { LearningGoalLinkDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
-import { LearningGoalCircularProgressDataFragment } from './LearningGoalCircularProgress.generated';
-import { LearningGoalBadgeDataFragment } from './LearningGoalBadge.generated';
-export type LearningGoalSubGoalCardDataFragment = (
-  { __typename?: 'LearningGoal' }
-  & Pick<Types.LearningGoal, 'description'>
-  & { requiredSubGoals?: Types.Maybe<Array<(
-    { __typename?: 'SubGoalItem' }
-    & Pick<Types.SubGoalItem, 'strength'>
-    & { subGoal: (
-      { __typename?: 'LearningGoal' }
-      & LearningGoalBadgeDataFragment
-    ) | (
-      { __typename?: 'Topic' }
-      & Pick<Types.Topic, '_id'>
-    ) }
-  )>>, dependsOnLearningGoals?: Types.Maybe<Array<(
-    { __typename?: 'DependsOnGoalItem' }
-    & Pick<Types.DependsOnGoalItem, 'parentLearningGoalId'>
-    & { learningGoal: (
-      { __typename?: 'LearningGoal' }
-      & Pick<Types.LearningGoal, '_id'>
-    ) }
-  )>> }
-  & LearningGoalLinkDataFragment
-  & LearningGoalCircularProgressDataFragment
-);
+export type LearningGoalSubGoalCardDataFragment = { __typename?: 'LearningGoal', description?: string | null | undefined, _id: string, key: string, name: string, type: Types.LearningGoalType, requiredSubGoals?: Array<{ __typename?: 'SubGoalItem', strength: number, subGoal: { __typename?: 'LearningGoal', type: Types.LearningGoalType, _id: string, key: string, name: string } | { __typename?: 'Topic', _id: string } }> | null | undefined, dependsOnLearningGoals?: Array<{ __typename?: 'DependsOnGoalItem', parentLearningGoalId: string, learningGoal: { __typename?: 'LearningGoal', _id: string } }> | null | undefined, progress?: { __typename?: 'LearningGoalProgress', level: number } | null | undefined };
 
-export type SubGoalCardDataFragment = (
-  { __typename?: 'SubGoalItem' }
-  & Pick<Types.SubGoalItem, 'strength'>
-  & { subGoal: { __typename?: 'LearningGoal' } | (
-    { __typename?: 'Topic' }
-    & Pick<Types.Topic, '_id'>
-  ) }
-);
+export type SubGoalCardDataFragment = { __typename?: 'SubGoalItem', strength: number, subGoal: { __typename?: 'LearningGoal' } | { __typename?: 'Topic', _id: string } };

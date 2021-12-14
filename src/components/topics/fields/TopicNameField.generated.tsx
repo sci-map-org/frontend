@@ -1,87 +1,23 @@
 import * as Types from '../../../graphql/types';
 
-import { TopicLinkDataFragment, TopicFullDataFragment } from '../../../graphql/topics/topics.fragments.generated';
 import * as Operations from './TopicNameField';
 import * as Apollo from '@apollo/client';
-export type TopicSuggestionDataFragment = (
-  { __typename?: 'Topic' }
-  & Pick<Types.Topic, 'context'>
-  & { disambiguationTopic?: Types.Maybe<(
-    { __typename?: 'Topic' }
-    & { contextualisedTopics?: Types.Maybe<Array<(
-      { __typename?: 'Topic' }
-      & Pick<Types.Topic, '_id'>
-    )>> }
-  )> }
-  & TopicLinkDataFragment
-);
+const defaultOptions =  {}
+export type TopicSuggestionDataFragment = { __typename?: 'Topic', context?: string | null | undefined, _id: string, key: string, name: string, disambiguationTopic?: { __typename?: 'Topic', contextualisedTopics?: Array<{ __typename?: 'Topic', _id: string }> | null | undefined } | null | undefined };
 
 export type AutocompleteTopicNameQueryVariables = Types.Exact<{
   partialName: Types.Scalars['String'];
 }>;
 
 
-export type AutocompleteTopicNameQuery = (
-  { __typename?: 'Query' }
-  & { autocompleteTopicName: (
-    { __typename?: 'SearchTopicsResult' }
-    & { items: Array<(
-      { __typename?: 'Topic' }
-      & TopicSuggestionDataFragment
-    )> }
-  ) }
-);
+export type AutocompleteTopicNameQuery = { __typename?: 'Query', autocompleteTopicName: { __typename?: 'SearchTopicsResult', items: Array<{ __typename?: 'Topic', context?: string | null | undefined, _id: string, key: string, name: string, disambiguationTopic?: { __typename?: 'Topic', contextualisedTopics?: Array<{ __typename?: 'Topic', _id: string }> | null | undefined } | null | undefined }> } };
 
 export type GetTopicByIdDisambiguationModalQueryVariables = Types.Exact<{
   topicId: Types.Scalars['String'];
 }>;
 
 
-export type GetTopicByIdDisambiguationModalQuery = (
-  { __typename?: 'Query' }
-  & { getTopicById: (
-    { __typename?: 'Topic' }
-    & { disambiguationTopic?: Types.Maybe<(
-      { __typename?: 'Topic' }
-      & { contextualisedTopics?: Types.Maybe<Array<(
-        { __typename?: 'Topic' }
-        & { partOfTopics?: Types.Maybe<Array<(
-          { __typename?: 'TopicIsPartOfTopic' }
-          & { partOfTopic: (
-            { __typename?: 'Topic' }
-            & TopicLinkDataFragment
-          ) }
-        )>>, parentTopic?: Types.Maybe<(
-          { __typename?: 'Topic' }
-          & { parentTopic?: Types.Maybe<(
-            { __typename?: 'Topic' }
-            & TopicLinkDataFragment
-          )> }
-          & TopicLinkDataFragment
-        )>, contextTopic?: Types.Maybe<(
-          { __typename?: 'Topic' }
-          & TopicLinkDataFragment
-        )> }
-        & TopicLinkDataFragment
-      )>> }
-      & TopicLinkDataFragment
-    )>, parentTopic?: Types.Maybe<(
-      { __typename?: 'Topic' }
-      & { parentTopic?: Types.Maybe<(
-        { __typename?: 'Topic' }
-        & TopicLinkDataFragment
-      )> }
-      & TopicLinkDataFragment
-    )>, partOfTopics?: Types.Maybe<Array<(
-      { __typename?: 'TopicIsPartOfTopic' }
-      & { partOfTopic: (
-        { __typename?: 'Topic' }
-        & TopicLinkDataFragment
-      ) }
-    )>> }
-    & TopicLinkDataFragment
-  ) }
-);
+export type GetTopicByIdDisambiguationModalQuery = { __typename?: 'Query', getTopicById: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined, disambiguationTopic?: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined, contextualisedTopics?: Array<{ __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined, partOfTopics?: Array<{ __typename?: 'TopicIsPartOfTopic', partOfTopic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } }> | null | undefined, parentTopic?: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined, parentTopic?: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } | null | undefined } | null | undefined, contextTopic?: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } | null | undefined }> | null | undefined } | null | undefined, parentTopic?: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined, parentTopic?: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } | null | undefined } | null | undefined, partOfTopics?: Array<{ __typename?: 'TopicIsPartOfTopic', partOfTopic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } }> | null | undefined } };
 
 export type CreateDisambiguationFromTopicMutationVariables = Types.Exact<{
   existingTopicId: Types.Scalars['String'];
@@ -89,13 +25,7 @@ export type CreateDisambiguationFromTopicMutationVariables = Types.Exact<{
 }>;
 
 
-export type CreateDisambiguationFromTopicMutation = (
-  { __typename?: 'Mutation' }
-  & { createDisambiguationFromTopic: (
-    { __typename?: 'Topic' }
-    & TopicLinkDataFragment
-  ) }
-);
+export type CreateDisambiguationFromTopicMutation = { __typename?: 'Mutation', createDisambiguationFromTopic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } };
 
 export type GetTopicValidContextsFromDisambiguationQueryVariables = Types.Exact<{
   parentTopicId: Types.Scalars['String'];
@@ -103,16 +33,7 @@ export type GetTopicValidContextsFromDisambiguationQueryVariables = Types.Exact<
 }>;
 
 
-export type GetTopicValidContextsFromDisambiguationQuery = (
-  { __typename?: 'Query' }
-  & { getTopicValidContextsFromDisambiguation: (
-    { __typename?: 'GetTopicValidContextsFromDisambiguation' }
-    & { validContexts?: Types.Maybe<Array<(
-      { __typename?: 'Topic' }
-      & TopicLinkDataFragment
-    )>> }
-  ) }
-);
+export type GetTopicValidContextsFromDisambiguationQuery = { __typename?: 'Query', getTopicValidContextsFromDisambiguation: { __typename?: 'GetTopicValidContextsFromDisambiguation', validContexts?: Array<{ __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined }> | null | undefined } };
 
 export type GetTopicValidContextsFromSameNameQueryVariables = Types.Exact<{
   parentTopicId: Types.Scalars['String'];
@@ -120,19 +41,7 @@ export type GetTopicValidContextsFromSameNameQueryVariables = Types.Exact<{
 }>;
 
 
-export type GetTopicValidContextsFromSameNameQuery = (
-  { __typename?: 'Query' }
-  & { getTopicValidContextsFromSameName: (
-    { __typename?: 'GetTopicValidContextsFromSameName' }
-    & { validContexts?: Types.Maybe<Array<(
-      { __typename?: 'Topic' }
-      & TopicLinkDataFragment
-    )>>, validSameNameTopicContexts?: Types.Maybe<Array<(
-      { __typename?: 'Topic' }
-      & TopicLinkDataFragment
-    )>> }
-  ) }
-);
+export type GetTopicValidContextsFromSameNameQuery = { __typename?: 'Query', getTopicValidContextsFromSameName: { __typename?: 'GetTopicValidContextsFromSameName', validContexts?: Array<{ __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined }> | null | undefined, validSameNameTopicContexts?: Array<{ __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined }> | null | undefined } };
 
 
 
@@ -153,10 +62,12 @@ export type GetTopicValidContextsFromSameNameQuery = (
  * });
  */
 export function useAutocompleteTopicNameQuery(baseOptions: Apollo.QueryHookOptions<AutocompleteTopicNameQuery, AutocompleteTopicNameQueryVariables>) {
-        return Apollo.useQuery<AutocompleteTopicNameQuery, AutocompleteTopicNameQueryVariables>(Operations.autocompleteTopicName, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<AutocompleteTopicNameQuery, AutocompleteTopicNameQueryVariables>(Operations.autocompleteTopicName, options);
       }
 export function useAutocompleteTopicNameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AutocompleteTopicNameQuery, AutocompleteTopicNameQueryVariables>) {
-          return Apollo.useLazyQuery<AutocompleteTopicNameQuery, AutocompleteTopicNameQueryVariables>(Operations.autocompleteTopicName, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<AutocompleteTopicNameQuery, AutocompleteTopicNameQueryVariables>(Operations.autocompleteTopicName, options);
         }
 export type AutocompleteTopicNameQueryHookResult = ReturnType<typeof useAutocompleteTopicNameQuery>;
 export type AutocompleteTopicNameLazyQueryHookResult = ReturnType<typeof useAutocompleteTopicNameLazyQuery>;
@@ -179,10 +90,12 @@ export type AutocompleteTopicNameQueryResult = Apollo.QueryResult<AutocompleteTo
  * });
  */
 export function useGetTopicByIdDisambiguationModalQuery(baseOptions: Apollo.QueryHookOptions<GetTopicByIdDisambiguationModalQuery, GetTopicByIdDisambiguationModalQueryVariables>) {
-        return Apollo.useQuery<GetTopicByIdDisambiguationModalQuery, GetTopicByIdDisambiguationModalQueryVariables>(Operations.getTopicByIdDisambiguationModal, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTopicByIdDisambiguationModalQuery, GetTopicByIdDisambiguationModalQueryVariables>(Operations.getTopicByIdDisambiguationModal, options);
       }
 export function useGetTopicByIdDisambiguationModalLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTopicByIdDisambiguationModalQuery, GetTopicByIdDisambiguationModalQueryVariables>) {
-          return Apollo.useLazyQuery<GetTopicByIdDisambiguationModalQuery, GetTopicByIdDisambiguationModalQueryVariables>(Operations.getTopicByIdDisambiguationModal, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTopicByIdDisambiguationModalQuery, GetTopicByIdDisambiguationModalQueryVariables>(Operations.getTopicByIdDisambiguationModal, options);
         }
 export type GetTopicByIdDisambiguationModalQueryHookResult = ReturnType<typeof useGetTopicByIdDisambiguationModalQuery>;
 export type GetTopicByIdDisambiguationModalLazyQueryHookResult = ReturnType<typeof useGetTopicByIdDisambiguationModalLazyQuery>;
@@ -208,7 +121,8 @@ export type CreateDisambiguationFromTopicMutationFn = Apollo.MutationFunction<Cr
  * });
  */
 export function useCreateDisambiguationFromTopicMutation(baseOptions?: Apollo.MutationHookOptions<CreateDisambiguationFromTopicMutation, CreateDisambiguationFromTopicMutationVariables>) {
-        return Apollo.useMutation<CreateDisambiguationFromTopicMutation, CreateDisambiguationFromTopicMutationVariables>(Operations.createDisambiguationFromTopic, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateDisambiguationFromTopicMutation, CreateDisambiguationFromTopicMutationVariables>(Operations.createDisambiguationFromTopic, options);
       }
 export type CreateDisambiguationFromTopicMutationHookResult = ReturnType<typeof useCreateDisambiguationFromTopicMutation>;
 export type CreateDisambiguationFromTopicMutationResult = Apollo.MutationResult<CreateDisambiguationFromTopicMutation>;
@@ -232,10 +146,12 @@ export type CreateDisambiguationFromTopicMutationOptions = Apollo.BaseMutationOp
  * });
  */
 export function useGetTopicValidContextsFromDisambiguationQuery(baseOptions: Apollo.QueryHookOptions<GetTopicValidContextsFromDisambiguationQuery, GetTopicValidContextsFromDisambiguationQueryVariables>) {
-        return Apollo.useQuery<GetTopicValidContextsFromDisambiguationQuery, GetTopicValidContextsFromDisambiguationQueryVariables>(Operations.getTopicValidContextsFromDisambiguation, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTopicValidContextsFromDisambiguationQuery, GetTopicValidContextsFromDisambiguationQueryVariables>(Operations.getTopicValidContextsFromDisambiguation, options);
       }
 export function useGetTopicValidContextsFromDisambiguationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTopicValidContextsFromDisambiguationQuery, GetTopicValidContextsFromDisambiguationQueryVariables>) {
-          return Apollo.useLazyQuery<GetTopicValidContextsFromDisambiguationQuery, GetTopicValidContextsFromDisambiguationQueryVariables>(Operations.getTopicValidContextsFromDisambiguation, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTopicValidContextsFromDisambiguationQuery, GetTopicValidContextsFromDisambiguationQueryVariables>(Operations.getTopicValidContextsFromDisambiguation, options);
         }
 export type GetTopicValidContextsFromDisambiguationQueryHookResult = ReturnType<typeof useGetTopicValidContextsFromDisambiguationQuery>;
 export type GetTopicValidContextsFromDisambiguationLazyQueryHookResult = ReturnType<typeof useGetTopicValidContextsFromDisambiguationLazyQuery>;
@@ -259,10 +175,12 @@ export type GetTopicValidContextsFromDisambiguationQueryResult = Apollo.QueryRes
  * });
  */
 export function useGetTopicValidContextsFromSameNameQuery(baseOptions: Apollo.QueryHookOptions<GetTopicValidContextsFromSameNameQuery, GetTopicValidContextsFromSameNameQueryVariables>) {
-        return Apollo.useQuery<GetTopicValidContextsFromSameNameQuery, GetTopicValidContextsFromSameNameQueryVariables>(Operations.getTopicValidContextsFromSameName, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTopicValidContextsFromSameNameQuery, GetTopicValidContextsFromSameNameQueryVariables>(Operations.getTopicValidContextsFromSameName, options);
       }
 export function useGetTopicValidContextsFromSameNameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTopicValidContextsFromSameNameQuery, GetTopicValidContextsFromSameNameQueryVariables>) {
-          return Apollo.useLazyQuery<GetTopicValidContextsFromSameNameQuery, GetTopicValidContextsFromSameNameQueryVariables>(Operations.getTopicValidContextsFromSameName, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTopicValidContextsFromSameNameQuery, GetTopicValidContextsFromSameNameQueryVariables>(Operations.getTopicValidContextsFromSameName, options);
         }
 export type GetTopicValidContextsFromSameNameQueryHookResult = ReturnType<typeof useGetTopicValidContextsFromSameNameQuery>;
 export type GetTopicValidContextsFromSameNameLazyQueryHookResult = ReturnType<typeof useGetTopicValidContextsFromSameNameLazyQuery>;

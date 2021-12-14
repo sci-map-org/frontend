@@ -1,19 +1,9 @@
 import * as Types from '../../graphql/types';
 
-import { TopicLinkDataFragment, TopicFullDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import * as Operations from './EditableTopicPrerequisites';
 import * as Apollo from '@apollo/client';
-export type EditableTopicPrerequisitesDataFragment = (
-  { __typename?: 'Topic' }
-  & Pick<Types.Topic, '_id'>
-  & { prerequisites?: Types.Maybe<Array<(
-    { __typename?: 'TopicHasPrerequisiteTopic' }
-    & { prerequisiteTopic: (
-      { __typename?: 'Topic' }
-      & TopicLinkDataFragment
-    ) }
-  )>> }
-);
+const defaultOptions =  {}
+export type EditableTopicPrerequisitesDataFragment = { __typename?: 'Topic', _id: string, prerequisites?: Array<{ __typename?: 'TopicHasPrerequisiteTopic', prerequisiteTopic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } }> | null | undefined };
 
 export type AddTopicHasPrerequisiteTopicMutationVariables = Types.Exact<{
   topicId: Types.Scalars['String'];
@@ -21,23 +11,7 @@ export type AddTopicHasPrerequisiteTopicMutationVariables = Types.Exact<{
 }>;
 
 
-export type AddTopicHasPrerequisiteTopicMutation = (
-  { __typename?: 'Mutation' }
-  & { addTopicHasPrerequisiteTopic: (
-    { __typename?: 'AddTopicHasPrerequisiteTopicResult' }
-    & { topic: (
-      { __typename?: 'Topic' }
-      & Pick<Types.Topic, '_id'>
-      & { prerequisites?: Types.Maybe<Array<(
-        { __typename?: 'TopicHasPrerequisiteTopic' }
-        & { prerequisiteTopic: (
-          { __typename?: 'Topic' }
-          & TopicLinkDataFragment
-        ) }
-      )>> }
-    ) }
-  ) }
-);
+export type AddTopicHasPrerequisiteTopicMutation = { __typename?: 'Mutation', addTopicHasPrerequisiteTopic: { __typename?: 'AddTopicHasPrerequisiteTopicResult', topic: { __typename?: 'Topic', _id: string, prerequisites?: Array<{ __typename?: 'TopicHasPrerequisiteTopic', prerequisiteTopic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } }> | null | undefined } } };
 
 export type RemoveTopicHasPrerequisiteTopicMutationVariables = Types.Exact<{
   topicId: Types.Scalars['String'];
@@ -45,23 +19,7 @@ export type RemoveTopicHasPrerequisiteTopicMutationVariables = Types.Exact<{
 }>;
 
 
-export type RemoveTopicHasPrerequisiteTopicMutation = (
-  { __typename?: 'Mutation' }
-  & { removeTopicHasPrerequisiteTopic: (
-    { __typename?: 'RemoveTopicHasPrerequisiteTopicResult' }
-    & { topic: (
-      { __typename?: 'Topic' }
-      & Pick<Types.Topic, '_id'>
-      & { prerequisites?: Types.Maybe<Array<(
-        { __typename?: 'TopicHasPrerequisiteTopic' }
-        & { prerequisiteTopic: (
-          { __typename?: 'Topic' }
-          & TopicLinkDataFragment
-        ) }
-      )>> }
-    ) }
-  ) }
-);
+export type RemoveTopicHasPrerequisiteTopicMutation = { __typename?: 'Mutation', removeTopicHasPrerequisiteTopic: { __typename?: 'RemoveTopicHasPrerequisiteTopicResult', topic: { __typename?: 'Topic', _id: string, prerequisites?: Array<{ __typename?: 'TopicHasPrerequisiteTopic', prerequisiteTopic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } }> | null | undefined } } };
 
 
 export type AddTopicHasPrerequisiteTopicMutationFn = Apollo.MutationFunction<AddTopicHasPrerequisiteTopicMutation, AddTopicHasPrerequisiteTopicMutationVariables>;
@@ -85,7 +43,8 @@ export type AddTopicHasPrerequisiteTopicMutationFn = Apollo.MutationFunction<Add
  * });
  */
 export function useAddTopicHasPrerequisiteTopicMutation(baseOptions?: Apollo.MutationHookOptions<AddTopicHasPrerequisiteTopicMutation, AddTopicHasPrerequisiteTopicMutationVariables>) {
-        return Apollo.useMutation<AddTopicHasPrerequisiteTopicMutation, AddTopicHasPrerequisiteTopicMutationVariables>(Operations.addTopicHasPrerequisiteTopic, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddTopicHasPrerequisiteTopicMutation, AddTopicHasPrerequisiteTopicMutationVariables>(Operations.addTopicHasPrerequisiteTopic, options);
       }
 export type AddTopicHasPrerequisiteTopicMutationHookResult = ReturnType<typeof useAddTopicHasPrerequisiteTopicMutation>;
 export type AddTopicHasPrerequisiteTopicMutationResult = Apollo.MutationResult<AddTopicHasPrerequisiteTopicMutation>;
@@ -111,7 +70,8 @@ export type RemoveTopicHasPrerequisiteTopicMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useRemoveTopicHasPrerequisiteTopicMutation(baseOptions?: Apollo.MutationHookOptions<RemoveTopicHasPrerequisiteTopicMutation, RemoveTopicHasPrerequisiteTopicMutationVariables>) {
-        return Apollo.useMutation<RemoveTopicHasPrerequisiteTopicMutation, RemoveTopicHasPrerequisiteTopicMutationVariables>(Operations.removeTopicHasPrerequisiteTopic, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveTopicHasPrerequisiteTopicMutation, RemoveTopicHasPrerequisiteTopicMutationVariables>(Operations.removeTopicHasPrerequisiteTopic, options);
       }
 export type RemoveTopicHasPrerequisiteTopicMutationHookResult = ReturnType<typeof useRemoveTopicHasPrerequisiteTopicMutation>;
 export type RemoveTopicHasPrerequisiteTopicMutationResult = Apollo.MutationResult<RemoveTopicHasPrerequisiteTopicMutation>;

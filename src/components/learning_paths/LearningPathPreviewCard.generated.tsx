@@ -1,20 +1,3 @@
 import * as Types from '../../graphql/types';
 
-import { LearningPathDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
-import { LearningPathCompletionDataFragment } from './LearningPathCompletion.generated';
-import { LearningMaterialWithCoveredTopicsData_LearningPath_Fragment, LearningMaterialWithCoveredTopicsData_Resource_Fragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
-import { UserAvatarDataFragment } from '../users/UserAvatar.generated';
-export type LearningPathPreviewCardDataFragment = (
-  { __typename?: 'LearningPath' }
-  & Pick<Types.LearningPath, 'rating'>
-  & { tags?: Types.Maybe<Array<(
-    { __typename?: 'LearningMaterialTag' }
-    & Pick<Types.LearningMaterialTag, 'name'>
-  )>>, createdBy?: Types.Maybe<(
-    { __typename?: 'User' }
-    & UserAvatarDataFragment
-  )> }
-  & LearningPathDataFragment
-  & LearningPathCompletionDataFragment
-  & LearningMaterialWithCoveredTopicsData_LearningPath_Fragment
-);
+export type LearningPathPreviewCardDataFragment = { __typename?: 'LearningPath', rating?: number | null | undefined, _id: string, key: string, public: boolean, name: string, description?: string | null | undefined, durationSeconds?: number | null | undefined, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined, createdBy?: { __typename?: 'User', _id: string, key: string, displayName: string, profilePictureUrl?: string | null | undefined } | null | undefined, started?: { __typename?: 'LearningPathStarted', startedAt: any, completedAt?: any | null | undefined } | null | undefined, resourceItems?: Array<{ __typename?: 'LearningPathResourceItem', resource: { __typename?: 'Resource', _id: string, durationSeconds?: number | null | undefined, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined } }> | null | undefined, coveredSubTopics?: { __typename?: 'LearningMaterialCoveredSubTopicsResults', items: Array<{ __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined }> } | null | undefined };

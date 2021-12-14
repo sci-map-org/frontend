@@ -1,30 +1,14 @@
 import * as Types from '../types';
 
-import { LearningPathWithResourceItemsPreviewDataFragment } from './learning_paths.fragments.generated';
 import * as Operations from './learning_paths.operations';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type StartLearningPathMutationVariables = Types.Exact<{
   learningPathId: Types.Scalars['String'];
 }>;
 
 
-export type StartLearningPathMutation = (
-  { __typename?: 'Mutation' }
-  & { startLearningPath: (
-    { __typename?: 'LearningPathStartedResult' }
-    & { learningPath: (
-      { __typename?: 'LearningPath' }
-      & Pick<Types.LearningPath, '_id' | 'key'>
-      & { started?: Types.Maybe<(
-        { __typename?: 'LearningPathStarted' }
-        & Pick<Types.LearningPathStarted, 'startedAt'>
-      )> }
-    ), user: (
-      { __typename?: 'CurrentUser' }
-      & Pick<Types.CurrentUser, '_id'>
-    ) }
-  ) }
-);
+export type StartLearningPathMutation = { __typename?: 'Mutation', startLearningPath: { __typename?: 'LearningPathStartedResult', learningPath: { __typename?: 'LearningPath', _id: string, key: string, started?: { __typename?: 'LearningPathStarted', startedAt: any } | null | undefined }, user: { __typename?: 'CurrentUser', _id: string } } };
 
 export type CompleteLearningPathMutationVariables = Types.Exact<{
   learningPathId: Types.Scalars['String'];
@@ -32,23 +16,7 @@ export type CompleteLearningPathMutationVariables = Types.Exact<{
 }>;
 
 
-export type CompleteLearningPathMutation = (
-  { __typename?: 'Mutation' }
-  & { completeLearningPath: (
-    { __typename?: 'LearningPathCompletedResult' }
-    & { learningPath: (
-      { __typename?: 'LearningPath' }
-      & Pick<Types.LearningPath, '_id' | 'key'>
-      & { started?: Types.Maybe<(
-        { __typename?: 'LearningPathStarted' }
-        & Pick<Types.LearningPathStarted, 'startedAt' | 'completedAt'>
-      )> }
-    ), user: (
-      { __typename?: 'CurrentUser' }
-      & Pick<Types.CurrentUser, '_id'>
-    ) }
-  ) }
-);
+export type CompleteLearningPathMutation = { __typename?: 'Mutation', completeLearningPath: { __typename?: 'LearningPathCompletedResult', learningPath: { __typename?: 'LearningPath', _id: string, key: string, started?: { __typename?: 'LearningPathStarted', startedAt: any, completedAt?: any | null | undefined } | null | undefined }, user: { __typename?: 'CurrentUser', _id: string } } };
 
 export type UpdateLearningPathMutationVariables = Types.Exact<{
   _id: Types.Scalars['String'];
@@ -56,26 +24,14 @@ export type UpdateLearningPathMutationVariables = Types.Exact<{
 }>;
 
 
-export type UpdateLearningPathMutation = (
-  { __typename?: 'Mutation' }
-  & { updateLearningPath: (
-    { __typename?: 'LearningPath' }
-    & LearningPathWithResourceItemsPreviewDataFragment
-  ) }
-);
+export type UpdateLearningPathMutation = { __typename?: 'Mutation', updateLearningPath: { __typename?: 'LearningPath', _id: string, key: string, public: boolean, name: string, description?: string | null | undefined, durationSeconds?: number | null | undefined, resourceItems?: Array<{ __typename?: 'LearningPathResourceItem', description?: string | null | undefined, resource: { __typename?: 'Resource', _id: string, name: string, type: Types.ResourceType, mediaType: Types.ResourceMediaType, url: string, description?: string | null | undefined, durationSeconds?: number | null | undefined, upvotes?: number | null | undefined, rating?: number | null | undefined, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined, coveredSubTopics?: { __typename?: 'LearningMaterialCoveredSubTopicsResults', items: Array<{ __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined }> } | null | undefined, subResourceSeries?: Array<{ __typename?: 'Resource', _id: string, name: string }> | null | undefined, subResources?: Array<{ __typename?: 'Resource', _id: string, name: string }> | null | undefined } }> | null | undefined } };
 
 export type DeleteLearningPathMutationVariables = Types.Exact<{
   _id: Types.Scalars['String'];
 }>;
 
 
-export type DeleteLearningPathMutation = (
-  { __typename?: 'Mutation' }
-  & { deleteLearningPath: (
-    { __typename?: 'DeleteLearningPathResult' }
-    & Pick<Types.DeleteLearningPathResult, '_id' | 'success'>
-  ) }
-);
+export type DeleteLearningPathMutation = { __typename?: 'Mutation', deleteLearningPath: { __typename?: 'DeleteLearningPathResult', _id: string, success: boolean } };
 
 
 export type StartLearningPathMutationFn = Apollo.MutationFunction<StartLearningPathMutation, StartLearningPathMutationVariables>;
@@ -98,7 +54,8 @@ export type StartLearningPathMutationFn = Apollo.MutationFunction<StartLearningP
  * });
  */
 export function useStartLearningPathMutation(baseOptions?: Apollo.MutationHookOptions<StartLearningPathMutation, StartLearningPathMutationVariables>) {
-        return Apollo.useMutation<StartLearningPathMutation, StartLearningPathMutationVariables>(Operations.startLearningPath, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<StartLearningPathMutation, StartLearningPathMutationVariables>(Operations.startLearningPath, options);
       }
 export type StartLearningPathMutationHookResult = ReturnType<typeof useStartLearningPathMutation>;
 export type StartLearningPathMutationResult = Apollo.MutationResult<StartLearningPathMutation>;
@@ -124,7 +81,8 @@ export type CompleteLearningPathMutationFn = Apollo.MutationFunction<CompleteLea
  * });
  */
 export function useCompleteLearningPathMutation(baseOptions?: Apollo.MutationHookOptions<CompleteLearningPathMutation, CompleteLearningPathMutationVariables>) {
-        return Apollo.useMutation<CompleteLearningPathMutation, CompleteLearningPathMutationVariables>(Operations.completeLearningPath, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CompleteLearningPathMutation, CompleteLearningPathMutationVariables>(Operations.completeLearningPath, options);
       }
 export type CompleteLearningPathMutationHookResult = ReturnType<typeof useCompleteLearningPathMutation>;
 export type CompleteLearningPathMutationResult = Apollo.MutationResult<CompleteLearningPathMutation>;
@@ -150,7 +108,8 @@ export type UpdateLearningPathMutationFn = Apollo.MutationFunction<UpdateLearnin
  * });
  */
 export function useUpdateLearningPathMutation(baseOptions?: Apollo.MutationHookOptions<UpdateLearningPathMutation, UpdateLearningPathMutationVariables>) {
-        return Apollo.useMutation<UpdateLearningPathMutation, UpdateLearningPathMutationVariables>(Operations.updateLearningPath, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateLearningPathMutation, UpdateLearningPathMutationVariables>(Operations.updateLearningPath, options);
       }
 export type UpdateLearningPathMutationHookResult = ReturnType<typeof useUpdateLearningPathMutation>;
 export type UpdateLearningPathMutationResult = Apollo.MutationResult<UpdateLearningPathMutation>;
@@ -175,7 +134,8 @@ export type DeleteLearningPathMutationFn = Apollo.MutationFunction<DeleteLearnin
  * });
  */
 export function useDeleteLearningPathMutation(baseOptions?: Apollo.MutationHookOptions<DeleteLearningPathMutation, DeleteLearningPathMutationVariables>) {
-        return Apollo.useMutation<DeleteLearningPathMutation, DeleteLearningPathMutationVariables>(Operations.deleteLearningPath, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteLearningPathMutation, DeleteLearningPathMutationVariables>(Operations.deleteLearningPath, options);
       }
 export type DeleteLearningPathMutationHookResult = ReturnType<typeof useDeleteLearningPathMutation>;
 export type DeleteLearningPathMutationResult = Apollo.MutationResult<DeleteLearningPathMutation>;

@@ -1,15 +1,3 @@
 import * as Types from '../../../../graphql/types';
 
-import { LearningPathLinkDataFragment } from '../../../../graphql/learning_paths/learning_paths.fragments.generated';
-export type SearchResultLearningPathCardDataFragment = (
-  { __typename?: 'LearningPath' }
-  & Pick<Types.LearningPath, 'durationSeconds' | 'rating'>
-  & { resourceItems?: Types.Maybe<Array<(
-    { __typename?: 'LearningPathResourceItem' }
-    & { resource: (
-      { __typename?: 'Resource' }
-      & Pick<Types.Resource, '_id'>
-    ) }
-  )>> }
-  & LearningPathLinkDataFragment
-);
+export type SearchResultLearningPathCardDataFragment = { __typename?: 'LearningPath', durationSeconds?: number | null | undefined, rating?: number | null | undefined, _id: string, key: string, name: string, resourceItems?: Array<{ __typename?: 'LearningPathResourceItem', resource: { __typename?: 'Resource', _id: string } }> | null | undefined };

@@ -1,10 +1,3 @@
 import * as Types from '../../graphql/types';
 
-import { LearningMaterialStarsRaterData_LearningPath_Fragment, LearningMaterialStarsRaterData_Resource_Fragment } from '../../components/learning_materials/LearningMaterialStarsRating.generated';
-import { LearningPathCompletionDataFragment } from '../../components/learning_paths/LearningPathCompletion.generated';
-export type StartedLearningPathCardDataFragment = (
-  { __typename?: 'LearningPath' }
-  & Pick<Types.LearningPath, '_id' | 'key' | 'name' | 'public' | 'rating' | 'description' | 'durationSeconds'>
-  & LearningMaterialStarsRaterData_LearningPath_Fragment
-  & LearningPathCompletionDataFragment
-);
+export type StartedLearningPathCardDataFragment = { __typename?: 'LearningPath', _id: string, key: string, name: string, public: boolean, rating?: number | null | undefined, description?: string | null | undefined, durationSeconds?: number | null | undefined, started?: { __typename?: 'LearningPathStarted', startedAt: any, completedAt?: any | null | undefined } | null | undefined, resourceItems?: Array<{ __typename?: 'LearningPathResourceItem', resource: { __typename?: 'Resource', _id: string, durationSeconds?: number | null | undefined, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined } }> | null | undefined };

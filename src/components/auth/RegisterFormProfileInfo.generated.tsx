@@ -2,18 +2,13 @@ import * as Types from '../../graphql/types';
 
 import * as Operations from './RegisterFormProfileInfo';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type GetUserByKeyQueryVariables = Types.Exact<{
   key: Types.Scalars['String'];
 }>;
 
 
-export type GetUserByKeyQuery = (
-  { __typename?: 'Query' }
-  & { getUser: (
-    { __typename?: 'User' }
-    & Pick<Types.User, '_id'>
-  ) }
-);
+export type GetUserByKeyQuery = { __typename?: 'Query', getUser: { __typename?: 'User', _id: string } };
 
 
 
@@ -34,10 +29,12 @@ export type GetUserByKeyQuery = (
  * });
  */
 export function useGetUserByKeyQuery(baseOptions: Apollo.QueryHookOptions<GetUserByKeyQuery, GetUserByKeyQueryVariables>) {
-        return Apollo.useQuery<GetUserByKeyQuery, GetUserByKeyQueryVariables>(Operations.getUserByKey, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUserByKeyQuery, GetUserByKeyQueryVariables>(Operations.getUserByKey, options);
       }
 export function useGetUserByKeyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserByKeyQuery, GetUserByKeyQueryVariables>) {
-          return Apollo.useLazyQuery<GetUserByKeyQuery, GetUserByKeyQueryVariables>(Operations.getUserByKey, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUserByKeyQuery, GetUserByKeyQueryVariables>(Operations.getUserByKey, options);
         }
 export type GetUserByKeyQueryHookResult = ReturnType<typeof useGetUserByKeyQuery>;
 export type GetUserByKeyLazyQueryHookResult = ReturnType<typeof useGetUserByKeyLazyQuery>;

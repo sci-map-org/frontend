@@ -28,6 +28,7 @@ const roleStyleMapping: {
 };
 export const LearningGoalBadgeData = gql`
   fragment LearningGoalBadgeData on LearningGoal {
+    type
     ...LearningGoalLinkData
   }
   ${LearningGoalLinkData}

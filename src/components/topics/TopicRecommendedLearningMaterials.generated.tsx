@@ -1,32 +1,15 @@
 import * as Types from '../../graphql/types';
 
-import { ResourcePreviewCardDataFragment } from '../../graphql/resources/resources.fragments.generated';
-import { LearningPathPreviewCardDataFragment } from '../learning_paths/LearningPathPreviewCard.generated';
 import * as Operations from './TopicRecommendedLearningMaterials';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type GetTopicRecommendedLearningMaterialsQueryVariables = Types.Exact<{
   key: Types.Scalars['String'];
   learningMaterialsOptions: Types.TopicLearningMaterialsOptions;
 }>;
 
 
-export type GetTopicRecommendedLearningMaterialsQuery = (
-  { __typename?: 'Query' }
-  & { getTopicByKey: (
-    { __typename?: 'Topic' }
-    & Pick<Types.Topic, '_id'>
-    & { learningMaterials?: Types.Maybe<(
-      { __typename?: 'TopicLearningMaterialsResults' }
-      & { items: Array<(
-        { __typename?: 'LearningPath' }
-        & LearningPathPreviewCardDataFragment
-      ) | (
-        { __typename?: 'Resource' }
-        & ResourcePreviewCardDataFragment
-      )> }
-    )> }
-  ) }
-);
+export type GetTopicRecommendedLearningMaterialsQuery = { __typename?: 'Query', getTopicByKey: { __typename?: 'Topic', _id: string, learningMaterials?: { __typename?: 'TopicLearningMaterialsResults', items: Array<{ __typename?: 'LearningPath', rating?: number | null | undefined, _id: string, key: string, public: boolean, name: string, description?: string | null | undefined, durationSeconds?: number | null | undefined, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined, createdBy?: { __typename?: 'User', _id: string, key: string, displayName: string, profilePictureUrl?: string | null | undefined } | null | undefined, started?: { __typename?: 'LearningPathStarted', startedAt: any, completedAt?: any | null | undefined } | null | undefined, resourceItems?: Array<{ __typename?: 'LearningPathResourceItem', resource: { __typename?: 'Resource', _id: string, durationSeconds?: number | null | undefined, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined } }> | null | undefined, coveredSubTopics?: { __typename?: 'LearningMaterialCoveredSubTopicsResults', items: Array<{ __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined }> } | null | undefined } | { __typename?: 'Resource', _id: string, name: string, type: Types.ResourceType, mediaType: Types.ResourceMediaType, url: string, description?: string | null | undefined, durationSeconds?: number | null | undefined, upvotes?: number | null | undefined, rating?: number | null | undefined, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined, coveredSubTopics?: { __typename?: 'LearningMaterialCoveredSubTopicsResults', items: Array<{ __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined }> } | null | undefined, subResourceSeries?: Array<{ __typename?: 'Resource', _id: string, name: string }> | null | undefined, subResources?: Array<{ __typename?: 'Resource', _id: string, name: string }> | null | undefined }> } | null | undefined } };
 
 
 
@@ -48,10 +31,12 @@ export type GetTopicRecommendedLearningMaterialsQuery = (
  * });
  */
 export function useGetTopicRecommendedLearningMaterialsQuery(baseOptions: Apollo.QueryHookOptions<GetTopicRecommendedLearningMaterialsQuery, GetTopicRecommendedLearningMaterialsQueryVariables>) {
-        return Apollo.useQuery<GetTopicRecommendedLearningMaterialsQuery, GetTopicRecommendedLearningMaterialsQueryVariables>(Operations.getTopicRecommendedLearningMaterials, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTopicRecommendedLearningMaterialsQuery, GetTopicRecommendedLearningMaterialsQueryVariables>(Operations.getTopicRecommendedLearningMaterials, options);
       }
 export function useGetTopicRecommendedLearningMaterialsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTopicRecommendedLearningMaterialsQuery, GetTopicRecommendedLearningMaterialsQueryVariables>) {
-          return Apollo.useLazyQuery<GetTopicRecommendedLearningMaterialsQuery, GetTopicRecommendedLearningMaterialsQueryVariables>(Operations.getTopicRecommendedLearningMaterials, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTopicRecommendedLearningMaterialsQuery, GetTopicRecommendedLearningMaterialsQueryVariables>(Operations.getTopicRecommendedLearningMaterials, options);
         }
 export type GetTopicRecommendedLearningMaterialsQueryHookResult = ReturnType<typeof useGetTopicRecommendedLearningMaterialsQuery>;
 export type GetTopicRecommendedLearningMaterialsLazyQueryHookResult = ReturnType<typeof useGetTopicRecommendedLearningMaterialsLazyQuery>;

@@ -1,31 +1,11 @@
 import * as Types from '../../graphql/types';
 
-import { TopicLinkDataFragment, TopicFullDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import * as Operations from './EditableLearningMaterialPrerequisites';
 import * as Apollo from '@apollo/client';
-export type EditableLearningMaterialPrerequisitesData_LearningPath_Fragment = (
-  { __typename?: 'LearningPath' }
-  & Pick<Types.LearningPath, '_id'>
-  & { prerequisites?: Types.Maybe<Array<(
-    { __typename?: 'LearningMaterialHasPrerequisiteTopic' }
-    & { topic: (
-      { __typename?: 'Topic' }
-      & TopicLinkDataFragment
-    ) }
-  )>> }
-);
+const defaultOptions =  {}
+export type EditableLearningMaterialPrerequisitesData_LearningPath_Fragment = { __typename?: 'LearningPath', _id: string, prerequisites?: Array<{ __typename?: 'LearningMaterialHasPrerequisiteTopic', topic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } }> | null | undefined };
 
-export type EditableLearningMaterialPrerequisitesData_Resource_Fragment = (
-  { __typename?: 'Resource' }
-  & Pick<Types.Resource, '_id'>
-  & { prerequisites?: Types.Maybe<Array<(
-    { __typename?: 'LearningMaterialHasPrerequisiteTopic' }
-    & { topic: (
-      { __typename?: 'Topic' }
-      & TopicLinkDataFragment
-    ) }
-  )>> }
-);
+export type EditableLearningMaterialPrerequisitesData_Resource_Fragment = { __typename?: 'Resource', _id: string, prerequisites?: Array<{ __typename?: 'LearningMaterialHasPrerequisiteTopic', topic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } }> | null | undefined };
 
 export type EditableLearningMaterialPrerequisitesDataFragment = EditableLearningMaterialPrerequisitesData_LearningPath_Fragment | EditableLearningMaterialPrerequisitesData_Resource_Fragment;
 
@@ -35,30 +15,7 @@ export type AddLearningMaterialHasPrerequisiteTopicMutationVariables = Types.Exa
 }>;
 
 
-export type AddLearningMaterialHasPrerequisiteTopicMutation = (
-  { __typename?: 'Mutation' }
-  & { addLearningMaterialHasPrerequisiteTopic: (
-    { __typename?: 'LearningPath' }
-    & Pick<Types.LearningPath, '_id'>
-    & { prerequisites?: Types.Maybe<Array<(
-      { __typename?: 'LearningMaterialHasPrerequisiteTopic' }
-      & { topic: (
-        { __typename?: 'Topic' }
-        & TopicLinkDataFragment
-      ) }
-    )>> }
-  ) | (
-    { __typename?: 'Resource' }
-    & Pick<Types.Resource, '_id'>
-    & { prerequisites?: Types.Maybe<Array<(
-      { __typename?: 'LearningMaterialHasPrerequisiteTopic' }
-      & { topic: (
-        { __typename?: 'Topic' }
-        & TopicLinkDataFragment
-      ) }
-    )>> }
-  ) }
-);
+export type AddLearningMaterialHasPrerequisiteTopicMutation = { __typename?: 'Mutation', addLearningMaterialHasPrerequisiteTopic: { __typename?: 'LearningPath', _id: string, prerequisites?: Array<{ __typename?: 'LearningMaterialHasPrerequisiteTopic', topic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } }> | null | undefined } | { __typename?: 'Resource', _id: string, prerequisites?: Array<{ __typename?: 'LearningMaterialHasPrerequisiteTopic', topic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } }> | null | undefined } };
 
 export type RemoveLearningMaterialHasPrerequisiteTopicMutationVariables = Types.Exact<{
   learningMaterialId: Types.Scalars['String'];
@@ -66,30 +23,7 @@ export type RemoveLearningMaterialHasPrerequisiteTopicMutationVariables = Types.
 }>;
 
 
-export type RemoveLearningMaterialHasPrerequisiteTopicMutation = (
-  { __typename?: 'Mutation' }
-  & { removeLearningMaterialHasPrerequisiteTopic: (
-    { __typename?: 'LearningPath' }
-    & Pick<Types.LearningPath, '_id'>
-    & { prerequisites?: Types.Maybe<Array<(
-      { __typename?: 'LearningMaterialHasPrerequisiteTopic' }
-      & { topic: (
-        { __typename?: 'Topic' }
-        & TopicLinkDataFragment
-      ) }
-    )>> }
-  ) | (
-    { __typename?: 'Resource' }
-    & Pick<Types.Resource, '_id'>
-    & { prerequisites?: Types.Maybe<Array<(
-      { __typename?: 'LearningMaterialHasPrerequisiteTopic' }
-      & { topic: (
-        { __typename?: 'Topic' }
-        & TopicLinkDataFragment
-      ) }
-    )>> }
-  ) }
-);
+export type RemoveLearningMaterialHasPrerequisiteTopicMutation = { __typename?: 'Mutation', removeLearningMaterialHasPrerequisiteTopic: { __typename?: 'LearningPath', _id: string, prerequisites?: Array<{ __typename?: 'LearningMaterialHasPrerequisiteTopic', topic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } }> | null | undefined } | { __typename?: 'Resource', _id: string, prerequisites?: Array<{ __typename?: 'LearningMaterialHasPrerequisiteTopic', topic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } }> | null | undefined } };
 
 
 export type AddLearningMaterialHasPrerequisiteTopicMutationFn = Apollo.MutationFunction<AddLearningMaterialHasPrerequisiteTopicMutation, AddLearningMaterialHasPrerequisiteTopicMutationVariables>;
@@ -113,7 +47,8 @@ export type AddLearningMaterialHasPrerequisiteTopicMutationFn = Apollo.MutationF
  * });
  */
 export function useAddLearningMaterialHasPrerequisiteTopicMutation(baseOptions?: Apollo.MutationHookOptions<AddLearningMaterialHasPrerequisiteTopicMutation, AddLearningMaterialHasPrerequisiteTopicMutationVariables>) {
-        return Apollo.useMutation<AddLearningMaterialHasPrerequisiteTopicMutation, AddLearningMaterialHasPrerequisiteTopicMutationVariables>(Operations.addLearningMaterialHasPrerequisiteTopic, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddLearningMaterialHasPrerequisiteTopicMutation, AddLearningMaterialHasPrerequisiteTopicMutationVariables>(Operations.addLearningMaterialHasPrerequisiteTopic, options);
       }
 export type AddLearningMaterialHasPrerequisiteTopicMutationHookResult = ReturnType<typeof useAddLearningMaterialHasPrerequisiteTopicMutation>;
 export type AddLearningMaterialHasPrerequisiteTopicMutationResult = Apollo.MutationResult<AddLearningMaterialHasPrerequisiteTopicMutation>;
@@ -139,7 +74,8 @@ export type RemoveLearningMaterialHasPrerequisiteTopicMutationFn = Apollo.Mutati
  * });
  */
 export function useRemoveLearningMaterialHasPrerequisiteTopicMutation(baseOptions?: Apollo.MutationHookOptions<RemoveLearningMaterialHasPrerequisiteTopicMutation, RemoveLearningMaterialHasPrerequisiteTopicMutationVariables>) {
-        return Apollo.useMutation<RemoveLearningMaterialHasPrerequisiteTopicMutation, RemoveLearningMaterialHasPrerequisiteTopicMutationVariables>(Operations.removeLearningMaterialHasPrerequisiteTopic, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveLearningMaterialHasPrerequisiteTopicMutation, RemoveLearningMaterialHasPrerequisiteTopicMutationVariables>(Operations.removeLearningMaterialHasPrerequisiteTopic, options);
       }
 export type RemoveLearningMaterialHasPrerequisiteTopicMutationHookResult = ReturnType<typeof useRemoveLearningMaterialHasPrerequisiteTopicMutation>;
 export type RemoveLearningMaterialHasPrerequisiteTopicMutationResult = Apollo.MutationResult<RemoveLearningMaterialHasPrerequisiteTopicMutation>;

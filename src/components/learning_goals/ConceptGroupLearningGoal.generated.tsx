@@ -1,38 +1,3 @@
 import * as Types from '../../graphql/types';
 
-import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
-import { OtherLearnersViewerUserDataFragment } from '../lib/OtherLearnersViewer.generated';
-import { LearningGoalBadgeDataFragment } from './LearningGoalBadge.generated';
-import { StartLearningGoalButtonDataFragment } from './StartLearningGoalButton.generated';
-import { LearningGoalPublishButtonDataFragment } from './LearningGoalPublishButton.generated';
-import { ParentLearningGoalsNavigationBlockDataFragment } from './ParentLearningGoalsNavigationBlock.generated';
-import { LearningGoalRelevantLearningMaterialsDataFragment } from './LearningGoalRelevantLearningMaterials.generated';
-export type ConceptGroupLearningGoalDataFragment = (
-  { __typename?: 'LearningGoal' }
-  & Pick<Types.LearningGoal, '_id'>
-  & { createdBy?: Types.Maybe<(
-    { __typename?: 'User' }
-    & Pick<Types.User, '_id'>
-  )>, startedBy?: Types.Maybe<(
-    { __typename?: 'LearningGoalStartedByResults' }
-    & Pick<Types.LearningGoalStartedByResults, 'count'>
-    & { items: Array<(
-      { __typename?: 'LearningGoalStartedByItem' }
-      & { user: (
-        { __typename?: 'User' }
-        & OtherLearnersViewerUserDataFragment
-      ) }
-    )> }
-  )>, requiredSubGoals?: Types.Maybe<Array<(
-    { __typename?: 'SubGoalItem' }
-    & { subGoal: (
-      { __typename?: 'LearningGoal' }
-      & LearningGoalBadgeDataFragment
-    ) | { __typename?: 'Topic' } }
-  )>> }
-  & LearningGoalDataFragment
-  & StartLearningGoalButtonDataFragment
-  & LearningGoalPublishButtonDataFragment
-  & ParentLearningGoalsNavigationBlockDataFragment
-  & LearningGoalRelevantLearningMaterialsDataFragment
-);
+export type ConceptGroupLearningGoalDataFragment = { __typename?: 'LearningGoal', _id: string, key: string, name: string, hidden: boolean, type: Types.LearningGoalType, description?: string | null | undefined, publishedAt?: any | null | undefined, createdBy?: { __typename?: 'User', _id: string } | null | undefined, startedBy?: { __typename?: 'LearningGoalStartedByResults', count: number, items: Array<{ __typename?: 'LearningGoalStartedByItem', user: { __typename?: 'User', _id: string, key: string, displayName: string, profilePictureUrl?: string | null | undefined } }> } | null | undefined, requiredSubGoals?: Array<{ __typename?: 'SubGoalItem', subGoal: { __typename?: 'LearningGoal', type: Types.LearningGoalType, _id: string, key: string, name: string } | { __typename?: 'Topic' } }> | null | undefined, started?: { __typename?: 'LearningGoalStarted', startedAt: any } | null | undefined, requiredInGoals?: Array<{ __typename?: 'RequiredInGoalItem', strength: number, goal: { __typename?: 'LearningGoal', _id: string, key: string, name: string, type: Types.LearningGoalType } }> | null | undefined, relevantLearningMaterials?: { __typename?: 'LearningGoalRelevantLearningMaterialsResults', items: Array<{ __typename?: 'LearningGoalRelevantLearningMaterialsItem', coverage?: number | null | undefined, learningMaterial: { __typename?: 'LearningPath', rating?: number | null | undefined, _id: string, key: string, public: boolean, name: string, description?: string | null | undefined, durationSeconds?: number | null | undefined, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined, createdBy?: { __typename?: 'User', _id: string, key: string, displayName: string, profilePictureUrl?: string | null | undefined } | null | undefined, started?: { __typename?: 'LearningPathStarted', startedAt: any, completedAt?: any | null | undefined } | null | undefined, resourceItems?: Array<{ __typename?: 'LearningPathResourceItem', resource: { __typename?: 'Resource', _id: string, durationSeconds?: number | null | undefined, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined } }> | null | undefined, coveredSubTopics?: { __typename?: 'LearningMaterialCoveredSubTopicsResults', items: Array<{ __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined }> } | null | undefined } | { __typename?: 'Resource', _id: string, name: string, type: Types.ResourceType, mediaType: Types.ResourceMediaType, url: string, description?: string | null | undefined, durationSeconds?: number | null | undefined, upvotes?: number | null | undefined, rating?: number | null | undefined, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined, coveredSubTopics?: { __typename?: 'LearningMaterialCoveredSubTopicsResults', items: Array<{ __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined }> } | null | undefined, subResourceSeries?: Array<{ __typename?: 'Resource', _id: string, name: string }> | null | undefined, subResources?: Array<{ __typename?: 'Resource', _id: string, name: string }> | null | undefined } }> } | null | undefined };

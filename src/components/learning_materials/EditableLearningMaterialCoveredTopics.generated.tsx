@@ -1,68 +1,29 @@
 import * as Types from '../../graphql/types';
 
-import { TopicLinkDataFragment, TopicFullDataFragment } from '../../graphql/topics/topics.fragments.generated';
-import { LearningMaterialWithCoveredTopicsData_LearningPath_Fragment, LearningMaterialWithCoveredTopicsData_Resource_Fragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
 import * as Operations from './EditableLearningMaterialCoveredTopics';
 import * as Apollo from '@apollo/client';
-export type EditableLearningMaterialPrerequisitesData_LearningPath_Fragment = (
-  { __typename?: 'LearningPath' }
-  & Pick<Types.LearningPath, '_id'>
-  & { prerequisites?: Types.Maybe<Array<(
-    { __typename?: 'LearningMaterialHasPrerequisiteTopic' }
-    & { topic: (
-      { __typename?: 'Topic' }
-      & TopicLinkDataFragment
-    ) }
-  )>> }
-);
+const defaultOptions =  {}
+export type EditableLearningMaterialPrerequisitesData_LearningPath_Fragment = { __typename?: 'LearningPath', _id: string, prerequisites?: Array<{ __typename?: 'LearningMaterialHasPrerequisiteTopic', topic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } }> | null | undefined };
 
-export type EditableLearningMaterialPrerequisitesData_Resource_Fragment = (
-  { __typename?: 'Resource' }
-  & Pick<Types.Resource, '_id'>
-  & { prerequisites?: Types.Maybe<Array<(
-    { __typename?: 'LearningMaterialHasPrerequisiteTopic' }
-    & { topic: (
-      { __typename?: 'Topic' }
-      & TopicLinkDataFragment
-    ) }
-  )>> }
-);
+export type EditableLearningMaterialPrerequisitesData_Resource_Fragment = { __typename?: 'Resource', _id: string, prerequisites?: Array<{ __typename?: 'LearningMaterialHasPrerequisiteTopic', topic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } }> | null | undefined };
 
 export type EditableLearningMaterialPrerequisitesDataFragment = EditableLearningMaterialPrerequisitesData_LearningPath_Fragment | EditableLearningMaterialPrerequisitesData_Resource_Fragment;
 
 export type AttachLearningMaterialCoversTopicsMutationVariables = Types.Exact<{
   learningMaterialId: Types.Scalars['String'];
-  topicsIds: Array<Types.Scalars['String']>;
+  topicsIds: Array<Types.Scalars['String']> | Types.Scalars['String'];
 }>;
 
 
-export type AttachLearningMaterialCoversTopicsMutation = (
-  { __typename?: 'Mutation' }
-  & { attachLearningMaterialCoversTopics: (
-    { __typename?: 'LearningPath' }
-    & LearningMaterialWithCoveredTopicsData_LearningPath_Fragment
-  ) | (
-    { __typename?: 'Resource' }
-    & LearningMaterialWithCoveredTopicsData_Resource_Fragment
-  ) }
-);
+export type AttachLearningMaterialCoversTopicsMutation = { __typename?: 'Mutation', attachLearningMaterialCoversTopics: { __typename?: 'LearningPath', _id: string, coveredSubTopics?: { __typename?: 'LearningMaterialCoveredSubTopicsResults', items: Array<{ __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined }> } | null | undefined } | { __typename?: 'Resource', _id: string, coveredSubTopics?: { __typename?: 'LearningMaterialCoveredSubTopicsResults', items: Array<{ __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined }> } | null | undefined } };
 
 export type DetachLearningMaterialCoversTopicsMutationVariables = Types.Exact<{
   learningMaterialId: Types.Scalars['String'];
-  topicsIds: Array<Types.Scalars['String']>;
+  topicsIds: Array<Types.Scalars['String']> | Types.Scalars['String'];
 }>;
 
 
-export type DetachLearningMaterialCoversTopicsMutation = (
-  { __typename?: 'Mutation' }
-  & { detachLearningMaterialCoversTopics: (
-    { __typename?: 'LearningPath' }
-    & LearningMaterialWithCoveredTopicsData_LearningPath_Fragment
-  ) | (
-    { __typename?: 'Resource' }
-    & LearningMaterialWithCoveredTopicsData_Resource_Fragment
-  ) }
-);
+export type DetachLearningMaterialCoversTopicsMutation = { __typename?: 'Mutation', detachLearningMaterialCoversTopics: { __typename?: 'LearningPath', _id: string, coveredSubTopics?: { __typename?: 'LearningMaterialCoveredSubTopicsResults', items: Array<{ __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined }> } | null | undefined } | { __typename?: 'Resource', _id: string, coveredSubTopics?: { __typename?: 'LearningMaterialCoveredSubTopicsResults', items: Array<{ __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined }> } | null | undefined } };
 
 
 export type AttachLearningMaterialCoversTopicsMutationFn = Apollo.MutationFunction<AttachLearningMaterialCoversTopicsMutation, AttachLearningMaterialCoversTopicsMutationVariables>;
@@ -86,7 +47,8 @@ export type AttachLearningMaterialCoversTopicsMutationFn = Apollo.MutationFuncti
  * });
  */
 export function useAttachLearningMaterialCoversTopicsMutation(baseOptions?: Apollo.MutationHookOptions<AttachLearningMaterialCoversTopicsMutation, AttachLearningMaterialCoversTopicsMutationVariables>) {
-        return Apollo.useMutation<AttachLearningMaterialCoversTopicsMutation, AttachLearningMaterialCoversTopicsMutationVariables>(Operations.attachLearningMaterialCoversTopics, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AttachLearningMaterialCoversTopicsMutation, AttachLearningMaterialCoversTopicsMutationVariables>(Operations.attachLearningMaterialCoversTopics, options);
       }
 export type AttachLearningMaterialCoversTopicsMutationHookResult = ReturnType<typeof useAttachLearningMaterialCoversTopicsMutation>;
 export type AttachLearningMaterialCoversTopicsMutationResult = Apollo.MutationResult<AttachLearningMaterialCoversTopicsMutation>;
@@ -112,7 +74,8 @@ export type DetachLearningMaterialCoversTopicsMutationFn = Apollo.MutationFuncti
  * });
  */
 export function useDetachLearningMaterialCoversTopicsMutation(baseOptions?: Apollo.MutationHookOptions<DetachLearningMaterialCoversTopicsMutation, DetachLearningMaterialCoversTopicsMutationVariables>) {
-        return Apollo.useMutation<DetachLearningMaterialCoversTopicsMutation, DetachLearningMaterialCoversTopicsMutationVariables>(Operations.detachLearningMaterialCoversTopics, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DetachLearningMaterialCoversTopicsMutation, DetachLearningMaterialCoversTopicsMutationVariables>(Operations.detachLearningMaterialCoversTopics, options);
       }
 export type DetachLearningMaterialCoversTopicsMutationHookResult = ReturnType<typeof useDetachLearningMaterialCoversTopicsMutation>;
 export type DetachLearningMaterialCoversTopicsMutationResult = Apollo.MutationResult<DetachLearningMaterialCoversTopicsMutation>;

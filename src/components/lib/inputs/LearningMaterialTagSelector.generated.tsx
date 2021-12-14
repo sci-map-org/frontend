@@ -2,18 +2,13 @@ import * as Types from '../../../graphql/types';
 
 import * as Operations from './LearningMaterialTagSelector';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type SearchLearningMaterialTagsQueryVariables = Types.Exact<{
   options: Types.SearchLearningMaterialTagsOptions;
 }>;
 
 
-export type SearchLearningMaterialTagsQuery = (
-  { __typename?: 'Query' }
-  & { searchLearningMaterialTags: Array<(
-    { __typename?: 'LearningMaterialTagSearchResult' }
-    & Pick<Types.LearningMaterialTagSearchResult, 'name' | 'usageCount'>
-  )> }
-);
+export type SearchLearningMaterialTagsQuery = { __typename?: 'Query', searchLearningMaterialTags: Array<{ __typename?: 'LearningMaterialTagSearchResult', name: string, usageCount?: number | null | undefined }> };
 
 
 
@@ -34,10 +29,12 @@ export type SearchLearningMaterialTagsQuery = (
  * });
  */
 export function useSearchLearningMaterialTagsQuery(baseOptions: Apollo.QueryHookOptions<SearchLearningMaterialTagsQuery, SearchLearningMaterialTagsQueryVariables>) {
-        return Apollo.useQuery<SearchLearningMaterialTagsQuery, SearchLearningMaterialTagsQueryVariables>(Operations.searchLearningMaterialTags, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SearchLearningMaterialTagsQuery, SearchLearningMaterialTagsQueryVariables>(Operations.searchLearningMaterialTags, options);
       }
 export function useSearchLearningMaterialTagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchLearningMaterialTagsQuery, SearchLearningMaterialTagsQueryVariables>) {
-          return Apollo.useLazyQuery<SearchLearningMaterialTagsQuery, SearchLearningMaterialTagsQueryVariables>(Operations.searchLearningMaterialTags, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SearchLearningMaterialTagsQuery, SearchLearningMaterialTagsQueryVariables>(Operations.searchLearningMaterialTags, options);
         }
 export type SearchLearningMaterialTagsQueryHookResult = ReturnType<typeof useSearchLearningMaterialTagsQuery>;
 export type SearchLearningMaterialTagsLazyQueryHookResult = ReturnType<typeof useSearchLearningMaterialTagsLazyQuery>;

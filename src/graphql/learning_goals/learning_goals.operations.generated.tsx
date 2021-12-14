@@ -1,39 +1,22 @@
 import * as Types from '../types';
 
-import { LearningGoalDataFragment } from './learning_goals.fragments.generated';
-import { SubGoalCardDataFragment } from '../../components/learning_goals/SubGoalCard.generated';
 import * as Operations from './learning_goals.operations';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type CheckLearningGoalKeyAvailabilityQueryVariables = Types.Exact<{
   key: Types.Scalars['String'];
 }>;
 
 
-export type CheckLearningGoalKeyAvailabilityQuery = (
-  { __typename?: 'Query' }
-  & { checkLearningGoalKeyAvailability: (
-    { __typename?: 'CheckLearningGoalKeyAvailabilityResult' }
-    & Pick<Types.CheckLearningGoalKeyAvailabilityResult, 'available'>
-    & { existingLearningGoal?: Types.Maybe<(
-      { __typename?: 'LearningGoal' }
-      & Pick<Types.LearningGoal, '_id' | 'name'>
-    )> }
-  ) }
-);
+export type CheckLearningGoalKeyAvailabilityQuery = { __typename?: 'Query', checkLearningGoalKeyAvailability: { __typename?: 'CheckLearningGoalKeyAvailabilityResult', available: boolean, existingLearningGoal?: { __typename?: 'LearningGoal', _id: string, name: string } | null | undefined } };
 
 export type CreateLearningGoalMutationVariables = Types.Exact<{
   payload: Types.CreateLearningGoalPayload;
-  options?: Types.Maybe<Types.CreateLearningGoalOptions>;
+  options?: Types.InputMaybe<Types.CreateLearningGoalOptions>;
 }>;
 
 
-export type CreateLearningGoalMutation = (
-  { __typename?: 'Mutation' }
-  & { createLearningGoal: (
-    { __typename?: 'LearningGoal' }
-    & LearningGoalDataFragment
-  ) }
-);
+export type CreateLearningGoalMutation = { __typename?: 'Mutation', createLearningGoal: { __typename?: 'LearningGoal', _id: string, key: string, name: string, hidden: boolean, type: Types.LearningGoalType, description?: string | null | undefined, publishedAt?: any | null | undefined } };
 
 export type UpdateLearningGoalMutationVariables = Types.Exact<{
   _id: Types.Scalars['String'];
@@ -41,26 +24,14 @@ export type UpdateLearningGoalMutationVariables = Types.Exact<{
 }>;
 
 
-export type UpdateLearningGoalMutation = (
-  { __typename?: 'Mutation' }
-  & { updateLearningGoal: (
-    { __typename?: 'LearningGoal' }
-    & LearningGoalDataFragment
-  ) }
-);
+export type UpdateLearningGoalMutation = { __typename?: 'Mutation', updateLearningGoal: { __typename?: 'LearningGoal', _id: string, key: string, name: string, hidden: boolean, type: Types.LearningGoalType, description?: string | null | undefined, publishedAt?: any | null | undefined } };
 
 export type DeleteLearningGoalMutationVariables = Types.Exact<{
   _id: Types.Scalars['String'];
 }>;
 
 
-export type DeleteLearningGoalMutation = (
-  { __typename?: 'Mutation' }
-  & { deleteLearningGoal: (
-    { __typename?: 'DeleteLearningGoalMutationResult' }
-    & Pick<Types.DeleteLearningGoalMutationResult, '_id' | 'success'>
-  ) }
-);
+export type DeleteLearningGoalMutation = { __typename?: 'Mutation', deleteLearningGoal: { __typename?: 'DeleteLearningGoalMutationResult', _id: string, success: boolean } };
 
 export type AttachLearningGoalRequiresSubGoalMutationVariables = Types.Exact<{
   learningGoalId: Types.Scalars['String'];
@@ -69,20 +40,7 @@ export type AttachLearningGoalRequiresSubGoalMutationVariables = Types.Exact<{
 }>;
 
 
-export type AttachLearningGoalRequiresSubGoalMutation = (
-  { __typename?: 'Mutation' }
-  & { attachLearningGoalRequiresSubGoal: (
-    { __typename?: 'AttachLearningGoalRequiresSubGoalResult' }
-    & { learningGoal: (
-      { __typename?: 'LearningGoal' }
-      & Pick<Types.LearningGoal, '_id'>
-      & { requiredSubGoals?: Types.Maybe<Array<(
-        { __typename?: 'SubGoalItem' }
-        & SubGoalCardDataFragment
-      )>> }
-    ) }
-  ) }
-);
+export type AttachLearningGoalRequiresSubGoalMutation = { __typename?: 'Mutation', attachLearningGoalRequiresSubGoal: { __typename?: 'AttachLearningGoalRequiresSubGoalResult', learningGoal: { __typename?: 'LearningGoal', _id: string, requiredSubGoals?: Array<{ __typename?: 'SubGoalItem', strength: number, subGoal: { __typename?: 'LearningGoal' } | { __typename?: 'Topic', _id: string } }> | null | undefined } } };
 
 export type DetachLearningGoalRequiresSubGoalMutationVariables = Types.Exact<{
   learningGoalId: Types.Scalars['String'];
@@ -90,79 +48,28 @@ export type DetachLearningGoalRequiresSubGoalMutationVariables = Types.Exact<{
 }>;
 
 
-export type DetachLearningGoalRequiresSubGoalMutation = (
-  { __typename?: 'Mutation' }
-  & { detachLearningGoalRequiresSubGoal: (
-    { __typename?: 'DetachLearningGoalRequiresSubGoalResult' }
-    & { learningGoal: (
-      { __typename?: 'LearningGoal' }
-      & Pick<Types.LearningGoal, '_id'>
-      & { requiredSubGoals?: Types.Maybe<Array<(
-        { __typename?: 'SubGoalItem' }
-        & SubGoalCardDataFragment
-      )>> }
-    ) }
-  ) }
-);
+export type DetachLearningGoalRequiresSubGoalMutation = { __typename?: 'Mutation', detachLearningGoalRequiresSubGoal: { __typename?: 'DetachLearningGoalRequiresSubGoalResult', learningGoal: { __typename?: 'LearningGoal', _id: string, requiredSubGoals?: Array<{ __typename?: 'SubGoalItem', strength: number, subGoal: { __typename?: 'LearningGoal' } | { __typename?: 'Topic', _id: string } }> | null | undefined } } };
 
 export type StartLearningGoalMutationVariables = Types.Exact<{
   learningGoalId: Types.Scalars['String'];
 }>;
 
 
-export type StartLearningGoalMutation = (
-  { __typename?: 'Mutation' }
-  & { startLearningGoal: (
-    { __typename?: 'LearningGoalStartedResult' }
-    & { learningGoal: (
-      { __typename?: 'LearningGoal' }
-      & Pick<Types.LearningGoal, '_id'>
-      & { started?: Types.Maybe<(
-        { __typename?: 'LearningGoalStarted' }
-        & Pick<Types.LearningGoalStarted, 'startedAt'>
-      )> }
-    ) }
-  ) }
-);
+export type StartLearningGoalMutation = { __typename?: 'Mutation', startLearningGoal: { __typename?: 'LearningGoalStartedResult', learningGoal: { __typename?: 'LearningGoal', _id: string, started?: { __typename?: 'LearningGoalStarted', startedAt: any } | null | undefined } } };
 
 export type PublishLearningGoalMutationVariables = Types.Exact<{
   learningGoalId: Types.Scalars['String'];
 }>;
 
 
-export type PublishLearningGoalMutation = (
-  { __typename?: 'Mutation' }
-  & { publishLearningGoal: (
-    { __typename?: 'LearningGoalPublishedResult' }
-    & { learningGoal: (
-      { __typename?: 'LearningGoal' }
-      & Pick<Types.LearningGoal, '_id' | 'publishedAt' | 'hidden'>
-      & { requiredSubGoals?: Types.Maybe<Array<(
-        { __typename?: 'SubGoalItem' }
-        & { subGoal: (
-          { __typename?: 'LearningGoal' }
-          & Pick<Types.LearningGoal, '_id' | 'publishedAt' | 'hidden'>
-        ) | { __typename?: 'Topic' } }
-      )>> }
-    ) }
-  ) }
-);
+export type PublishLearningGoalMutation = { __typename?: 'Mutation', publishLearningGoal: { __typename?: 'LearningGoalPublishedResult', learningGoal: { __typename?: 'LearningGoal', _id: string, publishedAt?: any | null | undefined, hidden: boolean, requiredSubGoals?: Array<{ __typename?: 'SubGoalItem', subGoal: { __typename?: 'LearningGoal', _id: string, publishedAt?: any | null | undefined, hidden: boolean } | { __typename?: 'Topic' } }> | null | undefined } } };
 
 export type IndexLearningGoalMutationVariables = Types.Exact<{
   learningGoalId: Types.Scalars['String'];
 }>;
 
 
-export type IndexLearningGoalMutation = (
-  { __typename?: 'Mutation' }
-  & { indexLearningGoal: (
-    { __typename?: 'LearningGoalIndexedResult' }
-    & { learningGoal: (
-      { __typename?: 'LearningGoal' }
-      & Pick<Types.LearningGoal, '_id' | 'hidden'>
-    ) }
-  ) }
-);
+export type IndexLearningGoalMutation = { __typename?: 'Mutation', indexLearningGoal: { __typename?: 'LearningGoalIndexedResult', learningGoal: { __typename?: 'LearningGoal', _id: string, hidden: boolean } } };
 
 export type AttachLearningGoalDependencyMutationVariables = Types.Exact<{
   parentLearningGoalId: Types.Scalars['String'];
@@ -171,53 +78,7 @@ export type AttachLearningGoalDependencyMutationVariables = Types.Exact<{
 }>;
 
 
-export type AttachLearningGoalDependencyMutation = (
-  { __typename?: 'Mutation' }
-  & { attachLearningGoalDependency: (
-    { __typename?: 'UpdateLearningGoalDependenciesResult' }
-    & { parentLearningGoal: (
-      { __typename?: 'LearningGoal' }
-      & Pick<Types.LearningGoal, '_id'>
-      & { requiredSubGoals?: Types.Maybe<Array<(
-        { __typename?: 'SubGoalItem' }
-        & { subGoal: (
-          { __typename?: 'LearningGoal' }
-          & Pick<Types.LearningGoal, '_id'>
-          & { dependsOnLearningGoals?: Types.Maybe<Array<(
-            { __typename?: 'DependsOnGoalItem' }
-            & Pick<Types.DependsOnGoalItem, 'parentLearningGoalId'>
-            & { learningGoal: (
-              { __typename?: 'LearningGoal' }
-              & Pick<Types.LearningGoal, '_id'>
-            ) }
-          )>> }
-        ) | { __typename?: 'Topic' } }
-      )>> }
-    ), learningGoal: (
-      { __typename?: 'LearningGoal' }
-      & Pick<Types.LearningGoal, '_id'>
-      & { dependsOnLearningGoals?: Types.Maybe<Array<(
-        { __typename?: 'DependsOnGoalItem' }
-        & Pick<Types.DependsOnGoalItem, 'parentLearningGoalId'>
-        & { learningGoal: (
-          { __typename?: 'LearningGoal' }
-          & Pick<Types.LearningGoal, '_id'>
-        ) }
-      )>> }
-    ), learningGoalDependency: (
-      { __typename?: 'LearningGoal' }
-      & Pick<Types.LearningGoal, '_id'>
-      & { dependantLearningGoals?: Types.Maybe<Array<(
-        { __typename?: 'DependsOnGoalItem' }
-        & Pick<Types.DependsOnGoalItem, 'parentLearningGoalId'>
-        & { learningGoal: (
-          { __typename?: 'LearningGoal' }
-          & Pick<Types.LearningGoal, '_id'>
-        ) }
-      )>> }
-    ) }
-  ) }
-);
+export type AttachLearningGoalDependencyMutation = { __typename?: 'Mutation', attachLearningGoalDependency: { __typename?: 'UpdateLearningGoalDependenciesResult', parentLearningGoal: { __typename?: 'LearningGoal', _id: string, requiredSubGoals?: Array<{ __typename?: 'SubGoalItem', subGoal: { __typename?: 'LearningGoal', _id: string, dependsOnLearningGoals?: Array<{ __typename?: 'DependsOnGoalItem', parentLearningGoalId: string, learningGoal: { __typename?: 'LearningGoal', _id: string } }> | null | undefined } | { __typename?: 'Topic' } }> | null | undefined }, learningGoal: { __typename?: 'LearningGoal', _id: string, dependsOnLearningGoals?: Array<{ __typename?: 'DependsOnGoalItem', parentLearningGoalId: string, learningGoal: { __typename?: 'LearningGoal', _id: string } }> | null | undefined }, learningGoalDependency: { __typename?: 'LearningGoal', _id: string, dependantLearningGoals?: Array<{ __typename?: 'DependsOnGoalItem', parentLearningGoalId: string, learningGoal: { __typename?: 'LearningGoal', _id: string } }> | null | undefined } } };
 
 export type DetachLearningGoalDependencyMutationVariables = Types.Exact<{
   parentLearningGoalId: Types.Scalars['String'];
@@ -226,35 +87,7 @@ export type DetachLearningGoalDependencyMutationVariables = Types.Exact<{
 }>;
 
 
-export type DetachLearningGoalDependencyMutation = (
-  { __typename?: 'Mutation' }
-  & { detachLearningGoalDependency: (
-    { __typename?: 'UpdateLearningGoalDependenciesResult' }
-    & { learningGoal: (
-      { __typename?: 'LearningGoal' }
-      & Pick<Types.LearningGoal, '_id'>
-      & { dependsOnLearningGoals?: Types.Maybe<Array<(
-        { __typename?: 'DependsOnGoalItem' }
-        & Pick<Types.DependsOnGoalItem, 'parentLearningGoalId'>
-        & { learningGoal: (
-          { __typename?: 'LearningGoal' }
-          & Pick<Types.LearningGoal, '_id'>
-        ) }
-      )>> }
-    ), learningGoalDependency: (
-      { __typename?: 'LearningGoal' }
-      & Pick<Types.LearningGoal, '_id'>
-      & { dependantLearningGoals?: Types.Maybe<Array<(
-        { __typename?: 'DependsOnGoalItem' }
-        & Pick<Types.DependsOnGoalItem, 'parentLearningGoalId'>
-        & { learningGoal: (
-          { __typename?: 'LearningGoal' }
-          & Pick<Types.LearningGoal, '_id'>
-        ) }
-      )>> }
-    ) }
-  ) }
-);
+export type DetachLearningGoalDependencyMutation = { __typename?: 'Mutation', detachLearningGoalDependency: { __typename?: 'UpdateLearningGoalDependenciesResult', learningGoal: { __typename?: 'LearningGoal', _id: string, dependsOnLearningGoals?: Array<{ __typename?: 'DependsOnGoalItem', parentLearningGoalId: string, learningGoal: { __typename?: 'LearningGoal', _id: string } }> | null | undefined }, learningGoalDependency: { __typename?: 'LearningGoal', _id: string, dependantLearningGoals?: Array<{ __typename?: 'DependsOnGoalItem', parentLearningGoalId: string, learningGoal: { __typename?: 'LearningGoal', _id: string } }> | null | undefined } } };
 
 
 
@@ -275,10 +108,12 @@ export type DetachLearningGoalDependencyMutation = (
  * });
  */
 export function useCheckLearningGoalKeyAvailabilityQuery(baseOptions: Apollo.QueryHookOptions<CheckLearningGoalKeyAvailabilityQuery, CheckLearningGoalKeyAvailabilityQueryVariables>) {
-        return Apollo.useQuery<CheckLearningGoalKeyAvailabilityQuery, CheckLearningGoalKeyAvailabilityQueryVariables>(Operations.checkLearningGoalKeyAvailability, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CheckLearningGoalKeyAvailabilityQuery, CheckLearningGoalKeyAvailabilityQueryVariables>(Operations.checkLearningGoalKeyAvailability, options);
       }
 export function useCheckLearningGoalKeyAvailabilityLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CheckLearningGoalKeyAvailabilityQuery, CheckLearningGoalKeyAvailabilityQueryVariables>) {
-          return Apollo.useLazyQuery<CheckLearningGoalKeyAvailabilityQuery, CheckLearningGoalKeyAvailabilityQueryVariables>(Operations.checkLearningGoalKeyAvailability, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CheckLearningGoalKeyAvailabilityQuery, CheckLearningGoalKeyAvailabilityQueryVariables>(Operations.checkLearningGoalKeyAvailability, options);
         }
 export type CheckLearningGoalKeyAvailabilityQueryHookResult = ReturnType<typeof useCheckLearningGoalKeyAvailabilityQuery>;
 export type CheckLearningGoalKeyAvailabilityLazyQueryHookResult = ReturnType<typeof useCheckLearningGoalKeyAvailabilityLazyQuery>;
@@ -304,7 +139,8 @@ export type CreateLearningGoalMutationFn = Apollo.MutationFunction<CreateLearnin
  * });
  */
 export function useCreateLearningGoalMutation(baseOptions?: Apollo.MutationHookOptions<CreateLearningGoalMutation, CreateLearningGoalMutationVariables>) {
-        return Apollo.useMutation<CreateLearningGoalMutation, CreateLearningGoalMutationVariables>(Operations.createLearningGoal, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateLearningGoalMutation, CreateLearningGoalMutationVariables>(Operations.createLearningGoal, options);
       }
 export type CreateLearningGoalMutationHookResult = ReturnType<typeof useCreateLearningGoalMutation>;
 export type CreateLearningGoalMutationResult = Apollo.MutationResult<CreateLearningGoalMutation>;
@@ -330,7 +166,8 @@ export type UpdateLearningGoalMutationFn = Apollo.MutationFunction<UpdateLearnin
  * });
  */
 export function useUpdateLearningGoalMutation(baseOptions?: Apollo.MutationHookOptions<UpdateLearningGoalMutation, UpdateLearningGoalMutationVariables>) {
-        return Apollo.useMutation<UpdateLearningGoalMutation, UpdateLearningGoalMutationVariables>(Operations.updateLearningGoal, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateLearningGoalMutation, UpdateLearningGoalMutationVariables>(Operations.updateLearningGoal, options);
       }
 export type UpdateLearningGoalMutationHookResult = ReturnType<typeof useUpdateLearningGoalMutation>;
 export type UpdateLearningGoalMutationResult = Apollo.MutationResult<UpdateLearningGoalMutation>;
@@ -355,7 +192,8 @@ export type DeleteLearningGoalMutationFn = Apollo.MutationFunction<DeleteLearnin
  * });
  */
 export function useDeleteLearningGoalMutation(baseOptions?: Apollo.MutationHookOptions<DeleteLearningGoalMutation, DeleteLearningGoalMutationVariables>) {
-        return Apollo.useMutation<DeleteLearningGoalMutation, DeleteLearningGoalMutationVariables>(Operations.deleteLearningGoal, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteLearningGoalMutation, DeleteLearningGoalMutationVariables>(Operations.deleteLearningGoal, options);
       }
 export type DeleteLearningGoalMutationHookResult = ReturnType<typeof useDeleteLearningGoalMutation>;
 export type DeleteLearningGoalMutationResult = Apollo.MutationResult<DeleteLearningGoalMutation>;
@@ -382,7 +220,8 @@ export type AttachLearningGoalRequiresSubGoalMutationFn = Apollo.MutationFunctio
  * });
  */
 export function useAttachLearningGoalRequiresSubGoalMutation(baseOptions?: Apollo.MutationHookOptions<AttachLearningGoalRequiresSubGoalMutation, AttachLearningGoalRequiresSubGoalMutationVariables>) {
-        return Apollo.useMutation<AttachLearningGoalRequiresSubGoalMutation, AttachLearningGoalRequiresSubGoalMutationVariables>(Operations.attachLearningGoalRequiresSubGoal, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AttachLearningGoalRequiresSubGoalMutation, AttachLearningGoalRequiresSubGoalMutationVariables>(Operations.attachLearningGoalRequiresSubGoal, options);
       }
 export type AttachLearningGoalRequiresSubGoalMutationHookResult = ReturnType<typeof useAttachLearningGoalRequiresSubGoalMutation>;
 export type AttachLearningGoalRequiresSubGoalMutationResult = Apollo.MutationResult<AttachLearningGoalRequiresSubGoalMutation>;
@@ -408,7 +247,8 @@ export type DetachLearningGoalRequiresSubGoalMutationFn = Apollo.MutationFunctio
  * });
  */
 export function useDetachLearningGoalRequiresSubGoalMutation(baseOptions?: Apollo.MutationHookOptions<DetachLearningGoalRequiresSubGoalMutation, DetachLearningGoalRequiresSubGoalMutationVariables>) {
-        return Apollo.useMutation<DetachLearningGoalRequiresSubGoalMutation, DetachLearningGoalRequiresSubGoalMutationVariables>(Operations.detachLearningGoalRequiresSubGoal, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DetachLearningGoalRequiresSubGoalMutation, DetachLearningGoalRequiresSubGoalMutationVariables>(Operations.detachLearningGoalRequiresSubGoal, options);
       }
 export type DetachLearningGoalRequiresSubGoalMutationHookResult = ReturnType<typeof useDetachLearningGoalRequiresSubGoalMutation>;
 export type DetachLearningGoalRequiresSubGoalMutationResult = Apollo.MutationResult<DetachLearningGoalRequiresSubGoalMutation>;
@@ -433,7 +273,8 @@ export type StartLearningGoalMutationFn = Apollo.MutationFunction<StartLearningG
  * });
  */
 export function useStartLearningGoalMutation(baseOptions?: Apollo.MutationHookOptions<StartLearningGoalMutation, StartLearningGoalMutationVariables>) {
-        return Apollo.useMutation<StartLearningGoalMutation, StartLearningGoalMutationVariables>(Operations.startLearningGoal, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<StartLearningGoalMutation, StartLearningGoalMutationVariables>(Operations.startLearningGoal, options);
       }
 export type StartLearningGoalMutationHookResult = ReturnType<typeof useStartLearningGoalMutation>;
 export type StartLearningGoalMutationResult = Apollo.MutationResult<StartLearningGoalMutation>;
@@ -458,7 +299,8 @@ export type PublishLearningGoalMutationFn = Apollo.MutationFunction<PublishLearn
  * });
  */
 export function usePublishLearningGoalMutation(baseOptions?: Apollo.MutationHookOptions<PublishLearningGoalMutation, PublishLearningGoalMutationVariables>) {
-        return Apollo.useMutation<PublishLearningGoalMutation, PublishLearningGoalMutationVariables>(Operations.publishLearningGoal, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<PublishLearningGoalMutation, PublishLearningGoalMutationVariables>(Operations.publishLearningGoal, options);
       }
 export type PublishLearningGoalMutationHookResult = ReturnType<typeof usePublishLearningGoalMutation>;
 export type PublishLearningGoalMutationResult = Apollo.MutationResult<PublishLearningGoalMutation>;
@@ -483,7 +325,8 @@ export type IndexLearningGoalMutationFn = Apollo.MutationFunction<IndexLearningG
  * });
  */
 export function useIndexLearningGoalMutation(baseOptions?: Apollo.MutationHookOptions<IndexLearningGoalMutation, IndexLearningGoalMutationVariables>) {
-        return Apollo.useMutation<IndexLearningGoalMutation, IndexLearningGoalMutationVariables>(Operations.indexLearningGoal, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<IndexLearningGoalMutation, IndexLearningGoalMutationVariables>(Operations.indexLearningGoal, options);
       }
 export type IndexLearningGoalMutationHookResult = ReturnType<typeof useIndexLearningGoalMutation>;
 export type IndexLearningGoalMutationResult = Apollo.MutationResult<IndexLearningGoalMutation>;
@@ -510,7 +353,8 @@ export type AttachLearningGoalDependencyMutationFn = Apollo.MutationFunction<Att
  * });
  */
 export function useAttachLearningGoalDependencyMutation(baseOptions?: Apollo.MutationHookOptions<AttachLearningGoalDependencyMutation, AttachLearningGoalDependencyMutationVariables>) {
-        return Apollo.useMutation<AttachLearningGoalDependencyMutation, AttachLearningGoalDependencyMutationVariables>(Operations.attachLearningGoalDependency, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AttachLearningGoalDependencyMutation, AttachLearningGoalDependencyMutationVariables>(Operations.attachLearningGoalDependency, options);
       }
 export type AttachLearningGoalDependencyMutationHookResult = ReturnType<typeof useAttachLearningGoalDependencyMutation>;
 export type AttachLearningGoalDependencyMutationResult = Apollo.MutationResult<AttachLearningGoalDependencyMutation>;
@@ -537,7 +381,8 @@ export type DetachLearningGoalDependencyMutationFn = Apollo.MutationFunction<Det
  * });
  */
 export function useDetachLearningGoalDependencyMutation(baseOptions?: Apollo.MutationHookOptions<DetachLearningGoalDependencyMutation, DetachLearningGoalDependencyMutationVariables>) {
-        return Apollo.useMutation<DetachLearningGoalDependencyMutation, DetachLearningGoalDependencyMutationVariables>(Operations.detachLearningGoalDependency, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DetachLearningGoalDependencyMutation, DetachLearningGoalDependencyMutationVariables>(Operations.detachLearningGoalDependency, options);
       }
 export type DetachLearningGoalDependencyMutationHookResult = ReturnType<typeof useDetachLearningGoalDependencyMutation>;
 export type DetachLearningGoalDependencyMutationResult = Apollo.MutationResult<DetachLearningGoalDependencyMutation>;

@@ -1,23 +1,14 @@
 import * as Types from '../../graphql/types';
 
-import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
 import * as Operations from './LearningGoalSelector';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type SearchLearningGoalsQueryVariables = Types.Exact<{
   options: Types.SearchLearningGoalsOptions;
 }>;
 
 
-export type SearchLearningGoalsQuery = (
-  { __typename?: 'Query' }
-  & { searchLearningGoals: (
-    { __typename?: 'SearchLearningGoalsResult' }
-    & { items: Array<(
-      { __typename?: 'LearningGoal' }
-      & LearningGoalDataFragment
-    )> }
-  ) }
-);
+export type SearchLearningGoalsQuery = { __typename?: 'Query', searchLearningGoals: { __typename?: 'SearchLearningGoalsResult', items: Array<{ __typename?: 'LearningGoal', _id: string, key: string, name: string, hidden: boolean, type: Types.LearningGoalType, description?: string | null | undefined, publishedAt?: any | null | undefined }> } };
 
 
 
@@ -38,10 +29,12 @@ export type SearchLearningGoalsQuery = (
  * });
  */
 export function useSearchLearningGoalsQuery(baseOptions: Apollo.QueryHookOptions<SearchLearningGoalsQuery, SearchLearningGoalsQueryVariables>) {
-        return Apollo.useQuery<SearchLearningGoalsQuery, SearchLearningGoalsQueryVariables>(Operations.searchLearningGoals, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SearchLearningGoalsQuery, SearchLearningGoalsQueryVariables>(Operations.searchLearningGoals, options);
       }
 export function useSearchLearningGoalsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchLearningGoalsQuery, SearchLearningGoalsQueryVariables>) {
-          return Apollo.useLazyQuery<SearchLearningGoalsQuery, SearchLearningGoalsQueryVariables>(Operations.searchLearningGoals, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SearchLearningGoalsQuery, SearchLearningGoalsQueryVariables>(Operations.searchLearningGoals, options);
         }
 export type SearchLearningGoalsQueryHookResult = ReturnType<typeof useSearchLearningGoalsQuery>;
 export type SearchLearningGoalsLazyQueryHookResult = ReturnType<typeof useSearchLearningGoalsLazyQuery>;

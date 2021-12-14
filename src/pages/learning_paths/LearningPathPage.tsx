@@ -100,30 +100,21 @@ const learningPathPlaceholder: GetLearningPathPageQuery['getLearningPathByKey'] 
   tags: [{ name: 'tag 1' }],
   public: true,
   rating: 4.5,
-  // coveredConceptsByDomain: [
-  // {
-  //   domain: generateDomainData(),
-  //   coveredConcepts: [generateConceptData(), generateConceptData(), generateConceptData()],
-  // },
-  // ],
   resourceItems: [
     {
       description:
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore',
       resource: generateResourcePreviewCardData(),
-      learningPathId: 'id',
     },
     {
       description:
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore',
       resource: generateResourcePreviewCardData(),
-      learningPathId: 'id',
     },
     {
       description:
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore',
       resource: generateResourcePreviewCardData(),
-      learningPathId: 'id',
     },
   ],
 };

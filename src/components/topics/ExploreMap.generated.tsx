@@ -1,46 +1,19 @@
 import * as Types from '../../graphql/types';
 
-import { MapVisualisationTopicDataFragment } from './SubTopicsMapVisualisation.generated';
-import { TopicLinkDataFragment, TopicFullDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import * as Operations from './ExploreMap';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type GetTopicByIdExplorePageQueryVariables = Types.Exact<{
   topicId: Types.Scalars['String'];
 }>;
 
 
-export type GetTopicByIdExplorePageQuery = (
-  { __typename?: 'Query' }
-  & { getTopicById: (
-    { __typename?: 'Topic' }
-    & Pick<Types.Topic, 'description' | 'learningMaterialsTotalCount'>
-    & { subTopics?: Types.Maybe<Array<(
-      { __typename?: 'TopicIsSubTopicOfTopic' }
-      & { subTopic: (
-        { __typename?: 'Topic' }
-        & MapVisualisationTopicDataFragment
-      ) }
-    )>>, parentTopic?: Types.Maybe<(
-      { __typename?: 'Topic' }
-      & TopicLinkDataFragment
-    )> }
-    & MapVisualisationTopicDataFragment
-  ) }
-);
+export type GetTopicByIdExplorePageQuery = { __typename?: 'Query', getTopicById: { __typename?: 'Topic', description?: string | null | undefined, learningMaterialsTotalCount?: number | null | undefined, subTopicsTotalCount?: number | null | undefined, _id: string, key: string, name: string, context?: string | null | undefined, subTopics?: Array<{ __typename?: 'TopicIsSubTopicOfTopic', subTopic: { __typename?: 'Topic', subTopicsTotalCount?: number | null | undefined, _id: string, key: string, name: string, context?: string | null | undefined } }> | null | undefined, parentTopic?: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } | null | undefined } };
 
 export type GetTopLevelTopicsQueryVariables = Types.Exact<{ [key: string]: never; }>;
 
 
-export type GetTopLevelTopicsQuery = (
-  { __typename?: 'Query' }
-  & { getTopLevelTopics: (
-    { __typename?: 'GetTopLevelTopicsResults' }
-    & { items: Array<(
-      { __typename?: 'Topic' }
-      & MapVisualisationTopicDataFragment
-    )> }
-  ) }
-);
+export type GetTopLevelTopicsQuery = { __typename?: 'Query', getTopLevelTopics: { __typename?: 'GetTopLevelTopicsResults', items: Array<{ __typename?: 'Topic', subTopicsTotalCount?: number | null | undefined, _id: string, key: string, name: string, context?: string | null | undefined }> } };
 
 
 
@@ -61,10 +34,12 @@ export type GetTopLevelTopicsQuery = (
  * });
  */
 export function useGetTopicByIdExplorePageQuery(baseOptions: Apollo.QueryHookOptions<GetTopicByIdExplorePageQuery, GetTopicByIdExplorePageQueryVariables>) {
-        return Apollo.useQuery<GetTopicByIdExplorePageQuery, GetTopicByIdExplorePageQueryVariables>(Operations.getTopicByIdExplorePage, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTopicByIdExplorePageQuery, GetTopicByIdExplorePageQueryVariables>(Operations.getTopicByIdExplorePage, options);
       }
 export function useGetTopicByIdExplorePageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTopicByIdExplorePageQuery, GetTopicByIdExplorePageQueryVariables>) {
-          return Apollo.useLazyQuery<GetTopicByIdExplorePageQuery, GetTopicByIdExplorePageQueryVariables>(Operations.getTopicByIdExplorePage, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTopicByIdExplorePageQuery, GetTopicByIdExplorePageQueryVariables>(Operations.getTopicByIdExplorePage, options);
         }
 export type GetTopicByIdExplorePageQueryHookResult = ReturnType<typeof useGetTopicByIdExplorePageQuery>;
 export type GetTopicByIdExplorePageLazyQueryHookResult = ReturnType<typeof useGetTopicByIdExplorePageLazyQuery>;
@@ -86,10 +61,12 @@ export type GetTopicByIdExplorePageQueryResult = Apollo.QueryResult<GetTopicById
  * });
  */
 export function useGetTopLevelTopicsQuery(baseOptions?: Apollo.QueryHookOptions<GetTopLevelTopicsQuery, GetTopLevelTopicsQueryVariables>) {
-        return Apollo.useQuery<GetTopLevelTopicsQuery, GetTopLevelTopicsQueryVariables>(Operations.getTopLevelTopics, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTopLevelTopicsQuery, GetTopLevelTopicsQueryVariables>(Operations.getTopLevelTopics, options);
       }
 export function useGetTopLevelTopicsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTopLevelTopicsQuery, GetTopLevelTopicsQueryVariables>) {
-          return Apollo.useLazyQuery<GetTopLevelTopicsQuery, GetTopLevelTopicsQueryVariables>(Operations.getTopLevelTopics, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTopLevelTopicsQuery, GetTopLevelTopicsQueryVariables>(Operations.getTopLevelTopics, options);
         }
 export type GetTopLevelTopicsQueryHookResult = ReturnType<typeof useGetTopLevelTopicsQuery>;
 export type GetTopLevelTopicsLazyQueryHookResult = ReturnType<typeof useGetTopLevelTopicsLazyQuery>;

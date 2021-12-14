@@ -46,7 +46,7 @@ export const useLogin = (options?: Parameters<typeof useLoginMutation>[0]) => {
           data: { currentUser: result.data.login.currentUser },
         });
       }
-      options?.update && options.update(cache, result);
+      options?.update && options.update(cache, result, {});
     },
   });
 
@@ -74,7 +74,7 @@ export const useLoginGoogle = (options?: Parameters<typeof useLoginGoogleMutatio
           data: { currentUser: result.data.loginGoogle.currentUser },
         });
       }
-      options?.update && options.update(cache, result);
+      options?.update && options.update(cache, result, {});
     },
   });
 

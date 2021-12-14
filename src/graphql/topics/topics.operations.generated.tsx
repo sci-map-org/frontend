@@ -1,24 +1,14 @@
 import * as Types from '../types';
 
-import { TopicLinkDataFragment, TopicFullDataFragment } from './topics.fragments.generated';
 import * as Operations from './topics.operations';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type SearchTopicsQueryVariables = Types.Exact<{
   options: Types.SearchTopicsOptions;
 }>;
 
 
-export type SearchTopicsQuery = (
-  { __typename?: 'Query' }
-  & { searchTopics: (
-    { __typename?: 'SearchTopicsResult' }
-    & { items: Array<(
-      { __typename?: 'Topic' }
-      & Pick<Types.Topic, '_id'>
-      & TopicLinkDataFragment
-    )> }
-  ) }
-);
+export type SearchTopicsQuery = { __typename?: 'Query', searchTopics: { __typename?: 'SearchTopicsResult', items: Array<{ __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined }> } };
 
 export type SearchSubTopicsQueryVariables = Types.Exact<{
   topicId: Types.Scalars['String'];
@@ -26,17 +16,7 @@ export type SearchSubTopicsQueryVariables = Types.Exact<{
 }>;
 
 
-export type SearchSubTopicsQuery = (
-  { __typename?: 'Query' }
-  & { searchSubTopics: (
-    { __typename?: 'SearchTopicsResult' }
-    & { items: Array<(
-      { __typename?: 'Topic' }
-      & Pick<Types.Topic, '_id'>
-      & TopicLinkDataFragment
-    )> }
-  ) }
-);
+export type SearchSubTopicsQuery = { __typename?: 'Query', searchSubTopics: { __typename?: 'SearchTopicsResult', items: Array<{ __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined }> } };
 
 export type UpdateTopicMutationVariables = Types.Exact<{
   topicId: Types.Scalars['String'];
@@ -44,43 +24,21 @@ export type UpdateTopicMutationVariables = Types.Exact<{
 }>;
 
 
-export type UpdateTopicMutation = (
-  { __typename?: 'Mutation' }
-  & { updateTopic: (
-    { __typename?: 'Topic' }
-    & TopicFullDataFragment
-  ) }
-);
+export type UpdateTopicMutation = { __typename?: 'Mutation', updateTopic: { __typename?: 'Topic', _id: string, name: string, key: string, context?: string | null | undefined, isDisambiguation?: boolean | null | undefined, description?: string | null | undefined, createdAt: any } };
 
 export type DeleteTopicMutationVariables = Types.Exact<{
   topicId: Types.Scalars['String'];
 }>;
 
 
-export type DeleteTopicMutation = (
-  { __typename?: 'Mutation' }
-  & { deleteTopic: (
-    { __typename?: 'DeleteTopicResponse' }
-    & Pick<Types.DeleteTopicResponse, '_id' | 'success'>
-  ) }
-);
+export type DeleteTopicMutation = { __typename?: 'Mutation', deleteTopic: { __typename?: 'DeleteTopicResponse', _id: string, success: boolean } };
 
 export type CheckTopicKeyAvailabilityQueryVariables = Types.Exact<{
   key: Types.Scalars['String'];
 }>;
 
 
-export type CheckTopicKeyAvailabilityQuery = (
-  { __typename?: 'Query' }
-  & { checkTopicKeyAvailability: (
-    { __typename?: 'CheckTopicKeyAvailabilityResult' }
-    & Pick<Types.CheckTopicKeyAvailabilityResult, 'available'>
-    & { existingTopic?: Types.Maybe<(
-      { __typename?: 'Topic' }
-      & Pick<Types.Topic, '_id' | 'name'>
-    )> }
-  ) }
-);
+export type CheckTopicKeyAvailabilityQuery = { __typename?: 'Query', checkTopicKeyAvailability: { __typename?: 'CheckTopicKeyAvailabilityResult', available: boolean, existingTopic?: { __typename?: 'Topic', _id: string, name: string } | null | undefined } };
 
 export type AttachTopicIsSubTopicOfTopicMutationVariables = Types.Exact<{
   parentTopicId: Types.Scalars['String'];
@@ -89,31 +47,7 @@ export type AttachTopicIsSubTopicOfTopicMutationVariables = Types.Exact<{
 }>;
 
 
-export type AttachTopicIsSubTopicOfTopicMutation = (
-  { __typename?: 'Mutation' }
-  & { attachTopicIsSubTopicOfTopic: (
-    { __typename?: 'TopicIsSubTopicOfTopic' }
-    & { parentTopic: (
-      { __typename?: 'Topic' }
-      & Pick<Types.Topic, '_id'>
-      & { subTopics?: Types.Maybe<Array<(
-        { __typename?: 'TopicIsSubTopicOfTopic' }
-        & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
-        & { subTopic: (
-          { __typename?: 'Topic' }
-          & Pick<Types.Topic, '_id'>
-        ) }
-      )>> }
-    ), subTopic: (
-      { __typename?: 'Topic' }
-      & Pick<Types.Topic, '_id'>
-      & { parentTopic?: Types.Maybe<(
-        { __typename?: 'Topic' }
-        & Pick<Types.Topic, '_id'>
-      )> }
-    ) }
-  ) }
-);
+export type AttachTopicIsSubTopicOfTopicMutation = { __typename?: 'Mutation', attachTopicIsSubTopicOfTopic: { __typename?: 'TopicIsSubTopicOfTopic', parentTopic: { __typename?: 'Topic', _id: string, subTopics?: Array<{ __typename?: 'TopicIsSubTopicOfTopic', index: number, subTopic: { __typename?: 'Topic', _id: string } }> | null | undefined }, subTopic: { __typename?: 'Topic', _id: string, parentTopic?: { __typename?: 'Topic', _id: string } | null | undefined } } };
 
 export type UpdateTopicIsSubTopicOfTopicMutationVariables = Types.Exact<{
   parentTopicId: Types.Scalars['String'];
@@ -122,31 +56,7 @@ export type UpdateTopicIsSubTopicOfTopicMutationVariables = Types.Exact<{
 }>;
 
 
-export type UpdateTopicIsSubTopicOfTopicMutation = (
-  { __typename?: 'Mutation' }
-  & { updateTopicIsSubTopicOfTopic: (
-    { __typename?: 'TopicIsSubTopicOfTopic' }
-    & { parentTopic: (
-      { __typename?: 'Topic' }
-      & Pick<Types.Topic, '_id'>
-      & { subTopics?: Types.Maybe<Array<(
-        { __typename?: 'TopicIsSubTopicOfTopic' }
-        & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
-        & { subTopic: (
-          { __typename?: 'Topic' }
-          & Pick<Types.Topic, '_id'>
-        ) }
-      )>> }
-    ), subTopic: (
-      { __typename?: 'Topic' }
-      & Pick<Types.Topic, '_id'>
-      & { parentTopic?: Types.Maybe<(
-        { __typename?: 'Topic' }
-        & Pick<Types.Topic, '_id'>
-      )> }
-    ) }
-  ) }
-);
+export type UpdateTopicIsSubTopicOfTopicMutation = { __typename?: 'Mutation', updateTopicIsSubTopicOfTopic: { __typename?: 'TopicIsSubTopicOfTopic', parentTopic: { __typename?: 'Topic', _id: string, subTopics?: Array<{ __typename?: 'TopicIsSubTopicOfTopic', index: number, subTopic: { __typename?: 'Topic', _id: string } }> | null | undefined }, subTopic: { __typename?: 'Topic', _id: string, parentTopic?: { __typename?: 'Topic', _id: string } | null | undefined } } };
 
 export type DetachTopicIsSubTopicOfTopicMutationVariables = Types.Exact<{
   parentTopicId: Types.Scalars['String'];
@@ -154,31 +64,7 @@ export type DetachTopicIsSubTopicOfTopicMutationVariables = Types.Exact<{
 }>;
 
 
-export type DetachTopicIsSubTopicOfTopicMutation = (
-  { __typename?: 'Mutation' }
-  & { detachTopicIsSubTopicOfTopic: (
-    { __typename?: 'DetachTopicIsSubTopicOfTopicResult' }
-    & { parentTopic: (
-      { __typename?: 'Topic' }
-      & Pick<Types.Topic, '_id'>
-      & { subTopics?: Types.Maybe<Array<(
-        { __typename?: 'TopicIsSubTopicOfTopic' }
-        & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
-        & { subTopic: (
-          { __typename?: 'Topic' }
-          & Pick<Types.Topic, '_id'>
-        ) }
-      )>> }
-    ), subTopic: (
-      { __typename?: 'Topic' }
-      & Pick<Types.Topic, '_id'>
-      & { parentTopic?: Types.Maybe<(
-        { __typename?: 'Topic' }
-        & Pick<Types.Topic, '_id'>
-      )> }
-    ) }
-  ) }
-);
+export type DetachTopicIsSubTopicOfTopicMutation = { __typename?: 'Mutation', detachTopicIsSubTopicOfTopic: { __typename?: 'DetachTopicIsSubTopicOfTopicResult', parentTopic: { __typename?: 'Topic', _id: string, subTopics?: Array<{ __typename?: 'TopicIsSubTopicOfTopic', index: number, subTopic: { __typename?: 'Topic', _id: string } }> | null | undefined }, subTopic: { __typename?: 'Topic', _id: string, parentTopic?: { __typename?: 'Topic', _id: string } | null | undefined } } };
 
 export type AttachTopicIsPartOfTopicMutationVariables = Types.Exact<{
   partOfTopicId: Types.Scalars['String'];
@@ -187,34 +73,7 @@ export type AttachTopicIsPartOfTopicMutationVariables = Types.Exact<{
 }>;
 
 
-export type AttachTopicIsPartOfTopicMutation = (
-  { __typename?: 'Mutation' }
-  & { attachTopicIsPartOfTopic: (
-    { __typename?: 'TopicIsPartOfTopic' }
-    & { partOfTopic: (
-      { __typename?: 'Topic' }
-      & { subTopics?: Types.Maybe<Array<(
-        { __typename?: 'TopicIsSubTopicOfTopic' }
-        & Pick<Types.TopicIsSubTopicOfTopic, 'relationshipType' | 'index'>
-        & { subTopic: (
-          { __typename?: 'Topic' }
-          & TopicLinkDataFragment
-        ) }
-      )>> }
-      & TopicLinkDataFragment
-    ), subTopic: (
-      { __typename?: 'Topic' }
-      & { partOfTopics?: Types.Maybe<Array<(
-        { __typename?: 'TopicIsPartOfTopic' }
-        & { partOfTopic: (
-          { __typename?: 'Topic' }
-          & TopicLinkDataFragment
-        ) }
-      )>> }
-      & TopicLinkDataFragment
-    ) }
-  ) }
-);
+export type AttachTopicIsPartOfTopicMutation = { __typename?: 'Mutation', attachTopicIsPartOfTopic: { __typename?: 'TopicIsPartOfTopic', partOfTopic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined, subTopics?: Array<{ __typename?: 'TopicIsSubTopicOfTopic', relationshipType: Types.SubTopicRelationshipType, index: number, subTopic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } }> | null | undefined }, subTopic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined, partOfTopics?: Array<{ __typename?: 'TopicIsPartOfTopic', partOfTopic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } }> | null | undefined } } };
 
 export type DetachTopicIsPartOfTopicMutationVariables = Types.Exact<{
   partOfTopicId: Types.Scalars['String'];
@@ -222,34 +81,7 @@ export type DetachTopicIsPartOfTopicMutationVariables = Types.Exact<{
 }>;
 
 
-export type DetachTopicIsPartOfTopicMutation = (
-  { __typename?: 'Mutation' }
-  & { detachTopicIsPartOfTopic: (
-    { __typename?: 'DetachTopicIsPartOfTopicResult' }
-    & { partOfTopic: (
-      { __typename?: 'Topic' }
-      & { subTopics?: Types.Maybe<Array<(
-        { __typename?: 'TopicIsSubTopicOfTopic' }
-        & Pick<Types.TopicIsSubTopicOfTopic, 'relationshipType' | 'index'>
-        & { subTopic: (
-          { __typename?: 'Topic' }
-          & TopicLinkDataFragment
-        ) }
-      )>> }
-      & TopicLinkDataFragment
-    ), subTopic: (
-      { __typename?: 'Topic' }
-      & { partOfTopics?: Types.Maybe<Array<(
-        { __typename?: 'TopicIsPartOfTopic' }
-        & { partOfTopic: (
-          { __typename?: 'Topic' }
-          & TopicLinkDataFragment
-        ) }
-      )>> }
-      & TopicLinkDataFragment
-    ) }
-  ) }
-);
+export type DetachTopicIsPartOfTopicMutation = { __typename?: 'Mutation', detachTopicIsPartOfTopic: { __typename?: 'DetachTopicIsPartOfTopicResult', partOfTopic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined, subTopics?: Array<{ __typename?: 'TopicIsSubTopicOfTopic', relationshipType: Types.SubTopicRelationshipType, index: number, subTopic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } }> | null | undefined }, subTopic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined, partOfTopics?: Array<{ __typename?: 'TopicIsPartOfTopic', partOfTopic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } }> | null | undefined } } };
 
 export type UpdateTopicIsPartOfTopicMutationVariables = Types.Exact<{
   partOfTopicId: Types.Scalars['String'];
@@ -258,34 +90,7 @@ export type UpdateTopicIsPartOfTopicMutationVariables = Types.Exact<{
 }>;
 
 
-export type UpdateTopicIsPartOfTopicMutation = (
-  { __typename?: 'Mutation' }
-  & { updateTopicIsPartOfTopic: (
-    { __typename?: 'TopicIsPartOfTopic' }
-    & { partOfTopic: (
-      { __typename?: 'Topic' }
-      & Pick<Types.Topic, '_id'>
-      & { subTopics?: Types.Maybe<Array<(
-        { __typename?: 'TopicIsSubTopicOfTopic' }
-        & Pick<Types.TopicIsSubTopicOfTopic, 'index'>
-        & { subTopic: (
-          { __typename?: 'Topic' }
-          & Pick<Types.Topic, '_id'>
-        ) }
-      )>> }
-    ), subTopic: (
-      { __typename?: 'Topic' }
-      & Pick<Types.Topic, '_id'>
-      & { partOfTopics?: Types.Maybe<Array<(
-        { __typename?: 'TopicIsPartOfTopic' }
-        & { partOfTopic: (
-          { __typename?: 'Topic' }
-          & Pick<Types.Topic, '_id'>
-        ) }
-      )>> }
-    ) }
-  ) }
-);
+export type UpdateTopicIsPartOfTopicMutation = { __typename?: 'Mutation', updateTopicIsPartOfTopic: { __typename?: 'TopicIsPartOfTopic', partOfTopic: { __typename?: 'Topic', _id: string, subTopics?: Array<{ __typename?: 'TopicIsSubTopicOfTopic', index: number, subTopic: { __typename?: 'Topic', _id: string } }> | null | undefined }, subTopic: { __typename?: 'Topic', _id: string, partOfTopics?: Array<{ __typename?: 'TopicIsPartOfTopic', partOfTopic: { __typename?: 'Topic', _id: string } }> | null | undefined } } };
 
 export type UpdateTopicContextMutationVariables = Types.Exact<{
   topicId: Types.Scalars['String'];
@@ -293,17 +98,7 @@ export type UpdateTopicContextMutationVariables = Types.Exact<{
 }>;
 
 
-export type UpdateTopicContextMutation = (
-  { __typename?: 'Mutation' }
-  & { updateTopicContext: (
-    { __typename?: 'Topic' }
-    & { contextTopic?: Types.Maybe<(
-      { __typename?: 'Topic' }
-      & TopicLinkDataFragment
-    )> }
-    & TopicLinkDataFragment
-  ) }
-);
+export type UpdateTopicContextMutation = { __typename?: 'Mutation', updateTopicContext: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined, contextTopic?: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } | null | undefined } };
 
 
 
@@ -324,10 +119,12 @@ export type UpdateTopicContextMutation = (
  * });
  */
 export function useSearchTopicsQuery(baseOptions: Apollo.QueryHookOptions<SearchTopicsQuery, SearchTopicsQueryVariables>) {
-        return Apollo.useQuery<SearchTopicsQuery, SearchTopicsQueryVariables>(Operations.searchTopics, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SearchTopicsQuery, SearchTopicsQueryVariables>(Operations.searchTopics, options);
       }
 export function useSearchTopicsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchTopicsQuery, SearchTopicsQueryVariables>) {
-          return Apollo.useLazyQuery<SearchTopicsQuery, SearchTopicsQueryVariables>(Operations.searchTopics, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SearchTopicsQuery, SearchTopicsQueryVariables>(Operations.searchTopics, options);
         }
 export type SearchTopicsQueryHookResult = ReturnType<typeof useSearchTopicsQuery>;
 export type SearchTopicsLazyQueryHookResult = ReturnType<typeof useSearchTopicsLazyQuery>;
@@ -351,10 +148,12 @@ export type SearchTopicsQueryResult = Apollo.QueryResult<SearchTopicsQuery, Sear
  * });
  */
 export function useSearchSubTopicsQuery(baseOptions: Apollo.QueryHookOptions<SearchSubTopicsQuery, SearchSubTopicsQueryVariables>) {
-        return Apollo.useQuery<SearchSubTopicsQuery, SearchSubTopicsQueryVariables>(Operations.searchSubTopics, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SearchSubTopicsQuery, SearchSubTopicsQueryVariables>(Operations.searchSubTopics, options);
       }
 export function useSearchSubTopicsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchSubTopicsQuery, SearchSubTopicsQueryVariables>) {
-          return Apollo.useLazyQuery<SearchSubTopicsQuery, SearchSubTopicsQueryVariables>(Operations.searchSubTopics, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SearchSubTopicsQuery, SearchSubTopicsQueryVariables>(Operations.searchSubTopics, options);
         }
 export type SearchSubTopicsQueryHookResult = ReturnType<typeof useSearchSubTopicsQuery>;
 export type SearchSubTopicsLazyQueryHookResult = ReturnType<typeof useSearchSubTopicsLazyQuery>;
@@ -380,7 +179,8 @@ export type UpdateTopicMutationFn = Apollo.MutationFunction<UpdateTopicMutation,
  * });
  */
 export function useUpdateTopicMutation(baseOptions?: Apollo.MutationHookOptions<UpdateTopicMutation, UpdateTopicMutationVariables>) {
-        return Apollo.useMutation<UpdateTopicMutation, UpdateTopicMutationVariables>(Operations.updateTopic, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateTopicMutation, UpdateTopicMutationVariables>(Operations.updateTopic, options);
       }
 export type UpdateTopicMutationHookResult = ReturnType<typeof useUpdateTopicMutation>;
 export type UpdateTopicMutationResult = Apollo.MutationResult<UpdateTopicMutation>;
@@ -405,7 +205,8 @@ export type DeleteTopicMutationFn = Apollo.MutationFunction<DeleteTopicMutation,
  * });
  */
 export function useDeleteTopicMutation(baseOptions?: Apollo.MutationHookOptions<DeleteTopicMutation, DeleteTopicMutationVariables>) {
-        return Apollo.useMutation<DeleteTopicMutation, DeleteTopicMutationVariables>(Operations.deleteTopic, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteTopicMutation, DeleteTopicMutationVariables>(Operations.deleteTopic, options);
       }
 export type DeleteTopicMutationHookResult = ReturnType<typeof useDeleteTopicMutation>;
 export type DeleteTopicMutationResult = Apollo.MutationResult<DeleteTopicMutation>;
@@ -428,10 +229,12 @@ export type DeleteTopicMutationOptions = Apollo.BaseMutationOptions<DeleteTopicM
  * });
  */
 export function useCheckTopicKeyAvailabilityQuery(baseOptions: Apollo.QueryHookOptions<CheckTopicKeyAvailabilityQuery, CheckTopicKeyAvailabilityQueryVariables>) {
-        return Apollo.useQuery<CheckTopicKeyAvailabilityQuery, CheckTopicKeyAvailabilityQueryVariables>(Operations.checkTopicKeyAvailability, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CheckTopicKeyAvailabilityQuery, CheckTopicKeyAvailabilityQueryVariables>(Operations.checkTopicKeyAvailability, options);
       }
 export function useCheckTopicKeyAvailabilityLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CheckTopicKeyAvailabilityQuery, CheckTopicKeyAvailabilityQueryVariables>) {
-          return Apollo.useLazyQuery<CheckTopicKeyAvailabilityQuery, CheckTopicKeyAvailabilityQueryVariables>(Operations.checkTopicKeyAvailability, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CheckTopicKeyAvailabilityQuery, CheckTopicKeyAvailabilityQueryVariables>(Operations.checkTopicKeyAvailability, options);
         }
 export type CheckTopicKeyAvailabilityQueryHookResult = ReturnType<typeof useCheckTopicKeyAvailabilityQuery>;
 export type CheckTopicKeyAvailabilityLazyQueryHookResult = ReturnType<typeof useCheckTopicKeyAvailabilityLazyQuery>;
@@ -458,7 +261,8 @@ export type AttachTopicIsSubTopicOfTopicMutationFn = Apollo.MutationFunction<Att
  * });
  */
 export function useAttachTopicIsSubTopicOfTopicMutation(baseOptions?: Apollo.MutationHookOptions<AttachTopicIsSubTopicOfTopicMutation, AttachTopicIsSubTopicOfTopicMutationVariables>) {
-        return Apollo.useMutation<AttachTopicIsSubTopicOfTopicMutation, AttachTopicIsSubTopicOfTopicMutationVariables>(Operations.attachTopicIsSubTopicOfTopic, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AttachTopicIsSubTopicOfTopicMutation, AttachTopicIsSubTopicOfTopicMutationVariables>(Operations.attachTopicIsSubTopicOfTopic, options);
       }
 export type AttachTopicIsSubTopicOfTopicMutationHookResult = ReturnType<typeof useAttachTopicIsSubTopicOfTopicMutation>;
 export type AttachTopicIsSubTopicOfTopicMutationResult = Apollo.MutationResult<AttachTopicIsSubTopicOfTopicMutation>;
@@ -485,7 +289,8 @@ export type UpdateTopicIsSubTopicOfTopicMutationFn = Apollo.MutationFunction<Upd
  * });
  */
 export function useUpdateTopicIsSubTopicOfTopicMutation(baseOptions?: Apollo.MutationHookOptions<UpdateTopicIsSubTopicOfTopicMutation, UpdateTopicIsSubTopicOfTopicMutationVariables>) {
-        return Apollo.useMutation<UpdateTopicIsSubTopicOfTopicMutation, UpdateTopicIsSubTopicOfTopicMutationVariables>(Operations.updateTopicIsSubTopicOfTopic, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateTopicIsSubTopicOfTopicMutation, UpdateTopicIsSubTopicOfTopicMutationVariables>(Operations.updateTopicIsSubTopicOfTopic, options);
       }
 export type UpdateTopicIsSubTopicOfTopicMutationHookResult = ReturnType<typeof useUpdateTopicIsSubTopicOfTopicMutation>;
 export type UpdateTopicIsSubTopicOfTopicMutationResult = Apollo.MutationResult<UpdateTopicIsSubTopicOfTopicMutation>;
@@ -511,7 +316,8 @@ export type DetachTopicIsSubTopicOfTopicMutationFn = Apollo.MutationFunction<Det
  * });
  */
 export function useDetachTopicIsSubTopicOfTopicMutation(baseOptions?: Apollo.MutationHookOptions<DetachTopicIsSubTopicOfTopicMutation, DetachTopicIsSubTopicOfTopicMutationVariables>) {
-        return Apollo.useMutation<DetachTopicIsSubTopicOfTopicMutation, DetachTopicIsSubTopicOfTopicMutationVariables>(Operations.detachTopicIsSubTopicOfTopic, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DetachTopicIsSubTopicOfTopicMutation, DetachTopicIsSubTopicOfTopicMutationVariables>(Operations.detachTopicIsSubTopicOfTopic, options);
       }
 export type DetachTopicIsSubTopicOfTopicMutationHookResult = ReturnType<typeof useDetachTopicIsSubTopicOfTopicMutation>;
 export type DetachTopicIsSubTopicOfTopicMutationResult = Apollo.MutationResult<DetachTopicIsSubTopicOfTopicMutation>;
@@ -538,7 +344,8 @@ export type AttachTopicIsPartOfTopicMutationFn = Apollo.MutationFunction<AttachT
  * });
  */
 export function useAttachTopicIsPartOfTopicMutation(baseOptions?: Apollo.MutationHookOptions<AttachTopicIsPartOfTopicMutation, AttachTopicIsPartOfTopicMutationVariables>) {
-        return Apollo.useMutation<AttachTopicIsPartOfTopicMutation, AttachTopicIsPartOfTopicMutationVariables>(Operations.attachTopicIsPartOfTopic, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AttachTopicIsPartOfTopicMutation, AttachTopicIsPartOfTopicMutationVariables>(Operations.attachTopicIsPartOfTopic, options);
       }
 export type AttachTopicIsPartOfTopicMutationHookResult = ReturnType<typeof useAttachTopicIsPartOfTopicMutation>;
 export type AttachTopicIsPartOfTopicMutationResult = Apollo.MutationResult<AttachTopicIsPartOfTopicMutation>;
@@ -564,7 +371,8 @@ export type DetachTopicIsPartOfTopicMutationFn = Apollo.MutationFunction<DetachT
  * });
  */
 export function useDetachTopicIsPartOfTopicMutation(baseOptions?: Apollo.MutationHookOptions<DetachTopicIsPartOfTopicMutation, DetachTopicIsPartOfTopicMutationVariables>) {
-        return Apollo.useMutation<DetachTopicIsPartOfTopicMutation, DetachTopicIsPartOfTopicMutationVariables>(Operations.detachTopicIsPartOfTopic, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DetachTopicIsPartOfTopicMutation, DetachTopicIsPartOfTopicMutationVariables>(Operations.detachTopicIsPartOfTopic, options);
       }
 export type DetachTopicIsPartOfTopicMutationHookResult = ReturnType<typeof useDetachTopicIsPartOfTopicMutation>;
 export type DetachTopicIsPartOfTopicMutationResult = Apollo.MutationResult<DetachTopicIsPartOfTopicMutation>;
@@ -591,7 +399,8 @@ export type UpdateTopicIsPartOfTopicMutationFn = Apollo.MutationFunction<UpdateT
  * });
  */
 export function useUpdateTopicIsPartOfTopicMutation(baseOptions?: Apollo.MutationHookOptions<UpdateTopicIsPartOfTopicMutation, UpdateTopicIsPartOfTopicMutationVariables>) {
-        return Apollo.useMutation<UpdateTopicIsPartOfTopicMutation, UpdateTopicIsPartOfTopicMutationVariables>(Operations.updateTopicIsPartOfTopic, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateTopicIsPartOfTopicMutation, UpdateTopicIsPartOfTopicMutationVariables>(Operations.updateTopicIsPartOfTopic, options);
       }
 export type UpdateTopicIsPartOfTopicMutationHookResult = ReturnType<typeof useUpdateTopicIsPartOfTopicMutation>;
 export type UpdateTopicIsPartOfTopicMutationResult = Apollo.MutationResult<UpdateTopicIsPartOfTopicMutation>;
@@ -617,7 +426,8 @@ export type UpdateTopicContextMutationFn = Apollo.MutationFunction<UpdateTopicCo
  * });
  */
 export function useUpdateTopicContextMutation(baseOptions?: Apollo.MutationHookOptions<UpdateTopicContextMutation, UpdateTopicContextMutationVariables>) {
-        return Apollo.useMutation<UpdateTopicContextMutation, UpdateTopicContextMutationVariables>(Operations.updateTopicContext, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateTopicContextMutation, UpdateTopicContextMutationVariables>(Operations.updateTopicContext, options);
       }
 export type UpdateTopicContextMutationHookResult = ReturnType<typeof useUpdateTopicContextMutation>;
 export type UpdateTopicContextMutationResult = Apollo.MutationResult<UpdateTopicContextMutation>;

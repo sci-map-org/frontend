@@ -11,6 +11,7 @@ import { LearningGoalCardDataFragment } from './LearningGoalCard.generated';
 
 export const LearningGoalCardData = gql`
   fragment LearningGoalCardData on LearningGoal {
+    type
     ...LearningGoalLinkData
     ...LearningGoalLinearProgressData
   }

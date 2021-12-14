@@ -1,40 +1,14 @@
 import * as Types from '../../graphql/types';
 
-import { MapVisualisationTopicDataFragment } from '../../components/topics/SubTopicsMapVisualisation.generated';
-import { TopicLinkDataFragment, TopicFullDataFragment } from '../../graphql/topics/topics.fragments.generated';
-import { ParentTopicsBreadcrumbsDataFragment } from '../../components/topics/ParentTopicsBreadcrumbs.generated';
-import { TopicSubHeaderDataFragment } from '../../components/topics/TopicSubHeader.generated';
-import { EditablePartOfTopicsDataFragment } from '../../components/topics/EditablePartOfTopics.generated';
-import { SeeAlsoDataFragment } from '../../components/topics/SeeAlso.generated';
 import * as Operations from './TopicPage';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type GetTopicByKeyTopicPageQueryVariables = Types.Exact<{
   key: Types.Scalars['String'];
 }>;
 
 
-export type GetTopicByKeyTopicPageQuery = (
-  { __typename?: 'Query' }
-  & { getTopicByKey: (
-    { __typename?: 'Topic' }
-    & Pick<Types.Topic, '_id' | 'name' | 'description' | 'isDisambiguation'>
-    & { subTopics?: Types.Maybe<Array<(
-      { __typename?: 'TopicIsSubTopicOfTopic' }
-      & { subTopic: (
-        { __typename?: 'Topic' }
-        & MapVisualisationTopicDataFragment
-      ) }
-    )>>, contextualisedTopics?: Types.Maybe<Array<(
-      { __typename?: 'Topic' }
-      & TopicLinkDataFragment
-    )>> }
-    & MapVisualisationTopicDataFragment
-    & ParentTopicsBreadcrumbsDataFragment
-    & TopicSubHeaderDataFragment
-    & EditablePartOfTopicsDataFragment
-    & SeeAlsoDataFragment
-  ) }
-);
+export type GetTopicByKeyTopicPageQuery = { __typename?: 'Query', getTopicByKey: { __typename?: 'Topic', _id: string, name: string, description?: string | null | undefined, isDisambiguation?: boolean | null | undefined, subTopicsTotalCount?: number | null | undefined, key: string, learningMaterialsTotalCount?: number | null | undefined, context?: string | null | undefined, subTopics?: Array<{ __typename?: 'TopicIsSubTopicOfTopic', subTopic: { __typename?: 'Topic', subTopicsTotalCount?: number | null | undefined, _id: string, key: string, name: string, context?: string | null | undefined } }> | null | undefined, contextualisedTopics?: Array<{ __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined }> | null | undefined, parentTopic?: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined, parentTopic?: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } | null | undefined } | null | undefined, partOfTopics?: Array<{ __typename?: 'TopicIsPartOfTopic', partOfTopic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } }> | null | undefined, disambiguationTopic?: { __typename?: 'Topic', contextualisedTopics?: Array<{ __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined }> | null | undefined } | null | undefined } };
 
 
 
@@ -55,10 +29,12 @@ export type GetTopicByKeyTopicPageQuery = (
  * });
  */
 export function useGetTopicByKeyTopicPageQuery(baseOptions: Apollo.QueryHookOptions<GetTopicByKeyTopicPageQuery, GetTopicByKeyTopicPageQueryVariables>) {
-        return Apollo.useQuery<GetTopicByKeyTopicPageQuery, GetTopicByKeyTopicPageQueryVariables>(Operations.getTopicByKeyTopicPage, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTopicByKeyTopicPageQuery, GetTopicByKeyTopicPageQueryVariables>(Operations.getTopicByKeyTopicPage, options);
       }
 export function useGetTopicByKeyTopicPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTopicByKeyTopicPageQuery, GetTopicByKeyTopicPageQueryVariables>) {
-          return Apollo.useLazyQuery<GetTopicByKeyTopicPageQuery, GetTopicByKeyTopicPageQueryVariables>(Operations.getTopicByKeyTopicPage, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTopicByKeyTopicPageQuery, GetTopicByKeyTopicPageQueryVariables>(Operations.getTopicByKeyTopicPage, options);
         }
 export type GetTopicByKeyTopicPageQueryHookResult = ReturnType<typeof useGetTopicByKeyTopicPageQuery>;
 export type GetTopicByKeyTopicPageLazyQueryHookResult = ReturnType<typeof useGetTopicByKeyTopicPageLazyQuery>;

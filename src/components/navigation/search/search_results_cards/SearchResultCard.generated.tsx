@@ -1,18 +1,3 @@
 import * as Types from '../../../../graphql/types';
 
-import { SearchResultTopicCardDataFragment } from './SearchResultTopicCard.generated';
-import { SearchResultLearningPathCardDataFragment } from './SearchResultLearningPathCard.generated';
-import { SearchResultResourceCardDataFragment } from './SearchResultResourceCard.generated';
-export type SearchResultCardDataFragment = (
-  { __typename?: 'SearchResult' }
-  & { entity: (
-    { __typename?: 'Topic' }
-    & SearchResultTopicCardDataFragment
-  ) | (
-    { __typename?: 'Resource' }
-    & SearchResultResourceCardDataFragment
-  ) | (
-    { __typename?: 'LearningPath' }
-    & SearchResultLearningPathCardDataFragment
-  ) }
-);
+export type SearchResultCardDataFragment = { __typename?: 'SearchResult', entity: { __typename?: 'LearningPath', durationSeconds?: number | null | undefined, rating?: number | null | undefined, _id: string, key: string, name: string, resourceItems?: Array<{ __typename?: 'LearningPathResourceItem', resource: { __typename?: 'Resource', _id: string } }> | null | undefined } | { __typename?: 'Resource', rating?: number | null | undefined, _id: string, name: string, resourceType: Types.ResourceType } | { __typename?: 'Topic', isDisambiguation?: boolean | null | undefined, context?: string | null | undefined, subTopicsTotalCount?: number | null | undefined, learningMaterialsTotalCount?: number | null | undefined, _id: string, key: string, name: string } };

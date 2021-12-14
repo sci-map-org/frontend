@@ -1,14 +1,3 @@
 import * as Types from '../../graphql/types';
 
-import { TopicLinkDataFragment, TopicFullDataFragment } from '../../graphql/topics/topics.fragments.generated';
-export type SeeAlsoDataFragment = (
-  { __typename?: 'Topic' }
-  & Pick<Types.Topic, '_id'>
-  & { disambiguationTopic?: Types.Maybe<(
-    { __typename?: 'Topic' }
-    & { contextualisedTopics?: Types.Maybe<Array<(
-      { __typename?: 'Topic' }
-      & TopicLinkDataFragment
-    )>> }
-  )> }
-);
+export type SeeAlsoDataFragment = { __typename?: 'Topic', _id: string, disambiguationTopic?: { __typename?: 'Topic', contextualisedTopics?: Array<{ __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined }> | null | undefined } | null | undefined };

@@ -1,20 +1,14 @@
 import * as Types from '../../graphql/types';
 
-import { ResourceDataFragment, ResourcePreviewCardDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import * as Operations from './NewResource';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type CreateResourceMutationVariables = Types.Exact<{
   payload: Types.CreateResourcePayload;
 }>;
 
 
-export type CreateResourceMutation = (
-  { __typename?: 'Mutation' }
-  & { createResource: (
-    { __typename?: 'Resource' }
-    & ResourceDataFragment
-  ) }
-);
+export type CreateResourceMutation = { __typename?: 'Mutation', createResource: { __typename?: 'Resource', _id: string, name: string, type: Types.ResourceType, mediaType: Types.ResourceMediaType, url: string, description?: string | null | undefined, durationSeconds?: number | null | undefined, rating?: number | null | undefined, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined } };
 
 
 export type CreateResourceMutationFn = Apollo.MutationFunction<CreateResourceMutation, CreateResourceMutationVariables>;
@@ -37,7 +31,8 @@ export type CreateResourceMutationFn = Apollo.MutationFunction<CreateResourceMut
  * });
  */
 export function useCreateResourceMutation(baseOptions?: Apollo.MutationHookOptions<CreateResourceMutation, CreateResourceMutationVariables>) {
-        return Apollo.useMutation<CreateResourceMutation, CreateResourceMutationVariables>(Operations.createResource, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateResourceMutation, CreateResourceMutationVariables>(Operations.createResource, options);
       }
 export type CreateResourceMutationHookResult = ReturnType<typeof useCreateResourceMutation>;
 export type CreateResourceMutationResult = Apollo.MutationResult<CreateResourceMutation>;

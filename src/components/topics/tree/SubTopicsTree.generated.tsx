@@ -1,48 +1,17 @@
 import * as Types from '../../../graphql/types';
 
-import { TopicLinkDataFragment, TopicFullDataFragment } from '../../../graphql/topics/topics.fragments.generated';
-import { SubTopicsTreeNodeDataFragment } from './SubTopicsTreeNode.generated';
 import * as Operations from './SubTopicsTree';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type GetTopicValidContextsQueryVariables = Types.Exact<{
   parentTopicId: Types.Scalars['String'];
   topicId: Types.Scalars['String'];
 }>;
 
 
-export type GetTopicValidContextsQuery = (
-  { __typename?: 'Query' }
-  & { getTopicValidContexts: (
-    { __typename?: 'GetTopicValidContextsResult' }
-    & { validContexts?: Types.Maybe<Array<(
-      { __typename?: 'Topic' }
-      & TopicLinkDataFragment
-    )>> }
-  ) }
-);
+export type GetTopicValidContextsQuery = { __typename?: 'Query', getTopicValidContexts: { __typename?: 'GetTopicValidContextsResult', validContexts?: Array<{ __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined }> | null | undefined } };
 
-export type SubTopicsTreeDataFragment = (
-  { __typename?: 'Topic' }
-  & { subTopics?: Types.Maybe<Array<(
-    { __typename?: 'TopicIsSubTopicOfTopic' }
-    & { subTopic: (
-      { __typename?: 'Topic' }
-      & { subTopics?: Types.Maybe<Array<(
-        { __typename?: 'TopicIsSubTopicOfTopic' }
-        & { subTopic: (
-          { __typename?: 'Topic' }
-          & { subTopics?: Types.Maybe<Array<(
-            { __typename?: 'TopicIsSubTopicOfTopic' }
-            & SubTopicsTreeNodeDataFragment
-          )>> }
-        ) }
-        & SubTopicsTreeNodeDataFragment
-      )>> }
-    ) }
-    & SubTopicsTreeNodeDataFragment
-  )>> }
-  & TopicLinkDataFragment
-);
+export type SubTopicsTreeDataFragment = { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined, subTopics?: Array<{ __typename?: 'TopicIsSubTopicOfTopic', index: number, relationshipType: Types.SubTopicRelationshipType, subTopic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined, subTopics?: Array<{ __typename?: 'TopicIsSubTopicOfTopic', index: number, relationshipType: Types.SubTopicRelationshipType, subTopic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined, subTopics?: Array<{ __typename?: 'TopicIsSubTopicOfTopic', index: number, relationshipType: Types.SubTopicRelationshipType, subTopic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined, contextTopic?: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } | null | undefined } }> | null | undefined, contextTopic?: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } | null | undefined } }> | null | undefined, contextTopic?: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } | null | undefined } }> | null | undefined };
 
 
 
@@ -64,10 +33,12 @@ export type SubTopicsTreeDataFragment = (
  * });
  */
 export function useGetTopicValidContextsQuery(baseOptions: Apollo.QueryHookOptions<GetTopicValidContextsQuery, GetTopicValidContextsQueryVariables>) {
-        return Apollo.useQuery<GetTopicValidContextsQuery, GetTopicValidContextsQueryVariables>(Operations.getTopicValidContexts, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTopicValidContextsQuery, GetTopicValidContextsQueryVariables>(Operations.getTopicValidContexts, options);
       }
 export function useGetTopicValidContextsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTopicValidContextsQuery, GetTopicValidContextsQueryVariables>) {
-          return Apollo.useLazyQuery<GetTopicValidContextsQuery, GetTopicValidContextsQueryVariables>(Operations.getTopicValidContexts, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTopicValidContextsQuery, GetTopicValidContextsQueryVariables>(Operations.getTopicValidContexts, options);
         }
 export type GetTopicValidContextsQueryHookResult = ReturnType<typeof useGetTopicValidContextsQuery>;
 export type GetTopicValidContextsLazyQueryHookResult = ReturnType<typeof useGetTopicValidContextsLazyQuery>;

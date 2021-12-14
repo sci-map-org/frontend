@@ -1,5 +1,3 @@
-import { LearningGoalLinkDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
-export type LearningGoalBadgeDataFragment = (
-  { __typename?: 'LearningGoal' }
-  & LearningGoalLinkDataFragment
-);
+import * as Types from '../../graphql/types';
+
+export type LearningGoalBadgeDataFragment = { __typename?: 'LearningGoal', type: Types.LearningGoalType, _id: string, key: string, name: string };

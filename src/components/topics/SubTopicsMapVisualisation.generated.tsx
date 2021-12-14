@@ -1,8 +1,3 @@
 import * as Types from '../../graphql/types';
 
-import { TopicLinkDataFragment, TopicFullDataFragment } from '../../graphql/topics/topics.fragments.generated';
-export type MapVisualisationTopicDataFragment = (
-  { __typename?: 'Topic' }
-  & Pick<Types.Topic, 'subTopicsTotalCount'>
-  & TopicLinkDataFragment
-);
+export type MapVisualisationTopicDataFragment = { __typename?: 'Topic', subTopicsTotalCount?: number | null | undefined, _id: string, key: string, name: string, context?: string | null | undefined };

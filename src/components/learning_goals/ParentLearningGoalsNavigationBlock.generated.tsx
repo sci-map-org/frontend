@@ -1,15 +1,3 @@
 import * as Types from '../../graphql/types';
 
-import { LearningGoalLinkDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
-export type ParentLearningGoalsNavigationBlockDataFragment = (
-  { __typename?: 'LearningGoal' }
-  & Pick<Types.LearningGoal, '_id'>
-  & { requiredInGoals?: Types.Maybe<Array<(
-    { __typename?: 'RequiredInGoalItem' }
-    & Pick<Types.RequiredInGoalItem, 'strength'>
-    & { goal: (
-      { __typename?: 'LearningGoal' }
-      & LearningGoalLinkDataFragment
-    ) }
-  )>> }
-);
+export type ParentLearningGoalsNavigationBlockDataFragment = { __typename?: 'LearningGoal', _id: string, requiredInGoals?: Array<{ __typename?: 'RequiredInGoalItem', strength: number, goal: { __typename?: 'LearningGoal', _id: string, key: string, name: string, type: Types.LearningGoalType } }> | null | undefined };

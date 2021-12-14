@@ -2,55 +2,22 @@ import * as Types from '../../graphql/types';
 
 import * as Operations from './LearningMaterialTagsEditor';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type AddTagsToLearningMaterialMutationVariables = Types.Exact<{
   learningMaterialId: Types.Scalars['String'];
-  tags: Array<Types.Scalars['String']>;
+  tags: Array<Types.Scalars['String']> | Types.Scalars['String'];
 }>;
 
 
-export type AddTagsToLearningMaterialMutation = (
-  { __typename?: 'Mutation' }
-  & { addTagsToLearningMaterial: (
-    { __typename?: 'LearningPath' }
-    & Pick<Types.LearningPath, '_id'>
-    & { tags?: Types.Maybe<Array<(
-      { __typename?: 'LearningMaterialTag' }
-      & Pick<Types.LearningMaterialTag, 'name'>
-    )>> }
-  ) | (
-    { __typename?: 'Resource' }
-    & Pick<Types.Resource, '_id'>
-    & { tags?: Types.Maybe<Array<(
-      { __typename?: 'LearningMaterialTag' }
-      & Pick<Types.LearningMaterialTag, 'name'>
-    )>> }
-  ) }
-);
+export type AddTagsToLearningMaterialMutation = { __typename?: 'Mutation', addTagsToLearningMaterial: { __typename?: 'LearningPath', _id: string, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined } | { __typename?: 'Resource', _id: string, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined } };
 
 export type RemoveTagsFromLearningMaterialMutationVariables = Types.Exact<{
   learningMaterialId: Types.Scalars['String'];
-  tags: Array<Types.Scalars['String']>;
+  tags: Array<Types.Scalars['String']> | Types.Scalars['String'];
 }>;
 
 
-export type RemoveTagsFromLearningMaterialMutation = (
-  { __typename?: 'Mutation' }
-  & { removeTagsFromLearningMaterial: (
-    { __typename?: 'LearningPath' }
-    & Pick<Types.LearningPath, '_id'>
-    & { tags?: Types.Maybe<Array<(
-      { __typename?: 'LearningMaterialTag' }
-      & Pick<Types.LearningMaterialTag, 'name'>
-    )>> }
-  ) | (
-    { __typename?: 'Resource' }
-    & Pick<Types.Resource, '_id'>
-    & { tags?: Types.Maybe<Array<(
-      { __typename?: 'LearningMaterialTag' }
-      & Pick<Types.LearningMaterialTag, 'name'>
-    )>> }
-  ) }
-);
+export type RemoveTagsFromLearningMaterialMutation = { __typename?: 'Mutation', removeTagsFromLearningMaterial: { __typename?: 'LearningPath', _id: string, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined } | { __typename?: 'Resource', _id: string, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined } };
 
 
 export type AddTagsToLearningMaterialMutationFn = Apollo.MutationFunction<AddTagsToLearningMaterialMutation, AddTagsToLearningMaterialMutationVariables>;
@@ -74,7 +41,8 @@ export type AddTagsToLearningMaterialMutationFn = Apollo.MutationFunction<AddTag
  * });
  */
 export function useAddTagsToLearningMaterialMutation(baseOptions?: Apollo.MutationHookOptions<AddTagsToLearningMaterialMutation, AddTagsToLearningMaterialMutationVariables>) {
-        return Apollo.useMutation<AddTagsToLearningMaterialMutation, AddTagsToLearningMaterialMutationVariables>(Operations.addTagsToLearningMaterial, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddTagsToLearningMaterialMutation, AddTagsToLearningMaterialMutationVariables>(Operations.addTagsToLearningMaterial, options);
       }
 export type AddTagsToLearningMaterialMutationHookResult = ReturnType<typeof useAddTagsToLearningMaterialMutation>;
 export type AddTagsToLearningMaterialMutationResult = Apollo.MutationResult<AddTagsToLearningMaterialMutation>;
@@ -100,7 +68,8 @@ export type RemoveTagsFromLearningMaterialMutationFn = Apollo.MutationFunction<R
  * });
  */
 export function useRemoveTagsFromLearningMaterialMutation(baseOptions?: Apollo.MutationHookOptions<RemoveTagsFromLearningMaterialMutation, RemoveTagsFromLearningMaterialMutationVariables>) {
-        return Apollo.useMutation<RemoveTagsFromLearningMaterialMutation, RemoveTagsFromLearningMaterialMutationVariables>(Operations.removeTagsFromLearningMaterial, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveTagsFromLearningMaterialMutation, RemoveTagsFromLearningMaterialMutationVariables>(Operations.removeTagsFromLearningMaterial, options);
       }
 export type RemoveTagsFromLearningMaterialMutationHookResult = ReturnType<typeof useRemoveTagsFromLearningMaterialMutation>;
 export type RemoveTagsFromLearningMaterialMutationResult = Apollo.MutationResult<RemoveTagsFromLearningMaterialMutation>;

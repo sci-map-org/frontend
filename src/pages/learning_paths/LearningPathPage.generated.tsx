@@ -1,51 +1,14 @@
 import * as Types from '../../graphql/types';
 
-import { LearningPathWithResourceItemsPreviewDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
-import { SquareResourceCardDataFragment } from '../../components/resources/SquareResourceCard.generated';
-import { UserAvatarDataFragment } from '../../components/users/UserAvatar.generated';
-import { LearningPathCompletionDataFragment } from '../../components/learning_paths/LearningPathCompletion.generated';
-import { LearningMaterialWithCoveredTopicsData_LearningPath_Fragment, LearningMaterialWithCoveredTopicsData_Resource_Fragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
-import { EditableLearningMaterialPrerequisitesData_LearningPath_Fragment, EditableLearningMaterialPrerequisitesData_Resource_Fragment } from '../../components/learning_materials/EditableLearningMaterialPrerequisites.generated';
-import { LearningMaterialStarsRaterData_LearningPath_Fragment, LearningMaterialStarsRaterData_Resource_Fragment } from '../../components/learning_materials/LearningMaterialStarsRating.generated';
 import * as Operations from './LearningPathPage';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type GetLearningPathPageQueryVariables = Types.Exact<{
   key: Types.Scalars['String'];
 }>;
 
 
-export type GetLearningPathPageQuery = (
-  { __typename?: 'Query' }
-  & { getLearningPathByKey: (
-    { __typename?: 'LearningPath' }
-    & Pick<Types.LearningPath, 'rating'>
-    & { complementaryResources?: Types.Maybe<Array<(
-      { __typename?: 'Resource' }
-      & SquareResourceCardDataFragment
-    )>>, tags?: Types.Maybe<Array<(
-      { __typename?: 'LearningMaterialTag' }
-      & Pick<Types.LearningMaterialTag, 'name'>
-    )>>, createdBy?: Types.Maybe<(
-      { __typename?: 'User' }
-      & UserAvatarDataFragment
-    )>, startedBy?: Types.Maybe<(
-      { __typename?: 'LearningPathStartedByResults' }
-      & Pick<Types.LearningPathStartedByResults, 'count'>
-      & { items: Array<(
-        { __typename?: 'LearningPathStartedByItem' }
-        & { user: (
-          { __typename?: 'User' }
-          & UserAvatarDataFragment
-        ) }
-      )> }
-    )> }
-    & LearningPathWithResourceItemsPreviewDataFragment
-    & LearningPathCompletionDataFragment
-    & LearningMaterialWithCoveredTopicsData_LearningPath_Fragment
-    & EditableLearningMaterialPrerequisitesData_LearningPath_Fragment
-    & LearningMaterialStarsRaterData_LearningPath_Fragment
-  ) }
-);
+export type GetLearningPathPageQuery = { __typename?: 'Query', getLearningPathByKey: { __typename?: 'LearningPath', rating?: number | null | undefined, _id: string, durationSeconds?: number | null | undefined, key: string, public: boolean, name: string, description?: string | null | undefined, complementaryResources?: Array<{ __typename?: 'Resource', _id: string, name: string, type: Types.ResourceType, rating?: number | null | undefined, url: string, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined } | null | undefined }> | null | undefined, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined, createdBy?: { __typename?: 'User', _id: string, key: string, displayName: string, profilePictureUrl?: string | null | undefined } | null | undefined, startedBy?: { __typename?: 'LearningPathStartedByResults', count: number, items: Array<{ __typename?: 'LearningPathStartedByItem', user: { __typename?: 'User', _id: string, key: string, displayName: string, profilePictureUrl?: string | null | undefined } }> } | null | undefined, resourceItems?: Array<{ __typename?: 'LearningPathResourceItem', description?: string | null | undefined, resource: { __typename?: 'Resource', _id: string, durationSeconds?: number | null | undefined, name: string, type: Types.ResourceType, mediaType: Types.ResourceMediaType, url: string, description?: string | null | undefined, upvotes?: number | null | undefined, rating?: number | null | undefined, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined, coveredSubTopics?: { __typename?: 'LearningMaterialCoveredSubTopicsResults', items: Array<{ __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined }> } | null | undefined, subResourceSeries?: Array<{ __typename?: 'Resource', _id: string, name: string }> | null | undefined, subResources?: Array<{ __typename?: 'Resource', _id: string, name: string }> | null | undefined } }> | null | undefined, started?: { __typename?: 'LearningPathStarted', startedAt: any, completedAt?: any | null | undefined } | null | undefined, coveredSubTopics?: { __typename?: 'LearningMaterialCoveredSubTopicsResults', items: Array<{ __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined }> } | null | undefined, prerequisites?: Array<{ __typename?: 'LearningMaterialHasPrerequisiteTopic', topic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } }> | null | undefined } };
 
 
 
@@ -66,10 +29,12 @@ export type GetLearningPathPageQuery = (
  * });
  */
 export function useGetLearningPathPageQuery(baseOptions: Apollo.QueryHookOptions<GetLearningPathPageQuery, GetLearningPathPageQueryVariables>) {
-        return Apollo.useQuery<GetLearningPathPageQuery, GetLearningPathPageQueryVariables>(Operations.getLearningPathPage, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetLearningPathPageQuery, GetLearningPathPageQueryVariables>(Operations.getLearningPathPage, options);
       }
 export function useGetLearningPathPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetLearningPathPageQuery, GetLearningPathPageQueryVariables>) {
-          return Apollo.useLazyQuery<GetLearningPathPageQuery, GetLearningPathPageQueryVariables>(Operations.getLearningPathPage, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetLearningPathPageQuery, GetLearningPathPageQueryVariables>(Operations.getLearningPathPage, options);
         }
 export type GetLearningPathPageQueryHookResult = ReturnType<typeof useGetLearningPathPageQuery>;
 export type GetLearningPathPageLazyQueryHookResult = ReturnType<typeof useGetLearningPathPageLazyQuery>;

@@ -2,16 +2,11 @@ import * as Types from '../../../graphql/types';
 
 import * as Operations from './CurrentUserLearningGoalsPage';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type GetCurrentUserLearningGoalsPageQueryVariables = Types.Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserLearningGoalsPageQuery = (
-  { __typename?: 'Query' }
-  & { currentUser?: Types.Maybe<(
-    { __typename?: 'CurrentUser' }
-    & Pick<Types.CurrentUser, '_id'>
-  )> }
-);
+export type GetCurrentUserLearningGoalsPageQuery = { __typename?: 'Query', currentUser?: { __typename?: 'CurrentUser', _id: string } | null | undefined };
 
 
 
@@ -31,10 +26,12 @@ export type GetCurrentUserLearningGoalsPageQuery = (
  * });
  */
 export function useGetCurrentUserLearningGoalsPageQuery(baseOptions?: Apollo.QueryHookOptions<GetCurrentUserLearningGoalsPageQuery, GetCurrentUserLearningGoalsPageQueryVariables>) {
-        return Apollo.useQuery<GetCurrentUserLearningGoalsPageQuery, GetCurrentUserLearningGoalsPageQueryVariables>(Operations.getCurrentUserLearningGoalsPage, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCurrentUserLearningGoalsPageQuery, GetCurrentUserLearningGoalsPageQueryVariables>(Operations.getCurrentUserLearningGoalsPage, options);
       }
 export function useGetCurrentUserLearningGoalsPageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCurrentUserLearningGoalsPageQuery, GetCurrentUserLearningGoalsPageQueryVariables>) {
-          return Apollo.useLazyQuery<GetCurrentUserLearningGoalsPageQuery, GetCurrentUserLearningGoalsPageQueryVariables>(Operations.getCurrentUserLearningGoalsPage, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCurrentUserLearningGoalsPageQuery, GetCurrentUserLearningGoalsPageQueryVariables>(Operations.getCurrentUserLearningGoalsPage, options);
         }
 export type GetCurrentUserLearningGoalsPageQueryHookResult = ReturnType<typeof useGetCurrentUserLearningGoalsPageQuery>;
 export type GetCurrentUserLearningGoalsPageLazyQueryHookResult = ReturnType<typeof useGetCurrentUserLearningGoalsPageLazyQuery>;

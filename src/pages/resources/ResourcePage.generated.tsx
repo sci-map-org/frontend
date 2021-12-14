@@ -1,50 +1,14 @@
 import * as Types from '../../graphql/types';
 
-import { ResourceDataFragment, ResourcePreviewCardDataFragment } from '../../graphql/resources/resources.fragments.generated';
-import { UserAvatarDataFragment } from '../../components/users/UserAvatar.generated';
-import { SquareResourceCardDataFragment } from '../../components/resources/SquareResourceCard.generated';
-import { LearningMaterialWithCoveredTopicsData_LearningPath_Fragment, LearningMaterialWithCoveredTopicsData_Resource_Fragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
-import { EditableLearningMaterialPrerequisitesData_LearningPath_Fragment, EditableLearningMaterialPrerequisitesData_Resource_Fragment } from '../../components/learning_materials/EditableLearningMaterialPrerequisites.generated';
-import { LearningMaterialStarsRaterData_LearningPath_Fragment, LearningMaterialStarsRaterData_Resource_Fragment } from '../../components/learning_materials/LearningMaterialStarsRating.generated';
 import * as Operations from './ResourcePage';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type GetResourceResourcePageQueryVariables = Types.Exact<{
   id: Types.Scalars['String'];
 }>;
 
 
-export type GetResourceResourcePageQuery = (
-  { __typename?: 'Query' }
-  & { getResourceById: (
-    { __typename?: 'Resource' }
-    & { createdBy?: Types.Maybe<(
-      { __typename?: 'User' }
-      & UserAvatarDataFragment
-    )>, subResources?: Types.Maybe<Array<(
-      { __typename?: 'Resource' }
-      & SquareResourceCardDataFragment
-    )>>, subResourceSeries?: Types.Maybe<Array<(
-      { __typename?: 'Resource' }
-      & ResourceDataFragment
-    )>>, parentResources?: Types.Maybe<Array<(
-      { __typename?: 'Resource' }
-      & Pick<Types.Resource, '_id' | 'name'>
-    )>>, seriesParentResource?: Types.Maybe<(
-      { __typename?: 'Resource' }
-      & Pick<Types.Resource, '_id' | 'name'>
-    )>, previousResource?: Types.Maybe<(
-      { __typename?: 'Resource' }
-      & Pick<Types.Resource, '_id' | 'name'>
-    )>, nextResource?: Types.Maybe<(
-      { __typename?: 'Resource' }
-      & Pick<Types.Resource, '_id' | 'name'>
-    )> }
-    & ResourceDataFragment
-    & LearningMaterialWithCoveredTopicsData_Resource_Fragment
-    & EditableLearningMaterialPrerequisitesData_Resource_Fragment
-    & LearningMaterialStarsRaterData_Resource_Fragment
-  ) }
-);
+export type GetResourceResourcePageQuery = { __typename?: 'Query', getResourceById: { __typename?: 'Resource', _id: string, name: string, type: Types.ResourceType, mediaType: Types.ResourceMediaType, url: string, description?: string | null | undefined, durationSeconds?: number | null | undefined, rating?: number | null | undefined, createdBy?: { __typename?: 'User', _id: string, key: string, displayName: string, profilePictureUrl?: string | null | undefined } | null | undefined, subResources?: Array<{ __typename?: 'Resource', _id: string, name: string, type: Types.ResourceType, rating?: number | null | undefined, url: string, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined } | null | undefined }> | null | undefined, subResourceSeries?: Array<{ __typename?: 'Resource', _id: string, name: string, type: Types.ResourceType, mediaType: Types.ResourceMediaType, url: string, description?: string | null | undefined, durationSeconds?: number | null | undefined, rating?: number | null | undefined, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined }> | null | undefined, parentResources?: Array<{ __typename?: 'Resource', _id: string, name: string }> | null | undefined, seriesParentResource?: { __typename?: 'Resource', _id: string, name: string } | null | undefined, previousResource?: { __typename?: 'Resource', _id: string, name: string } | null | undefined, nextResource?: { __typename?: 'Resource', _id: string, name: string } | null | undefined, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined, coveredSubTopics?: { __typename?: 'LearningMaterialCoveredSubTopicsResults', items: Array<{ __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined }> } | null | undefined, prerequisites?: Array<{ __typename?: 'LearningMaterialHasPrerequisiteTopic', topic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } }> | null | undefined } };
 
 
 
@@ -65,10 +29,12 @@ export type GetResourceResourcePageQuery = (
  * });
  */
 export function useGetResourceResourcePageQuery(baseOptions: Apollo.QueryHookOptions<GetResourceResourcePageQuery, GetResourceResourcePageQueryVariables>) {
-        return Apollo.useQuery<GetResourceResourcePageQuery, GetResourceResourcePageQueryVariables>(Operations.getResourceResourcePage, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetResourceResourcePageQuery, GetResourceResourcePageQueryVariables>(Operations.getResourceResourcePage, options);
       }
 export function useGetResourceResourcePageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetResourceResourcePageQuery, GetResourceResourcePageQueryVariables>) {
-          return Apollo.useLazyQuery<GetResourceResourcePageQuery, GetResourceResourcePageQueryVariables>(Operations.getResourceResourcePage, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetResourceResourcePageQuery, GetResourceResourcePageQueryVariables>(Operations.getResourceResourcePage, options);
         }
 export type GetResourceResourcePageQueryHookResult = ReturnType<typeof useGetResourceResourcePageQuery>;
 export type GetResourceResourcePageLazyQueryHookResult = ReturnType<typeof useGetResourceResourcePageLazyQuery>;

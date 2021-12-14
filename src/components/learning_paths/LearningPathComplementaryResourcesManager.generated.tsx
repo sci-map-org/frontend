@@ -1,32 +1,15 @@
 import * as Types from '../../graphql/types';
 
-import { LearningPathDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
-import { ResourceDataFragment, ResourcePreviewCardDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import * as Operations from './LearningPathComplementaryResourcesManager';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type AddComplementaryResourceToLearningPathMutationVariables = Types.Exact<{
   learningPathId: Types.Scalars['String'];
   resourceId: Types.Scalars['String'];
 }>;
 
 
-export type AddComplementaryResourceToLearningPathMutation = (
-  { __typename?: 'Mutation' }
-  & { addComplementaryResourceToLearningPath: (
-    { __typename?: 'ComplementaryResourceUpdatedResult' }
-    & { learningPath: (
-      { __typename?: 'LearningPath' }
-      & { complementaryResources?: Types.Maybe<Array<(
-        { __typename?: 'Resource' }
-        & Pick<Types.Resource, '_id'>
-      )>> }
-      & LearningPathDataFragment
-    ), resource: (
-      { __typename?: 'Resource' }
-      & ResourceDataFragment
-    ) }
-  ) }
-);
+export type AddComplementaryResourceToLearningPathMutation = { __typename?: 'Mutation', addComplementaryResourceToLearningPath: { __typename?: 'ComplementaryResourceUpdatedResult', learningPath: { __typename?: 'LearningPath', _id: string, key: string, public: boolean, name: string, description?: string | null | undefined, durationSeconds?: number | null | undefined, complementaryResources?: Array<{ __typename?: 'Resource', _id: string }> | null | undefined }, resource: { __typename?: 'Resource', _id: string, name: string, type: Types.ResourceType, mediaType: Types.ResourceMediaType, url: string, description?: string | null | undefined, durationSeconds?: number | null | undefined, rating?: number | null | undefined, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined } } };
 
 export type RemoveComplementaryResourceFromLearningPathMutationVariables = Types.Exact<{
   learningPathId: Types.Scalars['String'];
@@ -34,20 +17,7 @@ export type RemoveComplementaryResourceFromLearningPathMutationVariables = Types
 }>;
 
 
-export type RemoveComplementaryResourceFromLearningPathMutation = (
-  { __typename?: 'Mutation' }
-  & { removeComplementaryResourceFromLearningPath: (
-    { __typename?: 'ComplementaryResourceUpdatedResult' }
-    & { learningPath: (
-      { __typename?: 'LearningPath' }
-      & { complementaryResources?: Types.Maybe<Array<(
-        { __typename?: 'Resource' }
-        & Pick<Types.Resource, '_id'>
-      )>> }
-      & LearningPathDataFragment
-    ) }
-  ) }
-);
+export type RemoveComplementaryResourceFromLearningPathMutation = { __typename?: 'Mutation', removeComplementaryResourceFromLearningPath: { __typename?: 'ComplementaryResourceUpdatedResult', learningPath: { __typename?: 'LearningPath', _id: string, key: string, public: boolean, name: string, description?: string | null | undefined, durationSeconds?: number | null | undefined, complementaryResources?: Array<{ __typename?: 'Resource', _id: string }> | null | undefined } } };
 
 
 export type AddComplementaryResourceToLearningPathMutationFn = Apollo.MutationFunction<AddComplementaryResourceToLearningPathMutation, AddComplementaryResourceToLearningPathMutationVariables>;
@@ -71,7 +41,8 @@ export type AddComplementaryResourceToLearningPathMutationFn = Apollo.MutationFu
  * });
  */
 export function useAddComplementaryResourceToLearningPathMutation(baseOptions?: Apollo.MutationHookOptions<AddComplementaryResourceToLearningPathMutation, AddComplementaryResourceToLearningPathMutationVariables>) {
-        return Apollo.useMutation<AddComplementaryResourceToLearningPathMutation, AddComplementaryResourceToLearningPathMutationVariables>(Operations.addComplementaryResourceToLearningPath, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddComplementaryResourceToLearningPathMutation, AddComplementaryResourceToLearningPathMutationVariables>(Operations.addComplementaryResourceToLearningPath, options);
       }
 export type AddComplementaryResourceToLearningPathMutationHookResult = ReturnType<typeof useAddComplementaryResourceToLearningPathMutation>;
 export type AddComplementaryResourceToLearningPathMutationResult = Apollo.MutationResult<AddComplementaryResourceToLearningPathMutation>;
@@ -97,7 +68,8 @@ export type RemoveComplementaryResourceFromLearningPathMutationFn = Apollo.Mutat
  * });
  */
 export function useRemoveComplementaryResourceFromLearningPathMutation(baseOptions?: Apollo.MutationHookOptions<RemoveComplementaryResourceFromLearningPathMutation, RemoveComplementaryResourceFromLearningPathMutationVariables>) {
-        return Apollo.useMutation<RemoveComplementaryResourceFromLearningPathMutation, RemoveComplementaryResourceFromLearningPathMutationVariables>(Operations.removeComplementaryResourceFromLearningPath, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveComplementaryResourceFromLearningPathMutation, RemoveComplementaryResourceFromLearningPathMutationVariables>(Operations.removeComplementaryResourceFromLearningPath, options);
       }
 export type RemoveComplementaryResourceFromLearningPathMutationHookResult = ReturnType<typeof useRemoveComplementaryResourceFromLearningPathMutation>;
 export type RemoveComplementaryResourceFromLearningPathMutationResult = Apollo.MutationResult<RemoveComplementaryResourceFromLearningPathMutation>;

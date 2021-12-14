@@ -1,5 +1,8 @@
 export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -11,89 +14,179 @@ export type Scalars = {
   Date: string;
 };
 
-export type PaginationOptions = {
-  limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
+export type AddTopicHasPrerequisiteTopicResult = {
+  __typename?: 'AddTopicHasPrerequisiteTopicResult';
+  prerequisiteTopic: Topic;
+  strength: Scalars['Float'];
+  topic: Topic;
 };
 
-export enum SortingDirection {
-  Asc = 'ASC',
-  Desc = 'DESC'
-}
-
-export enum UserRole {
-  Admin = 'ADMIN',
-  Contributor = 'CONTRIBUTOR',
-  User = 'USER'
-}
-
-export type UserLearningPathsOptions = {
-  pagination?: Maybe<PaginationOptions>;
+export type AdminUpdateUserPayload = {
+  active?: InputMaybe<Scalars['Boolean']>;
+  bio?: InputMaybe<Scalars['String']>;
+  displayName?: InputMaybe<Scalars['String']>;
+  email?: InputMaybe<Scalars['String']>;
+  key?: InputMaybe<Scalars['String']>;
+  profilePictureUrl?: InputMaybe<Scalars['String']>;
+  role?: InputMaybe<UserRole>;
 };
 
-export type User = {
-  __typename?: 'User';
+export type AnalyzeResourceUrlResult = {
+  __typename?: 'AnalyzeResourceUrlResult';
+  resourceData?: Maybe<ResourceData>;
+};
+
+export type Article = {
+  __typename?: 'Article';
   _id: Scalars['String'];
-  email: Scalars['String'];
-  displayName: Scalars['String'];
-  bio?: Maybe<Scalars['String']>;
-  profilePictureUrl?: Maybe<Scalars['String']>;
-  role: UserRole;
+  author?: Maybe<User>;
+  content: Scalars['String'];
+  contentType: ArticleContentType;
   key: Scalars['String'];
-  articles?: Maybe<ListArticlesResult>;
-};
-
-
-export type UserArticlesArgs = {
-  options: ListArticlesOptions;
-};
-
-export type ListArticlesOptions = {
-  filter?: Maybe<ListArticlesFilter>;
-  pagination?: Maybe<PaginationOptions>;
-};
-
-export type ListArticlesFilter = {
-  contentType?: Maybe<ArticleContentType>;
+  title: Scalars['String'];
 };
 
 export enum ArticleContentType {
   Markdown = 'markdown'
 }
 
-export type ListArticlesResult = {
-  __typename?: 'ListArticlesResult';
-  items: Array<Article>;
+export type AttachLearningGoalRequiresSubGoalPayload = {
+  strength?: InputMaybe<Scalars['Float']>;
 };
 
-export type Article = {
-  __typename?: 'Article';
-  _id: Scalars['String'];
-  key: Scalars['String'];
+export type AttachLearningGoalRequiresSubGoalResult = {
+  __typename?: 'AttachLearningGoalRequiresSubGoalResult';
+  learningGoal: LearningGoal;
+  subGoal: SubGoal;
+};
+
+export type AttachTopicIsPartOfTopicPayload = {
+  index?: InputMaybe<Scalars['Float']>;
+};
+
+export type AttachTopicIsSubTopicOfTopicPayload = {
+  index?: InputMaybe<Scalars['Float']>;
+};
+
+export type CheckLearningGoalKeyAvailabilityResult = {
+  __typename?: 'CheckLearningGoalKeyAvailabilityResult';
+  available: Scalars['Boolean'];
+  existingLearningGoal?: Maybe<LearningGoal>;
+};
+
+export type CheckTopicKeyAvailabilityResult = {
+  __typename?: 'CheckTopicKeyAvailabilityResult';
+  available: Scalars['Boolean'];
+  existingTopic?: Maybe<Topic>;
+};
+
+export type ComplementaryResourceUpdatedResult = {
+  __typename?: 'ComplementaryResourceUpdatedResult';
+  learningPath: LearningPath;
+  resource: Resource;
+};
+
+export type ConsumedResource = {
+  __typename?: 'ConsumedResource';
+  consumedAt?: Maybe<Scalars['Date']>;
+  lastOpenedAt?: Maybe<Scalars['Date']>;
+  openedAt?: Maybe<Scalars['Date']>;
+};
+
+export type CreateArticlePayload = {
+  content: Scalars['String'];
   contentType: ArticleContentType;
   title: Scalars['String'];
-  content: Scalars['String'];
-  author?: Maybe<User>;
+};
+
+export type CreateLearningGoalOptions = {
+  public?: InputMaybe<Scalars['Boolean']>;
+  topicId?: InputMaybe<Scalars['String']>;
+};
+
+export type CreateLearningGoalPayload = {
+  description?: InputMaybe<Scalars['String']>;
+  key?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  type: LearningGoalType;
+};
+
+export type CreateLearningPathPayload = {
+  description?: InputMaybe<Scalars['String']>;
+  durationSeconds?: InputMaybe<Scalars['Int']>;
+  key?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  public?: InputMaybe<Scalars['Boolean']>;
+  resourceItems: Array<CreateLearningPathResourceItem>;
+  tags?: InputMaybe<Array<Scalars['String']>>;
+};
+
+export type CreateLearningPathResourceItem = {
+  description?: InputMaybe<Scalars['String']>;
+  resourceId: Scalars['String'];
+};
+
+export type CreateResourcePayload = {
+  coveredSubTopicsIds?: InputMaybe<Array<Scalars['String']>>;
+  description?: InputMaybe<Scalars['String']>;
+  durationSeconds?: InputMaybe<Scalars['Int']>;
+  mediaType: ResourceMediaType;
+  name: Scalars['String'];
+  prerequisitesTopicsIds?: InputMaybe<Array<Scalars['String']>>;
+  showInTopicsIds: Array<Scalars['String']>;
+  subResourceSeries?: InputMaybe<Array<CreateSubResourcePayload>>;
+  tags?: InputMaybe<Array<Scalars['String']>>;
+  type: ResourceType;
+  url: Scalars['String'];
+};
+
+export type CreateSubResourcePayload = {
+  coveredSubTopicsIds?: InputMaybe<Array<Scalars['String']>>;
+  description?: InputMaybe<Scalars['String']>;
+  durationSeconds?: InputMaybe<Scalars['Int']>;
+  mediaType: ResourceMediaType;
+  name: Scalars['String'];
+  prerequisitesTopicsIds?: InputMaybe<Array<Scalars['String']>>;
+  showInTopicsIds: Array<Scalars['String']>;
+  tags?: InputMaybe<Array<Scalars['String']>>;
+  type: ResourceType;
+  url: Scalars['String'];
+};
+
+export type CreateTopicContextOptions = {
+  contextTopicId: Scalars['String'];
+  disambiguationTopicId: Scalars['String'];
+};
+
+export type CreateTopicPayload = {
+  description?: InputMaybe<Scalars['String']>;
+  key: Scalars['String'];
+  name: Scalars['String'];
 };
 
 export type CurrentUser = {
   __typename?: 'CurrentUser';
   _id: Scalars['String'];
-  email: Scalars['String'];
-  displayName: Scalars['String'];
-  bio?: Maybe<Scalars['String']>;
-  profilePictureUrl?: Maybe<Scalars['String']>;
-  key: Scalars['String'];
-  role: UserRole;
   articles?: Maybe<ListArticlesResult>;
-  createdLearningPaths?: Maybe<Array<LearningPath>>;
-  startedLearningPaths?: Maybe<Array<LearningPathStartedItem>>;
+  bio?: Maybe<Scalars['String']>;
   consumedResources?: Maybe<UserConsumedResourcesResult>;
+  createdLearningPaths?: Maybe<Array<LearningPath>>;
+  displayName: Scalars['String'];
+  email: Scalars['String'];
+  key: Scalars['String'];
+  profilePictureUrl?: Maybe<Scalars['String']>;
+  role: UserRole;
+  startedLearningPaths?: Maybe<Array<LearningPathStartedItem>>;
 };
 
 
 export type CurrentUserArticlesArgs = {
   options: ListArticlesOptions;
+};
+
+
+export type CurrentUserConsumedResourcesArgs = {
+  options: UserConsumedResourcesOptions;
 };
 
 
@@ -106,465 +199,63 @@ export type CurrentUserStartedLearningPathsArgs = {
   options: UserLearningPathsOptions;
 };
 
-
-export type CurrentUserConsumedResourcesArgs = {
-  options: UserConsumedResourcesOptions;
-};
-
-export type LearningPathStartedItem = {
-  __typename?: 'LearningPathStartedItem';
-  learningPath: LearningPath;
-  startedAt: Scalars['Date'];
-  completedAt?: Maybe<Scalars['Date']>;
-};
-
-export type UserConsumedResourcesOptions = {
-  filter?: Maybe<UserConsumedResourcesFilter>;
-  sorting: UserConsumedResourcesSortingType;
-  pagination?: Maybe<PaginationOptions>;
-};
-
-export type UserConsumedResourcesResult = {
-  __typename?: 'UserConsumedResourcesResult';
-  items: Array<UserConsumedResourceItem>;
-  count: Scalars['Int'];
-};
-
-export type LearningPath = LearningMaterial & {
-  __typename?: 'LearningPath';
+export type DeleteArticleResponse = {
+  __typename?: 'DeleteArticleResponse';
   _id: Scalars['String'];
-  key: Scalars['String'];
-  name: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-  public: Scalars['Boolean'];
-  durationSeconds?: Maybe<Scalars['Int']>;
-  resourceItems?: Maybe<Array<LearningPathResourceItem>>;
-  complementaryResources?: Maybe<Array<Resource>>;
-  tags?: Maybe<Array<LearningMaterialTag>>;
-  rating?: Maybe<Scalars['Float']>;
-  started?: Maybe<LearningPathStarted>;
-  startedBy?: Maybe<LearningPathStartedByResults>;
-  coveredSubTopics?: Maybe<LearningMaterialCoveredSubTopicsResults>;
-  coveredSubTopicsTree?: Maybe<Array<Topic>>;
-  showedIn?: Maybe<Array<Topic>>;
-  prerequisites?: Maybe<Array<LearningMaterialHasPrerequisiteTopic>>;
-  createdBy?: Maybe<User>;
-  createdAt: Scalars['Date'];
+  success: Scalars['Boolean'];
 };
 
-
-export type LearningPathStartedByArgs = {
-  options: LearningPathStartedByOptions;
-};
-
-
-export type LearningPathCoveredSubTopicsArgs = {
-  options: LearningMaterialCoveredSubTopicsOptions;
-};
-
-export type LearningPathResourceItem = {
-  __typename?: 'LearningPathResourceItem';
-  resource: Resource;
-  learningPathId: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-};
-
-export type Resource = LearningMaterial & {
-  __typename?: 'Resource';
+export type DeleteLearningGoalMutationResult = {
+  __typename?: 'DeleteLearningGoalMutationResult';
   _id: Scalars['String'];
-  name: Scalars['String'];
-  type: ResourceType;
-  mediaType: ResourceMediaType;
-  tags?: Maybe<Array<LearningMaterialTag>>;
-  url: Scalars['String'];
-  upvotes?: Maybe<Scalars['Int']>;
-  rating?: Maybe<Scalars['Float']>;
-  description?: Maybe<Scalars['String']>;
-  durationSeconds?: Maybe<Scalars['Int']>;
-  consumed?: Maybe<ConsumedResource>;
-  subResources?: Maybe<Array<Resource>>;
-  parentResources?: Maybe<Array<Resource>>;
-  subResourceSeries?: Maybe<Array<Resource>>;
-  seriesParentResource?: Maybe<Resource>;
-  nextResource?: Maybe<Resource>;
-  previousResource?: Maybe<Resource>;
-  coveredSubTopics?: Maybe<LearningMaterialCoveredSubTopicsResults>;
-  coveredSubTopicsTree?: Maybe<Array<Topic>>;
-  showedIn?: Maybe<Array<Topic>>;
-  prerequisites?: Maybe<Array<LearningMaterialHasPrerequisiteTopic>>;
-  createdBy?: Maybe<User>;
-  createdAt: Scalars['Date'];
+  success: Scalars['Boolean'];
 };
 
-
-export type ResourceCoveredSubTopicsArgs = {
-  options: LearningMaterialCoveredSubTopicsOptions;
-};
-
-export enum ResourceType {
-  Article = 'article',
-  ArticleSeries = 'article_series',
-  Course = 'course',
-  Podcast = 'podcast',
-  PodcastEpisode = 'podcast_episode',
-  YoutubeVideo = 'youtube_video',
-  YoutubePlaylist = 'youtube_playlist',
-  OnlineBook = 'online_book',
-  Book = 'book',
-  ResearchPaper = 'research_paper',
-  Talk = 'talk',
-  Documentary = 'documentary',
-  Website = 'website',
-  VideoGame = 'video_game',
-  Infographic = 'infographic',
-  Tweet = 'tweet',
-  Exercise = 'exercise',
-  Quizz = 'quizz',
-  Project = 'project',
-  Other = 'other'
-}
-
-export enum ResourceMediaType {
-  Video = 'video',
-  Text = 'text',
-  Audio = 'audio',
-  Image = 'image',
-  InteractiveContent = 'interactive_content'
-}
-
-export type ConsumedResource = {
-  __typename?: 'ConsumedResource';
-  openedAt?: Maybe<Scalars['Date']>;
-  lastOpenedAt?: Maybe<Scalars['Date']>;
-  consumedAt?: Maybe<Scalars['Date']>;
-};
-
-
-export type LearningMaterialTag = {
-  __typename?: 'LearningMaterialTag';
-  name: Scalars['String'];
-};
-
-export type LearningMaterialCoveredSubTopicsOptions = {
-  pagination?: Maybe<PaginationOptions>;
-};
-
-export type LearningMaterialCoveredSubTopicsResults = {
-  __typename?: 'LearningMaterialCoveredSubTopicsResults';
-  items: Array<Topic>;
-};
-
-export type Topic = {
-  __typename?: 'Topic';
+export type DeleteLearningPathResult = {
+  __typename?: 'DeleteLearningPathResult';
   _id: Scalars['String'];
-  name: Scalars['String'];
-  key: Scalars['String'];
-  context?: Maybe<Scalars['String']>;
-  isDisambiguation?: Maybe<Scalars['Boolean']>;
-  contextTopic?: Maybe<Topic>;
-  otherContextsTopics?: Maybe<Array<Topic>>;
-  disambiguationTopic?: Maybe<Topic>;
-  contextualisedTopics?: Maybe<Array<Topic>>;
-  description?: Maybe<Scalars['String']>;
-  parentTopic?: Maybe<Topic>;
-  partOfTopics?: Maybe<Array<TopicIsPartOfTopic>>;
-  subTopics?: Maybe<Array<TopicIsSubTopicOfTopic>>;
-  subTopicsTotalCount?: Maybe<Scalars['Int']>;
-  learningMaterials?: Maybe<TopicLearningMaterialsResults>;
-  learningMaterialsTotalCount?: Maybe<Scalars['Int']>;
-  prerequisites?: Maybe<Array<TopicHasPrerequisiteTopic>>;
-  followUps?: Maybe<Array<TopicHasPrerequisiteTopic>>;
-  createdBy?: Maybe<User>;
-  createdAt: Scalars['Date'];
+  success: Scalars['Boolean'];
 };
 
-
-export type TopicLearningMaterialsArgs = {
-  options: TopicLearningMaterialsOptions;
-};
-
-export type TopicLearningMaterialsOptions = {
-  sortingType: TopicLearningMaterialsSortingType;
-  query?: Maybe<Scalars['String']>;
-  filter: TopicLearningMaterialsFilterOptions;
-};
-
-export enum TopicLearningMaterialsSortingType {
-  Recommended = 'recommended',
-  Rating = 'rating',
-  Newest = 'newest'
-}
-
-export type TopicLearningMaterialsFilterOptions = {
-  resourceTypeIn?: Maybe<Array<ResourceType>>;
-  completedByUser: Scalars['Boolean'];
-  learningMaterialTypeIn?: Maybe<Array<LearningMaterialType>>;
-};
-
-export enum LearningMaterialType {
-  Resource = 'Resource',
-  LearningPath = 'LearningPath'
-}
-
-export type TopicLearningMaterialsResults = {
-  __typename?: 'TopicLearningMaterialsResults';
-  items: Array<LearningMaterial>;
-};
-
-export type LearningMaterial = {
+export type DeleteResourceResponse = {
+  __typename?: 'DeleteResourceResponse';
   _id: Scalars['String'];
-  name: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-  tags?: Maybe<Array<LearningMaterialTag>>;
-  rating?: Maybe<Scalars['Float']>;
-  coveredSubTopics?: Maybe<LearningMaterialCoveredSubTopicsResults>;
-  coveredSubTopicsTree?: Maybe<Array<Topic>>;
-  showedIn?: Maybe<Array<Topic>>;
-  prerequisites?: Maybe<Array<LearningMaterialHasPrerequisiteTopic>>;
-  createdBy?: Maybe<User>;
-  createdAt: Scalars['Date'];
+  success: Scalars['Boolean'];
 };
 
-
-export type LearningMaterialCoveredSubTopicsArgs = {
-  options: LearningMaterialCoveredSubTopicsOptions;
+export type DeleteTopicResponse = {
+  __typename?: 'DeleteTopicResponse';
+  _id: Scalars['String'];
+  success: Scalars['Boolean'];
 };
 
-export type TopicIsPartOfTopic = {
-  __typename?: 'TopicIsPartOfTopic';
-  index: Scalars['Float'];
-  createdAt: Scalars['Date'];
-  createdByUserId?: Maybe<Scalars['String']>;
-  subTopic: Topic;
+export type DependsOnGoalItem = {
+  __typename?: 'DependsOnGoalItem';
+  learningGoal: LearningGoal;
+  parentLearningGoalId: Scalars['String'];
+};
+
+export type DetachLearningGoalRequiresSubGoalResult = {
+  __typename?: 'DetachLearningGoalRequiresSubGoalResult';
+  learningGoal: LearningGoal;
+  subGoal: SubGoal;
+};
+
+export type DetachTopicIsPartOfTopicResult = {
+  __typename?: 'DetachTopicIsPartOfTopicResult';
   partOfTopic: Topic;
-};
-
-export type TopicIsSubTopicOfTopic = {
-  __typename?: 'TopicIsSubTopicOfTopic';
-  index: Scalars['Float'];
-  createdAt: Scalars['Date'];
-  createdByUserId?: Maybe<Scalars['String']>;
-  relationshipType: SubTopicRelationshipType;
   subTopic: Topic;
+};
+
+export type DetachTopicIsSubTopicOfTopicResult = {
+  __typename?: 'DetachTopicIsSubTopicOfTopicResult';
   parentTopic: Topic;
+  subTopic: Topic;
 };
 
-export enum SubTopicRelationshipType {
-  IsSubtopicOf = 'IS_SUBTOPIC_OF',
-  IsPartOf = 'IS_PART_OF'
-}
-
-export type LearningMaterialHasPrerequisiteTopic = {
-  __typename?: 'LearningMaterialHasPrerequisiteTopic';
-  strength: Scalars['Float'];
-  createdByUserId: Scalars['String'];
-  createdAt: Scalars['Date'];
-  topic: Topic;
-  learningMaterial: LearningMaterial;
-};
-
-export type TopicHasPrerequisiteTopic = {
-  __typename?: 'TopicHasPrerequisiteTopic';
-  followUpTopic: Topic;
-  strength: Scalars['Float'];
-  prerequisiteTopic: Topic;
-};
-
-export type LearningPathStarted = {
-  __typename?: 'LearningPathStarted';
-  startedAt: Scalars['Date'];
-  completedAt?: Maybe<Scalars['Date']>;
-};
-
-export type LearningPathStartedByOptions = {
-  pagination?: Maybe<PaginationOptions>;
-};
-
-export type LearningPathStartedByResults = {
-  __typename?: 'LearningPathStartedByResults';
-  items: Array<LearningPathStartedByItem>;
-  count: Scalars['Int'];
-};
-
-export type LearningPathStartedByItem = {
-  __typename?: 'LearningPathStartedByItem';
-  user: User;
-  startedAt: Scalars['Date'];
-  completedAt?: Maybe<Scalars['Date']>;
-};
-
-export type UserConsumedResourceItem = {
-  __typename?: 'UserConsumedResourceItem';
-  resource: Resource;
-  openedAt?: Maybe<Scalars['Date']>;
-  lastOpenedAt?: Maybe<Scalars['Date']>;
-  consumedAt?: Maybe<Scalars['Date']>;
-};
-
-export type UserConsumedResourcesFilter = {
-  completed?: Maybe<Scalars['Boolean']>;
-};
-
-export enum UserConsumedResourcesSortingType {
-  LastOpened = 'lastOpened'
-}
-
-export type LoginResponse = {
-  __typename?: 'LoginResponse';
-  currentUser: CurrentUser;
-  jwt: Scalars['String'];
-  redirectUrl?: Maybe<Scalars['String']>;
-};
-
-export type Query = {
-  __typename?: 'Query';
-  currentUser?: Maybe<CurrentUser>;
-  getUser: User;
-  getHomePageData: GetHomePageDataResults;
-  getTopLevelTopics: GetTopLevelTopicsResults;
-  globalSearch: GlobalSearchResults;
-  getTopicById: Topic;
-  getTopicByKey: Topic;
-  searchTopics: SearchTopicsResult;
-  searchSubTopics: SearchTopicsResult;
-  autocompleteTopicName: SearchTopicsResult;
-  checkTopicKeyAvailability: CheckTopicKeyAvailabilityResult;
-  getTopicValidContexts: GetTopicValidContextsResult;
-  getTopicValidContextsFromSameName: GetTopicValidContextsFromSameName;
-  getTopicValidContextsFromDisambiguation: GetTopicValidContextsFromDisambiguation;
-  getArticleByKey: Article;
-  listArticles: ListArticlesResult;
-  searchLearningMaterialTags: Array<LearningMaterialTagSearchResult>;
-  searchResources: SearchResourcesResult;
-  getResourceById: Resource;
-  getResourceByKey: Resource;
-  analyzeResourceUrl: AnalyzeResourceUrlResult;
-  getLearningPathById: LearningPath;
-  getLearningPathByKey: LearningPath;
-  searchLearningGoals: SearchLearningGoalsResult;
-  getLearningGoalByKey: LearningGoal;
-  checkLearningGoalKeyAvailability: CheckLearningGoalKeyAvailabilityResult;
-};
-
-
-export type QueryGetUserArgs = {
-  key: Scalars['String'];
-};
-
-
-export type QueryGlobalSearchArgs = {
-  query: Scalars['String'];
-  options?: Maybe<GlobalSearchOptions>;
-};
-
-
-export type QueryGetTopicByIdArgs = {
-  topicId: Scalars['String'];
-};
-
-
-export type QueryGetTopicByKeyArgs = {
-  topicKey: Scalars['String'];
-};
-
-
-export type QuerySearchTopicsArgs = {
-  options: SearchTopicsOptions;
-};
-
-
-export type QuerySearchSubTopicsArgs = {
-  topicId: Scalars['String'];
-  options: SearchTopicsOptions;
-};
-
-
-export type QueryAutocompleteTopicNameArgs = {
-  partialName: Scalars['String'];
-};
-
-
-export type QueryCheckTopicKeyAvailabilityArgs = {
-  key: Scalars['String'];
-};
-
-
-export type QueryGetTopicValidContextsArgs = {
-  parentTopicId: Scalars['String'];
-  topicId: Scalars['String'];
-};
-
-
-export type QueryGetTopicValidContextsFromSameNameArgs = {
-  parentTopicId: Scalars['String'];
-  existingSameNameTopicId: Scalars['String'];
-};
-
-
-export type QueryGetTopicValidContextsFromDisambiguationArgs = {
-  parentTopicId: Scalars['String'];
-  disambiguationTopicId: Scalars['String'];
-};
-
-
-export type QueryGetArticleByKeyArgs = {
-  key: Scalars['String'];
-};
-
-
-export type QueryListArticlesArgs = {
-  options: ListArticlesOptions;
-};
-
-
-export type QuerySearchLearningMaterialTagsArgs = {
-  options: SearchLearningMaterialTagsOptions;
-};
-
-
-export type QuerySearchResourcesArgs = {
-  query: Scalars['String'];
-  options: SearchResourcesOptions;
-};
-
-
-export type QueryGetResourceByIdArgs = {
-  resourceId: Scalars['String'];
-};
-
-
-export type QueryGetResourceByKeyArgs = {
-  resourceKey: Scalars['String'];
-};
-
-
-export type QueryAnalyzeResourceUrlArgs = {
-  url: Scalars['String'];
-};
-
-
-export type QueryGetLearningPathByIdArgs = {
-  learningPathId: Scalars['String'];
-};
-
-
-export type QueryGetLearningPathByKeyArgs = {
-  learningPathKey: Scalars['String'];
-};
-
-
-export type QuerySearchLearningGoalsArgs = {
-  options: SearchLearningGoalsOptions;
-};
-
-
-export type QueryGetLearningGoalByKeyArgs = {
-  key: Scalars['String'];
-};
-
-
-export type QueryCheckLearningGoalKeyAvailabilityArgs = {
-  key: Scalars['String'];
+export type DiscourseSso = {
+  sig: Scalars['String'];
+  sso: Scalars['String'];
 };
 
 export type GetHomePageDataResults = {
@@ -573,38 +264,8 @@ export type GetHomePageDataResults = {
   recommendedLearningPaths: Array<LearningPath>;
 };
 
-export type GetTopLevelTopicsResults = {
-  __typename?: 'GetTopLevelTopicsResults';
-  items: Array<Topic>;
-};
-
-export type GlobalSearchOptions = {
-  pagination?: Maybe<PaginationOptions>;
-};
-
-export type GlobalSearchResults = {
-  __typename?: 'GlobalSearchResults';
-  results: Array<SearchResult>;
-};
-
-export type SearchTopicsOptions = {
-  query: Scalars['String'];
-  pagination: PaginationOptions;
-};
-
-export type SearchTopicsResult = {
-  __typename?: 'SearchTopicsResult';
-  items: Array<Topic>;
-};
-
-export type CheckTopicKeyAvailabilityResult = {
-  __typename?: 'CheckTopicKeyAvailabilityResult';
-  available: Scalars['Boolean'];
-  existingTopic?: Maybe<Topic>;
-};
-
-export type GetTopicValidContextsResult = {
-  __typename?: 'GetTopicValidContextsResult';
+export type GetTopicValidContextsFromDisambiguation = {
+  __typename?: 'GetTopicValidContextsFromDisambiguation';
   validContexts?: Maybe<Array<Topic>>;
 };
 
@@ -614,14 +275,184 @@ export type GetTopicValidContextsFromSameName = {
   validSameNameTopicContexts?: Maybe<Array<Topic>>;
 };
 
-export type GetTopicValidContextsFromDisambiguation = {
-  __typename?: 'GetTopicValidContextsFromDisambiguation';
+export type GetTopicValidContextsResult = {
+  __typename?: 'GetTopicValidContextsResult';
   validContexts?: Maybe<Array<Topic>>;
 };
 
-export type SearchLearningMaterialTagsOptions = {
-  query: Scalars['String'];
-  pagination: PaginationOptions;
+export type GetTopLevelTopicsResults = {
+  __typename?: 'GetTopLevelTopicsResults';
+  items: Array<Topic>;
+};
+
+export type GlobalSearchOptions = {
+  pagination?: InputMaybe<PaginationOptions>;
+};
+
+export type GlobalSearchResults = {
+  __typename?: 'GlobalSearchResults';
+  results: Array<SearchResult>;
+};
+
+export type KnownTopic = {
+  __typename?: 'KnownTopic';
+  level: Scalars['Float'];
+};
+
+export type LearningGoal = {
+  __typename?: 'LearningGoal';
+  _id: Scalars['String'];
+  createdBy?: Maybe<User>;
+  dependantLearningGoals?: Maybe<Array<DependsOnGoalItem>>;
+  dependsOnLearningGoals?: Maybe<Array<DependsOnGoalItem>>;
+  description?: Maybe<Scalars['String']>;
+  hidden: Scalars['Boolean'];
+  key: Scalars['String'];
+  name: Scalars['String'];
+  progress?: Maybe<LearningGoalProgress>;
+  publishedAt?: Maybe<Scalars['Date']>;
+  rating?: Maybe<Scalars['Float']>;
+  relevantLearningMaterials?: Maybe<LearningGoalRelevantLearningMaterialsResults>;
+  requiredInGoals?: Maybe<Array<RequiredInGoalItem>>;
+  requiredSubGoals?: Maybe<Array<SubGoalItem>>;
+  showedIn?: Maybe<Array<Topic>>;
+  size?: Maybe<Scalars['Float']>;
+  started?: Maybe<LearningGoalStarted>;
+  startedBy?: Maybe<LearningGoalStartedByResults>;
+  type: LearningGoalType;
+};
+
+
+export type LearningGoalDependantLearningGoalsArgs = {
+  parentLearningGoalIdIn?: InputMaybe<Array<Scalars['String']>>;
+};
+
+
+export type LearningGoalDependsOnLearningGoalsArgs = {
+  parentLearningGoalIdIn?: InputMaybe<Array<Scalars['String']>>;
+};
+
+
+export type LearningGoalRelevantLearningMaterialsArgs = {
+  options: LearningGoalRelevantLearningMaterialsOptions;
+};
+
+
+export type LearningGoalStartedByArgs = {
+  options: LearningGoalStartedByOptions;
+};
+
+export type LearningGoalIndexedResult = {
+  __typename?: 'LearningGoalIndexedResult';
+  learningGoal: LearningGoal;
+};
+
+export type LearningGoalProgress = {
+  __typename?: 'LearningGoalProgress';
+  level: Scalars['Float'];
+};
+
+export type LearningGoalPublishedResult = {
+  __typename?: 'LearningGoalPublishedResult';
+  learningGoal: LearningGoal;
+};
+
+export type LearningGoalRelevantLearningMaterialsItem = {
+  __typename?: 'LearningGoalRelevantLearningMaterialsItem';
+  coverage?: Maybe<Scalars['Float']>;
+  learningMaterial: LearningMaterial;
+};
+
+export type LearningGoalRelevantLearningMaterialsOptions = {
+  pagination?: InputMaybe<PaginationOptions>;
+};
+
+export type LearningGoalRelevantLearningMaterialsResults = {
+  __typename?: 'LearningGoalRelevantLearningMaterialsResults';
+  count: Scalars['Int'];
+  items: Array<LearningGoalRelevantLearningMaterialsItem>;
+};
+
+export type LearningGoalStarted = {
+  __typename?: 'LearningGoalStarted';
+  startedAt: Scalars['Date'];
+};
+
+export type LearningGoalStartedByItem = {
+  __typename?: 'LearningGoalStartedByItem';
+  startedAt: Scalars['Date'];
+  user: User;
+};
+
+export type LearningGoalStartedByOptions = {
+  pagination?: InputMaybe<PaginationOptions>;
+};
+
+export type LearningGoalStartedByResults = {
+  __typename?: 'LearningGoalStartedByResults';
+  count: Scalars['Int'];
+  items: Array<LearningGoalStartedByItem>;
+};
+
+export type LearningGoalStartedResult = {
+  __typename?: 'LearningGoalStartedResult';
+  currentUser: CurrentUser;
+  learningGoal: LearningGoal;
+};
+
+export enum LearningGoalType {
+  Roadmap = 'Roadmap',
+  SubGoal = 'SubGoal'
+}
+
+export type LearningMaterial = {
+  _id: Scalars['String'];
+  coveredSubTopics?: Maybe<LearningMaterialCoveredSubTopicsResults>;
+  coveredSubTopicsTree?: Maybe<Array<Topic>>;
+  createdAt: Scalars['Date'];
+  createdBy?: Maybe<User>;
+  description?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  prerequisites?: Maybe<Array<LearningMaterialHasPrerequisiteTopic>>;
+  rating?: Maybe<Scalars['Float']>;
+  showedIn?: Maybe<Array<Topic>>;
+  tags?: Maybe<Array<LearningMaterialTag>>;
+};
+
+
+export type LearningMaterialCoveredSubTopicsArgs = {
+  options: LearningMaterialCoveredSubTopicsOptions;
+};
+
+export type LearningMaterialCoveredSubTopicsOptions = {
+  pagination?: InputMaybe<PaginationOptions>;
+};
+
+export type LearningMaterialCoveredSubTopicsResults = {
+  __typename?: 'LearningMaterialCoveredSubTopicsResults';
+  items: Array<Topic>;
+};
+
+export type LearningMaterialCoversTopic = {
+  __typename?: 'LearningMaterialCoversTopic';
+  createdAt: Scalars['Date'];
+  createdByUserId?: Maybe<Scalars['String']>;
+  learningMaterial: LearningMaterial;
+  topic: Topic;
+};
+
+export type LearningMaterialHasPrerequisiteTopic = {
+  __typename?: 'LearningMaterialHasPrerequisiteTopic';
+  createdAt: Scalars['Date'];
+  createdByUserId: Scalars['String'];
+  learningMaterial: LearningMaterial;
+  strength: Scalars['Float'];
+  topic: Topic;
+};
+
+export type LearningMaterialTag = {
+  __typename?: 'LearningMaterialTag';
+  name: Scalars['String'];
 };
 
 export type LearningMaterialTagSearchResult = {
@@ -630,214 +461,418 @@ export type LearningMaterialTagSearchResult = {
   usageCount?: Maybe<Scalars['Int']>;
 };
 
-export type SearchResourcesOptions = {
-  pagination?: Maybe<PaginationOptions>;
-};
+export enum LearningMaterialType {
+  LearningPath = 'LearningPath',
+  Resource = 'Resource'
+}
 
-export type SearchResourcesResult = {
-  __typename?: 'SearchResourcesResult';
-  items: Array<Resource>;
-};
-
-export type AnalyzeResourceUrlResult = {
-  __typename?: 'AnalyzeResourceUrlResult';
-  resourceData?: Maybe<ResourceData>;
-};
-
-export type SearchLearningGoalsOptions = {
-  query?: Maybe<Scalars['String']>;
-  pagination: PaginationOptions;
-};
-
-export type SearchLearningGoalsResult = {
-  __typename?: 'SearchLearningGoalsResult';
-  items: Array<LearningGoal>;
-};
-
-export type LearningGoal = {
-  __typename?: 'LearningGoal';
+export type LearningPath = LearningMaterial & {
+  __typename?: 'LearningPath';
   _id: Scalars['String'];
-  key: Scalars['String'];
-  type: LearningGoalType;
-  name: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-  publishedAt?: Maybe<Scalars['Date']>;
-  hidden: Scalars['Boolean'];
-  rating?: Maybe<Scalars['Float']>;
-  progress?: Maybe<LearningGoalProgress>;
+  complementaryResources?: Maybe<Array<Resource>>;
+  coveredSubTopics?: Maybe<LearningMaterialCoveredSubTopicsResults>;
+  coveredSubTopicsTree?: Maybe<Array<Topic>>;
+  createdAt: Scalars['Date'];
   createdBy?: Maybe<User>;
+  description?: Maybe<Scalars['String']>;
+  durationSeconds?: Maybe<Scalars['Int']>;
+  key: Scalars['String'];
+  name: Scalars['String'];
+  prerequisites?: Maybe<Array<LearningMaterialHasPrerequisiteTopic>>;
+  public: Scalars['Boolean'];
+  rating?: Maybe<Scalars['Float']>;
+  resourceItems?: Maybe<Array<LearningPathResourceItem>>;
   showedIn?: Maybe<Array<Topic>>;
-  size?: Maybe<Scalars['Float']>;
-  requiredInGoals?: Maybe<Array<RequiredInGoalItem>>;
-  requiredSubGoals?: Maybe<Array<SubGoalItem>>;
-  dependsOnLearningGoals?: Maybe<Array<DependsOnGoalItem>>;
-  dependantLearningGoals?: Maybe<Array<DependsOnGoalItem>>;
-  started?: Maybe<LearningGoalStarted>;
-  startedBy?: Maybe<LearningGoalStartedByResults>;
-  relevantLearningMaterials?: Maybe<LearningGoalRelevantLearningMaterialsResults>;
+  started?: Maybe<LearningPathStarted>;
+  startedBy?: Maybe<LearningPathStartedByResults>;
+  tags?: Maybe<Array<LearningMaterialTag>>;
 };
 
 
-export type LearningGoalDependsOnLearningGoalsArgs = {
-  parentLearningGoalIdIn?: Maybe<Array<Scalars['String']>>;
+export type LearningPathCoveredSubTopicsArgs = {
+  options: LearningMaterialCoveredSubTopicsOptions;
 };
 
 
-export type LearningGoalDependantLearningGoalsArgs = {
-  parentLearningGoalIdIn?: Maybe<Array<Scalars['String']>>;
+export type LearningPathStartedByArgs = {
+  options: LearningPathStartedByOptions;
 };
 
-
-export type LearningGoalStartedByArgs = {
-  options: LearningGoalStartedByOptions;
+export type LearningPathCompletedResult = {
+  __typename?: 'LearningPathCompletedResult';
+  learningPath: LearningPath;
+  user: CurrentUser;
 };
 
-
-export type LearningGoalRelevantLearningMaterialsArgs = {
-  options: LearningGoalRelevantLearningMaterialsOptions;
+export type LearningPathResourceItem = {
+  __typename?: 'LearningPathResourceItem';
+  description?: Maybe<Scalars['String']>;
+  learningPathId: Scalars['String'];
+  resource: Resource;
 };
 
-export type CheckLearningGoalKeyAvailabilityResult = {
-  __typename?: 'CheckLearningGoalKeyAvailabilityResult';
-  available: Scalars['Boolean'];
-  existingLearningGoal?: Maybe<LearningGoal>;
+export type LearningPathStarted = {
+  __typename?: 'LearningPathStarted';
+  completedAt?: Maybe<Scalars['Date']>;
+  startedAt: Scalars['Date'];
 };
 
-export type RegisterPayload = {
-  key: Scalars['String'];
-  displayName: Scalars['String'];
-  email: Scalars['String'];
-  password: Scalars['String'];
+export type LearningPathStartedByItem = {
+  __typename?: 'LearningPathStartedByItem';
+  completedAt?: Maybe<Scalars['Date']>;
+  startedAt: Scalars['Date'];
+  user: User;
 };
 
-export type RegisterGooglePayload = {
-  key: Scalars['String'];
-  displayName: Scalars['String'];
-  idToken: Scalars['String'];
+export type LearningPathStartedByOptions = {
+  pagination?: InputMaybe<PaginationOptions>;
 };
 
-export type AdminUpdateUserPayload = {
-  displayName?: Maybe<Scalars['String']>;
-  bio?: Maybe<Scalars['String']>;
-  profilePictureUrl?: Maybe<Scalars['String']>;
-  key?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
-  role?: Maybe<UserRole>;
-  active?: Maybe<Scalars['Boolean']>;
+export type LearningPathStartedByResults = {
+  __typename?: 'LearningPathStartedByResults';
+  count: Scalars['Int'];
+  items: Array<LearningPathStartedByItem>;
 };
 
-export type DiscourseSso = {
-  sig: Scalars['String'];
-  sso: Scalars['String'];
+export type LearningPathStartedItem = {
+  __typename?: 'LearningPathStartedItem';
+  completedAt?: Maybe<Scalars['Date']>;
+  learningPath: LearningPath;
+  startedAt: Scalars['Date'];
 };
 
-export type VerifyEmailResponse = {
-  __typename?: 'VerifyEmailResponse';
-  email: Scalars['String'];
+export type LearningPathStartedResult = {
+  __typename?: 'LearningPathStartedResult';
+  learningPath: LearningPath;
+  user: CurrentUser;
 };
 
-export type TriggerResetPasswordResponse = {
-  __typename?: 'TriggerResetPasswordResponse';
-  errorMessage?: Maybe<Scalars['String']>;
-  success: Scalars['Boolean'];
+export type ListArticlesFilter = {
+  contentType?: InputMaybe<ArticleContentType>;
 };
 
-export type ResetPasswordPayload = {
-  token: Scalars['String'];
-  password: Scalars['String'];
+export type ListArticlesOptions = {
+  filter?: InputMaybe<ListArticlesFilter>;
+  pagination?: InputMaybe<PaginationOptions>;
 };
 
-export type ResetPasswordResponse = {
-  __typename?: 'ResetPasswordResponse';
+export type ListArticlesResult = {
+  __typename?: 'ListArticlesResult';
+  items: Array<Article>;
+};
+
+export type LoginResponse = {
+  __typename?: 'LoginResponse';
   currentUser: CurrentUser;
-};
-
-export type UpdateCurrentUserPayload = {
-  displayName?: Maybe<Scalars['String']>;
-  profilePictureUrl?: Maybe<Scalars['String']>;
-  bio?: Maybe<Scalars['String']>;
+  jwt: Scalars['String'];
+  redirectUrl?: Maybe<Scalars['String']>;
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
+  addComplementaryResourceToLearningPath: ComplementaryResourceUpdatedResult;
+  addLearningMaterialHasPrerequisiteTopic: LearningMaterial;
+  addSubResource: SubResourceCreatedResult;
+  addSubResourceToSeries: SubResourceSeriesCreatedResult;
+  addSubTopic: Topic;
+  addTagsToLearningMaterial: LearningMaterial;
+  addTopicHasPrerequisiteTopic: AddTopicHasPrerequisiteTopicResult;
+  adminUpdateUser: User;
+  attachLearningGoalDependency: UpdateLearningGoalDependenciesResult;
+  attachLearningGoalRequiresSubGoal: AttachLearningGoalRequiresSubGoalResult;
+  attachLearningMaterialCoversTopics: LearningMaterial;
+  attachTopicIsPartOfTopic: TopicIsPartOfTopic;
+  attachTopicIsSubTopicOfTopic: TopicIsSubTopicOfTopic;
+  completeLearningPath: LearningPathCompletedResult;
+  createArticle: Article;
+  createDisambiguationFromTopic: Topic;
+  createLearningGoal: LearningGoal;
+  createLearningPath: LearningPath;
+  createResource: Resource;
+  createSubResourceSeries: SubResourceSeriesCreatedResult;
+  createTopic: Topic;
+  deleteArticle: DeleteArticleResponse;
+  deleteLearningGoal: DeleteLearningGoalMutationResult;
+  deleteLearningPath: DeleteLearningPathResult;
+  deleteResource: DeleteResourceResponse;
+  deleteTopic: DeleteTopicResponse;
+  detachLearningGoalDependency: UpdateLearningGoalDependenciesResult;
+  detachLearningGoalRequiresSubGoal: DetachLearningGoalRequiresSubGoalResult;
+  detachLearningMaterialCoversTopics: LearningMaterial;
+  detachTopicIsPartOfTopic: DetachTopicIsPartOfTopicResult;
+  detachTopicIsSubTopicOfTopic: DetachTopicIsSubTopicOfTopicResult;
+  hideLearningGoalFromTopic: ShowLearningGoalInTopicResult;
+  hideLearningMaterialFromTopic: LearningMaterial;
+  indexLearningGoal: LearningGoalIndexedResult;
   login: LoginResponse;
   loginGoogle: LoginResponse;
+  publishLearningGoal: LearningGoalPublishedResult;
+  rateLearningGoal: LearningGoal;
+  rateLearningMaterial: LearningMaterial;
+  recommendLearningMaterial: LearningMaterial;
   register: CurrentUser;
   registerGoogle: CurrentUser;
-  verifyEmailAddress: VerifyEmailResponse;
-  triggerResetPassword: TriggerResetPasswordResponse;
+  removeComplementaryResourceFromLearningPath: ComplementaryResourceUpdatedResult;
+  removeLearningMaterialHasPrerequisiteTopic: LearningMaterial;
+  removeTagsFromLearningMaterial: LearningMaterial;
+  removeTopicHasPrerequisiteTopic: RemoveTopicHasPrerequisiteTopicResult;
   resetPassword: ResetPasswordResponse;
-  adminUpdateUser: User;
-  updateCurrentUser: CurrentUser;
-  createTopic: Topic;
-  createDisambiguationFromTopic: Topic;
-  addSubTopic: Topic;
-  updateTopic: Topic;
-  deleteTopic: DeleteTopicResponse;
+  setResourcesConsumed: Array<Resource>;
   setTopicsKnown: Array<Topic>;
   setTopicsUnknown: Array<Topic>;
-  updateTopicContext: Topic;
-  createArticle: Article;
-  updateArticle: Article;
-  deleteArticle: DeleteArticleResponse;
-  addTagsToLearningMaterial: LearningMaterial;
-  removeTagsFromLearningMaterial: LearningMaterial;
-  recommendLearningMaterial: LearningMaterial;
-  showLearningMaterialInTopic: LearningMaterial;
-  hideLearningMaterialFromTopic: LearningMaterial;
-  rateLearningMaterial: LearningMaterial;
-  createResource: Resource;
-  updateResource: Resource;
-  deleteResource: DeleteResourceResponse;
-  setResourcesConsumed: Array<Resource>;
-  addSubResource: SubResourceCreatedResult;
-  createSubResourceSeries: SubResourceSeriesCreatedResult;
-  addSubResourceToSeries: SubResourceSeriesCreatedResult;
-  createLearningPath: LearningPath;
-  updateLearningPath: LearningPath;
-  deleteLearningPath: DeleteLearningPathResult;
-  addComplementaryResourceToLearningPath: ComplementaryResourceUpdatedResult;
-  removeComplementaryResourceFromLearningPath: ComplementaryResourceUpdatedResult;
-  startLearningPath: LearningPathStartedResult;
-  completeLearningPath: LearningPathCompletedResult;
-  createLearningGoal: LearningGoal;
-  updateLearningGoal: LearningGoal;
-  deleteLearningGoal: DeleteLearningGoalMutationResult;
-  attachLearningGoalRequiresSubGoal: AttachLearningGoalRequiresSubGoalResult;
-  detachLearningGoalRequiresSubGoal: DetachLearningGoalRequiresSubGoalResult;
-  attachLearningGoalDependency: UpdateLearningGoalDependenciesResult;
-  detachLearningGoalDependency: UpdateLearningGoalDependenciesResult;
-  startLearningGoal: LearningGoalStartedResult;
-  publishLearningGoal: LearningGoalPublishedResult;
-  indexLearningGoal: LearningGoalIndexedResult;
   showLearningGoalInTopic: ShowLearningGoalInTopicResult;
-  hideLearningGoalFromTopic: ShowLearningGoalInTopicResult;
-  rateLearningGoal: LearningGoal;
-  addTopicHasPrerequisiteTopic: AddTopicHasPrerequisiteTopicResult;
-  removeTopicHasPrerequisiteTopic: RemoveTopicHasPrerequisiteTopicResult;
-  attachTopicIsSubTopicOfTopic: TopicIsSubTopicOfTopic;
-  updateTopicIsSubTopicOfTopic: TopicIsSubTopicOfTopic;
-  detachTopicIsSubTopicOfTopic: DetachTopicIsSubTopicOfTopicResult;
-  attachTopicIsPartOfTopic: TopicIsPartOfTopic;
+  showLearningMaterialInTopic: LearningMaterial;
+  startLearningGoal: LearningGoalStartedResult;
+  startLearningPath: LearningPathStartedResult;
+  triggerResetPassword: TriggerResetPasswordResponse;
+  updateArticle: Article;
+  updateCurrentUser: CurrentUser;
+  updateLearningGoal: LearningGoal;
+  updateLearningPath: LearningPath;
+  updateResource: Resource;
+  updateTopic: Topic;
+  updateTopicContext: Topic;
   updateTopicIsPartOfTopic: TopicIsPartOfTopic;
-  detachTopicIsPartOfTopic: DetachTopicIsPartOfTopicResult;
-  attachLearningMaterialCoversTopics: LearningMaterial;
-  detachLearningMaterialCoversTopics: LearningMaterial;
-  addLearningMaterialHasPrerequisiteTopic: LearningMaterial;
-  removeLearningMaterialHasPrerequisiteTopic: LearningMaterial;
+  updateTopicIsSubTopicOfTopic: TopicIsSubTopicOfTopic;
+  verifyEmailAddress: VerifyEmailResponse;
+};
+
+
+export type MutationAddComplementaryResourceToLearningPathArgs = {
+  learningPathId: Scalars['String'];
+  resourceId: Scalars['String'];
+};
+
+
+export type MutationAddLearningMaterialHasPrerequisiteTopicArgs = {
+  learningMaterialId: Scalars['String'];
+  prerequisiteTopicId: Scalars['String'];
+  strength?: InputMaybe<Scalars['Float']>;
+};
+
+
+export type MutationAddSubResourceArgs = {
+  parentResourceId: Scalars['String'];
+  subResourceId: Scalars['String'];
+};
+
+
+export type MutationAddSubResourceToSeriesArgs = {
+  parentResourceId: Scalars['String'];
+  previousResourceId: Scalars['String'];
+  subResourceId: Scalars['String'];
+};
+
+
+export type MutationAddSubTopicArgs = {
+  contextOptions?: InputMaybe<CreateTopicContextOptions>;
+  parentTopicId: Scalars['String'];
+  payload: CreateTopicPayload;
+};
+
+
+export type MutationAddTagsToLearningMaterialArgs = {
+  learningMaterialId: Scalars['String'];
+  tags: Array<Scalars['String']>;
+};
+
+
+export type MutationAddTopicHasPrerequisiteTopicArgs = {
+  prerequisiteTopicId: Scalars['String'];
+  strength?: InputMaybe<Scalars['Float']>;
+  topicId: Scalars['String'];
+};
+
+
+export type MutationAdminUpdateUserArgs = {
+  id: Scalars['String'];
+  payload: AdminUpdateUserPayload;
+};
+
+
+export type MutationAttachLearningGoalDependencyArgs = {
+  learningGoalDependencyId: Scalars['String'];
+  learningGoalId: Scalars['String'];
+  parentLearningGoalId: Scalars['String'];
+};
+
+
+export type MutationAttachLearningGoalRequiresSubGoalArgs = {
+  learningGoalId: Scalars['String'];
+  payload: AttachLearningGoalRequiresSubGoalPayload;
+  subGoalId: Scalars['String'];
+};
+
+
+export type MutationAttachLearningMaterialCoversTopicsArgs = {
+  learningMaterialId: Scalars['String'];
+  topicsIds: Array<Scalars['String']>;
+};
+
+
+export type MutationAttachTopicIsPartOfTopicArgs = {
+  partOfTopicId: Scalars['String'];
+  payload: AttachTopicIsPartOfTopicPayload;
+  subTopicId: Scalars['String'];
+};
+
+
+export type MutationAttachTopicIsSubTopicOfTopicArgs = {
+  parentTopicId: Scalars['String'];
+  payload: AttachTopicIsSubTopicOfTopicPayload;
+  subTopicId: Scalars['String'];
+};
+
+
+export type MutationCompleteLearningPathArgs = {
+  completed: Scalars['Boolean'];
+  learningPathId: Scalars['String'];
+};
+
+
+export type MutationCreateArticleArgs = {
+  payload: CreateArticlePayload;
+};
+
+
+export type MutationCreateDisambiguationFromTopicArgs = {
+  existingTopicContextTopicId: Scalars['String'];
+  existingTopicId: Scalars['String'];
+};
+
+
+export type MutationCreateLearningGoalArgs = {
+  options?: InputMaybe<CreateLearningGoalOptions>;
+  payload: CreateLearningGoalPayload;
+};
+
+
+export type MutationCreateLearningPathArgs = {
+  payload: CreateLearningPathPayload;
+};
+
+
+export type MutationCreateResourceArgs = {
+  payload: CreateResourcePayload;
+};
+
+
+export type MutationCreateSubResourceSeriesArgs = {
+  parentResourceId: Scalars['String'];
+  subResourceId: Scalars['String'];
+};
+
+
+export type MutationCreateTopicArgs = {
+  payload: CreateTopicPayload;
+};
+
+
+export type MutationDeleteArticleArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDeleteLearningGoalArgs = {
+  _id: Scalars['String'];
+};
+
+
+export type MutationDeleteLearningPathArgs = {
+  learningPathId: Scalars['String'];
+};
+
+
+export type MutationDeleteResourceArgs = {
+  resourceId: Scalars['String'];
+};
+
+
+export type MutationDeleteTopicArgs = {
+  topicId: Scalars['String'];
+};
+
+
+export type MutationDetachLearningGoalDependencyArgs = {
+  learningGoalDependencyId: Scalars['String'];
+  learningGoalId: Scalars['String'];
+  parentLearningGoalId: Scalars['String'];
+};
+
+
+export type MutationDetachLearningGoalRequiresSubGoalArgs = {
+  learningGoalId: Scalars['String'];
+  subGoalId: Scalars['String'];
+};
+
+
+export type MutationDetachLearningMaterialCoversTopicsArgs = {
+  learningMaterialId: Scalars['String'];
+  topicsIds: Array<Scalars['String']>;
+};
+
+
+export type MutationDetachTopicIsPartOfTopicArgs = {
+  partOfTopicId: Scalars['String'];
+  subTopicId: Scalars['String'];
+};
+
+
+export type MutationDetachTopicIsSubTopicOfTopicArgs = {
+  parentTopicId: Scalars['String'];
+  subTopicId: Scalars['String'];
+};
+
+
+export type MutationHideLearningGoalFromTopicArgs = {
+  learningGoalId: Scalars['String'];
+  topicId: Scalars['String'];
+};
+
+
+export type MutationHideLearningMaterialFromTopicArgs = {
+  learningMaterialId: Scalars['String'];
+  topicId: Scalars['String'];
+};
+
+
+export type MutationIndexLearningGoalArgs = {
+  learningGoalId: Scalars['String'];
 };
 
 
 export type MutationLoginArgs = {
+  discourseSSO?: InputMaybe<DiscourseSso>;
   email: Scalars['String'];
   password: Scalars['String'];
-  discourseSSO?: Maybe<DiscourseSso>;
 };
 
 
 export type MutationLoginGoogleArgs = {
+  discourseSSO?: InputMaybe<DiscourseSso>;
   idToken: Scalars['String'];
-  discourseSSO?: Maybe<DiscourseSso>;
+};
+
+
+export type MutationPublishLearningGoalArgs = {
+  learningGoalId: Scalars['String'];
+};
+
+
+export type MutationRateLearningGoalArgs = {
+  learningGoalId: Scalars['String'];
+  value: Scalars['Float'];
+};
+
+
+export type MutationRateLearningMaterialArgs = {
+  learningMaterialId: Scalars['String'];
+  value: Scalars['Float'];
+};
+
+
+export type MutationRecommendLearningMaterialArgs = {
+  learningMaterialId: Scalars['String'];
 };
 
 
@@ -851,13 +886,27 @@ export type MutationRegisterGoogleArgs = {
 };
 
 
-export type MutationVerifyEmailAddressArgs = {
-  token: Scalars['String'];
+export type MutationRemoveComplementaryResourceFromLearningPathArgs = {
+  learningPathId: Scalars['String'];
+  resourceId: Scalars['String'];
 };
 
 
-export type MutationTriggerResetPasswordArgs = {
-  email: Scalars['String'];
+export type MutationRemoveLearningMaterialHasPrerequisiteTopicArgs = {
+  learningMaterialId: Scalars['String'];
+  prerequisiteTopicId: Scalars['String'];
+};
+
+
+export type MutationRemoveTagsFromLearningMaterialArgs = {
+  learningMaterialId: Scalars['String'];
+  tags: Array<Scalars['String']>;
+};
+
+
+export type MutationRemoveTopicHasPrerequisiteTopicArgs = {
+  prerequisiteTopicId: Scalars['String'];
+  topicId: Scalars['String'];
 };
 
 
@@ -866,43 +915,8 @@ export type MutationResetPasswordArgs = {
 };
 
 
-export type MutationAdminUpdateUserArgs = {
-  id: Scalars['String'];
-  payload: AdminUpdateUserPayload;
-};
-
-
-export type MutationUpdateCurrentUserArgs = {
-  payload: UpdateCurrentUserPayload;
-};
-
-
-export type MutationCreateTopicArgs = {
-  payload: CreateTopicPayload;
-};
-
-
-export type MutationCreateDisambiguationFromTopicArgs = {
-  existingTopicId: Scalars['String'];
-  existingTopicContextTopicId: Scalars['String'];
-};
-
-
-export type MutationAddSubTopicArgs = {
-  parentTopicId: Scalars['String'];
-  payload: CreateTopicPayload;
-  contextOptions?: Maybe<CreateTopicContextOptions>;
-};
-
-
-export type MutationUpdateTopicArgs = {
-  topicId: Scalars['String'];
-  payload: UpdateTopicPayload;
-};
-
-
-export type MutationDeleteTopicArgs = {
-  topicId: Scalars['String'];
+export type MutationSetResourcesConsumedArgs = {
+  payload: SetResourcesConsumedPayload;
 };
 
 
@@ -916,14 +930,31 @@ export type MutationSetTopicsUnknownArgs = {
 };
 
 
-export type MutationUpdateTopicContextArgs = {
+export type MutationShowLearningGoalInTopicArgs = {
+  learningGoalId: Scalars['String'];
+  payload: ShowLearningGoalInTopicPayload;
   topicId: Scalars['String'];
-  contextTopicId: Scalars['String'];
 };
 
 
-export type MutationCreateArticleArgs = {
-  payload: CreateArticlePayload;
+export type MutationShowLearningMaterialInTopicArgs = {
+  learningMaterialId: Scalars['String'];
+  topicId: Scalars['String'];
+};
+
+
+export type MutationStartLearningGoalArgs = {
+  learningGoalId: Scalars['String'];
+};
+
+
+export type MutationStartLearningPathArgs = {
+  learningPathId: Scalars['String'];
+};
+
+
+export type MutationTriggerResetPasswordArgs = {
+  email: Scalars['String'];
 };
 
 
@@ -933,128 +964,8 @@ export type MutationUpdateArticleArgs = {
 };
 
 
-export type MutationDeleteArticleArgs = {
-  id: Scalars['String'];
-};
-
-
-export type MutationAddTagsToLearningMaterialArgs = {
-  learningMaterialId: Scalars['String'];
-  tags: Array<Scalars['String']>;
-};
-
-
-export type MutationRemoveTagsFromLearningMaterialArgs = {
-  learningMaterialId: Scalars['String'];
-  tags: Array<Scalars['String']>;
-};
-
-
-export type MutationRecommendLearningMaterialArgs = {
-  learningMaterialId: Scalars['String'];
-};
-
-
-export type MutationShowLearningMaterialInTopicArgs = {
-  topicId: Scalars['String'];
-  learningMaterialId: Scalars['String'];
-};
-
-
-export type MutationHideLearningMaterialFromTopicArgs = {
-  topicId: Scalars['String'];
-  learningMaterialId: Scalars['String'];
-};
-
-
-export type MutationRateLearningMaterialArgs = {
-  learningMaterialId: Scalars['String'];
-  value: Scalars['Float'];
-};
-
-
-export type MutationCreateResourceArgs = {
-  payload: CreateResourcePayload;
-};
-
-
-export type MutationUpdateResourceArgs = {
-  resourceId: Scalars['String'];
-  payload: UpdateResourcePayload;
-};
-
-
-export type MutationDeleteResourceArgs = {
-  resourceId: Scalars['String'];
-};
-
-
-export type MutationSetResourcesConsumedArgs = {
-  payload: SetResourcesConsumedPayload;
-};
-
-
-export type MutationAddSubResourceArgs = {
-  parentResourceId: Scalars['String'];
-  subResourceId: Scalars['String'];
-};
-
-
-export type MutationCreateSubResourceSeriesArgs = {
-  parentResourceId: Scalars['String'];
-  subResourceId: Scalars['String'];
-};
-
-
-export type MutationAddSubResourceToSeriesArgs = {
-  parentResourceId: Scalars['String'];
-  previousResourceId: Scalars['String'];
-  subResourceId: Scalars['String'];
-};
-
-
-export type MutationCreateLearningPathArgs = {
-  payload: CreateLearningPathPayload;
-};
-
-
-export type MutationUpdateLearningPathArgs = {
-  learningPathId: Scalars['String'];
-  payload: UpdateLearningPathPayload;
-};
-
-
-export type MutationDeleteLearningPathArgs = {
-  learningPathId: Scalars['String'];
-};
-
-
-export type MutationAddComplementaryResourceToLearningPathArgs = {
-  learningPathId: Scalars['String'];
-  resourceId: Scalars['String'];
-};
-
-
-export type MutationRemoveComplementaryResourceFromLearningPathArgs = {
-  learningPathId: Scalars['String'];
-  resourceId: Scalars['String'];
-};
-
-
-export type MutationStartLearningPathArgs = {
-  learningPathId: Scalars['String'];
-};
-
-
-export type MutationCompleteLearningPathArgs = {
-  learningPathId: Scalars['String'];
-  completed: Scalars['Boolean'];
-};
-
-
-export type MutationCreateLearningGoalArgs = {
-  payload: CreateLearningGoalPayload;
-  options?: Maybe<CreateLearningGoalOptions>;
+export type MutationUpdateCurrentUserArgs = {
+  payload: UpdateCurrentUserPayload;
 };
 
 
@@ -1064,465 +975,221 @@ export type MutationUpdateLearningGoalArgs = {
 };
 
 
-export type MutationDeleteLearningGoalArgs = {
-  _id: Scalars['String'];
+export type MutationUpdateLearningPathArgs = {
+  learningPathId: Scalars['String'];
+  payload: UpdateLearningPathPayload;
 };
 
 
-export type MutationAttachLearningGoalRequiresSubGoalArgs = {
-  learningGoalId: Scalars['String'];
-  subGoalId: Scalars['String'];
-  payload: AttachLearningGoalRequiresSubGoalPayload;
+export type MutationUpdateResourceArgs = {
+  payload: UpdateResourcePayload;
+  resourceId: Scalars['String'];
 };
 
 
-export type MutationDetachLearningGoalRequiresSubGoalArgs = {
-  learningGoalId: Scalars['String'];
-  subGoalId: Scalars['String'];
-};
-
-
-export type MutationAttachLearningGoalDependencyArgs = {
-  parentLearningGoalId: Scalars['String'];
-  learningGoalId: Scalars['String'];
-  learningGoalDependencyId: Scalars['String'];
-};
-
-
-export type MutationDetachLearningGoalDependencyArgs = {
-  parentLearningGoalId: Scalars['String'];
-  learningGoalId: Scalars['String'];
-  learningGoalDependencyId: Scalars['String'];
-};
-
-
-export type MutationStartLearningGoalArgs = {
-  learningGoalId: Scalars['String'];
-};
-
-
-export type MutationPublishLearningGoalArgs = {
-  learningGoalId: Scalars['String'];
-};
-
-
-export type MutationIndexLearningGoalArgs = {
-  learningGoalId: Scalars['String'];
-};
-
-
-export type MutationShowLearningGoalInTopicArgs = {
+export type MutationUpdateTopicArgs = {
+  payload: UpdateTopicPayload;
   topicId: Scalars['String'];
-  learningGoalId: Scalars['String'];
-  payload: ShowLearningGoalInTopicPayload;
 };
 
 
-export type MutationHideLearningGoalFromTopicArgs = {
+export type MutationUpdateTopicContextArgs = {
+  contextTopicId: Scalars['String'];
   topicId: Scalars['String'];
-  learningGoalId: Scalars['String'];
-};
-
-
-export type MutationRateLearningGoalArgs = {
-  learningGoalId: Scalars['String'];
-  value: Scalars['Float'];
-};
-
-
-export type MutationAddTopicHasPrerequisiteTopicArgs = {
-  topicId: Scalars['String'];
-  prerequisiteTopicId: Scalars['String'];
-  strength?: Maybe<Scalars['Float']>;
-};
-
-
-export type MutationRemoveTopicHasPrerequisiteTopicArgs = {
-  topicId: Scalars['String'];
-  prerequisiteTopicId: Scalars['String'];
-};
-
-
-export type MutationAttachTopicIsSubTopicOfTopicArgs = {
-  parentTopicId: Scalars['String'];
-  subTopicId: Scalars['String'];
-  payload: AttachTopicIsSubTopicOfTopicPayload;
-};
-
-
-export type MutationUpdateTopicIsSubTopicOfTopicArgs = {
-  parentTopicId: Scalars['String'];
-  subTopicId: Scalars['String'];
-  payload: UpdateTopicIsSubTopicOfTopicPayload;
-};
-
-
-export type MutationDetachTopicIsSubTopicOfTopicArgs = {
-  parentTopicId: Scalars['String'];
-  subTopicId: Scalars['String'];
-};
-
-
-export type MutationAttachTopicIsPartOfTopicArgs = {
-  partOfTopicId: Scalars['String'];
-  subTopicId: Scalars['String'];
-  payload: AttachTopicIsPartOfTopicPayload;
 };
 
 
 export type MutationUpdateTopicIsPartOfTopicArgs = {
   partOfTopicId: Scalars['String'];
-  subTopicId: Scalars['String'];
   payload: UpdateTopicIsPartOfTopicPayload;
-};
-
-
-export type MutationDetachTopicIsPartOfTopicArgs = {
-  partOfTopicId: Scalars['String'];
   subTopicId: Scalars['String'];
 };
 
 
-export type MutationAttachLearningMaterialCoversTopicsArgs = {
-  learningMaterialId: Scalars['String'];
-  topicsIds: Array<Scalars['String']>;
+export type MutationUpdateTopicIsSubTopicOfTopicArgs = {
+  parentTopicId: Scalars['String'];
+  payload: UpdateTopicIsSubTopicOfTopicPayload;
+  subTopicId: Scalars['String'];
 };
 
 
-export type MutationDetachLearningMaterialCoversTopicsArgs = {
-  learningMaterialId: Scalars['String'];
-  topicsIds: Array<Scalars['String']>;
+export type MutationVerifyEmailAddressArgs = {
+  token: Scalars['String'];
+};
+
+export type PaginationOptions = {
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+};
+
+export type Query = {
+  __typename?: 'Query';
+  analyzeResourceUrl: AnalyzeResourceUrlResult;
+  autocompleteTopicName: SearchTopicsResult;
+  checkLearningGoalKeyAvailability: CheckLearningGoalKeyAvailabilityResult;
+  checkTopicKeyAvailability: CheckTopicKeyAvailabilityResult;
+  currentUser?: Maybe<CurrentUser>;
+  getArticleByKey: Article;
+  getHomePageData: GetHomePageDataResults;
+  getLearningGoalByKey: LearningGoal;
+  getLearningPathById: LearningPath;
+  getLearningPathByKey: LearningPath;
+  getResourceById: Resource;
+  getResourceByKey: Resource;
+  getTopicById: Topic;
+  getTopicByKey: Topic;
+  getTopicValidContexts: GetTopicValidContextsResult;
+  getTopicValidContextsFromDisambiguation: GetTopicValidContextsFromDisambiguation;
+  getTopicValidContextsFromSameName: GetTopicValidContextsFromSameName;
+  getTopLevelTopics: GetTopLevelTopicsResults;
+  getUser: User;
+  globalSearch: GlobalSearchResults;
+  listArticles: ListArticlesResult;
+  searchLearningGoals: SearchLearningGoalsResult;
+  searchLearningMaterialTags: Array<LearningMaterialTagSearchResult>;
+  searchResources: SearchResourcesResult;
+  searchSubTopics: SearchTopicsResult;
+  searchTopics: SearchTopicsResult;
 };
 
 
-export type MutationAddLearningMaterialHasPrerequisiteTopicArgs = {
-  learningMaterialId: Scalars['String'];
-  prerequisiteTopicId: Scalars['String'];
-  strength?: Maybe<Scalars['Float']>;
-};
-
-
-export type MutationRemoveLearningMaterialHasPrerequisiteTopicArgs = {
-  learningMaterialId: Scalars['String'];
-  prerequisiteTopicId: Scalars['String'];
-};
-
-export type CreateTopicPayload = {
-  name: Scalars['String'];
-  key: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-};
-
-export type CreateTopicContextOptions = {
-  disambiguationTopicId: Scalars['String'];
-  contextTopicId: Scalars['String'];
-};
-
-export type UpdateTopicPayload = {
-  name?: Maybe<Scalars['String']>;
-  key?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-};
-
-export type DeleteTopicResponse = {
-  __typename?: 'DeleteTopicResponse';
-  _id: Scalars['String'];
-  success: Scalars['Boolean'];
-};
-
-export type SetTopicsKnownPayload = {
-  topics: Array<SetTopicKnownPayloadTopicsField>;
-};
-
-export type CreateArticlePayload = {
-  contentType: ArticleContentType;
-  title: Scalars['String'];
-  content: Scalars['String'];
-};
-
-export type UpdateArticlePayload = {
-  title?: Maybe<Scalars['String']>;
-  content?: Maybe<Scalars['String']>;
-};
-
-export type DeleteArticleResponse = {
-  __typename?: 'DeleteArticleResponse';
-  _id: Scalars['String'];
-  success: Scalars['Boolean'];
-};
-
-export type CreateResourcePayload = {
-  name: Scalars['String'];
-  type: ResourceType;
-  mediaType: ResourceMediaType;
+export type QueryAnalyzeResourceUrlArgs = {
   url: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-  durationSeconds?: Maybe<Scalars['Int']>;
-  tags?: Maybe<Array<Scalars['String']>>;
-  showInTopicsIds: Array<Scalars['String']>;
-  coveredSubTopicsIds?: Maybe<Array<Scalars['String']>>;
-  prerequisitesTopicsIds?: Maybe<Array<Scalars['String']>>;
-  subResourceSeries?: Maybe<Array<CreateSubResourcePayload>>;
 };
 
-export type UpdateResourcePayload = {
-  name?: Maybe<Scalars['String']>;
-  type?: Maybe<ResourceType>;
-  mediaType?: Maybe<ResourceMediaType>;
-  url?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  durationSeconds?: Maybe<Scalars['Int']>;
+
+export type QueryAutocompleteTopicNameArgs = {
+  partialName: Scalars['String'];
 };
 
-export type DeleteResourceResponse = {
-  __typename?: 'DeleteResourceResponse';
-  _id: Scalars['String'];
-  success: Scalars['Boolean'];
+
+export type QueryCheckLearningGoalKeyAvailabilityArgs = {
+  key: Scalars['String'];
 };
 
-export type SetResourcesConsumedPayload = {
-  resources: Array<SetResourcesConsumedPayloadResourcesField>;
+
+export type QueryCheckTopicKeyAvailabilityArgs = {
+  key: Scalars['String'];
 };
 
-export type SubResourceCreatedResult = {
-  __typename?: 'SubResourceCreatedResult';
-  parentResource: Resource;
-  subResource: Resource;
+
+export type QueryGetArticleByKeyArgs = {
+  key: Scalars['String'];
 };
 
-export type SubResourceSeriesCreatedResult = {
-  __typename?: 'SubResourceSeriesCreatedResult';
-  seriesParentResource: Resource;
-  subResource: Resource;
+
+export type QueryGetLearningGoalByKeyArgs = {
+  key: Scalars['String'];
 };
 
-export type CreateLearningPathPayload = {
-  name: Scalars['String'];
-  key?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  public?: Maybe<Scalars['Boolean']>;
-  durationSeconds?: Maybe<Scalars['Int']>;
-  tags?: Maybe<Array<Scalars['String']>>;
-  resourceItems: Array<CreateLearningPathResourceItem>;
+
+export type QueryGetLearningPathByIdArgs = {
+  learningPathId: Scalars['String'];
 };
 
-export type UpdateLearningPathPayload = {
-  name?: Maybe<Scalars['String']>;
-  public?: Maybe<Scalars['Boolean']>;
-  description?: Maybe<Scalars['String']>;
-  durationSeconds?: Maybe<Scalars['Int']>;
-  resourceItems?: Maybe<Array<CreateLearningPathResourceItem>>;
+
+export type QueryGetLearningPathByKeyArgs = {
+  learningPathKey: Scalars['String'];
 };
 
-export type DeleteLearningPathResult = {
-  __typename?: 'DeleteLearningPathResult';
-  success: Scalars['Boolean'];
-  _id: Scalars['String'];
+
+export type QueryGetResourceByIdArgs = {
+  resourceId: Scalars['String'];
 };
 
-export type ComplementaryResourceUpdatedResult = {
-  __typename?: 'ComplementaryResourceUpdatedResult';
-  resource: Resource;
-  learningPath: LearningPath;
+
+export type QueryGetResourceByKeyArgs = {
+  resourceKey: Scalars['String'];
 };
 
-export type LearningPathStartedResult = {
-  __typename?: 'LearningPathStartedResult';
-  user: CurrentUser;
-  learningPath: LearningPath;
+
+export type QueryGetTopicByIdArgs = {
+  topicId: Scalars['String'];
 };
 
-export type LearningPathCompletedResult = {
-  __typename?: 'LearningPathCompletedResult';
-  user: CurrentUser;
-  learningPath: LearningPath;
+
+export type QueryGetTopicByKeyArgs = {
+  topicKey: Scalars['String'];
 };
 
-export type CreateLearningGoalPayload = {
-  name: Scalars['String'];
-  type: LearningGoalType;
-  key?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
+
+export type QueryGetTopicValidContextsArgs = {
+  parentTopicId: Scalars['String'];
+  topicId: Scalars['String'];
 };
 
-export type CreateLearningGoalOptions = {
-  public?: Maybe<Scalars['Boolean']>;
-  topicId?: Maybe<Scalars['String']>;
+
+export type QueryGetTopicValidContextsFromDisambiguationArgs = {
+  disambiguationTopicId: Scalars['String'];
+  parentTopicId: Scalars['String'];
 };
 
-export type UpdateLearningGoalPayload = {
-  name?: Maybe<Scalars['String']>;
-  key?: Maybe<Scalars['String']>;
-  type?: Maybe<LearningGoalType>;
-  description?: Maybe<Scalars['String']>;
+
+export type QueryGetTopicValidContextsFromSameNameArgs = {
+  existingSameNameTopicId: Scalars['String'];
+  parentTopicId: Scalars['String'];
 };
 
-export type DeleteLearningGoalMutationResult = {
-  __typename?: 'DeleteLearningGoalMutationResult';
-  _id: Scalars['String'];
-  success: Scalars['Boolean'];
+
+export type QueryGetUserArgs = {
+  key: Scalars['String'];
 };
 
-export type AttachLearningGoalRequiresSubGoalPayload = {
-  strength?: Maybe<Scalars['Float']>;
+
+export type QueryGlobalSearchArgs = {
+  options?: InputMaybe<GlobalSearchOptions>;
+  query: Scalars['String'];
 };
 
-export type AttachLearningGoalRequiresSubGoalResult = {
-  __typename?: 'AttachLearningGoalRequiresSubGoalResult';
-  learningGoal: LearningGoal;
-  subGoal: SubGoal;
+
+export type QueryListArticlesArgs = {
+  options: ListArticlesOptions;
 };
 
-export type DetachLearningGoalRequiresSubGoalResult = {
-  __typename?: 'DetachLearningGoalRequiresSubGoalResult';
-  learningGoal: LearningGoal;
-  subGoal: SubGoal;
+
+export type QuerySearchLearningGoalsArgs = {
+  options: SearchLearningGoalsOptions;
 };
 
-export type UpdateLearningGoalDependenciesResult = {
-  __typename?: 'UpdateLearningGoalDependenciesResult';
-  parentLearningGoal: LearningGoal;
-  learningGoal: LearningGoal;
-  learningGoalDependency: LearningGoal;
+
+export type QuerySearchLearningMaterialTagsArgs = {
+  options: SearchLearningMaterialTagsOptions;
 };
 
-export type LearningGoalStartedResult = {
-  __typename?: 'LearningGoalStartedResult';
-  currentUser: CurrentUser;
-  learningGoal: LearningGoal;
+
+export type QuerySearchResourcesArgs = {
+  options: SearchResourcesOptions;
+  query: Scalars['String'];
 };
 
-export type LearningGoalPublishedResult = {
-  __typename?: 'LearningGoalPublishedResult';
-  learningGoal: LearningGoal;
+
+export type QuerySearchSubTopicsArgs = {
+  options: SearchTopicsOptions;
+  topicId: Scalars['String'];
 };
 
-export type LearningGoalIndexedResult = {
-  __typename?: 'LearningGoalIndexedResult';
-  learningGoal: LearningGoal;
+
+export type QuerySearchTopicsArgs = {
+  options: SearchTopicsOptions;
 };
 
-export type ShowLearningGoalInTopicPayload = {
-  index?: Maybe<Scalars['Float']>;
+export type RegisterGooglePayload = {
+  displayName: Scalars['String'];
+  idToken: Scalars['String'];
+  key: Scalars['String'];
 };
 
-export type ShowLearningGoalInTopicResult = {
-  __typename?: 'ShowLearningGoalInTopicResult';
-  learningGoal: LearningGoal;
-  topic: Topic;
-};
-
-export type AddTopicHasPrerequisiteTopicResult = {
-  __typename?: 'AddTopicHasPrerequisiteTopicResult';
-  topic: Topic;
-  strength: Scalars['Float'];
-  prerequisiteTopic: Topic;
+export type RegisterPayload = {
+  displayName: Scalars['String'];
+  email: Scalars['String'];
+  key: Scalars['String'];
+  password: Scalars['String'];
 };
 
 export type RemoveTopicHasPrerequisiteTopicResult = {
   __typename?: 'RemoveTopicHasPrerequisiteTopicResult';
-  topic: Topic;
   prerequisiteTopic: Topic;
-};
-
-export type AttachTopicIsSubTopicOfTopicPayload = {
-  index?: Maybe<Scalars['Float']>;
-};
-
-export type UpdateTopicIsSubTopicOfTopicPayload = {
-  index?: Maybe<Scalars['Float']>;
-};
-
-export type DetachTopicIsSubTopicOfTopicResult = {
-  __typename?: 'DetachTopicIsSubTopicOfTopicResult';
-  parentTopic: Topic;
-  subTopic: Topic;
-};
-
-export type AttachTopicIsPartOfTopicPayload = {
-  index?: Maybe<Scalars['Float']>;
-};
-
-export type UpdateTopicIsPartOfTopicPayload = {
-  index?: Maybe<Scalars['Float']>;
-};
-
-export type DetachTopicIsPartOfTopicResult = {
-  __typename?: 'DetachTopicIsPartOfTopicResult';
-  partOfTopic: Topic;
-  subTopic: Topic;
-};
-
-export type SearchResultEntity = Topic | Resource | LearningPath;
-
-export type SearchResult = {
-  __typename?: 'SearchResult';
-  entity: SearchResultEntity;
-  score: Scalars['Float'];
-};
-
-export type KnownTopic = {
-  __typename?: 'KnownTopic';
-  level: Scalars['Float'];
-};
-
-export type SetTopicKnownPayloadTopicsField = {
-  topicId: Scalars['String'];
-  level?: Maybe<Scalars['Float']>;
-};
-
-export type CreateSubResourcePayload = {
-  name: Scalars['String'];
-  type: ResourceType;
-  mediaType: ResourceMediaType;
-  url: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-  durationSeconds?: Maybe<Scalars['Int']>;
-  tags?: Maybe<Array<Scalars['String']>>;
-  showInTopicsIds: Array<Scalars['String']>;
-  coveredSubTopicsIds?: Maybe<Array<Scalars['String']>>;
-  prerequisitesTopicsIds?: Maybe<Array<Scalars['String']>>;
-};
-
-export type SetResourcesConsumedPayloadResourcesField = {
-  resourceId: Scalars['String'];
-  consumed?: Maybe<Scalars['Boolean']>;
-  opened?: Maybe<Scalars['Boolean']>;
-};
-
-export type SubResourceExtractedData = {
-  __typename?: 'SubResourceExtractedData';
-  name: Scalars['String'];
-  type: ResourceType;
-  mediaType: ResourceMediaType;
-  url: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-  durationSeconds?: Maybe<Scalars['Int']>;
-};
-
-export type ResourceData = {
-  __typename?: 'ResourceData';
-  name?: Maybe<Scalars['String']>;
-  type?: Maybe<ResourceType>;
-  mediaType?: Maybe<ResourceMediaType>;
-  description?: Maybe<Scalars['String']>;
-  durationSeconds?: Maybe<Scalars['Int']>;
-  subResourceSeries?: Maybe<Array<SubResourceExtractedData>>;
-};
-
-export type CreateLearningPathResourceItem = {
-  resourceId: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-};
-
-export enum LearningGoalType {
-  Roadmap = 'Roadmap',
-  SubGoal = 'SubGoal'
-}
-
-export type LearningGoalProgress = {
-  __typename?: 'LearningGoalProgress';
-  level: Scalars['Float'];
+  topic: Topic;
 };
 
 export type RequiredInGoalItem = {
@@ -1531,61 +1198,396 @@ export type RequiredInGoalItem = {
   strength: Scalars['Float'];
 };
 
-export type SubGoalItem = {
-  __typename?: 'SubGoalItem';
-  subGoal: SubGoal;
-  strength: Scalars['Float'];
+export type ResetPasswordPayload = {
+  password: Scalars['String'];
+  token: Scalars['String'];
 };
 
-export type DependsOnGoalItem = {
-  __typename?: 'DependsOnGoalItem';
+export type ResetPasswordResponse = {
+  __typename?: 'ResetPasswordResponse';
+  currentUser: CurrentUser;
+};
+
+export type Resource = LearningMaterial & {
+  __typename?: 'Resource';
+  _id: Scalars['String'];
+  consumed?: Maybe<ConsumedResource>;
+  coveredSubTopics?: Maybe<LearningMaterialCoveredSubTopicsResults>;
+  coveredSubTopicsTree?: Maybe<Array<Topic>>;
+  createdAt: Scalars['Date'];
+  createdBy?: Maybe<User>;
+  description?: Maybe<Scalars['String']>;
+  durationSeconds?: Maybe<Scalars['Int']>;
+  mediaType: ResourceMediaType;
+  name: Scalars['String'];
+  nextResource?: Maybe<Resource>;
+  parentResources?: Maybe<Array<Resource>>;
+  prerequisites?: Maybe<Array<LearningMaterialHasPrerequisiteTopic>>;
+  previousResource?: Maybe<Resource>;
+  rating?: Maybe<Scalars['Float']>;
+  seriesParentResource?: Maybe<Resource>;
+  showedIn?: Maybe<Array<Topic>>;
+  subResources?: Maybe<Array<Resource>>;
+  subResourceSeries?: Maybe<Array<Resource>>;
+  tags?: Maybe<Array<LearningMaterialTag>>;
+  type: ResourceType;
+  upvotes?: Maybe<Scalars['Int']>;
+  url: Scalars['String'];
+};
+
+
+export type ResourceCoveredSubTopicsArgs = {
+  options: LearningMaterialCoveredSubTopicsOptions;
+};
+
+export type ResourceData = {
+  __typename?: 'ResourceData';
+  description?: Maybe<Scalars['String']>;
+  durationSeconds?: Maybe<Scalars['Int']>;
+  mediaType?: Maybe<ResourceMediaType>;
+  name?: Maybe<Scalars['String']>;
+  subResourceSeries?: Maybe<Array<SubResourceExtractedData>>;
+  type?: Maybe<ResourceType>;
+};
+
+export enum ResourceMediaType {
+  Audio = 'audio',
+  Image = 'image',
+  InteractiveContent = 'interactive_content',
+  Text = 'text',
+  Video = 'video'
+}
+
+export enum ResourceType {
+  Article = 'article',
+  ArticleSeries = 'article_series',
+  Book = 'book',
+  Course = 'course',
+  Documentary = 'documentary',
+  Exercise = 'exercise',
+  Infographic = 'infographic',
+  OnlineBook = 'online_book',
+  Other = 'other',
+  Podcast = 'podcast',
+  PodcastEpisode = 'podcast_episode',
+  Project = 'project',
+  Quizz = 'quizz',
+  ResearchPaper = 'research_paper',
+  Talk = 'talk',
+  Tweet = 'tweet',
+  VideoGame = 'video_game',
+  Website = 'website',
+  YoutubePlaylist = 'youtube_playlist',
+  YoutubeVideo = 'youtube_video'
+}
+
+export type SearchLearningGoalsOptions = {
+  pagination: PaginationOptions;
+  query?: InputMaybe<Scalars['String']>;
+};
+
+export type SearchLearningGoalsResult = {
+  __typename?: 'SearchLearningGoalsResult';
+  items: Array<LearningGoal>;
+};
+
+export type SearchLearningMaterialTagsOptions = {
+  pagination: PaginationOptions;
+  query: Scalars['String'];
+};
+
+export type SearchResourcesOptions = {
+  pagination?: InputMaybe<PaginationOptions>;
+};
+
+export type SearchResourcesResult = {
+  __typename?: 'SearchResourcesResult';
+  items: Array<Resource>;
+};
+
+export type SearchResult = {
+  __typename?: 'SearchResult';
+  entity: SearchResultEntity;
+  score: Scalars['Float'];
+};
+
+export type SearchResultEntity = LearningPath | Resource | Topic;
+
+export type SearchTopicsOptions = {
+  pagination: PaginationOptions;
+  query: Scalars['String'];
+};
+
+export type SearchTopicsResult = {
+  __typename?: 'SearchTopicsResult';
+  items: Array<Topic>;
+};
+
+export type SetResourcesConsumedPayload = {
+  resources: Array<SetResourcesConsumedPayloadResourcesField>;
+};
+
+export type SetResourcesConsumedPayloadResourcesField = {
+  consumed?: InputMaybe<Scalars['Boolean']>;
+  opened?: InputMaybe<Scalars['Boolean']>;
+  resourceId: Scalars['String'];
+};
+
+export type SetTopicKnownPayloadTopicsField = {
+  level?: InputMaybe<Scalars['Float']>;
+  topicId: Scalars['String'];
+};
+
+export type SetTopicsKnownPayload = {
+  topics: Array<SetTopicKnownPayloadTopicsField>;
+};
+
+export type ShowLearningGoalInTopicPayload = {
+  index?: InputMaybe<Scalars['Float']>;
+};
+
+export type ShowLearningGoalInTopicResult = {
+  __typename?: 'ShowLearningGoalInTopicResult';
   learningGoal: LearningGoal;
-  parentLearningGoalId: Scalars['String'];
+  topic: Topic;
 };
 
-export type LearningGoalStarted = {
-  __typename?: 'LearningGoalStarted';
-  startedAt: Scalars['Date'];
-};
-
-export type LearningGoalStartedByOptions = {
-  pagination?: Maybe<PaginationOptions>;
-};
-
-export type LearningGoalStartedByResults = {
-  __typename?: 'LearningGoalStartedByResults';
-  items: Array<LearningGoalStartedByItem>;
-  count: Scalars['Int'];
-};
-
-export type LearningGoalRelevantLearningMaterialsOptions = {
-  pagination?: Maybe<PaginationOptions>;
-};
-
-export type LearningGoalRelevantLearningMaterialsResults = {
-  __typename?: 'LearningGoalRelevantLearningMaterialsResults';
-  items: Array<LearningGoalRelevantLearningMaterialsItem>;
-  count: Scalars['Int'];
-};
-
-export type LearningGoalRelevantLearningMaterialsItem = {
-  __typename?: 'LearningGoalRelevantLearningMaterialsItem';
-  learningMaterial: LearningMaterial;
-  coverage?: Maybe<Scalars['Float']>;
-};
-
-export type LearningGoalStartedByItem = {
-  __typename?: 'LearningGoalStartedByItem';
-  startedAt: Scalars['Date'];
-  user: User;
-};
+export enum SortingDirection {
+  Asc = 'ASC',
+  Desc = 'DESC'
+}
 
 export type SubGoal = LearningGoal | Topic;
 
-export type LearningMaterialCoversTopic = {
-  __typename?: 'LearningMaterialCoversTopic';
+export type SubGoalItem = {
+  __typename?: 'SubGoalItem';
+  strength: Scalars['Float'];
+  subGoal: SubGoal;
+};
+
+export type SubResourceCreatedResult = {
+  __typename?: 'SubResourceCreatedResult';
+  parentResource: Resource;
+  subResource: Resource;
+};
+
+export type SubResourceExtractedData = {
+  __typename?: 'SubResourceExtractedData';
+  description?: Maybe<Scalars['String']>;
+  durationSeconds?: Maybe<Scalars['Int']>;
+  mediaType: ResourceMediaType;
+  name: Scalars['String'];
+  type: ResourceType;
+  url: Scalars['String'];
+};
+
+export type SubResourceSeriesCreatedResult = {
+  __typename?: 'SubResourceSeriesCreatedResult';
+  seriesParentResource: Resource;
+  subResource: Resource;
+};
+
+export enum SubTopicRelationshipType {
+  IsPartOf = 'IS_PART_OF',
+  IsSubtopicOf = 'IS_SUBTOPIC_OF'
+}
+
+export type Topic = {
+  __typename?: 'Topic';
+  _id: Scalars['String'];
+  context?: Maybe<Scalars['String']>;
+  contextTopic?: Maybe<Topic>;
+  contextualisedTopics?: Maybe<Array<Topic>>;
+  createdAt: Scalars['Date'];
+  createdBy?: Maybe<User>;
+  description?: Maybe<Scalars['String']>;
+  disambiguationTopic?: Maybe<Topic>;
+  followUps?: Maybe<Array<TopicHasPrerequisiteTopic>>;
+  isDisambiguation?: Maybe<Scalars['Boolean']>;
+  key: Scalars['String'];
+  learningMaterials?: Maybe<TopicLearningMaterialsResults>;
+  learningMaterialsTotalCount?: Maybe<Scalars['Int']>;
+  name: Scalars['String'];
+  otherContextsTopics?: Maybe<Array<Topic>>;
+  parentTopic?: Maybe<Topic>;
+  partOfTopics?: Maybe<Array<TopicIsPartOfTopic>>;
+  prerequisites?: Maybe<Array<TopicHasPrerequisiteTopic>>;
+  subTopics?: Maybe<Array<TopicIsSubTopicOfTopic>>;
+  subTopicsTotalCount?: Maybe<Scalars['Int']>;
+};
+
+
+export type TopicLearningMaterialsArgs = {
+  options: TopicLearningMaterialsOptions;
+};
+
+export type TopicHasPrerequisiteTopic = {
+  __typename?: 'TopicHasPrerequisiteTopic';
+  followUpTopic: Topic;
+  prerequisiteTopic: Topic;
+  strength: Scalars['Float'];
+};
+
+export type TopicIsPartOfTopic = {
+  __typename?: 'TopicIsPartOfTopic';
   createdAt: Scalars['Date'];
   createdByUserId?: Maybe<Scalars['String']>;
-  learningMaterial: LearningMaterial;
-  topic: Topic;
+  index: Scalars['Float'];
+  partOfTopic: Topic;
+  subTopic: Topic;
+};
+
+export type TopicIsSubTopicOfTopic = {
+  __typename?: 'TopicIsSubTopicOfTopic';
+  createdAt: Scalars['Date'];
+  createdByUserId?: Maybe<Scalars['String']>;
+  index: Scalars['Float'];
+  parentTopic: Topic;
+  relationshipType: SubTopicRelationshipType;
+  subTopic: Topic;
+};
+
+export type TopicLearningMaterialsFilterOptions = {
+  completedByUser: Scalars['Boolean'];
+  learningMaterialTypeIn?: InputMaybe<Array<LearningMaterialType>>;
+  resourceTypeIn?: InputMaybe<Array<ResourceType>>;
+};
+
+export type TopicLearningMaterialsOptions = {
+  filter: TopicLearningMaterialsFilterOptions;
+  query?: InputMaybe<Scalars['String']>;
+  sortingType: TopicLearningMaterialsSortingType;
+};
+
+export type TopicLearningMaterialsResults = {
+  __typename?: 'TopicLearningMaterialsResults';
+  items: Array<LearningMaterial>;
+};
+
+export enum TopicLearningMaterialsSortingType {
+  Newest = 'newest',
+  Rating = 'rating',
+  Recommended = 'recommended'
+}
+
+export type TriggerResetPasswordResponse = {
+  __typename?: 'TriggerResetPasswordResponse';
+  errorMessage?: Maybe<Scalars['String']>;
+  success: Scalars['Boolean'];
+};
+
+export type UpdateArticlePayload = {
+  content?: InputMaybe<Scalars['String']>;
+  title?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateCurrentUserPayload = {
+  bio?: InputMaybe<Scalars['String']>;
+  displayName?: InputMaybe<Scalars['String']>;
+  profilePictureUrl?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateLearningGoalDependenciesResult = {
+  __typename?: 'UpdateLearningGoalDependenciesResult';
+  learningGoal: LearningGoal;
+  learningGoalDependency: LearningGoal;
+  parentLearningGoal: LearningGoal;
+};
+
+export type UpdateLearningGoalPayload = {
+  description?: InputMaybe<Scalars['String']>;
+  key?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<LearningGoalType>;
+};
+
+export type UpdateLearningPathPayload = {
+  description?: InputMaybe<Scalars['String']>;
+  durationSeconds?: InputMaybe<Scalars['Int']>;
+  name?: InputMaybe<Scalars['String']>;
+  public?: InputMaybe<Scalars['Boolean']>;
+  resourceItems?: InputMaybe<Array<CreateLearningPathResourceItem>>;
+};
+
+export type UpdateResourcePayload = {
+  description?: InputMaybe<Scalars['String']>;
+  durationSeconds?: InputMaybe<Scalars['Int']>;
+  mediaType?: InputMaybe<ResourceMediaType>;
+  name?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<ResourceType>;
+  url?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateTopicIsPartOfTopicPayload = {
+  index?: InputMaybe<Scalars['Float']>;
+};
+
+export type UpdateTopicIsSubTopicOfTopicPayload = {
+  index?: InputMaybe<Scalars['Float']>;
+};
+
+export type UpdateTopicPayload = {
+  description?: InputMaybe<Scalars['String']>;
+  key?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+};
+
+export type User = {
+  __typename?: 'User';
+  _id: Scalars['String'];
+  articles?: Maybe<ListArticlesResult>;
+  bio?: Maybe<Scalars['String']>;
+  displayName: Scalars['String'];
+  email: Scalars['String'];
+  key: Scalars['String'];
+  profilePictureUrl?: Maybe<Scalars['String']>;
+  role: UserRole;
+};
+
+
+export type UserArticlesArgs = {
+  options: ListArticlesOptions;
+};
+
+export type UserConsumedResourceItem = {
+  __typename?: 'UserConsumedResourceItem';
+  consumedAt?: Maybe<Scalars['Date']>;
+  lastOpenedAt?: Maybe<Scalars['Date']>;
+  openedAt?: Maybe<Scalars['Date']>;
+  resource: Resource;
+};
+
+export type UserConsumedResourcesFilter = {
+  completed?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type UserConsumedResourcesOptions = {
+  filter?: InputMaybe<UserConsumedResourcesFilter>;
+  pagination?: InputMaybe<PaginationOptions>;
+  sorting: UserConsumedResourcesSortingType;
+};
+
+export type UserConsumedResourcesResult = {
+  __typename?: 'UserConsumedResourcesResult';
+  count: Scalars['Int'];
+  items: Array<UserConsumedResourceItem>;
+};
+
+export enum UserConsumedResourcesSortingType {
+  LastOpened = 'lastOpened'
+}
+
+export type UserLearningPathsOptions = {
+  pagination?: InputMaybe<PaginationOptions>;
+};
+
+export enum UserRole {
+  Admin = 'ADMIN',
+  Contributor = 'CONTRIBUTOR',
+  User = 'USER'
+}
+
+export type VerifyEmailResponse = {
+  __typename?: 'VerifyEmailResponse';
+  email: Scalars['String'];
 };

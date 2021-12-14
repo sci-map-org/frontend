@@ -1,67 +1,36 @@
 import * as Types from '../types';
 
-import { ResourceDataFragment, ResourcePreviewCardDataFragment } from './resources.fragments.generated';
 import * as Operations from './resources.operations';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type SearchResourcesQueryVariables = Types.Exact<{
   query: Types.Scalars['String'];
   options: Types.SearchResourcesOptions;
 }>;
 
 
-export type SearchResourcesQuery = (
-  { __typename?: 'Query' }
-  & { searchResources: (
-    { __typename?: 'SearchResourcesResult' }
-    & { items: Array<(
-      { __typename?: 'Resource' }
-      & ResourceDataFragment
-    )> }
-  ) }
-);
+export type SearchResourcesQuery = { __typename?: 'Query', searchResources: { __typename?: 'SearchResourcesResult', items: Array<{ __typename?: 'Resource', _id: string, name: string, type: Types.ResourceType, mediaType: Types.ResourceMediaType, url: string, description?: string | null | undefined, durationSeconds?: number | null | undefined, rating?: number | null | undefined, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined }> } };
 
 export type GetResourcePreviewDataQueryVariables = Types.Exact<{
   id: Types.Scalars['String'];
 }>;
 
 
-export type GetResourcePreviewDataQuery = (
-  { __typename?: 'Query' }
-  & { getResourceById: (
-    { __typename?: 'Resource' }
-    & ResourcePreviewCardDataFragment
-  ) }
-);
+export type GetResourcePreviewDataQuery = { __typename?: 'Query', getResourceById: { __typename?: 'Resource', _id: string, name: string, type: Types.ResourceType, mediaType: Types.ResourceMediaType, url: string, description?: string | null | undefined, durationSeconds?: number | null | undefined, upvotes?: number | null | undefined, rating?: number | null | undefined, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined, coveredSubTopics?: { __typename?: 'LearningMaterialCoveredSubTopicsResults', items: Array<{ __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined }> } | null | undefined, subResourceSeries?: Array<{ __typename?: 'Resource', _id: string, name: string }> | null | undefined, subResources?: Array<{ __typename?: 'Resource', _id: string, name: string }> | null | undefined } };
 
 export type DeleteResourceMutationVariables = Types.Exact<{
   _id: Types.Scalars['String'];
 }>;
 
 
-export type DeleteResourceMutation = (
-  { __typename?: 'Mutation' }
-  & { deleteResource: (
-    { __typename?: 'DeleteResourceResponse' }
-    & Pick<Types.DeleteResourceResponse, '_id' | 'success'>
-  ) }
-);
+export type DeleteResourceMutation = { __typename?: 'Mutation', deleteResource: { __typename?: 'DeleteResourceResponse', _id: string, success: boolean } };
 
 export type SetResourceOpenedMutationVariables = Types.Exact<{
   resourceId: Types.Scalars['String'];
 }>;
 
 
-export type SetResourceOpenedMutation = (
-  { __typename?: 'Mutation' }
-  & { setResourcesConsumed: Array<(
-    { __typename?: 'Resource' }
-    & Pick<Types.Resource, '_id'>
-    & { consumed?: Types.Maybe<(
-      { __typename?: 'ConsumedResource' }
-      & Pick<Types.ConsumedResource, 'openedAt' | 'lastOpenedAt'>
-    )> }
-  )> }
-);
+export type SetResourceOpenedMutation = { __typename?: 'Mutation', setResourcesConsumed: Array<{ __typename?: 'Resource', _id: string, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, lastOpenedAt?: any | null | undefined } | null | undefined }> };
 
 export type SetResourceConsumedMutationVariables = Types.Exact<{
   resourceId: Types.Scalars['String'];
@@ -69,37 +38,14 @@ export type SetResourceConsumedMutationVariables = Types.Exact<{
 }>;
 
 
-export type SetResourceConsumedMutation = (
-  { __typename?: 'Mutation' }
-  & { setResourcesConsumed: Array<(
-    { __typename?: 'Resource' }
-    & Pick<Types.Resource, '_id'>
-    & { consumed?: Types.Maybe<(
-      { __typename?: 'ConsumedResource' }
-      & Pick<Types.ConsumedResource, 'openedAt' | 'consumedAt'>
-    )> }
-  )> }
-);
+export type SetResourceConsumedMutation = { __typename?: 'Mutation', setResourcesConsumed: Array<{ __typename?: 'Resource', _id: string, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined }> };
 
 export type AnalyzeResourceUrlQueryVariables = Types.Exact<{
   url: Types.Scalars['String'];
 }>;
 
 
-export type AnalyzeResourceUrlQuery = (
-  { __typename?: 'Query' }
-  & { analyzeResourceUrl: (
-    { __typename?: 'AnalyzeResourceUrlResult' }
-    & { resourceData?: Types.Maybe<(
-      { __typename?: 'ResourceData' }
-      & Pick<Types.ResourceData, 'name' | 'type' | 'mediaType' | 'description' | 'durationSeconds'>
-      & { subResourceSeries?: Types.Maybe<Array<(
-        { __typename?: 'SubResourceExtractedData' }
-        & Pick<Types.SubResourceExtractedData, 'name' | 'url' | 'type' | 'mediaType' | 'description' | 'durationSeconds'>
-      )>> }
-    )> }
-  ) }
-);
+export type AnalyzeResourceUrlQuery = { __typename?: 'Query', analyzeResourceUrl: { __typename?: 'AnalyzeResourceUrlResult', resourceData?: { __typename?: 'ResourceData', name?: string | null | undefined, type?: Types.ResourceType | null | undefined, mediaType?: Types.ResourceMediaType | null | undefined, description?: string | null | undefined, durationSeconds?: number | null | undefined, subResourceSeries?: Array<{ __typename?: 'SubResourceExtractedData', name: string, url: string, type: Types.ResourceType, mediaType: Types.ResourceMediaType, description?: string | null | undefined, durationSeconds?: number | null | undefined }> | null | undefined } | null | undefined } };
 
 
 
@@ -121,10 +67,12 @@ export type AnalyzeResourceUrlQuery = (
  * });
  */
 export function useSearchResourcesQuery(baseOptions: Apollo.QueryHookOptions<SearchResourcesQuery, SearchResourcesQueryVariables>) {
-        return Apollo.useQuery<SearchResourcesQuery, SearchResourcesQueryVariables>(Operations.searchResources, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SearchResourcesQuery, SearchResourcesQueryVariables>(Operations.searchResources, options);
       }
 export function useSearchResourcesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchResourcesQuery, SearchResourcesQueryVariables>) {
-          return Apollo.useLazyQuery<SearchResourcesQuery, SearchResourcesQueryVariables>(Operations.searchResources, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SearchResourcesQuery, SearchResourcesQueryVariables>(Operations.searchResources, options);
         }
 export type SearchResourcesQueryHookResult = ReturnType<typeof useSearchResourcesQuery>;
 export type SearchResourcesLazyQueryHookResult = ReturnType<typeof useSearchResourcesLazyQuery>;
@@ -147,10 +95,12 @@ export type SearchResourcesQueryResult = Apollo.QueryResult<SearchResourcesQuery
  * });
  */
 export function useGetResourcePreviewDataQuery(baseOptions: Apollo.QueryHookOptions<GetResourcePreviewDataQuery, GetResourcePreviewDataQueryVariables>) {
-        return Apollo.useQuery<GetResourcePreviewDataQuery, GetResourcePreviewDataQueryVariables>(Operations.getResourcePreviewData, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetResourcePreviewDataQuery, GetResourcePreviewDataQueryVariables>(Operations.getResourcePreviewData, options);
       }
 export function useGetResourcePreviewDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetResourcePreviewDataQuery, GetResourcePreviewDataQueryVariables>) {
-          return Apollo.useLazyQuery<GetResourcePreviewDataQuery, GetResourcePreviewDataQueryVariables>(Operations.getResourcePreviewData, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetResourcePreviewDataQuery, GetResourcePreviewDataQueryVariables>(Operations.getResourcePreviewData, options);
         }
 export type GetResourcePreviewDataQueryHookResult = ReturnType<typeof useGetResourcePreviewDataQuery>;
 export type GetResourcePreviewDataLazyQueryHookResult = ReturnType<typeof useGetResourcePreviewDataLazyQuery>;
@@ -175,7 +125,8 @@ export type DeleteResourceMutationFn = Apollo.MutationFunction<DeleteResourceMut
  * });
  */
 export function useDeleteResourceMutation(baseOptions?: Apollo.MutationHookOptions<DeleteResourceMutation, DeleteResourceMutationVariables>) {
-        return Apollo.useMutation<DeleteResourceMutation, DeleteResourceMutationVariables>(Operations.deleteResource, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteResourceMutation, DeleteResourceMutationVariables>(Operations.deleteResource, options);
       }
 export type DeleteResourceMutationHookResult = ReturnType<typeof useDeleteResourceMutation>;
 export type DeleteResourceMutationResult = Apollo.MutationResult<DeleteResourceMutation>;
@@ -200,7 +151,8 @@ export type SetResourceOpenedMutationFn = Apollo.MutationFunction<SetResourceOpe
  * });
  */
 export function useSetResourceOpenedMutation(baseOptions?: Apollo.MutationHookOptions<SetResourceOpenedMutation, SetResourceOpenedMutationVariables>) {
-        return Apollo.useMutation<SetResourceOpenedMutation, SetResourceOpenedMutationVariables>(Operations.setResourceOpened, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SetResourceOpenedMutation, SetResourceOpenedMutationVariables>(Operations.setResourceOpened, options);
       }
 export type SetResourceOpenedMutationHookResult = ReturnType<typeof useSetResourceOpenedMutation>;
 export type SetResourceOpenedMutationResult = Apollo.MutationResult<SetResourceOpenedMutation>;
@@ -226,7 +178,8 @@ export type SetResourceConsumedMutationFn = Apollo.MutationFunction<SetResourceC
  * });
  */
 export function useSetResourceConsumedMutation(baseOptions?: Apollo.MutationHookOptions<SetResourceConsumedMutation, SetResourceConsumedMutationVariables>) {
-        return Apollo.useMutation<SetResourceConsumedMutation, SetResourceConsumedMutationVariables>(Operations.setResourceConsumed, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SetResourceConsumedMutation, SetResourceConsumedMutationVariables>(Operations.setResourceConsumed, options);
       }
 export type SetResourceConsumedMutationHookResult = ReturnType<typeof useSetResourceConsumedMutation>;
 export type SetResourceConsumedMutationResult = Apollo.MutationResult<SetResourceConsumedMutation>;
@@ -249,10 +202,12 @@ export type SetResourceConsumedMutationOptions = Apollo.BaseMutationOptions<SetR
  * });
  */
 export function useAnalyzeResourceUrlQuery(baseOptions: Apollo.QueryHookOptions<AnalyzeResourceUrlQuery, AnalyzeResourceUrlQueryVariables>) {
-        return Apollo.useQuery<AnalyzeResourceUrlQuery, AnalyzeResourceUrlQueryVariables>(Operations.analyzeResourceUrl, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<AnalyzeResourceUrlQuery, AnalyzeResourceUrlQueryVariables>(Operations.analyzeResourceUrl, options);
       }
 export function useAnalyzeResourceUrlLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AnalyzeResourceUrlQuery, AnalyzeResourceUrlQueryVariables>) {
-          return Apollo.useLazyQuery<AnalyzeResourceUrlQuery, AnalyzeResourceUrlQueryVariables>(Operations.analyzeResourceUrl, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<AnalyzeResourceUrlQuery, AnalyzeResourceUrlQueryVariables>(Operations.analyzeResourceUrl, options);
         }
 export type AnalyzeResourceUrlQueryHookResult = ReturnType<typeof useAnalyzeResourceUrlQuery>;
 export type AnalyzeResourceUrlLazyQueryHookResult = ReturnType<typeof useAnalyzeResourceUrlLazyQuery>;

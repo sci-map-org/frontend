@@ -1,28 +1,7 @@
 import * as Types from '../types';
 
-export type CurrentUserDataFragment = (
-  { __typename?: 'CurrentUser' }
-  & Pick<Types.CurrentUser, '_id' | 'email' | 'key' | 'role' | 'displayName' | 'bio' | 'profilePictureUrl'>
-  & { startedLearningPaths?: Types.Maybe<Array<(
-    { __typename?: 'LearningPathStartedItem' }
-    & Pick<Types.LearningPathStartedItem, 'startedAt'>
-    & { learningPath: (
-      { __typename?: 'LearningPath' }
-      & Pick<Types.LearningPath, '_id' | 'key' | 'name'>
-    ) }
-  )>> }
-);
+export type CurrentUserDataFragment = { __typename?: 'CurrentUser', _id: string, email: string, key: string, role: Types.UserRole, displayName: string, bio?: string | null | undefined, profilePictureUrl?: string | null | undefined, startedLearningPaths?: Array<{ __typename?: 'LearningPathStartedItem', startedAt: any, learningPath: { __typename?: 'LearningPath', _id: string, key: string, name: string } }> | null | undefined };
 
-export type PublicUserDataFragment = (
-  { __typename?: 'User' }
-  & Pick<Types.User, '_id' | 'key' | 'role' | 'displayName' | 'bio' | 'profilePictureUrl'>
-);
+export type PublicUserDataFragment = { __typename?: 'User', _id: string, key: string, role: Types.UserRole, displayName: string, bio?: string | null | undefined, profilePictureUrl?: string | null | undefined };
 
-export type LoginResponseDataFragment = (
-  { __typename?: 'LoginResponse' }
-  & Pick<Types.LoginResponse, 'jwt' | 'redirectUrl'>
-  & { currentUser: (
-    { __typename?: 'CurrentUser' }
-    & CurrentUserDataFragment
-  ) }
-);
+export type LoginResponseDataFragment = { __typename?: 'LoginResponse', jwt: string, redirectUrl?: string | null | undefined, currentUser: { __typename?: 'CurrentUser', _id: string, email: string, key: string, role: Types.UserRole, displayName: string, bio?: string | null | undefined, profilePictureUrl?: string | null | undefined, startedLearningPaths?: Array<{ __typename?: 'LearningPathStartedItem', startedAt: any, learningPath: { __typename?: 'LearningPath', _id: string, key: string, name: string } }> | null | undefined } };

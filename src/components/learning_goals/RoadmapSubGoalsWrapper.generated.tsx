@@ -1,11 +1,3 @@
 import * as Types from '../../graphql/types';
 
-import { SubGoalCardDataFragment } from './SubGoalCard.generated';
-export type RoadmapSubGoalsWrapperDataFragment = (
-  { __typename?: 'LearningGoal' }
-  & Pick<Types.LearningGoal, '_id'>
-  & { requiredSubGoals?: Types.Maybe<Array<(
-    { __typename?: 'SubGoalItem' }
-    & SubGoalCardDataFragment
-  )>> }
-);
+export type RoadmapSubGoalsWrapperDataFragment = { __typename?: 'LearningGoal', _id: string, requiredSubGoals?: Array<{ __typename?: 'SubGoalItem', strength: number, subGoal: { __typename?: 'LearningGoal' } | { __typename?: 'Topic', _id: string } }> | null | undefined };

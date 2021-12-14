@@ -1,10 +1,3 @@
 import * as Types from '../../../graphql/types';
 
-export type ResourceUrlDataFragment = (
-  { __typename?: 'Resource' }
-  & Pick<Types.Resource, '_id' | 'url'>
-  & { consumed?: Types.Maybe<(
-    { __typename?: 'ConsumedResource' }
-    & Pick<Types.ConsumedResource, 'openedAt' | 'lastOpenedAt' | 'consumedAt'>
-  )> }
-);
+export type ResourceUrlDataFragment = { __typename?: 'Resource', _id: string, url: string, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, lastOpenedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined };

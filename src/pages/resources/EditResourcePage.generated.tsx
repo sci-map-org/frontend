@@ -1,38 +1,22 @@
 import * as Types from '../../graphql/types';
 
-import { ResourceDataFragment, ResourcePreviewCardDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import * as Operations from './EditResourcePage';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type UpdateResourceResourcePageMutationVariables = Types.Exact<{
   id: Types.Scalars['String'];
   payload: Types.UpdateResourcePayload;
 }>;
 
 
-export type UpdateResourceResourcePageMutation = (
-  { __typename?: 'Mutation' }
-  & { updateResource: (
-    { __typename?: 'Resource' }
-    & ResourceDataFragment
-  ) }
-);
+export type UpdateResourceResourcePageMutation = { __typename?: 'Mutation', updateResource: { __typename?: 'Resource', _id: string, name: string, type: Types.ResourceType, mediaType: Types.ResourceMediaType, url: string, description?: string | null | undefined, durationSeconds?: number | null | undefined, rating?: number | null | undefined, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined } };
 
 export type GetResourceEditResourcePageQueryVariables = Types.Exact<{
   id: Types.Scalars['String'];
 }>;
 
 
-export type GetResourceEditResourcePageQuery = (
-  { __typename?: 'Query' }
-  & { getResourceById: (
-    { __typename?: 'Resource' }
-    & { createdBy?: Types.Maybe<(
-      { __typename?: 'User' }
-      & Pick<Types.User, '_id'>
-    )> }
-    & ResourceDataFragment
-  ) }
-);
+export type GetResourceEditResourcePageQuery = { __typename?: 'Query', getResourceById: { __typename?: 'Resource', _id: string, name: string, type: Types.ResourceType, mediaType: Types.ResourceMediaType, url: string, description?: string | null | undefined, durationSeconds?: number | null | undefined, rating?: number | null | undefined, createdBy?: { __typename?: 'User', _id: string } | null | undefined, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined } };
 
 
 export type UpdateResourceResourcePageMutationFn = Apollo.MutationFunction<UpdateResourceResourcePageMutation, UpdateResourceResourcePageMutationVariables>;
@@ -56,7 +40,8 @@ export type UpdateResourceResourcePageMutationFn = Apollo.MutationFunction<Updat
  * });
  */
 export function useUpdateResourceResourcePageMutation(baseOptions?: Apollo.MutationHookOptions<UpdateResourceResourcePageMutation, UpdateResourceResourcePageMutationVariables>) {
-        return Apollo.useMutation<UpdateResourceResourcePageMutation, UpdateResourceResourcePageMutationVariables>(Operations.updateResourceResourcePage, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateResourceResourcePageMutation, UpdateResourceResourcePageMutationVariables>(Operations.updateResourceResourcePage, options);
       }
 export type UpdateResourceResourcePageMutationHookResult = ReturnType<typeof useUpdateResourceResourcePageMutation>;
 export type UpdateResourceResourcePageMutationResult = Apollo.MutationResult<UpdateResourceResourcePageMutation>;
@@ -79,10 +64,12 @@ export type UpdateResourceResourcePageMutationOptions = Apollo.BaseMutationOptio
  * });
  */
 export function useGetResourceEditResourcePageQuery(baseOptions: Apollo.QueryHookOptions<GetResourceEditResourcePageQuery, GetResourceEditResourcePageQueryVariables>) {
-        return Apollo.useQuery<GetResourceEditResourcePageQuery, GetResourceEditResourcePageQueryVariables>(Operations.getResourceEditResourcePage, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetResourceEditResourcePageQuery, GetResourceEditResourcePageQueryVariables>(Operations.getResourceEditResourcePage, options);
       }
 export function useGetResourceEditResourcePageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetResourceEditResourcePageQuery, GetResourceEditResourcePageQueryVariables>) {
-          return Apollo.useLazyQuery<GetResourceEditResourcePageQuery, GetResourceEditResourcePageQueryVariables>(Operations.getResourceEditResourcePage, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetResourceEditResourcePageQuery, GetResourceEditResourcePageQueryVariables>(Operations.getResourceEditResourcePage, options);
         }
 export type GetResourceEditResourcePageQueryHookResult = ReturnType<typeof useGetResourceEditResourcePageQuery>;
 export type GetResourceEditResourcePageLazyQueryHookResult = ReturnType<typeof useGetResourceEditResourcePageLazyQuery>;

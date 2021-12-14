@@ -1,8 +1,3 @@
 import * as Types from '../../graphql/types';
 
-import { LearningMaterialStarsRaterData_LearningPath_Fragment, LearningMaterialStarsRaterData_Resource_Fragment } from '../learning_materials/LearningMaterialStarsRating.generated';
-export type ResourceMiniCardDataFragment = (
-  { __typename?: 'Resource' }
-  & Pick<Types.Resource, '_id' | 'name' | 'type' | 'url' | 'rating'>
-  & LearningMaterialStarsRaterData_Resource_Fragment
-);
+export type ResourceMiniCardDataFragment = { __typename?: 'Resource', _id: string, name: string, type: Types.ResourceType, url: string, rating?: number | null | undefined, consumed?: { __typename?: 'ConsumedResource', consumedAt?: any | null | undefined, openedAt?: any | null | undefined } | null | undefined };

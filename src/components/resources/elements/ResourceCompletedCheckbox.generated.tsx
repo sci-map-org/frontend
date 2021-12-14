@@ -1,10 +1,3 @@
 import * as Types from '../../../graphql/types';
 
-export type ResourceCompletedCheckboxDataFragment = (
-  { __typename?: 'Resource' }
-  & Pick<Types.Resource, '_id'>
-  & { consumed?: Types.Maybe<(
-    { __typename?: 'ConsumedResource' }
-    & Pick<Types.ConsumedResource, 'consumedAt' | 'openedAt'>
-  )> }
-);
+export type ResourceCompletedCheckboxDataFragment = { __typename?: 'Resource', _id: string, consumed?: { __typename?: 'ConsumedResource', consumedAt?: any | null | undefined, openedAt?: any | null | undefined } | null | undefined };

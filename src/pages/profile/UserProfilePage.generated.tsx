@@ -1,20 +1,14 @@
 import * as Types from '../../graphql/types';
 
-import { PublicUserDataFragment } from '../../graphql/users/users.fragments.generated';
 import * as Operations from './UserProfilePage';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type GetUserUserProfilePageQueryVariables = Types.Exact<{
   key: Types.Scalars['String'];
 }>;
 
 
-export type GetUserUserProfilePageQuery = (
-  { __typename?: 'Query' }
-  & { getUser: (
-    { __typename?: 'User' }
-    & PublicUserDataFragment
-  ) }
-);
+export type GetUserUserProfilePageQuery = { __typename?: 'Query', getUser: { __typename?: 'User', _id: string, key: string, role: Types.UserRole, displayName: string, bio?: string | null | undefined, profilePictureUrl?: string | null | undefined } };
 
 
 
@@ -35,10 +29,12 @@ export type GetUserUserProfilePageQuery = (
  * });
  */
 export function useGetUserUserProfilePageQuery(baseOptions: Apollo.QueryHookOptions<GetUserUserProfilePageQuery, GetUserUserProfilePageQueryVariables>) {
-        return Apollo.useQuery<GetUserUserProfilePageQuery, GetUserUserProfilePageQueryVariables>(Operations.getUserUserProfilePage, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUserUserProfilePageQuery, GetUserUserProfilePageQueryVariables>(Operations.getUserUserProfilePage, options);
       }
 export function useGetUserUserProfilePageLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserUserProfilePageQuery, GetUserUserProfilePageQueryVariables>) {
-          return Apollo.useLazyQuery<GetUserUserProfilePageQuery, GetUserUserProfilePageQueryVariables>(Operations.getUserUserProfilePage, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUserUserProfilePageQuery, GetUserUserProfilePageQueryVariables>(Operations.getUserUserProfilePage, options);
         }
 export type GetUserUserProfilePageQueryHookResult = ReturnType<typeof useGetUserUserProfilePageQuery>;
 export type GetUserUserProfilePageLazyQueryHookResult = ReturnType<typeof useGetUserUserProfilePageLazyQuery>;

@@ -1,28 +1,15 @@
 import * as Types from '../../graphql/types';
 
-import { ResourceDataFragment, ResourcePreviewCardDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import * as Operations from './SubResourceSeriesManager';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type CreateSubResourceSeriesMutationVariables = Types.Exact<{
   parentResourceId: Types.Scalars['String'];
   subResourceId: Types.Scalars['String'];
 }>;
 
 
-export type CreateSubResourceSeriesMutation = (
-  { __typename?: 'Mutation' }
-  & { createSubResourceSeries: (
-    { __typename?: 'SubResourceSeriesCreatedResult' }
-    & { seriesParentResource: (
-      { __typename?: 'Resource' }
-      & Pick<Types.Resource, '_id'>
-      & { subResourceSeries?: Types.Maybe<Array<(
-        { __typename?: 'Resource' }
-        & ResourceDataFragment
-      )>> }
-    ) }
-  ) }
-);
+export type CreateSubResourceSeriesMutation = { __typename?: 'Mutation', createSubResourceSeries: { __typename?: 'SubResourceSeriesCreatedResult', seriesParentResource: { __typename?: 'Resource', _id: string, subResourceSeries?: Array<{ __typename?: 'Resource', _id: string, name: string, type: Types.ResourceType, mediaType: Types.ResourceMediaType, url: string, description?: string | null | undefined, durationSeconds?: number | null | undefined, rating?: number | null | undefined, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined }> | null | undefined } } };
 
 export type AddSubResourceToSeriesMutationVariables = Types.Exact<{
   parentResourceId: Types.Scalars['String'];
@@ -31,24 +18,7 @@ export type AddSubResourceToSeriesMutationVariables = Types.Exact<{
 }>;
 
 
-export type AddSubResourceToSeriesMutation = (
-  { __typename?: 'Mutation' }
-  & { addSubResourceToSeries: (
-    { __typename?: 'SubResourceSeriesCreatedResult' }
-    & { seriesParentResource: (
-      { __typename?: 'Resource' }
-      & Pick<Types.Resource, '_id'>
-      & { subResourceSeries?: Types.Maybe<Array<(
-        { __typename?: 'Resource' }
-        & { nextResource?: Types.Maybe<(
-          { __typename?: 'Resource' }
-          & ResourceDataFragment
-        )> }
-        & ResourceDataFragment
-      )>> }
-    ) }
-  ) }
-);
+export type AddSubResourceToSeriesMutation = { __typename?: 'Mutation', addSubResourceToSeries: { __typename?: 'SubResourceSeriesCreatedResult', seriesParentResource: { __typename?: 'Resource', _id: string, subResourceSeries?: Array<{ __typename?: 'Resource', _id: string, name: string, type: Types.ResourceType, mediaType: Types.ResourceMediaType, url: string, description?: string | null | undefined, durationSeconds?: number | null | undefined, rating?: number | null | undefined, nextResource?: { __typename?: 'Resource', _id: string, name: string, type: Types.ResourceType, mediaType: Types.ResourceMediaType, url: string, description?: string | null | undefined, durationSeconds?: number | null | undefined, rating?: number | null | undefined, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined } | null | undefined, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined }> | null | undefined } } };
 
 
 export type CreateSubResourceSeriesMutationFn = Apollo.MutationFunction<CreateSubResourceSeriesMutation, CreateSubResourceSeriesMutationVariables>;
@@ -72,7 +42,8 @@ export type CreateSubResourceSeriesMutationFn = Apollo.MutationFunction<CreateSu
  * });
  */
 export function useCreateSubResourceSeriesMutation(baseOptions?: Apollo.MutationHookOptions<CreateSubResourceSeriesMutation, CreateSubResourceSeriesMutationVariables>) {
-        return Apollo.useMutation<CreateSubResourceSeriesMutation, CreateSubResourceSeriesMutationVariables>(Operations.createSubResourceSeries, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateSubResourceSeriesMutation, CreateSubResourceSeriesMutationVariables>(Operations.createSubResourceSeries, options);
       }
 export type CreateSubResourceSeriesMutationHookResult = ReturnType<typeof useCreateSubResourceSeriesMutation>;
 export type CreateSubResourceSeriesMutationResult = Apollo.MutationResult<CreateSubResourceSeriesMutation>;
@@ -99,7 +70,8 @@ export type AddSubResourceToSeriesMutationFn = Apollo.MutationFunction<AddSubRes
  * });
  */
 export function useAddSubResourceToSeriesMutation(baseOptions?: Apollo.MutationHookOptions<AddSubResourceToSeriesMutation, AddSubResourceToSeriesMutationVariables>) {
-        return Apollo.useMutation<AddSubResourceToSeriesMutation, AddSubResourceToSeriesMutationVariables>(Operations.addSubResourceToSeries, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddSubResourceToSeriesMutation, AddSubResourceToSeriesMutationVariables>(Operations.addSubResourceToSeries, options);
       }
 export type AddSubResourceToSeriesMutationHookResult = ReturnType<typeof useAddSubResourceToSeriesMutation>;
 export type AddSubResourceToSeriesMutationResult = Apollo.MutationResult<AddSubResourceToSeriesMutation>;

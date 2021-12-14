@@ -1,20 +1,3 @@
 import * as Types from '../../graphql/types';
 
-export type LearningPathCompletionDataFragment = (
-  { __typename?: 'LearningPath' }
-  & Pick<Types.LearningPath, '_id' | 'durationSeconds'>
-  & { started?: Types.Maybe<(
-    { __typename?: 'LearningPathStarted' }
-    & Pick<Types.LearningPathStarted, 'startedAt' | 'completedAt'>
-  )>, resourceItems?: Types.Maybe<Array<(
-    { __typename?: 'LearningPathResourceItem' }
-    & { resource: (
-      { __typename?: 'Resource' }
-      & Pick<Types.Resource, '_id' | 'durationSeconds'>
-      & { consumed?: Types.Maybe<(
-        { __typename?: 'ConsumedResource' }
-        & Pick<Types.ConsumedResource, 'openedAt' | 'consumedAt'>
-      )> }
-    ) }
-  )>> }
-);
+export type LearningPathCompletionDataFragment = { __typename?: 'LearningPath', _id: string, durationSeconds?: number | null | undefined, started?: { __typename?: 'LearningPathStarted', startedAt: any, completedAt?: any | null | undefined } | null | undefined, resourceItems?: Array<{ __typename?: 'LearningPathResourceItem', resource: { __typename?: 'Resource', _id: string, durationSeconds?: number | null | undefined, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined } }> | null | undefined };

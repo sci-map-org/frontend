@@ -2,19 +2,14 @@ import * as Types from '../../graphql/types';
 
 import * as Operations from './LearningGoalStarsRater';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type RateLearningGoalMutationVariables = Types.Exact<{
   learningGoalId: Types.Scalars['String'];
   value: Types.Scalars['Float'];
 }>;
 
 
-export type RateLearningGoalMutation = (
-  { __typename?: 'Mutation' }
-  & { rateLearningGoal: (
-    { __typename?: 'LearningGoal' }
-    & Pick<Types.LearningGoal, '_id' | 'rating'>
-  ) }
-);
+export type RateLearningGoalMutation = { __typename?: 'Mutation', rateLearningGoal: { __typename?: 'LearningGoal', _id: string, rating?: number | null | undefined } };
 
 
 export type RateLearningGoalMutationFn = Apollo.MutationFunction<RateLearningGoalMutation, RateLearningGoalMutationVariables>;
@@ -38,7 +33,8 @@ export type RateLearningGoalMutationFn = Apollo.MutationFunction<RateLearningGoa
  * });
  */
 export function useRateLearningGoalMutation(baseOptions?: Apollo.MutationHookOptions<RateLearningGoalMutation, RateLearningGoalMutationVariables>) {
-        return Apollo.useMutation<RateLearningGoalMutation, RateLearningGoalMutationVariables>(Operations.rateLearningGoal, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RateLearningGoalMutation, RateLearningGoalMutationVariables>(Operations.rateLearningGoal, options);
       }
 export type RateLearningGoalMutationHookResult = ReturnType<typeof useRateLearningGoalMutation>;
 export type RateLearningGoalMutationResult = Apollo.MutationResult<RateLearningGoalMutation>;
