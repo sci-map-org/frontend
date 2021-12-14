@@ -33,12 +33,13 @@ import {
   ResourceType,
 } from '../../graphql/types';
 import { validateUrl } from '../../services/url.service';
-import { LearningGoalBadgeDataFragment } from '../learning_goals/LearningGoalBadge.generated';
 import { StatelessEditableLearningMaterialCoveredTopics } from '../learning_materials/EditableLearningMaterialCoveredTopics';
 import { StatelessEditableLearningMaterialPrerequisites } from '../learning_materials/EditableLearningMaterialPrerequisites';
 import { LearningMaterialTagsStatelessEditor } from '../learning_materials/LearningMaterialTagsEditor';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { FormButtons } from '../lib/buttons/FormButtons';
+import { TopicLink } from '../lib/links/TopicLink';
+import { FormFieldLabel } from '../lib/Typography';
 import { TopicBadge } from '../topics/TopicBadge';
 import { DurationFormField, DurationViewer } from './elements/Duration';
 import { ResourceDescriptionInput } from './elements/ResourceDescription';
@@ -186,6 +187,14 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
         value={resourceCreationData.description}
         onChange={(d) => updateResourceCreationData({ description: d })}
       />
+      <Stack direction="column" spacing={0} py={3}>
+        <FormFieldLabel>Show In:</FormFieldLabel>
+        <Stack pl={3}>
+          {resourceCreationData.showInTopics.map((showedInTopic) => (
+            <TopicLink topic={showedInTopic} />
+          ))}
+        </Stack>
+      </Stack>
       <Flex direction="row">
         <Flex w="50%">
           <StatelessEditableLearningMaterialCoveredTopics
