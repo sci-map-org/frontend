@@ -120,7 +120,7 @@ export const HomePage: React.FC = () => {
         renderTopoStain={(props) => (
           <Image
             {...props}
-            src="./static/topostain_brown.svg"
+            src="./images/topostain_brown.svg"
             w="400px"
             opacity={0.5}
             right={{ base: '-20%', md: '2%' }}
@@ -129,7 +129,7 @@ export const HomePage: React.FC = () => {
         )}
         imagePosition="left"
         layoutProps={outerLayoutProps}
-        renderImage={<Image src="./static/graph_illustration_bold.svg" mt={{ md: '-40px' }} pr={{ md: '20px' }} />}
+        renderImage={<Image src="./images/graph_illustration_bold.svg" mt={{ md: '-40px' }} pr={{ md: '20px' }} />}
         title={
           <>
             Explore a{' '}
@@ -173,7 +173,7 @@ export const HomePage: React.FC = () => {
         renderTopoStain={(props) => (
           <Image
             {...props}
-            src="./static/topostain_teal.svg"
+            src="./images/topostain_teal.svg"
             w={{ base: '360px', md: '400px' }}
             opacity={0.5}
             left={{ base: '-25%', md: '-1%' }}
@@ -182,7 +182,7 @@ export const HomePage: React.FC = () => {
         )}
         imagePosition="right"
         layoutProps={outerLayoutProps}
-        renderImage={<Image src="./static/boatymacboatface.svg" w={{ base: '300px', md: '360px' }} />}
+        renderImage={<Image src="./images/boatymacboatface.svg" w={{ base: '300px', md: '360px' }} />}
         title={
           <>
             Navigate{' '}
@@ -223,7 +223,7 @@ export const HomePage: React.FC = () => {
         renderTopoStain={(props) => (
           <Image
             {...props}
-            src="./static/topostain_green.svg"
+            src="./images/topostain_green.svg"
             w={{ base: '300px', md: '360px' }}
             opacity={0.5}
             right={{ base: '-10%', md: '6%' }}
@@ -231,7 +231,7 @@ export const HomePage: React.FC = () => {
           />
         )}
         layoutProps={outerLayoutProps}
-        renderImage={<Image src="./static/together_goal.svg" w={{ base: '250px', md: '320px' }} />}
+        renderImage={<Image src="./images/together_goal.svg" w={{ base: '250px', md: '320px' }} />}
         title={
           <>
             Grow{' '}
@@ -331,7 +331,7 @@ const HomeHeader: React.FC<{ layoutProps?: FlexProps }> = ({ layoutProps = {} })
     <Flex direction="column" id="homeHeader" w="100%" alignItems="center">
       <Flex justifyContent="space-between" alignItems="stretch" w="100%" {...layoutProps}>
         <Center w="50%">
-          <Img src="./static/walker.svg" w="400px" />
+          <Img src="./images/walker.svg" w="400px" />
         </Center>
         <Flex
           w="50%"
@@ -430,7 +430,7 @@ const SearchBox: React.FC<{ layoutProps?: FlexProps; leftTopoStainPosition?: 'to
       <Center w="100%" position="relative" {...layoutProps}>
         <Image
           position="absolute"
-          src="./static/topostain_blue.svg"
+          src="./images/topostain_blue.svg"
           zIndex={-3}
           left={{ base: '-33%', sm: '-20%', md: '0px' }}
           {...(leftTopoStainPosition === 'bottom' && {
@@ -446,7 +446,7 @@ const SearchBox: React.FC<{ layoutProps?: FlexProps; leftTopoStainPosition?: 'to
           <Box position="relative" px={5}>
             <Image
               position="absolute"
-              src="./static/search_dots_pin.svg"
+              src="./images/search_dots_pin.svg"
               right={{ base: '-30px', md: '-160px' }}
               bottom={{ base: '-30px', md: '10px' }}
               w={{ base: '300px', md: '320px' }}
@@ -454,7 +454,7 @@ const SearchBox: React.FC<{ layoutProps?: FlexProps; leftTopoStainPosition?: 'to
             />
             <Image
               position="absolute"
-              src="./static/search_stain.svg"
+              src="./images/search_stain.svg"
               zIndex={-3}
               right={{ base: '-20px', md: '-200px' }}
               bottom={{ base: '-120px', md: '-80px' }}

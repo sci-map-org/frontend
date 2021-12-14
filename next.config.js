@@ -1,5 +1,4 @@
-const withCSS = require('@zeit/next-css');
-module.exports = withCSS({
+module.exports = {
   /* config options here */
   serverRuntimeConfig: {
     // Will only be available on the server side
@@ -15,4 +14,4 @@ module.exports = withCSS({
     awsSecretKey: process.env.AWS_SECRET_KEY,
     awsRegion: process.env.AWS_REGION,
   },
-});
+};
