@@ -16,6 +16,14 @@ export const TopicPageSectionHeader: React.FC<HeadingProps> = ({ children, ...pr
   );
 };
 
+export const FormTitle: React.FC<HeadingProps> = ({ children, ...props }) => {
+  return (
+    <Heading color="gray.800" fontSize="4xl" fontWeight={400} {...props}>
+      {children}
+    </Heading>
+  );
+};
+
 export const FormFieldLabel: React.FC<TextProps> = ({ children, ...props }) => {
   return (
     <Text fontSize="lg" fontWeight={800} color="gray.700" {...props}>

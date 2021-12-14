@@ -1,5 +1,6 @@
 import { useDisclosure } from '@chakra-ui/hooks';
-import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Stack } from '@chakra-ui/react';
+import { Image } from '@chakra-ui/image';
+import { Flex, Heading, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Stack } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { ReactNode, useState } from 'react';
 import { TopicFullData, TopicLinkData } from '../../graphql/topics/topics.fragments';
@@ -12,6 +13,7 @@ import { CreateTopicContextOptions, CreateTopicPayload, SubTopicRelationshipType
 import { generateUrlKey } from '../../services/url.service';
 import { getChakraRelativeSize } from '../../util/chakra.util';
 import { FormButtons } from '../lib/buttons/FormButtons';
+import { FormTitle } from '../lib/Typography';
 import { TopicDescriptionField } from './fields/TopicDescription';
 import { TopicNameField } from './fields/TopicNameField';
 import { TopicUrlKeyField, useCheckTopicKeyAvailability } from './fields/TopicUrlKey';
@@ -45,51 +47,72 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
 }) => {
   const { isChecking, isAvailable } = useCheckTopicKeyAvailability(topicCreationData.key);
   return (
-    <Stack spacing={4} w="100%">
-      <TopicNameField
-        parentTopic={parentTopic}
-        value={topicCreationData.name}
-        onChange={(newNameValue) => {
-          updateTopicCreationData({
-            name: newNameValue,
-            ...(topicCreationData.key === generateUrlKey(topicCreationData.name) && {
-              key: generateUrlKey(newNameValue),
-            }),
-          });
-        }}
-        setContextAndDisambiguationTopic={(
-          contextTopic: TopicLinkDataFragment,
-          disambiguationTopic: TopicLinkDataFragment
-        ) => {
-          updateTopicCreationData({
-            contextTopic,
-            disambiguationTopic,
-            // key: generateUrlKey(`${topicCreationData.key}_(${contextTopic.key})`),
-          });
-        }}
-        onConnectSubTopic={onConnectSubTopic}
-      />
-      <TopicUrlKeyField
-        size={size}
-        value={topicCreationData.key}
-        onChange={(newKeyValue) => updateTopicCreationData({ key: generateUrlKey(newKeyValue) })}
-        isChecking={isChecking}
-        isAvailable={isAvailable}
-      />
+    <Flex direction="column" w="100%">
+      <Flex position="relative" justifyContent="center" alignItems="center" h="240px">
+        {parentTopic && (
+          <Heading size="md" fontWeight={500} position="absolute" left={5} top={5}>
+            {parentTopic?.name}
+          </Heading>
+        )}
+        <FormTitle position="relative" zIndex={1}>
+          {parentTopic ? 'Add SubTopic' : 'New Topic'}
+          <Image
+            position="absolute"
+            src="/images/topostain_pin_add_topic.svg"
+            w="300px"
+            maxW="300px"
+            right="-250px"
+            top="-100px"
+            zIndex={0}
+          />
+        </FormTitle>
+      </Flex>
+      <Stack spacing={4}>
+        <TopicNameField
+          parentTopic={parentTopic}
+          value={topicCreationData.name}
+          onChange={(newNameValue) => {
+            updateTopicCreationData({
+              name: newNameValue,
+              ...(topicCreationData.key === generateUrlKey(topicCreationData.name) && {
+                key: generateUrlKey(newNameValue),
+              }),
+            });
+          }}
+          setContextAndDisambiguationTopic={(
+            contextTopic: TopicLinkDataFragment,
+            disambiguationTopic: TopicLinkDataFragment
+          ) => {
+            updateTopicCreationData({
+              contextTopic,
+              disambiguationTopic,
+              // key: generateUrlKey(`${topicCreationData.key}_(${contextTopic.key})`),
+            });
+          }}
+          onConnectSubTopic={onConnectSubTopic}
+        />
+        <TopicUrlKeyField
+          size={size}
+          value={topicCreationData.key}
+          onChange={(newKeyValue) => updateTopicCreationData({ key: generateUrlKey(newKeyValue) })}
+          isChecking={isChecking}
+          isAvailable={isAvailable}
+        />
 
-      <TopicDescriptionField
-        size={size}
-        value={topicCreationData.description}
-        onChange={(newDescription) => updateTopicCreationData({ description: newDescription })}
-      />
+        <TopicDescriptionField
+          size={size}
+          value={topicCreationData.description}
+          onChange={(newDescription) => updateTopicCreationData({ description: newDescription })}
+        />
 
-      <FormButtons
-        isPrimaryDisabled={!topicCreationData.name || !topicCreationData.key || !isAvailable}
-        onCancel={onCancel}
-        size={getChakraRelativeSize(size, 1)}
-        onPrimaryClick={onCreate}
-      />
-    </Stack>
+        <FormButtons
+          isPrimaryDisabled={!topicCreationData.name || !topicCreationData.key || !isAvailable}
+          onCancel={onCancel}
+          size={getChakraRelativeSize(size, 1)}
+          onPrimaryClick={onCreate}
+        />
+      </Stack>
+    </Flex>
   );
 };
 
@@ -234,7 +257,7 @@ export const NewTopicModal: React.FC<NewTopicModalProps> = ({
         <Modal onClose={onClose} size="5xl" isOpen={isOpen}>
           <ModalOverlay>
             <ModalContent>
-              <ModalHeader>{title}</ModalHeader>
+              {/* <ModalHeader>{title}</ModalHeader> */}
               <ModalCloseButton />
               <ModalBody pb={5}>
                 <NewTopic
