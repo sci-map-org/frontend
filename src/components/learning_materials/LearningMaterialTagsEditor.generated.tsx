@@ -11,15 +11,15 @@ export type AddTagsToLearningMaterialMutationVariables = Types.Exact<{
 export type AddTagsToLearningMaterialMutation = (
   { __typename?: 'Mutation' }
   & { addTagsToLearningMaterial: (
-    { __typename?: 'Resource' }
-    & Pick<Types.Resource, '_id'>
+    { __typename?: 'LearningPath' }
+    & Pick<Types.LearningPath, '_id'>
     & { tags?: Types.Maybe<Array<(
       { __typename?: 'LearningMaterialTag' }
       & Pick<Types.LearningMaterialTag, 'name'>
     )>> }
   ) | (
-    { __typename?: 'LearningPath' }
-    & Pick<Types.LearningPath, '_id'>
+    { __typename?: 'Resource' }
+    & Pick<Types.Resource, '_id'>
     & { tags?: Types.Maybe<Array<(
       { __typename?: 'LearningMaterialTag' }
       & Pick<Types.LearningMaterialTag, 'name'>
@@ -36,15 +36,15 @@ export type RemoveTagsFromLearningMaterialMutationVariables = Types.Exact<{
 export type RemoveTagsFromLearningMaterialMutation = (
   { __typename?: 'Mutation' }
   & { removeTagsFromLearningMaterial: (
-    { __typename?: 'Resource' }
-    & Pick<Types.Resource, '_id'>
+    { __typename?: 'LearningPath' }
+    & Pick<Types.LearningPath, '_id'>
     & { tags?: Types.Maybe<Array<(
       { __typename?: 'LearningMaterialTag' }
       & Pick<Types.LearningMaterialTag, 'name'>
     )>> }
   ) | (
-    { __typename?: 'LearningPath' }
-    & Pick<Types.LearningPath, '_id'>
+    { __typename?: 'Resource' }
+    & Pick<Types.Resource, '_id'>
     & { tags?: Types.Maybe<Array<(
       { __typename?: 'LearningMaterialTag' }
       & Pick<Types.LearningMaterialTag, 'name'>

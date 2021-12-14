@@ -3,9 +3,9 @@ import * as Types from '../../graphql/types';
 import { ResourceDataFragment, ResourcePreviewCardDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { UserAvatarDataFragment } from '../../components/users/UserAvatar.generated';
 import { SquareResourceCardDataFragment } from '../../components/resources/SquareResourceCard.generated';
-import { LearningMaterialWithCoveredTopicsData_Resource_Fragment, LearningMaterialWithCoveredTopicsData_LearningPath_Fragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
-import { EditableLearningMaterialPrerequisitesData_Resource_Fragment, EditableLearningMaterialPrerequisitesData_LearningPath_Fragment } from '../../components/learning_materials/EditableLearningMaterialPrerequisites.generated';
-import { LearningMaterialStarsRaterData_Resource_Fragment, LearningMaterialStarsRaterData_LearningPath_Fragment } from '../../components/learning_materials/LearningMaterialStarsRating.generated';
+import { LearningMaterialWithCoveredTopicsData_LearningPath_Fragment, LearningMaterialWithCoveredTopicsData_Resource_Fragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
+import { EditableLearningMaterialPrerequisitesData_LearningPath_Fragment, EditableLearningMaterialPrerequisitesData_Resource_Fragment } from '../../components/learning_materials/EditableLearningMaterialPrerequisites.generated';
+import { LearningMaterialStarsRaterData_LearningPath_Fragment, LearningMaterialStarsRaterData_Resource_Fragment } from '../../components/learning_materials/LearningMaterialStarsRating.generated';
 import * as Operations from './ResourcePage';
 import * as Apollo from '@apollo/client';
 export type GetResourceResourcePageQueryVariables = Types.Exact<{

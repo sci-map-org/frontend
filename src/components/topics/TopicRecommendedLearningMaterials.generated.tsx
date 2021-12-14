@@ -18,11 +18,11 @@ export type GetTopicRecommendedLearningMaterialsQuery = (
     & { learningMaterials?: Types.Maybe<(
       { __typename?: 'TopicLearningMaterialsResults' }
       & { items: Array<(
-        { __typename?: 'Resource' }
-        & ResourcePreviewCardDataFragment
-      ) | (
         { __typename?: 'LearningPath' }
         & LearningPathPreviewCardDataFragment
+      ) | (
+        { __typename?: 'Resource' }
+        & ResourcePreviewCardDataFragment
       )> }
     )> }
   ) }

@@ -11,11 +11,11 @@ export type LearningGoalRelevantLearningMaterialsDataFragment = (
       { __typename?: 'LearningGoalRelevantLearningMaterialsItem' }
       & Pick<Types.LearningGoalRelevantLearningMaterialsItem, 'coverage'>
       & { learningMaterial: (
-        { __typename?: 'Resource' }
-        & ResourcePreviewCardDataFragment
-      ) | (
         { __typename?: 'LearningPath' }
         & LearningPathPreviewCardDataFragment
+      ) | (
+        { __typename?: 'Resource' }
+        & ResourcePreviewCardDataFragment
       ) }
     )> }
   )> }

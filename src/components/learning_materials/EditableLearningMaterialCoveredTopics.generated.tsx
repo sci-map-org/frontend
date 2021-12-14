@@ -1,21 +1,9 @@
 import * as Types from '../../graphql/types';
 
 import { TopicLinkDataFragment, TopicFullDataFragment } from '../../graphql/topics/topics.fragments.generated';
-import { LearningMaterialWithCoveredTopicsData_Resource_Fragment, LearningMaterialWithCoveredTopicsData_LearningPath_Fragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
+import { LearningMaterialWithCoveredTopicsData_LearningPath_Fragment, LearningMaterialWithCoveredTopicsData_Resource_Fragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
 import * as Operations from './EditableLearningMaterialCoveredTopics';
 import * as Apollo from '@apollo/client';
-export type EditableLearningMaterialPrerequisitesData_Resource_Fragment = (
-  { __typename?: 'Resource' }
-  & Pick<Types.Resource, '_id'>
-  & { prerequisites?: Types.Maybe<Array<(
-    { __typename?: 'LearningMaterialHasPrerequisiteTopic' }
-    & { topic: (
-      { __typename?: 'Topic' }
-      & TopicLinkDataFragment
-    ) }
-  )>> }
-);
-
 export type EditableLearningMaterialPrerequisitesData_LearningPath_Fragment = (
   { __typename?: 'LearningPath' }
   & Pick<Types.LearningPath, '_id'>
@@ -28,7 +16,19 @@ export type EditableLearningMaterialPrerequisitesData_LearningPath_Fragment = (
   )>> }
 );
 
-export type EditableLearningMaterialPrerequisitesDataFragment = EditableLearningMaterialPrerequisitesData_Resource_Fragment | EditableLearningMaterialPrerequisitesData_LearningPath_Fragment;
+export type EditableLearningMaterialPrerequisitesData_Resource_Fragment = (
+  { __typename?: 'Resource' }
+  & Pick<Types.Resource, '_id'>
+  & { prerequisites?: Types.Maybe<Array<(
+    { __typename?: 'LearningMaterialHasPrerequisiteTopic' }
+    & { topic: (
+      { __typename?: 'Topic' }
+      & TopicLinkDataFragment
+    ) }
+  )>> }
+);
+
+export type EditableLearningMaterialPrerequisitesDataFragment = EditableLearningMaterialPrerequisitesData_LearningPath_Fragment | EditableLearningMaterialPrerequisitesData_Resource_Fragment;
 
 export type AttachLearningMaterialCoversTopicsMutationVariables = Types.Exact<{
   learningMaterialId: Types.Scalars['String'];
@@ -39,11 +39,11 @@ export type AttachLearningMaterialCoversTopicsMutationVariables = Types.Exact<{
 export type AttachLearningMaterialCoversTopicsMutation = (
   { __typename?: 'Mutation' }
   & { attachLearningMaterialCoversTopics: (
-    { __typename?: 'Resource' }
-    & LearningMaterialWithCoveredTopicsData_Resource_Fragment
-  ) | (
     { __typename?: 'LearningPath' }
     & LearningMaterialWithCoveredTopicsData_LearningPath_Fragment
+  ) | (
+    { __typename?: 'Resource' }
+    & LearningMaterialWithCoveredTopicsData_Resource_Fragment
   ) }
 );
 
@@ -56,11 +56,11 @@ export type DetachLearningMaterialCoversTopicsMutationVariables = Types.Exact<{
 export type DetachLearningMaterialCoversTopicsMutation = (
   { __typename?: 'Mutation' }
   & { detachLearningMaterialCoversTopics: (
-    { __typename?: 'Resource' }
-    & LearningMaterialWithCoveredTopicsData_Resource_Fragment
-  ) | (
     { __typename?: 'LearningPath' }
     & LearningMaterialWithCoveredTopicsData_LearningPath_Fragment
+  ) | (
+    { __typename?: 'Resource' }
+    & LearningMaterialWithCoveredTopicsData_Resource_Fragment
   ) }
 );
 

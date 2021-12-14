@@ -3,18 +3,6 @@ import * as Types from '../../graphql/types';
 import { TopicLinkDataFragment, TopicFullDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import * as Operations from './EditableLearningMaterialPrerequisites';
 import * as Apollo from '@apollo/client';
-export type EditableLearningMaterialPrerequisitesData_Resource_Fragment = (
-  { __typename?: 'Resource' }
-  & Pick<Types.Resource, '_id'>
-  & { prerequisites?: Types.Maybe<Array<(
-    { __typename?: 'LearningMaterialHasPrerequisiteTopic' }
-    & { topic: (
-      { __typename?: 'Topic' }
-      & TopicLinkDataFragment
-    ) }
-  )>> }
-);
-
 export type EditableLearningMaterialPrerequisitesData_LearningPath_Fragment = (
   { __typename?: 'LearningPath' }
   & Pick<Types.LearningPath, '_id'>
@@ -27,7 +15,19 @@ export type EditableLearningMaterialPrerequisitesData_LearningPath_Fragment = (
   )>> }
 );
 
-export type EditableLearningMaterialPrerequisitesDataFragment = EditableLearningMaterialPrerequisitesData_Resource_Fragment | EditableLearningMaterialPrerequisitesData_LearningPath_Fragment;
+export type EditableLearningMaterialPrerequisitesData_Resource_Fragment = (
+  { __typename?: 'Resource' }
+  & Pick<Types.Resource, '_id'>
+  & { prerequisites?: Types.Maybe<Array<(
+    { __typename?: 'LearningMaterialHasPrerequisiteTopic' }
+    & { topic: (
+      { __typename?: 'Topic' }
+      & TopicLinkDataFragment
+    ) }
+  )>> }
+);
+
+export type EditableLearningMaterialPrerequisitesDataFragment = EditableLearningMaterialPrerequisitesData_LearningPath_Fragment | EditableLearningMaterialPrerequisitesData_Resource_Fragment;
 
 export type AddLearningMaterialHasPrerequisiteTopicMutationVariables = Types.Exact<{
   learningMaterialId: Types.Scalars['String'];
@@ -38,8 +38,8 @@ export type AddLearningMaterialHasPrerequisiteTopicMutationVariables = Types.Exa
 export type AddLearningMaterialHasPrerequisiteTopicMutation = (
   { __typename?: 'Mutation' }
   & { addLearningMaterialHasPrerequisiteTopic: (
-    { __typename?: 'Resource' }
-    & Pick<Types.Resource, '_id'>
+    { __typename?: 'LearningPath' }
+    & Pick<Types.LearningPath, '_id'>
     & { prerequisites?: Types.Maybe<Array<(
       { __typename?: 'LearningMaterialHasPrerequisiteTopic' }
       & { topic: (
@@ -48,8 +48,8 @@ export type AddLearningMaterialHasPrerequisiteTopicMutation = (
       ) }
     )>> }
   ) | (
-    { __typename?: 'LearningPath' }
-    & Pick<Types.LearningPath, '_id'>
+    { __typename?: 'Resource' }
+    & Pick<Types.Resource, '_id'>
     & { prerequisites?: Types.Maybe<Array<(
       { __typename?: 'LearningMaterialHasPrerequisiteTopic' }
       & { topic: (
@@ -69,8 +69,8 @@ export type RemoveLearningMaterialHasPrerequisiteTopicMutationVariables = Types.
 export type RemoveLearningMaterialHasPrerequisiteTopicMutation = (
   { __typename?: 'Mutation' }
   & { removeLearningMaterialHasPrerequisiteTopic: (
-    { __typename?: 'Resource' }
-    & Pick<Types.Resource, '_id'>
+    { __typename?: 'LearningPath' }
+    & Pick<Types.LearningPath, '_id'>
     & { prerequisites?: Types.Maybe<Array<(
       { __typename?: 'LearningMaterialHasPrerequisiteTopic' }
       & { topic: (
@@ -79,8 +79,8 @@ export type RemoveLearningMaterialHasPrerequisiteTopicMutation = (
       ) }
     )>> }
   ) | (
-    { __typename?: 'LearningPath' }
-    & Pick<Types.LearningPath, '_id'>
+    { __typename?: 'Resource' }
+    & Pick<Types.Resource, '_id'>
     & { prerequisites?: Types.Maybe<Array<(
       { __typename?: 'LearningMaterialHasPrerequisiteTopic' }
       & { topic: (
