@@ -1,21 +1,21 @@
 import { useDisclosure } from '@chakra-ui/hooks';
+import { CloseIcon } from '@chakra-ui/icons';
 import { Image } from '@chakra-ui/image';
 import {
-  Flex,
-  Center,
   Box,
+  Center,
+  Flex,
   Heading,
+  IconButton,
+  Input,
+  Link,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
   ModalOverlay,
   Stack,
-  Link,
-  Input,
-  IconButton,
 } from '@chakra-ui/react';
-import { Field } from '../lib/Field';
 import gql from 'graphql-tag';
 import { ReactNode, useState } from 'react';
 import { TopicFullData, TopicLinkData } from '../../graphql/topics/topics.fragments';
@@ -28,18 +28,20 @@ import { CreateTopicContextOptions, CreateTopicPayload, SubTopicRelationshipType
 import { generateUrlKey } from '../../services/url.service';
 import { getChakraRelativeSize } from '../../util/chakra.util';
 import { FormButtons } from '../lib/buttons/FormButtons';
+import { Field } from '../lib/Field';
 import { FormTitle } from '../lib/Typography';
 import { TopicDescriptionField } from './fields/TopicDescription';
+import { TopicLevelField } from './fields/TopicLevel';
 import { TopicNameField } from './fields/TopicNameField';
 import { TopicUrlKeyField, useCheckTopicKeyAvailability } from './fields/TopicUrlKey';
 import { useAddSubTopicMutation, useCreateTopicMutation } from './NewTopic.generated';
-import { CloseIcon } from '@chakra-ui/icons';
 
 type TopicCreationData = {
   name: string;
   key: string;
   description?: string;
   aliases: TopicNameAlias[];
+  level: number | null; // null means not applicable
   contextTopic?: TopicLinkDataFragment;
   disambiguationTopic?: TopicLinkDataFragment;
 };
@@ -122,6 +124,13 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
             </Box>
           </Field>
         </Center>
+        <Center>
+          <TopicLevelField
+            value={topicCreationData.level}
+            onChange={(level) => updateTopicCreationData({ level })}
+            w="360px"
+          />
+        </Center>
         <TopicUrlKeyField
           size={size}
           value={topicCreationData.key}
@@ -194,6 +203,7 @@ export const NewTopic: React.FC<NewTopicProps> = ({
     name: '',
     key: '',
     aliases: [],
+    level: 20,
     ...defaultCreationData,
   });
 
@@ -216,6 +226,7 @@ export const NewTopic: React.FC<NewTopicProps> = ({
       key: topicCreationData.key,
       description: topicCreationData.description,
       aliases: topicCreationData.aliases.map(({ value }) => value),
+      level: topicCreationData.level || undefined,
     };
     const contextOptions: CreateTopicContextOptions | undefined =
       topicCreationData.contextTopic && topicCreationData.disambiguationTopic
@@ -290,7 +301,6 @@ export const NewTopicModal: React.FC<NewTopicModalProps> = ({
         <Modal onClose={onClose} size="5xl" isOpen={isOpen}>
           <ModalOverlay>
             <ModalContent>
-              {/* <ModalHeader>{title}</ModalHeader> */}
               <ModalCloseButton />
               <ModalBody pb={5}>
                 <NewTopic

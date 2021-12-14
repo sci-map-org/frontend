@@ -18,6 +18,8 @@ export const TopicFullData = gql`
     context
     isDisambiguation
     description
+    aliases
+    level
     createdAt
   }
 `;

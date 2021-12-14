@@ -162,6 +162,7 @@ export type CreateTopicPayload = {
   aliases?: InputMaybe<Array<Scalars['String']>>;
   description?: InputMaybe<Scalars['String']>;
   key: Scalars['String'];
+  level?: InputMaybe<Scalars['Float']>;
   name: Scalars['String'];
 };
 
@@ -1409,6 +1410,7 @@ export type Topic = {
   key: Scalars['String'];
   learningMaterials?: Maybe<TopicLearningMaterialsResults>;
   learningMaterialsTotalCount?: Maybe<Scalars['Int']>;
+  level?: Maybe<Scalars['Float']>;
   name: Scalars['String'];
   otherContextsTopics?: Maybe<Array<Topic>>;
   parentTopic?: Maybe<Topic>;
@@ -1532,6 +1534,7 @@ export type UpdateTopicPayload = {
   aliases?: InputMaybe<Array<Scalars['String']>>;
   description?: InputMaybe<Scalars['String']>;
   key?: InputMaybe<Scalars['String']>;
+  level?: InputMaybe<Scalars['Float']>;
   name?: InputMaybe<Scalars['String']>;
 };
 
