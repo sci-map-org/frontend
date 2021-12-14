@@ -43,7 +43,7 @@ export const TopicPageLayout: React.FC<TopicPageLayoutProps> = ({
               <Image
                 display={{ base: 'none', md: 'initial' }}
                 position="absolute"
-                src="/static/tourist.svg"
+                src="/images/tourist.svg"
                 top={5}
                 right={-2}
                 h="280px"
@@ -51,7 +51,7 @@ export const TopicPageLayout: React.FC<TopicPageLayoutProps> = ({
               />
               <Image
                 position="absolute"
-                src="/static/topostain_green_domain_page.svg"
+                src="/images/topostain_green_domain_page.svg"
                 zIndex={0}
                 top="-30%"
                 right="0%"
