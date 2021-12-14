@@ -24,9 +24,15 @@ export const FormTitle: React.FC<HeadingProps> = ({ children, ...props }) => {
   );
 };
 
+export const FormFieldLabelStyleProps: Pick<TextProps, 'fontSize' | 'fontWeight' | 'color'> = {
+  fontSize: 'xl',
+  fontWeight: 800,
+  color: 'gray.700',
+};
+
 export const FormFieldLabel: React.FC<TextProps> = ({ children, ...props }) => {
   return (
-    <Text fontSize="lg" fontWeight={800} color="gray.700" {...props}>
+    <Text {...FormFieldLabelStyleProps} {...props}>
       {children}
     </Text>
   );

@@ -1,6 +1,21 @@
 import { useDisclosure } from '@chakra-ui/hooks';
 import { Image } from '@chakra-ui/image';
-import { Flex, Heading, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Stack } from '@chakra-ui/react';
+import {
+  Flex,
+  Center,
+  Box,
+  Heading,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalOverlay,
+  Stack,
+  Link,
+  Input,
+  IconButton,
+} from '@chakra-ui/react';
+import { Field } from '../lib/Field';
 import gql from 'graphql-tag';
 import { ReactNode, useState } from 'react';
 import { TopicFullData, TopicLinkData } from '../../graphql/topics/topics.fragments';
@@ -18,8 +33,10 @@ import { TopicDescriptionField } from './fields/TopicDescription';
 import { TopicNameField } from './fields/TopicNameField';
 import { TopicUrlKeyField, useCheckTopicKeyAvailability } from './fields/TopicUrlKey';
 import { useAddSubTopicMutation, useCreateTopicMutation } from './NewTopic.generated';
+import { CloseIcon } from '@chakra-ui/icons';
 
 type TopicCreationData = CreateTopicPayload & {
+  aliases: TopicNameAlias[];
   contextTopic?: TopicLinkDataFragment;
   disambiguationTopic?: TopicLinkDataFragment;
 };
@@ -67,30 +84,41 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
           />
         </FormTitle>
       </Flex>
-      <Stack spacing={4}>
-        <TopicNameField
-          parentTopic={parentTopic}
-          value={topicCreationData.name}
-          onChange={(newNameValue) => {
-            updateTopicCreationData({
-              name: newNameValue,
-              ...(topicCreationData.key === generateUrlKey(topicCreationData.name) && {
-                key: generateUrlKey(newNameValue),
-              }),
-            });
-          }}
-          setContextAndDisambiguationTopic={(
-            contextTopic: TopicLinkDataFragment,
-            disambiguationTopic: TopicLinkDataFragment
-          ) => {
-            updateTopicCreationData({
-              contextTopic,
-              disambiguationTopic,
-              // key: generateUrlKey(`${topicCreationData.key}_(${contextTopic.key})`),
-            });
-          }}
-          onConnectSubTopic={onConnectSubTopic}
-        />
+      <Stack spacing={10} alignItems="stretch">
+        <Center>
+          <Field label="Topic Name">
+            <TopicNameField
+              parentTopic={parentTopic}
+              value={topicCreationData.name}
+              onChange={(newNameValue) => {
+                updateTopicCreationData({
+                  name: newNameValue,
+                  ...(topicCreationData.key === generateUrlKey(topicCreationData.name) && {
+                    key: generateUrlKey(newNameValue),
+                  }),
+                });
+              }}
+              setContextAndDisambiguationTopic={(
+                contextTopic: TopicLinkDataFragment,
+                disambiguationTopic: TopicLinkDataFragment
+              ) => {
+                updateTopicCreationData({
+                  contextTopic,
+                  disambiguationTopic,
+                  // key: generateUrlKey(`${topicCreationData.key}_(${contextTopic.key})`),
+                });
+              }}
+              onConnectSubTopic={onConnectSubTopic}
+              w="360px"
+            />
+            <Box mt={1} pl={4}>
+              <TopicNameAliasField
+                aliases={topicCreationData.aliases}
+                onChange={(aliases) => updateTopicCreationData({ aliases })}
+              />
+            </Box>
+          </Field>
+        </Center>
         <TopicUrlKeyField
           size={size}
           value={topicCreationData.key}
@@ -162,6 +190,7 @@ export const NewTopic: React.FC<NewTopicProps> = ({
   const [topicCreationData, setTopicCreationData] = useState<TopicCreationData>({
     name: '',
     key: '',
+    aliases: [],
     ...defaultCreationData,
   });
 
@@ -281,5 +310,60 @@ export const NewTopicModal: React.FC<NewTopicModalProps> = ({
         </Modal>
       )}
     </>
+  );
+};
+
+interface TopicNameAlias {
+  id: string;
+  value: string;
+}
+const TopicNameAliasField: React.FC<{ aliases: TopicNameAlias[]; onChange: (aliases: TopicNameAlias[]) => void }> = ({
+  aliases,
+  onChange,
+}) => {
+  return (
+    <Stack spacing={1}>
+      {aliases.map((alias) => (
+        <Stack key={alias.id} direction="row" alignItems="center" spacing={1}>
+          <Input
+            size="xs"
+            placeholder="e.g. NLP"
+            onChange={(e) => {
+              const updatedAliases = [...aliases];
+              const index = updatedAliases.findIndex(({ id }) => id === alias.id);
+              updatedAliases[index].value = e.target.value;
+              onChange(updatedAliases);
+            }}
+          />
+          <IconButton
+            aria-label="remove alias"
+            icon={<CloseIcon />}
+            variant="ghost"
+            size="xs"
+            onClick={() => {
+              let updatedAliases = [...aliases];
+              const index = updatedAliases.findIndex(({ id }) => id === alias.id);
+              updatedAliases.splice(index, 1);
+              onChange(updatedAliases);
+            }}
+          />
+        </Stack>
+      ))}
+      <Link
+        color="blue.500"
+        fontSize="sm"
+        onClick={() =>
+          onChange([
+            ...aliases,
+            {
+              id: Math.random().toString(),
+              value: '',
+            },
+          ])
+        }
+      >
+        Add alias
+      </Link>
+    </Stack>
   );
 };

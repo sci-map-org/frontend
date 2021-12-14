@@ -66,6 +66,7 @@ interface TopicNameAutocompleteProps {
   onSelect: (topic: TopicLinkDataFragment) => void;
   placeholder?: string;
   isDisabled?: boolean;
+  w?: string;
 }
 
 export const TopicNameAutocomplete: React.FC<TopicNameAutocompleteProps> = ({
@@ -74,6 +75,7 @@ export const TopicNameAutocomplete: React.FC<TopicNameAutocompleteProps> = ({
   value,
   onChange,
   onSelect,
+  w,
 }) => {
   const [searchResults, setSearchResults] = useState<TopicResultItem[]>([]);
   const suggestions = uniqBy(searchResults, 'name');
@@ -108,7 +110,7 @@ export const TopicNameAutocomplete: React.FC<TopicNameAutocompleteProps> = ({
       onSelect(suggestions[0]);
     }
   });
-  const suggestionContainerWidth = '300px';
+  const suggestionContainerWidth = w;
   const width = suggestionContainerWidth;
   return (
     <Box w={width} ref={inputRef}>
@@ -184,6 +186,7 @@ interface TopicNameFieldProps {
     contextTopic: TopicLinkDataFragment,
     disambiguationTopic: TopicLinkDataFragment
   ) => void;
+  w?: string;
 }
 
 export const TopicNameField: React.FC<TopicNameFieldProps> = ({
@@ -192,6 +195,7 @@ export const TopicNameField: React.FC<TopicNameFieldProps> = ({
   parentTopic,
   onConnectSubTopic,
   setContextAndDisambiguationTopic,
+  w = '300px',
 }) => {
   const [existingSameNameTopic, setExistingSameNameTopic] = useState<TopicLinkDataFragment>();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -202,9 +206,11 @@ export const TopicNameField: React.FC<TopicNameFieldProps> = ({
   return (
     <>
       <TopicNameAutocomplete
+        placeholder="e.g. Functions, ..."
         onSelect={(selectedTopic) => openDesembiguationModal(selectedTopic)}
         value={value}
         onChange={onChange}
+        w={w}
       />
       {existingSameNameTopic && (
         <DisambiguationModal

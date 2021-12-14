@@ -1,5 +1,6 @@
 import { Box, FormControl, FormLabel } from '@chakra-ui/react';
 import React, { ReactNode } from 'react';
+import { FormFieldLabelStyleProps } from './Typography';
 
 interface FieldProps {
   id?: string;
@@ -8,8 +9,8 @@ interface FieldProps {
 
 export const Field: React.FC<FieldProps> = ({ id, label, children }) => {
   return (
-    <FormControl>
-      <FormLabel>{label}</FormLabel>
+    <FormControl w="unset">
+      <FormLabel {...FormFieldLabelStyleProps}>{label}</FormLabel>
       <Box pl={4}>{children}</Box>
     </FormControl>
   );
