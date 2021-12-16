@@ -23,7 +23,7 @@ export enum TopicLevelValue {
   Expert = 'expert',
 }
 
-const colorMap = interpolate([
+const topicLevelColorMap = interpolate([
   theme.colors.green[400],
   theme.colors.yellow[400],
   theme.colors.orange[400],
@@ -49,8 +49,8 @@ export const TopicLevelViewer: React.FC<TopicLevelViewerProps> = ({ level, topic
 
   return (
     <Text
-      color={colorMap(level / 100)}
-      borderColor={colorMap(level / 100)}
+      color={topicLevelColorMap(level / 100)}
+      borderColor={topicLevelColorMap(level / 100)}
       fontWeight={800}
       borderWidth={2}
       px={2}
@@ -82,7 +82,7 @@ export const TopicLevelField: React.FC<{
           isDisabled={value === null}
         >
           <SliderTrack>
-            <SliderFilledTrack />
+            <SliderFilledTrack bgColor={value !== null ? topicLevelColorMap(value / 100) : 'gray.500'} />
           </SliderTrack>
           <SliderThumb />
         </Slider>

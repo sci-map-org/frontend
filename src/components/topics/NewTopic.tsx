@@ -17,6 +17,7 @@ import {
   Stack,
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
+import { upperFirst } from 'lodash';
 import { ReactNode, useState } from 'react';
 import { TopicFullData, TopicLinkData } from '../../graphql/topics/topics.fragments';
 import { TopicFullDataFragment, TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
@@ -41,6 +42,7 @@ type TopicCreationData = {
   key: string;
   description?: string;
   descriptionSourceUrl?: string;
+  wikipediaPageUrl?: string;
   aliases: TopicNameAlias[];
   level: number | null; // null means not applicable
   contextTopic?: TopicLinkDataFragment;
@@ -98,7 +100,7 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
               value={topicCreationData.name}
               onChange={(newNameValue) => {
                 updateTopicCreationData({
-                  name: newNameValue,
+                  name: upperFirst(newNameValue),
                   ...(topicCreationData.key === generateUrlKey(topicCreationData.name) && {
                     key: generateUrlKey(newNameValue),
                   }),
@@ -149,6 +151,7 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
             updateTopicCreationData({
               description: pulledDescription.description,
               descriptionSourceUrl: pulledDescription.sourceUrl,
+              wikipediaPageUrl: pulledDescription.sourceUrl,
             })
           }
         />

@@ -165,6 +165,7 @@ export type CreateTopicPayload = {
   key: Scalars['String'];
   level?: InputMaybe<Scalars['Float']>;
   name: Scalars['String'];
+  wikipediaPageUrl?: InputMaybe<Scalars['String']>;
 };
 
 export type CurrentUser = {
@@ -1446,6 +1447,7 @@ export type Topic = {
   prerequisites?: Maybe<Array<TopicHasPrerequisiteTopic>>;
   subTopics?: Maybe<Array<TopicIsSubTopicOfTopic>>;
   subTopicsTotalCount?: Maybe<Scalars['Int']>;
+  wikipediaPageUrl?: Maybe<Scalars['String']>;
 };
 
 
@@ -1565,6 +1567,7 @@ export type UpdateTopicPayload = {
   key?: InputMaybe<Scalars['String']>;
   level?: InputMaybe<Scalars['Float']>;
   name?: InputMaybe<Scalars['String']>;
+  wikipediaPageUrl?: InputMaybe<Scalars['String']>;
 };
 
 export type User = {
