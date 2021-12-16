@@ -161,6 +161,7 @@ export type CreateTopicContextOptions = {
 export type CreateTopicPayload = {
   aliases?: InputMaybe<Array<Scalars['String']>>;
   description?: InputMaybe<Scalars['String']>;
+  descriptionSourceUrl?: InputMaybe<Scalars['String']>;
   key: Scalars['String'];
   level?: InputMaybe<Scalars['Float']>;
   name: Scalars['String'];
@@ -1024,6 +1025,26 @@ export type PaginationOptions = {
   offset?: InputMaybe<Scalars['Int']>;
 };
 
+export type PullDescriptionsQueryOptions = {
+  aliases?: InputMaybe<Array<Scalars['String']>>;
+  contextName?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  parentTopicName?: InputMaybe<Scalars['String']>;
+};
+
+export type PulledDescription = {
+  __typename?: 'PulledDescription';
+  description: Scalars['String'];
+  resultName?: Maybe<Scalars['String']>;
+  sourceName: PulledDescriptionSourceName;
+  sourceUrl: Scalars['String'];
+};
+
+export enum PulledDescriptionSourceName {
+  Google = 'google',
+  Wikipedia = 'wikipedia'
+}
+
 export type Query = {
   __typename?: 'Query';
   analyzeResourceUrl: AnalyzeResourceUrlResult;
@@ -1047,6 +1068,7 @@ export type Query = {
   getUser: User;
   globalSearch: GlobalSearchResults;
   listArticles: ListArticlesResult;
+  pullTopicDescriptions: Array<PulledDescription>;
   searchLearningGoals: SearchLearningGoalsResult;
   searchLearningMaterialTags: Array<LearningMaterialTagSearchResult>;
   searchResources: SearchResourcesResult;
@@ -1146,6 +1168,11 @@ export type QueryGlobalSearchArgs = {
 
 export type QueryListArticlesArgs = {
   options: ListArticlesOptions;
+};
+
+
+export type QueryPullTopicDescriptionsArgs = {
+  queryOptions: PullDescriptionsQueryOptions;
 };
 
 
@@ -1404,6 +1431,7 @@ export type Topic = {
   createdAt: Scalars['Date'];
   createdBy?: Maybe<User>;
   description?: Maybe<Scalars['String']>;
+  descriptionSourceUrl?: Maybe<Scalars['String']>;
   disambiguationTopic?: Maybe<Topic>;
   followUps?: Maybe<Array<TopicHasPrerequisiteTopic>>;
   isDisambiguation?: Maybe<Scalars['Boolean']>;
@@ -1533,6 +1561,7 @@ export type UpdateTopicIsSubTopicOfTopicPayload = {
 export type UpdateTopicPayload = {
   aliases?: InputMaybe<Array<Scalars['String']>>;
   description?: InputMaybe<Scalars['String']>;
+  descriptionSourceUrl?: InputMaybe<Scalars['String']>;
   key?: InputMaybe<Scalars['String']>;
   level?: InputMaybe<Scalars['Float']>;
   name?: InputMaybe<Scalars['String']>;

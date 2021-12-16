@@ -40,6 +40,7 @@ type TopicCreationData = {
   name: string;
   key: string;
   description?: string;
+  descriptionSourceUrl?: string;
   aliases: TopicNameAlias[];
   level: number | null; // null means not applicable
   contextTopic?: TopicLinkDataFragment;
@@ -143,6 +144,13 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
           size={size}
           value={topicCreationData.description}
           onChange={(newDescription) => updateTopicCreationData({ description: newDescription })}
+          pullDescriptionsQueryData={{ name: topicCreationData.name }}
+          onSelectPulledDescription={(pulledDescription) =>
+            updateTopicCreationData({
+              description: pulledDescription.description,
+              descriptionSourceUrl: pulledDescription.sourceUrl,
+            })
+          }
         />
 
         <FormButtons
@@ -225,6 +233,7 @@ export const NewTopic: React.FC<NewTopicProps> = ({
       name: topicCreationData.name,
       key: topicCreationData.key,
       description: topicCreationData.description,
+      descriptionSourceUrl: topicCreationData.descriptionSourceUrl,
       aliases: topicCreationData.aliases.map(({ value }) => value),
       level: topicCreationData.level || undefined,
     };
