@@ -25,7 +25,12 @@ import {
   useAttachTopicIsPartOfTopicMutation,
   useAttachTopicIsSubTopicOfTopicMutation,
 } from '../../graphql/topics/topics.operations.generated';
-import { CreateTopicContextOptions, CreateTopicPayload, SubTopicRelationshipType } from '../../graphql/types';
+import {
+  CreateTopicContextOptions,
+  CreateTopicPayload,
+  PulledDescriptionSourceName,
+  SubTopicRelationshipType,
+} from '../../graphql/types';
 import { generateUrlKey } from '../../services/url.service';
 import { getChakraRelativeSize } from '../../util/chakra.util';
 import { FormButtons } from '../lib/buttons/FormButtons';
@@ -151,7 +156,9 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
             updateTopicCreationData({
               description: pulledDescription.description,
               descriptionSourceUrl: pulledDescription.sourceUrl,
-              wikipediaPageUrl: pulledDescription.sourceUrl,
+              ...(pulledDescription.sourceName === PulledDescriptionSourceName.Wikipedia && {
+                wikipediaPageUrl: pulledDescription.sourceUrl,
+              }),
             })
           }
         />
@@ -237,6 +244,7 @@ export const NewTopic: React.FC<NewTopicProps> = ({
       key: topicCreationData.key,
       description: topicCreationData.description,
       descriptionSourceUrl: topicCreationData.descriptionSourceUrl,
+      wikipediaPageUrl: topicCreationData.wikipediaPageUrl,
       aliases: topicCreationData.aliases.map(({ value }) => value),
       level: topicCreationData.level || undefined,
     };
