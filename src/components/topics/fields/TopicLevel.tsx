@@ -1,6 +1,5 @@
 import {
   Box,
-  BoxProps,
   Flex,
   FlexProps,
   FormControl,
@@ -12,22 +11,24 @@ import {
   Switch,
   Text,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import interpolate from 'color-interpolate';
+import { useMemo, useState } from 'react';
+import { theme } from '../../../theme/theme';
 import { Field } from '../../lib/Field';
 
 export enum TopicLevelValue {
-  Basics = 'basics',
+  Beginner = 'beginner',
   Intermediate = 'intermediate',
   Advanced = 'advanced',
   Expert = 'expert',
 }
 
-const levelColorMapping: { [key in TopicLevelValue]: BoxProps['color'] } = {
-  [TopicLevelValue.Basics]: 'green.300',
-  [TopicLevelValue.Intermediate]: 'yellow.300',
-  [TopicLevelValue.Advanced]: 'orange.300',
-  [TopicLevelValue.Expert]: 'red.300',
-};
+const colorMap = interpolate([
+  theme.colors.green[400],
+  theme.colors.yellow[400],
+  theme.colors.orange[400],
+  theme.colors.red[400],
+]);
 
 interface TopicLevelViewerProps {
   level?: number;
@@ -35,20 +36,22 @@ interface TopicLevelViewerProps {
 }
 
 export const TopicLevelViewer: React.FC<TopicLevelViewerProps> = ({ level, topicId }) => {
-  if (level === undefined) return null;
-  if (level >= 0 && level <= 25) return <TopicLevelViewerBase value={TopicLevelValue.Basics} />;
-  if (level <= 50) return <TopicLevelViewerBase value={TopicLevelValue.Intermediate} />;
-  if (level <= 75) return <TopicLevelViewerBase value={TopicLevelValue.Advanced} />;
-  if (level <= 100) return <TopicLevelViewerBase value={TopicLevelValue.Expert} />;
-  throw new Error(`Invalid topic level value: ${level} for topic ${topicId}`);
-};
+  const value = useMemo(() => {
+    if (level === undefined) return null;
+    if (level >= 0 && level <= 25) return TopicLevelValue.Beginner;
+    if (level <= 50) return TopicLevelValue.Intermediate;
+    if (level <= 75) return TopicLevelValue.Advanced;
+    if (level <= 100) return TopicLevelValue.Expert;
+    throw new Error(`Invalid topic level value: ${level} for topic ${topicId}`);
+  }, [level]);
 
-const TopicLevelViewerBase: React.FC<{ value: TopicLevelValue }> = ({ value }) => {
+  if (level === undefined || !value) return null;
+
   return (
     <Text
-      color={levelColorMapping[value]}
+      color={colorMap(level / 100)}
+      borderColor={colorMap(level / 100)}
       fontWeight={800}
-      borderColor={levelColorMapping[value]}
       borderWidth={2}
       px={2}
       borderRadius={2}
