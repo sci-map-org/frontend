@@ -131,7 +131,7 @@ const PulledDescriptionOption: React.FC<{ onSelect: () => void; pulledDescriptio
         </Button>
       </Center>
       <Flex direction="column" alignItems="stretch" pl={1} flexGrow={0} overflow="hidden">
-        <Flex direction="row" alignItems="baseline" justiyContent="space-between" flexGrow={1}>
+        <Flex direction="row" alignItems="baseline" justifyContent="space-between" flexGrow={1} mr="2px">
           {pulledDescription.resultName && (
             <Text size="sm" fontWeight={600} color="gray.700" mr={2} whiteSpace="nowrap">
               {pulledDescription.resultName}

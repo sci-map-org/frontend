@@ -165,6 +165,7 @@ export type CreateTopicPayload = {
   key: Scalars['String'];
   level?: InputMaybe<Scalars['Float']>;
   name: Scalars['String'];
+  topicTypes?: InputMaybe<Array<Scalars['String']>>;
   wikipediaPageUrl?: InputMaybe<Scalars['String']>;
 };
 
@@ -581,6 +582,7 @@ export type Mutation = {
   addSubTopic: Topic;
   addTagsToLearningMaterial: LearningMaterial;
   addTopicHasPrerequisiteTopic: AddTopicHasPrerequisiteTopicResult;
+  addTopicTypesToTopic: Topic;
   adminUpdateUser: User;
   attachLearningGoalDependency: UpdateLearningGoalDependenciesResult;
   attachLearningGoalRequiresSubGoal: AttachLearningGoalRequiresSubGoalResult;
@@ -620,6 +622,7 @@ export type Mutation = {
   removeLearningMaterialHasPrerequisiteTopic: LearningMaterial;
   removeTagsFromLearningMaterial: LearningMaterial;
   removeTopicHasPrerequisiteTopic: RemoveTopicHasPrerequisiteTopicResult;
+  removeTopicTypesFromTopic: Topic;
   resetPassword: ResetPasswordResponse;
   setResourcesConsumed: Array<Resource>;
   setTopicsKnown: Array<Topic>;
@@ -685,6 +688,12 @@ export type MutationAddTopicHasPrerequisiteTopicArgs = {
   prerequisiteTopicId: Scalars['String'];
   strength?: InputMaybe<Scalars['Float']>;
   topicId: Scalars['String'];
+};
+
+
+export type MutationAddTopicTypesToTopicArgs = {
+  topicId: Scalars['String'];
+  topicTypes: Array<Scalars['String']>;
 };
 
 
@@ -914,6 +923,12 @@ export type MutationRemoveTopicHasPrerequisiteTopicArgs = {
 };
 
 
+export type MutationRemoveTopicTypesFromTopicArgs = {
+  topicId: Scalars['String'];
+  topicTypes: Array<Scalars['String']>;
+};
+
+
 export type MutationResetPasswordArgs = {
   payload: ResetPasswordPayload;
 };
@@ -1075,6 +1090,7 @@ export type Query = {
   searchResources: SearchResourcesResult;
   searchSubTopics: SearchTopicsResult;
   searchTopics: SearchTopicsResult;
+  searchTopicTypes: Array<TopicType>;
 };
 
 
@@ -1201,6 +1217,12 @@ export type QuerySearchSubTopicsArgs = {
 
 export type QuerySearchTopicsArgs = {
   options: SearchTopicsOptions;
+};
+
+
+export type QuerySearchTopicTypesArgs = {
+  limit?: InputMaybe<Scalars['Int']>;
+  query: Scalars['String'];
 };
 
 export type RegisterGooglePayload = {
@@ -1447,6 +1469,7 @@ export type Topic = {
   prerequisites?: Maybe<Array<TopicHasPrerequisiteTopic>>;
   subTopics?: Maybe<Array<TopicIsSubTopicOfTopic>>;
   subTopicsTotalCount?: Maybe<Scalars['Int']>;
+  topicTypes?: Maybe<Array<TopicType>>;
   wikipediaPageUrl?: Maybe<Scalars['String']>;
 };
 
@@ -1502,6 +1525,21 @@ export enum TopicLearningMaterialsSortingType {
   Newest = 'newest',
   Rating = 'rating',
   Recommended = 'recommended'
+}
+
+export type TopicType = {
+  __typename?: 'TopicType';
+  color?: Maybe<TopicTypeColor>;
+  iconName?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  usageCount?: Maybe<Scalars['Int']>;
+};
+
+export enum TopicTypeColor {
+  Blue = 'blue',
+  Green = 'green',
+  Orange = 'orange',
+  Red = 'red'
 }
 
 export type TriggerResetPasswordResponse = {

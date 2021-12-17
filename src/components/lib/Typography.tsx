@@ -37,3 +37,18 @@ export const FormFieldLabel: React.FC<TextProps> = ({ children, ...props }) => {
     </Text>
   );
 };
+
+export const FormFieldHelperTextStyleProps: Pick<TextProps, 'fontSize' | 'fontWeight' | 'color' | 'letterSpacing'> = {
+  fontSize: 'md',
+  letterSpacing: '0.3px',
+  fontWeight: 600,
+  color: 'gray.500',
+};
+
+export const FormFieldHelperText: React.FC<TextProps> = ({ children, ...props }) => {
+  return (
+    <Text {...FormFieldHelperTextStyleProps} {...props}>
+      {children}
+    </Text>
+  );
+};

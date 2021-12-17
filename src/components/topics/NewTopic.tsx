@@ -15,6 +15,7 @@ import {
   ModalContent,
   ModalOverlay,
   Stack,
+  Text,
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { upperFirst } from 'lodash';
@@ -30,6 +31,8 @@ import {
   CreateTopicPayload,
   PulledDescriptionSourceName,
   SubTopicRelationshipType,
+  TopicType,
+  TopicTypeColor,
 } from '../../graphql/types';
 import { generateUrlKey } from '../../services/url.service';
 import { getChakraRelativeSize } from '../../util/chakra.util';
@@ -39,6 +42,7 @@ import { FormTitle } from '../lib/Typography';
 import { TopicDescriptionField } from './fields/TopicDescription';
 import { TopicLevelField } from './fields/TopicLevel';
 import { TopicNameField } from './fields/TopicNameField';
+import { TopicTypeField } from './fields/TopicTypeField';
 import { TopicUrlKeyField, useCheckTopicKeyAvailability } from './fields/TopicUrlKey';
 import { useAddSubTopicMutation, useCreateTopicMutation } from './NewTopic.generated';
 
@@ -52,6 +56,7 @@ type TopicCreationData = {
   level: number | null; // null means not applicable
   contextTopic?: TopicLinkDataFragment;
   disambiguationTopic?: TopicLinkDataFragment;
+  topicTypes?: TopicType[];
 };
 interface NewTopicFormProps {
   parentTopic?: TopicLinkDataFragment;
@@ -162,6 +167,10 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
             })
           }
         />
+        <TopicTypeField
+          value={topicCreationData.topicTypes}
+          onChange={(topicTypes) => updateTopicCreationData({ topicTypes })}
+        />
 
         <FormButtons
           isPrimaryDisabled={!topicCreationData.name || !topicCreationData.key || !isAvailable}
@@ -221,7 +230,7 @@ export const NewTopic: React.FC<NewTopicProps> = ({
     name: '',
     key: '',
     aliases: [],
-    level: 20,
+    level: 35,
     ...defaultCreationData,
   });
 
@@ -247,6 +256,7 @@ export const NewTopic: React.FC<NewTopicProps> = ({
       wikipediaPageUrl: topicCreationData.wikipediaPageUrl,
       aliases: topicCreationData.aliases.map(({ value }) => value),
       level: topicCreationData.level || undefined,
+      topicTypes: topicCreationData.topicTypes?.map(({ name }) => name),
     };
     const contextOptions: CreateTopicContextOptions | undefined =
       topicCreationData.contextTopic && topicCreationData.disambiguationTopic
