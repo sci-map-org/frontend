@@ -64,6 +64,7 @@ export const TopicTypeField: React.FC<{ value?: TopicType[]; onChange: (topicTyp
           <WrapItem>
             <TopicTypeSelector
               size="xs"
+              placeholder="Search Types..."
               onSelect={(selected) => onChange(uniqBy([...(value || []), selected], 'name'))}
             />
           </WrapItem>
@@ -171,7 +172,10 @@ const TopicTypeSelector: React.FC<{
             <InputLeftElement pointerEvents="none" children={<SearchIcon color="gray.300" />} />
             <Input
               size={size}
+              _hover={{}}
               _focus={{ borderColor: 'blue.500' }}
+              boxSizing="content-box"
+              borderColor="gray.400"
               isDisabled={isDisabled}
               variant="outline"
               borderRadius={6}

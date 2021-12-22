@@ -18,8 +18,8 @@ import {
   Text,
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
-import { upperFirst } from 'lodash';
-import { ReactNode, useState } from 'react';
+import { uniqBy, upperFirst } from 'lodash';
+import { ReactNode, useMemo, useState } from 'react';
 import { TopicFullData, TopicLinkData } from '../../graphql/topics/topics.fragments';
 import { TopicFullDataFragment, TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import {
@@ -37,8 +37,10 @@ import {
 import { generateUrlKey } from '../../services/url.service';
 import { getChakraRelativeSize } from '../../util/chakra.util';
 import { FormButtons } from '../lib/buttons/FormButtons';
+import { CollapsedField } from '../lib/CollapsedField';
 import { Field } from '../lib/Field';
 import { FormTitle } from '../lib/Typography';
+import { EditableTopicPrerequisites, StatelessEditableTopicPrerequisites } from './EditableTopicPrerequisites';
 import { TopicDescriptionField } from './fields/TopicDescription';
 import { TopicLevelField } from './fields/TopicLevel';
 import { TopicNameField } from './fields/TopicNameField';
@@ -56,7 +58,8 @@ type TopicCreationData = {
   level: number | null; // null means not applicable
   contextTopic?: TopicLinkDataFragment;
   disambiguationTopic?: TopicLinkDataFragment;
-  topicTypes?: TopicType[];
+  topicTypes: TopicType[];
+  prerequisiteTopics: TopicLinkDataFragment[];
 };
 interface NewTopicFormProps {
   parentTopic?: TopicLinkDataFragment;
@@ -80,7 +83,20 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
   onConnectSubTopic,
   size = 'md',
 }) => {
-  const { isChecking, isAvailable } = useCheckTopicKeyAvailability(topicCreationData.key);
+  const { isChecking, isAvailable } = useCheckTopicKeyAvailability(
+    topicCreationData.contextTopic
+      ? topicCreationData.key + `_(_${topicCreationData.contextTopic.key}_)`
+      : topicCreationData.key
+  );
+
+  const { isOpen: customizeUrlFieldIsOpen, onToggle: customizeUrlFieldOnToggle } = useDisclosure();
+  const { isOpen: prereqFieldIsOpen, onToggle: prereqFieldOnToggle } = useDisclosure();
+
+  const fullTopicKey = useMemo(
+    () => (topicCreationData.contextTopic ? `${topicCreationData.key}_(${topicCreationData.contextTopic.key})` : ''),
+    [topicCreationData.contextTopic, topicCreationData.key]
+  );
+
   return (
     <Flex direction="column" w="100%">
       <Flex position="relative" justifyContent="center" alignItems="center" h="240px">
@@ -144,13 +160,6 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
             w="360px"
           />
         </Center>
-        <TopicUrlKeyField
-          size={size}
-          value={topicCreationData.key}
-          onChange={(newKeyValue) => updateTopicCreationData({ key: generateUrlKey(newKeyValue) })}
-          isChecking={isChecking}
-          isAvailable={isAvailable}
-        />
 
         <TopicDescriptionField
           size={size}
@@ -172,6 +181,50 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
           onChange={(topicTypes) => updateTopicCreationData({ topicTypes })}
         />
 
+        {/* <Flex justifyContent="space-between" flexDir="column"> */}
+        <Box w="45%">
+          <CollapsedField
+            label="Customize URL"
+            alignLabel="left"
+            isOpen={customizeUrlFieldIsOpen}
+            onToggle={customizeUrlFieldOnToggle}
+          >
+            <TopicUrlKeyField
+              size={size}
+              value={topicCreationData.key}
+              fullTopicKey={fullTopicKey}
+              onChange={(newKeyValue) => updateTopicCreationData({ key: generateUrlKey(newKeyValue) })}
+              isChecking={isChecking}
+              isAvailable={isAvailable}
+            />
+          </CollapsedField>
+        </Box>
+        <Box w="45%">
+          <CollapsedField
+            label="Select Prerequisites"
+            alignLabel="left"
+            isOpen={prereqFieldIsOpen}
+            onToggle={prereqFieldOnToggle}
+          >
+            <StatelessEditableTopicPrerequisites
+              editable={true}
+              prerequisites={topicCreationData.prerequisiteTopics}
+              onAdded={(prereq) =>
+                updateTopicCreationData({
+                  prerequisiteTopics: uniqBy([...topicCreationData.prerequisiteTopics, prereq], '_id'),
+                })
+              }
+              onRemove={(prereqIdToRemove) =>
+                updateTopicCreationData({
+                  prerequisiteTopics: topicCreationData.prerequisiteTopics.filter(
+                    (prereq) => prereq._id !== prereqIdToRemove
+                  ),
+                })
+              }
+            />
+          </CollapsedField>
+        </Box>
+        {/* </Flex> */}
         <FormButtons
           isPrimaryDisabled={!topicCreationData.name || !topicCreationData.key || !isAvailable}
           onCancel={onCancel}
@@ -231,6 +284,8 @@ export const NewTopic: React.FC<NewTopicProps> = ({
     key: '',
     aliases: [],
     level: 35,
+    topicTypes: [],
+    prerequisiteTopics: [],
     ...defaultCreationData,
   });
 
@@ -257,6 +312,7 @@ export const NewTopic: React.FC<NewTopicProps> = ({
       aliases: topicCreationData.aliases.map(({ value }) => value),
       level: topicCreationData.level || undefined,
       topicTypes: topicCreationData.topicTypes?.map(({ name }) => name),
+      prerequisitesTopicsIds: topicCreationData.prerequisiteTopics.map(({ _id }) => _id),
     };
     const contextOptions: CreateTopicContextOptions | undefined =
       topicCreationData.contextTopic && topicCreationData.disambiguationTopic

@@ -1,6 +1,7 @@
 import { Box } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
+import { SearchIcon } from '@chakra-ui/icons';
 import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import {
   useSearchTopicsLazyQuery,
@@ -72,6 +73,13 @@ export const TopicSelector: React.FC<TopicSelectorProps> = ({
             query.length >= 1 ? debouncedSearchLazyQuery.callback(query) : setSearchResults([])
           }
           onSelect={onSelect}
+          inputLeftIcon={<SearchIcon color="gray.300" />}
+          inputProps={{
+            variant: 'outline',
+            size: 'sm',
+            borderRadius: 4,
+            _focus: { borderColor: 'blue.500' },
+          }}
         />
       </Box>
     </>
