@@ -122,12 +122,16 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
             <TopicNameField
               parentTopic={parentTopic}
               value={topicCreationData.name}
+              contextTopic={topicCreationData.contextTopic}
+              disambiguationTopic={topicCreationData.disambiguationTopic}
               onChange={(newNameValue) => {
                 updateTopicCreationData({
                   name: upperFirst(newNameValue),
                   ...(topicCreationData.key === generateUrlKey(topicCreationData.name) && {
                     key: generateUrlKey(newNameValue),
                   }),
+                  contextTopic: undefined,
+                  disambiguationTopic: undefined,
                 });
               }}
               setContextAndDisambiguationTopic={(
@@ -140,7 +144,7 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
                 });
               }}
               onConnectSubTopic={onConnectSubTopic}
-              w="360px"
+              w="500px"
             />
             <Box mt={1} pl={4}>
               <TopicNameAliasField
@@ -154,7 +158,7 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
           <TopicLevelField
             value={topicCreationData.level}
             onChange={(level) => updateTopicCreationData({ level })}
-            w="360px"
+            w="500px"
           />
         </Center>
 

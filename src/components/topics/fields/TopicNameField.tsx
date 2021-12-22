@@ -13,6 +13,8 @@ import {
   Spinner,
   Stack,
   useDisclosure,
+  InputRightElement,
+  InputGroup,
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { uniqBy } from 'lodash';
@@ -23,8 +25,10 @@ import { TopicLinkData } from '../../../graphql/topics/topics.fragments';
 import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
 import { SubTopicRelationshipType } from '../../../graphql/types';
 import { useHandleClickOutside } from '../../../hooks/useHanldeClickOutside';
+import { TopicPageInfo } from '../../../pages/RoutesPageInfos';
 import { HelperText } from '../../lib/HelperText';
 import { TopicLink } from '../../lib/links/TopicLink';
+import { PageLink } from '../../navigation/InternalLink';
 import {
   GetTopicByIdDisambiguationModalQuery,
   TopicSuggestionDataFragment,
@@ -67,6 +71,7 @@ interface TopicNameAutocompleteProps {
   placeholder?: string;
   isDisabled?: boolean;
   w?: string;
+  contextTopic?: TopicLinkDataFragment;
 }
 
 export const TopicNameAutocomplete: React.FC<TopicNameAutocompleteProps> = ({
@@ -76,6 +81,7 @@ export const TopicNameAutocomplete: React.FC<TopicNameAutocompleteProps> = ({
   onChange,
   onSelect: onSelectProp,
   w,
+  contextTopic,
 }) => {
   const [searchResults, setSearchResults] = useState<TopicResultItem[]>([]);
 
@@ -114,7 +120,7 @@ export const TopicNameAutocomplete: React.FC<TopicNameAutocompleteProps> = ({
 
   let inputRef = useRef<HTMLDivElement>(null);
   useHandleClickOutside(inputRef, () => {
-    if (suggestions.length && value.toLocaleLowerCase() === suggestions[0].name.toLocaleLowerCase()) {
+    if (suggestions.length && value.toLocaleLowerCase() === suggestions[0].name.toLocaleLowerCase() && !contextTopic) {
       onSelect(suggestions[0]);
     }
   });
@@ -175,7 +181,23 @@ export const TopicNameAutocomplete: React.FC<TopicNameAutocompleteProps> = ({
           !!suggestions.length && suggestions[0].name.toLocaleLowerCase() === value.toLocaleLowerCase()
         }
         getSuggestionValue={(suggestion) => suggestion.name}
-        renderInputComponent={(inputProps: any) => <Input size="md" {...inputProps} w={width} />}
+        renderInputComponent={(inputProps: any) => (
+          <InputGroup size="md">
+            <Input size="md" {...inputProps} w={width} />
+            {contextTopic && (
+              <InputRightElement
+                w="unset"
+                px={2}
+                pointerEvents="none"
+                children={
+                  <Text color="gray.400" fontWeight={600}>
+                    ({contextTopic.name})
+                  </Text>
+                }
+              />
+            )}
+          </InputGroup>
+        )}
       />
     </Box>
   );
@@ -185,6 +207,8 @@ interface TopicNameFieldProps {
   value: string;
   onChange: (value: string) => void;
   parentTopic?: TopicLinkDataFragment;
+  contextTopic?: TopicLinkDataFragment;
+  disambiguationTopic?: TopicLinkDataFragment;
   onConnectSubTopic: (
     parentTopic: TopicLinkDataFragment,
     subTopic: TopicLinkDataFragment,
@@ -201,6 +225,8 @@ export const TopicNameField: React.FC<TopicNameFieldProps> = ({
   value,
   onChange,
   parentTopic,
+  contextTopic,
+  disambiguationTopic,
   onConnectSubTopic,
   setContextAndDisambiguationTopic,
   w = '300px',
@@ -212,13 +238,22 @@ export const TopicNameField: React.FC<TopicNameFieldProps> = ({
     onOpen();
   };
   return (
-    <>
+    <Box position="relative">
+      {disambiguationTopic && (
+        <Stack direction="row" alignItems="baseline" position="absolute" right={0} top={-5} zIndex={2}>
+          <Text fontSize="sm">See Disambiguation: </Text>
+          <PageLink color="blue.500" isExternal fontSize="sm" pageInfo={TopicPageInfo(disambiguationTopic)}>
+            {disambiguationTopic.name}
+          </PageLink>
+        </Stack>
+      )}
       <TopicNameAutocomplete
         placeholder="e.g. Functions, ..."
         onSelect={(selectedTopic) => openDesembiguationModal(selectedTopic)}
         value={value}
         onChange={onChange}
         w={w}
+        contextTopic={contextTopic}
       />
       {existingSameNameTopic && (
         <DisambiguationModal
@@ -240,7 +275,7 @@ export const TopicNameField: React.FC<TopicNameFieldProps> = ({
           }}
         />
       )}
-    </>
+    </Box>
   );
 };
 
