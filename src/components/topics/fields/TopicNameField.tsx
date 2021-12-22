@@ -16,7 +16,7 @@ import {
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { uniqBy } from 'lodash';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Autosuggest from 'react-autosuggest';
 import { useDebouncedCallback } from 'use-debounce';
 import { TopicLinkData } from '../../../graphql/topics/topics.fragments';
@@ -74,10 +74,18 @@ export const TopicNameAutocomplete: React.FC<TopicNameAutocompleteProps> = ({
   isDisabled,
   value,
   onChange,
-  onSelect,
+  onSelect: onSelectProp,
   w,
 }) => {
   const [searchResults, setSearchResults] = useState<TopicResultItem[]>([]);
+
+  const onSelect = useCallback(
+    (topic: TopicLinkDataFragment) => {
+      setSearchResults([]);
+      onSelectProp(topic);
+    },
+    [onSelectProp]
+  );
   const suggestions = uniqBy(searchResults, 'name');
 
   const [autocompleteTopicNameLazyQuery, { data: topicsSearchData }] = useAutocompleteTopicNameLazyQuery();
