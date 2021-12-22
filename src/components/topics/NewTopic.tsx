@@ -15,7 +15,6 @@ import {
   ModalContent,
   ModalOverlay,
   Stack,
-  Text,
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { uniqBy, upperFirst } from 'lodash';
@@ -32,7 +31,6 @@ import {
   PulledDescriptionSourceName,
   SubTopicRelationshipType,
   TopicType,
-  TopicTypeColor,
 } from '../../graphql/types';
 import { generateUrlKey } from '../../services/url.service';
 import { getChakraRelativeSize } from '../../util/chakra.util';
@@ -40,10 +38,10 @@ import { FormButtons } from '../lib/buttons/FormButtons';
 import { CollapsedField } from '../lib/CollapsedField';
 import { Field } from '../lib/Field';
 import { FormTitle } from '../lib/Typography';
-import { EditableTopicPrerequisites, StatelessEditableTopicPrerequisites } from './EditableTopicPrerequisites';
 import { TopicDescriptionField } from './fields/TopicDescription';
 import { TopicLevelField } from './fields/TopicLevel';
 import { TopicNameField } from './fields/TopicNameField';
+import { TopicPrerequisitesField } from './fields/TopicPrerequisitesField';
 import { TopicTypeField } from './fields/TopicTypeField';
 import { TopicUrlKeyField, useCheckTopicKeyAvailability } from './fields/TopicUrlKey';
 import { useAddSubTopicMutation, useCreateTopicMutation } from './NewTopic.generated';
@@ -139,7 +137,6 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
                 updateTopicCreationData({
                   contextTopic,
                   disambiguationTopic,
-                  // key: generateUrlKey(`${topicCreationData.key}_(${contextTopic.key})`),
                 });
               }}
               onConnectSubTopic={onConnectSubTopic}
@@ -181,52 +178,52 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
           onChange={(topicTypes) => updateTopicCreationData({ topicTypes })}
         />
 
-        {/* <Flex justifyContent="space-between" flexDir="column"> */}
-        <Box w="45%">
-          <CollapsedField
-            label="Customize URL"
-            alignLabel="left"
-            isOpen={customizeUrlFieldIsOpen}
-            onToggle={customizeUrlFieldOnToggle}
-          >
-            <TopicUrlKeyField
-              size={size}
-              value={topicCreationData.key}
-              fullTopicKey={fullTopicKey}
-              onChange={(newKeyValue) => updateTopicCreationData({ key: generateUrlKey(newKeyValue) })}
-              isChecking={isChecking}
-              isAvailable={isAvailable}
-            />
-          </CollapsedField>
-        </Box>
-        <Box w="45%">
-          <CollapsedField
-            label="Select Prerequisites"
-            alignLabel="left"
-            isOpen={prereqFieldIsOpen}
-            onToggle={prereqFieldOnToggle}
-          >
-            <StatelessEditableTopicPrerequisites
-              editable={true}
-              prerequisites={topicCreationData.prerequisiteTopics}
-              onAdded={(prereq) =>
-                updateTopicCreationData({
-                  prerequisiteTopics: uniqBy([...topicCreationData.prerequisiteTopics, prereq], '_id'),
-                })
-              }
-              onRemove={(prereqIdToRemove) =>
-                updateTopicCreationData({
-                  prerequisiteTopics: topicCreationData.prerequisiteTopics.filter(
-                    (prereq) => prereq._id !== prereqIdToRemove
-                  ),
-                })
-              }
-            />
-          </CollapsedField>
-        </Box>
-        {/* </Flex> */}
+        <Flex justifyContent="space-between" flexDir="row">
+          <Box w="45%">
+            <CollapsedField
+              label="Customize URL"
+              alignLabel="left"
+              isOpen={customizeUrlFieldIsOpen}
+              onToggle={customizeUrlFieldOnToggle}
+            >
+              <TopicUrlKeyField
+                size={size}
+                value={topicCreationData.key}
+                fullTopicKey={fullTopicKey}
+                onChange={(newKeyValue) => updateTopicCreationData({ key: generateUrlKey(newKeyValue) })}
+                isChecking={isChecking}
+                isAvailable={isAvailable}
+              />
+            </CollapsedField>
+          </Box>
+          <Box w="45%">
+            <CollapsedField
+              label="Select Prerequisites"
+              alignLabel="left"
+              isOpen={prereqFieldIsOpen}
+              onToggle={prereqFieldOnToggle}
+            >
+              <TopicPrerequisitesField
+                prerequisites={topicCreationData.prerequisiteTopics}
+                onAdded={(prereq) =>
+                  updateTopicCreationData({
+                    prerequisiteTopics: uniqBy([...topicCreationData.prerequisiteTopics, prereq], '_id'),
+                  })
+                }
+                onRemove={(prereqIdToRemove) =>
+                  updateTopicCreationData({
+                    prerequisiteTopics: topicCreationData.prerequisiteTopics.filter(
+                      (prereq) => prereq._id !== prereqIdToRemove
+                    ),
+                  })
+                }
+              />
+            </CollapsedField>
+          </Box>
+        </Flex>
         <FormButtons
           isPrimaryDisabled={!topicCreationData.name || !topicCreationData.key || !isAvailable}
+          primaryText={parentTopic ? 'Add SubTopic' : 'Create Topic'}
           onCancel={onCancel}
           size={getChakraRelativeSize(size, 1)}
           onPrimaryClick={onCreate}
@@ -305,7 +302,9 @@ export const NewTopic: React.FC<NewTopicProps> = ({
   const createTopic = async () => {
     const payload: CreateTopicPayload = {
       name: topicCreationData.name,
-      key: topicCreationData.key,
+      key: topicCreationData.contextTopic
+        ? `${topicCreationData.key}_(${topicCreationData.contextTopic.key})`
+        : topicCreationData.key,
       description: topicCreationData.description,
       descriptionSourceUrl: topicCreationData.descriptionSourceUrl,
       wikipediaPageUrl: topicCreationData.wikipediaPageUrl,

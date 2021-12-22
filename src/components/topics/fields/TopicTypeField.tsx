@@ -64,7 +64,7 @@ export const TopicTypeField: React.FC<{ value?: TopicType[]; onChange: (topicTyp
           <WrapItem>
             <TopicTypeSelector
               size="xs"
-              placeholder="Search Types..."
+              placeholder="Add Type..."
               onSelect={(selected) => onChange(uniqBy([...(value || []), selected], 'name'))}
             />
           </WrapItem>

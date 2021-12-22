@@ -70,7 +70,7 @@ export const TopicSelector: React.FC<TopicSelectorProps> = ({
           placeholder={placeholder || 'Search learning goal...'}
           entitySuggestions={searchResults}
           fetchEntitySuggestions={(query) =>
-            query.length >= 1 ? debouncedSearchLazyQuery.callback(query) : setSearchResults([])
+            query.length >= 2 ? debouncedSearchLazyQuery.callback(query) : setSearchResults([])
           }
           onSelect={onSelect}
           inputLeftIcon={<SearchIcon color="gray.300" />}
