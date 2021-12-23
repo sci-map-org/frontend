@@ -2,9 +2,12 @@ import { useDisclosure } from '@chakra-ui/hooks';
 import { CloseIcon } from '@chakra-ui/icons';
 import { Image } from '@chakra-ui/image';
 import {
+  Alert,
+  AlertIcon,
   Box,
   Center,
   Flex,
+  FormErrorMessage,
   Heading,
   IconButton,
   Input,
@@ -95,6 +98,18 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
     [topicCreationData.contextTopic, topicCreationData.key]
   );
 
+  const [showFormErrors, setShowFormErrors] = useState(false);
+
+  const formErrors = useMemo(() => {
+    let errors: { [key in 'name' | 'topicTypes' | 'key']?: string } = {};
+    if (!topicCreationData.name) errors.name = 'Topic Name is required';
+    if (topicCreationData.topicTypes.length < 1) errors.topicTypes = 'At least one Topic Type must be selected';
+    if (!topicCreationData.key || !isAvailable) errors.key = 'An available Url key is required';
+    return errors;
+  }, [topicCreationData.name, topicCreationData.topicTypes, topicCreationData.key]);
+
+  const formHasErrors = useMemo(() => Object.keys(formErrors).length > 0, [formErrors]);
+
   return (
     <Flex direction="column" w="100%">
       <Flex position="relative" justifyContent="center" alignItems="center" h="240px">
@@ -118,7 +133,7 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
       </Flex>
       <Stack spacing={10} alignItems="stretch">
         <Center>
-          <Field label="Topic Name">
+          <Field label="Topic Name" isInvalid={!!formErrors.name && showFormErrors}>
             <TopicNameField
               parentTopic={parentTopic}
               value={topicCreationData.name}
@@ -152,6 +167,7 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
                 onChange={(aliases) => updateTopicCreationData({ aliases })}
               />
             </Box>
+            <FormErrorMessage>Topic Name is required</FormErrorMessage>
           </Field>
         </Center>
         <Center>
@@ -179,6 +195,7 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
         <TopicTypeField
           value={topicCreationData.topicTypes}
           onChange={(topicTypes) => updateTopicCreationData({ topicTypes })}
+          isInvalid={!!formErrors.topicTypes && showFormErrors}
         />
 
         <Flex justifyContent="space-between" flexDir="row">
@@ -188,6 +205,7 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
               alignLabel="left"
               isOpen={customizeUrlFieldIsOpen}
               onToggle={customizeUrlFieldOnToggle}
+              isInvalid={!!formErrors.key && showFormErrors}
             >
               <TopicUrlKeyField
                 size={size}
@@ -225,12 +243,26 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
           </Box>
         </Flex>
         <FormButtons
-          isPrimaryDisabled={!topicCreationData.name || !topicCreationData.key || !isAvailable}
+          isPrimaryDisabled={formHasErrors && showFormErrors}
           primaryText={parentTopic ? 'Add SubTopic' : 'Create Topic'}
           onCancel={onCancel}
           size={getChakraRelativeSize(size, 1)}
-          onPrimaryClick={onCreate}
+          onPrimaryClick={() => {
+            if (formHasErrors) setShowFormErrors(true);
+            else onCreate();
+          }}
         />
+        {showFormErrors && formHasErrors && (
+          <Stack>
+            {Object.keys(formErrors).map((formErrorKey) => (
+              <Alert key={formErrorKey} status="error">
+                <AlertIcon />
+                {/* @ts-ignore */}
+                {formErrors[formErrorKey]}
+              </Alert>
+            ))}
+          </Stack>
+        )}
       </Stack>
     </Flex>
   );

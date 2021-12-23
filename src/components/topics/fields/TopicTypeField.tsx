@@ -1,5 +1,16 @@
 import { SearchIcon } from '@chakra-ui/icons';
-import { Box, Flex, Input, InputGroup, InputLeftElement, Stack, Text, Wrap, WrapItem } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  FormErrorMessage,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  Stack,
+  Text,
+  Wrap,
+  WrapItem,
+} from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { uniqBy } from 'lodash';
 import { useRef, useState } from 'react';
@@ -20,10 +31,11 @@ const TopicTypeSuggestions: TopicType[] = [
   { name: 'method', color: TopicTypeColor.Red },
   { name: 'application', color: TopicTypeColor.Green },
 ];
-export const TopicTypeField: React.FC<{ value?: TopicType[]; onChange: (topicTypes: TopicType[]) => void }> = ({
-  value,
-  onChange,
-}) => {
+export const TopicTypeField: React.FC<{
+  value?: TopicType[];
+  onChange: (topicTypes: TopicType[]) => void;
+  isInvalid?: boolean;
+}> = ({ value, onChange, isInvalid }) => {
   const [showSelector, setShowSelector] = useState(false);
   const topicTypeSelectorWrapperRef = useRef(null);
 
@@ -31,6 +43,7 @@ export const TopicTypeField: React.FC<{ value?: TopicType[]; onChange: (topicTyp
   return (
     <Field
       label="Topic Types"
+      isInvalid={isInvalid}
       renderRightOfLabel={
         value && (
           <Stack direction="row" alignItems="flex-end">
@@ -75,6 +88,7 @@ export const TopicTypeField: React.FC<{ value?: TopicType[]; onChange: (topicTyp
           </WrapItem>
         )}
       </Wrap>
+      <FormErrorMessage>At least one Topic Type must be selected.</FormErrorMessage>
     </Field>
   );
 };

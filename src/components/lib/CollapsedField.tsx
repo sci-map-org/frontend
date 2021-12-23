@@ -15,6 +15,7 @@ export const CollapsedField: React.FC<CollapsedFieldProps> = ({
   alignLabel = 'left',
   helperText,
   children,
+  isInvalid,
 }) => {
   return (
     <Flex direction="column" alignItems="stretch">
@@ -26,7 +27,7 @@ export const CollapsedField: React.FC<CollapsedFieldProps> = ({
         onClick={onToggle}
       >
         <FormFieldLabel mr={2}>{label}</FormFieldLabel>
-        <Icon as={isOpen ? ChevronUpIcon : ChevronDownIcon} boxSize={6} />
+        <Icon as={isOpen ? ChevronUpIcon : ChevronDownIcon} boxSize={6} {...(isInvalid && { color: 'red.500' })} />
       </Flex>
       <Collapse in={isOpen} animateOpacity>
         <Flex direction="column" pl={4}>

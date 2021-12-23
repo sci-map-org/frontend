@@ -7,11 +7,19 @@ export interface FieldProps {
   helperText?: string;
   renderRightOfLabel?: ReactNode;
   renderTopRight?: ReactNode;
+  isInvalid?: boolean;
 }
 
-export const Field: React.FC<FieldProps> = ({ label, helperText, children, renderRightOfLabel, renderTopRight }) => {
+export const Field: React.FC<FieldProps> = ({
+  label,
+  helperText,
+  children,
+  renderRightOfLabel,
+  renderTopRight,
+  isInvalid,
+}) => {
   return (
-    <FormControl display="flex" flexDir="column" w="unset">
+    <FormControl display="flex" flexDir="column" w="unset" isInvalid={isInvalid}>
       <Flex justifyContent="space-between" pb={1}>
         <Stack direction="row" spacing={1} alignItems="baseline">
           <FormLabel {...FormFieldLabelStyleProps} w="unset">
