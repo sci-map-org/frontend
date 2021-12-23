@@ -29,12 +29,7 @@ export const SeeAlso: React.FC<SeeAlsoProps> = ({ topic }) => {
         {topic.disambiguationTopic.contextualisedTopics
           .filter(({ _id }) => _id !== topic._id)
           .map((contextualisedTopic) => (
-            <TopicLink key={contextualisedTopic._id} topic={contextualisedTopic}>
-              {contextualisedTopic.name}{' '}
-              <Text color="gray.500" as="span">
-                ({contextualisedTopic.context})
-              </Text>
-            </TopicLink>
+            <TopicLink size="md" key={contextualisedTopic._id} topic={contextualisedTopic} showContext />
           ))}
       </Stack>
     </Stack>

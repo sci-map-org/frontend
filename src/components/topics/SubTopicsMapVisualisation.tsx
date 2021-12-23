@@ -22,7 +22,7 @@ export const MapVisualisationTopicData = gql`
   ${TopicLinkData}
 `;
 
-type NodeElement = SimulationNodeDatum & MapVisualisationTopicDataFragment & {size?: number};
+type NodeElement = SimulationNodeDatum & MapVisualisationTopicDataFragment & { size?: number };
 export interface SubTopicsMapVisualisationProps {
   topic?: MapVisualisationTopicDataFragment; //only used to force rerendering
   subTopics: MapVisualisationTopicDataFragment[];
@@ -43,7 +43,7 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
   const nodes: NodeElement[] = useMemo(
     () =>
       subTopics.map((subTopic) => {
-        return { id: subTopic._id, ...subTopic, size: subTopic.subTopicsTotalCount || undefined};
+        return { id: subTopic._id, ...subTopic, size: subTopic.subTopicsTotalCount || undefined };
       }),
     [subTopics]
   );
@@ -84,7 +84,7 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
         .attr('dx', 0)
 
         .attr('dy', (d) => {
-          return getNodeRadius(d) +  12;
+          return getNodeRadius(d) + 12;
         })
         .attr('z-index', 10)
         .attr('font-size', '0.8em')
@@ -164,9 +164,9 @@ export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps>
           </Flex>
           <Flex pt={1}>
             <Stack mr={2} spacing={1} pt={1}>
-                <Flex pl={1} alignItems="center">
-                  <TopicLink topic={parentTopic} onClick={() => onClick(parentTopic)} fontSize="md" />
-                </Flex>
+              <Flex pl={1} alignItems="center">
+                <TopicLink topic={parentTopic} onClick={() => onClick(parentTopic)} />
+              </Flex>
             </Stack>
           </Flex>
         </Flex>
