@@ -520,13 +520,7 @@ const HasDisambiguationTopicModalContent: React.FC<HasDisambiguationTopicModalCo
           {disambiguationTopic.contextualisedTopics?.map((contextualisedTopic) => (
             <Stack key={contextualisedTopic._id} direction="row" spacing={4} alignItems="center">
               <Stack direction="column" spacing={0} alignItems="flex-end">
-                <Stack direction="row" alignItems="baseline">
-                  {/* TODO: on hover, show tooltip with path ? */}
-                  <Text fontWeight={600}>{contextualisedTopic.name}</Text>
-                  <Text fontWeight={600} color="gray.500">
-                    ({contextualisedTopic.contextTopic?.name})
-                  </Text>
-                </Stack>
+                <TopicLink topic={contextualisedTopic} showContext newTab />
                 <Text fontSize="sm" fontWeight={400}>
                   {contextualisedTopic.parentTopic?.parentTopic?.name} / {contextualisedTopic.parentTopic?.name} /{' '}
                   {contextualisedTopic.name}
@@ -670,8 +664,12 @@ const NoDisambiguationTopicModalContent: React.FC<{
       <Text alignItems="center">
         {existingSameNameTopic.name} already exists under{' '}
         <Text as="span" fontWeight={600}>
-          {existingSameNameTopic.parentTopic?.parentTopic?.name}{' '}
-          {!!existingSameNameTopic.parentTopic?.name && '/ ' + existingSameNameTopic.parentTopic?.name}
+          {!!existingSameNameTopic.parentTopic.parentTopic && (
+            <>
+              <TopicLink topic={existingSameNameTopic.parentTopic.parentTopic} newTab /> /{' '}
+            </>
+          )}
+          <TopicLink topic={existingSameNameTopic.parentTopic} newTab />
         </Text>
       </Text>
       <Section>

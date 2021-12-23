@@ -38,13 +38,20 @@ export const pullTopicDescriptions = gql`
 `;
 
 export const TopicDescriptionField: React.FC<{
-  size?: 'sm' | 'md' | 'lg';
+  // size?: 'sm' | 'md' | 'lg';
+  // noOfLines?: number;
   value?: string | null;
-  noOfLines?: number;
   onChange: (value: string) => void;
   pullDescriptionsQueryData?: { name: string };
   onSelectPulledDescription: (pulledDescription: PulledDescription) => void;
-}> = ({ noOfLines = 17, size, value, onChange, onSelectPulledDescription, pullDescriptionsQueryData }) => {
+  placeholder?: string;
+}> = ({
+  value,
+  onChange,
+  onSelectPulledDescription,
+  pullDescriptionsQueryData,
+  placeholder = 'Topic description...',
+}) => {
   const [pulledDescriptions, setPulledDescriptions] = useState<PulledDescription[]>();
 
   const errorToast = useErrorToast();
@@ -84,7 +91,7 @@ export const TopicDescriptionField: React.FC<{
     >
       <Flex direction="row" justifyContent="space-between" alignItems="stretch">
         <Textarea
-          placeholder="Topic description"
+          placeholder={placeholder}
           minH="260px"
           h="unset"
           value={value || ''}
