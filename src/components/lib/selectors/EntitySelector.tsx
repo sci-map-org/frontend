@@ -26,6 +26,7 @@ type EntitySelectorProps<T extends EntityType> = {
   creationHelperText?: string;
   inputLeftIcon?: ReactNode;
   inputProps?: InputProps;
+  renderSuggestion?: (suggestion: T | NewEntity, options: { isHighlighted?: boolean }) => ReactNode;
 };
 
 export const EntitySelector = <T extends EntityType>({
@@ -42,6 +43,7 @@ export const EntitySelector = <T extends EntityType>({
   creationHelperText,
   inputLeftIcon,
   inputProps: inheritedInputProps,
+  renderSuggestion,
 }: PropsWithChildren<EntitySelectorProps<T>>) => {
   const [value, setValue] = useState('');
 
@@ -80,23 +82,27 @@ export const EntitySelector = <T extends EntityType>({
           else onSelect(suggestion);
           setValue('');
         }}
-        renderSuggestion={(suggestion, { isHighlighted }) => (
-          <Flex
-            direction="row"
-            px={5}
-            py={1}
-            borderBottomWidth={1}
-            w={width}
-            {...(isHighlighted && { backgroundColor: 'gray.100' })}
-          >
-            <Text fontWeight={500}>{suggestion.name}</Text>
-            {'new' in suggestion && (
-              <Text fontWeight={400} px={2} color="gray.600">
-                {creationHelperText || '(Create)'}
-              </Text>
-            )}
-          </Flex>
-        )}
+        renderSuggestion={(suggestion, { isHighlighted }) =>
+          !!renderSuggestion ? (
+            renderSuggestion(suggestion, { isHighlighted })
+          ) : (
+            <Flex
+              direction="row"
+              px={5}
+              py={1}
+              borderBottomWidth={1}
+              w={width}
+              {...(isHighlighted && { backgroundColor: 'gray.100' })}
+            >
+              <Text fontWeight={500}>{suggestion.name}</Text>
+              {'new' in suggestion && (
+                <Text fontWeight={400} px={2} color="gray.600">
+                  {creationHelperText || '(Create)'}
+                </Text>
+              )}
+            </Flex>
+          )
+        }
         renderSuggestionsContainer={({ containerProps, children }) =>
           children && (
             <Box

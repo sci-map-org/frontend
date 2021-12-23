@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { SearchIcon } from '@chakra-ui/icons';
@@ -61,11 +61,6 @@ export const TopicSelector: React.FC<TopicSelectorProps> = ({
       <Box>
         <EntitySelector
           width="100%"
-          //   allowCreation
-          //   onCreate={(newLg) => {
-          //     setCreateSubTopicDefaultPayload({ name: newLg.name, key: generateUrlKey(newLg.name) }); //TODO: proper validation
-          //     onOpen();
-          //   }}
           suggestionContainerWidth="300px"
           placeholder={placeholder || 'Search learning goal...'}
           entitySuggestions={searchResults}
@@ -80,6 +75,41 @@ export const TopicSelector: React.FC<TopicSelectorProps> = ({
             borderRadius: 4,
             _focus: { borderColor: 'blue.500' },
           }}
+          renderSuggestion={(suggestion, { isHighlighted }) => (
+            <Flex
+              direction="row"
+              alignItems="baseline"
+              px={2}
+              py={1}
+              borderBottomWidth={1}
+              // w={width}
+              {...(isHighlighted && { backgroundColor: 'gray.100' })}
+            >
+              <Text
+                fontWeight={500}
+                fontSize="sm"
+                textOverflow="ellipsis"
+                whiteSpace="nowrap"
+                overflow="hidden"
+                {...(!!(suggestion as TopicLinkDataFragment).context && { maxW: '60%' })}
+              >
+                {suggestion.name}
+              </Text>
+              {!!(suggestion as TopicLinkDataFragment).context && (
+                <Text
+                  fontSize="xs"
+                  fontWeight={600}
+                  color="gray.500"
+                  ml={2}
+                  textOverflow="ellipsis"
+                  whiteSpace="nowrap"
+                  overflow="hidden"
+                >
+                  ({(suggestion as TopicLinkDataFragment).context})
+                </Text>
+              )}
+            </Flex>
+          )}
         />
       </Box>
     </>

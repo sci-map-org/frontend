@@ -2,9 +2,10 @@ import { SearchIcon } from '@chakra-ui/icons';
 import { Box, Flex, Input, InputGroup, InputLeftElement, Stack, Text, Wrap, WrapItem } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { uniqBy } from 'lodash';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Autosuggest from 'react-autosuggest';
 import { TopicType, TopicTypeColor } from '../../../graphql/types';
+import { useHandleClickOutside } from '../../../hooks/useHanldeClickOutside';
 import { Field } from '../../lib/Field';
 import { useSearchTopicTypesLazyQuery } from './TopicTypeField.generated';
 import { TopicTypeViewer } from './TopicTypeViewer';
@@ -24,6 +25,9 @@ export const TopicTypeField: React.FC<{ value?: TopicType[]; onChange: (topicTyp
   onChange,
 }) => {
   const [showSelector, setShowSelector] = useState(false);
+  const topicTypeSelectorWrapperRef = useRef(null);
+
+  useHandleClickOutside(topicTypeSelectorWrapperRef, () => setShowSelector(false));
   return (
     <Field
       label="Topic Types"
@@ -61,10 +65,11 @@ export const TopicTypeField: React.FC<{ value?: TopicType[]; onChange: (topicTyp
             </WrapItem>
           ))}
         {showSelector && (
-          <WrapItem>
+          <WrapItem ref={topicTypeSelectorWrapperRef}>
             <TopicTypeSelector
               size="xs"
               placeholder="Add Type..."
+              width="100px"
               onSelect={(selected) => onChange(uniqBy([...(value || []), selected], 'name'))}
             />
           </WrapItem>
@@ -160,7 +165,7 @@ const TopicTypeSelector: React.FC<{
               borderColor="gray.400"
               zIndex={1000}
               position="absolute"
-              width={width}
+              width="200px"
             >
               {children}
             </Box>
@@ -174,7 +179,7 @@ const TopicTypeSelector: React.FC<{
               size={size}
               _hover={{}}
               _focus={{ borderColor: 'blue.500' }}
-              boxSizing="content-box"
+              h="24px"
               borderColor="gray.400"
               isDisabled={isDisabled}
               variant="outline"
