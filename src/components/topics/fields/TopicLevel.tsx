@@ -80,7 +80,13 @@ export const TopicLevelField: React.FC<{
             onChange(val);
           }}
           isDisabled={value === null}
+          position="relative"
         >
+          {value !== null && (
+            <Text position="absolute" fontSize="10px" fontWeight={400} color="gray.400" right={0} top={-3}>
+              {value}/100
+            </Text>
+          )}
           <SliderTrack>
             <SliderFilledTrack bgColor={value !== null ? topicLevelColorMap(value / 100) : 'gray.500'} />
           </SliderTrack>

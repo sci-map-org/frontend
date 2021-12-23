@@ -163,7 +163,6 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
         </Center>
 
         <TopicDescriptionField
-          size={size}
           value={topicCreationData.description}
           onChange={(newDescription) => updateTopicCreationData({ description: newDescription })}
           pullDescriptionsQueryData={{ name: topicCreationData.name }}

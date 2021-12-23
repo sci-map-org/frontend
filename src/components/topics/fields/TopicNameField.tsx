@@ -183,7 +183,7 @@ export const TopicNameAutocomplete: React.FC<TopicNameAutocompleteProps> = ({
         getSuggestionValue={(suggestion) => suggestion.name}
         renderInputComponent={(inputProps: any) => (
           <InputGroup size="md">
-            <Input size="md" {...inputProps} w={width} />
+            <Input size="md" {...inputProps} w={width} autoFocus />
             {contextTopic && (
               <InputRightElement
                 w="unset"
