@@ -18,7 +18,7 @@
   /* background-color: #f9f8fb; */
   background-color: white;
   /* Change path color, size (zoom in pattern or not) and path opacity in the svg file */
-  background-image: url(/static/topography_bg.svg);
+  background-image: url(/images/topography_bg.svg);
 }
 
 .node:hover .node_circle {
