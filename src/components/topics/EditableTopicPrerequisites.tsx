@@ -47,6 +47,7 @@ export const StatelessEditableTopicPrerequisites: React.FC<StatelessEditableTopi
           topics={prerequisites}
           onAdded={onAdded}
           onRemove={onRemove}
+          inputPlaceholder="Search Prerequisite Topic.."
         />
       )}
     </Stack>

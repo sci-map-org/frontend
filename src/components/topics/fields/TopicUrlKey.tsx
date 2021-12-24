@@ -1,6 +1,7 @@
 import { CheckIcon, NotAllowedIcon } from '@chakra-ui/icons';
 import {
   FormControl,
+  FormErrorMessage,
   FormHelperText,
   Input,
   InputGroup,
@@ -12,7 +13,6 @@ import {
 import { useEffect, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { useCheckTopicKeyAvailabilityLazyQuery } from '../../../graphql/topics/topics.operations.generated';
-import { generateUrlKey } from '../../../services/url.service';
 
 export const useCheckTopicKeyAvailability = (key: string) => {
   const [isChecking, setIsChecking] = useState(false);
@@ -29,7 +29,7 @@ export const useCheckTopicKeyAvailability = (key: string) => {
     setIsChecking(true);
   }, [key]);
   useEffect(() => {
-    checkTopicKeyAvailability({ variables: { key: keyValueToCheck } });
+    if (keyValueToCheck.length) checkTopicKeyAvailability({ variables: { key: keyValueToCheck } });
   }, [keyValueToCheck]);
 
   return {
@@ -43,19 +43,23 @@ export const useCheckTopicKeyAvailability = (key: string) => {
 export const TopicUrlKeyField: React.FC<{
   size?: 'md' | 'lg' | 'sm';
   value: string;
+  fullTopicKey: string;
   onChange: (newKeyValue: string) => void;
   isChecking: boolean;
   isAvailable?: boolean;
-}> = ({ size, value, onChange, isChecking, isAvailable }) => {
+  isInvalid?: boolean;
+}> = ({ size, value, fullTopicKey, onChange, isChecking, isAvailable, isInvalid }) => {
   return (
-    <FormControl id="key" size={size}>
-      <InputGroup>
+    <FormControl id="key" size={size} isInvalid={isInvalid}>
+      <InputGroup position="relative" left={0} right={0} zIndex={1}>
         <Input
           placeholder="Topic Url Key"
+          position="absolute"
           value={value}
-          size={size}
-          onChange={(e) => onChange(generateUrlKey(e.target.value))}
+          zIndex={1}
+          onChange={(e) => onChange(e.target.value)}
         />
+
         {value && (
           <InputRightElement
             children={
@@ -80,27 +84,32 @@ export const TopicUrlKeyField: React.FC<{
             }
           />
         )}
+        {/* Input element below is used to show the grayed out suffix */}
+        <Input value={value ? fullTopicKey : ''} zIndex={0} color="gray.400" readOnly />
       </InputGroup>
+      <InputGroup position="absolute" left={0} right={0} zIndex={0}></InputGroup>
+
       {value && (
         <FormHelperText fontSize="xs" {...(!isAvailable && { color: 'red.500' })}>
           {isAvailable && (
             <>
               Url will look like{' '}
               <Text as="span" fontWeight={500}>
-                /topics/{value}
+                /topics/{fullTopicKey}
               </Text>
             </>
           )}
           {isAvailable === false && (
             <>
               <Text as="span" fontWeight={500}>
-                /topics/{value}
+                /topics/{fullTopicKey}
               </Text>{' '}
               is not available
             </>
           )}
         </FormHelperText>
       )}
+      {!value && <FormErrorMessage>Url Key is required</FormErrorMessage>}
     </FormControl>
   );
 };

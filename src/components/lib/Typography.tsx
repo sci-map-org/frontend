@@ -16,9 +16,38 @@ export const TopicPageSectionHeader: React.FC<HeadingProps> = ({ children, ...pr
   );
 };
 
+export const FormTitle: React.FC<HeadingProps> = ({ children, ...props }) => {
+  return (
+    <Heading color="gray.800" fontSize="4xl" fontWeight={400} {...props}>
+      {children}
+    </Heading>
+  );
+};
+
+export const FormFieldLabelStyleProps: Pick<TextProps, 'fontSize' | 'fontWeight' | 'color'> = {
+  fontSize: 'xl',
+  fontWeight: 800,
+  color: 'gray.700',
+};
+
 export const FormFieldLabel: React.FC<TextProps> = ({ children, ...props }) => {
   return (
-    <Text fontSize="lg" fontWeight={800} color="gray.700" {...props}>
+    <Text {...FormFieldLabelStyleProps} {...props}>
+      {children}
+    </Text>
+  );
+};
+
+export const FormFieldHelperTextStyleProps: Pick<TextProps, 'fontSize' | 'fontWeight' | 'color' | 'letterSpacing'> = {
+  fontSize: 'md',
+  letterSpacing: '0.3px',
+  fontWeight: 600,
+  color: 'gray.500',
+};
+
+export const FormFieldHelperText: React.FC<TextProps> = ({ children, ...props }) => {
+  return (
+    <Text {...FormFieldHelperTextStyleProps} {...props}>
       {children}
     </Text>
   );

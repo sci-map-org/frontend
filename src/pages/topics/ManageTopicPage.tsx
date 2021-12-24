@@ -70,9 +70,12 @@ export const getTopicByKeyManageTopicPage = gql`
 const placeholderTopicData: GetTopicByKeyManageTopicPageQuery['getTopicByKey'] = generateTopicData();
 
 export const ManageTopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
-  const [updateTopicData, setUpdateTopicData] = useState<{ name?: string; key?: string; description?: string | null }>(
-    {}
-  );
+  const [updateTopicData, setUpdateTopicData] = useState<{
+    name?: string;
+    key?: string;
+    description?: string | null;
+    descriptionSourceUrl?: string | null;
+  }>({});
   const { isChecking, isAvailable } = useCheckTopicKeyAvailability(updateTopicData.key || '');
   const { data, loading, refetch } = useGetTopicByKeyManageTopicPageQuery({
     variables: { topicKey },
@@ -152,6 +155,18 @@ export const ManageTopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) =>
                         onChange={(newDescription) =>
                           setUpdateTopicData({ ...updateTopicData, description: newDescription })
                         }
+                        onSelectPulledDescription={(pulledDescription) =>
+                          setUpdateTopicData({
+                            ...updateTopicData,
+                            description: pulledDescription.description,
+
+                            // TODO
+                            // descriptionSourceUrl: pulledDescription.sourceUrl,
+                            // ...(pulledDescription.sourceName === PulledDescriptionSourceName.Wikipedia && {
+                            //   wikipediaPageUrl: pulledDescription.sourceUrl,
+                            // }),
+                          })
+                        }
                       />
                     ) : (
                       <TopicDescription
@@ -163,10 +178,12 @@ export const ManageTopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) =>
                   <Field label={<FormFieldLabel>Url Key</FormFieldLabel>}>
                     {editMode ? (
                       <TopicUrlKeyField
+                        // different behaviour based on topic.contextTopic
                         value={updateTopicData.key || ''}
                         onChange={(newKeyValue) => setUpdateTopicData({ key: newKeyValue })}
                         isChecking={isChecking}
                         isAvailable={updateTopicData.key !== topic.key ? isAvailable : undefined}
+                        fullTopicKey="TODO"
                       />
                     ) : (
                       topic.key

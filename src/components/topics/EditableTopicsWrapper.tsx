@@ -42,11 +42,7 @@ export const EditableTopicsWrapper: React.FC<EditableTopicsWrapperProps> = ({
         ))}
       </Stack>
       {editMode && (
-        <TopicSelector
-          // createLGDefaultData={{ type: LearningGoalType.SubGoal, public: true }}
-          placeholder={inputPlaceholder || `Add Topic...`}
-          onSelect={(topic) => onAdded(topic)}
-        />
+        <TopicSelector placeholder={inputPlaceholder || `Add Topic...`} onSelect={(topic) => onAdded(topic)} />
       )}
       {editable && !editMode && (
         <Tooltip hasArrow label={topics.length ? `Add or remove topics` : `Add topics`}>

@@ -1,5 +1,5 @@
-import { Box, Flex, Input, InputProps, Text } from '@chakra-ui/react';
-import { PropsWithChildren, useRef, useState } from 'react';
+import { Box, Flex, Input, InputGroup, InputLeftElement, InputProps, Text } from '@chakra-ui/react';
+import { PropsWithChildren, ReactNode, useRef, useState } from 'react';
 import Autosuggest from 'react-autosuggest';
 
 type EntityType = {
@@ -24,6 +24,9 @@ type EntitySelectorProps<T extends EntityType> = {
   isDisabled?: boolean;
   suggestionContainerWidth?: number | string;
   creationHelperText?: string;
+  inputLeftIcon?: ReactNode;
+  inputProps?: InputProps;
+  renderSuggestion?: (suggestion: T | NewEntity, options: { isHighlighted?: boolean }) => ReactNode;
 };
 
 export const EntitySelector = <T extends EntityType>({
@@ -38,16 +41,12 @@ export const EntitySelector = <T extends EntityType>({
   allowCreation,
   onCreate,
   creationHelperText,
+  inputLeftIcon,
+  inputProps: inheritedInputProps,
+  renderSuggestion,
 }: PropsWithChildren<EntitySelectorProps<T>>) => {
   const [value, setValue] = useState('');
-  const inputProps = {
-    placeholder,
-    value,
-    isDisabled,
-    onChange: (_event: any, { newValue }: { newValue: string }) => {
-      setValue(newValue);
-    },
-  };
+
   const suggestions: (T | NewEntity)[] = [
     ...(!!allowCreation && !entitySuggestions.find((e) => e.name === value) && value.length
       ? [
@@ -67,7 +66,13 @@ export const EntitySelector = <T extends EntityType>({
           return true;
         }}
         suggestions={suggestions}
-        inputProps={inputProps}
+        inputProps={{
+          placeholder,
+          value,
+          onChange: (_event: any, { newValue }: { newValue: string }) => {
+            setValue(newValue);
+          },
+        }}
         onSuggestionsFetchRequested={({ value: v }) => fetchEntitySuggestions(v)}
         onSuggestionsClearRequested={() => fetchEntitySuggestions(value)}
         onSuggestionSelected={(e, { suggestion }) => {
@@ -77,23 +82,27 @@ export const EntitySelector = <T extends EntityType>({
           else onSelect(suggestion);
           setValue('');
         }}
-        renderSuggestion={(suggestion, { isHighlighted }) => (
-          <Flex
-            direction="row"
-            px={5}
-            py={1}
-            borderBottomWidth={1}
-            w={width}
-            {...(isHighlighted && { backgroundColor: 'gray.100' })}
-          >
-            <Text fontWeight={500}>{suggestion.name}</Text>
-            {'new' in suggestion && (
-              <Text fontWeight={400} px={2} color="gray.600">
-                {creationHelperText || '(Create)'}
-              </Text>
-            )}
-          </Flex>
-        )}
+        renderSuggestion={(suggestion, { isHighlighted }) =>
+          !!renderSuggestion ? (
+            renderSuggestion(suggestion, { isHighlighted })
+          ) : (
+            <Flex
+              direction="row"
+              px={5}
+              py={1}
+              borderBottomWidth={1}
+              w={width}
+              {...(isHighlighted && { backgroundColor: 'gray.100' })}
+            >
+              <Text fontWeight={500}>{suggestion.name}</Text>
+              {'new' in suggestion && (
+                <Text fontWeight={400} px={2} color="gray.600">
+                  {creationHelperText || '(Create)'}
+                </Text>
+              )}
+            </Flex>
+          )
+        }
         renderSuggestionsContainer={({ containerProps, children }) =>
           children && (
             <Box
@@ -115,7 +124,17 @@ export const EntitySelector = <T extends EntityType>({
         highlightFirstSuggestion={true}
         getSuggestionValue={(suggestion) => suggestion.name}
         renderInputComponent={(inputProps: any) => (
-          <Input size={inputSize} variant="flushed" {...inputProps} w={width} />
+          <InputGroup>
+            {inputLeftIcon && <InputLeftElement pointerEvents="none" children={inputLeftIcon} />}
+            <Input
+              size={inputSize}
+              variant="flushed"
+              isDisabled={isDisabled}
+              {...inheritedInputProps}
+              {...inputProps}
+              w={width}
+            />
+          </InputGroup>
         )}
       />
     </Box>

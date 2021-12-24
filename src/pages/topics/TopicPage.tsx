@@ -121,18 +121,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
           </Text>
           <Stack ml={8} mt={2}>
             {topic.contextualisedTopics?.map((contextualisedTopic) => (
-              <TopicLink
-                fontSize="xl"
-                color="gray.800"
-                key={contextualisedTopic._id}
-                topic={contextualisedTopic}
-                size="lg"
-              >
-                {contextualisedTopic.name}{' '}
-                <Text color="gray.500" as="span">
-                  ({contextualisedTopic.context})
-                </Text>
-              </TopicLink>
+              <TopicLink key={contextualisedTopic._id} topic={contextualisedTopic} size="lg" showContext />
             ))}
           </Stack>
         </Box>

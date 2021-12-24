@@ -1,16 +1,38 @@
-import { Box, FormControl, FormLabel } from '@chakra-ui/react';
+import { Box, FormControl, FormLabel, Flex, Stack } from '@chakra-ui/react';
 import React, { ReactNode } from 'react';
+import { FormFieldHelperText, FormFieldLabelStyleProps } from './Typography';
 
-interface FieldProps {
-  id?: string;
+export interface FieldProps {
   label: string | ReactNode;
+  helperText?: string;
+  renderRightOfLabel?: ReactNode;
+  renderTopRight?: ReactNode;
+  isInvalid?: boolean;
 }
 
-export const Field: React.FC<FieldProps> = ({ id, label, children }) => {
+export const Field: React.FC<FieldProps> = ({
+  label,
+  helperText,
+  children,
+  renderRightOfLabel,
+  renderTopRight,
+  isInvalid,
+}) => {
   return (
-    <FormControl>
-      <FormLabel>{label}</FormLabel>
-      <Box pl={4}>{children}</Box>
+    <FormControl display="flex" flexDir="column" w="unset" isInvalid={isInvalid}>
+      <Flex justifyContent="space-between" pb={1}>
+        <Stack direction="row" spacing={1} alignItems="baseline">
+          <FormLabel {...FormFieldLabelStyleProps} w="unset">
+            {label}
+          </FormLabel>
+          {renderRightOfLabel}
+        </Stack>
+        {renderTopRight}
+      </Flex>
+      <Flex direction="column" pl={4}>
+        {helperText && <FormFieldHelperText pb={3}>{helperText}</FormFieldHelperText>}
+        {children}
+      </Flex>
     </FormControl>
   );
 };

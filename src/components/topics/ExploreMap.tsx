@@ -143,9 +143,8 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
       >
         {!!loadedTopic && loadedTopic._id !== rootTopic._id ? (
           <Stack direction="column" spacing={1}>
-            <Stack direction="row" alignItems="flex-start" pb={3}>
-              <TopicLink topic={loadedTopic} fontSize="3xl" isExternal />
-              <ExternalLinkIcon ml={2} boxSize={6} />
+            <Stack direction="row" alignItems="flex-start" pb={1}>
+              <TopicLink topic={loadedTopic} size="lg" newTab />
             </Stack>
             <Stack direction="row" spacing={8}>
               {subTopics?.length && (
