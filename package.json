@@ -19,7 +19,7 @@
     "postinstall": "patch-package"
   },
   "engines": {
-    "node": ">=14"
+    "node": ">=12.20"
   },
   "repository": {
     "type": "git",
