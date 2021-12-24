@@ -235,6 +235,7 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
                 onChange={(newKeyValue) => updateTopicCreationData({ key: generateUrlKey(newKeyValue) })}
                 isChecking={isChecking}
                 isAvailable={isAvailable}
+                isInvalid={!!formErrors.key && showFormErrors}
               />
             </CollapsedField>
           </Box>

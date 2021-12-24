@@ -47,9 +47,10 @@ export const TopicUrlKeyField: React.FC<{
   onChange: (newKeyValue: string) => void;
   isChecking: boolean;
   isAvailable?: boolean;
-}> = ({ size, value, fullTopicKey, onChange, isChecking, isAvailable }) => {
+  isInvalid?: boolean;
+}> = ({ size, value, fullTopicKey, onChange, isChecking, isAvailable, isInvalid }) => {
   return (
-    <FormControl id="key" size={size} isInvalid={!value}>
+    <FormControl id="key" size={size} isInvalid={isInvalid}>
       <InputGroup position="relative" left={0} right={0} zIndex={1}>
         <Input
           placeholder="Topic Url Key"

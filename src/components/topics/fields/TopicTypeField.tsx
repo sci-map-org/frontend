@@ -24,11 +24,10 @@ import { TopicTypeViewer } from './TopicTypeViewer';
 const TopicTypeSuggestions: TopicType[] = [
   { name: 'concept', color: TopicTypeColor.Orange },
   { name: 'field', color: TopicTypeColor.Red },
-  { name: 'idea', color: TopicTypeColor.Orange },
   { name: 'tool', color: TopicTypeColor.Green },
   { name: 'problem', color: TopicTypeColor.Green },
   { name: 'theory', color: TopicTypeColor.Red },
-  { name: 'method', color: TopicTypeColor.Red },
+  { name: 'method', color: TopicTypeColor.Orange },
   { name: 'application', color: TopicTypeColor.Green },
 ];
 export const TopicTypeField: React.FC<{
@@ -112,14 +111,19 @@ const TopicTypeSelector: React.FC<{
 }> = ({ onSelect, width, isDisabled, size = 'xs', placeholder }) => {
   width = width || '160px';
   const [value, setValue] = useState('');
-  const [searchTopicTypesLazyQuery, { data, loading }] = useSearchTopicTypesLazyQuery();
+  const [searchResults, setSearchResults] = useState<TopicType[]>([]);
+  const [searchTopicTypesLazyQuery] = useSearchTopicTypesLazyQuery({
+    onCompleted(d) {
+      setSearchResults(d.searchTopicTypes);
+    },
+  });
   const suggestions: TopicType[] = uniqBy(
     [
       {
         name: value,
         usageCount: 0,
       },
-      ...(data?.searchTopicTypes || []),
+      ...(searchResults || []),
     ],
     'name'
   );
@@ -140,8 +144,10 @@ const TopicTypeSelector: React.FC<{
       <Autosuggest
         suggestions={suggestions}
         inputProps={inputProps}
-        onSuggestionsFetchRequested={({ value: v }) => searchTopicTypesLazyQuery({ variables: { query: v } })}
-        onSuggestionsClearRequested={() => searchTopicTypesLazyQuery({ variables: { query: '' } })}
+        onSuggestionsFetchRequested={({ value: v }) =>
+          v.length >= 1 && searchTopicTypesLazyQuery({ variables: { query: v } })
+        }
+        onSuggestionsClearRequested={() => setSearchResults([])}
         onSuggestionSelected={(e, { suggestion }) => {
           onSelect(suggestion);
           setValue('');

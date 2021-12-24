@@ -1,3 +1,4 @@
+import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Input } from '@chakra-ui/input';
 import { Box, Flex, Text } from '@chakra-ui/layout';
 import {
@@ -249,6 +250,7 @@ export const TopicNameField: React.FC<TopicNameFieldProps> = ({
           <Text fontSize="sm">See Disambiguation: </Text>
           <PageLink color="blue.500" isExternal fontSize="sm" pageInfo={TopicPageInfo(disambiguationTopic)}>
             {disambiguationTopic.name}
+            <ExternalLinkIcon ml={1} mb={1} boxSize={3} color="blue.500" />
           </PageLink>
         </Stack>
       )}
