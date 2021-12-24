@@ -47,7 +47,11 @@ import { TopicNameField } from './fields/TopicNameField';
 import { TopicPrerequisitesField } from './fields/TopicPrerequisitesField';
 import { TopicTypeField } from './fields/TopicTypeField';
 import { TopicUrlKeyField, useCheckTopicKeyAvailability } from './fields/TopicUrlKey';
-import { useAddSubTopicMutation, useCreateTopicMutation } from './NewTopic.generated';
+import {
+  useAddSubTopicMutation,
+  useCreateDisambiguationFromTopicMutation,
+  useCreateTopicMutation,
+} from './NewTopic.generated';
 
 type TopicCreationData = {
   name: string;
@@ -61,6 +65,10 @@ type TopicCreationData = {
   disambiguationTopic?: TopicLinkDataFragment;
   topicTypes: TopicType[];
   prerequisiteTopics: TopicLinkDataFragment[];
+  createDisambiguation?: {
+    sameNameTopic: TopicLinkDataFragment;
+    sameNameTopicContextTopic: TopicLinkDataFragment;
+  };
 };
 interface NewTopicFormProps {
   parentTopic?: TopicLinkDataFragment;
@@ -149,7 +157,7 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
                   disambiguationTopic: undefined,
                 });
               }}
-              setContextAndDisambiguationTopic={(
+              onCreateContextualisedTopic={(
                 contextTopic: TopicLinkDataFragment,
                 disambiguationTopic: TopicLinkDataFragment
               ) => {
@@ -159,6 +167,19 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
                 });
               }}
               onConnectSubTopic={onConnectSubTopic}
+              onCreateDisambiguationTopic={(
+                contextTopic: TopicLinkDataFragment,
+                sameNameTopic: TopicLinkDataFragment,
+                sameNameTopicContextTopic: TopicLinkDataFragment
+              ) =>
+                updateTopicCreationData({
+                  contextTopic,
+                  createDisambiguation: {
+                    sameNameTopic,
+                    sameNameTopicContextTopic,
+                  },
+                })
+              }
               w="500px"
             />
             <Box mt={1} pl={4}>
@@ -294,6 +315,18 @@ export const addSubTopic = gql`
   ${TopicLinkData}
 `;
 
+export const createDisambiguationFromTopic = gql`
+  mutation createDisambiguationFromTopic($existingTopicId: String!, $existingTopicContextTopicId: String!) {
+    createDisambiguationFromTopic(
+      existingTopicId: $existingTopicId
+      existingTopicContextTopicId: $existingTopicContextTopicId
+    ) {
+      ...TopicLinkData
+    }
+  }
+  ${TopicLinkData}
+`;
+
 interface NewTopicProps {
   parentTopic?: TopicLinkDataFragment;
   onCancel: () => void;
@@ -334,6 +367,7 @@ export const NewTopic: React.FC<NewTopicProps> = ({
 
   const [attachTopicIsSubTopicOfTopicMutation] = useAttachTopicIsSubTopicOfTopicMutation();
   const [attachTopicIsPartOfTopicMutation] = useAttachTopicIsPartOfTopicMutation();
+  const [createDisambiguationFromTopicMutation] = useCreateDisambiguationFromTopicMutation();
   const createTopic = async () => {
     const payload: CreateTopicPayload = {
       name: topicCreationData.name,
@@ -348,11 +382,23 @@ export const NewTopic: React.FC<NewTopicProps> = ({
       topicTypes: topicCreationData.topicTypes?.map(({ name }) => name),
       prerequisitesTopicsIds: topicCreationData.prerequisiteTopics.map(({ _id }) => _id),
     };
+    let disambiguationTopicId = topicCreationData.disambiguationTopic?._id;
+    if (topicCreationData.createDisambiguation) {
+      const { data: createdDisambiguationTopicData } = await createDisambiguationFromTopicMutation({
+        variables: {
+          existingTopicId: topicCreationData.createDisambiguation.sameNameTopic._id,
+          existingTopicContextTopicId: topicCreationData.createDisambiguation.sameNameTopicContextTopic._id,
+        },
+      });
+      if (!createdDisambiguationTopicData) throw new Error('Should have created a disambiguation topic');
+      disambiguationTopicId = createdDisambiguationTopicData.createDisambiguationFromTopic._id;
+    }
+
     const contextOptions: CreateTopicContextOptions | undefined =
-      topicCreationData.contextTopic && topicCreationData.disambiguationTopic
+      topicCreationData.contextTopic && disambiguationTopicId
         ? {
             contextTopicId: topicCreationData.contextTopic._id,
-            disambiguationTopicId: topicCreationData.disambiguationTopic._id,
+            disambiguationTopicId,
           }
         : undefined;
     if (parentTopic) {

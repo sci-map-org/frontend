@@ -29,7 +29,7 @@ export const useCheckTopicKeyAvailability = (key: string) => {
     setIsChecking(true);
   }, [key]);
   useEffect(() => {
-    checkTopicKeyAvailability({ variables: { key: keyValueToCheck } });
+    if (keyValueToCheck.length) checkTopicKeyAvailability({ variables: { key: keyValueToCheck } });
   }, [keyValueToCheck]);
 
   return {

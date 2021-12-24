@@ -33,7 +33,6 @@ import {
   GetTopicByIdDisambiguationModalQuery,
   TopicSuggestionDataFragment,
   useAutocompleteTopicNameLazyQuery,
-  useCreateDisambiguationFromTopicMutation,
   useGetTopicByIdDisambiguationModalQuery,
   useGetTopicValidContextsFromSameNameQuery,
   useGetTopicValidContextsFromDisambiguationQuery,
@@ -214,9 +213,14 @@ interface TopicNameFieldProps {
     subTopic: TopicLinkDataFragment,
     relationshipType: SubTopicRelationshipType
   ) => void;
-  setContextAndDisambiguationTopic: (
+  onCreateContextualisedTopic: (
     contextTopic: TopicLinkDataFragment,
     disambiguationTopic: TopicLinkDataFragment
+  ) => void;
+  onCreateDisambiguationTopic: (
+    contextTopic: TopicLinkDataFragment,
+    sameNameTopic: TopicLinkDataFragment,
+    sameNameTopicContextTopic: TopicLinkDataFragment
   ) => void;
   w?: string;
 }
@@ -228,7 +232,8 @@ export const TopicNameField: React.FC<TopicNameFieldProps> = ({
   contextTopic,
   disambiguationTopic,
   onConnectSubTopic,
-  setContextAndDisambiguationTopic,
+  onCreateContextualisedTopic,
+  onCreateDisambiguationTopic,
   w = '300px',
 }) => {
   const [existingSameNameTopic, setExistingSameNameTopic] = useState<TopicLinkDataFragment>();
@@ -265,8 +270,12 @@ export const TopicNameField: React.FC<TopicNameFieldProps> = ({
             onClose();
           }}
           onCreateContextualisedTopic={(disambiguationTopic, contextTopic) => {
-            setContextAndDisambiguationTopic(contextTopic, disambiguationTopic);
+            onCreateContextualisedTopic(contextTopic, disambiguationTopic);
 
+            onClose();
+          }}
+          onCreateDisambiguationTopic={(contextTopic, sameNameTopic, sameNameTopicContextTopic) => {
+            onCreateDisambiguationTopic(contextTopic, sameNameTopic, sameNameTopicContextTopic);
             onClose();
           }}
           onConnectSubTopic={(...args) => {
@@ -319,18 +328,6 @@ export const getTopicByIdDisambiguationModal = gql`
   ${TopicLinkData}
 `;
 
-export const createDisambiguationFromTopic = gql`
-  mutation createDisambiguationFromTopic($existingTopicId: String!, $existingTopicContextTopicId: String!) {
-    createDisambiguationFromTopic(
-      existingTopicId: $existingTopicId
-      existingTopicContextTopicId: $existingTopicContextTopicId
-    ) {
-      ...TopicLinkData
-    }
-  }
-  ${TopicLinkData}
-`;
-
 const DisambiguationModal: React.FC<{
   parentTopic?: TopicLinkDataFragment;
   existingSameNameTopic: TopicLinkDataFragment;
@@ -340,12 +337,25 @@ const DisambiguationModal: React.FC<{
     disambiguationTopic: TopicLinkDataFragment,
     contextTopic: TopicLinkDataFragment
   ) => void;
+  onCreateDisambiguationTopic: (
+    contextTopic: TopicLinkDataFragment,
+    sameNameTopic: TopicLinkDataFragment,
+    sameNameTopicContextTopic: TopicLinkDataFragment
+  ) => void;
   onConnectSubTopic: (
     parentTopic: TopicLinkDataFragment,
     subTopic: TopicLinkDataFragment,
     relationshipType: SubTopicRelationshipType
   ) => void;
-}> = ({ parentTopic, existingSameNameTopic, isOpen, onCancel, onConnectSubTopic, onCreateContextualisedTopic }) => {
+}> = ({
+  parentTopic,
+  existingSameNameTopic,
+  isOpen,
+  onCancel,
+  onConnectSubTopic,
+  onCreateDisambiguationTopic,
+  onCreateContextualisedTopic,
+}) => {
   // from existing same name topic (which is not disambiguation), find the disambiguation then query all its
   // const selected
 
@@ -353,11 +363,6 @@ const DisambiguationModal: React.FC<{
   const { data, loading } = useGetTopicByIdDisambiguationModalQuery({
     variables: { topicId: existingSameNameTopic._id },
   });
-
-  const [createDisambiguationFromTopicMutation] = useCreateDisambiguationFromTopicMutation();
-
-  // handle case no disambiguation
-  // handle case no parent topic id
 
   if (!data) return null;
 
@@ -428,23 +433,7 @@ const DisambiguationModal: React.FC<{
                       onConnectSubTopic(parentTopic, topicToConnect, SubTopicRelationshipType.IsSubtopicOf);
                     }
                   }}
-                  onCreateContextualisedTopicAndDisambiguation={async (
-                    contextTopic,
-                    sameNameTopic,
-                    existingSameNameTopicContextTopic
-                  ) => {
-                    const { data: createdDisambiguationTopicData } = await createDisambiguationFromTopicMutation({
-                      variables: {
-                        existingTopicId: sameNameTopic._id,
-                        existingTopicContextTopicId: existingSameNameTopicContextTopic._id,
-                      },
-                    });
-                    if (!createdDisambiguationTopicData) throw new Error('Should have created a disambiguation topic');
-                    onCreateContextualisedTopic(
-                      createdDisambiguationTopicData.createDisambiguationFromTopic,
-                      contextTopic
-                    );
-                  }}
+                  onCreateDisambiguationTopic={onCreateDisambiguationTopic}
                   onCancel={onCancel}
                 />
               )}
@@ -493,7 +482,7 @@ const HasDisambiguationTopicModalContent: React.FC<HasDisambiguationTopicModalCo
   onCancel,
 }) => {
   const [newTopicSelectedContext, setNewTopicSelectedContext] = useState<TopicLinkDataFragment>();
-  const { data } = useGetTopicValidContextsFromDisambiguationQuery({
+  const { data, loading } = useGetTopicValidContextsFromDisambiguationQuery({
     variables: {
       parentTopicId: parentTopic._id,
       disambiguationTopicId: disambiguationTopic._id,
@@ -503,6 +492,12 @@ const HasDisambiguationTopicModalContent: React.FC<HasDisambiguationTopicModalCo
         setNewTopicSelectedContext(result.getTopicValidContextsFromDisambiguation.validContexts[0]);
     },
   });
+  if (loading)
+    return (
+      <Center py={24}>
+        <Spinner size="xl" />
+      </Center>
+    );
   if (!data?.getTopicValidContextsFromDisambiguation.validContexts?.length) {
     // TODO
     return <Text>Error: No valid contexts</Text>;
@@ -619,19 +614,13 @@ const NoDisambiguationTopicModalContent: React.FC<{
   existingSameNameTopic: GetTopicByIdDisambiguationModalQuery['getTopicById'];
   parentTopic: TopicLinkDataFragment;
   onConnectAsSubTopic: (topicToConnect: TopicLinkDataFragment, topicToConnectParent?: TopicLinkDataFragment) => void;
-  onCreateContextualisedTopicAndDisambiguation: (
+  onCreateDisambiguationTopic: (
     contextTopic: TopicLinkDataFragment,
-    existingSameNameTopic: TopicLinkDataFragment,
-    existingSameNameTopicContextTopic: TopicLinkDataFragment
+    sameNameTopic: TopicLinkDataFragment,
+    sameNameTopicContextTopic: TopicLinkDataFragment
   ) => void;
   onCancel: () => void;
-}> = ({
-  existingSameNameTopic,
-  parentTopic,
-  onConnectAsSubTopic,
-  onCreateContextualisedTopicAndDisambiguation,
-  onCancel,
-}) => {
+}> = ({ existingSameNameTopic, parentTopic, onConnectAsSubTopic, onCreateDisambiguationTopic, onCancel }) => {
   const [newTopicSelectedContext, setNewTopicSelectedContext] = useState<TopicLinkDataFragment>();
   const [existingTopicSelectedContext, setExistingTopicSelectedContext] = useState<TopicLinkDataFragment>();
 
@@ -732,7 +721,7 @@ const NoDisambiguationTopicModalContent: React.FC<{
               onClick={() =>
                 existingTopicSelectedContext &&
                 newTopicSelectedContext &&
-                onCreateContextualisedTopicAndDisambiguation(
+                onCreateDisambiguationTopic(
                   newTopicSelectedContext,
                   existingSameNameTopic,
                   existingTopicSelectedContext

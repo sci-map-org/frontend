@@ -19,6 +19,14 @@ export type AddSubTopicMutationVariables = Types.Exact<{
 
 export type AddSubTopicMutation = { __typename?: 'Mutation', addSubTopic: { __typename?: 'Topic', _id: string, name: string, key: string, context?: string | null | undefined, isDisambiguation?: boolean | null | undefined, description?: string | null | undefined, descriptionSourceUrl?: string | null | undefined, wikipediaPageUrl?: string | null | undefined, aliases?: Array<string> | null | undefined, level?: number | null | undefined, createdAt: any, parentTopic?: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } | null | undefined } };
 
+export type CreateDisambiguationFromTopicMutationVariables = Types.Exact<{
+  existingTopicId: Types.Scalars['String'];
+  existingTopicContextTopicId: Types.Scalars['String'];
+}>;
+
+
+export type CreateDisambiguationFromTopicMutation = { __typename?: 'Mutation', createDisambiguationFromTopic: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } };
+
 
 export type CreateTopicMutationFn = Apollo.MutationFunction<CreateTopicMutation, CreateTopicMutationVariables>;
 
@@ -74,3 +82,30 @@ export function useAddSubTopicMutation(baseOptions?: Apollo.MutationHookOptions<
 export type AddSubTopicMutationHookResult = ReturnType<typeof useAddSubTopicMutation>;
 export type AddSubTopicMutationResult = Apollo.MutationResult<AddSubTopicMutation>;
 export type AddSubTopicMutationOptions = Apollo.BaseMutationOptions<AddSubTopicMutation, AddSubTopicMutationVariables>;
+export type CreateDisambiguationFromTopicMutationFn = Apollo.MutationFunction<CreateDisambiguationFromTopicMutation, CreateDisambiguationFromTopicMutationVariables>;
+
+/**
+ * __useCreateDisambiguationFromTopicMutation__
+ *
+ * To run a mutation, you first call `useCreateDisambiguationFromTopicMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateDisambiguationFromTopicMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createDisambiguationFromTopicMutation, { data, loading, error }] = useCreateDisambiguationFromTopicMutation({
+ *   variables: {
+ *      existingTopicId: // value for 'existingTopicId'
+ *      existingTopicContextTopicId: // value for 'existingTopicContextTopicId'
+ *   },
+ * });
+ */
+export function useCreateDisambiguationFromTopicMutation(baseOptions?: Apollo.MutationHookOptions<CreateDisambiguationFromTopicMutation, CreateDisambiguationFromTopicMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateDisambiguationFromTopicMutation, CreateDisambiguationFromTopicMutationVariables>(Operations.createDisambiguationFromTopic, options);
+      }
+export type CreateDisambiguationFromTopicMutationHookResult = ReturnType<typeof useCreateDisambiguationFromTopicMutation>;
+export type CreateDisambiguationFromTopicMutationResult = Apollo.MutationResult<CreateDisambiguationFromTopicMutation>;
+export type CreateDisambiguationFromTopicMutationOptions = Apollo.BaseMutationOptions<CreateDisambiguationFromTopicMutation, CreateDisambiguationFromTopicMutationVariables>;
