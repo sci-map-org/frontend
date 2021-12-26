@@ -1,5 +1,5 @@
 import { CloseIcon, SmallCloseIcon } from '@chakra-ui/icons';
-import { IconButton, Text } from '@chakra-ui/react';
+import { IconButton, Stack, Text } from '@chakra-ui/react';
 import { upperFirst } from 'lodash';
 import { TopicType } from '../../../graphql/types';
 
@@ -54,5 +54,48 @@ export const TopicTypeViewer: React.FC<TopicTypeViewerProps> = ({
     >
       {topicType.name.split(' ').map(upperFirst).join(' ')}
     </Text>
+  );
+};
+
+interface TopicTypesViewerProps {
+  topicTypes: TopicType[];
+  size?: 'sm' | 'md';
+  onClick?: (topicType: TopicType) => void;
+  shade?: 'pale' | 'solid';
+  maxShown?: number;
+}
+export const TopicTypesViewer: React.FC<TopicTypesViewerProps> = ({
+  topicTypes,
+  size = 'md',
+  onClick,
+  shade = 'solid',
+  maxShown,
+}) => {
+  if (!topicTypes.length) return null;
+  return (
+    <Stack direction="row">
+      {topicTypes.slice(0, maxShown || topicTypes.length).map((topicType) => (
+        <TopicTypeViewer
+          topicType={topicType}
+          size={size}
+          {...(onClick && { onClick: () => onClick(topicType) })}
+          shade={shade}
+        />
+      ))}
+      {maxShown && maxShown < topicTypes.length && (
+        <Text
+          color="white"
+          bgColor={`red.${shade === 'solid' ? 500 : 300}`}
+          {...sizesMapping[size]}
+          display="flex"
+          alignItems="center"
+          _hover={{
+            ...(!!onClick && { cursor: 'pointer' }),
+          }}
+        >
+          +{topicTypes.length - maxShown}
+        </Text>
+      )}
+    </Stack>
   );
 };
