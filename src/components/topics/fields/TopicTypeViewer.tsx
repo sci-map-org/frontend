@@ -1,5 +1,4 @@
-import { CloseIcon, SmallCloseIcon } from '@chakra-ui/icons';
-import { IconButton, Stack, Text } from '@chakra-ui/react';
+import { Stack, Text } from '@chakra-ui/react';
 import { upperFirst } from 'lodash';
 import { TopicType } from '../../../graphql/types';
 

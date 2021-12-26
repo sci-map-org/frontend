@@ -45,12 +45,14 @@ export const TopicDescriptionField: React.FC<{
   pullDescriptionsQueryData?: { name: string };
   onSelectPulledDescription: (pulledDescription: PulledDescription) => void;
   placeholder?: string;
+  w?: string;
 }> = ({
   value,
   onChange,
   onSelectPulledDescription,
   pullDescriptionsQueryData,
   placeholder = 'Topic description...',
+  w,
 }) => {
   const [pulledDescriptions, setPulledDescriptions] = useState<PulledDescription[]>();
 
@@ -66,6 +68,7 @@ export const TopicDescriptionField: React.FC<{
   return (
     <Field
       label="Description"
+      w={w}
       renderTopRight={
         pullDescriptionsQueryData && (
           <Button

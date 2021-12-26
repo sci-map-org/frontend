@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Input, Stack, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Stack, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { differenceBy, pick } from 'lodash';
 import dynamic from 'next/dynamic';
@@ -16,7 +16,7 @@ import { TopicLevelEditor, TopicLevelViewer } from '../../components/topics/fiel
 import { SelectContextTopic } from '../../components/topics/fields/TopicNameField';
 import { TopicTypeField } from '../../components/topics/fields/TopicTypeField';
 import { TopicTypesViewer } from '../../components/topics/fields/TopicTypeViewer';
-import { TopicUrlKeyField, useCheckTopicKeyAvailability } from '../../components/topics/fields/TopicUrlKey';
+import { useCheckTopicKeyAvailability } from '../../components/topics/fields/TopicUrlKey';
 import { SubTopicsTreeData, SubTopicsTreeProps } from '../../components/topics/tree/SubTopicsTree';
 import { useGetTopicValidContextsQuery } from '../../components/topics/tree/SubTopicsTree.generated';
 import { generateTopicData, TopicLinkData } from '../../graphql/topics/topics.fragments';
@@ -27,9 +27,9 @@ import {
   useUpdateTopicMutation,
 } from '../../graphql/topics/topics.operations.generated';
 import { TopicTypeFullData } from '../../graphql/topic_types/topic_types.fragments';
-import { TopicType, UpdateTopicPayload } from '../../graphql/types';
+import { TopicType } from '../../graphql/types';
 import { routerPushToPage } from '../PageInfo';
-import { ManageTopicPageInfo, ManageTopicPagePath, TopicPageInfo } from '../RoutesPageInfos';
+import { ManageTopicPageInfo, TopicPageInfo } from '../RoutesPageInfos';
 import {
   GetTopicByKeyManageTopicPageQuery,
   useAddTopicTypesToTopicMutation,
@@ -49,6 +49,7 @@ const SubTopicsTree = dynamic<SubTopicsTreeProps>(
 export const addTopicTypesToTopic = gql`
   mutation addTopicTypesToTopic($topicId: String!, $topicTypes: [String!]!) {
     addTopicTypesToTopic(topicId: $topicId, topicTypes: $topicTypes) {
+      _id
       topicTypes {
         ...TopicTypeFullData
       }
@@ -60,6 +61,7 @@ export const addTopicTypesToTopic = gql`
 export const removeTopicTypesFromTopic = gql`
   mutation removeTopicTypesFromTopic($topicId: String!, $topicTypes: [String!]!) {
     removeTopicTypesFromTopic(topicId: $topicId, topicTypes: $topicTypes) {
+      _id
       topicTypes {
         ...TopicTypeFullData
       }
@@ -126,43 +128,17 @@ export const ManageTopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) =>
   const [updateTopicMutation] = useUpdateTopicMutation();
   const [addTopicTypesToTopicMutation] = useAddTopicTypesToTopicMutation();
   const [removeTopicTypesFromTopicMutation] = useRemoveTopicTypesFromTopicMutation();
-  const updateTopic = async () => {
-    const payload: UpdateTopicPayload = {
-      ...(updateTopicData.name && updateTopicData.name !== topic.name && { name: updateTopicData.name }),
-      ...(updateTopicData.key && updateTopicData.key !== topic.key && { key: updateTopicData.key }),
-      ...(updateTopicData.description !== topic.description && { description: updateTopicData.description || null }),
-    };
-    if (topic.topicTypes && updateTopicData.topicTypes) {
-      const toAdd = differenceBy(updateTopicData.topicTypes, topic.topicTypes, (t) => t.name);
-      const toRemove = differenceBy(topic.topicTypes, updateTopicData.topicTypes, (t) => t.name);
-      toAdd.length &&
-        (await addTopicTypesToTopicMutation({
-          variables: {
-            topicId: topic._id,
-            topicTypes: toAdd.map(({ name }) => name),
-          },
-        }));
-      toRemove.length &&
-        (await removeTopicTypesFromTopicMutation({
-          variables: {
-            topicId: topic._id,
-            topicTypes: toRemove.map(({ name }) => name),
-          },
-        }));
-    }
-    if (Object.keys(payload).length) {
-      await updateTopicMutation({
-        variables: {
-          topicId: topic._id,
-          payload,
-        },
-      });
-    }
-    if (payload.key) Router.push(ManageTopicPagePath(payload.key));
-    else refetch();
-  };
+  // const updateTopic = async () => {
+  //   const payload: UpdateTopicPayload = {
+  //     ...(updateTopicData.name && updateTopicData.name !== topic.name && { name: updateTopicData.name }),
+  //     ...(updateTopicData.key && updateTopicData.key !== topic.key && { key: updateTopicData.key }),
+  //     ...(updateTopicData.description !== topic.description && { description: updateTopicData.description || null }),
+  //   };
+  //   if (payload.key) Router.push(ManageTopicPagePath(payload.key));
+  //   else refetch();
+  // };
   const [deleteTopicMutation] = useDeleteTopicMutation();
-  const [editMode, setEditMode] = useState(false);
+  // const [editMode, setEditMode] = useState(false);
   if (!data && !loading) return <Box>Topic not found !</Box>;
 
   const topic = data?.getTopicByKey || placeholderTopicData;
@@ -188,7 +164,6 @@ export const ManageTopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) =>
       }
       accessRule="contributorOrAdmin"
     >
-      {/* <Stack spacing={4} alignItems="stretch"> */}
       <PageTitle mb={12}>Manage {topic.name}</PageTitle>
       <Tabs size="lg" isFitted variant="line" isLazy>
         <TabList mb="1em">
@@ -199,61 +174,78 @@ export const ManageTopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) =>
           <TabPanel>
             <Stack alignItems="stretch" spacing={8}>
               <Flex direction="row" w="100%">
-                <Stack spacing={6} flexGrow={1}>
-                  <Field label={<FormFieldLabel>Name</FormFieldLabel>}>
-                    {editMode ? (
-                      <Input
-                        value={updateTopicData.name}
-                        onChange={(e) => setUpdateTopicData({ ...updateTopicData, name: e.target.value })}
-                      />
-                    ) : (
-                      topic.name
-                    )}
+                <Stack spacing={12} flexGrow={1}>
+                  <Field label="Name">
+                    <Text>{topic.name}</Text>
                   </Field>
-
-                  {editMode ? (
-                    <TopicDescriptionField
-                      value={updateTopicData.description}
-                      onChange={(newDescription) =>
-                        setUpdateTopicData({ ...updateTopicData, description: newDescription })
-                      }
-                      pullDescriptionsQueryData={{ name: updateTopicData.name || '' }}
-                      onSelectPulledDescription={(pulledDescription) =>
-                        setUpdateTopicData({
-                          ...updateTopicData,
-                          description: pulledDescription.description,
-
-                          // TODO
-                          // descriptionSourceUrl: pulledDescription.sourceUrl,
-                          // ...(pulledDescription.sourceName === PulledDescriptionSourceName.Wikipedia && {
-                          //   wikipediaPageUrl: pulledDescription.sourceUrl,
-                          // }),
-                        })
-                      }
-                    />
-                  ) : (
-                    <Field label="Description">
+                  <EditableField
+                    label="Description"
+                    editModeRenderField={
+                      <TopicDescriptionField
+                        value={updateTopicData.description}
+                        onChange={(newDescription) =>
+                          setUpdateTopicData({ ...updateTopicData, description: newDescription })
+                        }
+                        pullDescriptionsQueryData={{ name: topic.name }}
+                        onSelectPulledDescription={(pulledDescription) =>
+                          setUpdateTopicData({
+                            ...updateTopicData,
+                            description: pulledDescription.description,
+                            // descriptionSourceUrl: pulledDescription.sourceUrl,
+                            // ...(pulledDescription.sourceName === PulledDescriptionSourceName.Wikipedia && {
+                            //   wikipediaPageUrl: pulledDescription.sourceUrl,
+                            // }),
+                          })
+                        }
+                        w="100%"
+                      />
+                    }
+                    onSave={async () => {}}
+                  >
+                    {
                       <TopicDescription
                         topicDescription={topic.description || undefined}
                         placeholder="No description"
                       />
-                    </Field>
-                  )}
-                  {editMode ? (
-                    <TopicTypeField
-                      value={updateTopicData.topicTypes || []}
-                      onChange={(newTopicTypes) => setUpdateTopicData({ topicTypes: newTopicTypes })}
-                    />
-                  ) : (
-                    <Field label="Topic Types">
-                      {!!updateTopicData.topicTypes?.length && (
-                        <TopicTypesViewer topicTypes={topic.topicTypes || []} maxShown={2} />
-                      )}
-                      {!updateTopicData.topicTypes?.length && <Text color="gray.600">None</Text>}
-                    </Field>
-                  )}
+                    }
+                  </EditableField>
+                  <EditableField
+                    label="Topic Types"
+                    editModeRenderField={
+                      <TopicTypeField
+                        value={updateTopicData.topicTypes || []}
+                        onChange={(newTopicTypes) => setUpdateTopicData({ topicTypes: newTopicTypes })}
+                      />
+                    }
+                    onSave={async () => {
+                      if (topic.topicTypes && updateTopicData.topicTypes) {
+                        const toAdd = differenceBy(updateTopicData.topicTypes, topic.topicTypes, (t) => t.name);
+                        const toRemove = differenceBy(topic.topicTypes, updateTopicData.topicTypes, (t) => t.name);
+                        toAdd.length &&
+                          (await addTopicTypesToTopicMutation({
+                            variables: {
+                              topicId: topic._id,
+                              topicTypes: toAdd.map(({ name }) => name),
+                            },
+                          }));
+                        toRemove.length &&
+                          (await removeTopicTypesFromTopicMutation({
+                            variables: {
+                              topicId: topic._id,
+                              topicTypes: toRemove.map(({ name }) => name),
+                            },
+                          }));
+                      } else console.error('bla');
+                    }}
+                  >
+                    {updateTopicData.topicTypes?.length ? (
+                      <TopicTypesViewer topicTypes={topic.topicTypes || []} />
+                    ) : (
+                      <Text color="gray.600">None</Text>
+                    )}
+                  </EditableField>
                   <Field label={<FormFieldLabel>Url Key</FormFieldLabel>}>
-                    {editMode ? (
+                    {/* {editMode ? (
                       <TopicUrlKeyField
                         // different behaviour based on topic.contextTopic
                         value={updateTopicData.key || ''}
@@ -264,7 +256,7 @@ export const ManageTopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) =>
                       />
                     ) : (
                       topic.key
-                    )}
+                    )} */}
                   </Field>
                   <EditableField
                     label="Level"
@@ -289,26 +281,6 @@ export const ManageTopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) =>
                       <TopicLevelViewer topicId={topic._id} level={topic.level || undefined} showNotApplicable />
                     </Box>
                   </EditableField>
-                </Stack>
-                <Stack spacing={4} pl={10} pt={4} minW="200px">
-                  {editMode ? (
-                    <>
-                      <Button
-                        colorScheme="blue"
-                        onClick={async () => {
-                          await updateTopic();
-                          setEditMode(false);
-                        }}
-                      >
-                        Save
-                      </Button>
-                      <Button onClick={() => setEditMode(false)}>Cancel</Button>
-                    </>
-                  ) : (
-                    <Button colorScheme="blue" onClick={() => setEditMode(true)}>
-                      Edit
-                    </Button>
-                  )}
                 </Stack>
               </Flex>
               <Flex direction="row" justifyContent="space-evenly">

@@ -3,14 +3,58 @@ import { ReactNode, useRef, useState } from 'react';
 import { Field, FieldProps } from './Field';
 
 interface EditableFieldProps extends Omit<FieldProps, 'renderRightOfLabel'> {
-  editModeChildren: ReactNode;
+  editModeChildren?: ReactNode;
+  editModeRenderField?: ReactNode;
   onSave: () => Promise<void>;
 }
 
-export const EditableField: React.FC<EditableFieldProps> = ({ editModeChildren, onSave, children, ...props }) => {
+export const EditableField: React.FC<EditableFieldProps> = ({
+  editModeChildren,
+  editModeRenderField,
+  onSave,
+  children,
+  ...props
+}) => {
   const [editMode, setEditMode] = useState(false);
   const fieldRef = useRef<HTMLDivElement | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+
+  const buttonStack = (
+    <Stack spacing={1}>
+      <Button
+        colorScheme="blue"
+        size="xs"
+        isLoading={isSaving}
+        onClick={async () => {
+          setIsSaving(true);
+          await onSave();
+          setIsSaving(false);
+          setEditMode(false);
+        }}
+      >
+        Save
+      </Button>
+      <Button
+        colorScheme="red"
+        variant="outline"
+        size="xs"
+        onClick={() => {
+          setEditMode(false);
+        }}
+      >
+        Cancel
+      </Button>
+    </Stack>
+  );
+  if (editMode && editModeRenderField)
+    return (
+      <Flex direction="row">
+        <Flex flexGrow={1}>{editModeRenderField}</Flex>
+        <Flex direction="column" pl={10}>
+          {buttonStack}
+        </Flex>
+      </Flex>
+    );
   return (
     <Field
       ref={fieldRef}
@@ -27,31 +71,7 @@ export const EditableField: React.FC<EditableFieldProps> = ({ editModeChildren, 
         <Flex direction="row" alignItems="stretch" flexGrow={1}>
           <Flex flexGrow={1}>{editModeChildren}</Flex>
           <Flex direction="column" pl={10}>
-            <Stack spacing={1}>
-              <Button
-                colorScheme="blue"
-                size="xs"
-                isLoading={isSaving}
-                onClick={async () => {
-                  setIsSaving(true);
-                  await onSave();
-                  setIsSaving(false);
-                  setEditMode(false);
-                }}
-              >
-                Save
-              </Button>
-              <Button
-                colorScheme="red"
-                variant="outline"
-                size="xs"
-                onClick={() => {
-                  setEditMode(false);
-                }}
-              >
-                Cancel
-              </Button>
-            </Stack>
+            {buttonStack}
           </Flex>
         </Flex>
       ) : (
