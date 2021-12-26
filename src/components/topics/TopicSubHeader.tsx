@@ -2,11 +2,13 @@ import { SettingsIcon } from '@chakra-ui/icons';
 import { LinkBox, LinkOverlay, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import React from 'react';
+import { TopicTypeFullData } from '../../graphql/topic_types/topic_types.fragments';
 import { ManageTopicPagePath, TopicTreePagePath } from '../../pages/RoutesPageInfos';
 import { RoleAccess } from '../auth/RoleAccess';
 import { ResourceIcon } from '../lib/icons/ResourceIcon';
 import { TopicIcon } from '../lib/icons/TopicIcon';
 import { TreeIcon } from '../lib/icons/TreeIcon';
+import { TopicTypesViewer } from './fields/TopicTypeViewer';
 import { TopicSubHeaderDataFragment } from './TopicSubHeader.generated';
 
 export const TopicSubHeaderData = gql`
@@ -14,8 +16,12 @@ export const TopicSubHeaderData = gql`
     _id
     key
     name
+    topicTypes {
+      ...TopicTypeFullData
+    }
     learningMaterialsTotalCount
   }
+  ${TopicTypeFullData}
 `;
 
 interface TopicSubHeaderProps {
@@ -25,6 +31,7 @@ interface TopicSubHeaderProps {
 export const TopicSubHeader: React.FC<TopicSubHeaderProps> = ({ topic, size }) => {
   return (
     <Stack direction="row" spacing="16px" alignItems="center">
+      {topic.topicTypes && <TopicTypesViewer topicTypes={topic.topicTypes} maxShown={1} />}
       <LinkBox as="div">
         <Stack direction="row" alignItems="center" spacing="6px">
           <TopicIcon boxSize="22px" color="gray.500" mb="2px" />

@@ -17,7 +17,7 @@ import { useRef, useState } from 'react';
 import Autosuggest from 'react-autosuggest';
 import { TopicType, TopicTypeColor } from '../../../graphql/types';
 import { useHandleClickOutside } from '../../../hooks/useHanldeClickOutside';
-import { Field } from '../../lib/Field';
+import { Field } from '../../lib/fields/Field';
 import { useSearchTopicTypesLazyQuery } from './TopicTypeField.generated';
 import { TopicTypeViewer } from './TopicTypeViewer';
 

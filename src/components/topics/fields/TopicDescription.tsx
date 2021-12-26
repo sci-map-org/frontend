@@ -3,7 +3,7 @@ import gql from 'graphql-tag';
 import { useState } from 'react';
 import { PulledDescription } from '../../../graphql/types';
 import { toUrlPreview } from '../../../services/url.service';
-import { Field } from '../../lib/Field';
+import { Field } from '../../lib/fields/Field';
 import { useErrorToast } from '../../lib/Toasts/ErrorToast';
 import { usePullTopicDescriptionsLazyQuery } from './TopicDescription.generated';
 

@@ -38,11 +38,11 @@ import {
 import { generateUrlKey } from '../../services/url.service';
 import { getChakraRelativeSize } from '../../util/chakra.util';
 import { FormButtons } from '../lib/buttons/FormButtons';
-import { CollapsedField } from '../lib/CollapsedField';
-import { Field } from '../lib/Field';
+import { CollapsedField } from '../lib/fields/CollapsedField';
+import { Field } from '../lib/fields/Field';
 import { FormTitle } from '../lib/Typography';
 import { TopicDescriptionField } from './fields/TopicDescription';
-import { TopicLevelField } from './fields/TopicLevel';
+import { TopicLevelEditor, TOPIC_LEVEL_DEFAULT_VALUE } from './fields/TopicLevel';
 import { TopicNameField } from './fields/TopicNameField';
 import { TopicPrerequisitesField } from './fields/TopicPrerequisitesField';
 import { TopicTypeField } from './fields/TopicTypeField';
@@ -192,11 +192,13 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
           </Field>
         </Center>
         <Center>
-          <TopicLevelField
-            value={topicCreationData.level}
-            onChange={(level) => updateTopicCreationData({ level })}
-            w="500px"
-          />
+          <Field label="Level">
+            <TopicLevelEditor
+              value={topicCreationData.level}
+              onChange={(level) => updateTopicCreationData({ level })}
+              w="500px"
+            />
+          </Field>
         </Center>
 
         <TopicDescriptionField
@@ -349,7 +351,7 @@ export const NewTopic: React.FC<NewTopicProps> = ({
     name: '',
     key: '',
     aliases: [],
-    level: 35,
+    level: TOPIC_LEVEL_DEFAULT_VALUE,
     topicTypes: [],
     prerequisiteTopics: [],
     ...defaultCreationData,

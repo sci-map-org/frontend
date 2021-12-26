@@ -1,17 +1,21 @@
 import { Box, Button, Flex, Input, Stack, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
-import { pick } from 'lodash';
+import { differenceBy, pick } from 'lodash';
 import dynamic from 'next/dynamic';
 import Router from 'next/router';
 import { useState } from 'react';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
-import { Field } from '../../components/lib/Field';
+import { EditableField } from '../../components/lib/fields/EditableField';
+import { Field } from '../../components/lib/fields/Field';
 import { FormFieldLabel, PageTitle } from '../../components/lib/Typography';
 import { EditablePartOfTopics, EditablePartOfTopicsData } from '../../components/topics/EditablePartOfTopics';
 import { EditableTopicPrerequisites } from '../../components/topics/EditableTopicPrerequisites';
 import { TopicDescription, TopicDescriptionField } from '../../components/topics/fields/TopicDescription';
+import { TopicLevelEditor, TopicLevelViewer } from '../../components/topics/fields/TopicLevel';
 import { SelectContextTopic } from '../../components/topics/fields/TopicNameField';
+import { TopicTypeField } from '../../components/topics/fields/TopicTypeField';
+import { TopicTypesViewer } from '../../components/topics/fields/TopicTypeViewer';
 import { TopicUrlKeyField, useCheckTopicKeyAvailability } from '../../components/topics/fields/TopicUrlKey';
 import { SubTopicsTreeData, SubTopicsTreeProps } from '../../components/topics/tree/SubTopicsTree';
 import { useGetTopicValidContextsQuery } from '../../components/topics/tree/SubTopicsTree.generated';
@@ -22,10 +26,16 @@ import {
   useUpdateTopicContextMutation,
   useUpdateTopicMutation,
 } from '../../graphql/topics/topics.operations.generated';
-import { UpdateTopicPayload } from '../../graphql/types';
+import { TopicTypeFullData } from '../../graphql/topic_types/topic_types.fragments';
+import { TopicType, UpdateTopicPayload } from '../../graphql/types';
 import { routerPushToPage } from '../PageInfo';
 import { ManageTopicPageInfo, ManageTopicPagePath, TopicPageInfo } from '../RoutesPageInfos';
-import { GetTopicByKeyManageTopicPageQuery, useGetTopicByKeyManageTopicPageQuery } from './ManageTopicPage.generated';
+import {
+  GetTopicByKeyManageTopicPageQuery,
+  useAddTopicTypesToTopicMutation,
+  useGetTopicByKeyManageTopicPageQuery,
+  useRemoveTopicTypesFromTopicMutation,
+} from './ManageTopicPage.generated';
 
 const SubTopicsTree = dynamic<SubTopicsTreeProps>(
   () =>
@@ -36,11 +46,37 @@ const SubTopicsTree = dynamic<SubTopicsTreeProps>(
   { ssr: false }
 );
 
+export const addTopicTypesToTopic = gql`
+  mutation addTopicTypesToTopic($topicId: String!, $topicTypes: [String!]!) {
+    addTopicTypesToTopic(topicId: $topicId, topicTypes: $topicTypes) {
+      topicTypes {
+        ...TopicTypeFullData
+      }
+    }
+  }
+  ${TopicTypeFullData}
+`;
+
+export const removeTopicTypesFromTopic = gql`
+  mutation removeTopicTypesFromTopic($topicId: String!, $topicTypes: [String!]!) {
+    removeTopicTypesFromTopic(topicId: $topicId, topicTypes: $topicTypes) {
+      topicTypes {
+        ...TopicTypeFullData
+      }
+    }
+  }
+  ${TopicTypeFullData}
+`;
+
 export const getTopicByKeyManageTopicPage = gql`
   query getTopicByKeyManageTopicPage($topicKey: String!) {
     getTopicByKey(topicKey: $topicKey) {
       ...TopicLinkData
+      level
       description
+      topicTypes {
+        ...TopicTypeFullData
+      }
       subTopics {
         index
         subTopic {
@@ -65,6 +101,7 @@ export const getTopicByKeyManageTopicPage = gql`
   ${TopicLinkData}
   ${SubTopicsTreeData}
   ${EditablePartOfTopicsData}
+  ${TopicTypeFullData}
 `;
 
 const placeholderTopicData: GetTopicByKeyManageTopicPageQuery['getTopicByKey'] = generateTopicData();
@@ -75,29 +112,54 @@ export const ManageTopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) =>
     key?: string;
     description?: string | null;
     descriptionSourceUrl?: string | null;
+    topicTypes?: TopicType[] | null;
+    level?: number | null;
   }>({});
   const { isChecking, isAvailable } = useCheckTopicKeyAvailability(updateTopicData.key || '');
   const { data, loading, refetch } = useGetTopicByKeyManageTopicPageQuery({
     variables: { topicKey },
     onCompleted(data) {
-      setUpdateTopicData(pick(data.getTopicByKey, ['key', 'name', 'description']));
+      setUpdateTopicData(pick(data.getTopicByKey, ['key', 'name', 'description', 'topicTypes', 'level']));
     },
   });
 
   const [updateTopicMutation] = useUpdateTopicMutation();
+  const [addTopicTypesToTopicMutation] = useAddTopicTypesToTopicMutation();
+  const [removeTopicTypesFromTopicMutation] = useRemoveTopicTypesFromTopicMutation();
   const updateTopic = async () => {
     const payload: UpdateTopicPayload = {
       ...(updateTopicData.name && updateTopicData.name !== topic.name && { name: updateTopicData.name }),
       ...(updateTopicData.key && updateTopicData.key !== topic.key && { key: updateTopicData.key }),
       ...(updateTopicData.description !== topic.description && { description: updateTopicData.description || null }),
     };
-    await updateTopicMutation({
-      variables: {
-        topicId: topic._id,
-        payload,
-      },
-    });
-    payload.key && Router.push(ManageTopicPagePath(payload.key));
+    if (topic.topicTypes && updateTopicData.topicTypes) {
+      const toAdd = differenceBy(updateTopicData.topicTypes, topic.topicTypes, (t) => t.name);
+      const toRemove = differenceBy(topic.topicTypes, updateTopicData.topicTypes, (t) => t.name);
+      toAdd.length &&
+        (await addTopicTypesToTopicMutation({
+          variables: {
+            topicId: topic._id,
+            topicTypes: toAdd.map(({ name }) => name),
+          },
+        }));
+      toRemove.length &&
+        (await removeTopicTypesFromTopicMutation({
+          variables: {
+            topicId: topic._id,
+            topicTypes: toRemove.map(({ name }) => name),
+          },
+        }));
+    }
+    if (Object.keys(payload).length) {
+      await updateTopicMutation({
+        variables: {
+          topicId: topic._id,
+          payload,
+        },
+      });
+    }
+    if (payload.key) Router.push(ManageTopicPagePath(payload.key));
+    else refetch();
   };
   const [deleteTopicMutation] = useDeleteTopicMutation();
   const [editMode, setEditMode] = useState(false);
@@ -148,33 +210,48 @@ export const ManageTopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) =>
                       topic.name
                     )}
                   </Field>
-                  <Field label={<FormFieldLabel>Description</FormFieldLabel>}>
-                    {editMode ? (
-                      <TopicDescriptionField
-                        value={updateTopicData.description}
-                        onChange={(newDescription) =>
-                          setUpdateTopicData({ ...updateTopicData, description: newDescription })
-                        }
-                        onSelectPulledDescription={(pulledDescription) =>
-                          setUpdateTopicData({
-                            ...updateTopicData,
-                            description: pulledDescription.description,
 
-                            // TODO
-                            // descriptionSourceUrl: pulledDescription.sourceUrl,
-                            // ...(pulledDescription.sourceName === PulledDescriptionSourceName.Wikipedia && {
-                            //   wikipediaPageUrl: pulledDescription.sourceUrl,
-                            // }),
-                          })
-                        }
-                      />
-                    ) : (
+                  {editMode ? (
+                    <TopicDescriptionField
+                      value={updateTopicData.description}
+                      onChange={(newDescription) =>
+                        setUpdateTopicData({ ...updateTopicData, description: newDescription })
+                      }
+                      pullDescriptionsQueryData={{ name: updateTopicData.name || '' }}
+                      onSelectPulledDescription={(pulledDescription) =>
+                        setUpdateTopicData({
+                          ...updateTopicData,
+                          description: pulledDescription.description,
+
+                          // TODO
+                          // descriptionSourceUrl: pulledDescription.sourceUrl,
+                          // ...(pulledDescription.sourceName === PulledDescriptionSourceName.Wikipedia && {
+                          //   wikipediaPageUrl: pulledDescription.sourceUrl,
+                          // }),
+                        })
+                      }
+                    />
+                  ) : (
+                    <Field label="Description">
                       <TopicDescription
                         topicDescription={topic.description || undefined}
                         placeholder="No description"
                       />
-                    )}
-                  </Field>
+                    </Field>
+                  )}
+                  {editMode ? (
+                    <TopicTypeField
+                      value={updateTopicData.topicTypes || []}
+                      onChange={(newTopicTypes) => setUpdateTopicData({ topicTypes: newTopicTypes })}
+                    />
+                  ) : (
+                    <Field label="Topic Types">
+                      {!!updateTopicData.topicTypes?.length && (
+                        <TopicTypesViewer topicTypes={topic.topicTypes || []} maxShown={2} />
+                      )}
+                      {!updateTopicData.topicTypes?.length && <Text color="gray.600">None</Text>}
+                    </Field>
+                  )}
                   <Field label={<FormFieldLabel>Url Key</FormFieldLabel>}>
                     {editMode ? (
                       <TopicUrlKeyField
@@ -183,12 +260,35 @@ export const ManageTopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) =>
                         onChange={(newKeyValue) => setUpdateTopicData({ key: newKeyValue })}
                         isChecking={isChecking}
                         isAvailable={updateTopicData.key !== topic.key ? isAvailable : undefined}
-                        fullTopicKey="TODO"
+                        fullTopicKey={updateTopicData.key || ''}
                       />
                     ) : (
                       topic.key
                     )}
                   </Field>
+                  <EditableField
+                    label="Level"
+                    onSave={async () => {
+                      await updateTopicMutation({
+                        variables: {
+                          topicId: topic._id,
+                          payload: { level: updateTopicData.level },
+                        },
+                      });
+                    }}
+                    editModeChildren={
+                      <TopicLevelEditor
+                        value={updateTopicData.level || null}
+                        onChange={(newLevelValue) => setUpdateTopicData({ level: newLevelValue })}
+                        w="100%"
+                      />
+                    }
+                    w="50%"
+                  >
+                    <Box alignSelf="flex-start">
+                      <TopicLevelViewer topicId={topic._id} level={topic.level || undefined} showNotApplicable />
+                    </Box>
+                  </EditableField>
                 </Stack>
                 <Stack spacing={4} pl={10} pt={4} minW="200px">
                   {editMode ? (
