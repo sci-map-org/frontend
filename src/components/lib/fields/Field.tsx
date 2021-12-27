@@ -15,12 +15,12 @@ export const Field = forwardRef<HTMLDivElement, PropsWithChildren<FieldProps>>(
     return (
       <FormControl ref={ref} display="flex" flexDir="column" w="unset" isInvalid={isInvalid} {...props}>
         <Flex justifyContent="space-between" pb={1}>
-          <Stack direction="row" spacing={1} alignItems="baseline">
-            <FormLabel {...FormFieldLabelStyleProps} w="unset">
+          <Flex direction="row" alignItems="baseline">
+            <FormLabel {...FormFieldLabelStyleProps} w="unset" mr={0}>
               {label}
             </FormLabel>
             {renderRightOfLabel}
-          </Stack>
+          </Flex>
           {renderTopRight}
         </Flex>
         <Flex direction="column" pl={4}>

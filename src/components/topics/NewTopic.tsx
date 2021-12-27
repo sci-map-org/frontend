@@ -41,6 +41,7 @@ import { FormButtons } from '../lib/buttons/FormButtons';
 import { CollapsedField } from '../lib/fields/CollapsedField';
 import { Field } from '../lib/fields/Field';
 import { FormTitle } from '../lib/Typography';
+import { TopicAliasesField, TopicNameAlias } from './fields/TopicAliases';
 import { TopicDescriptionField } from './fields/TopicDescription';
 import { TopicLevelEditor, TOPIC_LEVEL_DEFAULT_VALUE } from './fields/TopicLevel';
 import { TopicNameField } from './fields/TopicNameField';
@@ -183,7 +184,7 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
               w="500px"
             />
             <Box mt={1} pl={4}>
-              <TopicNameAliasField
+              <TopicAliasesField
                 aliases={topicCreationData.aliases}
                 onChange={(aliases) => updateTopicCreationData({ aliases })}
               />
@@ -493,60 +494,5 @@ export const NewTopicModal: React.FC<NewTopicModalProps> = ({
         </Modal>
       )}
     </>
-  );
-};
-
-interface TopicNameAlias {
-  id: string;
-  value: string;
-}
-const TopicNameAliasField: React.FC<{ aliases: TopicNameAlias[]; onChange: (aliases: TopicNameAlias[]) => void }> = ({
-  aliases,
-  onChange,
-}) => {
-  return (
-    <Stack spacing={1}>
-      {aliases.map((alias) => (
-        <Stack key={alias.id} direction="row" alignItems="center" spacing={1}>
-          <Input
-            size="xs"
-            placeholder="e.g. NLP"
-            onChange={(e) => {
-              const updatedAliases = [...aliases];
-              const index = updatedAliases.findIndex(({ id }) => id === alias.id);
-              updatedAliases[index].value = e.target.value;
-              onChange(updatedAliases);
-            }}
-          />
-          <IconButton
-            aria-label="remove alias"
-            icon={<CloseIcon />}
-            variant="ghost"
-            size="xs"
-            onClick={() => {
-              let updatedAliases = [...aliases];
-              const index = updatedAliases.findIndex(({ id }) => id === alias.id);
-              updatedAliases.splice(index, 1);
-              onChange(updatedAliases);
-            }}
-          />
-        </Stack>
-      ))}
-      <Link
-        color="blue.500"
-        fontSize="sm"
-        onClick={() =>
-          onChange([
-            ...aliases,
-            {
-              id: Math.random().toString(),
-              value: '',
-            },
-          ])
-        }
-      >
-        Add alias
-      </Link>
-    </Stack>
   );
 };

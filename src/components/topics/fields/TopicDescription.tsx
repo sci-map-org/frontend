@@ -5,6 +5,7 @@ import { PulledDescription } from '../../../graphql/types';
 import { toUrlPreview } from '../../../services/url.service';
 import { Field } from '../../lib/fields/Field';
 import { useErrorToast } from '../../lib/Toasts/ErrorToast';
+import { TopicDescriptionStyleProps } from '../../lib/Typography';
 import { usePullTopicDescriptionsLazyQuery } from './TopicDescription.generated';
 
 interface TopicDescriptionProps extends TextProps {
@@ -15,12 +16,12 @@ interface TopicDescriptionProps extends TextProps {
 export const TopicDescription: React.FC<TopicDescriptionProps> = ({ topicDescription, placeholder, ...props }) => {
   if (!topicDescription)
     return placeholder ? (
-      <Text fontWeight={300} color="gray.600" {...props}>
+      <Text fontWeight={500} color="gray.400" {...props}>
         {placeholder}
       </Text>
     ) : null;
   return (
-    <Text fontWeight={300} whiteSpace="pre-wrap" {...props}>
+    <Text {...TopicDescriptionStyleProps} whiteSpace="pre-wrap" {...props}>
       {topicDescription}
     </Text>
   );
@@ -100,6 +101,7 @@ export const TopicDescriptionField: React.FC<{
           value={value || ''}
           onChange={(e) => onChange(e.target.value)}
           {...(pulledDescriptions && { w: '50%' })}
+          {...TopicDescriptionStyleProps}
         />
         {pulledDescriptions && (
           <Flex flexGrow={0} w="46%">

@@ -64,7 +64,7 @@ export const EditableField: React.FC<EditableFieldProps> = ({
       {...props}
       renderRightOfLabel={
         !editMode && (
-          <Link color="blue.500" fontSize="sm" onClick={() => setEditMode(true)}>
+          <Link color="blue.500" mb="8px" fontSize="sm" onClick={() => setEditMode(true)} ml="6px">
             edit
           </Link>
         )

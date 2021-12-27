@@ -15,6 +15,7 @@ import { NewResourceModal } from '../../components/resources/NewResource';
 import { ResourcePreviewCardDataFragment } from '../../components/resources/ResourcePreviewCard.generated';
 import { BestXPagesLinks } from '../../components/topics/BestXPagesLinks';
 import { EditablePartOfTopics, EditablePartOfTopicsData } from '../../components/topics/EditablePartOfTopics';
+import { TopicDescription } from '../../components/topics/fields/TopicDescription';
 import { NewTopicModal } from '../../components/topics/NewTopic';
 import { ParentTopicsBreadcrumbs, ParentTopicsBreadcrumbsData } from '../../components/topics/ParentTopicsBreadcrumbs';
 import { SeeAlso, SeeAlsoData } from '../../components/topics/SeeAlso';
@@ -159,13 +160,13 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
           </Skeleton> */}
           {topic && topic.description && (
             <Skeleton isLoaded={!loading}>
-              <Box
+              <TopicDescription
+                topicDescription={topic.description}
                 mt={3}
                 backgroundImage="linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0.7), rgba(255,255,255,0.7), rgba(255,255,255,0.1))"
-                fontWeight={250}
-              >
-                {topic.description}
-              </Box>
+                // TODO
+                noOfLines={4}
+              />
             </Skeleton>
           )}
           <Flex direction="row" w="100%">

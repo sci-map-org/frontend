@@ -52,3 +52,9 @@ export const FormFieldHelperText: React.FC<TextProps> = ({ children, ...props })
     </Text>
   );
 };
+
+export const TopicDescriptionStyleProps: Pick<TextProps, 'fontSize' | 'color' | 'fontWeight'> = {
+  fontWeight: 500,
+  color: 'gray.700',
+  fontSize: '15px',
+};

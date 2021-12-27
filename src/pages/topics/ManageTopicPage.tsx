@@ -8,9 +8,10 @@ import { PageLayout } from '../../components/layout/PageLayout';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { EditableField } from '../../components/lib/fields/EditableField';
 import { Field } from '../../components/lib/fields/Field';
-import { FormFieldLabel, PageTitle } from '../../components/lib/Typography';
+import { PageTitle } from '../../components/lib/Typography';
 import { EditablePartOfTopics, EditablePartOfTopicsData } from '../../components/topics/EditablePartOfTopics';
 import { EditableTopicPrerequisites } from '../../components/topics/EditableTopicPrerequisites';
+import { TopicAliasesField, TopicNameAlias } from '../../components/topics/fields/TopicAliases';
 import { TopicDescription, TopicDescriptionField } from '../../components/topics/fields/TopicDescription';
 import { TopicLevelEditor, TopicLevelViewer } from '../../components/topics/fields/TopicLevel';
 import { SelectContextTopic } from '../../components/topics/fields/TopicNameField';
@@ -117,13 +118,14 @@ export const ManageTopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) =>
     topicTypes?: TopicType[] | null;
     level?: number | null;
     wikipediaPageUrl?: string | null;
+    aliases?: TopicNameAlias[] | null;
   }>({});
   const { isChecking, isAvailable } = useCheckTopicKeyAvailability(updateTopicData.key || '');
   const { data, loading, refetch } = useGetTopicByKeyManageTopicPageQuery({
     variables: { topicKey },
     onCompleted(data) {
-      setUpdateTopicData(
-        pick(data.getTopicByKey, [
+      setUpdateTopicData({
+        ...pick(data.getTopicByKey, [
           'key',
           'name',
           'description',
@@ -131,8 +133,9 @@ export const ManageTopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) =>
           'wikipediaPageUrl',
           'topicTypes',
           'level',
-        ])
-      );
+        ]),
+        aliases: data.getTopicByKey.aliases?.map((alias) => ({ value: alias, id: Math.random().toString() })),
+      });
     },
   });
 
@@ -178,9 +181,39 @@ export const ManageTopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) =>
             <Stack alignItems="stretch" spacing={8}>
               <Flex direction="row" w="100%">
                 <Stack spacing={12} flexGrow={1}>
-                  <Field label="Name">
-                    <Text>{topic.name}</Text>
-                  </Field>
+                  <Flex justifyContent="space-between">
+                    <Field label="Name" w="50%">
+                      <Text>{topic.name}</Text>
+                    </Field>
+                    <EditableField
+                      w="50%"
+                      label="Aliases"
+                      editModeChildren={
+                        <TopicAliasesField
+                          aliases={updateTopicData.aliases || []}
+                          onChange={(aliases) => setUpdateTopicData({ ...updateTopicData, aliases })}
+                        />
+                      }
+                      onSave={async () => {
+                        await updateTopicMutation({
+                          variables: {
+                            topicId: topic._id,
+                            payload: {
+                              aliases: updateTopicData.aliases?.length
+                                ? updateTopicData.aliases.map(({ value }) => value)
+                                : null,
+                            },
+                          },
+                        });
+                      }}
+                    >
+                      {topic.aliases?.length ? (
+                        <Text>{topic.aliases.join(', ')}</Text>
+                      ) : (
+                        <Text color="gray.600">None</Text>
+                      )}
+                    </EditableField>
+                  </Flex>
                   <EditableField
                     label="Level"
                     onSave={async () => {
