@@ -18,6 +18,7 @@ export const useCheckTopicKeyAvailability = (key: string) => {
   const [isChecking, setIsChecking] = useState(false);
   const [isAvailable, setIsAvailable] = useState<boolean>();
   const [checkTopicKeyAvailability] = useCheckTopicKeyAvailabilityLazyQuery({
+    fetchPolicy: 'no-cache',
     onCompleted(data) {
       setIsAvailable(!!data.checkTopicKeyAvailability.available);
       setIsChecking(false);

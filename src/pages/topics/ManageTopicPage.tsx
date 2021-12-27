@@ -28,7 +28,8 @@ import {
   useUpdateTopicMutation,
 } from '../../graphql/topics/topics.operations.generated';
 import { TopicTypeFullData } from '../../graphql/topic_types/topic_types.fragments';
-import { PulledDescriptionSourceName, TopicType } from '../../graphql/types';
+import { PulledDescriptionSourceName, TopicType, UserRole } from '../../graphql/types';
+import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { generateUrlKey } from '../../services/url.service';
 import { routerPushToPage } from '../PageInfo';
 import { ManageTopicPageInfo, ManageTopicPagePath, TopicPageInfo } from '../RoutesPageInfos';
@@ -138,7 +139,7 @@ export const ManageTopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) =>
       });
     },
   });
-
+  const { currentUser } = useCurrentUser();
   const [updateTopicMutation] = useUpdateTopicMutation();
   const [addTopicTypesToTopicMutation] = useAddTopicTypesToTopicMutation();
   const [removeTopicTypesFromTopicMutation] = useRemoveTopicTypesFromTopicMutation();
@@ -182,9 +183,40 @@ export const ManageTopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) =>
               <Flex direction="row" w="100%">
                 <Stack spacing={12} flexGrow={1}>
                   <Flex justifyContent="space-between">
-                    <Field label="Name" w="50%">
-                      <Text>{topic.name}</Text>
-                    </Field>
+                    {currentUser && currentUser.role === UserRole.Admin ? (
+                      <EditableField
+                        label="Name"
+                        w="50%"
+                        editModeChildren={
+                          <Input
+                            value={updateTopicData.name}
+                            onChange={(e) =>
+                              e.target.value &&
+                              setUpdateTopicData({
+                                ...updateTopicData,
+                                name: e.target.value,
+                              })
+                            }
+                          ></Input>
+                        }
+                        onSave={async () => {
+                          await updateTopicMutation({
+                            variables: {
+                              topicId: topic._id,
+                              payload: {
+                                name: updateTopicData.name,
+                              },
+                            },
+                          });
+                        }}
+                      >
+                        <Text>{topic.name}</Text>
+                      </EditableField>
+                    ) : (
+                      <Field label="Name" w="50%">
+                        <Text>{topic.name}</Text>
+                      </Field>
+                    )}
                     <EditableField
                       w="50%"
                       label="Aliases"

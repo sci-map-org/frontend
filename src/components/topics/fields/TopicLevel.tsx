@@ -48,7 +48,7 @@ export const TopicLevelViewer: React.FC<TopicLevelViewerProps> = ({ level, topic
 
   if (level === undefined || !value)
     return showNotApplicable ? (
-      <Text fontSize="md" fontWeight={600} color="gray.600" mb="2px">
+      <Text fontSize="md" fontWeight={600} color="gray.500" mb="2px">
         Not applicable
       </Text>
     ) : null;
