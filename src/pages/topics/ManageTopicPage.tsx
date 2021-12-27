@@ -6,6 +6,7 @@ import { NotFoundPage } from '../NotFoundPage';
 import { ManageTopicPageInfo, TopicPageInfo } from '../RoutesPageInfos';
 
 export const ManageTopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
+  // TODO: tab in Url
   const [tab, setTab] = useState(ManageTopicTabIndex.Data);
   const { data, loading, refetch } = useGetTopicByKeyManageTopicPageQuery({
     variables: { topicKey },

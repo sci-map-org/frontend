@@ -19,6 +19,7 @@ import {
   useAttachTopicIsPartOfTopicMutation,
   useDetachTopicIsPartOfTopicMutation,
 } from '../../../graphql/topics/topics.operations.generated';
+import { ManageTopicModal } from '../ManageTopic';
 
 export const SubTopicsTreeNodeData = gql`
   fragment SubTopicsTreeNodeData on TopicIsSubTopicOfTopic {
@@ -135,14 +136,19 @@ export const SubTopicsTreeNode: React.FC<SubTopicsTreeNodeProps> = ({
         </Stack>
         {node.updatable && (
           <Flex flexDir="column" justifyContent="space-between" pl={2}>
-            <IconButton
-              aria-label="manage topic"
-              size="xs"
-              fontSize="1em"
-              isRound
-              variant="ghost"
-              icon={<SettingsIcon />}
-              onClick={() => routerPushToPage(ManageTopicPageInfo(nodeTopicRelation.subTopic))}
+            <ManageTopicModal
+              topicKey={nodeTopicRelation.subTopic.key}
+              renderButton={(openModal) => (
+                <IconButton
+                  aria-label="manage topic"
+                  size="xs"
+                  fontSize="1em"
+                  isRound
+                  variant="ghost"
+                  icon={<SettingsIcon />}
+                  onClick={() => openModal()}
+                />
+              )}
             />
             {nodeTopicRelation.relationshipType === SubTopicRelationshipType.IsPartOf ? (
               <DeleteButtonWithConfirmation

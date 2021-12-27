@@ -1,9 +1,28 @@
-import { Box, Button, Flex, Input, Link, Stack, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  Input,
+  Link,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalOverlay,
+  Spinner,
+  Stack,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  Text,
+  useDisclosure,
+} from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { differenceBy, pick } from 'lodash';
 import dynamic from 'next/dynamic';
 import Router from 'next/router';
-import { useMemo, useState } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 import { EditableField } from '../../components/lib/fields/EditableField';
 import { Field } from '../../components/lib/fields/Field';
 import { PageTitle } from '../../components/lib/Typography';
@@ -43,6 +62,7 @@ import { UserAvatar, UserAvatarData } from '../users/UserAvatar';
 import {
   GetTopicByKeyManageTopicPageQuery,
   useAddTopicTypesToTopicMutation,
+  useGetTopicByKeyManageTopicPageQuery,
   useRemoveTopicTypesFromTopicMutation,
 } from './ManageTopic.generated';
 
@@ -550,5 +570,38 @@ const TopicContextEditor: React.FC<{
         </Button>
       )}
     </Stack>
+  );
+};
+
+export const ManageTopicModal: React.FC<{ topicKey: string; renderButton: (openModal: () => void) => ReactNode }> = ({
+  topicKey,
+  renderButton,
+}) => {
+  const [tab, setTab] = useState(ManageTopicTabIndex.Data);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { data, loading, refetch } = useGetTopicByKeyManageTopicPageQuery({
+    variables: { topicKey },
+  });
+
+  const topic = data?.getTopicByKey;
+  return (
+    <>
+      {renderButton(onOpen)}
+      {isOpen && (
+        <Modal onClose={onClose} size="6xl" isOpen={isOpen}>
+          <ModalOverlay>
+            <ModalContent>
+              <ModalBody pt={8} pb={12} px={10}>
+                {topic ? (
+                  <ManageTopic topic={topic} refetch={refetch} tab={tab} onChangeTab={setTab} />
+                ) : (
+                  <Spinner m={20} />
+                )}
+              </ModalBody>
+            </ModalContent>
+          </ModalOverlay>
+        </Modal>
+      )}
+    </>
   );
 };
