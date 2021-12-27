@@ -99,7 +99,7 @@ export const TopicUrlKeyField: React.FC<{
               </Text>
             </>
           )}
-          {isAvailable === false && (
+          {isAvailable === false && !isChecking && (
             <>
               <Text as="span" fontWeight={500}>
                 /topics/{fullTopicKey}

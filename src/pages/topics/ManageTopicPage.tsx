@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Stack, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Input, Link, Stack, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { differenceBy, pick } from 'lodash';
 import dynamic from 'next/dynamic';
@@ -16,10 +16,10 @@ import { TopicLevelEditor, TopicLevelViewer } from '../../components/topics/fiel
 import { SelectContextTopic } from '../../components/topics/fields/TopicNameField';
 import { TopicTypeField } from '../../components/topics/fields/TopicTypeField';
 import { TopicTypesViewer } from '../../components/topics/fields/TopicTypeViewer';
-import { useCheckTopicKeyAvailability } from '../../components/topics/fields/TopicUrlKey';
+import { TopicUrlKeyField, useCheckTopicKeyAvailability } from '../../components/topics/fields/TopicUrlKey';
 import { SubTopicsTreeData, SubTopicsTreeProps } from '../../components/topics/tree/SubTopicsTree';
 import { useGetTopicValidContextsQuery } from '../../components/topics/tree/SubTopicsTree.generated';
-import { generateTopicData, TopicLinkData } from '../../graphql/topics/topics.fragments';
+import { generateTopicData, TopicFullData, TopicLinkData } from '../../graphql/topics/topics.fragments';
 import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import {
   useDeleteTopicMutation,
@@ -27,9 +27,10 @@ import {
   useUpdateTopicMutation,
 } from '../../graphql/topics/topics.operations.generated';
 import { TopicTypeFullData } from '../../graphql/topic_types/topic_types.fragments';
-import { TopicType } from '../../graphql/types';
+import { PulledDescriptionSourceName, TopicType } from '../../graphql/types';
+import { generateUrlKey } from '../../services/url.service';
 import { routerPushToPage } from '../PageInfo';
-import { ManageTopicPageInfo, TopicPageInfo } from '../RoutesPageInfos';
+import { ManageTopicPageInfo, ManageTopicPagePath, TopicPageInfo } from '../RoutesPageInfos';
 import {
   GetTopicByKeyManageTopicPageQuery,
   useAddTopicTypesToTopicMutation,
@@ -73,9 +74,7 @@ export const removeTopicTypesFromTopic = gql`
 export const getTopicByKeyManageTopicPage = gql`
   query getTopicByKeyManageTopicPage($topicKey: String!) {
     getTopicByKey(topicKey: $topicKey) {
-      ...TopicLinkData
-      level
-      description
+      ...TopicFullData
       topicTypes {
         ...TopicTypeFullData
       }
@@ -100,6 +99,7 @@ export const getTopicByKeyManageTopicPage = gql`
       ...EditablePartOfTopicsData
     }
   }
+  ${TopicFullData}
   ${TopicLinkData}
   ${SubTopicsTreeData}
   ${EditablePartOfTopicsData}
@@ -116,29 +116,32 @@ export const ManageTopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) =>
     descriptionSourceUrl?: string | null;
     topicTypes?: TopicType[] | null;
     level?: number | null;
+    wikipediaPageUrl?: string | null;
   }>({});
   const { isChecking, isAvailable } = useCheckTopicKeyAvailability(updateTopicData.key || '');
   const { data, loading, refetch } = useGetTopicByKeyManageTopicPageQuery({
     variables: { topicKey },
     onCompleted(data) {
-      setUpdateTopicData(pick(data.getTopicByKey, ['key', 'name', 'description', 'topicTypes', 'level']));
+      setUpdateTopicData(
+        pick(data.getTopicByKey, [
+          'key',
+          'name',
+          'description',
+          'descriptionSourceUrl',
+          'wikipediaPageUrl',
+          'topicTypes',
+          'level',
+        ])
+      );
     },
   });
 
   const [updateTopicMutation] = useUpdateTopicMutation();
   const [addTopicTypesToTopicMutation] = useAddTopicTypesToTopicMutation();
   const [removeTopicTypesFromTopicMutation] = useRemoveTopicTypesFromTopicMutation();
-  // const updateTopic = async () => {
-  //   const payload: UpdateTopicPayload = {
-  //     ...(updateTopicData.name && updateTopicData.name !== topic.name && { name: updateTopicData.name }),
-  //     ...(updateTopicData.key && updateTopicData.key !== topic.key && { key: updateTopicData.key }),
-  //     ...(updateTopicData.description !== topic.description && { description: updateTopicData.description || null }),
-  //   };
-  //   if (payload.key) Router.push(ManageTopicPagePath(payload.key));
-  //   else refetch();
-  // };
+
   const [deleteTopicMutation] = useDeleteTopicMutation();
-  // const [editMode, setEditMode] = useState(false);
+
   if (!data && !loading) return <Box>Topic not found !</Box>;
 
   const topic = data?.getTopicByKey || placeholderTopicData;
@@ -179,42 +182,36 @@ export const ManageTopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) =>
                     <Text>{topic.name}</Text>
                   </Field>
                   <EditableField
-                    label="Description"
-                    editModeRenderField={
-                      <TopicDescriptionField
-                        value={updateTopicData.description}
-                        onChange={(newDescription) =>
-                          setUpdateTopicData({ ...updateTopicData, description: newDescription })
-                        }
-                        pullDescriptionsQueryData={{ name: topic.name }}
-                        onSelectPulledDescription={(pulledDescription) =>
-                          setUpdateTopicData({
-                            ...updateTopicData,
-                            description: pulledDescription.description,
-                            // descriptionSourceUrl: pulledDescription.sourceUrl,
-                            // ...(pulledDescription.sourceName === PulledDescriptionSourceName.Wikipedia && {
-                            //   wikipediaPageUrl: pulledDescription.sourceUrl,
-                            // }),
-                          })
-                        }
+                    label="Level"
+                    onSave={async () => {
+                      await updateTopicMutation({
+                        variables: {
+                          topicId: topic._id,
+                          payload: { level: updateTopicData.level },
+                        },
+                      });
+                    }}
+                    editModeChildren={
+                      <TopicLevelEditor
+                        value={updateTopicData.level || null}
+                        onChange={(newLevelValue) => setUpdateTopicData({ ...updateTopicData, level: newLevelValue })}
                         w="100%"
                       />
                     }
-                    onSave={async () => {}}
+                    w="50%"
                   >
-                    {
-                      <TopicDescription
-                        topicDescription={topic.description || undefined}
-                        placeholder="No description"
-                      />
-                    }
+                    <Box alignSelf="flex-start">
+                      <TopicLevelViewer topicId={topic._id} level={topic.level || undefined} showNotApplicable />
+                    </Box>
                   </EditableField>
                   <EditableField
                     label="Topic Types"
                     editModeRenderField={
                       <TopicTypeField
                         value={updateTopicData.topicTypes || []}
-                        onChange={(newTopicTypes) => setUpdateTopicData({ topicTypes: newTopicTypes })}
+                        onChange={(newTopicTypes) =>
+                          setUpdateTopicData({ ...updateTopicData, topicTypes: newTopicTypes })
+                        }
                       />
                     }
                     onSave={async () => {
@@ -238,48 +235,160 @@ export const ManageTopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) =>
                       } else console.error('bla');
                     }}
                   >
-                    {updateTopicData.topicTypes?.length ? (
+                    {topic.topicTypes?.length ? (
                       <TopicTypesViewer topicTypes={topic.topicTypes || []} />
                     ) : (
                       <Text color="gray.600">None</Text>
                     )}
                   </EditableField>
-                  <Field label={<FormFieldLabel>Url Key</FormFieldLabel>}>
-                    {/* {editMode ? (
-                      <TopicUrlKeyField
-                        // different behaviour based on topic.contextTopic
-                        value={updateTopicData.key || ''}
-                        onChange={(newKeyValue) => setUpdateTopicData({ key: newKeyValue })}
-                        isChecking={isChecking}
-                        isAvailable={updateTopicData.key !== topic.key ? isAvailable : undefined}
-                        fullTopicKey={updateTopicData.key || ''}
-                      />
-                    ) : (
-                      topic.key
-                    )} */}
-                  </Field>
                   <EditableField
-                    label="Level"
+                    label="Description"
+                    editModeRenderField={
+                      <TopicDescriptionField
+                        value={updateTopicData.description}
+                        onChange={(newDescription) =>
+                          setUpdateTopicData({
+                            ...updateTopicData,
+                            description: newDescription,
+                          })
+                        }
+                        pullDescriptionsQueryData={{ name: topic.name }}
+                        onSelectPulledDescription={(pulledDescription) =>
+                          setUpdateTopicData({
+                            ...updateTopicData,
+                            description: pulledDescription.description,
+                            descriptionSourceUrl: pulledDescription.sourceUrl,
+                            ...(pulledDescription.sourceName === PulledDescriptionSourceName.Wikipedia && {
+                              wikipediaPageUrl: pulledDescription.sourceUrl,
+                            }),
+                          })
+                        }
+                        w="100%"
+                      />
+                    }
                     onSave={async () => {
                       await updateTopicMutation({
                         variables: {
                           topicId: topic._id,
-                          payload: { level: updateTopicData.level },
+                          payload: {
+                            description: updateTopicData.description,
+                            descriptionSourceUrl: updateTopicData.descriptionSourceUrl,
+                            wikipediaPageUrl: updateTopicData.wikipediaPageUrl,
+                          },
                         },
                       });
                     }}
-                    editModeChildren={
-                      <TopicLevelEditor
-                        value={updateTopicData.level || null}
-                        onChange={(newLevelValue) => setUpdateTopicData({ level: newLevelValue })}
-                        w="100%"
+                  >
+                    {
+                      <TopicDescription
+                        topicDescription={topic.description || undefined}
+                        placeholder="No description"
                       />
                     }
+                  </EditableField>
+                  <Flex justifyContent="space-between">
+                    <EditableField
+                      label="Wikipedia Page"
+                      w="50%"
+                      editModeChildren={
+                        <Input
+                          value={updateTopicData.wikipediaPageUrl || ''}
+                          onChange={(e) =>
+                            setUpdateTopicData({ ...updateTopicData, wikipediaPageUrl: e.target.value || null })
+                          }
+                        />
+                      }
+                      onSave={async () => {
+                        await updateTopicMutation({
+                          variables: {
+                            topicId: topic._id,
+                            payload: {
+                              wikipediaPageUrl: updateTopicData.wikipediaPageUrl,
+                            },
+                          },
+                        });
+                      }}
+                    >
+                      {topic.wikipediaPageUrl ? (
+                        <Link href={topic.wikipediaPageUrl} isExternal color="blue.500" fontWeight={500}>
+                          {topic.wikipediaPageUrl}
+                        </Link>
+                      ) : (
+                        <Text color="gray.500">Unset</Text>
+                      )}
+                    </EditableField>
+                    <EditableField
+                      label="Description Source Url"
+                      w="50%"
+                      editModeChildren={
+                        <Input
+                          value={updateTopicData.descriptionSourceUrl || ''}
+                          onChange={(e) =>
+                            setUpdateTopicData({ ...updateTopicData, descriptionSourceUrl: e.target.value || null })
+                          }
+                        />
+                      }
+                      onSave={async () => {
+                        await updateTopicMutation({
+                          variables: {
+                            topicId: topic._id,
+                            payload: {
+                              descriptionSourceUrl: updateTopicData.descriptionSourceUrl,
+                            },
+                          },
+                        });
+                      }}
+                    >
+                      {topic.descriptionSourceUrl ? (
+                        <Link href={topic.descriptionSourceUrl} isExternal color="blue.500" fontWeight={500}>
+                          {topic.descriptionSourceUrl}
+                        </Link>
+                      ) : (
+                        <Text color="gray.500">Unset</Text>
+                      )}
+                    </EditableField>
+                  </Flex>
+                  <EditableField
+                    label="Url Key"
                     w="50%"
+                    disableSaveButton={!updateTopicData.key || isChecking || !isAvailable}
+                    onSave={async () => {
+                      if (updateTopicData.key && isAvailable) {
+                        await updateTopicMutation({
+                          variables: {
+                            topicId: topic._id,
+                            payload: {
+                              key: updateTopicData.key,
+                            },
+                          },
+                        });
+                        Router.push(ManageTopicPagePath(updateTopicData.key));
+                      }
+                    }}
+                    editModeChildren={
+                      <TopicUrlKeyField
+                        // different behaviour based on topic.contextTopic
+                        value={(updateTopicData.key || '').replace(`_(${topic.contextTopic?.key})`, '')}
+                        onChange={(newKeyValue) =>
+                          setUpdateTopicData({
+                            ...updateTopicData,
+                            key: topic.contextTopic?.key
+                              ? generateUrlKey(newKeyValue) + `_(${topic.contextTopic.key})`
+                              : generateUrlKey(newKeyValue),
+                          })
+                        }
+                        isChecking={isChecking}
+                        isAvailable={updateTopicData.key !== topic.key ? isAvailable : undefined}
+                        fullTopicKey={updateTopicData.key || ''}
+                      />
+                    }
                   >
-                    <Box alignSelf="flex-start">
-                      <TopicLevelViewer topicId={topic._id} level={topic.level || undefined} showNotApplicable />
-                    </Box>
+                    <Text as="span" fontWeight={500} color="gray.700" letterSpacing="0.1em">
+                      <Text as="span" color="gray.400">
+                        /topics/
+                      </Text>
+                      {topic.key}
+                    </Text>
                   </EditableField>
                 </Stack>
               </Flex>

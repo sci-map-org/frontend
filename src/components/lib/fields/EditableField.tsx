@@ -6,6 +6,7 @@ interface EditableFieldProps extends Omit<FieldProps, 'renderRightOfLabel'> {
   editModeChildren?: ReactNode;
   editModeRenderField?: ReactNode;
   onSave: () => Promise<void>;
+  disableSaveButton?: boolean;
 }
 
 export const EditableField: React.FC<EditableFieldProps> = ({
@@ -13,6 +14,7 @@ export const EditableField: React.FC<EditableFieldProps> = ({
   editModeRenderField,
   onSave,
   children,
+  disableSaveButton,
   ...props
 }) => {
   const [editMode, setEditMode] = useState(false);
@@ -25,6 +27,7 @@ export const EditableField: React.FC<EditableFieldProps> = ({
         colorScheme="blue"
         size="xs"
         isLoading={isSaving}
+        isDisabled={disableSaveButton}
         onClick={async () => {
           setIsSaving(true);
           await onSave();

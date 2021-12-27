@@ -75,6 +75,7 @@ export const TopicTypesViewer: React.FC<TopicTypesViewerProps> = ({
     <Stack direction="row">
       {topicTypes.slice(0, maxShown || topicTypes.length).map((topicType) => (
         <TopicTypeViewer
+          key={topicType.name}
           topicType={topicType}
           size={size}
           {...(onClick && { onClick: () => onClick(topicType) })}
