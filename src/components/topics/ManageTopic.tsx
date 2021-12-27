@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Flex,
+  Image,
   Input,
   Link,
   Modal,
@@ -590,7 +591,14 @@ export const ManageTopicModal: React.FC<{ topicKey: string; renderButton: (openM
       {isOpen && (
         <Modal onClose={onClose} size="6xl" isOpen={isOpen}>
           <ModalOverlay>
-            <ModalContent>
+            <ModalContent position="relative">
+              <Image
+                position="absolute"
+                src="/images/topostain_red_manage_topic_page.svg"
+                zIndex={-1}
+                right="0"
+                h={{ base: '200px', sm: '240px', md: '300px' }}
+              />
               <ModalBody pt={8} pb={12} px={10}>
                 {topic ? (
                   <ManageTopic topic={topic} refetch={refetch} tab={tab} onChangeTab={setTab} />
