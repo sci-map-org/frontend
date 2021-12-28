@@ -1,5 +1,5 @@
 import { EditIcon } from '@chakra-ui/icons';
-import { Flex, IconButton, Stack, Tooltip } from '@chakra-ui/react';
+import { Flex, IconButton, Stack, Tooltip, Wrap, WrapItem } from '@chakra-ui/react';
 import { useRef, useState } from 'react';
 import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import { useHandleClickOutside } from '../../hooks/useHanldeClickOutside';
@@ -12,7 +12,7 @@ interface EditableTopicsWrapperProps {
   onRemove: (topicId: string) => void;
   onAdded: (topic: TopicLinkDataFragment) => void;
   editable?: boolean;
-  displayMode?: 'column' | 'row';
+  displayMode?: 'column' | 'row' | 'wrap';
   inputPlaceholder?: string;
   isLoading?: boolean;
 }
@@ -21,7 +21,7 @@ export const EditableTopicsWrapper: React.FC<EditableTopicsWrapperProps> = ({
   onRemove,
   onAdded,
   editable,
-  displayMode = 'column',
+  displayMode = 'wrap',
   inputPlaceholder,
   isLoading,
 }) => {
@@ -30,17 +30,26 @@ export const EditableTopicsWrapper: React.FC<EditableTopicsWrapperProps> = ({
   useHandleClickOutside(wrapperRef, () => setEditMode(false));
   return (
     <Flex ref={wrapperRef} direction="column" alignItems="center" maxW="300px">
-      <Stack direction={displayMode} alignItems="center" spacing={1}>
-        {topics.map((topic) => (
-          <TopicBadge
-            // role={role}
-            key={topic._id}
-            topic={topic}
-            removable={editMode}
-            onRemove={() => onRemove(topic._id)}
-          />
-        ))}
-      </Stack>
+      {!!topics.length && (
+        <>
+          {displayMode !== 'wrap' && (
+            <Stack direction={displayMode} alignItems="center" spacing={1} mb={1}>
+              {topics.map((topic) => (
+                <TopicBadge key={topic._id} topic={topic} removable={editMode} onRemove={() => onRemove(topic._id)} />
+              ))}
+            </Stack>
+          )}
+          {displayMode === 'wrap' && (
+            <Wrap spacing={1} justify="center" mb={1}>
+              {topics.map((topic) => (
+                <WrapItem key={topic._id}>
+                  <TopicBadge topic={topic} removable={editMode} onRemove={() => onRemove(topic._id)} />
+                </WrapItem>
+              ))}
+            </Wrap>
+          )}
+        </>
+      )}
       {editMode && (
         <TopicSelector placeholder={inputPlaceholder || `Add Topic...`} onSelect={(topic) => onAdded(topic)} />
       )}

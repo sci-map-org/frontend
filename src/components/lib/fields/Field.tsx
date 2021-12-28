@@ -8,15 +8,13 @@ export interface FieldProps extends FlexProps {
   renderRightOfLabel?: ReactNode;
   renderTopRight?: ReactNode;
   isInvalid?: boolean;
-  centered?: boolean;
 }
 
 export const Field = forwardRef<HTMLDivElement, PropsWithChildren<FieldProps>>(
-  ({ label, helperText, children, renderRightOfLabel, renderTopRight, isInvalid, centered, ...props }, ref) => {
+  ({ label, helperText, children, renderRightOfLabel, renderTopRight, isInvalid, ...props }, ref) => {
     return (
       <FormControl ref={ref} display="flex" flexDir="column" w="unset" isInvalid={isInvalid} {...props}>
         <Flex justifyContent="space-between" pb={1}>
-          {centered && <Flex />}
           <Flex direction="row" alignItems="baseline">
             <FormLabel {...FormFieldLabelStyleProps} w="unset" mr={1}>
               {label}
@@ -25,7 +23,7 @@ export const Field = forwardRef<HTMLDivElement, PropsWithChildren<FieldProps>>(
           </Flex>
           {renderTopRight}
         </Flex>
-        <Flex direction="column" pl={centered ? 0 : 4} {...(centered && { alignItems: 'center' })}>
+        <Flex direction="column" pl={4}>
           {helperText && <FormFieldHelperText pb={3}>{helperText}</FormFieldHelperText>}
           {children}
         </Flex>

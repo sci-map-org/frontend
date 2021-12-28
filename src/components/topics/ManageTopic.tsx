@@ -1,6 +1,8 @@
 import {
   Box,
   Button,
+  Center,
+  Divider,
   Flex,
   Image,
   Input,
@@ -18,6 +20,8 @@ import {
   Tabs,
   Text,
   useDisclosure,
+  Wrap,
+  WrapItem,
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { differenceBy, pick } from 'lodash';
@@ -60,6 +64,7 @@ import { RoleAccess } from '../auth/RoleAccess';
 import { ButtonWithConfirmationDialog } from '../lib/buttons/ButtonWithConfirmationDialog';
 import { PageLink } from '../navigation/InternalLink';
 import { UserAvatar, UserAvatarData } from '../users/UserAvatar';
+import { TopicContextEditor } from './fields/TopicContextEditor';
 import {
   GetTopicByKeyManageTopicPageQuery,
   useAddTopicTypesToTopicMutation,
@@ -203,16 +208,16 @@ export const ManageTopic: React.FC<{
       </PageTitle>
       <Tabs size="lg" isFitted variant="line" isLazy index={tab} onChange={onChangeTab}>
         <TabList mb={6}>
-          <Tab fontSize="2xl" fontWeight={600}>
+          <Tab _active={{}} _focus={{}} fontSize="2xl" fontWeight={600}>
             Edit Topic
           </Tab>
-          <Tab fontSize="2xl" fontWeight={600}>
+          <Tab _active={{}} _focus={{}} fontSize="2xl" fontWeight={600}>
             SubTopics Tree
           </Tab>
         </TabList>
         <TabPanels>
           <TabPanel>
-            <Stack alignItems="stretch" spacing={8}>
+            <Stack alignItems="stretch" spacing={16}>
               <Stack w="100%" spacing={12} flexGrow={1}>
                 <Flex justifyContent="space-between">
                   {currentUser && currentUser.role === UserRole.Admin ? (
@@ -498,14 +503,26 @@ export const ManageTopic: React.FC<{
                   )}
                 </Flex>
               </Stack>
-              <Flex direction="row" justifyContent="space-evenly">
-                <EditableTopicPrerequisites topic={topic} editable={true} />
-                <EditablePartOfTopics topic={topic} editable={true} align="center" />
-
+              <Center>
+                <Divider borderBottomWidth="2px" w="70%" borderColor="gray.400" />
+              </Center>
+              <Wrap justify="space-around" spacing={10}>
+                <WrapItem justifyContent="center" w="300px">
+                  <EditableTopicPrerequisites topic={topic} editable={true} />
+                </WrapItem>
+                <WrapItem justifyContent="center" w="300px">
+                  <EditablePartOfTopics topic={topic} editable={true} align="center" />
+                </WrapItem>
                 {topic.parentTopic && topic.contextTopic && (
-                  <TopicContextEditor parentTopic={topic.parentTopic} contextTopic={topic.contextTopic} topic={topic} />
+                  <WrapItem justifyContent="center" w="300px">
+                    <TopicContextEditor
+                      parentTopic={topic.parentTopic}
+                      contextTopic={topic.contextTopic}
+                      topic={topic}
+                    />
+                  </WrapItem>
                 )}
-              </Flex>
+              </Wrap>
             </Stack>
           </TabPanel>
           <TabPanel display="flex" justifyContent="center">
@@ -521,56 +538,6 @@ export const ManageTopic: React.FC<{
         </TabPanels>
       </Tabs>
     </>
-    // </PageLayout>
-  );
-};
-
-const TopicContextEditor: React.FC<{
-  topic: TopicLinkDataFragment;
-  parentTopic: TopicLinkDataFragment;
-  contextTopic: TopicLinkDataFragment;
-}> = ({ topic, parentTopic, contextTopic }) => {
-  const { data } = useGetTopicValidContextsQuery({
-    variables: { parentTopicId: parentTopic._id, topicId: topic._id },
-    onCompleted(r) {
-      if (!r.getTopicValidContexts.validContexts?.length) throw new Error(`No valid contexts found for ${topic._id}`);
-    },
-  });
-  const [updateTopicContextMutation] = useUpdateTopicContextMutation();
-  const [newContext, setNewContext] = useState<TopicLinkDataFragment>();
-
-  return (
-    <Stack alignItems="flex-end">
-      <Stack direction="row" alignItems="baseline">
-        <Text fontWeight={600} color="gray.500">
-          Context:{' '}
-        </Text>
-        {data?.getTopicValidContexts.validContexts && (
-          <>
-            <SelectContextTopic
-              contexts={data.getTopicValidContexts.validContexts}
-              selectedContext={newContext || contextTopic}
-              onSelect={(context) => setNewContext(context)}
-            />
-          </>
-        )}
-      </Stack>
-      {newContext && newContext._id !== contextTopic?._id && (
-        <Button
-          colorScheme="blue"
-          onClick={async () => {
-            const { data } = await updateTopicContextMutation({
-              variables: { topicId: topic._id, contextTopicId: newContext._id },
-            });
-            data && routerPushToPage(ManageTopicPageInfo(data.updateTopicContext));
-            setNewContext(undefined);
-          }}
-          size="sm"
-        >
-          Save
-        </Button>
-      )}
-    </Stack>
   );
 };
 

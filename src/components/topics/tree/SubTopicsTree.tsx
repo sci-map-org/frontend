@@ -134,9 +134,8 @@ export const SubTopicsTree: React.FC<SubTopicsTreeProps> = ({ topic, onUpdated, 
     [baseTopicNodeId]
   );
 
-  const [selectValidContextModalProps, setSelectValidContextModalProps] = useState<
-    Omit<SelectValidContextModalProps, 'onSelectValidContext' | 'isOpen' | 'onCancel'>
-  >();
+  const [selectValidContextModalProps, setSelectValidContextModalProps] =
+    useState<Omit<SelectValidContextModalProps, 'onSelectValidContext' | 'isOpen' | 'onCancel'>>();
   const client = useApolloClient();
 
   const transformSubTopics = (subTopicItems: SubTopicItem[], canUpdate: boolean): TopicTreeItem[] => {
@@ -320,7 +319,7 @@ export const SubTopicsTree: React.FC<SubTopicsTreeProps> = ({ topic, onUpdated, 
 
   return (
     <>
-      <Stack spacing={4} width="1300px">
+      <Stack spacing={4} width="1200px">
         {isLoading || isUpdating ? (
           <Center h="400px" w="100%">
             <Spinner size="xl" />

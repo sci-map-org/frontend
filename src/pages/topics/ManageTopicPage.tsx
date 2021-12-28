@@ -39,7 +39,7 @@ export const ManageTopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) =>
           src="/images/topostain_red_manage_topic_page.svg"
           zIndex={-1}
           right="0"
-          h={{ base: '200px', sm: '240px', md: '300px' }}
+          h={{ base: '200px', sm: '240px', md: '280px' }}
         />
       }
     >
