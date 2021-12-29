@@ -23,7 +23,7 @@ import {
   useAddTagsToLearningMaterialMutation,
   useRemoveTagsFromLearningMaterialMutation,
 } from './LearningMaterialTagsEditor.generated';
-import { useHandleClickOutside } from '../../hooks/useHanldeClickOutside';
+import { useHandleClickOutside } from '../../hooks/useHandleClickOutside';
 
 export const SelectedTagsViewer: React.FC<{
   selectedTags?: LearningMaterialTag[] | null;

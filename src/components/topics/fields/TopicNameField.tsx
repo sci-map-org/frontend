@@ -25,7 +25,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { TopicLinkData } from '../../../graphql/topics/topics.fragments';
 import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
 import { SubTopicRelationshipType } from '../../../graphql/types';
-import { useHandleClickOutside } from '../../../hooks/useHanldeClickOutside';
+import { useHandleClickOutside } from '../../../hooks/useHandleClickOutside';
 import { TopicPageInfo } from '../../../pages/RoutesPageInfos';
 import { HelperText } from '../../lib/HelperText';
 import { TopicLink } from '../../lib/links/TopicLink';

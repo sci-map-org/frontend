@@ -2,7 +2,7 @@ import { EditIcon } from '@chakra-ui/icons';
 import { Flex, IconButton, Stack, Tooltip, Wrap, WrapItem } from '@chakra-ui/react';
 import { useRef, useState } from 'react';
 import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
-import { useHandleClickOutside } from '../../hooks/useHanldeClickOutside';
+import { useHandleClickOutside } from '../../hooks/useHandleClickOutside';
 import { TopicBadge } from './TopicBadge';
 
 import { TopicSelector } from './TopicSelector';

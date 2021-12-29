@@ -15,8 +15,9 @@ import gql from 'graphql-tag';
 import { uniqBy } from 'lodash';
 import { useRef, useState } from 'react';
 import Autosuggest from 'react-autosuggest';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { TopicType, TopicTypeColor } from '../../../graphql/types';
-import { useHandleClickOutside } from '../../../hooks/useHanldeClickOutside';
+import { useHandleClickOutside } from '../../../hooks/useHandleClickOutside';
 import { Field } from '../../lib/fields/Field';
 import { useSearchTopicTypesLazyQuery } from './TopicTypeField.generated';
 import { TopicTypeViewer } from './TopicTypeViewer';
@@ -45,15 +46,49 @@ export const TopicTypeField: React.FC<{
       isInvalid={isInvalid}
       renderRightOfLabel={
         value && (
-          <Stack direction="row" alignItems="flex-end">
-            {value.map((selectedTopicType) => (
-              <TopicTypeViewer
-                key={selectedTopicType.name}
-                topicType={selectedTopicType}
-                onClick={() => onChange(value.filter((v) => v.name !== selectedTopicType.name))}
-              />
-            ))}
-          </Stack>
+          <DragDropContext
+            onDragEnd={(result) => {
+              if (!result.destination) {
+                return;
+              }
+              console.log('ondragend');
+              const updatedTopicTypes = Array.from(value);
+              const [removed] = updatedTopicTypes.splice(result.source.index, 1);
+              updatedTopicTypes.splice(result.destination.index, 0, removed);
+              onChange(updatedTopicTypes);
+            }}
+          >
+            <Droppable droppableId="droppable" direction="horizontal">
+              {(dropProvided, dropSnapshot) => (
+                <Stack
+                  direction="row"
+                  alignItems="flex-end"
+                  {...dropProvided.droppableProps}
+                  ref={dropProvided.innerRef}
+                >
+                  {value.map((selectedTopicType, index) => (
+                    <Draggable key={selectedTopicType.name} draggableId={selectedTopicType.name} index={index}>
+                      {(provided, snapshot) => (
+                        <Box
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          opacity={snapshot.isDragging ? 0.5 : 1}
+                        >
+                          <TopicTypeViewer
+                            key={selectedTopicType.name}
+                            topicType={selectedTopicType}
+                            onClick={() => onChange(value.filter((v) => v.name !== selectedTopicType.name))}
+                          />
+                        </Box>
+                      )}
+                    </Draggable>
+                  ))}
+                  {dropProvided.placeholder}
+                </Stack>
+              )}
+            </Droppable>
+          </DragDropContext>
         )
       }
       helperText="Select all that applies. Pick at least one."
