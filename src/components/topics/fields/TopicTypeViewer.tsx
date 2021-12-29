@@ -1,6 +1,7 @@
-import { Stack, Text } from '@chakra-ui/react';
+import { Box, Stack, Text, TextProps } from '@chakra-ui/react';
 import { upperFirst } from 'lodash';
 import { TopicType } from '../../../graphql/types';
+import { useHover } from '../../../hooks/useHover';
 
 const sizesMapping = {
   sm: {
@@ -23,33 +24,41 @@ const sizesMapping = {
   },
 };
 
-interface TopicTypeViewerProps {
+const getTopicTypeViewerBgColor = (topicType: TopicType, shade: 'pale' | 'solid'): string => {
+  return topicType.color
+    ? `${topicType.color}.${shade === 'solid' ? 500 : 300}`
+    : `gray.${shade === 'solid' ? 500 : 300}`;
+};
+
+interface TopicTypeViewerProps extends TextProps {
   topicType: TopicType;
   size?: 'sm' | 'md';
   onClick?: () => void;
   shade?: 'pale' | 'solid';
 }
+
 export const TopicTypeViewer: React.FC<TopicTypeViewerProps> = ({
   topicType,
   size = 'md',
   onClick,
   shade = 'solid',
+  ...props
 }) => {
   return (
     <Text
       color="white"
-      bgColor={
-        topicType.color
-          ? `${topicType.color}.${shade === 'solid' ? 500 : 300}`
-          : `gray.${shade === 'solid' ? 500 : 300}`
-      }
+      bgColor={getTopicTypeViewerBgColor(topicType, shade)}
       {...sizesMapping[size]}
       {...(onClick && { onClick: () => onClick() })}
       display="flex"
       alignItems="center"
+      textOverflow="ellipsis"
+      whiteSpace="nowrap"
+      overflow="hidden"
       _hover={{
         ...(!!onClick && { cursor: 'pointer' }),
       }}
+      {...props}
     >
       {topicType.name.split(' ').map(upperFirst).join(' ')}
     </Text>
@@ -63,6 +72,7 @@ interface TopicTypesViewerProps {
   shade?: 'pale' | 'solid';
   maxShown?: number;
 }
+
 export const TopicTypesViewer: React.FC<TopicTypesViewerProps> = ({
   topicTypes,
   size = 'md',
@@ -71,8 +81,10 @@ export const TopicTypesViewer: React.FC<TopicTypesViewerProps> = ({
   maxShown,
 }) => {
   if (!topicTypes.length) return null;
+  const [setRef, isHover] = useHover();
+
   return (
-    <Stack direction="row">
+    <Stack direction="row" ref={setRef}>
       {topicTypes.slice(0, maxShown || topicTypes.length).map((topicType) => (
         <TopicTypeViewer
           key={topicType.name}
@@ -80,22 +92,52 @@ export const TopicTypesViewer: React.FC<TopicTypesViewerProps> = ({
           size={size}
           {...(onClick && { onClick: () => onClick(topicType) })}
           shade={shade}
+          textOverflow="ellipsis"
+          whiteSpace="nowrap"
         />
       ))}
-      {maxShown && maxShown < topicTypes.length && (
-        <Text
-          color="white"
-          bgColor={`red.${shade === 'solid' ? 500 : 300}`}
-          {...sizesMapping[size]}
-          display="flex"
-          alignItems="center"
-          _hover={{
-            ...(!!onClick && { cursor: 'pointer' }),
-          }}
-        >
-          +{topicTypes.length - maxShown}
-        </Text>
-      )}
+      <Box position="relative">
+        {isHover && !!maxShown && maxShown < topicTypes.length && (
+          <Stack direction="row" position="absolute" bgColor="white" zIndex={2}>
+            {topicTypes.slice(maxShown, topicTypes.length).map((topicType, idx) => (
+              <TopicTypeViewer
+                key={topicType.name}
+                topicType={topicType}
+                size={size}
+                {...(onClick && { onClick: () => onClick(topicType) })}
+                shade={shade}
+              />
+            ))}
+          </Stack>
+        )}
+        {!!maxShown && maxShown < topicTypes.length && (
+          <Text
+            color="white"
+            bgGradient={
+              topicTypes.length - maxShown > 1
+                ? `linear(to-r, ${getTopicTypeViewerBgColor(
+                    topicTypes[maxShown],
+                    shade
+                  )} 0%, ${getTopicTypeViewerBgColor(topicTypes[maxShown], shade)} 50%, ${getTopicTypeViewerBgColor(
+                    topicTypes[maxShown + 1],
+                    shade
+                  )} 50%, ${getTopicTypeViewerBgColor(topicTypes[maxShown + 1], shade)} 100%)`
+                : `linear(to-r, ${getTopicTypeViewerBgColor(topicTypes[maxShown], shade)}, ${getTopicTypeViewerBgColor(
+                    topicTypes[maxShown],
+                    shade
+                  )})`
+            }
+            {...sizesMapping[size]}
+            display="flex"
+            alignItems="center"
+            _hover={{
+              ...(!!onClick && { cursor: 'pointer' }),
+            }}
+          >
+            +{topicTypes.length - maxShown}
+          </Text>
+        )}
+      </Box>
     </Stack>
   );
 };

@@ -24,7 +24,7 @@ import {
   WrapItem,
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
-import { differenceBy, pick } from 'lodash';
+import { pick } from 'lodash';
 import dynamic from 'next/dynamic';
 import Router from 'next/router';
 import { ReactNode, useMemo, useState } from 'react';
@@ -36,29 +36,17 @@ import { EditableTopicPrerequisites } from '../../components/topics/EditableTopi
 import { TopicAliasesField, TopicNameAlias } from '../../components/topics/fields/TopicAliases';
 import { TopicDescription, TopicDescriptionField } from '../../components/topics/fields/TopicDescription';
 import { TopicLevelEditor, TopicLevelViewer } from '../../components/topics/fields/TopicLevel';
-import { SelectContextTopic } from '../../components/topics/fields/TopicNameField';
 import { TopicTypeField } from '../../components/topics/fields/TopicTypeField';
 import { TopicTypesViewer } from '../../components/topics/fields/TopicTypeViewer';
 import { TopicUrlKeyField, useCheckTopicKeyAvailability } from '../../components/topics/fields/TopicUrlKey';
 import { SubTopicsTreeData, SubTopicsTreeProps } from '../../components/topics/tree/SubTopicsTree';
-import { useGetTopicValidContextsQuery } from '../../components/topics/tree/SubTopicsTree.generated';
 import { TopicFullData, TopicLinkData } from '../../graphql/topics/topics.fragments';
-import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
-import {
-  useDeleteTopicMutation,
-  useUpdateTopicContextMutation,
-  useUpdateTopicMutation,
-} from '../../graphql/topics/topics.operations.generated';
+import { useDeleteTopicMutation, useUpdateTopicMutation } from '../../graphql/topics/topics.operations.generated';
 import { TopicTypeFullData } from '../../graphql/topic_types/topic_types.fragments';
 import { PulledDescriptionSourceName, TopicType, UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { routerPushToPage } from '../../pages/PageInfo';
-import {
-  ManageTopicPageInfo,
-  ManageTopicPagePath,
-  TopicPageInfo,
-  UserProfilePageInfo,
-} from '../../pages/RoutesPageInfos';
+import { ManageTopicPagePath, TopicPageInfo, UserProfilePageInfo } from '../../pages/RoutesPageInfos';
 import { generateUrlKey } from '../../services/url.service';
 import { RoleAccess } from '../auth/RoleAccess';
 import { ButtonWithConfirmationDialog } from '../lib/buttons/ButtonWithConfirmationDialog';
@@ -67,9 +55,8 @@ import { UserAvatar, UserAvatarData } from '../users/UserAvatar';
 import { TopicContextEditor } from './fields/TopicContextEditor';
 import {
   GetTopicByKeyManageTopicPageQuery,
-  useAddTopicTypesToTopicMutation,
   useGetTopicByKeyManageTopicPageQuery,
-  useRemoveTopicTypesFromTopicMutation,
+  useUpdateTopicTopicTypesMutation,
 } from './ManageTopic.generated';
 
 export enum ManageTopicTabIndex {
@@ -86,21 +73,9 @@ const SubTopicsTree = dynamic<SubTopicsTreeProps>(
   { ssr: false }
 );
 
-export const addTopicTypesToTopic = gql`
-  mutation addTopicTypesToTopic($topicId: String!, $topicTypes: [String!]!) {
-    addTopicTypesToTopic(topicId: $topicId, topicTypes: $topicTypes) {
-      _id
-      topicTypes {
-        ...TopicTypeFullData
-      }
-    }
-  }
-  ${TopicTypeFullData}
-`;
-
-export const removeTopicTypesFromTopic = gql`
-  mutation removeTopicTypesFromTopic($topicId: String!, $topicTypes: [String!]!) {
-    removeTopicTypesFromTopic(topicId: $topicId, topicTypes: $topicTypes) {
+export const updateTopicTopicTypes = gql`
+  mutation updateTopicTopicTypes($topicId: String!, $topicTypesNames: [String!]!) {
+    updateTopicTopicTypes(topicId: $topicId, topicTypesNames: $topicTypesNames) {
       _id
       topicTypes {
         ...TopicTypeFullData
@@ -174,8 +149,7 @@ export const ManageTopic: React.FC<{
 
   const { currentUser } = useCurrentUser();
   const [updateTopicMutation] = useUpdateTopicMutation();
-  const [addTopicTypesToTopicMutation] = useAddTopicTypesToTopicMutation();
-  const [removeTopicTypesFromTopicMutation] = useRemoveTopicTypesFromTopicMutation();
+  const [updateTopicTopicTypesMutation] = useUpdateTopicTopicTypesMutation();
 
   const [deleteTopicMutation] = useDeleteTopicMutation();
 
@@ -318,23 +292,13 @@ export const ManageTopic: React.FC<{
                   }
                   onSave={async () => {
                     if (topic.topicTypes && updateTopicData.topicTypes) {
-                      const toAdd = differenceBy(updateTopicData.topicTypes, topic.topicTypes, (t) => t.name);
-                      const toRemove = differenceBy(topic.topicTypes, updateTopicData.topicTypes, (t) => t.name);
-                      toAdd.length &&
-                        (await addTopicTypesToTopicMutation({
-                          variables: {
-                            topicId: topic._id,
-                            topicTypes: toAdd.map(({ name }) => name),
-                          },
-                        }));
-                      toRemove.length &&
-                        (await removeTopicTypesFromTopicMutation({
-                          variables: {
-                            topicId: topic._id,
-                            topicTypes: toRemove.map(({ name }) => name),
-                          },
-                        }));
-                    } else console.error('bla');
+                      await updateTopicTopicTypesMutation({
+                        variables: {
+                          topicId: topic._id,
+                          topicTypesNames: updateTopicData.topicTypes.map(({ name }) => name),
+                        },
+                      });
+                    } else console.error('unreachable code reached');
                   }}
                 >
                   {topic.topicTypes?.length ? (

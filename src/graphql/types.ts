@@ -642,6 +642,7 @@ export type Mutation = {
   updateTopicContext: Topic;
   updateTopicIsPartOfTopic: TopicIsPartOfTopic;
   updateTopicIsSubTopicOfTopic: TopicIsSubTopicOfTopic;
+  updateTopicTopicTypes: Topic;
   verifyEmailAddress: VerifyEmailResponse;
 };
 
@@ -1030,6 +1031,12 @@ export type MutationUpdateTopicIsSubTopicOfTopicArgs = {
   parentTopicId: Scalars['String'];
   payload: UpdateTopicIsSubTopicOfTopicPayload;
   subTopicId: Scalars['String'];
+};
+
+
+export type MutationUpdateTopicTopicTypesArgs = {
+  topicId: Scalars['String'];
+  topicTypesNames: Array<Scalars['String']>;
 };
 
 
