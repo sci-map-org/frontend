@@ -1,3 +1,4 @@
+import { SubTopicsTreeData } from './tree/SubTopicsTreeData';
 import {
   Box,
   Button,
@@ -39,7 +40,7 @@ import { TopicLevelEditor, TopicLevelViewer } from '../../components/topics/fiel
 import { TopicTypeField } from '../../components/topics/fields/TopicTypeField';
 import { TopicTypesViewer } from '../../components/topics/fields/TopicTypeViewer';
 import { TopicUrlKeyField, useCheckTopicKeyAvailability } from '../../components/topics/fields/TopicUrlKey';
-import { SubTopicsTreeData, SubTopicsTreeProps } from '../../components/topics/tree/SubTopicsTree';
+import { SubTopicsTreeProps } from '../../components/topics/tree/SubTopicsTree';
 import { TopicFullData, TopicLinkData } from '../../graphql/topics/topics.fragments';
 import { useDeleteTopicMutation, useUpdateTopicMutation } from '../../graphql/topics/topics.operations.generated';
 import { TopicTypeFullData } from '../../graphql/topic_types/topic_types.fragments';
@@ -288,10 +289,12 @@ export const ManageTopic: React.FC<{
                       onChange={(newTopicTypes) =>
                         setUpdateTopicData({ ...updateTopicData, topicTypes: newTopicTypes })
                       }
+                      isInvalid={!updateTopicData.topicTypes?.length}
                     />
                   }
+                  disableSaveButton={!updateTopicData.topicTypes?.length}
                   onSave={async () => {
-                    if (topic.topicTypes && updateTopicData.topicTypes) {
+                    if (topic.topicTypes && updateTopicData.topicTypes?.length) {
                       await updateTopicTopicTypesMutation({
                         variables: {
                           topicId: topic._id,

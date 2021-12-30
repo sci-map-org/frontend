@@ -1,6 +1,6 @@
 // Exist mostly because having pageinfos in Pages creates circular dependencies
 
-import { topicLinkStyles } from '../components/lib/links/TopicLink';
+import { TopicLinkStyleProps } from '../components/lib/Typography';
 import { LearningGoalLinkDataFragment } from '../graphql/learning_goals/learning_goals.fragments.generated';
 import { LearningPathDataFragment } from '../graphql/learning_paths/learning_paths.fragments.generated';
 import { ResourceDataFragment } from '../graphql/resources/resources.fragments.generated';
@@ -15,7 +15,7 @@ export const TopicPageInfo = (topic: TopicLinkDataFragment): PageInfo => ({
   name: topic.name,
   path: TopicPagePath(topic.key),
   routePath: TopicPagePath('[topicKey]'),
-  breadcrumbLinkProps: topicLinkStyles.topicName,
+  breadcrumbLinkProps: TopicLinkStyleProps.topicName,
 });
 
 export const NewTopicPagePath = '/topics/new';

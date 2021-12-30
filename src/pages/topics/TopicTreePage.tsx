@@ -1,12 +1,10 @@
-import { Box, Flex, Stack } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import dynamic from 'next/dynamic';
-import { useMemo } from 'react';
 import { PageLayout } from '../../components/layout/PageLayout';
-import { SubTopicsTreeData, SubTopicsTreeProps } from '../../components/topics/tree/SubTopicsTree';
+import { SubTopicsTreeProps } from '../../components/topics/tree/SubTopicsTree';
+import { SubTopicsTreeData } from '../../components/topics/tree/SubTopicsTreeData';
 import { generateTopicData } from '../../graphql/topics/topics.fragments';
-import { UserRole } from '../../graphql/types';
-import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { TopicPageInfo, TopicTreePageInfo } from '../RoutesPageInfos';
 import { GetTopicByKeyTopicTreePageQuery, useGetTopicByKeyTopicTreePageQuery } from './TopicTreePage.generated';
 
@@ -22,6 +20,7 @@ const SubTopicsTree = dynamic<SubTopicsTreeProps>(
 export const getTopicByKeyTopicTreePage = gql`
   query getTopicByKeyTopicTreePage($topicKey: String!) {
     getTopicByKey(topicKey: $topicKey) {
+      _id
       ...SubTopicsTreeData
     }
   }

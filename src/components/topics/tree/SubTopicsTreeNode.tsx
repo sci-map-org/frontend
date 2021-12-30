@@ -1,39 +1,21 @@
 import { IconButton } from '@chakra-ui/button';
 import { AddIcon, ExternalLinkIcon, Icon, MinusIcon, SettingsIcon } from '@chakra-ui/icons';
 import { Box, Flex, Stack, Text } from '@chakra-ui/layout';
+import { BiDuplicate } from '@react-icons/all-files/bi/BiDuplicate';
 import { BiLink } from '@react-icons/all-files/bi/BiLink';
 import { BiUnlink } from '@react-icons/all-files/bi/BiUnlink';
-import { BiDuplicate } from '@react-icons/all-files/bi/BiDuplicate';
-import gql from 'graphql-tag';
 import { isDescendant, NodeRendererProps } from 'react-sortable-tree';
-import { TopicLinkData } from '../../../graphql/topics/topics.fragments';
-import { SubTopicRelationshipType } from '../../../graphql/types';
-import { routerPushToPage } from '../../../pages/PageInfo';
-import { ManageTopicPageInfo, TopicPageInfo } from '../../../pages/RoutesPageInfos';
-import { DeleteButtonWithConfirmation } from '../../lib/buttons/DeleteButtonWithConfirmation';
-import { PageLink } from '../../navigation/InternalLink';
-
-import { SubTopicsTreeNodeDataFragment } from './SubTopicsTreeNode.generated';
-import { getTopicIdFromNodeId } from './SubTopicsTree';
 import {
   useAttachTopicIsPartOfTopicMutation,
   useDetachTopicIsPartOfTopicMutation,
 } from '../../../graphql/topics/topics.operations.generated';
+import { SubTopicRelationshipType } from '../../../graphql/types';
+import { TopicPageInfo } from '../../../pages/RoutesPageInfos';
+import { DeleteButtonWithConfirmation } from '../../lib/buttons/DeleteButtonWithConfirmation';
+import { PageLink } from '../../navigation/InternalLink';
 import { ManageTopicModal } from '../ManageTopic';
-
-export const SubTopicsTreeNodeData = gql`
-  fragment SubTopicsTreeNodeData on TopicIsSubTopicOfTopic {
-    index
-    relationshipType
-    subTopic {
-      ...TopicLinkData
-      contextTopic {
-        ...TopicLinkData
-      }
-    }
-  }
-  ${TopicLinkData}
-`;
+import { getTopicIdFromNodeId } from './SubTopicsTree';
+import { SubTopicsTreeNodeDataFragment } from './SubTopicsTreeNodeData.generated';
 
 interface SubTopicsTreeNodeProps extends NodeRendererProps {
   baseTopicNodeId: string;

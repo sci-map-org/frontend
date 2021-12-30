@@ -1,11 +1,11 @@
-import { Box, Button, Divider, Input, Stack, Text } from '@chakra-ui/react';
+import { Box, Button, Divider, Input, Link, Stack, Text } from '@chakra-ui/react';
+import NextLink from 'next/link';
 import { useState } from 'react';
 import { DiscourseSso } from '../../graphql/types';
 import { LoginResponseDataFragment } from '../../graphql/users/users.fragments.generated';
 import { useLogin } from '../../graphql/users/users.hooks';
 import { ResetPasswordPageInfo } from '../../pages/RoutesPageInfos';
 import { PasswordInput } from '../lib/inputs/PasswordInput';
-import { PageLink } from '../navigation/InternalLink';
 import { GoogleAuthButton } from './GoogleAuthButton';
 
 export const LoginForm: React.FC<{
@@ -42,9 +42,21 @@ export const LoginForm: React.FC<{
           <Text fontSize="xl" fontWeight={300}>
             Or with your email address
           </Text>
-          <PageLink pageInfo={ResetPasswordPageInfo} color="blue.500" fontSize="xs" fontWeight={400}>
+          <NextLink
+            href={{
+              pathname: ResetPasswordPageInfo.routePath,
+              // query
+            }}
+            as={ResetPasswordPageInfo.path}
+            passHref
+          >
+            <Link color="blue.500" fontSize="xs" fontWeight={400}>
+              Forgot password?
+            </Link>
+          </NextLink>
+          {/* <PageLink pageInfo={ResetPasswordPageInfo} color="blue.500" fontSize="xs" fontWeight={400}>
             Forgot password?
-          </PageLink>
+          </PageLink> */}
         </Stack>
         <Input
           placeholder="Email"

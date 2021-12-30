@@ -2,15 +2,8 @@ import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Link, Text } from '@chakra-ui/react';
 import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
 import { TopicPageInfo } from '../../../pages/RoutesPageInfos';
-import { PageLink, PageLinkProps } from '../../navigation/InternalLink';
-
-export const topicLinkStyles: { [key in 'topicName' | 'contextName']: Pick<PageLinkProps, 'color' | 'fontWeight'> } = {
-  topicName: {
-    fontWeight: 700,
-    color: 'gray.700',
-  },
-  contextName: { fontWeight: 700, color: 'gray.500' },
-};
+import { PageLink } from '../../navigation/InternalLink';
+import { TopicLinkStyleProps } from '../Typography';
 
 const sizesMapping = {
   sm: {
@@ -39,10 +32,15 @@ interface TopicLinkProps {
 }
 export const TopicLink: React.FC<TopicLinkProps> = ({ topic, onClick, size = 'md', showContext, newTab }) => {
   return onClick ? (
-    <Link onClick={onClick} {...topicLinkStyles.topicName} fontSize={sizesMapping[size].topicNameFontSize} _focus={{}}>
+    <Link
+      onClick={onClick}
+      {...TopicLinkStyleProps.topicName}
+      fontSize={sizesMapping[size].topicNameFontSize}
+      _focus={{}}
+    >
       {topic.name}{' '}
       {topic.context && (
-        <Text as="span" {...topicLinkStyles.contextName} fontSize={sizesMapping[size].contextNameFontSize}>
+        <Text as="span" {...TopicLinkStyleProps.contextName} fontSize={sizesMapping[size].contextNameFontSize}>
           ({topic.context})
         </Text>
       )}
@@ -51,14 +49,14 @@ export const TopicLink: React.FC<TopicLinkProps> = ({ topic, onClick, size = 'md
   ) : (
     <PageLink
       pageInfo={TopicPageInfo(topic)}
-      {...topicLinkStyles.topicName}
+      {...TopicLinkStyleProps.topicName}
       fontSize={sizesMapping[size].topicNameFontSize}
       isExternal={newTab}
       _focus={{}}
     >
       {topic.name}{' '}
       {topic.context && (
-        <Text as="span" {...topicLinkStyles.contextName} fontSize={sizesMapping[size].contextNameFontSize}>
+        <Text as="span" {...TopicLinkStyleProps.contextName} fontSize={sizesMapping[size].contextNameFontSize}>
           ({topic.context})
         </Text>
       )}

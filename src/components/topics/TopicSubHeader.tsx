@@ -31,7 +31,7 @@ interface TopicSubHeaderProps {
 export const TopicSubHeader: React.FC<TopicSubHeaderProps> = ({ topic, size }) => {
   return (
     <Stack direction="row" spacing="16px" alignItems="center">
-      {topic.topicTypes && <TopicTypesViewer topicTypes={topic.topicTypes} maxShown={1} />}
+      {topic.topicTypes && <TopicTypesViewer topicTypes={topic.topicTypes} maxShown={2} />}
       <LinkBox as="div">
         <Stack direction="row" alignItems="center" spacing="6px">
           <TopicIcon boxSize="22px" color="gray.500" mb="2px" />

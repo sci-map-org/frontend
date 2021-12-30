@@ -30,13 +30,10 @@ import { SubTopicRelationshipType } from '../../../graphql/types';
 import { RoleAccess } from '../../auth/RoleAccess';
 import { SelectContextTopic } from '../fields/TopicNameField';
 import { NewTopicModal } from './../NewTopic';
-import {
-  GetTopicValidContextsQuery,
-  GetTopicValidContextsQueryVariables,
-  SubTopicsTreeDataFragment,
-} from './SubTopicsTree.generated';
-import { SubTopicsTreeNode, SubTopicsTreeNodeData } from './SubTopicsTreeNode';
-import { SubTopicsTreeNodeDataFragment } from './SubTopicsTreeNode.generated';
+import { GetTopicValidContextsQuery, GetTopicValidContextsQueryVariables } from './SubTopicsTree.generated';
+import { SubTopicsTreeDataFragment } from './SubTopicsTreeData.generated';
+import { SubTopicsTreeNode } from './SubTopicsTreeNode';
+import { SubTopicsTreeNodeDataFragment } from './SubTopicsTreeNodeData.generated';
 
 export const getTopicValidContexts = gql`
   query getTopicValidContexts($parentTopicId: String!, $topicId: String!) {
@@ -49,26 +46,6 @@ export const getTopicValidContexts = gql`
   ${TopicLinkData}
 `;
 
-export const SubTopicsTreeData = gql`
-  fragment SubTopicsTreeData on Topic {
-    ...TopicLinkData
-    subTopics {
-      ...SubTopicsTreeNodeData
-      subTopic {
-        subTopics {
-          ...SubTopicsTreeNodeData
-          subTopic {
-            subTopics {
-              ...SubTopicsTreeNodeData
-            }
-          }
-        }
-      }
-    }
-  }
-  ${TopicLinkData}
-  ${SubTopicsTreeNodeData}
-`;
 export interface SubTopicsTreeProps {
   topic: SubTopicsTreeDataFragment;
   onUpdated: () => void;
