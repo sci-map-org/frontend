@@ -30,13 +30,37 @@ const topicLevelColorMap = interpolate([
   theme.colors.red[400],
 ]);
 
+const sizesMapping = {
+  sm: {
+    fontWeight: 800,
+    borderWidth: '2px',
+    px: '3px',
+    py: 0,
+    borderRadius: '2px',
+    fontSize: '11px',
+    lineHeight: '13px',
+  },
+  md: {
+    fontWeight: 800,
+    borderWidth: 2,
+    px: 2,
+    borderRadius: 2,
+    fontSize: 'md',
+  },
+};
 interface TopicLevelViewerProps {
   level?: number;
   topicId?: string;
   showNotApplicable?: boolean;
+  size?: 'sm' | 'md';
 }
 
-export const TopicLevelViewer: React.FC<TopicLevelViewerProps> = ({ level, topicId, showNotApplicable }) => {
+export const TopicLevelViewer: React.FC<TopicLevelViewerProps> = ({
+  level,
+  topicId,
+  showNotApplicable,
+  size = 'md',
+}) => {
   const value = useMemo(() => {
     if (level === undefined) return null;
     if (level >= 0 && level <= 25) return TopicLevelValue.Beginner;
@@ -54,14 +78,7 @@ export const TopicLevelViewer: React.FC<TopicLevelViewerProps> = ({ level, topic
     ) : null;
 
   return (
-    <Text
-      color={topicLevelColorMap(level / 100)}
-      borderColor={topicLevelColorMap(level / 100)}
-      fontWeight={800}
-      borderWidth={2}
-      px={2}
-      borderRadius={2}
-    >
+    <Text color={topicLevelColorMap(level / 100)} borderColor={topicLevelColorMap(level / 100)} {...sizesMapping[size]}>
       {value.toLocaleUpperCase()}
     </Text>
   );

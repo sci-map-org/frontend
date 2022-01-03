@@ -2,7 +2,9 @@ import { BreadcrumbLink } from '../components/layout/NavigationBreadcrumbs';
 import Router from 'next/router';
 import { ParsedUrlQuery } from 'querystring';
 
-export interface PageInfo extends BreadcrumbLink {}
+export interface PageInfo extends BreadcrumbLink {
+  query?: ParsedUrlQuery;
+}
 
 export const routerPushToPage = (
   pageInfo: PageInfo,
@@ -10,5 +12,5 @@ export const routerPushToPage = (
     query: ParsedUrlQuery;
   }
 ) => {
-  Router.push({ pathname: pageInfo.path, query: options?.query }, pageInfo.path);
+  Router.push({ pathname: pageInfo.path, query: { ...options?.query, ...pageInfo.query } }, pageInfo.path);
 };

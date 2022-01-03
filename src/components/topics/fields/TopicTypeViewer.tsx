@@ -5,8 +5,8 @@ import { useHover } from '../../../hooks/useHover';
 
 const sizesMapping = {
   sm: {
-    px: '4px',
-    fontSize: '14px',
+    px: '3px',
+    fontSize: '12px',
     fontWeight: 500,
     lineHeight: '1.25em',
     pt: '1px',
@@ -84,7 +84,7 @@ export const TopicTypesViewer: React.FC<TopicTypesViewerProps> = ({
   const [setRef, isHover] = useHover();
 
   return (
-    <Stack direction="row" ref={setRef}>
+    <Stack direction="row" ref={setRef} spacing={{ md: '8px', sm: '4px' }[size]}>
       {topicTypes.slice(0, maxShown || topicTypes.length).map((topicType) => (
         <TopicTypeViewer
           key={topicType.name}

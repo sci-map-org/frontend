@@ -1,11 +1,14 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import dynamic from 'next/dynamic';
 import { PageLayout } from '../../components/layout/PageLayout';
+import { PageTitle } from '../../components/lib/Typography';
+import { PageButtonLink } from '../../components/navigation/InternalLink';
+import { ManageTopicTabIndex } from '../../components/topics/ManageTopic';
 import { SubTopicsTreeProps } from '../../components/topics/tree/SubTopicsTree';
 import { SubTopicsTreeData } from '../../components/topics/tree/SubTopicsTreeData';
 import { generateTopicData } from '../../graphql/topics/topics.fragments';
-import { TopicPageInfo, TopicTreePageInfo } from '../RoutesPageInfos';
+import { ManageTopicPageInfo, TopicPageInfo, TopicTreePageInfo } from '../RoutesPageInfos';
 import { GetTopicByKeyTopicTreePageQuery, useGetTopicByKeyTopicTreePageQuery } from './TopicTreePage.generated';
 
 const SubTopicsTree = dynamic<SubTopicsTreeProps>(
@@ -39,12 +42,20 @@ export const TopicTreePage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
   if (!data && !loading) return <Box>Topic not found !</Box>;
   const topic = data?.getTopicByKey || placeholderTopicData;
   return (
-    <PageLayout
-      breadCrumbsLinks={[TopicPageInfo(topic), TopicTreePageInfo(topic)]}
-      title={topic.name + ' - SubTopics'}
-      centerChildren
-      isLoading={loading}
-    >
+    <PageLayout breadCrumbsLinks={[TopicPageInfo(topic), TopicTreePageInfo(topic)]} isLoading={loading}>
+      <Flex>
+        <PageTitle mb={10} mt={10}>
+          <Text color="blue.600" as="span">
+            {topic.name}
+          </Text>
+          - SubTopics Tree
+        </PageTitle>
+      </Flex>
+      <Flex direction="row-reverse" mb={8}>
+        <PageButtonLink pageInfo={ManageTopicPageInfo(topic, ManageTopicTabIndex.SubTopics)}>
+          Manage SubTopics
+        </PageButtonLink>
+      </Flex>
       {topic.subTopics && (
         <SubTopicsTree
           topic={topic}

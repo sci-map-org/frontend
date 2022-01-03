@@ -1,6 +1,7 @@
 // Exist mostly because having pageinfos in Pages creates circular dependencies
 
 import { TopicLinkStyleProps } from '../components/lib/Typography';
+import { ManageTopicTabIndex } from '../components/topics/ManageTopic';
 import { LearningGoalLinkDataFragment } from '../graphql/learning_goals/learning_goals.fragments.generated';
 import { LearningPathDataFragment } from '../graphql/learning_paths/learning_paths.fragments.generated';
 import { ResourceDataFragment } from '../graphql/resources/resources.fragments.generated';
@@ -26,10 +27,14 @@ export const NewTopicPageInfo: PageInfo = {
 };
 
 export const ManageTopicPagePath = (topicKey: string) => `/topics/${topicKey}/manage`;
-export const ManageTopicPageInfo = (topic: TopicLinkDataFragment): PageInfo => ({
+export const ManageTopicPageInfo = (
+  topic: TopicLinkDataFragment,
+  tab: ManageTopicTabIndex = ManageTopicTabIndex.Data
+): PageInfo => ({
   name: `Manage`,
   path: ManageTopicPagePath(topic.key),
   routePath: ManageTopicPagePath('[topicKey]'),
+  query: { tab: tab.toString() },
 });
 
 export const TopicTreePagePath = (topicKey: string) => `/topics/${topicKey}/tree`;
