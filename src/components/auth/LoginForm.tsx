@@ -50,13 +50,11 @@ export const LoginForm: React.FC<{
             as={ResetPasswordPageInfo.path}
             passHref
           >
+            {/* Used rather than PageLink to avoid a circular dependency */}
             <Link color="blue.500" fontSize="xs" fontWeight={400}>
               Forgot password?
             </Link>
           </NextLink>
-          {/* <PageLink pageInfo={ResetPasswordPageInfo} color="blue.500" fontSize="xs" fontWeight={400}>
-            Forgot password?
-          </PageLink> */}
         </Stack>
         <Input
           placeholder="Email"

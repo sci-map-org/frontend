@@ -43,7 +43,7 @@ export const ManageTopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) =>
         />
       }
     >
-      {topic && (
+      {!!topic && (
         <ManageTopic
           topic={topic}
           tab={tabQueryParam || ManageTopicTabIndex.Data}

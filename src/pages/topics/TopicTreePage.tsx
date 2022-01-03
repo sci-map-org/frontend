@@ -1,9 +1,9 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, Image, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import dynamic from 'next/dynamic';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { PageTitle } from '../../components/lib/Typography';
-import { PageButtonLink } from '../../components/navigation/InternalLink';
+import { PageLink } from '../../components/navigation/InternalLink';
 import { ManageTopicTabIndex } from '../../components/topics/ManageTopic';
 import { SubTopicsTreeProps } from '../../components/topics/tree/SubTopicsTree';
 import { SubTopicsTreeData } from '../../components/topics/tree/SubTopicsTreeData';
@@ -42,29 +42,51 @@ export const TopicTreePage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
   if (!data && !loading) return <Box>Topic not found !</Box>;
   const topic = data?.getTopicByKey || placeholderTopicData;
   return (
-    <PageLayout breadCrumbsLinks={[TopicPageInfo(topic), TopicTreePageInfo(topic)]} isLoading={loading}>
+    <PageLayout
+      breadCrumbsLinks={[TopicPageInfo(topic), TopicTreePageInfo(topic)]}
+      isLoading={loading}
+      renderBackgroundImage={
+        <Image
+          position="absolute"
+          src="/images/topostain_green_domain_page.svg"
+          zIndex={-1}
+          right="0"
+          h={{ base: '200px', sm: '240px', md: '320px' }}
+        />
+      }
+    >
       <Flex>
-        <PageTitle mb={10} mt={10}>
+        <PageTitle mb={2} mt={10}>
           <Text color="blue.600" as="span">
             {topic.name}
           </Text>
           - SubTopics Tree
         </PageTitle>
       </Flex>
-      <Flex direction="row-reverse" mb={8}>
-        <PageButtonLink pageInfo={ManageTopicPageInfo(topic, ManageTopicTabIndex.SubTopics)}>
-          Manage SubTopics
-        </PageButtonLink>
+      <Flex direction="row" mb={20}>
+        <PageLink
+          color="gray.700"
+          fontWeight={600}
+          size="sm"
+          variant="outline"
+          pageInfo={ManageTopicPageInfo(topic, ManageTopicTabIndex.SubTopics)}
+          display="flex"
+          alignItems="baseline"
+        >
+          Manage
+        </PageLink>
       </Flex>
       {topic.subTopics && (
-        <SubTopicsTree
-          topic={topic}
-          onUpdated={() => {
-            refetch();
-          }}
-          updatable={false}
-          isLoading={loading}
-        />
+        <Box>
+          <SubTopicsTree
+            topic={topic}
+            onUpdated={() => {
+              refetch();
+            }}
+            updatable={false}
+            isLoading={loading}
+          />
+        </Box>
       )}
     </PageLayout>
   );
