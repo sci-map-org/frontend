@@ -270,6 +270,11 @@ export type GetHomePageDataResults = {
   recommendedLearningPaths: Array<LearningPath>;
 };
 
+export type GetTopLevelTopicsResults = {
+  __typename?: 'GetTopLevelTopicsResults';
+  items: Array<Topic>;
+};
+
 export type GetTopicValidContextsFromDisambiguation = {
   __typename?: 'GetTopicValidContextsFromDisambiguation';
   validContexts?: Maybe<Array<Topic>>;
@@ -284,11 +289,6 @@ export type GetTopicValidContextsFromSameName = {
 export type GetTopicValidContextsResult = {
   __typename?: 'GetTopicValidContextsResult';
   validContexts?: Maybe<Array<Topic>>;
-};
-
-export type GetTopLevelTopicsResults = {
-  __typename?: 'GetTopLevelTopicsResults';
-  items: Array<Topic>;
 };
 
 export type GlobalSearchOptions = {
@@ -642,6 +642,7 @@ export type Mutation = {
   updateTopicContext: Topic;
   updateTopicIsPartOfTopic: TopicIsPartOfTopic;
   updateTopicIsSubTopicOfTopic: TopicIsSubTopicOfTopic;
+  updateTopicTopicTypes: Topic;
   verifyEmailAddress: VerifyEmailResponse;
 };
 
@@ -1033,6 +1034,12 @@ export type MutationUpdateTopicIsSubTopicOfTopicArgs = {
 };
 
 
+export type MutationUpdateTopicTopicTypesArgs = {
+  topicId: Scalars['String'];
+  topicTypesNames: Array<Scalars['String']>;
+};
+
+
 export type MutationVerifyEmailAddressArgs = {
   token: Scalars['String'];
 };
@@ -1076,12 +1083,12 @@ export type Query = {
   getLearningPathByKey: LearningPath;
   getResourceById: Resource;
   getResourceByKey: Resource;
+  getTopLevelTopics: GetTopLevelTopicsResults;
   getTopicById: Topic;
   getTopicByKey: Topic;
   getTopicValidContexts: GetTopicValidContextsResult;
   getTopicValidContextsFromDisambiguation: GetTopicValidContextsFromDisambiguation;
   getTopicValidContextsFromSameName: GetTopicValidContextsFromSameName;
-  getTopLevelTopics: GetTopLevelTopicsResults;
   getUser: User;
   globalSearch: GlobalSearchResults;
   listArticles: ListArticlesResult;
@@ -1090,8 +1097,8 @@ export type Query = {
   searchLearningMaterialTags: Array<LearningMaterialTagSearchResult>;
   searchResources: SearchResourcesResult;
   searchSubTopics: SearchTopicsResult;
-  searchTopics: SearchTopicsResult;
   searchTopicTypes: Array<TopicType>;
+  searchTopics: SearchTopicsResult;
 };
 
 
@@ -1216,14 +1223,14 @@ export type QuerySearchSubTopicsArgs = {
 };
 
 
-export type QuerySearchTopicsArgs = {
-  options: SearchTopicsOptions;
-};
-
-
 export type QuerySearchTopicTypesArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   query: Scalars['String'];
+};
+
+
+export type QuerySearchTopicsArgs = {
+  options: SearchTopicsOptions;
 };
 
 export type RegisterGooglePayload = {
@@ -1280,8 +1287,8 @@ export type Resource = LearningMaterial & {
   rating?: Maybe<Scalars['Float']>;
   seriesParentResource?: Maybe<Resource>;
   showedIn?: Maybe<Array<Topic>>;
-  subResources?: Maybe<Array<Resource>>;
   subResourceSeries?: Maybe<Array<Resource>>;
+  subResources?: Maybe<Array<Resource>>;
   tags?: Maybe<Array<LearningMaterialTag>>;
   type: ResourceType;
   upvotes?: Maybe<Scalars['Int']>;

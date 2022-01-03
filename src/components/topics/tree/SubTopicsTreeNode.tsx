@@ -1,38 +1,25 @@
 import { IconButton } from '@chakra-ui/button';
 import { AddIcon, ExternalLinkIcon, Icon, MinusIcon, SettingsIcon } from '@chakra-ui/icons';
 import { Box, Flex, Stack, Text } from '@chakra-ui/layout';
+import { Tooltip } from '@chakra-ui/react';
+import { BiDuplicate } from '@react-icons/all-files/bi/BiDuplicate';
 import { BiLink } from '@react-icons/all-files/bi/BiLink';
 import { BiUnlink } from '@react-icons/all-files/bi/BiUnlink';
-import { BiDuplicate } from '@react-icons/all-files/bi/BiDuplicate';
-import gql from 'graphql-tag';
 import { isDescendant, NodeRendererProps } from 'react-sortable-tree';
-import { TopicLinkData } from '../../../graphql/topics/topics.fragments';
-import { SubTopicRelationshipType } from '../../../graphql/types';
-import { routerPushToPage } from '../../../pages/PageInfo';
-import { ManageTopicPageInfo, TopicPageInfo } from '../../../pages/RoutesPageInfos';
-import { DeleteButtonWithConfirmation } from '../../lib/buttons/DeleteButtonWithConfirmation';
-import { PageLink } from '../../navigation/InternalLink';
-
-import { SubTopicsTreeNodeDataFragment } from './SubTopicsTreeNode.generated';
-import { getTopicIdFromNodeId } from './SubTopicsTree';
 import {
   useAttachTopicIsPartOfTopicMutation,
   useDetachTopicIsPartOfTopicMutation,
 } from '../../../graphql/topics/topics.operations.generated';
-
-export const SubTopicsTreeNodeData = gql`
-  fragment SubTopicsTreeNodeData on TopicIsSubTopicOfTopic {
-    index
-    relationshipType
-    subTopic {
-      ...TopicLinkData
-      contextTopic {
-        ...TopicLinkData
-      }
-    }
-  }
-  ${TopicLinkData}
-`;
+import { SubTopicRelationshipType } from '../../../graphql/types';
+import { TopicPageInfo } from '../../../pages/RoutesPageInfos';
+import { ButtonWithConfirmationDialog } from '../../lib/buttons/ButtonWithConfirmationDialog';
+import { DeleteButtonWithConfirmation } from '../../lib/buttons/DeleteButtonWithConfirmation';
+import { PageLink } from '../../navigation/InternalLink';
+import { TopicLevelViewer } from '../fields/TopicLevel';
+import { TopicTypesViewer } from '../fields/TopicTypeViewer';
+import { ManageTopicModal } from '../ManageTopic';
+import { getTopicIdFromNodeId } from './SubTopicsTree';
+import { SubTopicsTreeNodeDataFragment } from './SubTopicsTreeNodeData.generated';
 
 interface SubTopicsTreeNodeProps extends NodeRendererProps {
   baseTopicNodeId: string;
@@ -127,34 +114,56 @@ export const SubTopicsTreeNode: React.FC<SubTopicsTreeNodeProps> = ({
               <ExternalLinkIcon />
             </Stack>
           </PageLink>
-          <Stack direction="row" spacing={1}>
-            {nodeTopicRelation.relationshipType === SubTopicRelationshipType.IsPartOf && (
-              <Icon as={BiLink} color="blue.500" />
+          <Flex direction="row" justifyContent="space-between" pr="2px" pb="1px">
+            {(nodeTopicRelation.relationshipType === SubTopicRelationshipType.IsPartOf ||
+              !!nodeTopicRelation.subTopic.topicTypes?.length) && (
+              <Flex direction="row" {...(typeof nodeTopicRelation.subTopic.level === 'number' && { mr: '8px' })}>
+                {nodeTopicRelation.relationshipType === SubTopicRelationshipType.IsPartOf && (
+                  <Icon as={BiLink} mr={1} color="blue.500" />
+                )}
+                <TopicTypesViewer topicTypes={nodeTopicRelation.subTopic.topicTypes || []} size="sm" maxShown={2} />
+              </Flex>
             )}
-          </Stack>
+            <TopicLevelViewer level={nodeTopicRelation.subTopic.level || undefined} size="sm" />
+          </Flex>
         </Stack>
         {node.updatable && (
           <Flex flexDir="column" justifyContent="space-between" pl={2}>
-            <IconButton
-              aria-label="manage topic"
-              size="xs"
-              fontSize="1em"
-              isRound
-              variant="ghost"
-              icon={<SettingsIcon />}
-              onClick={() => routerPushToPage(ManageTopicPageInfo(nodeTopicRelation.subTopic))}
+            <ManageTopicModal
+              topicKey={nodeTopicRelation.subTopic.key}
+              renderButton={(openModal) => (
+                <Tooltip label={`Manage ${nodeTopicRelation.subTopic.name}`}>
+                  <IconButton
+                    aria-label={`Manage ${nodeTopicRelation.subTopic.name}`}
+                    size="xs"
+                    fontSize="1em"
+                    isRound
+                    variant="ghost"
+                    icon={<SettingsIcon />}
+                    onClick={() => openModal()}
+                  />
+                </Tooltip>
+              )}
             />
             {nodeTopicRelation.relationshipType === SubTopicRelationshipType.IsPartOf ? (
-              <DeleteButtonWithConfirmation
-                icon={<BiUnlink />}
-                size="xs"
-                isRound
-                fontSize="1em"
-                variant="ghost"
-                mode="iconButton"
-                modalBodyText={`Remove virtual link "${nodeTopicRelation.subTopic.name}" ?`}
-                modalHeaderText={`Detach "${nodeTopicRelation.subTopic.name}" ?`}
+              <ButtonWithConfirmationDialog
+                renderButton={(openDialog) => (
+                  <Tooltip label={`Remove virtual copy (detach "Also Part Of" relationship) ?`}>
+                    <IconButton
+                      aria-label={`Remove virtual copy (detach "Also Part Of" relationship) ?`}
+                      icon={<BiUnlink />}
+                      size="xs"
+                      isRound
+                      fontSize="1em"
+                      variant="ghost"
+                      onClick={openDialog}
+                    />
+                  </Tooltip>
+                )}
+                dialogBodyText={`Remove virtual copy "${nodeTopicRelation.subTopic.name}" ?`}
+                dialogHeaderText={`Detach "${nodeTopicRelation.subTopic.name}" ?`}
                 confirmButtonText="Detach"
+                confirmButtonColorScheme="red"
                 onConfirmation={async () => {
                   await detachTopicIsPartOfTopicMutation({
                     variables: {
@@ -168,25 +177,27 @@ export const SubTopicsTreeNode: React.FC<SubTopicsTreeNodeProps> = ({
                 }}
               />
             ) : (
-              <IconButton
-                aria-label="create virtual"
-                icon={<BiDuplicate />}
-                size="xs"
-                isRound
-                fontSize="1em"
-                variant="ghost"
-                onClick={() => {
-                  attachTopicIsPartOfTopicMutation({
-                    variables: {
-                      partOfTopicId: getTopicIdFromNodeId(
-                        path.length > 1 ? (path[path.length - 2] as string) : baseTopicNodeId
-                      ),
-                      subTopicId: nodeTopicRelation.subTopic._id,
-                      payload: { index: nodeTopicRelation.index + 1 },
-                    },
-                  });
-                }}
-              />
+              <Tooltip label={`Create virtual copy (new "Also Part Of" relationship) ?`}>
+                <IconButton
+                  aria-label={`Create virtual copy (new "Also Part Of" relationship) ?`}
+                  icon={<BiDuplicate />}
+                  size="xs"
+                  isRound
+                  fontSize="1em"
+                  variant="ghost"
+                  onClick={() => {
+                    attachTopicIsPartOfTopicMutation({
+                      variables: {
+                        partOfTopicId: getTopicIdFromNodeId(
+                          path.length > 1 ? (path[path.length - 2] as string) : baseTopicNodeId
+                        ),
+                        subTopicId: nodeTopicRelation.subTopic._id,
+                        payload: { index: nodeTopicRelation.index + 1 },
+                      },
+                    });
+                  }}
+                />
+              </Tooltip>
             )}
           </Flex>
         )}

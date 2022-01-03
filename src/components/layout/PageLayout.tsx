@@ -33,7 +33,46 @@ interface PageLayoutProps {
   isLoading?: boolean;
   accessRule?: RoleAccessAllowedRule | boolean;
   marginSize?: keyof typeof marginSizesMapping;
+  renderBackgroundImage?: ReactNode;
 }
+export const PageLayout: React.FC<PageLayoutProps> = ({
+  children,
+  breadCrumbsLinks,
+  title,
+  renderTopLeft,
+  renderTopRight,
+  renderLeft,
+  renderRight,
+  centerChildren,
+  isLoading,
+  accessRule,
+  marginSize = 'md',
+  renderBackgroundImage,
+  ...baseLayoutProps
+}) => {
+  return (
+    <BasePageLayout
+      renderLeft={renderLeft}
+      renderRight={renderRight}
+      centerChildren={centerChildren}
+      accessRule={accessRule}
+      marginSize={marginSize}
+      renderBackgroundImage={renderBackgroundImage}
+      renderHeader={(layoutProps) => (
+        <BasicPageHeader
+          breadCrumbsLinks={breadCrumbsLinks}
+          title={title}
+          renderTopLeft={renderTopLeft}
+          renderTopRight={renderTopRight}
+          layoutProps={layoutProps}
+          isLoading={isLoading}
+        />
+      )}
+    >
+      {children}
+    </BasePageLayout>
+  );
+};
 
 interface BasePageLayout {
   renderLeft?: ReactNode;
@@ -42,6 +81,7 @@ interface BasePageLayout {
   centerChildren?: boolean;
   accessRule?: RoleAccessAllowedRule | boolean;
   marginSize?: keyof typeof marginSizesMapping;
+  renderBackgroundImage?: ReactNode;
 }
 export const BasePageLayout: React.FC<BasePageLayout> = ({
   renderLeft,
@@ -50,6 +90,7 @@ export const BasePageLayout: React.FC<BasePageLayout> = ({
   centerChildren,
   accessRule,
   marginSize = 'md',
+  renderBackgroundImage,
   children,
 }) => {
   const { currentUser } = useCurrentUser();
@@ -62,7 +103,14 @@ export const BasePageLayout: React.FC<BasePageLayout> = ({
       </Flex>
     );
   return (
-    <Flex direction="column" alignItems="stretch" pb="100px" maxWidth={{ base: '100%', md: '1800px' }}>
+    <Flex
+      direction="column"
+      alignItems="stretch"
+      pb="100px"
+      maxWidth={{ base: '100%', md: '1800px' }}
+      position="relative"
+    >
+      {renderBackgroundImage}
       {renderHeader && renderHeader(marginSizesMapping[marginSize])}
       <Flex direction="row" justifyContent="stretch" minH="100%" px={marginSizesMapping[marginSize].px}>
         {renderLeft && <Box>{renderLeft}</Box>}
@@ -117,42 +165,5 @@ const BasicPageHeader: React.FC<BasicPageHeaderProps> = ({
         </Flex>
       )}
     </Flex>
-  );
-};
-
-export const PageLayout: React.FC<PageLayoutProps> = ({
-  children,
-  breadCrumbsLinks,
-  title,
-  renderTopLeft,
-  renderTopRight,
-  renderLeft,
-  renderRight,
-  centerChildren,
-  isLoading,
-  accessRule,
-  marginSize = 'md',
-  ...baseLayoutProps
-}) => {
-  return (
-    <BasePageLayout
-      renderLeft={renderLeft}
-      renderRight={renderRight}
-      centerChildren={centerChildren}
-      accessRule={accessRule}
-      marginSize={marginSize}
-      renderHeader={(layoutProps) => (
-        <BasicPageHeader
-          breadCrumbsLinks={breadCrumbsLinks}
-          title={title}
-          renderTopLeft={renderTopLeft}
-          renderTopRight={renderTopRight}
-          layoutProps={layoutProps}
-          isLoading={isLoading}
-        />
-      )}
-    >
-      {children}
-    </BasePageLayout>
   );
 };

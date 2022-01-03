@@ -14,7 +14,7 @@ import {
 import interpolate from 'color-interpolate';
 import { useMemo, useState } from 'react';
 import { theme } from '../../../theme/theme';
-import { Field } from '../../lib/Field';
+import { Field } from '../../lib/fields/Field';
 
 export enum TopicLevelValue {
   Beginner = 'beginner',
@@ -30,12 +30,37 @@ const topicLevelColorMap = interpolate([
   theme.colors.red[400],
 ]);
 
+const sizesMapping = {
+  sm: {
+    fontWeight: 800,
+    borderWidth: '2px',
+    px: '3px',
+    py: 0,
+    borderRadius: '2px',
+    fontSize: '11px',
+    lineHeight: '13px',
+  },
+  md: {
+    fontWeight: 800,
+    borderWidth: 2,
+    px: 2,
+    borderRadius: 2,
+    fontSize: 'md',
+  },
+};
 interface TopicLevelViewerProps {
   level?: number;
   topicId?: string;
+  showNotApplicable?: boolean;
+  size?: 'sm' | 'md';
 }
 
-export const TopicLevelViewer: React.FC<TopicLevelViewerProps> = ({ level, topicId }) => {
+export const TopicLevelViewer: React.FC<TopicLevelViewerProps> = ({
+  level,
+  topicId,
+  showNotApplicable,
+  size = 'md',
+}) => {
   const value = useMemo(() => {
     if (level === undefined) return null;
     if (level >= 0 && level <= 25) return TopicLevelValue.Beginner;
@@ -45,74 +70,74 @@ export const TopicLevelViewer: React.FC<TopicLevelViewerProps> = ({ level, topic
     throw new Error(`Invalid topic level value: ${level} for topic ${topicId}`);
   }, [level]);
 
-  if (level === undefined || !value) return null;
+  if (level === undefined || !value)
+    return showNotApplicable ? (
+      <Text fontSize="md" fontWeight={600} color="gray.500" mb="2px">
+        Not applicable
+      </Text>
+    ) : null;
 
   return (
-    <Text
-      color={topicLevelColorMap(level / 100)}
-      borderColor={topicLevelColorMap(level / 100)}
-      fontWeight={800}
-      borderWidth={2}
-      px={2}
-      borderRadius={2}
-    >
+    <Text color={topicLevelColorMap(level / 100)} borderColor={topicLevelColorMap(level / 100)} {...sizesMapping[size]}>
       {value.toLocaleUpperCase()}
     </Text>
   );
 };
 
-export const TopicLevelField: React.FC<{
+export const TOPIC_LEVEL_DEFAULT_VALUE = 35;
+
+export const TopicLevelEditor: React.FC<{
   value: number | null;
   onChange: (value: number | null) => void;
   w?: FlexProps['w'];
 }> = ({ value, onChange, w }) => {
-  const [sliderValue, setSliderValue] = useState<number | null>(value);
-  return (
-    <Field label="Level">
-      <Flex direction="column" alignItems="stretch" w={w}>
-        <Slider
-          defaultValue={value || undefined}
-          min={0}
-          max={100}
-          aria-label="level"
-          onChange={(val) => {
-            setSliderValue(val);
-            onChange(val);
-          }}
-          isDisabled={value === null}
-          position="relative"
-        >
-          {value !== null && (
-            <Text position="absolute" fontSize="10px" fontWeight={400} color="gray.400" right={0} top={-3}>
-              {value}/100
-            </Text>
-          )}
-          <SliderTrack>
-            <SliderFilledTrack bgColor={value !== null ? topicLevelColorMap(value / 100) : 'gray.500'} />
-          </SliderTrack>
-          <SliderThumb />
-        </Slider>
+  const [sliderValue, setSliderValue] = useState<number>(value || TOPIC_LEVEL_DEFAULT_VALUE);
 
-        <Flex justifyContent="space-between" mt={1}>
-          <Box>
-            <TopicLevelViewer level={value === null ? undefined : value} />
-          </Box>
-          <FormControl display="flex" alignItems="baseline" w="unset" h="28px">
-            <FormLabel htmlFor="level-not-applicable-switch" fontSize="md" fontWeight={600} color="gray.600" mb="2px">
-              Not applicable
-            </FormLabel>
-            <Switch
-              id="level-not-applicable-switch"
-              size="sm"
-              isChecked={value === null}
-              onChange={() => {
-                if (value === null) onChange(sliderValue);
-                else onChange(null);
-              }}
-            />
-          </FormControl>
-        </Flex>
+  return (
+    <Flex direction="column" alignItems="stretch" w={w}>
+      <Slider
+        defaultValue={value || undefined}
+        value={sliderValue}
+        min={0}
+        max={100}
+        aria-label="level"
+        onChange={(val) => {
+          setSliderValue(val);
+          onChange(val);
+        }}
+        isDisabled={value === null}
+        position="relative"
+      >
+        {value !== null && (
+          <Text position="absolute" fontSize="10px" fontWeight={400} color="gray.400" right={0} top={-3}>
+            {value}/100
+          </Text>
+        )}
+        <SliderTrack>
+          <SliderFilledTrack bgColor={value !== null ? topicLevelColorMap(value / 100) : 'gray.500'} />
+        </SliderTrack>
+        <SliderThumb />
+      </Slider>
+
+      <Flex justifyContent="space-between" mt={1}>
+        <Box>
+          <TopicLevelViewer level={value === null ? undefined : value} />
+        </Box>
+        <FormControl display="flex" alignItems="baseline" w="unset" h="28px">
+          <FormLabel htmlFor="level-not-applicable-switch" fontSize="md" fontWeight={600} color="gray.600" mb="2px">
+            Not applicable
+          </FormLabel>
+          <Switch
+            id="level-not-applicable-switch"
+            size="sm"
+            isChecked={value === null}
+            onChange={() => {
+              if (value === null) onChange(sliderValue);
+              else onChange(null);
+            }}
+          />
+        </FormControl>
       </Flex>
-    </Field>
+    </Flex>
   );
 };

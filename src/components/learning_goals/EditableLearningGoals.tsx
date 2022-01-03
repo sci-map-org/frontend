@@ -6,7 +6,7 @@ import { EditIcon } from '@chakra-ui/icons';
 import { LearningGoalSelector } from './LearningGoalSelector';
 import { LearningGoalDataFragment } from '../../graphql/learning_goals/learning_goals.fragments.generated';
 import { LearningGoalType } from '../../graphql/types';
-import { useHandleClickOutside } from '../../hooks/useHanldeClickOutside';
+import { useHandleClickOutside } from '../../hooks/useHandleClickOutside';
 
 interface EditableLearningGoalsProps {
   learningGoals: LearningGoalBadgeDataFragment[];

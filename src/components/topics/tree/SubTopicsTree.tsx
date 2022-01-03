@@ -28,15 +28,13 @@ import {
 } from '../../../graphql/topics/topics.operations.generated';
 import { SubTopicRelationshipType } from '../../../graphql/types';
 import { RoleAccess } from '../../auth/RoleAccess';
+import { TopicIcon } from '../../lib/icons/TopicIcon';
 import { SelectContextTopic } from '../fields/TopicNameField';
 import { NewTopicModal } from './../NewTopic';
-import {
-  GetTopicValidContextsQuery,
-  GetTopicValidContextsQueryVariables,
-  SubTopicsTreeDataFragment,
-} from './SubTopicsTree.generated';
-import { SubTopicsTreeNode, SubTopicsTreeNodeData } from './SubTopicsTreeNode';
-import { SubTopicsTreeNodeDataFragment } from './SubTopicsTreeNode.generated';
+import { GetTopicValidContextsQuery, GetTopicValidContextsQueryVariables } from './SubTopicsTree.generated';
+import { SubTopicsTreeDataFragment } from './SubTopicsTreeData.generated';
+import { SubTopicsTreeNode } from './SubTopicsTreeNode';
+import { SubTopicsTreeNodeDataFragment } from './SubTopicsTreeNodeData.generated';
 
 export const getTopicValidContexts = gql`
   query getTopicValidContexts($parentTopicId: String!, $topicId: String!) {
@@ -49,26 +47,6 @@ export const getTopicValidContexts = gql`
   ${TopicLinkData}
 `;
 
-export const SubTopicsTreeData = gql`
-  fragment SubTopicsTreeData on Topic {
-    ...TopicLinkData
-    subTopics {
-      ...SubTopicsTreeNodeData
-      subTopic {
-        subTopics {
-          ...SubTopicsTreeNodeData
-          subTopic {
-            subTopics {
-              ...SubTopicsTreeNodeData
-            }
-          }
-        }
-      }
-    }
-  }
-  ${TopicLinkData}
-  ${SubTopicsTreeNodeData}
-`;
 export interface SubTopicsTreeProps {
   topic: SubTopicsTreeDataFragment;
   onUpdated: () => void;
@@ -134,9 +112,8 @@ export const SubTopicsTree: React.FC<SubTopicsTreeProps> = ({ topic, onUpdated, 
     [baseTopicNodeId]
   );
 
-  const [selectValidContextModalProps, setSelectValidContextModalProps] = useState<
-    Omit<SelectValidContextModalProps, 'onSelectValidContext' | 'isOpen' | 'onCancel'>
-  >();
+  const [selectValidContextModalProps, setSelectValidContextModalProps] =
+    useState<Omit<SelectValidContextModalProps, 'onSelectValidContext' | 'isOpen' | 'onCancel'>>();
   const client = useApolloClient();
 
   const transformSubTopics = (subTopicItems: SubTopicItem[], canUpdate: boolean): TopicTreeItem[] => {
@@ -320,14 +297,62 @@ export const SubTopicsTree: React.FC<SubTopicsTreeProps> = ({ topic, onUpdated, 
 
   return (
     <>
-      <Stack spacing={4} width="1300px">
+      <Stack spacing={4} width="1200px">
         {isLoading || isUpdating ? (
           <Center h="400px" w="100%">
             <Spinner size="xl" />
           </Center>
         ) : (
           treeData.length && (
-            <Box h={`${count * 72 + 10}px`} w="100%">
+            <Box h={`${count * 72 + 10}px`} w="100%" position="relative">
+              <Box overflow="visible" position="absolute" right={4} top={4} h="100%">
+                <Stack spacing={8} right={4} top={4} pt={4} position="sticky" w="200px" bgColor="white" zIndex={3}>
+                  {updatable && treeData.length && (
+                    <RoleAccess accessRule="contributorOrAdmin">
+                      <Stack direction="column" spacing={3}>
+                        <Button
+                          colorScheme="teal"
+                          isDisabled={!pendingUpdates.length}
+                          onClick={() => runPendingUpdates()}
+                          flexGrow={1}
+                        >
+                          Save
+                          {!!pendingUpdates.length &&
+                            ` (${pendingUpdates.length} change${pendingUpdates.length === 1 ? '' : 's'})`}
+                        </Button>
+                        <Button
+                          isDisabled={!pendingUpdates.length}
+                          onClick={() => {
+                            setPendingUpdates([]);
+                            buildTreeData();
+                          }}
+                          colorScheme="red"
+                          variant="outline"
+                          flexGrow={1}
+                        >
+                          Cancel
+                        </Button>
+                      </Stack>
+                    </RoleAccess>
+                  )}
+                  <RoleAccess accessRule="loggedInUser">
+                    <NewTopicModal
+                      parentTopic={topic}
+                      renderButton={(openModal) => (
+                        <Button
+                          colorScheme="blue"
+                          onClick={() => openModal()}
+                          variant="solid"
+                          leftIcon={<TopicIcon boxSize="20px" />}
+                        >
+                          Add SubTopic
+                        </Button>
+                      )}
+                      onCreated={() => onUpdated()}
+                    />
+                  </RoleAccess>
+                </Stack>
+              </Box>
               <SortableTree
                 treeData={treeData}
                 rowHeight={72}
@@ -406,45 +431,6 @@ export const SubTopicsTree: React.FC<SubTopicsTreeProps> = ({ topic, onUpdated, 
             </Box>
           )
         )}
-        <Stack spacing={6} pt={4}>
-          {updatable && treeData.length && (
-            <RoleAccess accessRule="contributorOrAdmin">
-              <Flex justifyContent="space-between">
-                <Button
-                  w="45%"
-                  isDisabled={!pendingUpdates.length}
-                  onClick={() => {
-                    setPendingUpdates([]);
-                    buildTreeData();
-                  }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  w="45%"
-                  colorScheme="blue"
-                  isDisabled={!pendingUpdates.length}
-                  onClick={() => runPendingUpdates()}
-                >
-                  Save
-                  {!!pendingUpdates.length &&
-                    ` (${pendingUpdates.length} change${pendingUpdates.length === 1 ? '' : 's'})`}
-                </Button>
-              </Flex>
-            </RoleAccess>
-          )}
-          <RoleAccess accessRule="loggedInUser">
-            <NewTopicModal
-              parentTopic={topic}
-              renderButton={(openModal) => (
-                <Button colorScheme="blue" onClick={() => openModal()} variant="outline">
-                  + Add SubTopic
-                </Button>
-              )}
-              onCreated={() => onUpdated()}
-            />
-          </RoleAccess>
-        </Stack>
       </Stack>
       {selectValidContextModalProps && (
         <SelectValidContextModal

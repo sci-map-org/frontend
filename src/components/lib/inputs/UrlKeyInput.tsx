@@ -20,6 +20,9 @@ interface UrlKeyInputProps {
   value: string;
   availability: UrlKeyAvailability;
 }
+/**
+ * Deprecated ?
+ */
 export const UrlKeyInput: React.FC<UrlKeyInputProps> = ({
   size,
   placeholder,

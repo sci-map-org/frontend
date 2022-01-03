@@ -1,4 +1,4 @@
-import { Heading, HeadingProps, Text, TextProps } from '@chakra-ui/layout';
+import { Heading, HeadingProps, Text, TextProps, LinkProps } from '@chakra-ui/layout';
 
 export const PageTitle: React.FC<HeadingProps> = ({ children, ...props }) => {
   return (
@@ -51,4 +51,20 @@ export const FormFieldHelperText: React.FC<TextProps> = ({ children, ...props })
       {children}
     </Text>
   );
+};
+
+export const TopicDescriptionStyleProps: Pick<TextProps, 'fontSize' | 'color' | 'fontWeight'> = {
+  fontWeight: 500,
+  color: 'gray.700',
+  fontSize: '15px',
+};
+
+export const TopicLinkStyleProps: {
+  [key in 'topicName' | 'contextName']: Pick<LinkProps, 'color' | 'fontWeight'>;
+} = {
+  topicName: {
+    fontWeight: 700,
+    color: 'gray.700',
+  },
+  contextName: { fontWeight: 700, color: 'gray.500' },
 };

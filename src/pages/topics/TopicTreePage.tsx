@@ -1,13 +1,14 @@
-import { Box, Flex, Stack } from '@chakra-ui/react';
+import { Box, Flex, Image, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import dynamic from 'next/dynamic';
-import { useMemo } from 'react';
 import { PageLayout } from '../../components/layout/PageLayout';
-import { SubTopicsTreeData, SubTopicsTreeProps } from '../../components/topics/tree/SubTopicsTree';
+import { PageTitle } from '../../components/lib/Typography';
+import { PageLink } from '../../components/navigation/InternalLink';
+import { ManageTopicTabIndex } from '../../components/topics/ManageTopic';
+import { SubTopicsTreeProps } from '../../components/topics/tree/SubTopicsTree';
+import { SubTopicsTreeData } from '../../components/topics/tree/SubTopicsTreeData';
 import { generateTopicData } from '../../graphql/topics/topics.fragments';
-import { UserRole } from '../../graphql/types';
-import { useCurrentUser } from '../../graphql/users/users.hooks';
-import { TopicPageInfo, TopicTreePageInfo } from '../RoutesPageInfos';
+import { ManageTopicPageInfo, TopicPageInfo, TopicTreePageInfo } from '../RoutesPageInfos';
 import { GetTopicByKeyTopicTreePageQuery, useGetTopicByKeyTopicTreePageQuery } from './TopicTreePage.generated';
 
 const SubTopicsTree = dynamic<SubTopicsTreeProps>(
@@ -22,6 +23,7 @@ const SubTopicsTree = dynamic<SubTopicsTreeProps>(
 export const getTopicByKeyTopicTreePage = gql`
   query getTopicByKeyTopicTreePage($topicKey: String!) {
     getTopicByKey(topicKey: $topicKey) {
+      _id
       ...SubTopicsTreeData
     }
   }
@@ -42,19 +44,49 @@ export const TopicTreePage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
   return (
     <PageLayout
       breadCrumbsLinks={[TopicPageInfo(topic), TopicTreePageInfo(topic)]}
-      title={topic.name + ' - SubTopics'}
-      centerChildren
       isLoading={loading}
-    >
-      {topic.subTopics && (
-        <SubTopicsTree
-          topic={topic}
-          onUpdated={() => {
-            refetch();
-          }}
-          updatable={false}
-          isLoading={loading}
+      renderBackgroundImage={
+        <Image
+          position="absolute"
+          src="/images/topostain_green_domain_page.svg"
+          zIndex={-1}
+          right="0"
+          h={{ base: '200px', sm: '240px', md: '320px' }}
         />
+      }
+    >
+      <Flex>
+        <PageTitle mb={2} mt={10}>
+          <Text color="blue.600" as="span">
+            {topic.name}
+          </Text>
+          - SubTopics Tree
+        </PageTitle>
+      </Flex>
+      <Flex direction="row" mb={20}>
+        <PageLink
+          color="gray.700"
+          fontWeight={600}
+          size="sm"
+          variant="outline"
+          pageInfo={ManageTopicPageInfo(topic, ManageTopicTabIndex.SubTopics)}
+          display="flex"
+          alignItems="baseline"
+        >
+          Manage
+        </PageLink>
+      </Flex>
+      {topic.subTopics && (
+        <Box>
+          <SubTopicsTree
+            topic={topic}
+            onUpdated={() => {
+              refetch();
+            }}
+            updatable={false}
+            isLoading={loading}
+          />
+        </Box>
       )}
     </PageLayout>
   );

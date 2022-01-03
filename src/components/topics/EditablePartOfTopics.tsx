@@ -43,8 +43,8 @@ export const StatelessEditablePartOfTopics: React.FC<StatelessEditablePartOfTopi
     <Stack direction="column" alignItems={align === 'right' ? 'flex-end' : 'center'} spacing={2}>
       <Stack direction="row" alignItems="flex-end">
         <DirectionSignIcon boxSize="24px" />
-        <Text fontWeight={600} fontSize="lg" color="gray.700">
-          {partOfTopics && partOfTopics.length ? 'Also Part Of' : 'No Part Of'}
+        <Text fontWeight={600} fontSize="lg" color="gray.700" whiteSpace="nowrap">
+          {partOfTopics && partOfTopics.length ? 'Also Part Of' : 'Not Part of other topics'}
         </Text>
       </Stack>
       {partOfTopics && (
