@@ -1,6 +1,7 @@
 import { Box, Flex, Image, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import dynamic from 'next/dynamic';
+import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { PageTitle } from '../../components/lib/Typography';
 import { PageLink } from '../../components/navigation/InternalLink';
@@ -64,17 +65,19 @@ export const TopicTreePage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
         </PageTitle>
       </Flex>
       <Flex direction="row" mb={20}>
-        <PageLink
-          color="gray.700"
-          fontWeight={600}
-          size="sm"
-          variant="outline"
-          pageInfo={ManageTopicPageInfo(topic, ManageTopicTabIndex.SubTopics)}
-          display="flex"
-          alignItems="baseline"
-        >
-          Manage
-        </PageLink>
+        <RoleAccess accessRule="contributorOrAdmin">
+          <PageLink
+            color="gray.700"
+            fontWeight={600}
+            size="sm"
+            variant="outline"
+            pageInfo={ManageTopicPageInfo(topic, ManageTopicTabIndex.SubTopics)}
+            display="flex"
+            alignItems="baseline"
+          >
+            Manage
+          </PageLink>
+        </RoleAccess>
       </Flex>
       {topic.subTopics && (
         <Box>
