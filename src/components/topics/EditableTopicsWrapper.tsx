@@ -1,10 +1,9 @@
-import { EditIcon } from '@chakra-ui/icons';
-import { Flex, IconButton, Stack, Tooltip, Wrap, WrapItem } from '@chakra-ui/react';
+import { Flex, Link, Stack, Tooltip, Wrap, WrapItem } from '@chakra-ui/react';
 import { useRef, useState } from 'react';
 import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import { useHandleClickOutside } from '../../hooks/useHandleClickOutside';
+import { EditLinkStyleProps } from '../lib/Typography';
 import { TopicBadge } from './TopicBadge';
-
 import { TopicSelector } from './TopicSelector';
 
 interface EditableTopicsWrapperProps {
@@ -54,19 +53,16 @@ export const EditableTopicsWrapper: React.FC<EditableTopicsWrapperProps> = ({
         <TopicSelector placeholder={inputPlaceholder || `Add Topic...`} onSelect={(topic) => onAdded(topic)} />
       )}
       {editable && !editMode && (
-        <Tooltip hasArrow label={topics.length ? `Add or remove topics` : `Add topics`}>
-          <IconButton
-            alignSelf="center"
-            isDisabled={isLoading}
-            size="xs"
-            variant="ghost"
-            aria-label="add topic"
-            onClick={(e) => {
-              setEditMode(true);
-            }}
-            icon={<EditIcon />}
-          />
-        </Tooltip>
+        <Link
+          alignSelf="center"
+          isDisabled={isLoading}
+          onClick={(e) => {
+            setEditMode(true);
+          }}
+          {...EditLinkStyleProps}
+        >
+          edit
+        </Link>
       )}
     </Flex>
   );

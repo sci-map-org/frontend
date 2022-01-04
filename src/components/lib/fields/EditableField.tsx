@@ -1,5 +1,6 @@
 import { Button, Flex, Link, Stack } from '@chakra-ui/react';
 import { ReactNode, useRef, useState } from 'react';
+import { EditLinkStyleProps } from '../Typography';
 import { Field, FieldProps } from './Field';
 
 interface EditableFieldProps extends Omit<FieldProps, 'renderRightOfLabel'> {
@@ -64,7 +65,7 @@ export const EditableField: React.FC<EditableFieldProps> = ({
       {...props}
       renderRightOfLabel={
         !editMode && (
-          <Link color="blue.500" mb="8px" fontSize="sm" onClick={() => setEditMode(true)} ml="2px">
+          <Link {...EditLinkStyleProps} mb="8px" onClick={() => setEditMode(true)} ml="2px">
             edit
           </Link>
         )

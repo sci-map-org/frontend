@@ -68,3 +68,8 @@ export const TopicLinkStyleProps: {
   },
   contextName: { fontWeight: 700, color: 'gray.500' },
 };
+
+export const EditLinkStyleProps: Pick<LinkProps, 'color' | 'fontSize'> = {
+  color: 'blue.500',
+  fontSize: 'sm',
+};
