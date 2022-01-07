@@ -139,12 +139,14 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
           color="blackAlpha.800"
           backgroundImage="linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0.7), rgba(255,255,255,0.7), rgba(255,255,255,0.1))"
         >
-          Learn <Text as="span">{topic.name}</Text>
+          <PageTitle>{topic.name}</PageTitle>
         </Heading>
       }
       renderBlockBelowTitle={
         <>
-          <TopicSubHeader topic={topic} size="md" />
+          <Box pt={2} pb={2}>
+            <TopicSubHeader topic={topic} size="md" mt={2} />
+          </Box>
           {/* TODO topic tree page */}
           {/* <Skeleton isLoaded={!loading}>
             <PageLink

@@ -14,12 +14,12 @@ const sizesMapping = {
     borderRadius: 2,
   },
   md: {
-    px: '6px',
-    fontSize: '17px',
+    px: '5px',
+    fontSize: '16px',
     fontWeight: 500,
     lineHeight: '1.25em',
     pt: '1px',
-    pb: '2px',
+    pb: '1px',
     borderRadius: 2,
   },
 };
@@ -96,21 +96,21 @@ export const TopicTypesViewer: React.FC<TopicTypesViewerProps> = ({
           whiteSpace="nowrap"
         />
       ))}
-      <Box position="relative">
-        {isHover && !!maxShown && maxShown < topicTypes.length && (
-          <Stack direction="row" position="absolute" bgColor="white" zIndex={2}>
-            {topicTypes.slice(maxShown, topicTypes.length).map((topicType, idx) => (
-              <TopicTypeViewer
-                key={topicType.name}
-                topicType={topicType}
-                size={size}
-                {...(onClick && { onClick: () => onClick(topicType) })}
-                shade={shade}
-              />
-            ))}
-          </Stack>
-        )}
-        {!!maxShown && maxShown < topicTypes.length && (
+      {!!maxShown && maxShown < topicTypes.length && (
+        <Box position="relative">
+          {isHover && (
+            <Stack direction="row" position="absolute" bgColor="white" zIndex={2}>
+              {topicTypes.slice(maxShown, topicTypes.length).map((topicType, idx) => (
+                <TopicTypeViewer
+                  key={topicType.name}
+                  topicType={topicType}
+                  size={size}
+                  {...(onClick && { onClick: () => onClick(topicType) })}
+                  shade={shade}
+                />
+              ))}
+            </Stack>
+          )}
           <Text
             color="white"
             bgGradient={
@@ -136,8 +136,8 @@ export const TopicTypesViewer: React.FC<TopicTypesViewerProps> = ({
           >
             +{topicTypes.length - maxShown}
           </Text>
-        )}
-      </Box>
+        </Box>
+      )}
     </Stack>
   );
 };
