@@ -1,4 +1,17 @@
-import { Button, Center, Flex, Heading, Link, Stack, Text, Textarea, TextProps } from '@chakra-ui/react';
+import {
+  Button,
+  Center,
+  Flex,
+  FormControl,
+  FormErrorMessage,
+  FormHelperText,
+  Heading,
+  Link,
+  Stack,
+  Text,
+  Textarea,
+  TextProps,
+} from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useEffect, useRef, useState } from 'react';
 import { PulledDescription } from '../../../graphql/types';
@@ -99,11 +112,12 @@ export const pullTopicDescriptions = gql`
   }
 `;
 
+export const TOPIC_DESCRIPTION_MAX_LENGTH = 500;
+
 export const TopicDescriptionField: React.FC<{
-  // size?: 'sm' | 'md' | 'lg';
-  // noOfLines?: number;
   value?: string | null;
   onChange: (value: string) => void;
+  isInvalid?: boolean;
   pullDescriptionsQueryData?: { name: string };
   onSelectPulledDescription: (pulledDescription: PulledDescription) => void;
   placeholder?: string;
@@ -111,6 +125,7 @@ export const TopicDescriptionField: React.FC<{
 }> = ({
   value,
   onChange,
+  isInvalid,
   onSelectPulledDescription,
   pullDescriptionsQueryData,
   placeholder = 'Topic description...',
@@ -131,6 +146,7 @@ export const TopicDescriptionField: React.FC<{
     <Field
       label="Description"
       w={w}
+      isInvalid={isInvalid}
       renderTopRight={
         pullDescriptionsQueryData && (
           <Button
@@ -155,15 +171,20 @@ export const TopicDescriptionField: React.FC<{
       }
     >
       <Flex direction="row" justifyContent="space-between" alignItems="stretch">
-        <Textarea
-          placeholder={placeholder}
-          minH="260px"
-          h="unset"
-          value={value || ''}
-          onChange={(e) => onChange(e.target.value)}
-          {...(pulledDescriptions && { w: '50%' })}
-          {...TopicDescriptionStyleProps}
-        />
+        <FormControl {...(pulledDescriptions && { w: '50%' })}>
+          <Textarea
+            placeholder={placeholder}
+            minH="260px"
+            h="unset"
+            isInvalid={!!isInvalid}
+            value={value || ''}
+            onChange={(e) => onChange(e.target.value)}
+            {...TopicDescriptionStyleProps}
+          />
+          <FormHelperText textAlign="right" id="description-helper-text">
+            {value ? value.length : 0}/{TOPIC_DESCRIPTION_MAX_LENGTH}
+          </FormHelperText>
+        </FormControl>
         {pulledDescriptions && (
           <Flex flexGrow={0} w="46%">
             {!pulledDescriptions.length && (
@@ -188,6 +209,7 @@ export const TopicDescriptionField: React.FC<{
           </Flex>
         )}
       </Flex>
+      <FormErrorMessage>Topic Description is too long</FormErrorMessage>
     </Field>
   );
 };

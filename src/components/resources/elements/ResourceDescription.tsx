@@ -14,6 +14,7 @@ export const ResourceDescription: React.FC<
     </Skeleton>
   ) : null;
 };
+
 export const ResourceDescriptionInput: React.FC<{
   value?: string;
   onChange: (value?: string) => void;
