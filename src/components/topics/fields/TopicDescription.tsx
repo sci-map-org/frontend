@@ -1,6 +1,6 @@
 import { Button, Center, Flex, Heading, Link, Stack, Text, Textarea, TextProps } from '@chakra-ui/react';
 import gql from 'graphql-tag';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { PulledDescription } from '../../../graphql/types';
 import { toUrlPreview } from '../../../services/url.service';
 import { Field } from '../../lib/fields/Field';
@@ -11,9 +11,51 @@ import { usePullTopicDescriptionsLazyQuery } from './TopicDescription.generated'
 interface TopicDescriptionProps extends TextProps {
   topicDescription?: string;
   placeholder?: string;
+  noOfLines?: number;
 }
 
-export const TopicDescription: React.FC<TopicDescriptionProps> = ({ topicDescription, placeholder, ...props }) => {
+export const TopicDescription: React.FC<TopicDescriptionProps> = ({
+  topicDescription,
+  placeholder,
+  noOfLines,
+  ...props
+}) => {
+  const [clamped, setClamped] = useState(true);
+  const [showButton, setShowButton] = useState(true);
+  const containerRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    const hasClamping = (el: HTMLParagraphElement) => {
+      const { clientHeight, scrollHeight } = el;
+      return clientHeight !== scrollHeight;
+    };
+
+    const checkButtonAvailability = () => {
+      if (containerRef.current) {
+        // TODO
+
+        // Save current state to reapply later if necessary.
+        // const hadClampClass = containerRef.current.classList.contains('clamp');
+        // // Make sure that CSS clamping is applied if aplicable.
+        // if (!hadClampClass) containerRef.current.classList.add('clamp');
+        // Check for clamping and show or hide button accordingly.
+        setShowButton(hasClamping(containerRef.current));
+        // Sync clamping with local state.
+        // if (!hadClampClass) containerRef.current.classList.remove('clamp');
+      }
+    };
+
+    // const debouncedCheck = debounce(checkButtonAvailability, 50);
+
+    checkButtonAvailability();
+    // window.addEventListener('resize', debouncedCheck);
+
+    return;
+    // return () => {
+    //   window.removeEventListener('resize', debouncedCheck);
+    // };
+  }, [containerRef]);
+
   if (!topicDescription)
     return placeholder ? (
       <Text fontWeight={500} color="gray.400" {...props}>
@@ -21,9 +63,28 @@ export const TopicDescription: React.FC<TopicDescriptionProps> = ({ topicDescrip
       </Text>
     ) : null;
   return (
-    <Text {...TopicDescriptionStyleProps} whiteSpace="pre-wrap" {...props}>
-      {topicDescription}
-    </Text>
+    <Flex direction="column">
+      <Text
+        ref={containerRef}
+        {...TopicDescriptionStyleProps}
+        whiteSpace="pre-wrap"
+        {...props}
+        {...(!!clamped && {
+          noOfLines: noOfLines,
+          display: '-webkit-box',
+          overflow: 'hidden',
+          'text-overflow': 'ellipsis',
+          'overflow-wrap': 'break-word',
+        })}
+      >
+        {topicDescription}
+      </Text>
+      {showButton && (
+        <Link color="blue.500" fontSize="sm" onClick={() => setClamped(!clamped)} mt="1px">
+          {clamped ? 'Read More' : 'Show Less'}
+        </Link>
+      )}
+    </Flex>
   );
 };
 

@@ -52,10 +52,9 @@ export const EditableTopicsWrapper: React.FC<EditableTopicsWrapperProps> = ({
       {editMode && (
         <TopicSelector placeholder={inputPlaceholder || `Add Topic...`} onSelect={(topic) => onAdded(topic)} />
       )}
-      {editable && !editMode && (
+      {editable && !editMode && !isLoading && (
         <Link
           alignSelf="center"
-          isDisabled={isLoading}
           onClick={(e) => {
             setEditMode(true);
           }}

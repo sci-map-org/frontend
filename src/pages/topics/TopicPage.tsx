@@ -133,33 +133,22 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
       renderTopLeftNavigation={<ParentTopicsBreadcrumbs topic={topic} isLoading={loading} />}
       renderTopRightNavigation={<EditablePartOfTopics topic={topic} editable={false} align="right" />}
       renderTitle={
-        <Heading
-          fontSize={{ base: '4xl', md: '4xl', lg: '5xl' }}
-          fontWeight={500}
-          color="blackAlpha.800"
+        <PageTitle
+          // fontSize={{ base: '4xl', md: '4xl', lg: '5xl' }}
+          // fontWeight={500}
+          // color="blackAlpha.800"
           backgroundImage="linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0.7), rgba(255,255,255,0.7), rgba(255,255,255,0.1))"
         >
-          <PageTitle>{topic.name}</PageTitle>
-        </Heading>
+          {/* <PageTitle> */}
+          {topic.name}
+          {/* </PageTitle> */}
+        </PageTitle>
       }
       renderBlockBelowTitle={
         <>
           <Box pt={2} pb={2}>
             <TopicSubHeader topic={topic} size="md" mt={2} />
           </Box>
-          {/* TODO topic tree page */}
-          {/* <Skeleton isLoaded={!loading}>
-            <PageLink
-              color="gray.600"
-              _hover={{ color: 'gray.700', textDecoration: 'none' }}
-              fontWeight={600}
-              fontSize="sm"
-              pageInfo={ConceptListPageInfo(domain)}
-              isDisabled={loading}
-            >
-              {domain.subTopics?.length ? domain.subTopics.length + ' SubTopics ' : 'No SubTopics yet'}
-            </PageLink>
-          </Skeleton> */}
           {topic && topic.description && (
             <Skeleton isLoaded={!loading}>
               <TopicDescription
