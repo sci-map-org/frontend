@@ -13,8 +13,9 @@ import { PageTitle } from '../../components/lib/Typography';
 import { PageButtonLink } from '../../components/navigation/InternalLink';
 import { NewResourceModal } from '../../components/resources/NewResource';
 import { ResourcePreviewCardDataFragment } from '../../components/resources/ResourcePreviewCard.generated';
+import { AlsoPartOfTopicsViewer } from '../../components/topics/AlsoPartOfTopicsViewer';
 import { BestXPagesLinks } from '../../components/topics/BestXPagesLinks';
-import { EditablePartOfTopics, EditablePartOfTopicsData } from '../../components/topics/EditablePartOfTopics';
+import { EditablePartOfTopicsData } from '../../components/topics/EditablePartOfTopics';
 import { TopicDescription } from '../../components/topics/fields/TopicDescription';
 import { NewTopicModal } from '../../components/topics/NewTopic';
 import { ParentTopicsBreadcrumbs, ParentTopicsBreadcrumbsData } from '../../components/topics/ParentTopicsBreadcrumbs';
@@ -131,17 +132,10 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
   return (
     <TopicPageLayout
       renderTopLeftNavigation={<ParentTopicsBreadcrumbs topic={topic} isLoading={loading} />}
-      renderTopRightNavigation={<EditablePartOfTopics topic={topic} editable={false} align="right" />}
+      renderTopRightNavigation={<AlsoPartOfTopicsViewer topic={topic} />}
       renderTitle={
-        <PageTitle
-          // fontSize={{ base: '4xl', md: '4xl', lg: '5xl' }}
-          // fontWeight={500}
-          // color="blackAlpha.800"
-          backgroundImage="linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0.7), rgba(255,255,255,0.7), rgba(255,255,255,0.1))"
-        >
-          {/* <PageTitle> */}
+        <PageTitle backgroundImage="linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0.7), rgba(255,255,255,0.7), rgba(255,255,255,0.1))">
           {topic.name}
-          {/* </PageTitle> */}
         </PageTitle>
       }
       renderBlockBelowTitle={
