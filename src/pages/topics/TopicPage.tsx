@@ -183,74 +183,78 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
       )}
       isLoading={loading}
     >
-      <>
-        <Flex direction={{ base: 'column-reverse', md: 'row' }} mb="100px" mt={10}>
-          <Flex direction="column" flexShrink={1} flexGrow={1}>
-            <TopicRecommendedLearningMaterials
-              topic={topic}
-              learningMaterialsPreviews={learningMaterials}
-              isLoading={resourcesLoading}
-              reloadRecommendedResources={() => refetchLearningMaterials()}
-              learningMaterialsOptions={learningMaterialsOptions}
-              setLearningMaterialsOptions={setLearningMaterialsOptions}
+      <Flex direction={{ base: 'column', lg: 'row' }} mb="60px" mt={10}>
+        <Flex direction="column" flexShrink={1} flexGrow={1}>
+          <TopicRecommendedLearningMaterials
+            topic={topic}
+            learningMaterialsPreviews={learningMaterials}
+            isLoading={resourcesLoading}
+            reloadRecommendedResources={() => refetchLearningMaterials()}
+            learningMaterialsOptions={learningMaterialsOptions}
+            setLearningMaterialsOptions={setLearningMaterialsOptions}
+          />
+        </Flex>
+        <Stack
+          ml={{ base: 0, lg: 10 }}
+          mt={{ base: 10, lg: 0 }}
+          direction={{ base: 'row', lg: 'column' }}
+          w={{ base: '100%', lg: '270px' }}
+          spacing={{ base: 'auto', lg: 10 }}
+        >
+          <Stack direction="column" spacing={4} alignItems="flex-end">
+            <NewResourceModal
+              defaultResourceCreationData={{
+                showInTopics: [topic],
+              }}
+              onResourceCreated={() => refetchLearningMaterials()}
+              renderButton={(openModal) => (
+                <Button
+                  leftIcon={<ResourceIcon boxSize={6} />}
+                  variant="solid"
+                  colorScheme="teal"
+                  isDisabled={loading}
+                  onClick={() => {
+                    if (!currentUser) return onOpenUnauthentificatedModal();
+                    openModal();
+                  }}
+                >
+                  Share new Resource
+                </Button>
+              )}
             />
-          </Flex>
-          <Stack ml={{ base: 0, md: 10 }} mb={10} direction={{ base: 'row', md: 'column' }} spacing={10}>
-            <Stack direction="column" spacing={4} alignItems="flex-end">
-              <NewResourceModal
-                defaultResourceCreationData={{
-                  showInTopics: [topic],
-                }}
-                onResourceCreated={() => refetchLearningMaterials()}
+            <RoleAccess accessRule="loggedInUser">
+              <NewTopicModal
+                parentTopic={topic}
                 renderButton={(openModal) => (
                   <Button
-                    leftIcon={<ResourceIcon boxSize={6} />}
+                    leftIcon={<TopicIcon />}
                     variant="solid"
-                    colorScheme="teal"
+                    colorScheme="blue"
                     isDisabled={loading}
-                    onClick={() => {
-                      if (!currentUser) return onOpenUnauthentificatedModal();
-                      openModal();
-                    }}
+                    onClick={openModal}
                   >
-                    Share new Resource
+                    Suggest SubTopic
                   </Button>
                 )}
+                onCreated={() => refetch()}
+                onSubTopicConnected={() => refetch()}
               />
-              <RoleAccess accessRule="loggedInUser">
-                <NewTopicModal
-                  parentTopic={topic}
-                  renderButton={(openModal) => (
-                    <Button
-                      leftIcon={<TopicIcon />}
-                      variant="solid"
-                      colorScheme="blue"
-                      isDisabled={loading}
-                      onClick={openModal}
-                    >
-                      Suggest SubTopic
-                    </Button>
-                  )}
-                  onCreated={() => refetch()}
-                  onSubTopicConnected={() => refetch()}
-                />
-              </RoleAccess>
-              <PageButtonLink
-                leftIcon={<LearningPathIcon boxSize={7} />}
-                variant="solid"
-                colorScheme="teal"
-                pageInfo={NewLearningPathPageInfo}
-                loggedInOnly
-                isDisabled={loading}
-              >
-                Share your Path
-              </PageButtonLink>
-            </Stack>
-            <SeeAlso topic={topic} />
-            <BestXPagesLinks topicKey={topic.key} />
+            </RoleAccess>
+            <PageButtonLink
+              leftIcon={<LearningPathIcon boxSize={7} />}
+              variant="solid"
+              colorScheme="teal"
+              pageInfo={NewLearningPathPageInfo}
+              loggedInOnly
+              isDisabled={loading}
+            >
+              Share your Path
+            </PageButtonLink>
           </Stack>
-        </Flex>
-      </>
+          <SeeAlso topic={topic} />
+          <BestXPagesLinks topicKey={topic.key} />
+        </Stack>
+      </Flex>
     </TopicPageLayout>
   );
 };

@@ -39,12 +39,12 @@ export const TopicPageLayout: React.FC<TopicPageLayoutProps> = ({
             w="100%"
             direction={{ base: 'column', lg: 'row' }}
             overflow="hidden"
-            justifyContent={{ base: 'flex-start', md: 'space-between' }}
+            justifyContent={{ base: 'flex-start', lg: 'space-between' }}
             alignItems="stretch"
             pb={4}
             {...layoutProps}
           >
-            <Flex direction="column" flexGrow={1} minH="280px" pr={{ md: '160px' }}>
+            <Flex direction="column" flexGrow={1} minH="280px" pr={{ lg: '8%' }}>
               <>
                 <Image
                   position="absolute"
@@ -53,7 +53,7 @@ export const TopicPageLayout: React.FC<TopicPageLayoutProps> = ({
                   top="-10%"
                   left="41%"
                   opacity={0.6}
-                  h={{ base: '300px', md: '350px' }}
+                  h={{ base: '300px', lg: '350px' }}
                 />
               </>
 
