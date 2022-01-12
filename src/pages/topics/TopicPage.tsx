@@ -197,9 +197,9 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
         <Stack
           ml={{ base: 0, lg: 10 }}
           mt={{ base: 10, lg: 0 }}
-          direction={{ base: 'row', lg: 'column' }}
+          direction={{ base: 'column', md: 'row', lg: 'column' }}
           w={{ base: '100%', lg: '270px' }}
-          spacing={{ base: 'auto', lg: 10 }}
+          spacing={{ base: 4, md: 'auto', lg: 10 }}
         >
           <Stack direction="column" spacing={4} alignItems="flex-end">
             <NewResourceModal
