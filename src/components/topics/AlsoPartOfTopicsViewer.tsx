@@ -7,15 +7,16 @@ interface AlsoPartOfTopicsViewerProps {
   topic: EditablePartOfTopicsDataFragment;
 }
 export const AlsoPartOfTopicsViewer: React.FC<AlsoPartOfTopicsViewerProps> = ({ topic }) => {
+  if (!topic.partOfTopics?.length) return null;
   return (
-    <Flex direction="column" alignItems="flex-end">
+    <Flex direction="row" alignItems="flex-end">
       <Stack direction="row">
         <DirectionSignIcon boxSize="24px" />
-        <Text fontWeight={600} color="gray.700" alignItems="baseline">
+        <Text fontWeight={600} fontSize="16px" color="gray.700" alignItems="baseline" pt="2px">
           Also Part Of
         </Text>
       </Stack>
-      <Stack direction="row">
+      <Stack direction="row" ml={2}>
         {topic.partOfTopics?.map(({ partOfTopic }) => (
           <TopicBadge key={partOfTopic._id} size="sm" topic={partOfTopic} colorScheme="teal" />
         ))}

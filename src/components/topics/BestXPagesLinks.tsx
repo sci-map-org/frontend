@@ -1,5 +1,6 @@
 import { Stack, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
+import { TopicPageSectionHeader } from '../lib/Typography';
 import { InternalLink } from '../navigation/InternalLink';
 
 const links: { name: string; url_suffix: string }[] = [
@@ -28,31 +29,19 @@ export const BestXPagesLinks: React.FC<{ topicKey: string }> = ({ topicKey }) =>
   const router = useRouter();
 
   return (
-    <Stack
-      direction="column"
-      spacing={2}
-      backgroundColor="white"
-      boxShadow="md"
-      borderRadius={3}
-      pt={1}
-      pb={3}
-      borderWidth={1}
-      borderColor="gray.200"
-      minW="180px"
-    >
-      <Text fontSize="xl" textAlign="center" fontWeight={600} color="gray.600">
-        Quick Links
-      </Text>
-      <Stack spacing={1} pl={5} pr={5}>
+    <Stack direction="column" alignItems="flex-end" spacing={2} pl={2} pb={2}>
+      <TopicPageSectionHeader>Quick Links</TopicPageSectionHeader>
+      <Stack spacing="2px" alignItems="flex-end">
         {links.map((link) =>
           router.route === '/topics/[topicKey]/' + link.url_suffix ? (
-            <Text key={link.url_suffix} fontWeight={500} color="blue.800">
+            <Text fontSize="16px" key={link.url_suffix} fontWeight={500} color="blue.900">
               {link.name}
             </Text>
           ) : (
             <InternalLink
+              fontSize="15px"
               fontWeight={500}
-              color="blue.800"
+              color="blue.900"
               textDecoration="underline"
               key={link.url_suffix}
               routePath={'/topics/[topicKey]/' + link.url_suffix}
