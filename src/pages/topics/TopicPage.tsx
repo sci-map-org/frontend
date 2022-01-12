@@ -222,24 +222,26 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
                 </Button>
               )}
             />
-            <RoleAccess accessRule="loggedInUser">
-              <NewTopicModal
-                parentTopic={topic}
-                renderButton={(openModal) => (
-                  <Button
-                    leftIcon={<TopicIcon />}
-                    variant="solid"
-                    colorScheme="blue"
-                    isDisabled={loading}
-                    onClick={openModal}
-                  >
-                    Suggest SubTopic
-                  </Button>
-                )}
-                onCreated={() => refetch()}
-                onSubTopicConnected={() => refetch()}
-              />
-            </RoleAccess>
+
+            <NewTopicModal
+              parentTopic={topic}
+              renderButton={(openModal) => (
+                <Button
+                  leftIcon={<TopicIcon />}
+                  variant="solid"
+                  colorScheme="blue"
+                  isDisabled={loading}
+                  onClick={() => {
+                    if (!currentUser) return onOpenUnauthentificatedModal();
+                    openModal();
+                  }}
+                >
+                  Suggest SubTopic
+                </Button>
+              )}
+              onCreated={() => refetch()}
+              onSubTopicConnected={() => refetch()}
+            />
             <PageButtonLink
               leftIcon={<LearningPathIcon boxSize={7} />}
               variant="solid"
