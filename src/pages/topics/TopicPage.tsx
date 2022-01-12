@@ -21,6 +21,7 @@ import { TopicDescription } from '../../components/topics/fields/TopicDescriptio
 import { NewTopicModal } from '../../components/topics/NewTopic';
 import { ParentTopicsBreadcrumbs, ParentTopicsBreadcrumbsData } from '../../components/topics/ParentTopicsBreadcrumbs';
 import { SeeAlso, SeeAlsoData } from '../../components/topics/SeeAlso';
+import { SubTopicFilter } from '../../components/topics/SubTopicFilter';
 import { MapVisualisationTopicData } from '../../components/topics/SubTopicsMapVisualisation';
 import { SubTopicsMinimap } from '../../components/topics/SubTopicsMinimap';
 import { TopicRecommendedLearningMaterials } from '../../components/topics/TopicRecommendedLearningMaterials';
@@ -84,6 +85,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
   const { currentUser } = useCurrentUser();
   const { onOpen: onOpenUnauthentificatedModal } = useUnauthentificatedModal();
 
+  const [subTopicFilterId, setSubTopicFilterId] = useState<string | null>(null);
   const {
     data: learningMaterialsData,
     // networkStatus,
@@ -185,14 +187,21 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
     >
       <Flex direction={{ base: 'column', lg: 'row' }} mb="60px" mt={10}>
         <Flex direction="column" flexShrink={1} flexGrow={1}>
-          <TopicRecommendedLearningMaterials
-            topic={topic}
-            learningMaterialsPreviews={learningMaterials}
-            isLoading={resourcesLoading}
-            reloadRecommendedResources={() => refetchLearningMaterials()}
-            learningMaterialsOptions={learningMaterialsOptions}
-            setLearningMaterialsOptions={setLearningMaterialsOptions}
-          />
+          <Stack spacing={5}>
+            <SubTopicFilter
+              subTopics={topic.subTopics?.map((subTopic) => subTopic.subTopic) || []}
+              selectedSubTopicId={subTopicFilterId}
+              onChange={(newSubTopicFilterId) => setSubTopicFilterId(newSubTopicFilterId)}
+            />
+            <TopicRecommendedLearningMaterials
+              topic={topic}
+              learningMaterialsPreviews={learningMaterials}
+              isLoading={resourcesLoading}
+              reloadRecommendedResources={() => refetchLearningMaterials()}
+              learningMaterialsOptions={learningMaterialsOptions}
+              setLearningMaterialsOptions={setLearningMaterialsOptions}
+            />
+          </Stack>
         </Flex>
         <Stack
           ml={{ base: 0, lg: 10 }}
