@@ -24,9 +24,9 @@ export const ParentTopicsBreadcrumbs: React.FC<{ topic: ParentTopicsBreadcrumbsD
   return (
     <Skeleton isLoaded={!isLoading}>
       <Stack direction="row">
-        {topic.parentTopic?.parentTopic && <TopicLink size="lg" topic={topic.parentTopic.parentTopic} />}
+        {topic.parentTopic?.parentTopic && <TopicLink size="xl" topic={topic.parentTopic.parentTopic} />}
         {topic.parentTopic?.parentTopic && <Text>/</Text>}
-        {topic.parentTopic && <TopicLink size="lg" topic={topic.parentTopic} />}
+        {topic.parentTopic && <TopicLink size="xl" topic={topic.parentTopic} />}
       </Stack>
     </Skeleton>
   );

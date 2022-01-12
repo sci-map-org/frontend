@@ -1,8 +1,9 @@
 import { Box, BoxProps, CloseButton, LinkProps, Stack, Text } from '@chakra-ui/react';
-import gql from 'graphql-tag';
 import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import { TopicPageInfo } from '../../pages/RoutesPageInfos';
 import { PageLink } from '../navigation/InternalLink';
+
+type TopicBadgeColorScheme = 'default' | 'teal';
 
 interface TopicBadgeProps {
   size?: 'md' | 'sm' | 'xs';
@@ -10,27 +11,33 @@ interface TopicBadgeProps {
   onRemove?: () => void;
   removable?: boolean;
   clickable?: boolean;
+  colorScheme?: TopicBadgeColorScheme;
 }
 
-const badgeStyleProps = (topic: TopicLinkDataFragment, size: 'md' | 'sm' | 'xs'): LinkProps & BoxProps => ({
-  borderRadius: 11,
-  px: { xs: '3px', sm: '4px', md: '6px' }[size],
-  // bgColor: topic.known ? 'teal.50' : 'white',
-  color: 'gray.800',
+const badgeStyleProps = (
+  topic: TopicLinkDataFragment,
+  size: 'md' | 'sm' | 'xs',
+  colorScheme: TopicBadgeColorScheme
+): LinkProps & BoxProps => ({
+  borderRadius: 16,
   fontWeight: 400,
   borderWidth: '1px',
-  borderColor: 'gray.800',
-  // borderColor: topic.known ? 'teal.800' : 'gray.800',
   textAlign: 'center',
-  fontSize: size,
+  px: { xs: '3px', sm: '6px', md: '6px' }[size],
+  py: { xs: '0px', sm: '2px', md: '3px' }[size],
+  fontSize: { xs: 'xs', sm: 'sm', md: 'md' }[size],
+  color: colorScheme === 'default' ? 'gray.800' : 'white',
+  bgColor: colorScheme === 'default' ? 'white' : 'teal.600',
+  borderColor: colorScheme === 'default' ? 'gray.800' : 'teal.600',
 });
 export const TopicBadge: React.FC<TopicBadgeProps> = ({
   topic,
-  // domain: domainProp,
+
   removable,
   onRemove,
   clickable = true,
   size = 'md',
+  colorScheme = 'default',
 }) => {
   const content = (
     <Stack spacing={1} direction="row" alignItems="center">
@@ -51,10 +58,10 @@ export const TopicBadge: React.FC<TopicBadgeProps> = ({
     </Stack>
   );
   return clickable ? (
-    <PageLink {...badgeStyleProps(topic, size)} pageInfo={TopicPageInfo(topic)}>
+    <PageLink {...badgeStyleProps(topic, size, colorScheme)} pageInfo={TopicPageInfo(topic)}>
       {content}
     </PageLink>
   ) : (
-    <Box {...badgeStyleProps(topic, size)}>{content}</Box>
+    <Box {...badgeStyleProps(topic, size, colorScheme)}>{content}</Box>
   );
 };

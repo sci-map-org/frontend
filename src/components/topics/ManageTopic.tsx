@@ -35,7 +35,11 @@ import { PageTitle } from '../../components/lib/Typography';
 import { EditablePartOfTopics, EditablePartOfTopicsData } from '../../components/topics/EditablePartOfTopics';
 import { EditableTopicPrerequisites } from '../../components/topics/EditableTopicPrerequisites';
 import { TopicAliasesField, TopicNameAlias } from '../../components/topics/fields/TopicAliases';
-import { TopicDescription, TopicDescriptionField } from '../../components/topics/fields/TopicDescription';
+import {
+  TopicDescription,
+  TopicDescriptionField,
+  TOPIC_DESCRIPTION_MAX_LENGTH,
+} from '../../components/topics/fields/TopicDescription';
 import { TopicLevelEditor, TopicLevelViewer } from '../../components/topics/fields/TopicLevel';
 import { TopicTypeField } from '../../components/topics/fields/TopicTypeField';
 import { TopicTypesViewer } from '../../components/topics/fields/TopicTypeViewer';
@@ -312,6 +316,9 @@ export const ManageTopic: React.FC<{
                 </EditableField>
                 <EditableField
                   label="Description"
+                  disableSaveButton={
+                    !!updateTopicData.description && updateTopicData.description.length > TOPIC_DESCRIPTION_MAX_LENGTH
+                  }
                   editModeRenderField={
                     <TopicDescriptionField
                       value={updateTopicData.description}
@@ -320,6 +327,10 @@ export const ManageTopic: React.FC<{
                           ...updateTopicData,
                           description: newDescription,
                         })
+                      }
+                      isInvalid={
+                        !!updateTopicData.description &&
+                        updateTopicData.description.length > TOPIC_DESCRIPTION_MAX_LENGTH
                       }
                       pullDescriptionsQueryData={{ name: topic.name }}
                       onSelectPulledDescription={(pulledDescription) =>

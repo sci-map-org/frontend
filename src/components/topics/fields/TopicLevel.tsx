@@ -43,9 +43,10 @@ const sizesMapping = {
   md: {
     fontWeight: 800,
     borderWidth: 2,
-    px: 2,
+    px: '4px',
     borderRadius: 2,
-    fontSize: 'md',
+    fontSize: '14px',
+    lineHeight: '1.3em',
   },
 };
 interface TopicLevelViewerProps {

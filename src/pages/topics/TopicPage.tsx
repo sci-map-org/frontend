@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Heading, Skeleton, Stack, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Link, Skeleton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useState } from 'react';
 import { RoleAccess } from '../../components/auth/RoleAccess';
@@ -8,13 +8,15 @@ import { TopicPageLayout } from '../../components/layout/TopicPageLayout';
 import { LearningPathPreviewCardDataFragment } from '../../components/learning_paths/LearningPathPreviewCard.generated';
 import { LearningPathIcon } from '../../components/lib/icons/LearningPathIcon';
 import { ResourceIcon } from '../../components/lib/icons/ResourceIcon';
+import { TopicIcon } from '../../components/lib/icons/TopicIcon';
 import { TopicLink } from '../../components/lib/links/TopicLink';
 import { PageTitle } from '../../components/lib/Typography';
 import { PageButtonLink } from '../../components/navigation/InternalLink';
 import { NewResourceModal } from '../../components/resources/NewResource';
 import { ResourcePreviewCardDataFragment } from '../../components/resources/ResourcePreviewCard.generated';
+import { AlsoPartOfTopicsViewer } from '../../components/topics/AlsoPartOfTopicsViewer';
 import { BestXPagesLinks } from '../../components/topics/BestXPagesLinks';
-import { EditablePartOfTopics, EditablePartOfTopicsData } from '../../components/topics/EditablePartOfTopics';
+import { EditablePartOfTopicsData } from '../../components/topics/EditablePartOfTopics';
 import { TopicDescription } from '../../components/topics/fields/TopicDescription';
 import { NewTopicModal } from '../../components/topics/NewTopic';
 import { ParentTopicsBreadcrumbs, ParentTopicsBreadcrumbsData } from '../../components/topics/ParentTopicsBreadcrumbs';
@@ -27,7 +29,7 @@ import { TopicSubHeader, TopicSubHeaderData } from '../../components/topics/Topi
 import { generateTopicData, TopicLinkData } from '../../graphql/topics/topics.fragments';
 import { TopicLearningMaterialsOptions, TopicLearningMaterialsSortingType } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
-import { NewLearningPathPageInfo, NewResourcePageInfo } from '../RoutesPageInfos';
+import { NewLearningPathPageInfo } from '../RoutesPageInfos';
 import { GetTopicByKeyTopicPageQuery, useGetTopicByKeyTopicPageQuery } from './TopicPage.generated';
 
 export const getTopicByKeyTopicPage = gql`
@@ -36,6 +38,7 @@ export const getTopicByKeyTopicPage = gql`
       _id
       name
       description
+      wikipediaPageUrl
       isDisambiguation
       ...MapVisualisationTopicData
       subTopics {
@@ -131,90 +134,41 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
   return (
     <TopicPageLayout
       renderTopLeftNavigation={<ParentTopicsBreadcrumbs topic={topic} isLoading={loading} />}
-      renderTopRightNavigation={<EditablePartOfTopics topic={topic} editable={false} align="right" />}
+      renderTopRightNavigation={<AlsoPartOfTopicsViewer topic={topic} />}
       renderTitle={
-        <Heading
-          fontSize={{ base: '4xl', md: '4xl', lg: '5xl' }}
-          fontWeight={500}
-          color="blackAlpha.800"
-          backgroundImage="linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0.7), rgba(255,255,255,0.7), rgba(255,255,255,0.1))"
-        >
-          Learn <Text as="span">{topic.name}</Text>
-        </Heading>
+        <PageTitle backgroundImage="linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0.7), rgba(255,255,255,0.7), rgba(255,255,255,0.1))">
+          {topic.name}
+        </PageTitle>
       }
       renderBlockBelowTitle={
         <>
-          <TopicSubHeader topic={topic} size="md" />
-          {/* TODO topic tree page */}
-          {/* <Skeleton isLoaded={!loading}>
-            <PageLink
-              color="gray.600"
-              _hover={{ color: 'gray.700', textDecoration: 'none' }}
-              fontWeight={600}
-              fontSize="sm"
-              pageInfo={ConceptListPageInfo(domain)}
-              isDisabled={loading}
-            >
-              {domain.subTopics?.length ? domain.subTopics.length + ' SubTopics ' : 'No SubTopics yet'}
-            </PageLink>
-          </Skeleton> */}
+          <Box pt="2px" pb={3}>
+            <TopicSubHeader topic={topic} size="md" mt={2} />
+          </Box>
           {topic && topic.description && (
             <Skeleton isLoaded={!loading}>
               <TopicDescription
                 topicDescription={topic.description}
                 mt={3}
                 backgroundImage="linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0.7), rgba(255,255,255,0.7), rgba(255,255,255,0.1))"
-                // TODO
-                noOfLines={4}
+                noOfLines={5}
               />
             </Skeleton>
           )}
-          <Flex direction="row" w="100%">
-            <Stack direction="row" spacing={4} pl={0} pt={10} pb={{ base: 4, lg: 12 }} pr={10} alignItems="flex-start">
-              <NewResourceModal
-                defaultResourceCreationData={{
-                  showInTopics: [topic],
-                }}
-                onResourceCreated={() => refetchLearningMaterials()}
-                renderButton={(openModal) => (
-                  <Button
-                    leftIcon={<ResourceIcon boxSize={6} />}
-                    variant="solid"
-                    colorScheme="blue"
-                    isDisabled={loading}
-                    onClick={() => {
-                      if (!currentUser) return onOpenUnauthentificatedModal();
-                      openModal();
-                    }}
-                  >
-                    Add Resource
-                  </Button>
-                )}
-              />
-              <PageButtonLink
-                leftIcon={<LearningPathIcon boxSize={7} />}
-                variant="solid"
-                colorScheme="teal"
-                pageInfo={NewLearningPathPageInfo}
-                loggedInOnly
-                isDisabled={loading}
+          {topic.wikipediaPageUrl && (
+            <Skeleton isLoaded={!loading}>
+              <Link
+                href={topic.wikipediaPageUrl}
+                color="blue.500"
+                fontSize="sm"
+                fontWeight={500}
+                textDecor="underline"
+                isExternal
               >
-                Add Learning Path
-              </PageButtonLink>
-              <RoleAccess accessRule="loggedInUser">
-                <NewTopicModal
-                  parentTopic={topic}
-                  renderButton={(openModal) => (
-                    <Button variant="solid" colorScheme="blue" isDisabled={loading} onClick={openModal}>
-                      Add SubTopic
-                    </Button>
-                  )}
-                  onCreated={() => refetch()}
-                  onSubTopicConnected={() => refetch()}
-                />
-              </RoleAccess>
-            </Stack>
-          </Flex>
+                Wikipedia
+              </Link>
+            </Skeleton>
+          )}
         </>
       }
       renderMinimap={(pxWidth, pxHeight) => (
@@ -229,43 +183,80 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
       )}
       isLoading={loading}
     >
-      <>
-        <Flex direction={{ base: 'column-reverse', md: 'row' }} mb="100px" mt={10}>
-          <Flex direction="column" flexShrink={1} flexGrow={1}>
-            <TopicRecommendedLearningMaterials
-              topic={topic}
-              learningMaterialsPreviews={learningMaterials}
-              isLoading={resourcesLoading}
-              reloadRecommendedResources={() => refetchLearningMaterials()}
-              learningMaterialsOptions={learningMaterialsOptions}
-              setLearningMaterialsOptions={setLearningMaterialsOptions}
-            />
-          </Flex>
-          {/* <Stack
-            spacing={4}
-            alignItems={{ base: 'start', md: 'stretch' }}
-            direction={{ base: 'row', md: 'column' }}
-            flexShrink={0}
-            ml={{ base: 0, md: 8 }}
-          >
-            <RoleAccess accessRule="loggedInUser">
-              <DomainUserHistory maxH={{ md: '210px' }} domainKey={domainKey} />
-            </RoleAccess>
-            <SubTopicsMenu
-              topicId={domain._id}
-              domain={domain}
-              minWidth="260px"
-              subTopics={domain.subTopics || []}
-              isLoading={loading}
-              onConceptToggled={() => refetchLearningMaterials()}
-            />
-          </Stack> */}
-          <Stack ml={{ base: 0, md: 10 }} mb={10} direction={{ base: 'row', md: 'column' }}>
-            <SeeAlso topic={topic} />
-            <BestXPagesLinks topicKey={topic.key} />
-          </Stack>
+      <Flex direction={{ base: 'column', lg: 'row' }} mb="60px" mt={10}>
+        <Flex direction="column" flexShrink={1} flexGrow={1}>
+          <TopicRecommendedLearningMaterials
+            topic={topic}
+            learningMaterialsPreviews={learningMaterials}
+            isLoading={resourcesLoading}
+            reloadRecommendedResources={() => refetchLearningMaterials()}
+            learningMaterialsOptions={learningMaterialsOptions}
+            setLearningMaterialsOptions={setLearningMaterialsOptions}
+          />
         </Flex>
-      </>
+        <Stack
+          ml={{ base: 0, lg: 10 }}
+          mt={{ base: 10, lg: 0 }}
+          direction={{ base: 'column', md: 'row', lg: 'column' }}
+          w={{ base: '100%', lg: '270px' }}
+          spacing={{ base: 4, md: 'auto', lg: 10 }}
+        >
+          <Stack direction="column" spacing={4} alignItems="flex-end">
+            <NewResourceModal
+              defaultResourceCreationData={{
+                showInTopics: [topic],
+              }}
+              onResourceCreated={() => refetchLearningMaterials()}
+              renderButton={(openModal) => (
+                <Button
+                  leftIcon={<ResourceIcon boxSize={6} />}
+                  variant="solid"
+                  colorScheme="teal"
+                  isDisabled={loading}
+                  onClick={() => {
+                    if (!currentUser) return onOpenUnauthentificatedModal();
+                    openModal();
+                  }}
+                >
+                  Share new Resource
+                </Button>
+              )}
+            />
+
+            <NewTopicModal
+              parentTopic={topic}
+              renderButton={(openModal) => (
+                <Button
+                  leftIcon={<TopicIcon />}
+                  variant="solid"
+                  colorScheme="blue"
+                  isDisabled={loading}
+                  onClick={() => {
+                    if (!currentUser) return onOpenUnauthentificatedModal();
+                    openModal();
+                  }}
+                >
+                  Suggest SubTopic
+                </Button>
+              )}
+              onCreated={() => refetch()}
+              onSubTopicConnected={() => refetch()}
+            />
+            <PageButtonLink
+              leftIcon={<LearningPathIcon boxSize={7} />}
+              variant="solid"
+              colorScheme="teal"
+              pageInfo={NewLearningPathPageInfo}
+              loggedInOnly
+              isDisabled={loading}
+            >
+              Share your Path
+            </PageButtonLink>
+          </Stack>
+          <SeeAlso topic={topic} />
+          <BestXPagesLinks topicKey={topic.key} />
+        </Stack>
+      </Flex>
     </TopicPageLayout>
   );
 };

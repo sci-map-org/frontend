@@ -42,7 +42,7 @@ import { CollapsedField } from '../lib/fields/CollapsedField';
 import { Field } from '../lib/fields/Field';
 import { FormTitle } from '../lib/Typography';
 import { TopicAliasesField, TopicNameAlias } from './fields/TopicAliases';
-import { TopicDescriptionField } from './fields/TopicDescription';
+import { TopicDescriptionField, TOPIC_DESCRIPTION_MAX_LENGTH } from './fields/TopicDescription';
 import { TopicLevelEditor, TOPIC_LEVEL_DEFAULT_VALUE } from './fields/TopicLevel';
 import { TopicNameField } from './fields/TopicNameField';
 import { TopicPrerequisitesField } from './fields/TopicPrerequisitesField';
@@ -110,12 +110,14 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
   const [showFormErrors, setShowFormErrors] = useState(false);
 
   const formErrors = useMemo(() => {
-    let errors: { [key in 'name' | 'topicTypes' | 'key']?: string } = {};
+    let errors: { [key in 'name' | 'description' | 'topicTypes' | 'key']?: string } = {};
     if (!topicCreationData.name) errors.name = 'Topic Name is required';
+    if (topicCreationData.description && topicCreationData.description.length > TOPIC_DESCRIPTION_MAX_LENGTH)
+      errors.description = `Topic Description is too long (max ${TOPIC_DESCRIPTION_MAX_LENGTH} characters)`;
     if (topicCreationData.topicTypes.length < 1) errors.topicTypes = 'At least one Topic Type must be selected';
     if (!topicCreationData.key || !isAvailable) errors.key = 'An available Url key is required';
     return errors;
-  }, [topicCreationData.name, topicCreationData.topicTypes, topicCreationData.key]);
+  }, [topicCreationData.name, topicCreationData.description, topicCreationData.topicTypes, topicCreationData.key]);
 
   const formHasErrors = useMemo(() => Object.keys(formErrors).length > 0, [formErrors]);
 
@@ -205,6 +207,7 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({
         <TopicDescriptionField
           value={topicCreationData.description}
           onChange={(newDescription) => updateTopicCreationData({ description: newDescription })}
+          isInvalid={!!formErrors.description && showFormErrors}
           pullDescriptionsQueryData={{ name: topicCreationData.name }}
           onSelectPulledDescription={(pulledDescription) =>
             updateTopicCreationData({

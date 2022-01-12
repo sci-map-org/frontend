@@ -21,12 +21,17 @@ const sizesMapping = {
     contextNameFontSize: 'md',
     externalLinkIconSize: '18px',
   },
+  xl: {
+    topicNameFontSize: 'xl',
+    contextNameFontSize: 'lg',
+    externalLinkIconSize: '20px',
+  },
 };
 interface TopicLinkProps {
   topic: TopicLinkDataFragment;
   /* if supplying onClick prop, won't be rendered as an <a> */
   onClick?: () => void;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   showContext?: boolean;
   newTab?: boolean;
 }

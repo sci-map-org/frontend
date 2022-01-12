@@ -3,6 +3,7 @@ import gql from 'graphql-tag';
 import { useState } from 'react';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { LearningPathPreviewCardData } from '../../components/learning_paths/LearningPathPreviewCard';
+import { TopicDescription } from '../../components/topics/fields/TopicDescription';
 import { TopicRecommendedLearningMaterials } from '../../components/topics/TopicRecommendedLearningMaterials';
 import { ResourcePreviewCardData } from '../../graphql/resources/resources.fragments';
 import {
@@ -40,7 +41,11 @@ export const BestXPage: React.FC<{ topicKey: string; x: ResourceType[] }> = ({ t
   });
 
   const [topicData, setTopicData] = useState<GetBestXPageDataQuery['getTopicByKey']>();
-  const { data, loading, refetch: refetchLearningMaterials } = useGetBestXPageDataQuery({
+  const {
+    data,
+    loading,
+    refetch: refetchLearningMaterials,
+  } = useGetBestXPageDataQuery({
     variables: { key: topicKey, learningMaterialsOptions: learningMaterialsOptions },
     onCompleted(data) {
       setTopicData(data.getTopicByKey);
@@ -57,18 +62,8 @@ export const BestXPage: React.FC<{ topicKey: string; x: ResourceType[] }> = ({ t
           <Heading fontSize="4xl" fontWeight="normal" color="blackAlpha.800">
             Learn {topic.name}
           </Heading>
-          {topic && topic.description && <Box fontWeight={250}>{topic.description}</Box>}
+          {topic && topic.description && <TopicDescription topicDescription={topic.description} noOfLines={5} />}
         </Flex>
-        {/* <Flex direction="row" justifyContent="flex-end" alignItems="center">
-          <PageButtonLink
-            variant="solid"
-            colorScheme="blue"
-            pageInfo={AddResourceToDomainPageInfo(domain)}
-            loggedInOnly
-          >
-            Add Resource
-          </PageButtonLink>
-        </Flex> */}
       </Flex>
       <Box my={8} />
       <Stack spacing={10} direction="row">
@@ -82,16 +77,6 @@ export const BestXPage: React.FC<{ topicKey: string; x: ResourceType[] }> = ({ t
             setLearningMaterialsOptions={setLearningMaterialsOptions}
           />
         </Flex>
-        {/* <Stack spacing={5} direction="column">
-          <SubTopicsMenu
-            topicId={domain._id}
-            subTopics={domain.subTopics || []}
-            isLoading={loading}
-            minWidth="260px"
-            domain={domain}
-          />
-          <BestXPagesLinks domainKey={domain.key} />
-        </Stack> */}
       </Stack>
     </PageLayout>
   );
