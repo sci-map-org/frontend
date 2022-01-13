@@ -24,6 +24,11 @@ import { SeeAlso, SeeAlsoData } from '../../components/topics/SeeAlso';
 import { SubTopicFilter } from '../../components/topics/SubTopicFilter';
 import { MapVisualisationTopicData } from '../../components/topics/SubTopicsMapVisualisation';
 import { SubTopicsMinimap } from '../../components/topics/SubTopicsMinimap';
+import {
+  TopicPageLearningMaterialsFeed,
+  TopicPageLearningMaterialsFeedOptions,
+  useTopicPageLearningMaterialsFeed,
+} from '../../components/topics/TopicPageLearningMaterialsFeed';
 import { TopicRecommendedLearningMaterials } from '../../components/topics/TopicRecommendedLearningMaterials';
 import { useGetTopicRecommendedLearningMaterialsQuery } from '../../components/topics/TopicRecommendedLearningMaterials.generated';
 import { TopicSubHeader, TopicSubHeaderData } from '../../components/topics/TopicSubHeader';
@@ -73,37 +78,27 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
     variables: { key: topicKey },
   });
 
-  const [learningMaterialsOptions, setLearningMaterialsOptions] = useState<TopicLearningMaterialsOptions>({
-    sortingType: TopicLearningMaterialsSortingType.Recommended,
-    filter: { completedByUser: false },
-  });
-
-  const [learningMaterialPreviews, setLearningMaterialPreviews] = useState<
-    (ResourcePreviewCardDataFragment | LearningPathPreviewCardDataFragment)[]
-  >([]);
-
   const { currentUser } = useCurrentUser();
   const { onOpen: onOpenUnauthentificatedModal } = useUnauthentificatedModal();
 
-  const [subTopicFilterId, setSubTopicFilterId] = useState<string | null>(null);
-  const {
-    data: learningMaterialsData,
-    // networkStatus,
-    loading: resourcesLoading,
-    refetch: refetchLearningMaterials,
-  } = useGetTopicRecommendedLearningMaterialsQuery({
-    variables: { key: topicKey, learningMaterialsOptions: learningMaterialsOptions },
-    fetchPolicy: 'no-cache',
-    ssr: false,
-    notifyOnNetworkStatusChange: true,
-    onCompleted(data) {
-      if (data?.getTopicByKey.learningMaterials?.items) {
-        setLearningMaterialPreviews(data?.getTopicByKey.learningMaterials?.items);
-      }
-    },
-  });
+  const [learningMaterialsFeedOptions, setLearningMaterialsFeedOptions] =
+    useState<TopicPageLearningMaterialsFeedOptions>({
+      mainTopicKey: topicKey,
+      selectedSubTopicKey: null,
+      sorting: TopicLearningMaterialsSortingType.Recommended,
+      page: 1,
+      typeFilters: {},
+      tagsFilters: [],
+    });
 
-  const learningMaterials = learningMaterialsData?.getTopicByKey?.learningMaterials?.items || learningMaterialPreviews; // ? after getDomainByKey because of https://github.com/apollographql/apollo-client/issues/6986
+  const {
+    loading: learningMaterialsFeedLoading,
+    topic: selectedTopic,
+    learningMaterials,
+    totalPages,
+    feedAvailableFilters,
+    refetch: refetchLearningMaterials,
+  } = useTopicPageLearningMaterialsFeed(learningMaterialsFeedOptions);
 
   const topic = data?.getTopicByKey || placeholderTopicData;
 
@@ -176,7 +171,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
       renderMinimap={(pxWidth, pxHeight) => (
         <SubTopicsMinimap
           topic={topic}
-          isLoading={!!loading || !!resourcesLoading}
+          isLoading={!!loading || !!learningMaterialsFeedLoading}
           subTopics={(topic.subTopics || []).map(({ subTopic }) => subTopic)}
           parentTopic={topic.parentTopic || undefined}
           pxWidth={pxWidth}
@@ -187,21 +182,16 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
     >
       <Flex direction={{ base: 'column', lg: 'row' }} mb="60px" mt={10}>
         <Flex direction="column" flexShrink={1} flexGrow={1}>
-          <Stack spacing={5}>
-            <SubTopicFilter
-              subTopics={topic.subTopics?.map((subTopic) => subTopic.subTopic) || []}
-              selectedSubTopicId={subTopicFilterId}
-              onChange={(newSubTopicFilterId) => setSubTopicFilterId(newSubTopicFilterId)}
-            />
-            <TopicRecommendedLearningMaterials
-              topic={topic}
-              learningMaterialsPreviews={learningMaterials}
-              isLoading={resourcesLoading}
-              reloadRecommendedResources={() => refetchLearningMaterials()}
-              learningMaterialsOptions={learningMaterialsOptions}
-              setLearningMaterialsOptions={setLearningMaterialsOptions}
-            />
-          </Stack>
+          <TopicPageLearningMaterialsFeed
+            selectedTopic={selectedTopic}
+            feedOptions={learningMaterialsFeedOptions}
+            setFeedOptions={setLearningMaterialsFeedOptions}
+            subTopics={topic.subTopics?.map(({ subTopic }) => subTopic) || []}
+            feedAvailableFilters={feedAvailableFilters}
+            learningMaterials={learningMaterials}
+            totalPages={totalPages}
+            isLoading={learningMaterialsFeedLoading}
+          />
         </Flex>
         <Stack
           ml={{ base: 0, lg: 10 }}

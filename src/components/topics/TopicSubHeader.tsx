@@ -1,5 +1,5 @@
 import { SettingsIcon } from '@chakra-ui/icons';
-import { Flex, LinkBox, LinkOverlay, Stack, Text, Wrap, WrapItem, WrapProps } from '@chakra-ui/react';
+import { Flex, LinkBox, LinkOverlay, Skeleton, Stack, Text, Wrap, WrapItem, WrapProps } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import React, { ReactNode } from 'react';
 import { TopicTypeFullData } from '../../graphql/topic_types/topic_types.fragments';
@@ -37,6 +37,7 @@ export const TopicSubHeaderData = gql`
 interface TopicSubHeaderProps {
   topic: TopicSubHeaderDataFragment;
   size: 'sm' | 'md';
+  isLoading?: boolean;
 }
 
 const TextSubHeaderItem: React.FC<{
@@ -79,7 +80,7 @@ const TextSubHeaderItem: React.FC<{
   );
 };
 
-export const TopicSubHeader: React.FC<TopicSubHeaderProps & WrapProps> = ({ topic, size, ...wrapProps }) => {
+export const TopicSubHeader: React.FC<TopicSubHeaderProps & WrapProps> = ({ topic, size, isLoading, ...wrapProps }) => {
   const { currentUser } = useCurrentUser();
   const menuItems = [
     ...(!!topic.topicTypes ? [<TopicTypesViewer topicTypes={topic.topicTypes} maxShown={2} />] : []),
@@ -120,7 +121,9 @@ export const TopicSubHeader: React.FC<TopicSubHeaderProps & WrapProps> = ({ topi
   return (
     <Wrap spacing="11px" {...wrapProps}>
       {menuItems.map((menuItem, idx) => (
-        <WrapItem key={idx}>{menuItem}</WrapItem>
+        <WrapItem key={idx}>
+          <Skeleton isLoaded={!isLoading}>{menuItem}</Skeleton>
+        </WrapItem>
       ))}
     </Wrap>
   );

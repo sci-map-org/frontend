@@ -1,36 +1,43 @@
-import { Flex, Heading, Stack, StackProps, Wrap, WrapItem } from '@chakra-ui/react';
+import { Divider, Flex, Heading, Stack, StackProps, Wrap, WrapItem } from '@chakra-ui/react';
 import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
+import { TopicDescription } from './fields/TopicDescription';
+import { TopicSubHeader } from './TopicSubHeader';
 
 interface SubTopicFilterProps extends Omit<StackProps, 'onChange'> {
   subTopics: TopicLinkDataFragment[];
-  selectedSubTopicId: string | null;
-  onChange: (selectedTopicId: string | null) => void;
+  selectedSubTopic: TopicLinkDataFragment | null;
+  onChange: (selectedTopicKey: string | null) => void;
 }
-export const SubTopicFilter: React.FC<SubTopicFilterProps> = ({
-  subTopics,
-  selectedSubTopicId,
-  onChange,
-  ...props
-}) => {
+export const SubTopicFilter: React.FC<SubTopicFilterProps> = ({ subTopics, selectedSubTopic, onChange, ...props }) => {
   return (
-    <Stack alignItems="center" {...props}>
+    <Stack spacing={4} alignItems="center" {...props}>
       <Heading size="xl" fontWeight={400}>
         SubTopics
       </Heading>
-      <Wrap>
+      <Wrap justify="center">
         <WrapItem>
-          <SubTopicFilterItem name="General" isSelected={selectedSubTopicId === null} onClick={() => onChange(null)} />
+          <SubTopicFilterItem name="General" isSelected={selectedSubTopic === null} onClick={() => onChange(null)} />
         </WrapItem>
         {subTopics.map((subTopic) => (
           <WrapItem key={subTopic._id}>
             <SubTopicFilterItem
               name={subTopic.name}
-              isSelected={selectedSubTopicId === subTopic._id}
-              onClick={() => onChange(subTopic._id)}
+              isSelected={selectedSubTopic?._id === subTopic._id}
+              onClick={() => onChange(subTopic.key)}
             />
           </WrapItem>
         ))}
       </Wrap>
+      {selectedSubTopic && <Divider borderColor="gray.400" />}
+      {selectedSubTopic && (
+        <Stack alignItems="center">
+          <Heading color="gray.600" size="lg">
+            {selectedSubTopic.name}
+          </Heading>
+          <TopicSubHeader topic={selectedSubTopic} size="sm" />
+          {/* <TopicDescription topicDescription={selectedSubTopic.description} /> */}
+        </Stack>
+      )}
     </Stack>
   );
 };

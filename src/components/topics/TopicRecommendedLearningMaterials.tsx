@@ -1,7 +1,8 @@
-import { SearchIcon } from '@chakra-ui/icons';
+import { ChevronDownIcon, SearchIcon } from '@chakra-ui/icons';
 import {
   Badge,
-  Box, Checkbox,
+  Box,
+  Checkbox,
   Flex,
   FormControl,
   FormLabel,
@@ -14,11 +15,13 @@ import {
   Tag,
   TagCloseButton,
   TagLabel,
-  Text
+  Text,
+  Wrap,
+  WrapItem,
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { values, without } from 'lodash';
-import { DependencyList, useEffect, useMemo, useRef, useState } from 'react';
+import { DependencyList, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import MultiSelect from 'react-multi-select-component';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 import BeatLoader from 'react-spinners/BeatLoader';
@@ -30,7 +33,7 @@ import {
   ResourceType,
   TopicLearningMaterialsFilterOptions,
   TopicLearningMaterialsOptions,
-  TopicLearningMaterialsSortingType
+  TopicLearningMaterialsSortingType,
 } from '../../graphql/types';
 import { theme } from '../../theme/theme';
 import { LearningPathPreviewCard, LearningPathPreviewCardData } from '../learning_paths/LearningPathPreviewCard';
@@ -39,12 +42,13 @@ import { ResourceTypeBadge, resourceTypeColorMapping, resourceTypeToLabel } from
 import { LearningMaterialPreviewCardList } from '../resources/LearningMaterialPreviewCardList';
 import { ResourcePreviewCard } from '../resources/ResourcePreviewCard';
 import { ResourcePreviewCardDataFragment } from '../resources/ResourcePreviewCard.generated';
+import {
+  TopicPageLearningMaterialFeedTypeFilter,
+  TopicPageLearningMaterialsFeedOptions,
+} from './TopicPageLearningMaterialsFeed';
 
 export const getTopicRecommendedLearningMaterials = gql`
-  query getTopicRecommendedLearningMaterials(
-    $key: String!
-    $learningMaterialsOptions: TopicLearningMaterialsOptions!
-  ) {
+  query getTopicRecommendedLearningMaterials($key: String!, $learningMaterialsOptions: TopicLearningMaterialsOptions!) {
     getTopicByKey(topicKey: $key) {
       _id
       learningMaterials(options: $learningMaterialsOptions) {
@@ -59,81 +63,193 @@ export const getTopicRecommendedLearningMaterials = gql`
   ${LearningPathPreviewCardData}
 `;
 
-function getLearningMaterialFilterString(types: LearningMaterialFilterType[], maxLength = 3): string {
-  if (types.length === 1)
-    return getLearningMaterialFilterTypeLabel(types[0]) + (types[0][types[0].length - 1] === 's' ? '' : 's');
-  if (types.length > maxLength)
-    return (
-      types
-        .map(getLearningMaterialFilterTypeLabel)
-        .map((t) => (t[t.length - 1] === 's' ? t : t + 's'))
-        .slice(0, maxLength)
-        .join(', ') + '...'
-    );
-  return types
-    .map(getLearningMaterialFilterTypeLabel)
-    .map((t) => (t[t.length - 1] === 's' ? t : t + 's'))
-    .join(', ');
-}
+// function getLearningMaterialFilterString(types: LearningMaterialFilterType[], maxLength = 3): string {
+//   if (types.length === 1)
+//     return getLearningMaterialFilterTypeLabel(types[0]) + (types[0][types[0].length - 1] === 's' ? '' : 's');
+//   if (types.length > maxLength)
+//     return (
+//       types
+//         .map(getLearningMaterialFilterTypeLabel)
+//         .map((t) => (t[t.length - 1] === 's' ? t : t + 's'))
+//         .slice(0, maxLength)
+//         .join(', ') + '...'
+//     );
+//   return types
+//     .map(getLearningMaterialFilterTypeLabel)
+//     .map((t) => (t[t.length - 1] === 's' ? t : t + 's'))
+//     .join(', ');
+// }
 /**
  * TODO ? could be nice, not 100% required
  */
-function getTitle(options: TopicLearningMaterialsOptions, domainName: string) {
-  let s1 = '';
-  let s2 = '';
-  let s3 = '';
-  const types = getFilterTypesFromFilterOptions(options.filter);
-  switch (options.sortingType) {
-    case TopicLearningMaterialsSortingType.Recommended:
-      s1 = 'Recommended';
-      s2 = types.length <= 3 ? getLearningMaterialFilterString(types, 2) : '';
-      s3 = 'For You';
-      break;
-    case TopicLearningMaterialsSortingType.Rating:
-      s1 = 'Best'; // 'Highest rated' | 'Best' |  'Highest Rating' | ?
-      s2 = types.length ? getLearningMaterialFilterString(types) : 'Learning Resources';
-      s3 = 'in ' + domainName;
-      break;
-    case TopicLearningMaterialsSortingType.Newest:
-      s1 = 'Recently added'; // 'Newest' | 'Latest' | ?
-      s2 = types.length ? getLearningMaterialFilterString(types) : 'Learning Resources';
-      s3 = 'in ' + domainName;
-      break;
-  }
-  return { s1, s2, s3 };
-}
+// function getTitle(options: TopicLearningMaterialsOptions, domainName: string) {
+//   let s1 = '';
+//   let s2 = '';
+//   let s3 = '';
+//   const types = getFilterTypesFromFilterOptions(options.filter);
+//   switch (options.sortingType) {
+//     case TopicLearningMaterialsSortingType.Recommended:
+//       s1 = 'Recommended';
+//       s2 = types.length <= 3 ? getLearningMaterialFilterString(types, 2) : '';
+//       s3 = 'For You';
+//       break;
+//     case TopicLearningMaterialsSortingType.Rating:
+//       s1 = 'Best'; // 'Highest rated' | 'Best' |  'Highest Rating' | ?
+//       s2 = types.length ? getLearningMaterialFilterString(types) : 'Learning Resources';
+//       s3 = 'in ' + domainName;
+//       break;
+//     case TopicLearningMaterialsSortingType.Newest:
+//       s1 = 'Recently added'; // 'Newest' | 'Latest' | ?
+//       s2 = types.length ? getLearningMaterialFilterString(types) : 'Learning Resources';
+//       s3 = 'in ' + domainName;
+//       break;
+//   }
+//   return { s1, s2, s3 };
+// }
+
 export const TopicRecommendedLearningMaterials: React.FC<{
-  topic: TopicLinkDataFragment;
+  // topic: TopicLinkDataFragment;
   learningMaterialsPreviews: (ResourcePreviewCardDataFragment | LearningPathPreviewCardDataFragment)[];
   isLoading: boolean;
-  learningMaterialsOptions: TopicLearningMaterialsOptions;
-  setLearningMaterialsOptions: (learningMaterialsOptions: TopicLearningMaterialsOptions) => void;
+  feedOptions: TopicPageLearningMaterialsFeedOptions;
+  setFeedOptions: (options: TopicPageLearningMaterialsFeedOptions) => void;
+  // learningMaterialsOptions: TopicLearningMaterialsOptions;
+  // setLearningMaterialsOptions: (learningMaterialsOptions: TopicLearningMaterialsOptions) => void;
   reloadRecommendedResources: () => void;
 }> = ({
-  topic,
+  // topic,
   learningMaterialsPreviews,
   isLoading,
   reloadRecommendedResources,
-  learningMaterialsOptions,
-  setLearningMaterialsOptions,
+  feedOptions,
+  setFeedOptions,
+  // learningMaterialsOptions,
+  // setLearningMaterialsOptions,
 }) => {
-  const { s1, s2, s3 } = useMemo(() => getTitle(learningMaterialsOptions, topic.name), [
-    topic,
-    learningMaterialsOptions.sortingType,
-    learningMaterialsOptions.filter,
-  ]);
+  // const { s1, s2, s3 } = useMemo(
+  //   () => getTitle(learningMaterialsOptions, topic.name),
+  //   [topic, learningMaterialsOptions.sortingType, learningMaterialsOptions.filter]
+  // );
+  const toggleTypeFilter = useCallback(
+    (typeFilterName: TopicPageLearningMaterialFeedTypeFilter) => {
+      setFeedOptions({
+        ...feedOptions,
+        typeFilters: { ...feedOptions.typeFilters, [typeFilterName]: !feedOptions.typeFilters[typeFilterName] },
+      });
+    },
+    [setFeedOptions, feedOptions]
+  );
   return (
-    <Flex direction="column" w="100%" borderTopRadius={2}>
-      <Flex direction="column" alignItems="stretch" pl={3} bgColor="teal.600" color="white" borderTopRadius="inherit">
-        <Flex direction="row" alignItems="baseline" pt={1}>
-          <Text fontSize="2xl" fontWeight={500}>
+    <Flex direction="column" w="100%">
+      <Flex direction="column" alignItems="stretch">
+        <Flex direction="row" alignItems="baseline" pt={1} justifyContent="space-between">
+          <Stack direction="row" alignItems="baseline">
+            <Text fontSize="2xl" fontWeight={500}>
+              Best Resources
+            </Text>
+            <SearchResourcesInput onChange={(value) => setFeedOptions({ ...feedOptions, query: value || undefined })} />
+          </Stack>
+          {/* <Text fontSize="2xl" fontWeight={500}>
             {s1 + ' '}
-            {/* <Text fontSize="2xl" as="span" {...(s2 !== 'Learning Resources' && { color: 'blue.800' })}> */}
             {s2}
-            {/* </Text> */}
             {' ' + s3}
-          </Text>
-          <Box pl={3}></Box>
+          </Text> */}
+          <FormControl id="sort_by" w="260px" display="flex" flexDir="row" alignItems="center" px={3}>
+            <FormLabel mb={0} fontWeight={600} flexShrink={0} color="gray.600">
+              Sort by:
+            </FormLabel>
+            <Select
+              size="sm"
+              fontWeight={500}
+              // variant="outline"
+              borderColor="white"
+              _focus={{}}
+              // bgColor="teal.600"
+              // colorScheme="whiteAlpha"
+              onChange={(e) =>
+                setFeedOptions({
+                  ...feedOptions,
+                  sorting: e.target.value as TopicLearningMaterialsSortingType,
+                })
+              }
+              value={feedOptions.sorting}
+            >
+              <option value={TopicLearningMaterialsSortingType.Recommended}>Most Relevant</option>
+              <option value={TopicLearningMaterialsSortingType.Rating}>Highest Rating</option>
+              <option value={TopicLearningMaterialsSortingType.Newest}>Newest First</option>
+            </Select>
+          </FormControl>
+        </Flex>
+        <Flex direction="row" justifyContent="space-between" alignItems="baseline">
+          <Wrap spacing="8px" mt={3}>
+            <WrapItem>
+              <LearningMaterialFilterItem
+                onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Course)}
+                color="teal.600"
+                isSelected={feedOptions.typeFilters.Course}
+              >
+                Course
+              </LearningMaterialFilterItem>
+            </WrapItem>
+            <WrapItem>
+              <LearningMaterialFilterItem
+                onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Video)}
+                color="red.500"
+                isSelected={feedOptions.typeFilters.Video}
+              >
+                Video
+              </LearningMaterialFilterItem>
+            </WrapItem>
+            <WrapItem>
+              <LearningMaterialFilterItem
+                onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Podcast)}
+                color="orange.500"
+                isSelected={feedOptions.typeFilters.Podcast}
+              >
+                Podcast
+              </LearningMaterialFilterItem>
+            </WrapItem>
+            <WrapItem>
+              <LearningMaterialFilterItem
+                onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Short)}
+                color="blue.500"
+                isSelected={feedOptions.typeFilters.Short}
+              >
+                Short<Text as="span" fontSize="sm">{`(<30min)`}</Text>
+              </LearningMaterialFilterItem>
+            </WrapItem>
+            <WrapItem>
+              <LearningMaterialFilterItem
+                color="purple.500"
+                onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Long)}
+                isSelected={feedOptions.typeFilters.Long}
+              >
+                Long<Text as="span" fontSize="sm">{`(>30min)`}</Text>
+              </LearningMaterialFilterItem>
+            </WrapItem>
+            <WrapItem>
+              <LearningMaterialFilterItem
+                color="yellow.500"
+                onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Article)}
+                isSelected={feedOptions.typeFilters.Article}
+              >
+                Article
+              </LearningMaterialFilterItem>
+            </WrapItem>
+            <WrapItem>
+              <LearningMaterialFilterItem
+                color="teal.500"
+                onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.LearningPath)}
+                isSelected={feedOptions.typeFilters.LearningPath}
+              >
+                Learning Path
+              </LearningMaterialFilterItem>
+            </WrapItem>
+          </Wrap>
+          <Stack direction="row" alignItems="baseline">
+            <Text fontWeight={600}>More Filters</Text>
+            <ChevronDownIcon />
+          </Stack>
         </Flex>
         <Flex
           pt={4}
@@ -147,12 +263,7 @@ export const TopicRecommendedLearningMaterials: React.FC<{
             spacing={{ base: 2, md: 8 }}
             alignItems={{ base: 'flex-start', md: 'center' }}
           >
-            <SearchResourcesInput
-              onChange={(value) =>
-                setLearningMaterialsOptions({ ...learningMaterialsOptions, query: value || undefined })
-              }
-            />
-            <LearningMaterialTypeFilter
+            {/* <LearningMaterialTypeFilter
               filterOptions={learningMaterialsOptions.filter}
               setFilterOptions={(filterOptions) =>
                 setLearningMaterialsOptions({
@@ -160,35 +271,9 @@ export const TopicRecommendedLearningMaterials: React.FC<{
                   filter: filterOptions,
                 })
               }
-            />
+            /> */}
           </Stack>
-          <Box py={1}>
-            <FormControl id="sort_by" display="flex" flexDir="row" alignItems="center" px={3}>
-              <FormLabel mb={0} fontWeight={600} flexShrink={0}>
-                Sort by:
-              </FormLabel>
-              <Select
-                size="sm"
-                fontWeight={500}
-                variant="outline"
-                borderColor="white"
-                _focus={{}}
-                bgColor="teal.600"
-                colorScheme="whiteAlpha"
-                onChange={(e) =>
-                  setLearningMaterialsOptions({
-                    ...learningMaterialsOptions,
-                    sortingType: e.target.value as TopicLearningMaterialsSortingType,
-                  })
-                }
-                value={learningMaterialsOptions.sortingType}
-              >
-                <option value={TopicLearningMaterialsSortingType.Recommended}>Most Relevant</option>
-                <option value={TopicLearningMaterialsSortingType.Rating}>Highest Rating</option>
-                <option value={TopicLearningMaterialsSortingType.Newest}>Newest First</option>
-              </Select>
-            </FormControl>
-          </Box>
+          <Box py={1}></Box>
         </Flex>
       </Flex>
       <LearningMaterialPreviewCardList
@@ -257,12 +342,12 @@ export const SearchResourcesInput: React.FC<{
         variant="outline"
         placeholder="Search..."
         value={query}
-        color="gray.500"
+        color="gray.600"
         onChange={(e) => setQuery(e.target.value)}
         borderRadius={20}
-        borderColor="white"
+        // borderColor="white"
         borderWidth={1}
-        bgColor="white"
+        // bgColor="white"
         _focus={{}}
       />
       {value !== query && shouldSearch(query) && (
@@ -422,5 +507,32 @@ const ItemRenderer = ({
         <Badge colorScheme="teal">Learning Path</Badge>
       )}
     </Stack>
+  );
+};
+
+const LearningMaterialFilterItem: React.FC<{ color: string; isSelected?: boolean; onSelect: () => void }> = ({
+  color,
+  isSelected,
+  onSelect,
+  children,
+}) => {
+  return (
+    <Text
+      borderWidth={1}
+      borderColor={color}
+      color={isSelected ? 'white' : color}
+      bgColor={isSelected ? color : 'white'}
+      px={2}
+      py="2px"
+      borderRadius="50px"
+      fontSize="18px"
+      fontWeight={600}
+      _hover={{
+        cursor: 'pointer',
+      }}
+      onClick={onSelect}
+    >
+      {children}
+    </Text>
   );
 };
