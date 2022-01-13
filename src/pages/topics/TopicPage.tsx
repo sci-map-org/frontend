@@ -30,7 +30,6 @@ import {
   useTopicPageLearningMaterialsFeed,
 } from '../../components/topics/TopicPageLearningMaterialsFeed';
 import { TopicRecommendedLearningMaterials } from '../../components/topics/TopicRecommendedLearningMaterials';
-import { useGetTopicRecommendedLearningMaterialsQuery } from '../../components/topics/TopicRecommendedLearningMaterials.generated';
 import { TopicSubHeader, TopicSubHeaderData } from '../../components/topics/TopicSubHeader';
 import { generateTopicData, TopicLinkData } from '../../graphql/topics/topics.fragments';
 import { TopicLearningMaterialsOptions, TopicLearningMaterialsSortingType } from '../../graphql/types';
@@ -93,7 +92,8 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
 
   const {
     loading: learningMaterialsFeedLoading,
-    topic: selectedTopic,
+    topic: selectedSubTopicData,
+    lastSelectedSubTopic,
     learningMaterials,
     totalPages,
     feedAvailableFilters,
@@ -101,7 +101,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
   } = useTopicPageLearningMaterialsFeed(learningMaterialsFeedOptions);
 
   const topic = data?.getTopicByKey || placeholderTopicData;
-
+  const selectedSubTopic = learningMaterialsFeedOptions.selectedSubTopicKey ? lastSelectedSubTopic : null;
   if (error) return null;
 
   if (topic.isDisambiguation)
@@ -180,10 +180,11 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
       )}
       isLoading={loading}
     >
-      <Flex direction={{ base: 'column', lg: 'row' }} mb="60px" mt={10}>
-        <Flex direction="column" flexShrink={1} flexGrow={1}>
+      <Flex direction={{ base: 'column', lg: 'row' }} mb="60px" mt={10} width="100%">
+        <Flex direction="column" flexGrow={1}>
           <TopicPageLearningMaterialsFeed
-            selectedTopic={selectedTopic}
+            mainTopic={topic}
+            selectedSubTopic={selectedSubTopic}
             feedOptions={learningMaterialsFeedOptions}
             setFeedOptions={setLearningMaterialsFeedOptions}
             subTopics={topic.subTopics?.map(({ subTopic }) => subTopic) || []}
@@ -199,6 +200,9 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
           direction={{ base: 'column', md: 'row', lg: 'column' }}
           w={{ base: '100%', lg: '270px' }}
           spacing={{ base: 4, md: 'auto', lg: 10 }}
+          flexBasis={{ base: '100%', lg: '270px' }}
+          flexGrow={0}
+          flexShrink={0}
         >
           <Stack direction="column" spacing={4} alignItems="flex-end">
             <NewResourceModal

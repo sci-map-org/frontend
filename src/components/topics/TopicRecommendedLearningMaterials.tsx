@@ -42,26 +42,11 @@ import { ResourceTypeBadge, resourceTypeColorMapping, resourceTypeToLabel } from
 import { LearningMaterialPreviewCardList } from '../resources/LearningMaterialPreviewCardList';
 import { ResourcePreviewCard } from '../resources/ResourcePreviewCard';
 import { ResourcePreviewCardDataFragment } from '../resources/ResourcePreviewCard.generated';
+import { SubTopicFilterData } from './SubTopicFilter';
 import {
   TopicPageLearningMaterialFeedTypeFilter,
   TopicPageLearningMaterialsFeedOptions,
 } from './TopicPageLearningMaterialsFeed';
-
-export const getTopicRecommendedLearningMaterials = gql`
-  query getTopicRecommendedLearningMaterials($key: String!, $learningMaterialsOptions: TopicLearningMaterialsOptions!) {
-    getTopicByKey(topicKey: $key) {
-      _id
-      learningMaterials(options: $learningMaterialsOptions) {
-        items {
-          ...ResourcePreviewCardData
-          ...LearningPathPreviewCardData
-        }
-      }
-    }
-  }
-  ${ResourcePreviewCardData}
-  ${LearningPathPreviewCardData}
-`;
 
 // function getLearningMaterialFilterString(types: LearningMaterialFilterType[], maxLength = 3): string {
 //   if (types.length === 1)

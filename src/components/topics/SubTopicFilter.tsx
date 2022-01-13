@@ -1,11 +1,24 @@
 import { Divider, Flex, Heading, Stack, StackProps, Wrap, WrapItem } from '@chakra-ui/react';
+import gql from 'graphql-tag';
+import { TopicLinkData } from '../../graphql/topics/topics.fragments';
 import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import { TopicDescription } from './fields/TopicDescription';
-import { TopicSubHeader } from './TopicSubHeader';
+import { SubTopicFilterDataFragment } from './SubTopicFilter.generated';
+import { TopicSubHeader, TopicSubHeaderData } from './TopicSubHeader';
+import { TopicSubHeaderDataFragment } from './TopicSubHeader.generated';
 
+export const SubTopicFilterData = gql`
+  fragment SubTopicFilterData on Topic {
+    ...TopicLinkData
+    description
+    ...TopicSubHeaderData
+  }
+  ${TopicLinkData}
+  ${TopicSubHeaderData}
+`;
 interface SubTopicFilterProps extends Omit<StackProps, 'onChange'> {
   subTopics: TopicLinkDataFragment[];
-  selectedSubTopic: TopicLinkDataFragment | null;
+  selectedSubTopic: SubTopicFilterDataFragment | null;
   onChange: (selectedTopicKey: string | null) => void;
 }
 export const SubTopicFilter: React.FC<SubTopicFilterProps> = ({ subTopics, selectedSubTopic, onChange, ...props }) => {
@@ -35,7 +48,7 @@ export const SubTopicFilter: React.FC<SubTopicFilterProps> = ({ subTopics, selec
             {selectedSubTopic.name}
           </Heading>
           <TopicSubHeader topic={selectedSubTopic} size="sm" />
-          {/* <TopicDescription topicDescription={selectedSubTopic.description} /> */}
+          <TopicDescription topicDescription={selectedSubTopic.description} />
         </Stack>
       )}
     </Stack>
