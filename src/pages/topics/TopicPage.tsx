@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Link, Skeleton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { RoleAccess } from '../../components/auth/RoleAccess';
 import { useUnauthentificatedModal } from '../../components/auth/UnauthentificatedModal';
 import { PageLayout } from '../../components/layout/PageLayout';
@@ -22,6 +22,7 @@ import { NewTopicModal } from '../../components/topics/NewTopic';
 import { ParentTopicsBreadcrumbs, ParentTopicsBreadcrumbsData } from '../../components/topics/ParentTopicsBreadcrumbs';
 import { SeeAlso, SeeAlsoData } from '../../components/topics/SeeAlso';
 import { SubTopicFilter } from '../../components/topics/SubTopicFilter';
+import { SubTopicFilterDataFragment } from '../../components/topics/SubTopicFilter.generated';
 import { MapVisualisationTopicData } from '../../components/topics/SubTopicsMapVisualisation';
 import { SubTopicsMinimap } from '../../components/topics/SubTopicsMinimap';
 import {
@@ -100,8 +101,17 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
     refetch: refetchLearningMaterials,
   } = useTopicPageLearningMaterialsFeed(learningMaterialsFeedOptions);
 
+  const [selectedSubTopic, setSelectedSubTopic] = useState<null | SubTopicFilterDataFragment>(null);
+  useEffect(() => {
+    if (!learningMaterialsFeedOptions.selectedSubTopicKey) {
+      setSelectedSubTopic(null);
+    } else {
+      setSelectedSubTopic(selectedSubTopicData);
+    }
+  }, [selectedSubTopicData, learningMaterialsFeedOptions.selectedSubTopicKey]);
+
   const topic = data?.getTopicByKey || placeholderTopicData;
-  const selectedSubTopic = learningMaterialsFeedOptions.selectedSubTopicKey ? lastSelectedSubTopic : null;
+  // const selectedSubTopic = //learningMaterialsFeedOptions.selectedSubTopicKey ? lastSelectedSubTopic : null;
   if (error) return null;
 
   if (topic.isDisambiguation)

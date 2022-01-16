@@ -4,8 +4,7 @@ import { omit, range } from 'lodash';
 import { useMemo, useState } from 'react';
 import { ResourcePreviewCardData } from '../../graphql/resources/resources.fragments';
 import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
-import { TopicLearningMaterialsSortingType } from '../../graphql/types';
-import { GetTopicByKeyTopicPageQuery } from '../../pages/topics/TopicPage.generated';
+import { ResourceType, TopicLearningMaterialsSortingType } from '../../graphql/types';
 import { LearningPathPreviewCardData } from '../learning_paths/LearningPathPreviewCard';
 import { LearningPathPreviewCardDataFragment } from '../learning_paths/LearningPathPreviewCard.generated';
 import { ResourcePreviewCardDataFragment } from '../resources/ResourcePreviewCard.generated';
@@ -13,6 +12,8 @@ import { SubTopicFilter, SubTopicFilterData } from './SubTopicFilter';
 import { SubTopicFilterDataFragment } from './SubTopicFilter.generated';
 import { useGetTopicRecommendedLearningMaterialsQuery } from './TopicPageLearningMaterialsFeed.generated';
 import { TopicRecommendedLearningMaterials } from './TopicRecommendedLearningMaterials';
+
+export const LM_FEED_RESULTS_PER_PAGE = 8;
 
 export enum TopicPageLearningMaterialFeedTypeFilter {
   Course = 'Course',
@@ -35,6 +36,14 @@ export const getTopicRecommendedLearningMaterials = gql`
           ...LearningPathPreviewCardData
         }
       }
+      learningMaterialsFilters {
+        types
+        tagFilters {
+          name
+          count
+        }
+      }
+      learningMaterialsTotalCount
     }
   }
   ${ResourcePreviewCardData}
@@ -64,23 +73,24 @@ export const useTopicPageLearningMaterialsFeed = (
   learningMaterials: Array<ResourcePreviewCardDataFragment | LearningPathPreviewCardDataFragment>;
   loading: boolean;
   refetch: () => void;
+  learningMaterialsFilters?: FeedAvailableFilters;
 } => {
   const [lastSelectedSubTopic, setLastSelectedSubTopic] = useState<SubTopicFilterDataFragment | null>(null);
   const [learningMaterialPreviews, setLearningMaterialPreviews] = useState<
     (ResourcePreviewCardDataFragment | LearningPathPreviewCardDataFragment)[]
   >([]);
 
-  const {
-    data: learningMaterialsData,
-    loading,
-    refetch,
-  } = useGetTopicRecommendedLearningMaterialsQuery({
+  const { data, loading, refetch } = useGetTopicRecommendedLearningMaterialsQuery({
     variables: {
       key: options.selectedSubTopicKey || options.mainTopicKey,
       learningMaterialsOptions: {
         sortingType: options.sorting,
         query: options.query,
         filter: { completedByUser: false },
+        pagination: {
+          offset: (options.page - 1) * LM_FEED_RESULTS_PER_PAGE,
+          limit: LM_FEED_RESULTS_PER_PAGE,
+        },
       },
     },
     fetchPolicy: 'no-cache',
@@ -94,18 +104,36 @@ export const useTopicPageLearningMaterialsFeed = (
       }
     },
   });
+  console.log(data?.getTopicByKey?.learningMaterialsFilters);
+  const learningMaterials = data?.getTopicByKey?.learningMaterials?.items || learningMaterialPreviews; // ? after getDomainByKey because of https://github.com/apollographql/apollo-client/issues/6986
 
-  const learningMaterials = learningMaterialsData?.getTopicByKey?.learningMaterials?.items || learningMaterialPreviews; // ? after getDomainByKey because of https://github.com/apollographql/apollo-client/issues/6986
+  const totalPages = !!data?.getTopicByKey?.learningMaterialsTotalCount
+    ? 1 + Math.floor((data.getTopicByKey.learningMaterialsTotalCount - 0.005) / LM_FEED_RESULTS_PER_PAGE)
+    : 1;
+  // 6/5 -
+  // => +1 ?
+
+  // modulo === 0 -> same page
+  // 4/4 -> 1
+  // 2/4 -> 0
+  // 6/4 -> 1
+  // console.log(totalPages, LM_FEED_RESULTS_PER_PAGE, data?.getTopicByKey?.learningMaterialsTotalCount);
   return {
     learningMaterials,
     loading,
     refetch,
     lastSelectedSubTopic,
-    topic: learningMaterialsData?.getTopicByKey,
+    topic: data?.getTopicByKey,
+    learningMaterialsFilters: data?.getTopicByKey?.learningMaterialsFilters || undefined,
     feedAvailableFilters: {},
-    totalPages: 7,
+    totalPages: totalPages,
   };
 };
+
+interface FeedAvailableFilters {
+  types: ResourceType[];
+  tagFilters: Array<{ name: string; count: number }>;
+}
 
 interface TopicPageLearningMaterialsFeedProps {
   subTopics: TopicLinkDataFragment[];
@@ -113,7 +141,7 @@ interface TopicPageLearningMaterialsFeedProps {
   selectedSubTopic: SubTopicFilterDataFragment | null;
   learningMaterials: Array<ResourcePreviewCardDataFragment | LearningPathPreviewCardDataFragment>;
   totalPages: number;
-  feedAvailableFilters: any;
+  feedAvailableFilters?: FeedAvailableFilters;
   feedOptions: TopicPageLearningMaterialsFeedOptions;
   setFeedOptions: (options: TopicPageLearningMaterialsFeedOptions) => void;
   isLoading: boolean;

@@ -1331,7 +1331,6 @@ export enum ResourceType {
   Podcast = 'podcast',
   PodcastEpisode = 'podcast_episode',
   Project = 'project',
-  Quizz = 'quizz',
   ResearchPaper = 'research_paper',
   Talk = 'talk',
   Tweet = 'tweet',
@@ -1452,6 +1451,12 @@ export enum SubTopicRelationshipType {
   IsSubtopicOf = 'IS_SUBTOPIC_OF'
 }
 
+export type TagFilter = {
+  __typename?: 'TagFilter';
+  count: Scalars['Int'];
+  name: Scalars['String'];
+};
+
 export type Topic = {
   __typename?: 'Topic';
   _id: Scalars['String'];
@@ -1468,6 +1473,7 @@ export type Topic = {
   isDisambiguation?: Maybe<Scalars['Boolean']>;
   key: Scalars['String'];
   learningMaterials?: Maybe<TopicLearningMaterialsResults>;
+  learningMaterialsFilters?: Maybe<TopicLearningMaterialsFilters>;
   learningMaterialsTotalCount?: Maybe<Scalars['Int']>;
   level?: Maybe<Scalars['Float']>;
   name: Scalars['String'];
@@ -1518,8 +1524,15 @@ export type TopicLearningMaterialsFilterOptions = {
   resourceTypeIn?: InputMaybe<Array<ResourceType>>;
 };
 
+export type TopicLearningMaterialsFilters = {
+  __typename?: 'TopicLearningMaterialsFilters';
+  tagFilters: Array<TagFilter>;
+  types: Array<ResourceType>;
+};
+
 export type TopicLearningMaterialsOptions = {
   filter: TopicLearningMaterialsFilterOptions;
+  pagination?: InputMaybe<PaginationOptions>;
   query?: InputMaybe<Scalars['String']>;
   sortingType: TopicLearningMaterialsSortingType;
 };
