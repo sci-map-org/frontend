@@ -1,42 +1,40 @@
 import { Box, Button, Flex, Link, Skeleton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useEffect, useState } from 'react';
-import { RoleAccess } from '../../components/auth/RoleAccess';
-import { useUnauthentificatedModal } from '../../components/auth/UnauthentificatedModal';
-import { PageLayout } from '../../components/layout/PageLayout';
-import { TopicPageLayout } from '../../components/layout/TopicPageLayout';
-import { LearningPathPreviewCardDataFragment } from '../../components/learning_paths/LearningPathPreviewCard.generated';
-import { LearningPathIcon } from '../../components/lib/icons/LearningPathIcon';
-import { ResourceIcon } from '../../components/lib/icons/ResourceIcon';
-import { TopicIcon } from '../../components/lib/icons/TopicIcon';
-import { TopicLink } from '../../components/lib/links/TopicLink';
-import { PageTitle } from '../../components/lib/Typography';
-import { PageButtonLink } from '../../components/navigation/InternalLink';
-import { NewResourceModal } from '../../components/resources/NewResource';
-import { ResourcePreviewCardDataFragment } from '../../components/resources/ResourcePreviewCard.generated';
-import { AlsoPartOfTopicsViewer } from '../../components/topics/AlsoPartOfTopicsViewer';
-import { BestXPagesLinks } from '../../components/topics/BestXPagesLinks';
-import { EditablePartOfTopicsData } from '../../components/topics/EditablePartOfTopics';
-import { TopicDescription } from '../../components/topics/fields/TopicDescription';
-import { NewTopicModal } from '../../components/topics/NewTopic';
-import { ParentTopicsBreadcrumbs, ParentTopicsBreadcrumbsData } from '../../components/topics/ParentTopicsBreadcrumbs';
-import { SeeAlso, SeeAlsoData } from '../../components/topics/SeeAlso';
-import { SubTopicFilter } from '../../components/topics/SubTopicFilter';
-import { SubTopicFilterDataFragment } from '../../components/topics/SubTopicFilter.generated';
-import { MapVisualisationTopicData } from '../../components/topics/SubTopicsMapVisualisation';
-import { SubTopicsMinimap } from '../../components/topics/SubTopicsMinimap';
+import { useUnauthentificatedModal } from '../../../components/auth/UnauthentificatedModal';
+import { PageLayout } from '../../../components/layout/PageLayout';
+import { TopicPageLayout } from '../../../components/layout/TopicPageLayout';
+import { LearningPathIcon } from '../../../components/lib/icons/LearningPathIcon';
+import { ResourceIcon } from '../../../components/lib/icons/ResourceIcon';
+import { TopicIcon } from '../../../components/lib/icons/TopicIcon';
+import { TopicLink } from '../../../components/lib/links/TopicLink';
+import { PageTitle } from '../../../components/lib/Typography';
+import { PageButtonLink } from '../../../components/navigation/InternalLink';
+import { NewResourceModal } from '../../../components/resources/NewResource';
+import { AlsoPartOfTopicsViewer } from '../../../components/topics/AlsoPartOfTopicsViewer';
+import { BestXPagesLinks } from '../../../components/topics/BestXPagesLinks';
+import { EditablePartOfTopicsData } from '../../../components/topics/EditablePartOfTopics';
+import { TopicDescription } from '../../../components/topics/fields/TopicDescription';
+import { NewTopicModal } from '../../../components/topics/NewTopic';
+import {
+  ParentTopicsBreadcrumbs,
+  ParentTopicsBreadcrumbsData,
+} from '../../../components/topics/ParentTopicsBreadcrumbs';
+import { SubTopicFilterDataFragment } from './SubTopicFilter.generated';
+import { MapVisualisationTopicData } from '../../../components/topics/SubTopicsMapVisualisation';
+import { SubTopicsMinimap } from '../../../components/topics/SubTopicsMinimap';
+import { TopicSubHeader, TopicSubHeaderData } from '../../../components/topics/TopicSubHeader';
+import { generateTopicData, TopicLinkData } from '../../../graphql/topics/topics.fragments';
+import { TopicLearningMaterialsSortingType } from '../../../graphql/types';
+import { useCurrentUser } from '../../../graphql/users/users.hooks';
+import { NewLearningPathPageInfo } from '../../RoutesPageInfos';
+import { SeeAlso, SeeAlsoData } from './SeeAlso';
+import { GetTopicByKeyTopicPageQuery, useGetTopicByKeyTopicPageQuery } from './TopicPage.generated';
 import {
   TopicPageLearningMaterialsFeed,
   TopicPageLearningMaterialsFeedOptions,
   useTopicPageLearningMaterialsFeed,
-} from '../../components/topics/TopicPageLearningMaterialsFeed';
-import { TopicRecommendedLearningMaterials } from '../../components/topics/TopicRecommendedLearningMaterials';
-import { TopicSubHeader, TopicSubHeaderData } from '../../components/topics/TopicSubHeader';
-import { generateTopicData, TopicLinkData } from '../../graphql/topics/topics.fragments';
-import { TopicLearningMaterialsOptions, TopicLearningMaterialsSortingType } from '../../graphql/types';
-import { useCurrentUser } from '../../graphql/users/users.hooks';
-import { NewLearningPathPageInfo } from '../RoutesPageInfos';
-import { GetTopicByKeyTopicPageQuery, useGetTopicByKeyTopicPageQuery } from './TopicPage.generated';
+} from './TopicPageLearningMaterialsFeed';
 
 export const getTopicByKeyTopicPage = gql`
   query getTopicByKeyTopicPage($key: String!) {

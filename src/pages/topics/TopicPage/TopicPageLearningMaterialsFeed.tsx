@@ -2,28 +2,23 @@ import { Button, Flex, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { omit, range } from 'lodash';
 import { useMemo, useState } from 'react';
-import { ResourcePreviewCardData } from '../../graphql/resources/resources.fragments';
-import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
-import { ResourceType, TopicLearningMaterialsSortingType } from '../../graphql/types';
-import { LearningPathPreviewCardData } from '../learning_paths/LearningPathPreviewCard';
-import { LearningPathPreviewCardDataFragment } from '../learning_paths/LearningPathPreviewCard.generated';
-import { ResourcePreviewCardDataFragment } from '../resources/ResourcePreviewCard.generated';
+import {
+  LearningPathPreviewCard,
+  LearningPathPreviewCardData,
+} from '../../../components/learning_paths/LearningPathPreviewCard';
+import { LearningPathPreviewCardDataFragment } from '../../../components/learning_paths/LearningPathPreviewCard.generated';
+import { LearningMaterialPreviewCardList } from '../../../components/resources/LearningMaterialPreviewCardList';
+import { ResourcePreviewCard } from '../../../components/resources/ResourcePreviewCard';
+import { ResourcePreviewCardDataFragment } from '../../../components/resources/ResourcePreviewCard.generated';
+import { ResourcePreviewCardData } from '../../../graphql/resources/resources.fragments';
+import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
+import { ResourceType, TopicLearningMaterialsSortingType } from '../../../graphql/types';
+import { LearningMaterialsFilters, TopicPageLearningMaterialFeedTypeFilter } from './LearningMaterialsFilters';
 import { SubTopicFilter, SubTopicFilterData } from './SubTopicFilter';
 import { SubTopicFilterDataFragment } from './SubTopicFilter.generated';
 import { useGetTopicRecommendedLearningMaterialsQuery } from './TopicPageLearningMaterialsFeed.generated';
-import { TopicRecommendedLearningMaterials } from './TopicRecommendedLearningMaterials';
 
 export const LM_FEED_RESULTS_PER_PAGE = 8;
-
-export enum TopicPageLearningMaterialFeedTypeFilter {
-  Course = 'Course',
-  Video = 'Video',
-  Podcast = 'Podcast',
-  Short = 'Short',
-  Long = 'Long',
-  Article = 'Article',
-  LearningPath = 'LearningPath',
-}
 
 export const getTopicRecommendedLearningMaterials = gql`
   query getTopicRecommendedLearningMaterials($key: String!, $learningMaterialsOptions: TopicLearningMaterialsOptions!) {
@@ -67,13 +62,12 @@ export const useTopicPageLearningMaterialsFeed = (
   options: TopicPageLearningMaterialsFeedOptions
 ): {
   topic: any; // TODO
-  feedAvailableFilters: {};
+  feedAvailableFilters?: FeedAvailableFilters;
   totalPages: number;
   lastSelectedSubTopic: SubTopicFilterDataFragment | null;
   learningMaterials: Array<ResourcePreviewCardDataFragment | LearningPathPreviewCardDataFragment>;
   loading: boolean;
   refetch: () => void;
-  learningMaterialsFilters?: FeedAvailableFilters;
 } => {
   const [lastSelectedSubTopic, setLastSelectedSubTopic] = useState<SubTopicFilterDataFragment | null>(null);
   const [learningMaterialPreviews, setLearningMaterialPreviews] = useState<
@@ -124,13 +118,12 @@ export const useTopicPageLearningMaterialsFeed = (
     refetch,
     lastSelectedSubTopic,
     topic: data?.getTopicByKey,
-    learningMaterialsFilters: data?.getTopicByKey?.learningMaterialsFilters || undefined,
-    feedAvailableFilters: {},
+    feedAvailableFilters: data?.getTopicByKey?.learningMaterialsFilters || undefined,
     totalPages: totalPages,
   };
 };
 
-interface FeedAvailableFilters {
+export interface FeedAvailableFilters {
   types: ResourceType[];
   tagFilters: Array<{ name: string; count: number }>;
 }
@@ -168,14 +161,38 @@ export const TopicPageLearningMaterialsFeed: React.FC<TopicPageLearningMaterials
         onChange={(selectedSubTopicKey) => setFeedOptions({ ...feedOptions, selectedSubTopicKey })}
       />
       <Flex direction="column" px={feedOptions.selectedSubTopicKey ? 10 : 0} alignItems="stretch">
-        <TopicRecommendedLearningMaterials
-          learningMaterialsPreviews={learningMaterials}
-          isLoading={isLoading}
-          // reloadRecommendedResources={() => refetchLearningMaterials()}
-          reloadRecommendedResources={() => console.log('reloading')}
-          feedOptions={feedOptions}
-          setFeedOptions={setFeedOptions}
-        />
+        <Flex direction="column" w="100%">
+          <LearningMaterialsFilters feedOptions={feedOptions} setFeedOptions={setFeedOptions} />
+          <LearningMaterialPreviewCardList
+            learningMaterialsPreviewItems={learningMaterials.map((learningMaterial) => ({ learningMaterial }))}
+            isLoading={isLoading}
+            loadingMessage="Finding the most adapted learning resources..."
+            renderCard={({ learningMaterial }, idx) => {
+              if (learningMaterial.__typename === 'Resource')
+                return (
+                  <ResourcePreviewCard
+                    key={learningMaterial._id}
+                    resource={learningMaterial}
+                    onResourceConsumed={() => console.log('reloading')}
+                    showCompletedNotificationToast={true}
+                    leftBlockWidth="120px"
+                    inCompactList
+                    firstItemInCompactList={idx === 0}
+                  />
+                );
+              if (learningMaterial.__typename === 'LearningPath')
+                return (
+                  <LearningPathPreviewCard
+                    learningPath={learningMaterial}
+                    key={learningMaterial._id}
+                    leftBlockWidth="120px"
+                    inCompactList
+                    firstItemInCompactList={idx === 0}
+                  />
+                );
+            }}
+          />
+        </Flex>
         <Flex>
           <Pagination
             currentPage={feedOptions.page}
