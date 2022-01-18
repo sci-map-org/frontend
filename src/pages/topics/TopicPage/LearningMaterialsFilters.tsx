@@ -1,7 +1,5 @@
 import { ChevronDownIcon, SearchIcon } from '@chakra-ui/icons';
 import {
-  Box,
-  Button,
   Flex,
   FormControl,
   FormLabel,
@@ -15,27 +13,12 @@ import {
   Wrap,
   WrapItem,
 } from '@chakra-ui/react';
-import gql from 'graphql-tag';
-import { omit, range } from 'lodash';
-import { DependencyList, useEffect } from 'react';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { xor } from 'lodash';
+import { DependencyList, useCallback, useEffect, useRef, useState } from 'react';
 import BeatLoader from 'react-spinners/BeatLoader';
 import { useDebounce } from 'use-debounce';
-import { ResourcePreviewCardData } from '../../../graphql/resources/resources.fragments';
-import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
-import { ResourceType, TopicLearningMaterialsSortingType } from '../../../graphql/types';
+import { TopicLearningMaterialsSortingType } from '../../../graphql/types';
 import { theme } from '../../../theme/theme';
-import {
-  LearningPathPreviewCard,
-  LearningPathPreviewCardData,
-} from '../../../components/learning_paths/LearningPathPreviewCard';
-import { LearningPathPreviewCardDataFragment } from '../../../components/learning_paths/LearningPathPreviewCard.generated';
-import { LearningMaterialPreviewCardList } from '../../../components/resources/LearningMaterialPreviewCardList';
-import { ResourcePreviewCard } from '../../../components/resources/ResourcePreviewCard';
-import { ResourcePreviewCardDataFragment } from '../../../components/resources/ResourcePreviewCard.generated';
-import { SubTopicFilter, SubTopicFilterData } from './SubTopicFilter';
-import { SubTopicFilterDataFragment } from './SubTopicFilter.generated';
-import { useGetTopicRecommendedLearningMaterialsQuery } from './TopicPageLearningMaterialsFeed.generated';
 import { FeedAvailableFilters, TopicPageLearningMaterialsFeedOptions } from './TopicPageLearningMaterialsFeed';
 
 export enum TopicPageLearningMaterialFeedTypeFilter {
@@ -49,11 +32,16 @@ export enum TopicPageLearningMaterialFeedTypeFilter {
 }
 
 interface LearningMaterialFiltersProps {
+  feedAvailableFilters?: FeedAvailableFilters;
   feedOptions: TopicPageLearningMaterialsFeedOptions;
   setFeedOptions: (options: TopicPageLearningMaterialsFeedOptions) => void;
 }
 
-export const LearningMaterialsFilters: React.FC<LearningMaterialFiltersProps> = ({ feedOptions, setFeedOptions }) => {
+export const LearningMaterialsFilters: React.FC<LearningMaterialFiltersProps> = ({
+  feedOptions,
+  setFeedOptions,
+  feedAvailableFilters,
+}) => {
   const toggleTypeFilter = useCallback(
     (typeFilterName: TopicPageLearningMaterialFeedTypeFilter) => {
       setFeedOptions({
@@ -64,7 +52,7 @@ export const LearningMaterialsFilters: React.FC<LearningMaterialFiltersProps> = 
     [setFeedOptions, feedOptions]
   );
   return (
-    <Flex direction="column" alignItems="stretch">
+    <Flex direction="column" alignItems="stretch" pb={3}>
       <Flex direction="row" alignItems="baseline" pt={1} justifyContent="space-between">
         <Stack direction="row" alignItems="baseline">
           <Text fontSize="2xl" fontWeight={500}>
@@ -89,7 +77,7 @@ export const LearningMaterialsFilters: React.FC<LearningMaterialFiltersProps> = 
             }
             value={feedOptions.sorting}
           >
-            <option value={TopicLearningMaterialsSortingType.Recommended}>Most Relevant</option>
+            {/* <option value={TopicLearningMaterialsSortingType.Recommended}>Most Relevant</option> */}
             <option value={TopicLearningMaterialsSortingType.Rating}>Highest Rating</option>
             <option value={TopicLearningMaterialsSortingType.Newest}>Newest First</option>
           </Select>
@@ -166,30 +154,29 @@ export const LearningMaterialsFilters: React.FC<LearningMaterialFiltersProps> = 
           <ChevronDownIcon />
         </Stack>
       </Flex>
-      <Flex
-        pt={4}
-        direction={{ base: 'column', md: 'row' }}
-        pb={3}
-        justifyContent={{ base: 'flex-start', md: 'space-between' }}
-        alignItems={{ base: 'flex-start', md: 'center' }}
-      >
-        <Stack
-          direction={{ base: 'column', md: 'row' }}
-          spacing={{ base: 2, md: 8 }}
-          alignItems={{ base: 'flex-start', md: 'center' }}
-        >
-          {/* <LearningMaterialTypeFilter
-      filterOptions={learningMaterialsOptions.filter}
-      setFilterOptions={(filterOptions) =>
-        setLearningMaterialsOptions({
-          ...learningMaterialsOptions,
-          filter: filterOptions,
-        })
-      }
-    /> */}
-        </Stack>
-        <Box py={1}></Box>
-      </Flex>
+      {!!feedAvailableFilters?.tagFilters?.length && (
+        <Flex pt={3}>
+          <Wrap>
+            <WrapItem>
+              <Text fontSize="14px" fontWeight={500} color="gray.400">
+                Filter by Tags
+              </Text>
+            </WrapItem>
+            {feedAvailableFilters.tagFilters.map((tagFilter) => (
+              <WrapItem key={tagFilter.name}>
+                <LearningMaterialTagFitlterItem
+                  name={tagFilter.name}
+                  count={tagFilter.count}
+                  isSelected={feedOptions.tagsFilters.includes(tagFilter.name)}
+                  onSelect={() => {
+                    setFeedOptions({ ...feedOptions, tagsFilters: xor(feedOptions.tagsFilters, [tagFilter.name]) }); // toggle this tag filter
+                  }}
+                />
+              </WrapItem>
+            ))}
+          </Wrap>
+        </Flex>
+      )}
     </Flex>
   );
 };
@@ -268,5 +255,34 @@ const SearchResourcesInput: React.FC<{
         </InputRightElement>
       )}
     </InputGroup>
+  );
+};
+
+const LearningMaterialTagFitlterItem: React.FC<{
+  name: string;
+  count: number;
+  isSelected?: boolean;
+  onSelect: () => void;
+}> = ({ name, count, isSelected, onSelect }) => {
+  return (
+    <Text
+      fontSize="14px"
+      fontWeight={500}
+      borderRadius="14px"
+      pt="2px"
+      pb="4px"
+      px="8px"
+      _hover={{
+        cursor: 'pointer',
+      }}
+      {...(isSelected ? { color: 'white', bgColor: 'gray.600' } : { color: 'gray.600', bgColor: 'gray.100' })}
+      onClick={() => onSelect()}
+      letterSpacing="0.03em"
+    >
+      {name}{' '}
+      <Text as="span" fontWeight={600}>
+        ({count})
+      </Text>
+    </Text>
   );
 };

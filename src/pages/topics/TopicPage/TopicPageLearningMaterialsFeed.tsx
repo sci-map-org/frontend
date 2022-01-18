@@ -1,7 +1,7 @@
 import { Button, Flex, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { omit, range } from 'lodash';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   LearningPathPreviewCard,
   LearningPathPreviewCardData,
@@ -12,7 +12,12 @@ import { ResourcePreviewCard } from '../../../components/resources/ResourcePrevi
 import { ResourcePreviewCardDataFragment } from '../../../components/resources/ResourcePreviewCard.generated';
 import { ResourcePreviewCardData } from '../../../graphql/resources/resources.fragments';
 import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
-import { ResourceType, TopicLearningMaterialsSortingType } from '../../../graphql/types';
+import {
+  LearningMaterialType,
+  ResourceType,
+  TopicLearningMaterialsFilterOptions,
+  TopicLearningMaterialsSortingType,
+} from '../../../graphql/types';
 import { LearningMaterialsFilters, TopicPageLearningMaterialFeedTypeFilter } from './LearningMaterialsFilters';
 import { SubTopicFilter, SubTopicFilterData } from './SubTopicFilter';
 import { SubTopicFilterDataFragment } from './SubTopicFilter.generated';
@@ -30,12 +35,13 @@ export const getTopicRecommendedLearningMaterials = gql`
           ...ResourcePreviewCardData
           ...LearningPathPreviewCardData
         }
-      }
-      learningMaterialsFilters {
-        types
-        tagFilters {
-          name
-          count
+        totalCount
+        availableFilters {
+          types
+          tagFilters {
+            name
+            count
+          }
         }
       }
       learningMaterialsTotalCount
@@ -58,6 +64,81 @@ export interface TopicPageLearningMaterialsFeedOptions {
   tagsFilters: string[];
 }
 
+function getFilterOptionsFromFilterTypes(
+  filterTypes: TopicPageLearningMaterialsFeedOptions['typeFilters']
+): Pick<
+  TopicLearningMaterialsFilterOptions,
+  'learningMaterialTypeIn' | 'resourceTypeIn' | 'durationSecondsGeq' | 'durationSecondsLeq'
+> {
+  let durationSecondsGeq: number | undefined = undefined;
+  let durationSecondsLeq: number | undefined = undefined;
+  if (
+    filterTypes[TopicPageLearningMaterialFeedTypeFilter.Short] &&
+    filterTypes[TopicPageLearningMaterialFeedTypeFilter.Long]
+  ) {
+  } else {
+    if (filterTypes[TopicPageLearningMaterialFeedTypeFilter.Short]) {
+      durationSecondsLeq = 60 * 30;
+    }
+    if (filterTypes[TopicPageLearningMaterialFeedTypeFilter.Long]) {
+      durationSecondsGeq = 60 * 30;
+    }
+  }
+
+  const hasFilterEnabled = Object.keys(filterTypes)
+    .filter(
+      (type) =>
+        !(
+          type === TopicPageLearningMaterialFeedTypeFilter.Short ||
+          type === TopicPageLearningMaterialFeedTypeFilter.Long
+        )
+    )
+    .reduce((acc, key) => {
+      if (!!filterTypes[key as keyof typeof filterTypes]) return true;
+      return acc;
+    }, false);
+  if (!hasFilterEnabled)
+    return {
+      learningMaterialTypeIn: [LearningMaterialType.LearningPath, LearningMaterialType.Resource],
+      resourceTypeIn: undefined,
+      durationSecondsGeq,
+      durationSecondsLeq,
+    };
+  const learningMaterialTypeIn: TopicLearningMaterialsFilterOptions['learningMaterialTypeIn'] = [];
+  const resourceTypeIn: TopicLearningMaterialsFilterOptions['resourceTypeIn'] = [];
+  if (filterTypes[TopicPageLearningMaterialFeedTypeFilter.LearningPath]) {
+    learningMaterialTypeIn.push(LearningMaterialType.LearningPath);
+  }
+  if (filterTypes[TopicPageLearningMaterialFeedTypeFilter.Course]) {
+    if (!learningMaterialTypeIn.includes(LearningMaterialType.Resource))
+      learningMaterialTypeIn.push(LearningMaterialType.Resource);
+    resourceTypeIn.push(ResourceType.Course);
+  }
+  if (filterTypes[TopicPageLearningMaterialFeedTypeFilter.Podcast]) {
+    if (!learningMaterialTypeIn.includes(LearningMaterialType.Resource))
+      learningMaterialTypeIn.push(LearningMaterialType.Resource);
+    resourceTypeIn.push(ResourceType.Podcast);
+    resourceTypeIn.push(ResourceType.PodcastEpisode);
+  }
+  if (filterTypes[TopicPageLearningMaterialFeedTypeFilter.Article]) {
+    if (!learningMaterialTypeIn.includes(LearningMaterialType.Resource))
+      learningMaterialTypeIn.push(LearningMaterialType.Resource);
+    resourceTypeIn.push(ResourceType.Article);
+    resourceTypeIn.push(ResourceType.ArticleSeries);
+  }
+  if (filterTypes[TopicPageLearningMaterialFeedTypeFilter.Video]) {
+    if (!learningMaterialTypeIn.includes(LearningMaterialType.Resource))
+      learningMaterialTypeIn.push(LearningMaterialType.Resource);
+    resourceTypeIn.push(ResourceType.YoutubeVideo);
+    resourceTypeIn.push(ResourceType.YoutubePlaylist);
+  }
+  return {
+    learningMaterialTypeIn,
+    resourceTypeIn,
+    durationSecondsGeq,
+    durationSecondsLeq,
+  };
+}
 export const useTopicPageLearningMaterialsFeed = (
   options: TopicPageLearningMaterialsFeedOptions
 ): {
@@ -74,13 +155,20 @@ export const useTopicPageLearningMaterialsFeed = (
     (ResourcePreviewCardDataFragment | LearningPathPreviewCardDataFragment)[]
   >([]);
 
+  const filter = useMemo(() => {
+    return getFilterOptionsFromFilterTypes(options.typeFilters);
+  }, [options.typeFilters]);
+
   const { data, loading, refetch } = useGetTopicRecommendedLearningMaterialsQuery({
     variables: {
       key: options.selectedSubTopicKey || options.mainTopicKey,
       learningMaterialsOptions: {
         sortingType: options.sorting,
         query: options.query,
-        filter: { completedByUser: false },
+        filter: {
+          ...filter,
+          learningMaterialTagsIn: options.tagsFilters.length ? options.tagsFilters : undefined,
+        },
         pagination: {
           offset: (options.page - 1) * LM_FEED_RESULTS_PER_PAGE,
           limit: LM_FEED_RESULTS_PER_PAGE,
@@ -98,11 +186,11 @@ export const useTopicPageLearningMaterialsFeed = (
       }
     },
   });
-  console.log(data?.getTopicByKey?.learningMaterialsFilters);
+
   const learningMaterials = data?.getTopicByKey?.learningMaterials?.items || learningMaterialPreviews; // ? after getDomainByKey because of https://github.com/apollographql/apollo-client/issues/6986
 
-  const totalPages = !!data?.getTopicByKey?.learningMaterialsTotalCount
-    ? 1 + Math.floor((data.getTopicByKey.learningMaterialsTotalCount - 0.005) / LM_FEED_RESULTS_PER_PAGE)
+  const totalPages = !!data?.getTopicByKey?.learningMaterials?.totalCount
+    ? 1 + Math.floor((data?.getTopicByKey?.learningMaterials?.totalCount - 0.005) / LM_FEED_RESULTS_PER_PAGE)
     : 1;
   // 6/5 -
   // => +1 ?
@@ -118,7 +206,7 @@ export const useTopicPageLearningMaterialsFeed = (
     refetch,
     lastSelectedSubTopic,
     topic: data?.getTopicByKey,
-    feedAvailableFilters: data?.getTopicByKey?.learningMaterialsFilters || undefined,
+    feedAvailableFilters: data?.getTopicByKey?.learningMaterials?.availableFilters || undefined,
     totalPages: totalPages,
   };
 };
@@ -158,41 +246,43 @@ export const TopicPageLearningMaterialsFeed: React.FC<TopicPageLearningMaterials
         selectedSubTopic={
           selectedSubTopic || subTopics.find((subTopic) => subTopic.key === feedOptions.selectedSubTopicKey) || null
         }
-        onChange={(selectedSubTopicKey) => setFeedOptions({ ...feedOptions, selectedSubTopicKey })}
+        onChange={(selectedSubTopicKey) => setFeedOptions({ ...feedOptions, selectedSubTopicKey, tagsFilters: [] })}
       />
       <Flex direction="column" px={feedOptions.selectedSubTopicKey ? 10 : 0} alignItems="stretch">
-        <Flex direction="column" w="100%">
-          <LearningMaterialsFilters feedOptions={feedOptions} setFeedOptions={setFeedOptions} />
-          <LearningMaterialPreviewCardList
-            learningMaterialsPreviewItems={learningMaterials.map((learningMaterial) => ({ learningMaterial }))}
-            isLoading={isLoading}
-            loadingMessage="Finding the most adapted learning resources..."
-            renderCard={({ learningMaterial }, idx) => {
-              if (learningMaterial.__typename === 'Resource')
-                return (
-                  <ResourcePreviewCard
-                    key={learningMaterial._id}
-                    resource={learningMaterial}
-                    onResourceConsumed={() => console.log('reloading')}
-                    showCompletedNotificationToast={true}
-                    leftBlockWidth="120px"
-                    inCompactList
-                    firstItemInCompactList={idx === 0}
-                  />
-                );
-              if (learningMaterial.__typename === 'LearningPath')
-                return (
-                  <LearningPathPreviewCard
-                    learningPath={learningMaterial}
-                    key={learningMaterial._id}
-                    leftBlockWidth="120px"
-                    inCompactList
-                    firstItemInCompactList={idx === 0}
-                  />
-                );
-            }}
-          />
-        </Flex>
+        <LearningMaterialsFilters
+          feedAvailableFilters={feedAvailableFilters}
+          feedOptions={feedOptions}
+          setFeedOptions={setFeedOptions}
+        />
+        <LearningMaterialPreviewCardList
+          learningMaterialsPreviewItems={learningMaterials.map((learningMaterial) => ({ learningMaterial }))}
+          isLoading={isLoading}
+          loadingMessage="Finding the most adapted learning resources..."
+          renderCard={({ learningMaterial }, idx) => {
+            if (learningMaterial.__typename === 'Resource')
+              return (
+                <ResourcePreviewCard
+                  key={learningMaterial._id}
+                  resource={learningMaterial}
+                  onResourceConsumed={() => console.log('reloading')}
+                  showCompletedNotificationToast={true}
+                  leftBlockWidth="120px"
+                  inCompactList
+                  firstItemInCompactList={idx === 0}
+                />
+              );
+            if (learningMaterial.__typename === 'LearningPath')
+              return (
+                <LearningPathPreviewCard
+                  learningPath={learningMaterial}
+                  key={learningMaterial._id}
+                  leftBlockWidth="120px"
+                  inCompactList
+                  firstItemInCompactList={idx === 0}
+                />
+              );
+          }}
+        />
         <Flex>
           <Pagination
             currentPage={feedOptions.page}

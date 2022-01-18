@@ -83,12 +83,23 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
     useState<TopicPageLearningMaterialsFeedOptions>({
       mainTopicKey: topicKey,
       selectedSubTopicKey: null,
-      sorting: TopicLearningMaterialsSortingType.Recommended,
+      sorting: TopicLearningMaterialsSortingType.Newest,
       page: 1,
       typeFilters: {},
       tagsFilters: [],
     });
 
+  useEffect(() => {
+    // Behaviour when switching page -- maybe keep same sorting/type filters ?
+    setLearningMaterialsFeedOptions({
+      mainTopicKey: topicKey,
+      selectedSubTopicKey: null,
+      sorting: TopicLearningMaterialsSortingType.Newest,
+      page: 1,
+      typeFilters: {},
+      tagsFilters: [],
+    });
+  }, [topicKey]);
   const {
     loading: learningMaterialsFeedLoading,
     topic: selectedSubTopicData,

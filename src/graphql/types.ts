@@ -1473,7 +1473,6 @@ export type Topic = {
   isDisambiguation?: Maybe<Scalars['Boolean']>;
   key: Scalars['String'];
   learningMaterials?: Maybe<TopicLearningMaterialsResults>;
-  learningMaterialsFilters?: Maybe<TopicLearningMaterialsFilters>;
   learningMaterialsTotalCount?: Maybe<Scalars['Int']>;
   level?: Maybe<Scalars['Float']>;
   name: Scalars['String'];
@@ -1518,16 +1517,19 @@ export type TopicIsSubTopicOfTopic = {
   subTopic: Topic;
 };
 
-export type TopicLearningMaterialsFilterOptions = {
-  completedByUser: Scalars['Boolean'];
-  learningMaterialTypeIn?: InputMaybe<Array<LearningMaterialType>>;
-  resourceTypeIn?: InputMaybe<Array<ResourceType>>;
-};
-
-export type TopicLearningMaterialsFilters = {
-  __typename?: 'TopicLearningMaterialsFilters';
+export type TopicLearningMaterialsAvailableFilters = {
+  __typename?: 'TopicLearningMaterialsAvailableFilters';
   tagFilters: Array<TagFilter>;
   types: Array<ResourceType>;
+};
+
+export type TopicLearningMaterialsFilterOptions = {
+  completedByUser?: InputMaybe<Scalars['Boolean']>;
+  durationSecondsGeq?: InputMaybe<Scalars['Int']>;
+  durationSecondsLeq?: InputMaybe<Scalars['Int']>;
+  learningMaterialTagsIn?: InputMaybe<Array<Scalars['String']>>;
+  learningMaterialTypeIn?: InputMaybe<Array<LearningMaterialType>>;
+  resourceTypeIn?: InputMaybe<Array<ResourceType>>;
 };
 
 export type TopicLearningMaterialsOptions = {
@@ -1539,13 +1541,14 @@ export type TopicLearningMaterialsOptions = {
 
 export type TopicLearningMaterialsResults = {
   __typename?: 'TopicLearningMaterialsResults';
+  availableFilters?: Maybe<TopicLearningMaterialsAvailableFilters>;
   items: Array<LearningMaterial>;
+  totalCount: Scalars['Int'];
 };
 
 export enum TopicLearningMaterialsSortingType {
   Newest = 'newest',
-  Rating = 'rating',
-  Recommended = 'recommended'
+  Rating = 'rating'
 }
 
 export type TopicType = {
