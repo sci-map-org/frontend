@@ -1,19 +1,19 @@
-import { ChevronDownIcon, SearchIcon } from '@chakra-ui/icons';
+import { ChevronDownIcon, ChevronUpIcon, SearchIcon } from '@chakra-ui/icons';
 import {
   Flex,
   FormControl,
   FormLabel,
+  IconButton,
   Input,
   InputGroup,
   InputLeftElement,
   InputRightElement,
   Select,
-  Stack,
   Text,
   Wrap,
   WrapItem,
 } from '@chakra-ui/react';
-import { intersection, xor } from 'lodash';
+import { debounce, intersection, xor } from 'lodash';
 import { DependencyList, useCallback, useEffect, useRef, useState } from 'react';
 import BeatLoader from 'react-spinners/BeatLoader';
 import { useDebounce } from 'use-debounce';
@@ -74,12 +74,16 @@ export const LearningMaterialsFilters: React.FC<LearningMaterialFiltersProps> = 
   return (
     <Flex direction="column" alignItems="stretch" pb={3}>
       <Flex direction="row" alignItems="baseline" pt={1} justifyContent="space-between">
-        <Stack direction="row" alignItems="baseline">
-          <Text fontSize="2xl" fontWeight={500}>
-            Best Resources
-          </Text>
-          <SearchResourcesInput onChange={(value) => setFeedOptions({ ...feedOptions, query: value || undefined })} />
-        </Stack>
+        <Wrap>
+          <WrapItem>
+            <Text fontSize="2xl" fontWeight={500}>
+              Best Resources
+            </Text>
+          </WrapItem>
+          <WrapItem>
+            <SearchResourcesInput onChange={(value) => setFeedOptions({ ...feedOptions, query: value || undefined })} />
+          </WrapItem>
+        </Wrap>
         <FormControl id="sort_by" w="260px" display="flex" flexDir="row" alignItems="center" px={3}>
           <FormLabel mb={0} fontWeight={600} flexShrink={0} color="gray.600">
             Sort by:
@@ -197,25 +201,11 @@ export const LearningMaterialsFilters: React.FC<LearningMaterialFiltersProps> = 
       </Flex>
       {!!feedAvailableFilters?.tagFilters?.length && (
         <Flex pt={3}>
-          <Wrap>
-            <WrapItem>
-              <Text fontSize="14px" fontWeight={500} color="gray.400">
-                Filter by Tags
-              </Text>
-            </WrapItem>
-            {feedAvailableFilters.tagFilters.map((tagFilter) => (
-              <WrapItem key={tagFilter.name}>
-                <LearningMaterialTagFitlterItem
-                  name={tagFilter.name}
-                  count={tagFilter.count}
-                  isSelected={feedOptions.tagsFilters.includes(tagFilter.name)}
-                  onSelect={() => {
-                    setFeedOptions({ ...feedOptions, tagsFilters: xor(feedOptions.tagsFilters, [tagFilter.name]) }); // toggle this tag filter
-                  }}
-                />
-              </WrapItem>
-            ))}
-          </Wrap>
+          <LearningMaterialsTagsFilters
+            feedAvailableFilters={feedAvailableFilters}
+            feedOptions={feedOptions}
+            setFeedOptions={setFeedOptions}
+          />
         </Flex>
       )}
     </Flex>
@@ -326,5 +316,80 @@ const LearningMaterialTagFitlterItem: React.FC<{
         ({count})
       </Text>
     </Text>
+  );
+};
+
+const wrapPxSpacing = 4;
+const wrapItemPxHeight = 27;
+
+const LearningMaterialsTagsFilters: React.FC<{
+  feedAvailableFilters: FeedAvailableFilters;
+  feedOptions: TopicPageLearningMaterialsFeedOptions;
+  setFeedOptions: (options: TopicPageLearningMaterialsFeedOptions) => void;
+}> = ({ feedAvailableFilters, feedOptions, setFeedOptions }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpandable, setIsExpandable] = useState(false);
+
+  useEffect(() => {
+    const checkIsExpandable = () => {
+      if (containerRef.current && !isExpanded) {
+        const { clientHeight, scrollHeight } = containerRef.current;
+
+        setIsExpandable(scrollHeight - wrapPxSpacing / 2 > clientHeight);
+      }
+    };
+
+    const debouncedCheck = debounce(checkIsExpandable, 50);
+
+    checkIsExpandable();
+    window.addEventListener('resize', debouncedCheck);
+
+    return () => {
+      window.removeEventListener('resize', debouncedCheck);
+    };
+  }, [containerRef.current, feedAvailableFilters]);
+  return (
+    <Flex direction="row" alignItems="stretch">
+      <Wrap
+        ref={containerRef}
+        spacing={`${wrapPxSpacing}px`}
+        {...(!isExpanded && {
+          maxH: 2 * wrapItemPxHeight + wrapPxSpacing + 'px',
+          overflow: 'hidden',
+        })}
+      >
+        <WrapItem h={`${wrapItemPxHeight}px`}>
+          <Text fontSize="14px" fontWeight={500} color="gray.400">
+            Filter by Tags
+          </Text>
+        </WrapItem>
+        {feedAvailableFilters.tagFilters.map((tagFilter) => (
+          <WrapItem key={tagFilter.name} h={`${wrapItemPxHeight}px`}>
+            <LearningMaterialTagFitlterItem
+              name={tagFilter.name}
+              count={tagFilter.count}
+              isSelected={feedOptions.tagsFilters.includes(tagFilter.name)}
+              onSelect={() => {
+                setFeedOptions({ ...feedOptions, tagsFilters: xor(feedOptions.tagsFilters, [tagFilter.name]) }); // toggle this tag filter
+              }}
+            />
+          </WrapItem>
+        ))}
+      </Wrap>
+      {isExpandable && (
+        <Flex>
+          <IconButton
+            aria-label="expand tags filters"
+            size="sm"
+            isRound
+            fontSize="1em"
+            variant="ghost"
+            icon={isExpanded ? <ChevronUpIcon /> : <ChevronDownIcon />}
+            onClick={() => setIsExpanded(!isExpanded)}
+          />
+        </Flex>
+      )}
+    </Flex>
   );
 };

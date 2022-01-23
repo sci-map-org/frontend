@@ -43,7 +43,6 @@ export const SubTopicFilter: React.FC<SubTopicFilterProps> = ({
     const checkIsExpandable = () => {
       if (containerRef.current) {
         const { clientHeight, scrollHeight } = containerRef.current;
-        console.log({ clientHeight, scrollHeight });
 
         setIsExpandable(scrollHeight - wrapPxSpacing / 2 > clientHeight);
       }
