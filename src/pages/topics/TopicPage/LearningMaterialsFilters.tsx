@@ -1,5 +1,6 @@
 import { ChevronDownIcon, ChevronUpIcon, SearchIcon } from '@chakra-ui/icons';
 import {
+  Center,
   Flex,
   FormControl,
   FormLabel,
@@ -19,6 +20,7 @@ import BeatLoader from 'react-spinners/BeatLoader';
 import { useDebounce } from 'use-debounce';
 import { ResourceType, TopicLearningMaterialsSortingType } from '../../../graphql/types';
 import { theme } from '../../../theme/theme';
+import { TopicTreePage } from '../TopicTreePage';
 import { FeedAvailableFilters, TopicPageLearningMaterialsFeedOptions } from './TopicPageLearningMaterialsFeed';
 
 export enum TopicPageLearningMaterialFeedTypeFilter {
@@ -350,12 +352,12 @@ const LearningMaterialsTagsFilters: React.FC<{
     };
   }, [containerRef.current, feedAvailableFilters]);
   return (
-    <Flex direction="row" alignItems="stretch">
+    <Flex direction="row" >
       <Wrap
         ref={containerRef}
         spacing={`${wrapPxSpacing}px`}
         {...(!isExpanded && {
-          maxH: 2 * wrapItemPxHeight + wrapPxSpacing + 'px',
+          maxH: wrapItemPxHeight + wrapPxSpacing + 'px',
           overflow: 'hidden',
         })}
       >
@@ -378,17 +380,17 @@ const LearningMaterialsTagsFilters: React.FC<{
         ))}
       </Wrap>
       {isExpandable && (
-        <Flex>
+        <Center h={`${wrapItemPxHeight}px`}>
           <IconButton
             aria-label="expand tags filters"
-            size="sm"
+            size="xs"
             isRound
             fontSize="1em"
             variant="ghost"
             icon={isExpanded ? <ChevronUpIcon /> : <ChevronDownIcon />}
             onClick={() => setIsExpanded(!isExpanded)}
           />
-        </Flex>
+        </Center>
       )}
     </Flex>
   );

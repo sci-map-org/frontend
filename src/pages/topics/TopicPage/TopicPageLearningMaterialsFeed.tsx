@@ -255,7 +255,7 @@ export const TopicPageLearningMaterialsFeed: React.FC<TopicPageLearningMaterials
 
   return (
     <Stack spacing={5} width="100%" position="relative">
-      <SubTopicFilter
+      {!!subTopics.length && <SubTopicFilter
         mainTopic={mainTopic}
         subTopics={subTopics.map((subTopic) => subTopic) || []}
         selectedSubTopic={
@@ -265,7 +265,7 @@ export const TopicPageLearningMaterialsFeed: React.FC<TopicPageLearningMaterials
           setFeedOptions({ ...feedOptions, selectedSubTopicKey, page: 1, tagsFilters: [] })
         }
         isLoading={isLoading}
-      />
+      />}
       <Flex direction="column" px={feedOptions.selectedSubTopicKey ? 10 : 0} alignItems="stretch">
         {partiallyLoadedSelectedSubTopic && <Divider borderColor="gray.400" />}
         {partiallyLoadedSelectedSubTopic && (
