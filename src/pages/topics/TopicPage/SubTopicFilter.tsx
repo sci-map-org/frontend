@@ -1,7 +1,8 @@
-import { Divider, Flex, Heading, Stack, StackProps, Wrap, WrapItem } from '@chakra-ui/react';
+import { Flex, Heading, Link, Stack, StackProps, Wrap, WrapItem } from '@chakra-ui/react';
 import gql from 'graphql-tag';
-import { TopicDescription } from '../../../components/topics/fields/TopicDescription';
-import { TopicSubHeader, TopicSubHeaderData } from '../../../components/topics/TopicSubHeader';
+import { debounce } from 'lodash';
+import { useEffect, useRef, useState } from 'react';
+import { TopicSubHeaderData } from '../../../components/topics/TopicSubHeader';
 import { TopicLinkData } from '../../../graphql/topics/topics.fragments';
 import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
 import { SubTopicFilterDataFragment } from './SubTopicFilter.generated';
@@ -16,41 +17,82 @@ export const SubTopicFilterData = gql`
   ${TopicSubHeaderData}
 `;
 
+const wrapPxSpacing = 6;
+const wrapItemPxHeight = 32;
+
 interface SubTopicFilterProps extends Omit<StackProps, 'onChange'> {
+  mainTopic: TopicLinkDataFragment;
   subTopics: TopicLinkDataFragment[];
   selectedSubTopic: SubTopicFilterDataFragment | null;
   onChange: (selectedTopicKey: string | null) => void;
+  isLoading?: boolean;
 }
-export const SubTopicFilter: React.FC<SubTopicFilterProps> = ({ subTopics, selectedSubTopic, onChange, ...props }) => {
+export const SubTopicFilter: React.FC<SubTopicFilterProps> = ({
+  mainTopic,
+  subTopics,
+  selectedSubTopic,
+  onChange,
+  isLoading, // TODO : ?
+  ...props
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpandable, setIsExpandable] = useState(false);
+
+  useEffect(() => {
+    const checkIsExpandable = () => {
+      if (containerRef.current) {
+        const { clientHeight, scrollHeight } = containerRef.current;
+        console.log({ clientHeight, scrollHeight });
+
+        setIsExpandable(scrollHeight - wrapPxSpacing / 2 > clientHeight);
+      }
+    };
+
+    const debouncedCheck = debounce(checkIsExpandable, 50);
+
+    checkIsExpandable();
+    window.addEventListener('resize', debouncedCheck);
+
+    return () => {
+      window.removeEventListener('resize', debouncedCheck);
+    };
+  }, [containerRef.current, mainTopic._id]);
+
   return (
     <Stack spacing={4} alignItems="center" {...props}>
       <Heading size="xl" fontWeight={400}>
         SubTopics
       </Heading>
-      <Wrap justify="center">
-        <WrapItem>
-          <SubTopicFilterItem name="General" isSelected={selectedSubTopic === null} onClick={() => onChange(null)} />
-        </WrapItem>
-        {subTopics.map((subTopic) => (
-          <WrapItem key={subTopic._id}>
-            <SubTopicFilterItem
-              name={subTopic.name}
-              isSelected={selectedSubTopic?._id === subTopic._id}
-              onClick={() => onChange(subTopic.key)}
-            />
+      <Stack spacing="4px" alignItems="center">
+        <Wrap
+          ref={containerRef}
+          justify="center"
+          spacing={`${wrapPxSpacing}px`}
+          {...(!isExpanded && {
+            maxH: 2 * wrapItemPxHeight + wrapPxSpacing + 'px',
+            overflow: 'hidden',
+          })}
+        >
+          <WrapItem fontWeight={500} h={`${wrapItemPxHeight}px`}>
+            <SubTopicFilterItem name="See All" isSelected={selectedSubTopic === null} onClick={() => onChange(null)} />
           </WrapItem>
-        ))}
-      </Wrap>
-      {selectedSubTopic && <Divider borderColor="gray.400" />}
-      {selectedSubTopic && (
-        <Stack alignItems="center">
-          <Heading color="gray.600" size="lg">
-            {selectedSubTopic.name}
-          </Heading>
-          <TopicSubHeader topic={selectedSubTopic} size="sm" />
-          <TopicDescription topicDescription={selectedSubTopic.description || undefined} />
-        </Stack>
-      )}
+          {subTopics.map((subTopic) => (
+            <WrapItem key={subTopic._id} h={`${wrapItemPxHeight}px`}>
+              <SubTopicFilterItem
+                name={subTopic.name}
+                isSelected={selectedSubTopic?._id === subTopic._id}
+                onClick={() => onChange(subTopic.key)}
+              />
+            </WrapItem>
+          ))}
+        </Wrap>
+        {isExpandable && (
+          <Link fontSize="sm" color="blue.500" onClick={() => setIsExpanded(!isExpanded)}>
+            {isExpanded ? 'Show less' : 'Show all'}
+          </Link>
+        )}
+      </Stack>
     </Stack>
   );
 };

@@ -1473,6 +1473,7 @@ export type Topic = {
   isDisambiguation?: Maybe<Scalars['Boolean']>;
   key: Scalars['String'];
   learningMaterials?: Maybe<TopicLearningMaterialsResults>;
+  learningMaterialsAvailableTypeFilters?: Maybe<TopicLearningMaterialsAvailableTypeFilters>;
   learningMaterialsTotalCount?: Maybe<Scalars['Int']>;
   level?: Maybe<Scalars['Float']>;
   name: Scalars['String'];
@@ -1517,9 +1518,11 @@ export type TopicIsSubTopicOfTopic = {
   subTopic: Topic;
 };
 
-export type TopicLearningMaterialsAvailableFilters = {
-  __typename?: 'TopicLearningMaterialsAvailableFilters';
-  tagFilters: Array<TagFilter>;
+export type TopicLearningMaterialsAvailableTypeFilters = {
+  __typename?: 'TopicLearningMaterialsAvailableTypeFilters';
+  geq30minCount: Scalars['Int'];
+  learningPathsCount: Scalars['Int'];
+  leq30minCount: Scalars['Int'];
   types: Array<ResourceType>;
 };
 
@@ -1541,7 +1544,7 @@ export type TopicLearningMaterialsOptions = {
 
 export type TopicLearningMaterialsResults = {
   __typename?: 'TopicLearningMaterialsResults';
-  availableFilters?: Maybe<TopicLearningMaterialsAvailableFilters>;
+  availableTagFilters: Array<TagFilter>;
   items: Array<LearningMaterial>;
   totalCount: Scalars['Int'];
 };

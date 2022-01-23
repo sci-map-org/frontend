@@ -13,11 +13,11 @@ import {
   Wrap,
   WrapItem,
 } from '@chakra-ui/react';
-import { xor } from 'lodash';
+import { intersection, xor } from 'lodash';
 import { DependencyList, useCallback, useEffect, useRef, useState } from 'react';
 import BeatLoader from 'react-spinners/BeatLoader';
 import { useDebounce } from 'use-debounce';
-import { TopicLearningMaterialsSortingType } from '../../../graphql/types';
+import { ResourceType, TopicLearningMaterialsSortingType } from '../../../graphql/types';
 import { theme } from '../../../theme/theme';
 import { FeedAvailableFilters, TopicPageLearningMaterialsFeedOptions } from './TopicPageLearningMaterialsFeed';
 
@@ -29,7 +29,27 @@ export enum TopicPageLearningMaterialFeedTypeFilter {
   Long = 'Long',
   Article = 'Article',
   LearningPath = 'LearningPath',
+  // Exercise = 'Exercise'
 }
+
+export const LMFeedFiltersToVerbMapping = {
+  [TopicPageLearningMaterialFeedTypeFilter.Course]: 'Study',
+  [TopicPageLearningMaterialFeedTypeFilter.Video]: 'Watch',
+  [TopicPageLearningMaterialFeedTypeFilter.Podcast]: 'Listen',
+  [TopicPageLearningMaterialFeedTypeFilter.Short]: 'Short', // ?
+  [TopicPageLearningMaterialFeedTypeFilter.Long]: 'Long', // ?
+  [TopicPageLearningMaterialFeedTypeFilter.Article]: 'Read',
+  // [TopicPageLearningMaterialFeedTypeFilter.Exercise]: 'Practice',
+  // [TopicPageLearningMaterialFeedTypeFilter.LearningPath  ]: '', Follow ?
+};
+
+export const LMFeedFiltersToResourceTypeMapping = {
+  [TopicPageLearningMaterialFeedTypeFilter.Course]: [ResourceType.Course],
+  [TopicPageLearningMaterialFeedTypeFilter.Video]: [ResourceType.YoutubeVideo, ResourceType.YoutubePlaylist],
+  [TopicPageLearningMaterialFeedTypeFilter.Podcast]: [ResourceType.Podcast, ResourceType.PodcastEpisode],
+  [TopicPageLearningMaterialFeedTypeFilter.Article]: [ResourceType.Article, ResourceType.ArticleSeries],
+  // [TopicPageLearningMaterialFeedTypeFilter.]
+};
 
 interface LearningMaterialFiltersProps {
   feedAvailableFilters?: FeedAvailableFilters;
@@ -90,6 +110,9 @@ export const LearningMaterialsFilters: React.FC<LearningMaterialFiltersProps> = 
               onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Course)}
               color="teal.600"
               isSelected={feedOptions.typeFilters.Course}
+              isDisabled={
+                feedAvailableFilters && intersection(feedAvailableFilters.types, [ResourceType.Course]).length === 0
+              }
             >
               Course
             </LearningMaterialFilterItem>
@@ -99,6 +122,11 @@ export const LearningMaterialsFilters: React.FC<LearningMaterialFiltersProps> = 
               onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Video)}
               color="red.500"
               isSelected={feedOptions.typeFilters.Video}
+              isDisabled={
+                feedAvailableFilters &&
+                intersection(feedAvailableFilters.types, [ResourceType.YoutubePlaylist, ResourceType.YoutubeVideo])
+                  .length === 0
+              }
             >
               Video
             </LearningMaterialFilterItem>
@@ -108,6 +136,11 @@ export const LearningMaterialsFilters: React.FC<LearningMaterialFiltersProps> = 
               onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Podcast)}
               color="orange.500"
               isSelected={feedOptions.typeFilters.Podcast}
+              isDisabled={
+                feedAvailableFilters &&
+                intersection(feedAvailableFilters.types, [ResourceType.Podcast, ResourceType.PodcastEpisode]).length ===
+                  0
+              }
             >
               Podcast
             </LearningMaterialFilterItem>
@@ -117,6 +150,7 @@ export const LearningMaterialsFilters: React.FC<LearningMaterialFiltersProps> = 
               onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Short)}
               color="blue.500"
               isSelected={feedOptions.typeFilters.Short}
+              isDisabled={feedAvailableFilters && feedAvailableFilters.leq30minCount === 0}
             >
               Short<Text as="span" fontSize="sm">{`(<30min)`}</Text>
             </LearningMaterialFilterItem>
@@ -126,6 +160,7 @@ export const LearningMaterialsFilters: React.FC<LearningMaterialFiltersProps> = 
               color="purple.500"
               onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Long)}
               isSelected={feedOptions.typeFilters.Long}
+              isDisabled={feedAvailableFilters && feedAvailableFilters.geq30minCount === 0}
             >
               Long<Text as="span" fontSize="sm">{`(>30min)`}</Text>
             </LearningMaterialFilterItem>
@@ -135,6 +170,11 @@ export const LearningMaterialsFilters: React.FC<LearningMaterialFiltersProps> = 
               color="yellow.500"
               onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Article)}
               isSelected={feedOptions.typeFilters.Article}
+              isDisabled={
+                feedAvailableFilters &&
+                intersection(feedAvailableFilters.types, [ResourceType.Article, ResourceType.ArticleSeries]).length ===
+                  0
+              }
             >
               Article
             </LearningMaterialFilterItem>
@@ -144,15 +184,16 @@ export const LearningMaterialsFilters: React.FC<LearningMaterialFiltersProps> = 
               color="teal.500"
               onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.LearningPath)}
               isSelected={feedOptions.typeFilters.LearningPath}
+              isDisabled={feedAvailableFilters && feedAvailableFilters.learningPathsCount === 0}
             >
               Learning Path
             </LearningMaterialFilterItem>
           </WrapItem>
         </Wrap>
-        <Stack direction="row" alignItems="baseline">
+        {/* <Stack direction="row" alignItems="baseline">
           <Text fontWeight={600}>More Filters</Text>
           <ChevronDownIcon />
-        </Stack>
+        </Stack> */}
       </Flex>
       {!!feedAvailableFilters?.tagFilters?.length && (
         <Flex pt={3}>
@@ -181,12 +222,12 @@ export const LearningMaterialsFilters: React.FC<LearningMaterialFiltersProps> = 
   );
 };
 
-const LearningMaterialFilterItem: React.FC<{ color: string; isSelected?: boolean; onSelect: () => void }> = ({
-  color,
-  isSelected,
-  onSelect,
-  children,
-}) => {
+const LearningMaterialFilterItem: React.FC<{
+  color: string;
+  isSelected?: boolean;
+  onSelect: () => void;
+  isDisabled?: boolean;
+}> = ({ color, isSelected, onSelect, children, isDisabled }) => {
   return (
     <Text
       borderWidth={1}
@@ -199,9 +240,10 @@ const LearningMaterialFilterItem: React.FC<{ color: string; isSelected?: boolean
       fontSize="18px"
       fontWeight={600}
       _hover={{
-        cursor: 'pointer',
+        cursor: isDisabled ? 'unset' : 'pointer',
       }}
-      onClick={onSelect}
+      {...(!isDisabled && { onClick: onSelect })}
+      {...(isDisabled && { opacity: 0.5 })}
     >
       {children}
     </Text>

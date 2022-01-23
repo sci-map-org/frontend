@@ -102,8 +102,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
   }, [topicKey]);
   const {
     loading: learningMaterialsFeedLoading,
-    topic: selectedSubTopicData,
-    lastSelectedSubTopic,
+    lastSelectedSubTopic: selectedSubTopicData,
     learningMaterials,
     totalPages,
     feedAvailableFilters,
@@ -111,16 +110,17 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
   } = useTopicPageLearningMaterialsFeed(learningMaterialsFeedOptions);
 
   const [selectedSubTopic, setSelectedSubTopic] = useState<null | SubTopicFilterDataFragment>(null);
+
   useEffect(() => {
-    if (!learningMaterialsFeedOptions.selectedSubTopicKey) {
-      setSelectedSubTopic(null);
-    } else {
-      setSelectedSubTopic(selectedSubTopicData);
-    }
-  }, [selectedSubTopicData, learningMaterialsFeedOptions.selectedSubTopicKey]);
+    selectedSubTopicData && selectedSubTopicData._id !== topic._id && setSelectedSubTopic(selectedSubTopicData);
+  }, [selectedSubTopicData]);
+
+  useEffect(() => {
+    if (!learningMaterialsFeedOptions.selectedSubTopicKey) setSelectedSubTopic(null);
+  }, [learningMaterialsFeedOptions.selectedSubTopicKey]);
 
   const topic = data?.getTopicByKey || placeholderTopicData;
-  // const selectedSubTopic = //learningMaterialsFeedOptions.selectedSubTopicKey ? lastSelectedSubTopic : null;
+
   if (error) return null;
 
   if (topic.isDisambiguation)

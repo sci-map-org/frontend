@@ -1,4 +1,4 @@
-import { Button, Flex, Stack, Text } from '@chakra-ui/react';
+import { Button, Divider, Flex, Heading, Skeleton, Spinner, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { omit, range } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
@@ -10,6 +10,8 @@ import { LearningPathPreviewCardDataFragment } from '../../../components/learnin
 import { LearningMaterialPreviewCardList } from '../../../components/resources/LearningMaterialPreviewCardList';
 import { ResourcePreviewCard } from '../../../components/resources/ResourcePreviewCard';
 import { ResourcePreviewCardDataFragment } from '../../../components/resources/ResourcePreviewCard.generated';
+import { TopicDescription } from '../../../components/topics/fields/TopicDescription';
+import { TopicSubHeader } from '../../../components/topics/TopicSubHeader';
 import { ResourcePreviewCardData } from '../../../graphql/resources/resources.fragments';
 import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
 import {
@@ -36,15 +38,18 @@ export const getTopicRecommendedLearningMaterials = gql`
           ...LearningPathPreviewCardData
         }
         totalCount
-        availableFilters {
-          types
-          tagFilters {
-            name
-            count
-          }
+        availableTagFilters {
+          name
+          count
         }
       }
       learningMaterialsTotalCount
+      learningMaterialsAvailableTypeFilters {
+        types
+        learningPathsCount
+        leq30minCount
+        geq30minCount
+      }
     }
   }
   ${ResourcePreviewCardData}
@@ -154,6 +159,7 @@ export const useTopicPageLearningMaterialsFeed = (
   const [learningMaterialPreviews, setLearningMaterialPreviews] = useState<
     (ResourcePreviewCardDataFragment | LearningPathPreviewCardDataFragment)[]
   >([]);
+  const [feedAvailableFilters, setFeedAvailableFilters] = useState<FeedAvailableFilters | undefined>();
 
   const filter = useMemo(() => {
     return getFilterOptionsFromFilterTypes(options.typeFilters);
@@ -181,6 +187,15 @@ export const useTopicPageLearningMaterialsFeed = (
     onCompleted(data) {
       if (!data) throw new Error('Fetch failed');
       setLastSelectedSubTopic(omit(data.getTopicByKey, ['learningMaterials']));
+      if (
+        data.getTopicByKey?.learningMaterials?.availableTagFilters &&
+        data.getTopicByKey?.learningMaterialsAvailableTypeFilters
+      ) {
+        setFeedAvailableFilters({
+          tagFilters: data.getTopicByKey.learningMaterials.availableTagFilters,
+          ...data.getTopicByKey.learningMaterialsAvailableTypeFilters,
+        });
+      }
       if (data.getTopicByKey.learningMaterials?.items) {
         setLearningMaterialPreviews(data?.getTopicByKey.learningMaterials?.items);
       }
@@ -192,28 +207,24 @@ export const useTopicPageLearningMaterialsFeed = (
   const totalPages = !!data?.getTopicByKey?.learningMaterials?.totalCount
     ? 1 + Math.floor((data?.getTopicByKey?.learningMaterials?.totalCount - 0.005) / LM_FEED_RESULTS_PER_PAGE)
     : 1;
-  // 6/5 -
-  // => +1 ?
 
-  // modulo === 0 -> same page
-  // 4/4 -> 1
-  // 2/4 -> 0
-  // 6/4 -> 1
-  // console.log(totalPages, LM_FEED_RESULTS_PER_PAGE, data?.getTopicByKey?.learningMaterialsTotalCount);
   return {
     learningMaterials,
     loading,
     refetch,
     lastSelectedSubTopic,
     topic: data?.getTopicByKey,
-    feedAvailableFilters: data?.getTopicByKey?.learningMaterials?.availableFilters || undefined,
+    feedAvailableFilters,
     totalPages: totalPages,
   };
 };
 
 export interface FeedAvailableFilters {
-  types: ResourceType[];
   tagFilters: Array<{ name: string; count: number }>;
+  types: ResourceType[];
+  learningPathsCount: number;
+  leq30minCount: number;
+  geq30minCount: number;
 }
 
 interface TopicPageLearningMaterialsFeedProps {
@@ -239,20 +250,43 @@ export const TopicPageLearningMaterialsFeed: React.FC<TopicPageLearningMaterials
   setFeedOptions,
   isLoading,
 }) => {
+  const partiallyLoadedSelectedSubTopic =
+    selectedSubTopic || subTopics.find((subTopic) => subTopic.key === feedOptions.selectedSubTopicKey) || null;
+
   return (
-    <Stack spacing={5} width="100%">
+    <Stack spacing={5} width="100%" position="relative">
       <SubTopicFilter
+        mainTopic={mainTopic}
         subTopics={subTopics.map((subTopic) => subTopic) || []}
         selectedSubTopic={
           selectedSubTopic || subTopics.find((subTopic) => subTopic.key === feedOptions.selectedSubTopicKey) || null
         }
-        onChange={(selectedSubTopicKey) => setFeedOptions({ ...feedOptions, selectedSubTopicKey, tagsFilters: [] })}
+        onChange={(selectedSubTopicKey) =>
+          setFeedOptions({ ...feedOptions, selectedSubTopicKey, page: 1, tagsFilters: [] })
+        }
+        isLoading={isLoading}
       />
       <Flex direction="column" px={feedOptions.selectedSubTopicKey ? 10 : 0} alignItems="stretch">
+        {partiallyLoadedSelectedSubTopic && <Divider borderColor="gray.400" />}
+        {partiallyLoadedSelectedSubTopic && (
+          <Stack alignItems="center">
+            <Heading color="gray.600" size="lg">
+              {partiallyLoadedSelectedSubTopic.name}
+            </Heading>
+            {selectedSubTopic ? (
+              <TopicSubHeader topic={selectedSubTopic} size="sm" />
+            ) : (
+              <TopicSubHeader topic={partiallyLoadedSelectedSubTopic} size="sm" isLoading={true} />
+            )}
+            {selectedSubTopic && <TopicDescription topicDescription={selectedSubTopic.description || undefined} />}
+          </Stack>
+        )}
         <LearningMaterialsFilters
           feedAvailableFilters={feedAvailableFilters}
           feedOptions={feedOptions}
-          setFeedOptions={setFeedOptions}
+          setFeedOptions={(options) => {
+            setFeedOptions({ ...options, page: 1 });
+          }}
         />
         <LearningMaterialPreviewCardList
           learningMaterialsPreviewItems={learningMaterials.map((learningMaterial) => ({ learningMaterial }))}
