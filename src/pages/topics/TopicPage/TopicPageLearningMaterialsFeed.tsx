@@ -1,3 +1,4 @@
+import { NetworkStatus } from '@apollo/client';
 import { Button, Divider, Flex, Heading, Skeleton, Spinner, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { omit, range } from 'lodash';
@@ -153,19 +154,22 @@ export const useTopicPageLearningMaterialsFeed = (
   lastSelectedSubTopic: SubTopicFilterDataFragment | null;
   learningMaterials: Array<ResourcePreviewCardDataFragment | LearningPathPreviewCardDataFragment>;
   loading: boolean;
+  initialLoading: boolean;
+  isReloading: boolean;
   refetch: () => void;
 } => {
   const [lastSelectedSubTopic, setLastSelectedSubTopic] = useState<SubTopicFilterDataFragment | null>(null);
   const [learningMaterialPreviews, setLearningMaterialPreviews] = useState<
     (ResourcePreviewCardDataFragment | LearningPathPreviewCardDataFragment)[]
   >([]);
+  const [learningMaterialsTotalCount, setLearningMaterialsTotalCount] = useState<number>();
   const [feedAvailableFilters, setFeedAvailableFilters] = useState<FeedAvailableFilters | undefined>();
 
   const filter = useMemo(() => {
     return getFilterOptionsFromFilterTypes(options.typeFilters);
   }, [options.typeFilters]);
 
-  const { data, loading, refetch } = useGetTopicRecommendedLearningMaterialsQuery({
+  const { data, loading, refetch, networkStatus } = useGetTopicRecommendedLearningMaterialsQuery({
     variables: {
       key: options.selectedSubTopicKey || options.mainTopicKey,
       learningMaterialsOptions: {
@@ -196,21 +200,24 @@ export const useTopicPageLearningMaterialsFeed = (
           ...data.getTopicByKey.learningMaterialsAvailableTypeFilters,
         });
       }
-      if (data.getTopicByKey.learningMaterials?.items) {
-        setLearningMaterialPreviews(data?.getTopicByKey.learningMaterials?.items);
+      if (data.getTopicByKey.learningMaterials) {
+        setLearningMaterialsTotalCount(data.getTopicByKey.learningMaterials.totalCount);
+        setLearningMaterialPreviews(data.getTopicByKey.learningMaterials.items);
       }
     },
   });
 
   const learningMaterials = data?.getTopicByKey?.learningMaterials?.items || learningMaterialPreviews; // ? after getDomainByKey because of https://github.com/apollographql/apollo-client/issues/6986
 
-  const totalPages = !!data?.getTopicByKey?.learningMaterials?.totalCount
-    ? 1 + Math.floor((data?.getTopicByKey?.learningMaterials?.totalCount - 0.005) / LM_FEED_RESULTS_PER_PAGE)
+  const totalPages = !!learningMaterialsTotalCount
+    ? 1 + Math.floor((learningMaterialsTotalCount - 0.005) / LM_FEED_RESULTS_PER_PAGE)
     : 1;
 
   return {
     learningMaterials,
     loading,
+    initialLoading: networkStatus === NetworkStatus.loading,
+    isReloading: networkStatus === NetworkStatus.setVariables || networkStatus === NetworkStatus.refetch,
     refetch,
     lastSelectedSubTopic,
     topic: data?.getTopicByKey,
@@ -237,6 +244,8 @@ interface TopicPageLearningMaterialsFeedProps {
   feedOptions: TopicPageLearningMaterialsFeedOptions;
   setFeedOptions: (options: TopicPageLearningMaterialsFeedOptions) => void;
   isLoading: boolean;
+  initialLoading: boolean;
+  isReloading: boolean;
 }
 
 export const TopicPageLearningMaterialsFeed: React.FC<TopicPageLearningMaterialsFeedProps> = ({
@@ -249,23 +258,27 @@ export const TopicPageLearningMaterialsFeed: React.FC<TopicPageLearningMaterials
   feedOptions,
   setFeedOptions,
   isLoading,
+  initialLoading,
+  isReloading,
 }) => {
   const partiallyLoadedSelectedSubTopic =
     selectedSubTopic || subTopics.find((subTopic) => subTopic.key === feedOptions.selectedSubTopicKey) || null;
 
   return (
     <Stack spacing={5} width="100%" position="relative">
-      {!!subTopics.length && <SubTopicFilter
-        mainTopic={mainTopic}
-        subTopics={subTopics.map((subTopic) => subTopic) || []}
-        selectedSubTopic={
-          selectedSubTopic || subTopics.find((subTopic) => subTopic.key === feedOptions.selectedSubTopicKey) || null
-        }
-        onChange={(selectedSubTopicKey) =>
-          setFeedOptions({ ...feedOptions, selectedSubTopicKey, page: 1, tagsFilters: [] })
-        }
-        isLoading={isLoading}
-      />}
+      {!!subTopics.length && (
+        <SubTopicFilter
+          mainTopic={mainTopic}
+          subTopics={subTopics.map((subTopic) => subTopic) || []}
+          selectedSubTopic={
+            selectedSubTopic || subTopics.find((subTopic) => subTopic.key === feedOptions.selectedSubTopicKey) || null
+          }
+          onChange={(selectedSubTopicKey) =>
+            setFeedOptions({ ...feedOptions, selectedSubTopicKey, page: 1, tagsFilters: [] })
+          }
+          isLoading={isLoading}
+        />
+      )}
       <Flex direction="column" px={feedOptions.selectedSubTopicKey ? 10 : 0} alignItems="stretch">
         {partiallyLoadedSelectedSubTopic && <Divider borderColor="gray.400" />}
         {partiallyLoadedSelectedSubTopic && (
@@ -290,7 +303,7 @@ export const TopicPageLearningMaterialsFeed: React.FC<TopicPageLearningMaterials
         />
         <LearningMaterialPreviewCardList
           learningMaterialsPreviewItems={learningMaterials.map((learningMaterial) => ({ learningMaterial }))}
-          isLoading={isLoading}
+          isLoading={initialLoading}
           loadingMessage="Finding the most adapted learning resources..."
           renderCard={({ learningMaterial }, idx) => {
             if (learningMaterial.__typename === 'Resource')
@@ -303,6 +316,7 @@ export const TopicPageLearningMaterialsFeed: React.FC<TopicPageLearningMaterials
                   leftBlockWidth="120px"
                   inCompactList
                   firstItemInCompactList={idx === 0}
+                  isLoading={isReloading}
                 />
               );
             if (learningMaterial.__typename === 'LearningPath')
@@ -313,11 +327,12 @@ export const TopicPageLearningMaterialsFeed: React.FC<TopicPageLearningMaterials
                   leftBlockWidth="120px"
                   inCompactList
                   firstItemInCompactList={idx === 0}
+                  isLoading={isReloading}
                 />
               );
           }}
         />
-        <Flex>
+        <Flex pt={2}>
           <Pagination
             currentPage={feedOptions.page}
             totalPages={totalPages}

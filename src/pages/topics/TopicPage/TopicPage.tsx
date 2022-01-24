@@ -102,6 +102,8 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
   }, [topicKey]);
   const {
     loading: learningMaterialsFeedLoading,
+    initialLoading: learningMaterialsFeedInitialLoading,
+    isReloading: learningMaterialsFeedReloading,
     lastSelectedSubTopic: selectedSubTopicData,
     learningMaterials,
     totalPages,
@@ -211,6 +213,8 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
             learningMaterials={learningMaterials}
             totalPages={totalPages}
             isLoading={learningMaterialsFeedLoading}
+            initialLoading={learningMaterialsFeedInitialLoading}
+            isReloading={learningMaterialsFeedReloading}
           />
         </Flex>
         <Stack
