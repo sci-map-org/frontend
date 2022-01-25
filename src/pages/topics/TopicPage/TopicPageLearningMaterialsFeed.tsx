@@ -376,7 +376,7 @@ const Pagination: React.FC<{
           <Button size="sm" variant="outline" onClick={() => setCurrentPage(1)}>
             1
           </Button>
-          <Text>..</Text>
+          {shownPageNumbers[0] > 2 && <Text>..</Text>}
         </>
       )}
       {shownPageNumbers.map((shownPageNumber) => (
@@ -391,9 +391,9 @@ const Pagination: React.FC<{
           {shownPageNumber}
         </Button>
       ))}
-      {currentPage < totalPages - 2 && (
+      {shownPageNumbers[shownPageNumbers.length - 1] <= totalPages - 1 && (
         <>
-          <Text>..</Text>
+          {shownPageNumbers[shownPageNumbers.length - 1] <= totalPages - 2 && <Text>..</Text>}
           <Button size="sm" variant="outline" onClick={() => setCurrentPage(totalPages)}>
             {totalPages}
           </Button>
