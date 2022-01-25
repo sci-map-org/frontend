@@ -13,6 +13,7 @@ import {
   TextProps,
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
+import { debounce } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 import { PulledDescription } from '../../../graphql/types';
 import { toUrlPreview } from '../../../services/url.service';
@@ -58,15 +59,14 @@ export const TopicDescription: React.FC<TopicDescriptionProps> = ({
       }
     };
 
-    // const debouncedCheck = debounce(checkButtonAvailability, 50);
+    const debouncedCheck = debounce(checkButtonAvailability, 50);
 
     checkButtonAvailability();
-    // window.addEventListener('resize', debouncedCheck);
+    window.addEventListener('resize', debouncedCheck);
 
-    return;
-    // return () => {
-    //   window.removeEventListener('resize', debouncedCheck);
-    // };
+    return () => {
+      window.removeEventListener('resize', debouncedCheck);
+    };
   }, [containerRef]);
 
   if (!topicDescription)
@@ -112,7 +112,7 @@ export const pullTopicDescriptions = gql`
   }
 `;
 
-export const TOPIC_DESCRIPTION_MAX_LENGTH = 500;
+export const TOPIC_DESCRIPTION_MAX_LENGTH = 1000;
 
 export const TopicDescriptionField: React.FC<{
   value?: string | null;

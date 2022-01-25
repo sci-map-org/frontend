@@ -1331,7 +1331,6 @@ export enum ResourceType {
   Podcast = 'podcast',
   PodcastEpisode = 'podcast_episode',
   Project = 'project',
-  Quizz = 'quizz',
   ResearchPaper = 'research_paper',
   Talk = 'talk',
   Tweet = 'tweet',
@@ -1452,6 +1451,12 @@ export enum SubTopicRelationshipType {
   IsSubtopicOf = 'IS_SUBTOPIC_OF'
 }
 
+export type TagFilter = {
+  __typename?: 'TagFilter';
+  count: Scalars['Int'];
+  name: Scalars['String'];
+};
+
 export type Topic = {
   __typename?: 'Topic';
   _id: Scalars['String'];
@@ -1468,6 +1473,7 @@ export type Topic = {
   isDisambiguation?: Maybe<Scalars['Boolean']>;
   key: Scalars['String'];
   learningMaterials?: Maybe<TopicLearningMaterialsResults>;
+  learningMaterialsAvailableTypeFilters?: Maybe<TopicLearningMaterialsAvailableTypeFilters>;
   learningMaterialsTotalCount?: Maybe<Scalars['Int']>;
   level?: Maybe<Scalars['Float']>;
   name: Scalars['String'];
@@ -1512,27 +1518,40 @@ export type TopicIsSubTopicOfTopic = {
   subTopic: Topic;
 };
 
+export type TopicLearningMaterialsAvailableTypeFilters = {
+  __typename?: 'TopicLearningMaterialsAvailableTypeFilters';
+  geq30minCount: Scalars['Int'];
+  learningPathsCount: Scalars['Int'];
+  leq30minCount: Scalars['Int'];
+  types: Array<ResourceType>;
+};
+
 export type TopicLearningMaterialsFilterOptions = {
-  completedByUser: Scalars['Boolean'];
+  completedByUser?: InputMaybe<Scalars['Boolean']>;
+  durationSecondsGeq?: InputMaybe<Scalars['Int']>;
+  durationSecondsLeq?: InputMaybe<Scalars['Int']>;
+  learningMaterialTagsIn?: InputMaybe<Array<Scalars['String']>>;
   learningMaterialTypeIn?: InputMaybe<Array<LearningMaterialType>>;
   resourceTypeIn?: InputMaybe<Array<ResourceType>>;
 };
 
 export type TopicLearningMaterialsOptions = {
   filter: TopicLearningMaterialsFilterOptions;
+  pagination?: InputMaybe<PaginationOptions>;
   query?: InputMaybe<Scalars['String']>;
   sortingType: TopicLearningMaterialsSortingType;
 };
 
 export type TopicLearningMaterialsResults = {
   __typename?: 'TopicLearningMaterialsResults';
+  availableTagFilters: Array<TagFilter>;
   items: Array<LearningMaterial>;
+  totalCount: Scalars['Int'];
 };
 
 export enum TopicLearningMaterialsSortingType {
   Newest = 'newest',
-  Rating = 'rating',
-  Recommended = 'recommended'
+  Rating = 'rating'
 }
 
 export type TopicType = {

@@ -1,8 +1,8 @@
 import { Flex, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
-import { TopicLinkData } from '../../graphql/topics/topics.fragments';
-import { TopicLink } from '../lib/links/TopicLink';
-import { TopicPageSectionHeader } from '../lib/Typography';
+import { TopicLinkData } from '../../../graphql/topics/topics.fragments';
+import { TopicLink } from '../../../components/lib/links/TopicLink';
+import { TopicPageSectionHeader } from '../../../components/lib/Typography';
 import { SeeAlsoDataFragment } from './SeeAlso.generated';
 
 export const SeeAlsoData = gql`

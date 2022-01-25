@@ -1,36 +1,40 @@
 import { Box, Button, Flex, Link, Skeleton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
-import { useState } from 'react';
-import { RoleAccess } from '../../components/auth/RoleAccess';
-import { useUnauthentificatedModal } from '../../components/auth/UnauthentificatedModal';
-import { PageLayout } from '../../components/layout/PageLayout';
-import { TopicPageLayout } from '../../components/layout/TopicPageLayout';
-import { LearningPathPreviewCardDataFragment } from '../../components/learning_paths/LearningPathPreviewCard.generated';
-import { LearningPathIcon } from '../../components/lib/icons/LearningPathIcon';
-import { ResourceIcon } from '../../components/lib/icons/ResourceIcon';
-import { TopicIcon } from '../../components/lib/icons/TopicIcon';
-import { TopicLink } from '../../components/lib/links/TopicLink';
-import { PageTitle } from '../../components/lib/Typography';
-import { PageButtonLink } from '../../components/navigation/InternalLink';
-import { NewResourceModal } from '../../components/resources/NewResource';
-import { ResourcePreviewCardDataFragment } from '../../components/resources/ResourcePreviewCard.generated';
-import { AlsoPartOfTopicsViewer } from '../../components/topics/AlsoPartOfTopicsViewer';
-import { BestXPagesLinks } from '../../components/topics/BestXPagesLinks';
-import { EditablePartOfTopicsData } from '../../components/topics/EditablePartOfTopics';
-import { TopicDescription } from '../../components/topics/fields/TopicDescription';
-import { NewTopicModal } from '../../components/topics/NewTopic';
-import { ParentTopicsBreadcrumbs, ParentTopicsBreadcrumbsData } from '../../components/topics/ParentTopicsBreadcrumbs';
-import { SeeAlso, SeeAlsoData } from '../../components/topics/SeeAlso';
-import { MapVisualisationTopicData } from '../../components/topics/SubTopicsMapVisualisation';
-import { SubTopicsMinimap } from '../../components/topics/SubTopicsMinimap';
-import { TopicRecommendedLearningMaterials } from '../../components/topics/TopicRecommendedLearningMaterials';
-import { useGetTopicRecommendedLearningMaterialsQuery } from '../../components/topics/TopicRecommendedLearningMaterials.generated';
-import { TopicSubHeader, TopicSubHeaderData } from '../../components/topics/TopicSubHeader';
-import { generateTopicData, TopicLinkData } from '../../graphql/topics/topics.fragments';
-import { TopicLearningMaterialsOptions, TopicLearningMaterialsSortingType } from '../../graphql/types';
-import { useCurrentUser } from '../../graphql/users/users.hooks';
-import { NewLearningPathPageInfo } from '../RoutesPageInfos';
+import { useEffect, useState } from 'react';
+import { useUnauthentificatedModal } from '../../../components/auth/UnauthentificatedModal';
+import { PageLayout } from '../../../components/layout/PageLayout';
+import { TopicPageLayout } from '../../../components/layout/TopicPageLayout';
+import { LearningPathIcon } from '../../../components/lib/icons/LearningPathIcon';
+import { ResourceIcon } from '../../../components/lib/icons/ResourceIcon';
+import { TopicIcon } from '../../../components/lib/icons/TopicIcon';
+import { TopicLink } from '../../../components/lib/links/TopicLink';
+import { PageTitle } from '../../../components/lib/Typography';
+import { PageButtonLink } from '../../../components/navigation/InternalLink';
+import { NewResourceModal } from '../../../components/resources/NewResource';
+import { AlsoPartOfTopicsViewer } from '../../../components/topics/AlsoPartOfTopicsViewer';
+import { BestXPagesLinks } from '../../../components/topics/BestXPagesLinks';
+import { EditablePartOfTopicsData } from '../../../components/topics/EditablePartOfTopics';
+import { TopicDescription } from '../../../components/topics/fields/TopicDescription';
+import { NewTopicModal } from '../../../components/topics/NewTopic';
+import {
+  ParentTopicsBreadcrumbs,
+  ParentTopicsBreadcrumbsData,
+} from '../../../components/topics/ParentTopicsBreadcrumbs';
+import { SubTopicFilterDataFragment } from './SubTopicFilter.generated';
+import { MapVisualisationTopicData } from '../../../components/topics/SubTopicsMapVisualisation';
+import { SubTopicsMinimap } from '../../../components/topics/SubTopicsMinimap';
+import { TopicSubHeader, TopicSubHeaderData } from '../../../components/topics/TopicSubHeader';
+import { generateTopicData, TopicLinkData } from '../../../graphql/topics/topics.fragments';
+import { TopicLearningMaterialsSortingType } from '../../../graphql/types';
+import { useCurrentUser } from '../../../graphql/users/users.hooks';
+import { NewLearningPathPageInfo } from '../../RoutesPageInfos';
+import { SeeAlso, SeeAlsoData } from './SeeAlso';
 import { GetTopicByKeyTopicPageQuery, useGetTopicByKeyTopicPageQuery } from './TopicPage.generated';
+import {
+  TopicPageLearningMaterialsFeed,
+  TopicPageLearningMaterialsFeedOptions,
+  useTopicPageLearningMaterialsFeed,
+} from './TopicPageLearningMaterialsFeed';
 
 export const getTopicByKeyTopicPage = gql`
   query getTopicByKeyTopicPage($key: String!) {
@@ -72,36 +76,50 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
     variables: { key: topicKey },
   });
 
-  const [learningMaterialsOptions, setLearningMaterialsOptions] = useState<TopicLearningMaterialsOptions>({
-    sortingType: TopicLearningMaterialsSortingType.Recommended,
-    filter: { completedByUser: false },
-  });
-
-  const [learningMaterialPreviews, setLearningMaterialPreviews] = useState<
-    (ResourcePreviewCardDataFragment | LearningPathPreviewCardDataFragment)[]
-  >([]);
-
   const { currentUser } = useCurrentUser();
   const { onOpen: onOpenUnauthentificatedModal } = useUnauthentificatedModal();
 
-  const {
-    data: learningMaterialsData,
-    // networkStatus,
-    loading: resourcesLoading,
-    refetch: refetchLearningMaterials,
-  } = useGetTopicRecommendedLearningMaterialsQuery({
-    variables: { key: topicKey, learningMaterialsOptions: learningMaterialsOptions },
-    fetchPolicy: 'no-cache',
-    ssr: false,
-    notifyOnNetworkStatusChange: true,
-    onCompleted(data) {
-      if (data?.getTopicByKey.learningMaterials?.items) {
-        setLearningMaterialPreviews(data?.getTopicByKey.learningMaterials?.items);
-      }
-    },
-  });
+  const [learningMaterialsFeedOptions, setLearningMaterialsFeedOptions] =
+    useState<TopicPageLearningMaterialsFeedOptions>({
+      mainTopicKey: topicKey,
+      selectedSubTopicKey: null,
+      sorting: TopicLearningMaterialsSortingType.Rating,
+      page: 1,
+      typeFilters: {},
+      tagsFilters: [],
+    });
 
-  const learningMaterials = learningMaterialsData?.getTopicByKey?.learningMaterials?.items || learningMaterialPreviews; // ? after getDomainByKey because of https://github.com/apollographql/apollo-client/issues/6986
+  useEffect(() => {
+    // Behaviour when switching page -- maybe keep same sorting/type filters ?
+    setLearningMaterialsFeedOptions({
+      mainTopicKey: topicKey,
+      selectedSubTopicKey: null,
+      sorting: TopicLearningMaterialsSortingType.Rating,
+      page: 1,
+      typeFilters: {},
+      tagsFilters: [],
+    });
+  }, [topicKey]);
+  const {
+    loading: learningMaterialsFeedLoading,
+    initialLoading: learningMaterialsFeedInitialLoading,
+    isReloading: learningMaterialsFeedReloading,
+    lastSelectedTopic,
+    learningMaterials,
+    totalPages,
+    feedAvailableFilters,
+    refetch: refetchLearningMaterials,
+  } = useTopicPageLearningMaterialsFeed(learningMaterialsFeedOptions);
+
+  const [selectedSubTopic, setSelectedSubTopic] = useState<null | SubTopicFilterDataFragment>(null);
+
+  useEffect(() => {
+    lastSelectedTopic && lastSelectedTopic._id !== topic._id && setSelectedSubTopic(lastSelectedTopic);
+  }, [lastSelectedTopic]);
+
+  useEffect(() => {
+    if (!learningMaterialsFeedOptions.selectedSubTopicKey) setSelectedSubTopic(null);
+  }, [learningMaterialsFeedOptions.selectedSubTopicKey]);
 
   const topic = data?.getTopicByKey || placeholderTopicData;
 
@@ -141,9 +159,9 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
         </PageTitle>
       }
       renderBlockBelowTitle={
-        <>
+        <Flex direction="column" pb={{ base: 4, md: 0 }}>
           <Box pt="2px" pb={3}>
-            <TopicSubHeader topic={topic} size="md" mt={2} />
+            <TopicSubHeader topic={topic} size="md" mt={2} displayManage />
           </Box>
           {topic && topic.description && (
             <Skeleton isLoaded={!loading}>
@@ -169,12 +187,12 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
               </Link>
             </Skeleton>
           )}
-        </>
+        </Flex>
       }
       renderMinimap={(pxWidth, pxHeight) => (
         <SubTopicsMinimap
           topic={topic}
-          isLoading={!!loading || !!resourcesLoading}
+          isLoading={!!loading || !!learningMaterialsFeedLoading}
           subTopics={(topic.subTopics || []).map(({ subTopic }) => subTopic)}
           parentTopic={topic.parentTopic || undefined}
           pxWidth={pxWidth}
@@ -183,15 +201,20 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
       )}
       isLoading={loading}
     >
-      <Flex direction={{ base: 'column', lg: 'row' }} mb="60px" mt={10}>
-        <Flex direction="column" flexShrink={1} flexGrow={1}>
-          <TopicRecommendedLearningMaterials
-            topic={topic}
-            learningMaterialsPreviews={learningMaterials}
-            isLoading={resourcesLoading}
-            reloadRecommendedResources={() => refetchLearningMaterials()}
-            learningMaterialsOptions={learningMaterialsOptions}
-            setLearningMaterialsOptions={setLearningMaterialsOptions}
+      <Flex direction={{ base: 'column', lg: 'row' }} mb="60px" mt={10} width="100%">
+        <Flex direction="column" flexGrow={1}>
+          <TopicPageLearningMaterialsFeed
+            mainTopic={topic}
+            selectedSubTopic={selectedSubTopic}
+            feedOptions={learningMaterialsFeedOptions}
+            setFeedOptions={setLearningMaterialsFeedOptions}
+            subTopics={topic.subTopics?.map(({ subTopic }) => subTopic) || []}
+            feedAvailableFilters={feedAvailableFilters}
+            learningMaterials={learningMaterials}
+            totalPages={totalPages}
+            isLoading={learningMaterialsFeedLoading}
+            initialLoading={learningMaterialsFeedInitialLoading}
+            isReloading={learningMaterialsFeedReloading}
           />
         </Flex>
         <Stack
@@ -200,6 +223,9 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
           direction={{ base: 'column', md: 'row', lg: 'column' }}
           w={{ base: '100%', lg: '270px' }}
           spacing={{ base: 4, md: 'auto', lg: 10 }}
+          flexBasis={{ base: '100%', lg: '270px' }}
+          flexGrow={0}
+          flexShrink={0}
         >
           <Stack direction="column" spacing={4} alignItems="flex-end">
             <NewResourceModal
