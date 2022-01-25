@@ -112,7 +112,7 @@ export const pullTopicDescriptions = gql`
   }
 `;
 
-export const TOPIC_DESCRIPTION_MAX_LENGTH = 500;
+export const TOPIC_DESCRIPTION_MAX_LENGTH = 1000;
 
 export const TopicDescriptionField: React.FC<{
   value?: string | null;
