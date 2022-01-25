@@ -83,7 +83,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
     useState<TopicPageLearningMaterialsFeedOptions>({
       mainTopicKey: topicKey,
       selectedSubTopicKey: null,
-      sorting: TopicLearningMaterialsSortingType.Newest,
+      sorting: TopicLearningMaterialsSortingType.Rating,
       page: 1,
       typeFilters: {},
       tagsFilters: [],
@@ -94,7 +94,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
     setLearningMaterialsFeedOptions({
       mainTopicKey: topicKey,
       selectedSubTopicKey: null,
-      sorting: TopicLearningMaterialsSortingType.Newest,
+      sorting: TopicLearningMaterialsSortingType.Rating,
       page: 1,
       typeFilters: {},
       tagsFilters: [],
