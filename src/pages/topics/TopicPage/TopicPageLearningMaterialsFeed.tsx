@@ -1,5 +1,6 @@
 import { NetworkStatus } from '@apollo/client';
-import { Button, Divider, Flex, Heading, Stack, Text } from '@chakra-ui/react';
+import { ExternalLinkIcon } from '@chakra-ui/icons';
+import { Box, Button, Divider, Flex, Heading, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { omit, range } from 'lodash';
 import { useMemo, useRef, useState } from 'react';
@@ -8,6 +9,7 @@ import {
   LearningPathPreviewCardData,
 } from '../../../components/learning_paths/LearningPathPreviewCard';
 import { LearningPathPreviewCardDataFragment } from '../../../components/learning_paths/LearningPathPreviewCard.generated';
+import { PageLink } from '../../../components/navigation/InternalLink';
 import { LearningMaterialPreviewCardList } from '../../../components/resources/LearningMaterialPreviewCardList';
 import { ResourcePreviewCard } from '../../../components/resources/ResourcePreviewCard';
 import { ResourcePreviewCardDataFragment } from '../../../components/resources/ResourcePreviewCard.generated';
@@ -22,6 +24,7 @@ import {
   TopicLearningMaterialsSortingType,
 } from '../../../graphql/types';
 import { useScroll } from '../../../hooks/useScroll';
+import { TopicPageInfo } from '../../RoutesPageInfos';
 import {
   LearningMaterialsFilters,
   LMFeedFiltersToResourceTypeMapping,
@@ -155,17 +158,16 @@ function getFilterOptionsFromFilterTypes(
 export const useTopicPageLearningMaterialsFeed = (
   options: TopicPageLearningMaterialsFeedOptions
 ): {
-  topic: any; // TODO
   feedAvailableFilters?: FeedAvailableFilters;
   totalPages: number;
-  lastSelectedSubTopic: SubTopicFilterDataFragment | null;
+  lastSelectedTopic: SubTopicFilterDataFragment | null;
   learningMaterials: Array<ResourcePreviewCardDataFragment | LearningPathPreviewCardDataFragment>;
   loading: boolean;
   initialLoading: boolean;
   isReloading: boolean;
   refetch: () => void;
 } => {
-  const [lastSelectedSubTopic, setLastSelectedSubTopic] = useState<SubTopicFilterDataFragment | null>(null);
+  const [lastSelectedTopic, setLastSelectedTopic] = useState<SubTopicFilterDataFragment | null>(null);
   const [learningMaterialPreviews, setLearningMaterialPreviews] = useState<
     (ResourcePreviewCardDataFragment | LearningPathPreviewCardDataFragment)[]
   >([]);
@@ -176,7 +178,7 @@ export const useTopicPageLearningMaterialsFeed = (
     return getFilterOptionsFromFilterTypes(options.typeFilters);
   }, [options.typeFilters]);
 
-  const { data, loading, refetch, networkStatus } = useGetTopicRecommendedLearningMaterialsQuery({
+  const { loading, refetch, networkStatus } = useGetTopicRecommendedLearningMaterialsQuery({
     variables: {
       key: options.selectedSubTopicKey || options.mainTopicKey,
       learningMaterialsOptions: {
@@ -197,7 +199,7 @@ export const useTopicPageLearningMaterialsFeed = (
     notifyOnNetworkStatusChange: true,
     onCompleted(data) {
       if (!data) throw new Error('Fetch failed');
-      setLastSelectedSubTopic(omit(data.getTopicByKey, ['learningMaterials']));
+      setLastSelectedTopic(omit(data.getTopicByKey, ['learningMaterials']));
       if (
         data.getTopicByKey?.learningMaterials?.availableTagFilters &&
         data.getTopicByKey?.learningMaterialsAvailableTypeFilters
@@ -214,20 +216,17 @@ export const useTopicPageLearningMaterialsFeed = (
     },
   });
 
-  const learningMaterials = data?.getTopicByKey?.learningMaterials?.items || learningMaterialPreviews; // ? after getDomainByKey because of https://github.com/apollographql/apollo-client/issues/6986
-
   const totalPages = !!learningMaterialsTotalCount
     ? 1 + Math.floor((learningMaterialsTotalCount - 0.005) / LM_FEED_RESULTS_PER_PAGE)
     : 1;
 
   return {
-    learningMaterials,
+    learningMaterials: learningMaterialPreviews,
     loading,
     initialLoading: networkStatus === NetworkStatus.loading,
     isReloading: networkStatus === NetworkStatus.setVariables || networkStatus === NetworkStatus.refetch,
     refetch,
-    lastSelectedSubTopic,
-    topic: data?.getTopicByKey,
+    lastSelectedTopic,
     feedAvailableFilters,
     totalPages: totalPages,
   };
@@ -294,22 +293,40 @@ export const TopicPageLearningMaterialsFeed: React.FC<TopicPageLearningMaterials
         px={{ base: feedOptions.selectedSubTopicKey ? 10 : 0, md: feedOptions.selectedSubTopicKey ? 10 : 0 }}
         alignItems="stretch"
       >
-        {/* {partiallyLoadedSelectedSubTopic && (
-          <Stack spacing={5} pb={3}>
-            <Divider borderColor="gray.400" />
-            <Stack alignItems="center">
-              <Heading color="gray.600" size="lg">
-                {partiallyLoadedSelectedSubTopic.name}
-              </Heading>
-              {selectedSubTopic ? (
-                <TopicSubHeader topic={selectedSubTopic} size="sm" />
-              ) : (
-                <TopicSubHeader topic={partiallyLoadedSelectedSubTopic} size="sm" isLoading={true} />
-              )}
-              {selectedSubTopic && <TopicDescription topicDescription={selectedSubTopic.description || undefined} />}
+        {partiallyLoadedSelectedSubTopic && (
+          <Box position="relative">
+            <PageLink
+              color="blue.500"
+              display="flex"
+              alignItems="baseline"
+              position="absolute"
+              right="6px"
+              top="6px"
+              pageInfo={TopicPageInfo(partiallyLoadedSelectedSubTopic)}
+              isExternal
+            >
+              Explore
+              <ExternalLinkIcon ml="6px" boxSize={4} />
+            </PageLink>
+            <Stack spacing={5} pb={3}>
+              <Divider borderColor="gray.400" />
+
+              <Stack alignItems="center">
+                <PageLink pageInfo={TopicPageInfo(partiallyLoadedSelectedSubTopic)} isExternal>
+                  <Heading color="gray.600" size="lg">
+                    {partiallyLoadedSelectedSubTopic.name}
+                  </Heading>
+                </PageLink>
+                {selectedSubTopic ? (
+                  <TopicSubHeader topic={selectedSubTopic} size="sm" justify="center" subTopicsDisplay="count" />
+                ) : (
+                  <TopicSubHeader topic={partiallyLoadedSelectedSubTopic} size="sm" isLoading={true} />
+                )}
+                {selectedSubTopic && <TopicDescription topicDescription={selectedSubTopic.description || undefined} />}
+              </Stack>
             </Stack>
-          </Stack>
-        )} */}
+          </Box>
+        )}
         <LearningMaterialsFilters
           feedAvailableFilters={feedAvailableFilters}
           feedOptions={feedOptions}

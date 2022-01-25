@@ -104,7 +104,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
     loading: learningMaterialsFeedLoading,
     initialLoading: learningMaterialsFeedInitialLoading,
     isReloading: learningMaterialsFeedReloading,
-    lastSelectedSubTopic: selectedSubTopicData,
+    lastSelectedTopic,
     learningMaterials,
     totalPages,
     feedAvailableFilters,
@@ -114,8 +114,8 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
   const [selectedSubTopic, setSelectedSubTopic] = useState<null | SubTopicFilterDataFragment>(null);
 
   useEffect(() => {
-    selectedSubTopicData && selectedSubTopicData._id !== topic._id && setSelectedSubTopic(selectedSubTopicData);
-  }, [selectedSubTopicData]);
+    lastSelectedTopic && lastSelectedTopic._id !== topic._id && setSelectedSubTopic(lastSelectedTopic);
+  }, [lastSelectedTopic]);
 
   useEffect(() => {
     if (!learningMaterialsFeedOptions.selectedSubTopicKey) setSelectedSubTopic(null);
@@ -161,7 +161,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
       renderBlockBelowTitle={
         <Flex direction="column" pb={{ base: 4, md: 0 }}>
           <Box pt="2px" pb={3}>
-            <TopicSubHeader topic={topic} size="md" mt={2} />
+            <TopicSubHeader topic={topic} size="md" mt={2} displayManage />
           </Box>
           {topic && topic.description && (
             <Skeleton isLoaded={!loading}>

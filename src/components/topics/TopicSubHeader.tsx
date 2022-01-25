@@ -11,7 +11,7 @@ import {
   TopicTreePageInfo,
   TopicTreePagePath,
 } from '../../pages/RoutesPageInfos';
-import { RoleAccess } from '../auth/RoleAccess';
+import { RoleAccess, userHasAccess } from '../auth/RoleAccess';
 import { ResourceIcon } from '../lib/icons/ResourceIcon';
 import { TopicIcon } from '../lib/icons/TopicIcon';
 import { TreeIcon } from '../lib/icons/TreeIcon';
@@ -30,6 +30,7 @@ export const TopicSubHeaderData = gql`
       ...TopicTypeFullData
     }
     learningMaterialsTotalCount
+    subTopicsTotalCount
   }
   ${TopicTypeFullData}
 `;
@@ -38,7 +39,74 @@ interface TopicSubHeaderProps {
   topic: TopicSubHeaderDataFragment;
   size: 'sm' | 'md';
   isLoading?: boolean;
+  subTopicsDisplay?: 'tree' | 'count';
+  displayManage?: boolean;
 }
+
+export const TopicSubHeader: React.FC<TopicSubHeaderProps & WrapProps> = ({
+  topic,
+  size,
+  isLoading,
+  subTopicsDisplay = 'tree',
+  displayManage,
+  ...wrapProps
+}) => {
+  const { currentUser } = useCurrentUser();
+  const menuItems = [
+    ...(!!topic.topicTypes ? [<TopicTypesViewer topicTypes={topic.topicTypes} maxShown={2} />] : []),
+    ...(!!topic.level ? [<TopicLevelViewer level={topic.level} />] : []),
+    subTopicsDisplay === 'tree' ? (
+      <TextSubHeaderItem
+        size={size}
+        pageInfo={TopicTreePageInfo(topic)}
+        leftIcon={<TopicIcon boxSize="22px" color="currentColor" />}
+        text="SubTopics Tree"
+        rightIcon={<TreeIcon boxSize="20px" color="currentColor" mt="2px" />}
+      />
+    ) : (
+      <TextSubHeaderItem
+        size={size}
+        pageInfo={TopicTreePageInfo(topic)}
+        leftIcon={<TopicIcon boxSize="22px" color="currentColor" />}
+        text={`${topic.subTopicsTotalCount} SubTopics`}
+      />
+    ),
+    <TextSubHeaderItem
+      size={size}
+      leftIcon={<ResourceIcon boxSize="20px" color="currentColor" />}
+      text={`${topic.learningMaterialsTotalCount} Resources`}
+    />,
+    ...(displayManage && userHasAccess('contributorOrAdmin', currentUser)
+      ? [
+          <TextSubHeaderItem
+            size={size}
+            pageInfo={ManageTopicPageInfo(topic)}
+            leftIcon={<SettingsIcon boxSize="16px" color="currentColor" />}
+            text="Manage"
+          />,
+        ]
+      : []),
+  ].reduce((final, item, idx, menuItems) => {
+    final.push(item);
+    if (idx < menuItems.length - 1)
+      final.push(
+        <Text fontWeight={500} fontSize="15px" color="gray.500">
+          |
+        </Text>
+      );
+
+    return final;
+  }, [] as JSX.Element[]);
+  return (
+    <Wrap spacing="11px" {...wrapProps}>
+      {menuItems.map((menuItem, idx) => (
+        <WrapItem key={idx}>
+          <Skeleton isLoaded={!isLoading}>{menuItem}</Skeleton>
+        </WrapItem>
+      ))}
+    </Wrap>
+  );
+};
 
 const TextSubHeaderItem: React.FC<{
   size: TopicSubHeaderProps['size'];
@@ -77,54 +145,5 @@ const TextSubHeaderItem: React.FC<{
     </PageLink>
   ) : (
     visualElement
-  );
-};
-
-export const TopicSubHeader: React.FC<TopicSubHeaderProps & WrapProps> = ({ topic, size, isLoading, ...wrapProps }) => {
-  const { currentUser } = useCurrentUser();
-  const menuItems = [
-    ...(!!topic.topicTypes ? [<TopicTypesViewer topicTypes={topic.topicTypes} maxShown={2} />] : []),
-    ...(!!topic.level ? [<TopicLevelViewer level={topic.level} />] : []),
-    <TextSubHeaderItem
-      size={size}
-      pageInfo={TopicTreePageInfo(topic)}
-      leftIcon={<TopicIcon boxSize="22px" color="currentColor" />}
-      text="SubTopics Tree"
-      rightIcon={<TreeIcon boxSize="20px" color="currentColor" mt="2px" />}
-    />,
-    <TextSubHeaderItem
-      size={size}
-      leftIcon={<ResourceIcon boxSize="20px" color="currentColor" />}
-      text={`${topic.learningMaterialsTotalCount} Resources`}
-    />,
-    ...(!!currentUser
-      ? [
-          <TextSubHeaderItem
-            size={size}
-            pageInfo={ManageTopicPageInfo(topic)}
-            leftIcon={<SettingsIcon boxSize="16px" color="currentColor" />}
-            text="Manage"
-          />,
-        ]
-      : []),
-  ].reduce((final, item, idx, menuItems) => {
-    final.push(item);
-    if (idx < menuItems.length - 1)
-      final.push(
-        <Text fontWeight={500} fontSize="15px" color="gray.500">
-          |
-        </Text>
-      );
-
-    return final;
-  }, [] as JSX.Element[]);
-  return (
-    <Wrap spacing="11px" {...wrapProps}>
-      {menuItems.map((menuItem, idx) => (
-        <WrapItem key={idx}>
-          <Skeleton isLoaded={!isLoading}>{menuItem}</Skeleton>
-        </WrapItem>
-      ))}
-    </Wrap>
   );
 };
