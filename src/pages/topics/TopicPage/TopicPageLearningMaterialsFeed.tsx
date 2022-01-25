@@ -22,7 +22,11 @@ import {
   TopicLearningMaterialsSortingType,
 } from '../../../graphql/types';
 import { useScroll } from '../../../hooks/useScroll';
-import { LearningMaterialsFilters, TopicPageLearningMaterialFeedTypeFilter } from './LearningMaterialsFilters';
+import {
+  LearningMaterialsFilters,
+  LMFeedFiltersToResourceTypeMapping,
+  TopicPageLearningMaterialFeedTypeFilter,
+} from './LearningMaterialsFilters';
 import { SubTopicFilter, SubTopicFilterData } from './SubTopicFilter';
 import { SubTopicFilterDataFragment } from './SubTopicFilter.generated';
 import { useGetTopicRecommendedLearningMaterialsQuery } from './TopicPageLearningMaterialsFeed.generated';
@@ -116,28 +120,30 @@ function getFilterOptionsFromFilterTypes(
   if (filterTypes[TopicPageLearningMaterialFeedTypeFilter.LearningPath]) {
     learningMaterialTypeIn.push(LearningMaterialType.LearningPath);
   }
-  if (filterTypes[TopicPageLearningMaterialFeedTypeFilter.Course]) {
+  if (filterTypes[TopicPageLearningMaterialFeedTypeFilter.Read]) {
     if (!learningMaterialTypeIn.includes(LearningMaterialType.Resource))
       learningMaterialTypeIn.push(LearningMaterialType.Resource);
-    resourceTypeIn.push(ResourceType.Course);
+    resourceTypeIn.push(...LMFeedFiltersToResourceTypeMapping[TopicPageLearningMaterialFeedTypeFilter.Read]);
   }
-  if (filterTypes[TopicPageLearningMaterialFeedTypeFilter.Podcast]) {
+  if (filterTypes[TopicPageLearningMaterialFeedTypeFilter.Watch]) {
     if (!learningMaterialTypeIn.includes(LearningMaterialType.Resource))
       learningMaterialTypeIn.push(LearningMaterialType.Resource);
-    resourceTypeIn.push(ResourceType.Podcast);
-    resourceTypeIn.push(ResourceType.PodcastEpisode);
+    resourceTypeIn.push(...LMFeedFiltersToResourceTypeMapping[TopicPageLearningMaterialFeedTypeFilter.Watch]);
   }
-  if (filterTypes[TopicPageLearningMaterialFeedTypeFilter.Article]) {
+  if (filterTypes[TopicPageLearningMaterialFeedTypeFilter.Listen]) {
     if (!learningMaterialTypeIn.includes(LearningMaterialType.Resource))
       learningMaterialTypeIn.push(LearningMaterialType.Resource);
-    resourceTypeIn.push(ResourceType.Article);
-    resourceTypeIn.push(ResourceType.ArticleSeries);
+    resourceTypeIn.push(...LMFeedFiltersToResourceTypeMapping[TopicPageLearningMaterialFeedTypeFilter.Listen]);
   }
-  if (filterTypes[TopicPageLearningMaterialFeedTypeFilter.Video]) {
+  if (filterTypes[TopicPageLearningMaterialFeedTypeFilter.Study]) {
     if (!learningMaterialTypeIn.includes(LearningMaterialType.Resource))
       learningMaterialTypeIn.push(LearningMaterialType.Resource);
-    resourceTypeIn.push(ResourceType.YoutubeVideo);
-    resourceTypeIn.push(ResourceType.YoutubePlaylist);
+    resourceTypeIn.push(...LMFeedFiltersToResourceTypeMapping[TopicPageLearningMaterialFeedTypeFilter.Study]);
+  }
+  if (filterTypes[TopicPageLearningMaterialFeedTypeFilter.Practice]) {
+    if (!learningMaterialTypeIn.includes(LearningMaterialType.Resource))
+      learningMaterialTypeIn.push(LearningMaterialType.Resource);
+    resourceTypeIn.push(...LMFeedFiltersToResourceTypeMapping[TopicPageLearningMaterialFeedTypeFilter.Practice]);
   }
   return {
     learningMaterialTypeIn,
@@ -282,8 +288,13 @@ export const TopicPageLearningMaterialsFeed: React.FC<TopicPageLearningMaterials
           isLoading={isLoading}
         />
       )}
-      <Flex ref={scrollRef} direction="column" px={feedOptions.selectedSubTopicKey ? 10 : 0} alignItems="stretch">
-        {partiallyLoadedSelectedSubTopic && (
+      <Flex
+        ref={scrollRef}
+        direction="column"
+        px={{ base: feedOptions.selectedSubTopicKey ? 10 : 0, md: feedOptions.selectedSubTopicKey ? 10 : 0 }}
+        alignItems="stretch"
+      >
+        {/* {partiallyLoadedSelectedSubTopic && (
           <Stack spacing={5} pb={3}>
             <Divider borderColor="gray.400" />
             <Stack alignItems="center">
@@ -298,7 +309,7 @@ export const TopicPageLearningMaterialsFeed: React.FC<TopicPageLearningMaterials
               {selectedSubTopic && <TopicDescription topicDescription={selectedSubTopic.description || undefined} />}
             </Stack>
           </Stack>
-        )}
+        )} */}
         <LearningMaterialsFilters
           feedAvailableFilters={feedAvailableFilters}
           feedOptions={feedOptions}

@@ -1,5 +1,6 @@
 import { ChevronDownIcon, ChevronUpIcon, SearchIcon } from '@chakra-ui/icons';
 import {
+  Box,
   Center,
   Flex,
   FormControl,
@@ -23,34 +24,65 @@ import { theme } from '../../../theme/theme';
 import { TopicTreePage } from '../TopicTreePage';
 import { FeedAvailableFilters, TopicPageLearningMaterialsFeedOptions } from './TopicPageLearningMaterialsFeed';
 
+// export enum TopicPageLearningMaterialFeedTypeFilter {
+//   Course = 'Course',
+//   Video = 'Video',
+//   Podcast = 'Podcast',
+//   Short = 'Short',
+//   Long = 'Long',
+//   Article = 'Article',
+//   LearningPath = 'LearningPath',
+//   // Exercise = 'Exercise'
+// }
+
 export enum TopicPageLearningMaterialFeedTypeFilter {
-  Course = 'Course',
-  Video = 'Video',
-  Podcast = 'Podcast',
+  Read = 'Read',
+  Watch = 'Watch',
+  Listen = 'Listen',
+  Study = 'Study',
+  Practice = 'Practice',
   Short = 'Short',
   Long = 'Long',
-  Article = 'Article',
   LearningPath = 'LearningPath',
-  // Exercise = 'Exercise'
 }
 
-export const LMFeedFiltersToVerbMapping = {
-  [TopicPageLearningMaterialFeedTypeFilter.Course]: 'Study',
-  [TopicPageLearningMaterialFeedTypeFilter.Video]: 'Watch',
-  [TopicPageLearningMaterialFeedTypeFilter.Podcast]: 'Listen',
-  [TopicPageLearningMaterialFeedTypeFilter.Short]: 'Short', // ?
-  [TopicPageLearningMaterialFeedTypeFilter.Long]: 'Long', // ?
-  [TopicPageLearningMaterialFeedTypeFilter.Article]: 'Read',
-  // [TopicPageLearningMaterialFeedTypeFilter.Exercise]: 'Practice',
-  // [TopicPageLearningMaterialFeedTypeFilter.LearningPath  ]: '', Follow ?
-};
+// export const LMFeedFiltersToVerbMapping = {
+//   [TopicPageLearningMaterialFeedTypeFilter.Stu]: 'Study',
+//   [TopicPageLearningMaterialFeedTypeFilter.Video]: 'Watch',
+//   [TopicPageLearningMaterialFeedTypeFilter.Podcast]: 'Listen',
+//   [TopicPageLearningMaterialFeedTypeFilter.Short]: 'Short', // ?
+//   [TopicPageLearningMaterialFeedTypeFilter.Long]: 'Long', // ?
+//   [TopicPageLearningMaterialFeedTypeFilter.Article]: 'Read',
+//   // [TopicPageLearningMaterialFeedTypeFilter.Exercise]: 'Practice',
+//   // [TopicPageLearningMaterialFeedTypeFilter.LearningPath  ]: '', Follow ?
+// };
 
 export const LMFeedFiltersToResourceTypeMapping = {
-  [TopicPageLearningMaterialFeedTypeFilter.Course]: [ResourceType.Course],
-  [TopicPageLearningMaterialFeedTypeFilter.Video]: [ResourceType.YoutubeVideo, ResourceType.YoutubePlaylist],
-  [TopicPageLearningMaterialFeedTypeFilter.Podcast]: [ResourceType.Podcast, ResourceType.PodcastEpisode],
-  [TopicPageLearningMaterialFeedTypeFilter.Article]: [ResourceType.Article, ResourceType.ArticleSeries],
-  // [TopicPageLearningMaterialFeedTypeFilter.]
+  [TopicPageLearningMaterialFeedTypeFilter.Read]: [
+    ResourceType.Article,
+    ResourceType.ArticleSeries,
+    ResourceType.Book,
+    ResourceType.OnlineBook,
+    ResourceType.ResearchPaper,
+  ],
+  [TopicPageLearningMaterialFeedTypeFilter.Watch]: [
+    ResourceType.YoutubeVideo,
+    ResourceType.YoutubePlaylist,
+    ResourceType.Talk,
+    ResourceType.Documentary,
+  ],
+  [TopicPageLearningMaterialFeedTypeFilter.Listen]: [
+    ResourceType.Podcast,
+    ResourceType.PodcastEpisode,
+    ResourceType.Talk,
+  ],
+
+  [TopicPageLearningMaterialFeedTypeFilter.Study]: [ResourceType.Course],
+  [TopicPageLearningMaterialFeedTypeFilter.Practice]: [
+    ResourceType.Project,
+    ResourceType.Exercise,
+    ResourceType.VideoGame, // ? Or Play filter ?
+  ],
 };
 
 interface LearningMaterialFiltersProps {
@@ -75,80 +107,105 @@ export const LearningMaterialsFilters: React.FC<LearningMaterialFiltersProps> = 
   );
   return (
     <Flex direction="column" alignItems="stretch" pb={3}>
-      <Flex direction="row" alignItems="baseline" pt={1} justifyContent="space-between">
-        <Wrap>
-          <WrapItem>
-            <Text fontSize="2xl" fontWeight={500}>
-              Best Resources
-            </Text>
-          </WrapItem>
-          <WrapItem>
+      <Flex direction="row" alignItems="baseline" pt={1} justifyContent="space-between" flexWrap="wrap">
+        <Text fontSize="2xl" fontWeight={500} mr={2}>
+          Best Resources
+        </Text>
+        <Flex direction="row" justifyContent="space-between" flexGrow={1} flexWrap="wrap">
+          <Box py={1}>
             <SearchResourcesInput onChange={(value) => setFeedOptions({ ...feedOptions, query: value || undefined })} />
-          </WrapItem>
-        </Wrap>
-        <FormControl id="sort_by" w="260px" display="flex" flexDir="row" alignItems="center" px={3}>
-          <FormLabel mb={0} fontWeight={600} flexShrink={0} color="gray.600">
-            Sort by:
-          </FormLabel>
-          <Select
-            size="sm"
-            fontWeight={500}
-            borderColor="white"
-            _focus={{}}
-            onChange={(e) =>
-              setFeedOptions({
-                ...feedOptions,
-                sorting: e.target.value as TopicLearningMaterialsSortingType,
-              })
-            }
-            value={feedOptions.sorting}
-          >
-            {/* <option value={TopicLearningMaterialsSortingType.Recommended}>Most Relevant</option> */}
-            <option value={TopicLearningMaterialsSortingType.Rating}>Highest Rating</option>
-            <option value={TopicLearningMaterialsSortingType.Newest}>Newest First</option>
-          </Select>
-        </FormControl>
+          </Box>
+          <FormControl id="sort_by" w="260px" display="flex" flexDir="row" alignItems="center" pl={1} pr={3} py={1}>
+            <FormLabel mb={0} fontWeight={600} flexShrink={0} color="gray.600">
+              Sort by:
+            </FormLabel>
+            <Select
+              size="sm"
+              fontWeight={500}
+              borderColor="white"
+              _focus={{}}
+              onChange={(e) =>
+                setFeedOptions({
+                  ...feedOptions,
+                  sorting: e.target.value as TopicLearningMaterialsSortingType,
+                })
+              }
+              value={feedOptions.sorting}
+            >
+              {/* <option value={TopicLearningMaterialsSortingType.Recommended}>Most Relevant</option> */}
+              <option value={TopicLearningMaterialsSortingType.Rating}>Highest Rating</option>
+              <option value={TopicLearningMaterialsSortingType.Newest}>Newest First</option>
+            </Select>
+          </FormControl>
+        </Flex>
       </Flex>
       <Wrap spacing="8px" mt={3} justify={{ base: 'center', lg: 'normal' }}>
         <WrapItem>
           <LearningMaterialFilterItem
-            onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Course)}
-            color="teal.600"
-            isSelected={feedOptions.typeFilters.Course}
+            color="yellow.500"
+            onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Read)}
+            isSelected={feedOptions.typeFilters.Read}
             isDisabled={
-              feedAvailableFilters && intersection(feedAvailableFilters.types, [ResourceType.Course]).length === 0
+              feedAvailableFilters &&
+              intersection(feedAvailableFilters.types, LMFeedFiltersToResourceTypeMapping.Read).length === 0
             }
           >
-            Course
+            Read
           </LearningMaterialFilterItem>
         </WrapItem>
         <WrapItem>
           <LearningMaterialFilterItem
-            onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Video)}
+            onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Watch)}
             color="red.500"
-            isSelected={feedOptions.typeFilters.Video}
+            isSelected={feedOptions.typeFilters.Watch}
             isDisabled={
               feedAvailableFilters &&
-              intersection(feedAvailableFilters.types, [ResourceType.YoutubePlaylist, ResourceType.YoutubeVideo])
-                .length === 0
+              intersection(feedAvailableFilters.types, LMFeedFiltersToResourceTypeMapping.Watch).length === 0
             }
           >
-            Video
+            Watch
           </LearningMaterialFilterItem>
         </WrapItem>
         <WrapItem>
           <LearningMaterialFilterItem
-            onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Podcast)}
+            onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Listen)}
             color="orange.500"
-            isSelected={feedOptions.typeFilters.Podcast}
+            isSelected={feedOptions.typeFilters.Listen}
             isDisabled={
               feedAvailableFilters &&
-              intersection(feedAvailableFilters.types, [ResourceType.Podcast, ResourceType.PodcastEpisode]).length === 0
+              intersection(feedAvailableFilters.types, LMFeedFiltersToResourceTypeMapping.Listen).length === 0
             }
           >
-            Podcast
+            Listen
           </LearningMaterialFilterItem>
         </WrapItem>
+        <WrapItem>
+          <LearningMaterialFilterItem
+            onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Study)}
+            color="teal.600"
+            isSelected={feedOptions.typeFilters.Study}
+            isDisabled={
+              feedAvailableFilters &&
+              intersection(feedAvailableFilters.types, LMFeedFiltersToResourceTypeMapping.Study).length === 0
+            }
+          >
+            Study
+          </LearningMaterialFilterItem>
+        </WrapItem>
+        <WrapItem>
+          <LearningMaterialFilterItem
+            onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Practice)}
+            color="gray.600"
+            isSelected={feedOptions.typeFilters.Practice}
+            isDisabled={
+              feedAvailableFilters &&
+              intersection(feedAvailableFilters.types, LMFeedFiltersToResourceTypeMapping.Practice).length === 0
+            }
+          >
+            Practice
+          </LearningMaterialFilterItem>
+        </WrapItem>
+
         <WrapItem>
           <LearningMaterialFilterItem
             onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Short)}
@@ -169,19 +226,7 @@ export const LearningMaterialsFilters: React.FC<LearningMaterialFiltersProps> = 
             Long<Text as="span" fontSize="sm">{`(>30min)`}</Text>
           </LearningMaterialFilterItem>
         </WrapItem>
-        <WrapItem>
-          <LearningMaterialFilterItem
-            color="yellow.500"
-            onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Article)}
-            isSelected={feedOptions.typeFilters.Article}
-            isDisabled={
-              feedAvailableFilters &&
-              intersection(feedAvailableFilters.types, [ResourceType.Article, ResourceType.ArticleSeries]).length === 0
-            }
-          >
-            Article
-          </LearningMaterialFilterItem>
-        </WrapItem>
+
         <WrapItem>
           <LearningMaterialFilterItem
             color="teal.500"
