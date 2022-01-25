@@ -280,7 +280,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
             </PageButtonLink>
           </Stack>
           <SeeAlso topic={topic} />
-          <BestXPagesLinks topicKey={topic.key} />
+          {/* <BestXPagesLinks topicKey={topic.key} /> TODO - fix*/}
         </Stack>
       </Flex>
     </TopicPageLayout>

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { LearningPathPreviewCardData } from '../../components/learning_paths/LearningPathPreviewCard';
 import { TopicDescription } from '../../components/topics/fields/TopicDescription';
-import { TopicRecommendedLearningMaterials } from '../../components/topics/TopicRecommendedLearningMaterials';
+// import { TopicRecommendedLearningMaterials } from '../../components/topics/TopicRecommendedLearningMaterials';
 import { ResourcePreviewCardData } from '../../graphql/resources/resources.fragments';
 import {
   LearningMaterialType,
@@ -68,14 +68,14 @@ export const BestXPage: React.FC<{ topicKey: string; x: ResourceType[] }> = ({ t
       <Box my={8} />
       <Stack spacing={10} direction="row">
         <Flex flexGrow={1}>
-          <TopicRecommendedLearningMaterials
+          {/* <TopicRecommendedLearningMaterials
             topic={topic}
             learningMaterialsPreviews={topic.learningMaterials?.items || []}
             isLoading={loading}
             reloadRecommendedResources={() => refetchLearningMaterials()}
             learningMaterialsOptions={learningMaterialsOptions}
             setLearningMaterialsOptions={setLearningMaterialsOptions}
-          />
+          /> */}
         </Flex>
       </Stack>
     </PageLayout>

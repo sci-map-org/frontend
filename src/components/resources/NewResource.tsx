@@ -69,7 +69,7 @@ const typeToMediaTypeMapping: { [key in ResourceType]: ResourceMediaType | null 
   [ResourceType.VideoGame]: ResourceMediaType.InteractiveContent,
   [ResourceType.Exercise]: null,
   [ResourceType.Project]: ResourceMediaType.Text,
-  [ResourceType.Quizz]: ResourceMediaType.InteractiveContent,
+  // [ResourceType.Quizz]: ResourceMediaType.InteractiveContent,
 };
 
 type SubResourceCreationData = Omit<

@@ -44,7 +44,7 @@ export const resourceTypeColorMapping: { [key in ResourceType]: string } = {
   [ResourceType.Infographic]: 'yellow',
   [ResourceType.Website]: 'blue',
   [ResourceType.Exercise]: 'gray',
-  [ResourceType.Quizz]: 'gray',
+  // [ResourceType.Quizz]: 'gray',
   [ResourceType.Project]: 'gray',
   [ResourceType.YoutubeVideo]: 'red',
   [ResourceType.YoutubePlaylist]: 'red',
