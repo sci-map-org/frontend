@@ -283,18 +283,20 @@ export const TopicPageLearningMaterialsFeed: React.FC<TopicPageLearningMaterials
         />
       )}
       <Flex ref={scrollRef} direction="column" px={feedOptions.selectedSubTopicKey ? 10 : 0} alignItems="stretch">
-        {partiallyLoadedSelectedSubTopic && <Divider borderColor="gray.400" />}
         {partiallyLoadedSelectedSubTopic && (
-          <Stack alignItems="center">
-            <Heading color="gray.600" size="lg">
-              {partiallyLoadedSelectedSubTopic.name}
-            </Heading>
-            {selectedSubTopic ? (
-              <TopicSubHeader topic={selectedSubTopic} size="sm" />
-            ) : (
-              <TopicSubHeader topic={partiallyLoadedSelectedSubTopic} size="sm" isLoading={true} />
-            )}
-            {selectedSubTopic && <TopicDescription topicDescription={selectedSubTopic.description || undefined} />}
+          <Stack spacing={5} pb={3}>
+            <Divider borderColor="gray.400" />
+            <Stack alignItems="center">
+              <Heading color="gray.600" size="lg">
+                {partiallyLoadedSelectedSubTopic.name}
+              </Heading>
+              {selectedSubTopic ? (
+                <TopicSubHeader topic={selectedSubTopic} size="sm" />
+              ) : (
+                <TopicSubHeader topic={partiallyLoadedSelectedSubTopic} size="sm" isLoading={true} />
+              )}
+              {selectedSubTopic && <TopicDescription topicDescription={selectedSubTopic.description || undefined} />}
+            </Stack>
           </Stack>
         )}
         <LearningMaterialsFilters

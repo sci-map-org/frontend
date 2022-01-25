@@ -159,7 +159,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
         </PageTitle>
       }
       renderBlockBelowTitle={
-        <>
+        <Flex direction="column" pb={{ base: 4, md: 0 }}>
           <Box pt="2px" pb={3}>
             <TopicSubHeader topic={topic} size="md" mt={2} />
           </Box>
@@ -187,7 +187,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
               </Link>
             </Skeleton>
           )}
-        </>
+        </Flex>
       }
       renderMinimap={(pxWidth, pxHeight) => (
         <SubTopicsMinimap

@@ -109,98 +109,90 @@ export const LearningMaterialsFilters: React.FC<LearningMaterialFiltersProps> = 
           </Select>
         </FormControl>
       </Flex>
-      <Flex direction="row" justifyContent="space-between" alignItems="baseline">
-        <Wrap spacing="8px" mt={3}>
-          <WrapItem>
-            <LearningMaterialFilterItem
-              onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Course)}
-              color="teal.600"
-              isSelected={feedOptions.typeFilters.Course}
-              isDisabled={
-                feedAvailableFilters && intersection(feedAvailableFilters.types, [ResourceType.Course]).length === 0
-              }
-            >
-              Course
-            </LearningMaterialFilterItem>
-          </WrapItem>
-          <WrapItem>
-            <LearningMaterialFilterItem
-              onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Video)}
-              color="red.500"
-              isSelected={feedOptions.typeFilters.Video}
-              isDisabled={
-                feedAvailableFilters &&
-                intersection(feedAvailableFilters.types, [ResourceType.YoutubePlaylist, ResourceType.YoutubeVideo])
-                  .length === 0
-              }
-            >
-              Video
-            </LearningMaterialFilterItem>
-          </WrapItem>
-          <WrapItem>
-            <LearningMaterialFilterItem
-              onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Podcast)}
-              color="orange.500"
-              isSelected={feedOptions.typeFilters.Podcast}
-              isDisabled={
-                feedAvailableFilters &&
-                intersection(feedAvailableFilters.types, [ResourceType.Podcast, ResourceType.PodcastEpisode]).length ===
-                  0
-              }
-            >
-              Podcast
-            </LearningMaterialFilterItem>
-          </WrapItem>
-          <WrapItem>
-            <LearningMaterialFilterItem
-              onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Short)}
-              color="blue.500"
-              isSelected={feedOptions.typeFilters.Short}
-              isDisabled={feedAvailableFilters && feedAvailableFilters.leq30minCount === 0}
-            >
-              Short<Text as="span" fontSize="sm">{`(<30min)`}</Text>
-            </LearningMaterialFilterItem>
-          </WrapItem>
-          <WrapItem>
-            <LearningMaterialFilterItem
-              color="purple.500"
-              onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Long)}
-              isSelected={feedOptions.typeFilters.Long}
-              isDisabled={feedAvailableFilters && feedAvailableFilters.geq30minCount === 0}
-            >
-              Long<Text as="span" fontSize="sm">{`(>30min)`}</Text>
-            </LearningMaterialFilterItem>
-          </WrapItem>
-          <WrapItem>
-            <LearningMaterialFilterItem
-              color="yellow.500"
-              onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Article)}
-              isSelected={feedOptions.typeFilters.Article}
-              isDisabled={
-                feedAvailableFilters &&
-                intersection(feedAvailableFilters.types, [ResourceType.Article, ResourceType.ArticleSeries]).length ===
-                  0
-              }
-            >
-              Article
-            </LearningMaterialFilterItem>
-          </WrapItem>
-          <WrapItem>
-            <LearningMaterialFilterItem
-              color="teal.500"
-              onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.LearningPath)}
-              isSelected={feedOptions.typeFilters.LearningPath}
-              isDisabled={feedAvailableFilters && feedAvailableFilters.learningPathsCount === 0}
-            >
-              Learning Path
-            </LearningMaterialFilterItem>
-          </WrapItem>
-        </Wrap>
-        {/* <Stack direction="row" alignItems="baseline">
-          <Text fontWeight={600}>More Filters</Text>
-          <ChevronDownIcon />
-        </Stack> */}
-      </Flex>
+      <Wrap spacing="8px" mt={3} justify={{ base: 'center', lg: 'normal' }}>
+        <WrapItem>
+          <LearningMaterialFilterItem
+            onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Course)}
+            color="teal.600"
+            isSelected={feedOptions.typeFilters.Course}
+            isDisabled={
+              feedAvailableFilters && intersection(feedAvailableFilters.types, [ResourceType.Course]).length === 0
+            }
+          >
+            Course
+          </LearningMaterialFilterItem>
+        </WrapItem>
+        <WrapItem>
+          <LearningMaterialFilterItem
+            onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Video)}
+            color="red.500"
+            isSelected={feedOptions.typeFilters.Video}
+            isDisabled={
+              feedAvailableFilters &&
+              intersection(feedAvailableFilters.types, [ResourceType.YoutubePlaylist, ResourceType.YoutubeVideo])
+                .length === 0
+            }
+          >
+            Video
+          </LearningMaterialFilterItem>
+        </WrapItem>
+        <WrapItem>
+          <LearningMaterialFilterItem
+            onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Podcast)}
+            color="orange.500"
+            isSelected={feedOptions.typeFilters.Podcast}
+            isDisabled={
+              feedAvailableFilters &&
+              intersection(feedAvailableFilters.types, [ResourceType.Podcast, ResourceType.PodcastEpisode]).length === 0
+            }
+          >
+            Podcast
+          </LearningMaterialFilterItem>
+        </WrapItem>
+        <WrapItem>
+          <LearningMaterialFilterItem
+            onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Short)}
+            color="blue.500"
+            isSelected={feedOptions.typeFilters.Short}
+            isDisabled={feedAvailableFilters && feedAvailableFilters.leq30minCount === 0}
+          >
+            Short<Text as="span" fontSize="sm">{`(<30min)`}</Text>
+          </LearningMaterialFilterItem>
+        </WrapItem>
+        <WrapItem>
+          <LearningMaterialFilterItem
+            color="purple.500"
+            onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Long)}
+            isSelected={feedOptions.typeFilters.Long}
+            isDisabled={feedAvailableFilters && feedAvailableFilters.geq30minCount === 0}
+          >
+            Long<Text as="span" fontSize="sm">{`(>30min)`}</Text>
+          </LearningMaterialFilterItem>
+        </WrapItem>
+        <WrapItem>
+          <LearningMaterialFilterItem
+            color="yellow.500"
+            onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.Article)}
+            isSelected={feedOptions.typeFilters.Article}
+            isDisabled={
+              feedAvailableFilters &&
+              intersection(feedAvailableFilters.types, [ResourceType.Article, ResourceType.ArticleSeries]).length === 0
+            }
+          >
+            Article
+          </LearningMaterialFilterItem>
+        </WrapItem>
+        <WrapItem>
+          <LearningMaterialFilterItem
+            color="teal.500"
+            onSelect={() => toggleTypeFilter(TopicPageLearningMaterialFeedTypeFilter.LearningPath)}
+            isSelected={feedOptions.typeFilters.LearningPath}
+            isDisabled={feedAvailableFilters && feedAvailableFilters.learningPathsCount === 0}
+          >
+            Learning Path
+          </LearningMaterialFilterItem>
+        </WrapItem>
+      </Wrap>
       {!!feedAvailableFilters?.tagFilters?.length && (
         <Flex pt={3}>
           <LearningMaterialsTagsFilters
@@ -352,7 +344,7 @@ const LearningMaterialsTagsFilters: React.FC<{
     };
   }, [containerRef.current, feedAvailableFilters]);
   return (
-    <Flex direction="row" >
+    <Flex direction="row">
       <Wrap
         ref={containerRef}
         spacing={`${wrapPxSpacing}px`}
