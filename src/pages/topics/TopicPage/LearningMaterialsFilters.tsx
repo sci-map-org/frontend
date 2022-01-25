@@ -21,19 +21,7 @@ import BeatLoader from 'react-spinners/BeatLoader';
 import { useDebounce } from 'use-debounce';
 import { ResourceType, TopicLearningMaterialsSortingType } from '../../../graphql/types';
 import { theme } from '../../../theme/theme';
-import { TopicTreePage } from '../TopicTreePage';
 import { FeedAvailableFilters, TopicPageLearningMaterialsFeedOptions } from './TopicPageLearningMaterialsFeed';
-
-// export enum TopicPageLearningMaterialFeedTypeFilter {
-//   Course = 'Course',
-//   Video = 'Video',
-//   Podcast = 'Podcast',
-//   Short = 'Short',
-//   Long = 'Long',
-//   Article = 'Article',
-//   LearningPath = 'LearningPath',
-//   // Exercise = 'Exercise'
-// }
 
 export enum TopicPageLearningMaterialFeedTypeFilter {
   Read = 'Read',
@@ -45,17 +33,6 @@ export enum TopicPageLearningMaterialFeedTypeFilter {
   Long = 'Long',
   LearningPath = 'LearningPath',
 }
-
-// export const LMFeedFiltersToVerbMapping = {
-//   [TopicPageLearningMaterialFeedTypeFilter.Stu]: 'Study',
-//   [TopicPageLearningMaterialFeedTypeFilter.Video]: 'Watch',
-//   [TopicPageLearningMaterialFeedTypeFilter.Podcast]: 'Listen',
-//   [TopicPageLearningMaterialFeedTypeFilter.Short]: 'Short', // ?
-//   [TopicPageLearningMaterialFeedTypeFilter.Long]: 'Long', // ?
-//   [TopicPageLearningMaterialFeedTypeFilter.Article]: 'Read',
-//   // [TopicPageLearningMaterialFeedTypeFilter.Exercise]: 'Practice',
-//   // [TopicPageLearningMaterialFeedTypeFilter.LearningPath  ]: '', Follow ?
-// };
 
 export const LMFeedFiltersToResourceTypeMapping = {
   [TopicPageLearningMaterialFeedTypeFilter.Read]: [
