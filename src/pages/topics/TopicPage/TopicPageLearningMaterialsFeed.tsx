@@ -1,8 +1,8 @@
 import { NetworkStatus } from '@apollo/client';
-import { Button, Divider, Flex, Heading, Skeleton, Spinner, Stack, Text } from '@chakra-ui/react';
+import { Button, Divider, Flex, Heading, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { omit, range } from 'lodash';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import {
   LearningPathPreviewCard,
   LearningPathPreviewCardData,
@@ -21,6 +21,7 @@ import {
   TopicLearningMaterialsFilterOptions,
   TopicLearningMaterialsSortingType,
 } from '../../../graphql/types';
+import { useScroll } from '../../../hooks/useScroll';
 import { LearningMaterialsFilters, TopicPageLearningMaterialFeedTypeFilter } from './LearningMaterialsFilters';
 import { SubTopicFilter, SubTopicFilterData } from './SubTopicFilter';
 import { SubTopicFilterDataFragment } from './SubTopicFilter.generated';
@@ -261,9 +262,11 @@ export const TopicPageLearningMaterialsFeed: React.FC<TopicPageLearningMaterials
   initialLoading,
   isReloading,
 }) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
   const partiallyLoadedSelectedSubTopic =
     selectedSubTopic || subTopics.find((subTopic) => subTopic.key === feedOptions.selectedSubTopicKey) || null;
 
+  const { scrollToElement } = useScroll('auto');
   return (
     <Stack spacing={5} width="100%" position="relative">
       {!!subTopics.length && (
@@ -279,7 +282,7 @@ export const TopicPageLearningMaterialsFeed: React.FC<TopicPageLearningMaterials
           isLoading={isLoading}
         />
       )}
-      <Flex direction="column" px={feedOptions.selectedSubTopicKey ? 10 : 0} alignItems="stretch">
+      <Flex ref={scrollRef} direction="column" px={feedOptions.selectedSubTopicKey ? 10 : 0} alignItems="stretch">
         {partiallyLoadedSelectedSubTopic && <Divider borderColor="gray.400" />}
         {partiallyLoadedSelectedSubTopic && (
           <Stack alignItems="center">
@@ -336,7 +339,10 @@ export const TopicPageLearningMaterialsFeed: React.FC<TopicPageLearningMaterials
           <Pagination
             currentPage={feedOptions.page}
             totalPages={totalPages}
-            setCurrentPage={(page) => setFeedOptions({ ...feedOptions, page })}
+            setCurrentPage={(page) => {
+              scrollToElement(scrollRef);
+              setFeedOptions({ ...feedOptions, page });
+            }}
           />
         </Flex>
       </Flex>
