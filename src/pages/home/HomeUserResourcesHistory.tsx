@@ -56,7 +56,7 @@ export const LastOpenedResourceCardData = gql`
       _id
       name
       url
-      type
+      types
       rating
       durationSeconds
     }

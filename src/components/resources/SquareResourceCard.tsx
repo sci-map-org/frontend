@@ -14,7 +14,7 @@ export const SquareResourceCardData = gql`
   fragment SquareResourceCardData on Resource {
     _id
     name
-    type
+    types
     rating
     consumed {
       openedAt

@@ -17,7 +17,7 @@ export const ResourceMiniCardData = gql`
   fragment ResourceMiniCardData on Resource {
     _id
     name
-    type
+    types
     url
     rating
     ...LearningMaterialStarsRaterData

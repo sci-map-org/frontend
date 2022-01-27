@@ -7,7 +7,7 @@ export const ResourceData = gql`
   fragment ResourceData on Resource {
     _id
     name
-    type
+    types
     mediaType
     url
     description
@@ -42,7 +42,7 @@ export const ResourcePreviewCardData = gql`
   fragment ResourcePreviewCardData on Resource {
     _id
     name
-    type
+    types
     mediaType
     url
     description
@@ -59,7 +59,6 @@ export const ResourcePreviewCardData = gql`
         ...TopicLinkData
       }
     }
-    upvotes
     rating
     subResourceSeries {
       _id

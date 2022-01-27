@@ -136,7 +136,7 @@ export type CreateResourcePayload = {
   showInTopicsIds: Array<Scalars['String']>;
   subResourceSeries?: InputMaybe<Array<CreateSubResourcePayload>>;
   tags?: InputMaybe<Array<Scalars['String']>>;
-  type: ResourceType;
+  types: Array<ResourceType>;
   url: Scalars['String'];
 };
 
@@ -149,7 +149,7 @@ export type CreateSubResourcePayload = {
   prerequisitesTopicsIds?: InputMaybe<Array<Scalars['String']>>;
   showInTopicsIds: Array<Scalars['String']>;
   tags?: InputMaybe<Array<Scalars['String']>>;
-  type: ResourceType;
+  types: Array<ResourceType>;
   url: Scalars['String'];
 };
 
@@ -421,6 +421,8 @@ export type LearningMaterial = {
   name: Scalars['String'];
   prerequisites?: Maybe<Array<LearningMaterialHasPrerequisiteTopic>>;
   rating?: Maybe<Scalars['Float']>;
+  recommendationsCount?: Maybe<Scalars['Int']>;
+  recommendedBy?: Maybe<Array<UserRecommendedLearningMaterial>>;
   showedIn?: Maybe<Array<Topic>>;
   tags?: Maybe<Array<LearningMaterialTag>>;
 };
@@ -428,6 +430,11 @@ export type LearningMaterial = {
 
 export type LearningMaterialCoveredSubTopicsArgs = {
   options: LearningMaterialCoveredSubTopicsOptions;
+};
+
+
+export type LearningMaterialRecommendedByArgs = {
+  limit?: InputMaybe<Scalars['Int']>;
 };
 
 export type LearningMaterialCoveredSubTopicsOptions = {
@@ -487,6 +494,8 @@ export type LearningPath = LearningMaterial & {
   prerequisites?: Maybe<Array<LearningMaterialHasPrerequisiteTopic>>;
   public: Scalars['Boolean'];
   rating?: Maybe<Scalars['Float']>;
+  recommendationsCount?: Maybe<Scalars['Int']>;
+  recommendedBy?: Maybe<Array<UserRecommendedLearningMaterial>>;
   resourceItems?: Maybe<Array<LearningPathResourceItem>>;
   showedIn?: Maybe<Array<Topic>>;
   started?: Maybe<LearningPathStarted>;
@@ -497,6 +506,11 @@ export type LearningPath = LearningMaterial & {
 
 export type LearningPathCoveredSubTopicsArgs = {
   options: LearningMaterialCoveredSubTopicsOptions;
+};
+
+
+export type LearningPathRecommendedByArgs = {
+  limit?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -608,6 +622,7 @@ export type Mutation = {
   detachLearningMaterialCoversTopics: LearningMaterial;
   detachTopicIsPartOfTopic: DetachTopicIsPartOfTopicResult;
   detachTopicIsSubTopicOfTopic: DetachTopicIsSubTopicOfTopicResult;
+  downvoteLearningMaterial: LearningMaterial;
   hideLearningGoalFromTopic: ShowLearningGoalInTopicResult;
   hideLearningMaterialFromTopic: LearningMaterial;
   indexLearningGoal: LearningGoalIndexedResult;
@@ -836,6 +851,11 @@ export type MutationDetachTopicIsPartOfTopicArgs = {
 export type MutationDetachTopicIsSubTopicOfTopicArgs = {
   parentTopicId: Scalars['String'];
   subTopicId: Scalars['String'];
+};
+
+
+export type MutationDownvoteLearningMaterialArgs = {
+  learningMaterialId: Scalars['String'];
 };
 
 
@@ -1285,19 +1305,25 @@ export type Resource = LearningMaterial & {
   prerequisites?: Maybe<Array<LearningMaterialHasPrerequisiteTopic>>;
   previousResource?: Maybe<Resource>;
   rating?: Maybe<Scalars['Float']>;
+  recommendationsCount?: Maybe<Scalars['Int']>;
+  recommendedBy?: Maybe<Array<UserRecommendedLearningMaterial>>;
   seriesParentResource?: Maybe<Resource>;
   showedIn?: Maybe<Array<Topic>>;
   subResourceSeries?: Maybe<Array<Resource>>;
   subResources?: Maybe<Array<Resource>>;
   tags?: Maybe<Array<LearningMaterialTag>>;
-  type: ResourceType;
-  upvotes?: Maybe<Scalars['Int']>;
+  types: Array<ResourceType>;
   url: Scalars['String'];
 };
 
 
 export type ResourceCoveredSubTopicsArgs = {
   options: LearningMaterialCoveredSubTopicsOptions;
+};
+
+
+export type ResourceRecommendedByArgs = {
+  limit?: InputMaybe<Scalars['Int']>;
 };
 
 export type ResourceData = {
@@ -1307,7 +1333,7 @@ export type ResourceData = {
   mediaType?: Maybe<ResourceMediaType>;
   name?: Maybe<Scalars['String']>;
   subResourceSeries?: Maybe<Array<SubResourceExtractedData>>;
-  type?: Maybe<ResourceType>;
+  types?: Maybe<Array<ResourceType>>;
 };
 
 export enum ResourceMediaType {
@@ -1436,7 +1462,7 @@ export type SubResourceExtractedData = {
   durationSeconds?: Maybe<Scalars['Int']>;
   mediaType: ResourceMediaType;
   name: Scalars['String'];
-  type: ResourceType;
+  types: Array<ResourceType>;
   url: Scalars['String'];
 };
 
@@ -1613,7 +1639,7 @@ export type UpdateResourcePayload = {
   durationSeconds?: InputMaybe<Scalars['Int']>;
   mediaType?: InputMaybe<ResourceMediaType>;
   name?: InputMaybe<Scalars['String']>;
-  type?: InputMaybe<ResourceType>;
+  types?: InputMaybe<Array<ResourceType>>;
   url?: InputMaybe<Scalars['String']>;
 };
 
@@ -1682,6 +1708,13 @@ export enum UserConsumedResourcesSortingType {
 
 export type UserLearningPathsOptions = {
   pagination?: InputMaybe<PaginationOptions>;
+};
+
+export type UserRecommendedLearningMaterial = {
+  __typename?: 'UserRecommendedLearningMaterial';
+  learningMaterial: LearningMaterial;
+  recommendedAt: Scalars['Date'];
+  user: User;
 };
 
 export enum UserRole {

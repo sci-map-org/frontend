@@ -9,7 +9,7 @@ import { SearchResultResourceCardDataFragment } from './SearchResultResourceCard
 export const SearchResultResourceCardData = gql`
   fragment SearchResultResourceCardData on Resource {
     ...ResourceLinkData
-    resourceType: type
+    resourceTypes: types
     rating
   }
   ${ResourceLinkData}
