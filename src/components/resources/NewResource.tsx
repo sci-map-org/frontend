@@ -193,7 +193,7 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
         <FormFieldLabel>Show In:</FormFieldLabel>
         <Stack pl={3}>
           {resourceCreationData.showInTopics.map((showedInTopic) => (
-            <TopicLink topic={showedInTopic} />
+            <TopicLink key={showedInTopic._id} topic={showedInTopic} />
           ))}
         </Stack>
       </Stack>
@@ -307,7 +307,7 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
               <Stack direction="row" alignItems="center" spacing={2}>
                 <Text fontWeight={500}>{subResource.name}</Text>
                 {subResource.types.map((type) => (
-                  <ResourceTypeBadge type={type} />
+                  <ResourceTypeBadge key={type} type={type} />
                 ))}
                 <DurationViewer value={subResource.durationSeconds} />
               </Stack>
