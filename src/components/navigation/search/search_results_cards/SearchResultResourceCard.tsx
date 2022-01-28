@@ -9,7 +9,7 @@ import { SearchResultResourceCardDataFragment } from './SearchResultResourceCard
 export const SearchResultResourceCardData = gql`
   fragment SearchResultResourceCardData on Resource {
     ...ResourceLinkData
-    resourceType: type
+    resourceTypes: types
     rating
   }
   ${ResourceLinkData}
@@ -23,7 +23,8 @@ export const SearchResultResourceCard: React.FC<
 > = ({ resource, ...props }) => {
   return (
     <SearchResultCardContainer
-      renderIcon={(props) => <ResourceTypeIcon resourceType={resource.resourceType} {...props} />}
+      // TODO
+      renderIcon={(props) => <ResourceTypeIcon resourceType={resource.resourceTypes[0]} {...props} />}
       borderLeftColor="blue.300"
       {...props}
     >

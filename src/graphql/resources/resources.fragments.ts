@@ -1,13 +1,13 @@
 import gql from 'graphql-tag';
 import { TopicLinkData } from '../topics/topics.fragments';
 import { ResourceMediaType, ResourceType } from '../types';
-import { ResourceDataFragment } from './resources.fragments.generated';
+import { ResourceDataFragment, ResourcePreviewCardDataFragment } from './resources.fragments.generated';
 
 export const ResourceData = gql`
   fragment ResourceData on Resource {
     _id
     name
-    type
+    types
     mediaType
     url
     description
@@ -33,7 +33,7 @@ export const ResourceLinkData = gql`
 export const generateResourceData = (): ResourceDataFragment => ({
   _id: Math.random().toString(),
   name: 'My awesome resource name',
-  type: ResourceType.Article,
+  types: [ResourceType.Article],
   mediaType: ResourceMediaType.Text,
   url: 'https://myresource.url',
 });
@@ -42,7 +42,7 @@ export const ResourcePreviewCardData = gql`
   fragment ResourcePreviewCardData on Resource {
     _id
     name
-    type
+    types
     mediaType
     url
     description
@@ -59,7 +59,6 @@ export const ResourcePreviewCardData = gql`
         ...TopicLinkData
       }
     }
-    upvotes
     rating
     subResourceSeries {
       _id
@@ -72,6 +71,14 @@ export const ResourcePreviewCardData = gql`
   }
   ${TopicLinkData}
 `;
+
+export const generateResourcePreviewCardData = (): ResourcePreviewCardDataFragment => ({
+  _id: Math.random().toString(),
+  name: 'My resource name',
+  types: [ResourceType.Article],
+  url: 'https://myresource.url',
+  mediaType: ResourceMediaType.Text,
+});
 
 export const ResourceWithCoveredTopicsData = gql`
   fragment ResourceWithCoveredTopicsData on Resource {

@@ -68,14 +68,14 @@ export const analyzeResourceUrl = gql`
     analyzeResourceUrl(url: $url) {
       resourceData {
         name
-        type
+        types
         mediaType
         description
         durationSeconds
         subResourceSeries {
           name
           url
-          type
+          types
           mediaType
           description
           durationSeconds

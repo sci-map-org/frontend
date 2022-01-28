@@ -135,7 +135,7 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
           if (analyzedResourceData) {
             updateResourceCreationData({
               ...(!!analyzedResourceData.name && !resourceCreationData.name && { name: analyzedResourceData.name }),
-              ...(!!analyzedResourceData.type && { type: analyzedResourceData.type }),
+              ...(!!analyzedResourceData.types && { types: analyzedResourceData.types }),
               ...(!!analyzedResourceData.mediaType && { mediaType: analyzedResourceData.mediaType }),
               ...(!!analyzedResourceData.description &&
                 !resourceCreationData.description && { description: analyzedResourceData.description }),
@@ -145,7 +145,7 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
               coveredSubTopics: [],
               ...(!!analyzedResourceData.subResourceSeries && {
                 subResourceSeries: analyzedResourceData.subResourceSeries.map((sub) => ({
-                  ...pick(sub, ['name', 'url', 'type', 'mediaType', 'durationSeconds']),
+                  ...pick(sub, ['name', 'url', 'types', 'mediaType', 'durationSeconds']),
                   tags: [],
                   description: sub.description || undefined,
                   prerequisites: [],
@@ -158,6 +158,8 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
         }}
       />
       <Flex flexDirection="row" justifyContent="space-between">
+        {/* 
+        TODO
         <ResourceTypeSelector
           value={resourceCreationData.type}
           onSelect={(t) => {
@@ -167,7 +169,7 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
               ...(!!inferredMediaType && { mediaType: inferredMediaType }),
             });
           }}
-        />
+        /> */}
       </Flex>
       <LearningMaterialTagsStatelessEditor
         selectedTags={resourceCreationData.tags}
@@ -191,7 +193,7 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
         <FormFieldLabel>Show In:</FormFieldLabel>
         <Stack pl={3}>
           {resourceCreationData.showInTopics.map((showedInTopic) => (
-            <TopicLink topic={showedInTopic} />
+            <TopicLink key={showedInTopic._id} topic={showedInTopic} />
           ))}
         </Stack>
       </Stack>
@@ -259,7 +261,7 @@ interface NewResourceFormProps {
 const defaultResourceData: ResourceCreationData = {
   name: '',
   mediaType: ResourceMediaType.Text,
-  type: ResourceType.Article,
+  types: [ResourceType.Article],
   url: '',
   durationSeconds: null,
   tags: [],
@@ -304,7 +306,9 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
             renderTop={(subResource, index) => (
               <Stack direction="row" alignItems="center" spacing={2}>
                 <Text fontWeight={500}>{subResource.name}</Text>
-                <ResourceTypeBadge type={subResource.type} />
+                {subResource.types.map((type) => (
+                  <ResourceTypeBadge key={type} type={type} />
+                ))}
                 <DurationViewer value={subResource.durationSeconds} />
               </Stack>
             )}

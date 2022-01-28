@@ -59,7 +59,9 @@ export const StatelessSubResourceSeriesManager: React.FC<StatelessSubResourceSer
             renderTop={(resource) => (
               <Stack spacing={2}>
                 <Stack direction="row" alignItems="center" spacing={2}>
-                  <ResourceTypeIcon resourceType={resource.type} boxSize={5} />
+                  {resource.types.map((type) => (
+                    <ResourceTypeIcon key={type} resourceType={type} boxSize={5} />
+                  ))}
                   <InternalLink routePath="/resources/[_id]" asHref={`/resources/${resource._id}`}>
                     {resource.name}
                   </InternalLink>

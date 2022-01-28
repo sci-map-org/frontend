@@ -22,8 +22,8 @@ interface ResourceEditorProps {
 export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave }) => {
   const [name, setName] = useState(resource.name);
   const [mediaType, setMediaType] = useState(resource.mediaType);
-  const [type, setType] = useState(resource.type);
 
+  const [types, setTypes] = useState(resource.types);
   const [url, setUrl] = useState(resource.url);
   const [durationSeconds, setDurationSeconds] = useState(resource.durationSeconds);
   const [description, setDescription] = useState(resource.description || undefined);
@@ -45,8 +45,10 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
         <Input id="name" placeholder="name" size="md" value={name} onChange={(e) => setName(e.target.value)}></Input>
       </FormControl>
       <ResourceUrlInput value={url} onChange={setUrl} />
+
+      {/* TODO  */}
       <Flex direction="row">
-        <ResourceTypeSelector value={type} onSelect={(t) => setType(t)} />
+        <ResourceTypeSelector value={types[0]} onSelect={(t) => setTypes([t])} />
       </Flex>
       <Flex flexDirection="row">
         <ResourceMediaTypeSelector value={mediaType} onSelect={(t) => setMediaType(t)} />
@@ -91,7 +93,7 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
               onSave({
                 name,
                 mediaType,
-                type,
+                types,
                 url,
                 description,
                 durationSeconds,

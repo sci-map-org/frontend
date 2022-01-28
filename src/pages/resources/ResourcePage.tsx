@@ -36,6 +36,7 @@ import { ResourceType, UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { GetResourceResourcePageQuery, useGetResourceResourcePageQuery } from './ResourcePage.generated';
 import { LearningMaterialWithCoveredTopicsData } from '../../graphql/learning_materials/learning_materials.fragments';
+import { intersection } from 'lodash';
 
 export const getResourceResourcePage = gql`
   query getResourceResourcePage($id: String!) {
@@ -164,7 +165,10 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
           <Stack spacing={4} flexGrow={1}>
             <Box>
               <Skeleton isLoaded={!loading}>
-                <ResourceTypeBadge type={resource.type} /> - <ResourceMediaTypeBadge mediaType={resource.mediaType} />{' '}
+                {resource.types.map((type) => (
+                  <ResourceTypeBadge key={type} type={type} />
+                ))}{' '}
+                - <ResourceMediaTypeBadge mediaType={resource.mediaType} />{' '}
               </Skeleton>
             </Box>
             <Box>
@@ -176,7 +180,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
               />
             </Box>
             {resource.description && <ResourceDescription description={resource.description} />}
-            {(resource.type === ResourceType.YoutubeVideo || resource.type === ResourceType.YoutubePlaylist) && (
+            {intersection(resource.types, [ResourceType.YoutubeVideo, ResourceType.YoutubePlaylist]).length > 1 && (
               <Center mr={4}>
                 <ResourceYoutubePlayer resource={resource} skipThumbnail />
               </Center>

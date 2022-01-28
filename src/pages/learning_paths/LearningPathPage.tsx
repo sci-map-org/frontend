@@ -42,7 +42,6 @@ import { OtherLearnersViewer } from '../../components/lib/OtherLearnersViewer';
 import { StarsRatingViewer } from '../../components/lib/StarsRating';
 import { EditableDuration } from '../../components/resources/elements/Duration';
 import { EditableLearningMaterialCoveredTopics } from '../../components/learning_materials/EditableLearningMaterialCoveredTopics';
-import { generateResourcePreviewCardData } from '../../components/resources/ResourcePreviewCard';
 import { SquareResourceCardData } from '../../components/resources/SquareResourceCard';
 import { UserAvatar, UserAvatarData } from '../../components/users/UserAvatar';
 import { LearningMaterialWithCoveredTopicsData } from '../../graphql/learning_materials/learning_materials.fragments';
@@ -56,6 +55,7 @@ import { useUpdateLearningPathMutation } from '../../graphql/learning_paths/lear
 import { UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { GetLearningPathPageQuery, useGetLearningPathPageQuery } from './LearningPathPage.generated';
+import { generateResourcePreviewCardData } from '../../graphql/resources/resources.fragments';
 
 export const getLearningPathPage = gql`
   query getLearningPathPage($key: String!) {

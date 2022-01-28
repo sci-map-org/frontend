@@ -12,10 +12,10 @@ import { LearningPathPreviewCardDataFragment } from '../../../components/learnin
 import { PageLink } from '../../../components/navigation/InternalLink';
 import { LearningMaterialPreviewCardList } from '../../../components/resources/LearningMaterialPreviewCardList';
 import { ResourcePreviewCard } from '../../../components/resources/ResourcePreviewCard';
-import { ResourcePreviewCardDataFragment } from '../../../components/resources/ResourcePreviewCard.generated';
 import { TopicDescription } from '../../../components/topics/fields/TopicDescription';
 import { TopicSubHeader } from '../../../components/topics/TopicSubHeader';
 import { ResourcePreviewCardData } from '../../../graphql/resources/resources.fragments';
+import { ResourcePreviewCardDataFragment } from '../../../graphql/resources/resources.fragments.generated';
 import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
 import {
   LearningMaterialType,

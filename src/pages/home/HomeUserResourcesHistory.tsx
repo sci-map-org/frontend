@@ -56,7 +56,7 @@ export const LastOpenedResourceCardData = gql`
       _id
       name
       url
-      type
+      types
       rating
       durationSeconds
     }
@@ -87,7 +87,9 @@ const LastOpenedResourceCard: React.FC<{
           <Stack direction="row" spacing={1} alignItems="center">
             {/* 24px so that height doesn't change when rater appears */}
             <Stack spacing={1} direction="row" alignItems="center">
-              <ResourceTypeIcon resourceType={resourceItem.resource.type} boxSize="20px" my="3px" />
+              {resourceItem.resource.types.map((type) => (
+                <ResourceTypeIcon key={type} resourceType={type} boxSize="20px" my="3px" />
+              ))}
               <StarsRatingViewer value={resourceItem.resource.rating} pxSize={15} />
               <DurationViewer value={resourceItem.resource.durationSeconds} />
             </Stack>
