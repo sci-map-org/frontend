@@ -18,8 +18,12 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
+import { intersection } from 'lodash';
 import React, { forwardRef, ReactElement, ReactNode } from 'react';
-import { ResourceLinkDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import {
+  ResourceLinkDataFragment,
+  ResourcePreviewCardDataFragment,
+} from '../../graphql/resources/resources.fragments.generated';
 import { TopicLinkData } from '../../graphql/topics/topics.fragments';
 import { ResourceMediaType, ResourceType } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
@@ -44,16 +48,7 @@ import { ResourceDescription } from './elements/ResourceDescription';
 import { ResourceTypeIcon } from './elements/ResourceType';
 import { ResourceUrlLinkViewer, ResourceUrlLinkWrapper } from './elements/ResourceUrl';
 import { ResourceYoutubePlayer } from './elements/ResourceYoutubePlayer';
-import { ResourcePreviewCardDataFragment } from './ResourcePreviewCard.generated';
 
-export const generateResourcePreviewCardData = (): ResourcePreviewCardDataFragment => ({
-  _id: Math.random().toString(),
-  name: 'My resource name',
-  type: ResourceType.Article,
-  url: 'https://myresource.url',
-  mediaType: ResourceMediaType.Text,
-  upvotes: 32,
-});
 interface ResourcePreviewCardProps {
   resource: ResourcePreviewCardDataFragment;
   onResourceConsumed?: (resourceId: string, consumed: boolean) => void;
@@ -112,7 +107,9 @@ export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCar
               <Stack direction="row" spacing={1} alignItems="center">
                 {/* 24px so that height doesn't change when rater appears */}
                 <Stack spacing={1} direction="row" alignItems="center">
-                  <ResourceTypeIcon resourceType={resource.type} boxSize="20px" my="3px" />
+                  {resource.types.map((type) => (
+                    <ResourceTypeIcon key={type} resourceType={type} boxSize="20px" my="3px" />
+                  ))}
                   <StarsRatingViewer value={resource.rating} pxSize={15} />
                   <DurationViewer value={resource.durationSeconds} />
                 </Stack>
@@ -152,7 +149,7 @@ const MainContentBlock: React.FC<{
           isLoading={isLoading}
         />
       </Box>
-      {(resource.type === ResourceType.YoutubeVideo || resource.type === ResourceType.YoutubePlaylist) && (
+      {intersection(resource.types, [ResourceType.YoutubeVideo, ResourceType.YoutubePlaylist]).length > 0 && (
         <Box display="flex" justifyContent="center">
           <BoxBlockDefaultClickPropagation
             mt={showPlayer ? 0 : '-26px'}

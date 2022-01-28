@@ -47,7 +47,9 @@ export const ResourceMiniCard: React.FC<ResourceMiniCardProps> = ({
       }
       renderSecondRow={
         <Stack direction="row" spacing={1} alignItems="baseline">
-          <ResourceTypeBadge fontSize="xs" type={resource.type} />
+          {resource.types.map((type) => (
+            <ResourceTypeBadge key={type} fontSize="xs" type={type} />
+          ))}
           <StarsRatingViewer pxSize={13} value={resource.rating} />
           <BoxBlockDefaultClickPropagation>
             <LearningMaterialStarsRater learningMaterial={resource} size="xs" />

@@ -52,7 +52,9 @@ export const SquareResourceCard: React.FC<SquareResourceCardProps> = ({ resource
       renderBottom={
         <Stack direction="row" alignItems="center">
           <StarsRatingViewer value={resource.rating} pxSize={13} />
-          <ResourceTypeIcon boxSize={4} resourceType={resource.type} />
+          {resource.types.map((type) => (
+            <ResourceTypeIcon key={type} boxSize={4} resourceType={type} />
+          ))}
         </Stack>
       }
     >

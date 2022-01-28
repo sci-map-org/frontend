@@ -23,7 +23,8 @@ export const SearchResultResourceCard: React.FC<
 > = ({ resource, ...props }) => {
   return (
     <SearchResultCardContainer
-      renderIcon={(props) => <ResourceTypeIcon resourceType={resource.resourceType} {...props} />}
+      // TODO
+      renderIcon={(props) => <ResourceTypeIcon resourceType={resource.resourceTypes[0]} {...props} />}
       borderLeftColor="blue.300"
       {...props}
     >

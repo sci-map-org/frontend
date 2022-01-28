@@ -44,9 +44,9 @@ const EditResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) => {
     >
       <ResourceEditor
         resource={resource}
-        onSave={async (editedResource) => {
+        onSave={async (payload) => {
           await updateResource({
-            variables: { id: resource._id, payload: editedResource },
+            variables: { id: resource._id, payload },
           });
           Router.push(`/resources/${resource._id}`);
         }}
