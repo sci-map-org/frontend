@@ -1,4 +1,5 @@
 import gql from 'graphql-tag';
+import { LearningMaterialRecommendationsViewerData } from '../../components/learning_materials/LearningMaterialRecommendationsViewer';
 import { TopicLinkData } from '../topics/topics.fragments';
 import { ResourceMediaType, ResourceType } from '../types';
 import { ResourceDataFragment, ResourcePreviewCardDataFragment } from './resources.fragments.generated';
@@ -60,6 +61,7 @@ export const ResourcePreviewCardData = gql`
       }
     }
     rating
+    ...LearningMaterialRecommendationsViewerData
     subResourceSeries {
       _id
       name
@@ -70,6 +72,7 @@ export const ResourcePreviewCardData = gql`
     }
   }
   ${TopicLinkData}
+  ${LearningMaterialRecommendationsViewerData}
 `;
 
 export const generateResourcePreviewCardData = (): ResourcePreviewCardDataFragment => ({

@@ -35,6 +35,7 @@ import {
   LearningMaterialCardContainer,
   LearningMaterialCardCoveredTopics,
 } from '../learning_materials/LearningMaterialCardContainer';
+import { LearningMaterialRecommendationsViewer } from '../learning_materials/LearningMaterialRecommendationsViewer';
 import { LearningMaterialStarsRater } from '../learning_materials/LearningMaterialStarsRating';
 import { EditableLearningMaterialTags } from '../learning_materials/LearningMaterialTagsEditor';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
@@ -80,13 +81,14 @@ export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCar
       <LearningMaterialCardContainer
         ref={ref}
         renderCenterLeft={
-          <ResourceCompletedCheckbox
-            size="md"
-            resource={resource}
-            isLoading={isLoading}
-            onResourceConsumed={onResourceConsumed}
-            showCompletedNotificationToast={showCompletedNotificationToast}
-          />
+          <LearningMaterialRecommendationsViewer learningMaterial={resource} isLoading={!!isLoading} size="sm" />
+          // <ResourceCompletedCheckbox
+          //   size="md"
+          //   resource={resource}
+          //   isLoading={isLoading}
+          //   onResourceConsumed={onResourceConsumed}
+          //   showCompletedNotificationToast={showCompletedNotificationToast}
+          // />
         }
         leftBlockWidth={leftBlockWidth}
         inCompactList={inCompactList}

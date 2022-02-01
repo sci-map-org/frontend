@@ -73,3 +73,23 @@ export const EditLinkStyleProps: Pick<LinkProps, 'color' | 'fontSize'> = {
   color: 'blue.500',
   fontSize: 'sm',
 };
+
+// Users
+
+export const UserDisplayName: React.FC<TextProps> = ({ children, ...props }) => {
+  return (
+    <Text {...props} {...UserDisplayNameStyleProps}>
+      {children}
+    </Text>
+  );
+};
+
+export const UserDisplayNameStyleProps: Pick<TextProps, 'color' | 'fontWeight'> = {
+  color: 'gray.800',
+  fontWeight: 500,
+};
+
+export const UserKeyLinkStyleProps: Pick<LinkProps, 'color' | 'fontWeight'> = {
+  color: 'blue.600',
+  fontWeight: 600,
+};
