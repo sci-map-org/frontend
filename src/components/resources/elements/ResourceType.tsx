@@ -3,10 +3,12 @@ import {
   BadgeProps,
   Center,
   CenterProps,
+  Flex,
   FormControl,
   FormLabel,
   Icon,
   Select,
+  Text,
   Tooltip,
 } from '@chakra-ui/react';
 import { upperFirst, values } from 'lodash';
@@ -29,36 +31,68 @@ import { YoutubePlaylistIcon } from '../../lib/icons/YoutubePlaylistIcon';
 import { IconProps } from '@chakra-ui/icons';
 
 export const resourceTypeColorMapping: { [key in ResourceType]: string } = {
-  [ResourceType.Article]: 'green',
-  [ResourceType.ArticleSeries]: 'green',
-  [ResourceType.Course]: 'red',
-  [ResourceType.Podcast]: 'yellow',
-  [ResourceType.PodcastEpisode]: 'yellow',
-  [ResourceType.Other]: 'gray',
-  [ResourceType.OnlineBook]: 'red',
-  [ResourceType.Book]: 'red',
-  [ResourceType.ResearchPaper]: 'blue',
-  [ResourceType.Documentary]: 'blue',
-  [ResourceType.Tweet]: 'blue',
+  [ResourceType.Article]: 'yellow',
+  [ResourceType.ArticleSeries]: 'yellow',
+  [ResourceType.Book]: 'yellow',
+  [ResourceType.OnlineBook]: 'yellow',
+  [ResourceType.ResearchPaper]: 'yellow',
+  [ResourceType.Podcast]: 'orange',
+  [ResourceType.PodcastEpisode]: 'orange',
   [ResourceType.Talk]: 'orange',
-  [ResourceType.Infographic]: 'yellow',
+  [ResourceType.Course]: 'teal',
+  [ResourceType.Tweet]: 'blue',
+  [ResourceType.Infographic]: 'blue',
   [ResourceType.Website]: 'blue',
-  [ResourceType.Exercise]: 'gray',
   // [ResourceType.Quizz]: 'gray',
-  [ResourceType.Project]: 'gray',
+  [ResourceType.Documentary]: 'red',
   [ResourceType.YoutubeVideo]: 'red',
   [ResourceType.YoutubePlaylist]: 'red',
-  [ResourceType.VideoGame]: 'yellow',
+  [ResourceType.Exercise]: 'gray',
+  [ResourceType.Project]: 'gray',
+  [ResourceType.VideoGame]: 'gray',
+  [ResourceType.Other]: 'gray',
 };
 
 export const resourceTypeToLabel = (type: ResourceType) => type.split('_').map(upperFirst).join(' ');
 
 //ItemRenderer in DomainRecommendedLearningMaterials copies this style. TODO: refactor
 export const ResourceTypeBadge: React.FC<BadgeProps & { type: ResourceType }> = ({ type, ...badgeProps }) => {
+  const icon = useMemo(() => {
+    return resourceTypeIconMapping[type];
+  }, [type]);
+
+  if (!icon) return null;
+
   return (
-    <Badge colorScheme={resourceTypeColorMapping[type]} {...badgeProps}>
-      {resourceTypeToLabel(type)}
-    </Badge>
+    <Flex
+      bgColor={`${resourceTypeColorMapping[type]}.400`}
+      {...badgeProps}
+      direction="row"
+      alignItems="stretch"
+      borderRadius={3}
+      px="4px"
+      pt="2px"
+      pb="2px"
+      opacity={0.96}
+    >
+      <Center>
+        <Icon color="white" as={icon} boxSize="16px" />
+      </Center>
+      <Center>
+        <Text
+          ml="6px"
+          color="white"
+          fontWeight={400}
+          textTransform="uppercase"
+          letterSpacing="0.11em"
+          fontSize="14px"
+          lineHeight="14px"
+          height="14px"
+        >
+          {resourceTypeToLabel(type)}
+        </Text>
+      </Center>
+    </Flex>
   );
 };
 

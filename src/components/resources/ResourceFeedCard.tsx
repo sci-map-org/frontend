@@ -1,4 +1,3 @@
-import { useApolloClient } from '@apollo/client';
 import { EditIcon } from '@chakra-ui/icons';
 import {
   Badge,
@@ -16,18 +15,11 @@ import {
   PopoverTrigger,
   Skeleton,
   Stack,
-  Text,
   Tooltip,
   useDisclosure,
 } from '@chakra-ui/react';
-import gql from 'graphql-tag';
 import { intersection } from 'lodash';
-import React, { forwardRef, ReactElement, ReactNode, useEffect, useMemo } from 'react';
-import {
-  generateResourceFeedCardData,
-  generateResourcePreviewCardData,
-  ResourceFeedCardData,
-} from '../../graphql/resources/resources.fragments';
+import React, { forwardRef, ReactElement, ReactNode, useMemo } from 'react';
 import {
   ResourceFeedCardDataFragment,
   ResourceLinkDataFragment,
@@ -43,12 +35,13 @@ import { LearningMaterialCardCoveredTopics } from '../learning_materials/Learnin
 import { LearningMaterialRecommendButton } from '../learning_materials/LearningMaterialRecommendButton';
 import { EditableLearningMaterialTags } from '../learning_materials/LearningMaterialTagsEditor';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
-import { HeartIcon } from '../lib/icons/HeartIcon';
 import { ResourceGroupIcon } from '../lib/icons/ResourceGroupIcon';
 import { ResourceSeriesIcon } from '../lib/icons/ResourceSeriesIcon';
 import { InternalLink } from '../navigation/InternalLink';
+import { DurationViewer } from './elements/Duration';
 import { ResourceCompletedCheckbox } from './elements/ResourceCompletedCheckbox';
 import { ResourceDescription } from './elements/ResourceDescription';
+import { ResourceTypeBadge } from './elements/ResourceType';
 import { ResourceUrlLinkViewer, ResourceUrlLinkWrapper } from './elements/ResourceUrl';
 import { ResourceYoutubePlayer } from './elements/ResourceYoutubePlayer';
 
@@ -67,7 +60,7 @@ export const ResourceFeedCard = forwardRef<HTMLDivElement, ResourceFeedCardProps
     ref
   ) => {
     const resourceIsNew = useMemo(() => {
-      return !isLoading && new Date(resource.createdAt).getTime() > Date.now() - 3 * 30 * 24 * 60 * 60 * 1000;
+      return !isLoading && new Date(resource.createdAt).getTime() > Date.now() - 6 * 30 * 24 * 60 * 60 * 1000;
     }, [resource.createdAt, isLoading]);
 
     return (
@@ -95,12 +88,12 @@ export const ResourceFeedCard = forwardRef<HTMLDivElement, ResourceFeedCardProps
         // renderTopRight={<Flex h="32px" w="120px" bgColor="cyan.200" />}
         renderTopRight={
           resourceIsNew && (
-            <Badge size="lg" colorScheme="purple">
+            <Badge fontSize="md" colorScheme="purple">
               New
             </Badge>
           )
         }
-        renderSubTitle={<Flex h="20px" w="150px" bgColor="green.200" />}
+        renderSubTitle={<SubTitle resource={resource} isLoading={isLoading} />}
         renderCentralBlock={<Flex h="60px" w="400px" bgColor="gray.200" />}
         renderPreview={<Flex h="100px" w="180px" bgColor="red.200" />}
         // renderRight={null}
@@ -113,6 +106,22 @@ export const ResourceFeedCard = forwardRef<HTMLDivElement, ResourceFeedCardProps
     );
   }
 );
+
+const SubTitle: React.FC<{ resource: ResourceFeedCardDataFragment; isLoading: boolean }> = ({
+  resource,
+  isLoading,
+}) => {
+  return (
+    <Skeleton isLoaded={!isLoading}>
+      <Stack spacing={1} direction="row" alignItems="center">
+        {resource.types.map((type) => (
+          <ResourceTypeBadge key={type} type={type} />
+        ))}
+        <DurationViewer value={resource.durationSeconds} />
+      </Stack>
+    </Skeleton>
+  );
+};
 {
   /* <Flex direction="row" flexGrow={1} pt="4px">
           <Flex direction="column" flexGrow={1} justifyContent="center">
@@ -200,7 +209,7 @@ const TitleLink: React.FC<{ resource: ResourceFeedCardDataFragment; isLoading: b
         isLoading={isLoading}
         flexWrap="wrap"
       >
-        <Heading mr={1} as="h3" fontSize="23px" color="gray.700" noOfLines={1}>
+        <Heading mr={1} as="h3" fontSize="22px" color="gray.700" noOfLines={1}>
           {resource.name}
         </Heading>
         <ResourceUrlLinkViewer resource={resource} maxLength={30} />
