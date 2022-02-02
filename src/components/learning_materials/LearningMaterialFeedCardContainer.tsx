@@ -63,7 +63,6 @@ export const LearningMaterialFeedCardContainer = forwardRef<HTMLDivElement, Lear
             flexShrink={0}
             flexBasis="140px"
             py={2}
-            bgColor="red.100"
           >
             <LearningMaterialRecommendationsViewer
               learningMaterial={learningMaterial}
@@ -74,7 +73,7 @@ export const LearningMaterialFeedCardContainer = forwardRef<HTMLDivElement, Lear
           </BoxBlockDefaultClickPropagation>
         )}
         <Flex direction="column" alignItems="stretch" flexGrow={1} ml={layout === 'desktop' ? '6px' : 0} pt="3px">
-          <Flex justifyContent="space-between" flexWrap="wrap" mb="3px">
+          <Flex justifyContent="space-between" mb="3px" alignItems="flex-start">
             {renderTitle}
             {renderTopRight}
           </Flex>
@@ -89,15 +88,7 @@ export const LearningMaterialFeedCardContainer = forwardRef<HTMLDivElement, Lear
           </Flex>
           <Flex direction="row" alignItems="stretch">
             {layout === 'mobile' && (
-              <BoxBlockDefaultClickPropagation
-                // display="flex"
-                // justifyContent="center"
-                // alignItems="center"
-                // flexShrink={0}
-                // flexBasis="200px"
-                // py={2}
-                bgColor="red.100"
-              >
+              <BoxBlockDefaultClickPropagation>
                 <LearningMaterialRecommendationsViewer
                   learningMaterial={learningMaterial}
                   isLoading={false} // TODO

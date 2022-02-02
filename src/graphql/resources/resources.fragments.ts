@@ -79,6 +79,7 @@ export const ResourceFeedCardData = gql`
       _id
       name
     }
+    createdAt
   }
   ${TopicLinkData}
   ${LearningMaterialRecommendationsViewerData}
@@ -89,6 +90,7 @@ export const generateResourceFeedCardData = (): ResourceFeedCardDataFragment => 
   types: [ResourceType.Article],
   url: 'https://myresource.url',
   recommendationsCount: 2,
+  createdAt: new Date().toISOString(),
 });
 
 export const ResourcePreviewCardData = gql`

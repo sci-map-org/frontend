@@ -1,9 +1,11 @@
 import { useApolloClient } from '@apollo/client';
 import { EditIcon } from '@chakra-ui/icons';
 import {
+  Badge,
   Box,
   Button,
   Flex,
+  Heading,
   IconButton,
   Popover,
   PopoverArrow,
@@ -53,50 +55,21 @@ import { ResourceYoutubePlayer } from './elements/ResourceYoutubePlayer';
 interface ResourceFeedCardProps {
   resource: ResourceFeedCardDataFragment;
   onResourceConsumed?: (resourceId: string, consumed: boolean) => void;
-  isLoading?: boolean;
-  // inCompactList?: boolean;
-  // firstItemInCompactList?: boolean;
+  isLoading: boolean;
   showCompletedNotificationToast?: boolean;
-  // leftBlockWidth?: FlexProps['w'];
   expandByDefault?: boolean;
   renderTopRight?: ReactNode;
 }
 
 export const ResourceFeedCard = forwardRef<HTMLDivElement, ResourceFeedCardProps>(
   (
-    {
-      resource,
-      onResourceConsumed,
-      isLoading,
-      // inCompactList,
-      // firstItemInCompactList,
-      showCompletedNotificationToast,
-      // leftBlockWidth = '100px',
-      expandByDefault,
-      renderTopRight = null,
-    },
+    { resource, onResourceConsumed, isLoading, showCompletedNotificationToast, expandByDefault, renderTopRight = null },
     ref
   ) => {
-    // const client = useApolloClient();
-    // useEffect(() => {
-    //   if (resourceProps._id) {
-    //     const s = client.readFragment<ResourceFeedCardDataFragment>({
-    //       // id: 'Resource:G2ko_S21J',
-    //       id: `Resource:${resourceProps._id}`, // The value of the to-do item's cache ID
-    //       fragmentName: 'ResourceFeedCardData',
-    //       fragment: ResourceFeedCardData,
-    //     });
-    //   }
-    // }, [resourceProps._id]);
-    // const resource = resourceProps;
-    // const resource = client.readFragment<ResourceFeedCardDataFragment>({
-    //   // id: 'Resource:G2ko_S21J',
-    //   id: `Resource:${resourceProps._id}`, // The value of the to-do item's cache ID
-    //   fragmentName: 'ResourceFeedCardData',
-    //   fragment: ResourceFeedCardData,
-    // });
-    // if (!resource) throw new Error(`fragment Resource:${resourceProps._id} not found or incomplete`);
-    // console.log(resourceProps._id);
+    const resourceIsNew = useMemo(() => {
+      return !isLoading && new Date(resource.createdAt).getTime() > Date.now() - 3 * 30 * 24 * 60 * 60 * 1000;
+    }, [resource.createdAt, isLoading]);
+
     return (
       <LearningMaterialFeedCardContainer
         learningMaterial={resource}
@@ -113,16 +86,20 @@ export const ResourceFeedCard = forwardRef<HTMLDivElement, ResourceFeedCardProps
           </Tooltip>,
         ]}
         ref={ref}
-        // pageInfo={ResourcePageInfo(resource)}
-        // inCompactList={inCompactList}
-        // firstItemInCompactList={firstItemInCompactList}
-        // renderTitle={<TitleLink resource={resource} isLoading={isLoading} />}
-        renderTitle={
-          <Skeleton isLoaded={!isLoading}>
-            <Flex h="36px" w="500px" bgColor="teal.200" />
-          </Skeleton>
+        renderTitle={<TitleLink resource={resource} isLoading={isLoading} />}
+        // renderTitle={
+        //   <Skeleton isLoaded={!isLoading}>
+        //     <Flex h="36px" w="500px" bgColor="teal.200" />
+        //   </Skeleton>
+        // }
+        // renderTopRight={<Flex h="32px" w="120px" bgColor="cyan.200" />}
+        renderTopRight={
+          resourceIsNew && (
+            <Badge size="lg" colorScheme="purple">
+              New
+            </Badge>
+          )
         }
-        renderTopRight={<Flex h="32px" w="120px" bgColor="cyan.200" />}
         renderSubTitle={<Flex h="20px" w="150px" bgColor="green.200" />}
         renderCentralBlock={<Flex h="60px" w="400px" bgColor="gray.200" />}
         renderPreview={<Flex h="100px" w="180px" bgColor="red.200" />}
@@ -209,7 +186,7 @@ const MainContentBlock: React.FC<{
   );
 };
 
-const TitleLink: React.FC<{ resource: ResourcePreviewCardDataFragment; isLoading?: boolean }> = ({
+const TitleLink: React.FC<{ resource: ResourceFeedCardDataFragment; isLoading: boolean }> = ({
   resource,
   isLoading,
 }) => {
@@ -221,10 +198,11 @@ const TitleLink: React.FC<{ resource: ResourcePreviewCardDataFragment; isLoading
         flexDirection={{ base: 'column', md: 'row' }}
         resource={resource}
         isLoading={isLoading}
+        flexWrap="wrap"
       >
-        <Text mr={1} as="span" fontSize="xl">
+        <Heading mr={1} as="h3" fontSize="23px" color="gray.700" noOfLines={1}>
           {resource.name}
-        </Text>
+        </Heading>
         <ResourceUrlLinkViewer resource={resource} maxLength={30} />
       </ResourceUrlLinkWrapper>
     </BoxBlockDefaultClickPropagation>
