@@ -1,4 +1,4 @@
-import { Flex, Text } from '@chakra-ui/react';
+import { Center, Flex, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { UserAvatarData } from '../users/UserAvatar';
 import { UserAvatarGroup } from '../users/UserAvatarGroup';
@@ -32,15 +32,15 @@ export const recommendLearningMaterial = gql`
   ${LearningMaterialRecommendationsViewerData}
 `;
 
-const sizesMapping = {
+const sizesMapping: {
+  [key in 'sm' | 'md']: {
+    recommendedByFontSize: string;
+  };
+} = {
   sm: {
-    heartBoxSize: 10,
-    heartInnerText: '12px',
     recommendedByFontSize: '14px',
   },
   md: {
-    heartBoxSize: 12,
-    heartInnerText: '14px',
     recommendedByFontSize: 'md',
   },
 };
@@ -49,36 +49,53 @@ const sizesMapping = {
 export const LearningMaterialRecommendationsViewer: React.FC<{
   learningMaterial: LearningMaterialRecommendationsViewerDataFragment;
   isLoading: boolean;
+  display?: 'vertical' | 'horizontal';
   size?: 'md' | 'sm';
-}> = ({ learningMaterial, isLoading, size = 'md' }) => {
+}> = ({ learningMaterial, isLoading, display = 'vertical', size = 'md' }) => {
   if (typeof learningMaterial.recommendationsCount !== 'number' && !isLoading)
     throw new Error('learningMaterial.recommendationsCount should not be null');
   return (
-    <Flex direction="column" alignItems="center" p={1}>
-      <LearningMaterialRecommendButton
-        learningMaterialId={learningMaterial._id}
-        isRecommended={!!learningMaterial.recommended}
-        recommendationsTotalCount={
-          typeof learningMaterial.recommendationsCount === 'number' ? learningMaterial.recommendationsCount : undefined
-        }
-        size={size}
-      />
-      <Text
-        color="gray.500"
-        fontWeight={600}
-        fontSize={sizesMapping[size].recommendedByFontSize}
-        textAlign="center"
-        // whiteSpace="nowrap"
-      >
-        {!!learningMaterial.recommendedBy?.length ? 'Recommended By' : 'No recommendations'}
-      </Text>
-      {!!learningMaterial.recommendedBy?.length && (
-        <UserAvatarGroup
-          users={learningMaterial.recommendedBy.map(({ user }) => user)}
-          popoverTitle="Recommended By"
+    <Flex
+      direction={display === 'vertical' ? 'column' : 'row'}
+      alignItems="stretch"
+      p={1}
+      {...(display === 'horizontal' && { spacing: 1 })}
+    >
+      <Center>
+        <LearningMaterialRecommendButton
+          learningMaterialId={learningMaterial._id}
+          isRecommended={!!learningMaterial.recommended}
+          recommendationsTotalCount={
+            typeof learningMaterial.recommendationsCount === 'number'
+              ? learningMaterial.recommendationsCount
+              : undefined
+          }
           size={size}
         />
-      )}
+      </Center>
+      <Flex
+        direction="column"
+        justifyContent="center"
+        alignItems={display === 'vertical' ? 'center' : 'flex-start'}
+        {...(display === 'horizontal' && { ml: 1 })}
+      >
+        <Text
+          color="gray.500"
+          fontWeight={600}
+          fontSize={sizesMapping[size].recommendedByFontSize}
+          textAlign="center"
+          {...(display === 'horizontal' && { whiteSpace: 'nowrap' })}
+        >
+          {!!learningMaterial.recommendedBy?.length ? 'Recommended By' : 'No recommendations'}
+        </Text>
+        {!!learningMaterial.recommendedBy?.length && (
+          <UserAvatarGroup
+            users={learningMaterial.recommendedBy.map(({ user }) => user)}
+            popoverTitle="Recommended By"
+            size={size}
+          />
+        )}
+      </Flex>
     </Flex>
   );
 };

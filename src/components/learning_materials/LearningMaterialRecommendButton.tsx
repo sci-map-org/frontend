@@ -8,8 +8,8 @@ const sizesMapping = {
     heartInnerText: '8px',
   },
   sm: {
-    heartBoxSize: 10,
-    heartInnerText: '12px',
+    heartBoxSize: '44px',
+    heartInnerText: '13px',
   },
   md: {
     heartBoxSize: 12,

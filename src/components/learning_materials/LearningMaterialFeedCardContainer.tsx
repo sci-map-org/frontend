@@ -1,7 +1,5 @@
-import { Center, Flex, LinkBox, LinkOverlay, Stack } from '@chakra-ui/react';
-import NextLink from 'next/link';
+import { Center, Flex, Stack, useBreakpointValue } from '@chakra-ui/react';
 import React, { forwardRef, ReactNode } from 'react';
-import { PageInfo } from '../../pages/PageInfo';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { LearningMaterialRecommendationsViewer } from './LearningMaterialRecommendationsViewer';
 import { LearningMaterialRecommendationsViewerDataFragment } from './LearningMaterialRecommendationsViewer.generated';
@@ -35,6 +33,10 @@ export const LearningMaterialFeedCardContainer = forwardRef<HTMLDivElement, Lear
     },
     ref
   ) => {
+    const layout = useBreakpointValue<'mobile' | 'desktop'>({
+      base: 'mobile',
+      md: 'desktop',
+    });
     return (
       <Flex
         ref={ref}
@@ -53,23 +55,25 @@ export const LearningMaterialFeedCardContainer = forwardRef<HTMLDivElement, Lear
         // Maybe the comments count component, like reddit ?
         onClick={() => onClick()}
       >
-        <BoxBlockDefaultClickPropagation
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          flexShrink={0}
-          flexBasis="140px"
-          py={2}
-          bgColor="red.100"
-        >
-          <LearningMaterialRecommendationsViewer
-            learningMaterial={learningMaterial}
-            isLoading={false} // TODO
-            size="sm"
-          />
-        </BoxBlockDefaultClickPropagation>
-
-        <Flex direction="column" alignItems="stretch" flexGrow={1} ml="6px" pt="3px">
+        {layout === 'desktop' && (
+          <BoxBlockDefaultClickPropagation
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            flexShrink={0}
+            flexBasis="140px"
+            py={2}
+            bgColor="red.100"
+          >
+            <LearningMaterialRecommendationsViewer
+              learningMaterial={learningMaterial}
+              isLoading={false} // TODO
+              display="vertical"
+              size="sm"
+            />
+          </BoxBlockDefaultClickPropagation>
+        )}
+        <Flex direction="column" alignItems="stretch" flexGrow={1} ml={layout === 'desktop' ? '6px' : 0} pt="3px">
           <Flex justifyContent="space-between" flexWrap="wrap" mb="3px">
             {renderTitle}
             {renderTopRight}
@@ -83,9 +87,35 @@ export const LearningMaterialFeedCardContainer = forwardRef<HTMLDivElement, Lear
               {renderPreview}
             </Center>
           </Flex>
-          <Flex justifyContent="space-between" my="3px" flexWrap="wrap">
-            {renderBottomLeft}
-            {renderBottomRight}
+          <Flex direction="row" alignItems="stretch">
+            {layout === 'mobile' && (
+              <BoxBlockDefaultClickPropagation
+                // display="flex"
+                // justifyContent="center"
+                // alignItems="center"
+                // flexShrink={0}
+                // flexBasis="200px"
+                // py={2}
+                bgColor="red.100"
+              >
+                <LearningMaterialRecommendationsViewer
+                  learningMaterial={learningMaterial}
+                  isLoading={false} // TODO
+                  display="horizontal"
+                  size="sm"
+                />
+              </BoxBlockDefaultClickPropagation>
+            )}
+            <Flex
+              alignItems="center"
+              justifyContent="space-between"
+              my="3px"
+              flexWrap="wrap"
+              ml={layout === 'mobile' ? '3px' : 0}
+            >
+              {renderBottomLeft}
+              {renderBottomRight}
+            </Flex>
           </Flex>
         </Flex>
         <Flex ml="6px" alignItems="center" justifyContent="flex-end" bgColor="blue.100">
