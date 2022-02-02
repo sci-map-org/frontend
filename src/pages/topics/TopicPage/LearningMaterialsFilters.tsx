@@ -371,7 +371,7 @@ const LearningMaterialsTagsFilters: React.FC<{
         ref={containerRef}
         spacing={`${wrapPxSpacing}px`}
         {...(!isExpanded && {
-          maxH: wrapItemPxHeight + wrapPxSpacing + 'px',
+          maxH: wrapItemPxHeight + 'px',
           overflow: 'hidden',
         })}
       >

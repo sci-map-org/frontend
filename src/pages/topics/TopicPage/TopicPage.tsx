@@ -104,6 +104,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
     loading: learningMaterialsFeedLoading,
     initialLoading: learningMaterialsFeedInitialLoading,
     isReloading: learningMaterialsFeedReloading,
+    isRefetching: learningMaterialsFeedIsRefetching,
     lastSelectedTopic,
     learningMaterials,
     totalPages,
@@ -214,7 +215,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
             totalPages={totalPages}
             isLoading={learningMaterialsFeedLoading}
             initialLoading={learningMaterialsFeedInitialLoading}
-            isReloading={learningMaterialsFeedReloading}
+            isReloading={learningMaterialsFeedReloading || learningMaterialsFeedIsRefetching}
           />
         </Flex>
         <Stack
@@ -228,6 +229,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
           flexShrink={0}
         >
           <Stack direction="column" spacing={4} alignItems="flex-end">
+            <Button onClick={() => refetchLearningMaterials()}>Reload</Button>
             <NewResourceModal
               defaultResourceCreationData={{
                 showInTopics: [topic],

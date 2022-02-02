@@ -2,7 +2,11 @@ import gql from 'graphql-tag';
 import { LearningMaterialRecommendationsViewerData } from '../../components/learning_materials/LearningMaterialRecommendationsViewer';
 import { TopicLinkData } from '../topics/topics.fragments';
 import { ResourceMediaType, ResourceType } from '../types';
-import { ResourceDataFragment, ResourcePreviewCardDataFragment } from './resources.fragments.generated';
+import {
+  ResourceDataFragment,
+  ResourceFeedCardDataFragment,
+  ResourcePreviewCardDataFragment,
+} from './resources.fragments.generated';
 
 export const ResourceData = gql`
   fragment ResourceData on Resource {
@@ -37,6 +41,54 @@ export const generateResourceData = (): ResourceDataFragment => ({
   types: [ResourceType.Article],
   mediaType: ResourceMediaType.Text,
   url: 'https://myresource.url',
+});
+
+export const ResourceFeedCardData = gql`
+  fragment ResourceFeedCardData on Resource {
+    _id
+    name
+    types
+    url
+    description
+    durationSeconds
+    tags {
+      name
+    }
+    consumed {
+      openedAt
+      consumedAt
+    }
+
+    ...LearningMaterialRecommendationsViewerData
+    coveredSubTopics(options: {}) {
+      items {
+        ...TopicLinkData
+      }
+    }
+    prerequisites {
+      topic {
+        ...TopicLinkData
+      }
+    }
+    # rating
+    subResourceSeries {
+      _id
+      name
+    }
+    subResources {
+      _id
+      name
+    }
+  }
+  ${TopicLinkData}
+  ${LearningMaterialRecommendationsViewerData}
+`;
+export const generateResourceFeedCardData = (): ResourceFeedCardDataFragment => ({
+  _id: Math.random().toString(),
+  name: 'My resource name',
+  types: [ResourceType.Article],
+  url: 'https://myresource.url',
+  recommendationsCount: 2,
 });
 
 export const ResourcePreviewCardData = gql`

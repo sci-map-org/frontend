@@ -1,6 +1,6 @@
 import { Flex, Heading, Stack, Text } from '@chakra-ui/layout';
 import gql from 'graphql-tag';
-import { LearningMaterialCardContainer } from '../../components/learning_materials/LearningMaterialCardContainer';
+import { LearningMaterialCardContainer } from '../../components/learning_materials/LearningMaterialPreviewCardContainer';
 import { LearningMaterialStarsRater } from '../../components/learning_materials/LearningMaterialStarsRating';
 import { BoxBlockDefaultClickPropagation } from '../../components/lib/BoxBlockDefaultClickPropagation';
 import { StarsRatingViewer } from '../../components/lib/StarsRating';

@@ -61,10 +61,10 @@ export const UserAvatarGroup: React.FC<UserAvatarGroupProps> = ({ users, popover
               <PopoverHeader bgColor="teal.600" color="white" fontWeight={600}>
                 {popoverTitle}
               </PopoverHeader>
-              <PopoverBody maxH="240px" overflowY="scroll" maxW="100%">
+              <PopoverBody maxH="240px" overflowY="scroll" maxW="100%" bgColor="white">
                 <Stack>
                   {users.map((user) => (
-                    <Flex direction="row" maxW="100%">
+                    <Flex key={user._id} direction="row" maxW="100%">
                       <Center flexShrink={0} mr={2}>
                         <UserAvatar user={user} size="sm" disablePopover />
                       </Center>

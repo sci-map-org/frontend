@@ -11,11 +11,15 @@ import {
 import { LearningPathPreviewCardDataFragment } from '../../../components/learning_paths/LearningPathPreviewCard.generated';
 import { PageLink } from '../../../components/navigation/InternalLink';
 import { LearningMaterialPreviewCardList } from '../../../components/resources/LearningMaterialPreviewCardList';
+import { ResourceFeedCard } from '../../../components/resources/ResourceFeedCard';
 import { ResourcePreviewCard } from '../../../components/resources/ResourcePreviewCard';
 import { TopicDescription } from '../../../components/topics/fields/TopicDescription';
 import { TopicSubHeader } from '../../../components/topics/TopicSubHeader';
-import { ResourcePreviewCardData } from '../../../graphql/resources/resources.fragments';
-import { ResourcePreviewCardDataFragment } from '../../../graphql/resources/resources.fragments.generated';
+import { ResourceFeedCardData, ResourcePreviewCardData } from '../../../graphql/resources/resources.fragments';
+import {
+  ResourceFeedCardDataFragment,
+  ResourcePreviewCardDataFragment,
+} from '../../../graphql/resources/resources.fragments.generated';
 import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
 import {
   LearningMaterialType,
@@ -43,7 +47,7 @@ export const getTopicRecommendedLearningMaterials = gql`
       ...SubTopicFilterData
       learningMaterials(options: $learningMaterialsOptions) {
         items {
-          ...ResourcePreviewCardData
+          ...ResourceFeedCardData
           ...LearningPathPreviewCardData
         }
         totalCount
@@ -61,7 +65,7 @@ export const getTopicRecommendedLearningMaterials = gql`
       }
     }
   }
-  ${ResourcePreviewCardData}
+  ${ResourceFeedCardData}
   ${LearningPathPreviewCardData}
   ${SubTopicFilterData}
 `;
@@ -161,24 +165,29 @@ export const useTopicPageLearningMaterialsFeed = (
   feedAvailableFilters?: FeedAvailableFilters;
   totalPages: number;
   lastSelectedTopic: SubTopicFilterDataFragment | null;
-  learningMaterials: Array<ResourcePreviewCardDataFragment | LearningPathPreviewCardDataFragment>;
+  learningMaterials: Array<ResourceFeedCardDataFragment | LearningPathPreviewCardDataFragment>;
   loading: boolean;
   initialLoading: boolean;
   isReloading: boolean;
+  isRefetching: boolean;
   refetch: () => void;
 } => {
+  // Why creating a variable here and not using networkStatus along with notifyOnNetworkStatusChange ?
+  // Pretty long story, in short in order to update the cards UI cleanly when recommending/completing a resource
+  // we want to avoid showing a loading state again. useFragment (https://github.com/apollographql/apollo-client/issues/8236)
+  // could help avoid this, but it would still be a bit complicated and fragile.
+  // Overall we're entering Apollo Client's limitations with the feed's logic
+  const [isRefetching, setIsRefetching] = useState(false);
+
   const [lastSelectedTopic, setLastSelectedTopic] = useState<SubTopicFilterDataFragment | null>(null);
-  const [learningMaterialPreviews, setLearningMaterialPreviews] = useState<
-    (ResourcePreviewCardDataFragment | LearningPathPreviewCardDataFragment)[]
-  >([]);
-  const [learningMaterialsTotalCount, setLearningMaterialsTotalCount] = useState<number>();
+
   const [feedAvailableFilters, setFeedAvailableFilters] = useState<FeedAvailableFilters | undefined>();
 
   const filter = useMemo(() => {
     return getFilterOptionsFromFilterTypes(options.typeFilters);
   }, [options.typeFilters]);
 
-  const { loading, refetch, networkStatus } = useGetTopicRecommendedLearningMaterialsQuery({
+  const { data, previousData, loading, refetch, networkStatus } = useGetTopicRecommendedLearningMaterialsQuery({
     variables: {
       key: options.selectedSubTopicKey || options.mainTopicKey,
       learningMaterialsOptions: {
@@ -194,9 +203,10 @@ export const useTopicPageLearningMaterialsFeed = (
         },
       },
     },
-    fetchPolicy: 'no-cache',
+    // nextFetchPolicy: 'standby',
+    fetchPolicy: 'network-only',
     ssr: false,
-    notifyOnNetworkStatusChange: true,
+    // notifyOnNetworkStatusChange: true,
     onCompleted(data) {
       if (!data) throw new Error('Fetch failed');
       setLastSelectedTopic(omit(data.getTopicByKey, ['learningMaterials']));
@@ -209,12 +219,15 @@ export const useTopicPageLearningMaterialsFeed = (
           ...data.getTopicByKey.learningMaterialsAvailableTypeFilters,
         });
       }
-      if (data.getTopicByKey.learningMaterials) {
-        setLearningMaterialsTotalCount(data.getTopicByKey.learningMaterials.totalCount);
-        setLearningMaterialPreviews(data.getTopicByKey.learningMaterials.items);
-      }
+      // if (data.getTopicByKey.learningMaterials) {
+      //   setLearningMaterialsTotalCount(data.getTopicByKey.learningMaterials.totalCount);
+      // setLearningMaterialPreviews(data.getTopicByKey.learningMaterials.items);
+      // }
     },
   });
+  const lastFetchedData = data?.getTopicByKey || previousData?.getTopicByKey;
+  const learningMaterialPreviews = lastFetchedData?.learningMaterials?.items || [];
+  const learningMaterialsTotalCount = lastFetchedData?.learningMaterials?.totalCount;
 
   const totalPages = !!learningMaterialsTotalCount
     ? 1 + Math.floor((learningMaterialsTotalCount - 0.005) / LM_FEED_RESULTS_PER_PAGE)
@@ -225,7 +238,12 @@ export const useTopicPageLearningMaterialsFeed = (
     loading,
     initialLoading: networkStatus === NetworkStatus.loading,
     isReloading: networkStatus === NetworkStatus.setVariables || networkStatus === NetworkStatus.refetch,
-    refetch,
+    isRefetching,
+    refetch: async () => {
+      setIsRefetching(true);
+      await refetch();
+      setIsRefetching(false);
+    },
     lastSelectedTopic,
     feedAvailableFilters,
     totalPages: totalPages,
@@ -244,7 +262,7 @@ interface TopicPageLearningMaterialsFeedProps {
   subTopics: TopicLinkDataFragment[];
   mainTopic: TopicLinkDataFragment;
   selectedSubTopic: SubTopicFilterDataFragment | null;
-  learningMaterials: Array<ResourcePreviewCardDataFragment | LearningPathPreviewCardDataFragment>;
+  learningMaterials: Array<ResourceFeedCardDataFragment | LearningPathPreviewCardDataFragment>;
   totalPages: number;
   feedAvailableFilters?: FeedAvailableFilters;
   feedOptions: TopicPageLearningMaterialsFeedOptions;
@@ -341,14 +359,11 @@ export const TopicPageLearningMaterialsFeed: React.FC<TopicPageLearningMaterials
           renderCard={({ learningMaterial }, idx) => {
             if (learningMaterial.__typename === 'Resource')
               return (
-                <ResourcePreviewCard
+                <ResourceFeedCard
                   key={learningMaterial._id}
                   resource={learningMaterial}
                   onResourceConsumed={() => console.log('reloading')}
                   showCompletedNotificationToast={true}
-                  leftBlockWidth="120px"
-                  inCompactList
-                  firstItemInCompactList={idx === 0}
                   isLoading={isReloading}
                 />
               );

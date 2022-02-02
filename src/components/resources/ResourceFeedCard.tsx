@@ -1,9 +1,9 @@
+import { useApolloClient } from '@apollo/client';
 import { EditIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
   Flex,
-  FlexProps,
   IconButton,
   Popover,
   PopoverArrow,
@@ -15,88 +15,129 @@ import {
   Skeleton,
   Stack,
   Text,
+  Tooltip,
   useDisclosure,
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { intersection } from 'lodash';
-import React, { forwardRef, ReactElement, ReactNode } from 'react';
+import React, { forwardRef, ReactElement, ReactNode, useEffect, useMemo } from 'react';
 import {
+  generateResourceFeedCardData,
+  generateResourcePreviewCardData,
+  ResourceFeedCardData,
+} from '../../graphql/resources/resources.fragments';
+import {
+  ResourceFeedCardDataFragment,
   ResourceLinkDataFragment,
   ResourcePreviewCardDataFragment,
 } from '../../graphql/resources/resources.fragments.generated';
-import { TopicLinkData } from '../../graphql/topics/topics.fragments';
-import { ResourceMediaType, ResourceType } from '../../graphql/types';
+import { ResourceType } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { EditResourcePageInfo, ResourcePageInfo } from '../../pages/RoutesPageInfos';
-import { RoleAccess } from '../auth/RoleAccess';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
-import {
-  LearningMaterialCardContainer,
-  LearningMaterialCardCoveredTopics,
-} from '../learning_materials/LearningMaterialPreviewCardContainer';
-import { LearningMaterialRecommendationsViewer } from '../learning_materials/LearningMaterialRecommendationsViewer';
-import { LearningMaterialStarsRater } from '../learning_materials/LearningMaterialStarsRating';
+import { LearningMaterialFeedCardContainer } from '../learning_materials/LearningMaterialFeedCardContainer';
+import { LearningMaterialCardCoveredTopics } from '../learning_materials/LearningMaterialPreviewCardContainer';
+import { LearningMaterialRecommendButton } from '../learning_materials/LearningMaterialRecommendButton';
 import { EditableLearningMaterialTags } from '../learning_materials/LearningMaterialTagsEditor';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
+import { HeartIcon } from '../lib/icons/HeartIcon';
 import { ResourceGroupIcon } from '../lib/icons/ResourceGroupIcon';
 import { ResourceSeriesIcon } from '../lib/icons/ResourceSeriesIcon';
-import { StarsRatingViewer } from '../lib/StarsRating';
 import { InternalLink } from '../navigation/InternalLink';
-import { DurationViewer } from './elements/Duration';
 import { ResourceCompletedCheckbox } from './elements/ResourceCompletedCheckbox';
 import { ResourceDescription } from './elements/ResourceDescription';
-import { ResourceTypeIcon } from './elements/ResourceType';
 import { ResourceUrlLinkViewer, ResourceUrlLinkWrapper } from './elements/ResourceUrl';
 import { ResourceYoutubePlayer } from './elements/ResourceYoutubePlayer';
 
-interface ResourcePreviewCardProps {
-  resource: ResourcePreviewCardDataFragment;
+interface ResourceFeedCardProps {
+  resource: ResourceFeedCardDataFragment;
   onResourceConsumed?: (resourceId: string, consumed: boolean) => void;
   isLoading?: boolean;
-  inCompactList?: boolean;
-  firstItemInCompactList?: boolean;
+  // inCompactList?: boolean;
+  // firstItemInCompactList?: boolean;
   showCompletedNotificationToast?: boolean;
-  leftBlockWidth?: FlexProps['w'];
+  // leftBlockWidth?: FlexProps['w'];
   expandByDefault?: boolean;
   renderTopRight?: ReactNode;
 }
 
-export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCardProps>(
+export const ResourceFeedCard = forwardRef<HTMLDivElement, ResourceFeedCardProps>(
   (
     {
       resource,
       onResourceConsumed,
       isLoading,
-      inCompactList,
-      firstItemInCompactList,
+      // inCompactList,
+      // firstItemInCompactList,
       showCompletedNotificationToast,
-      leftBlockWidth = '100px',
+      // leftBlockWidth = '100px',
       expandByDefault,
       renderTopRight = null,
     },
     ref
   ) => {
+    // const client = useApolloClient();
+    // useEffect(() => {
+    //   if (resourceProps._id) {
+    //     const s = client.readFragment<ResourceFeedCardDataFragment>({
+    //       // id: 'Resource:G2ko_S21J',
+    //       id: `Resource:${resourceProps._id}`, // The value of the to-do item's cache ID
+    //       fragmentName: 'ResourceFeedCardData',
+    //       fragment: ResourceFeedCardData,
+    //     });
+    //   }
+    // }, [resourceProps._id]);
+    // const resource = resourceProps;
+    // const resource = client.readFragment<ResourceFeedCardDataFragment>({
+    //   // id: 'Resource:G2ko_S21J',
+    //   id: `Resource:${resourceProps._id}`, // The value of the to-do item's cache ID
+    //   fragmentName: 'ResourceFeedCardData',
+    //   fragment: ResourceFeedCardData,
+    // });
+    // if (!resource) throw new Error(`fragment Resource:${resourceProps._id} not found or incomplete`);
+    // console.log(resourceProps._id);
     return (
-      <LearningMaterialCardContainer
+      <LearningMaterialFeedCardContainer
+        learningMaterial={resource}
+        interactionButtons={[
+          <ResourceCompletedCheckbox size="xs" resource={resource} />,
+          <Tooltip label="Recommend">
+            <LearningMaterialRecommendButton
+              learningMaterialId={resource._id}
+              isRecommended={!!resource.recommended}
+              size="xs"
+            />
+            {/* <HeartIcon boxSize={6} /> */}
+            {/* <IconButton aria-label="recommend" icon={<HeartIcon />} variant="ghost" /> */}
+          </Tooltip>,
+        ]}
         ref={ref}
-        renderCenterLeft={
-          <ResourceCompletedCheckbox
-            size="md"
-            resource={resource}
-            isLoading={isLoading}
-            onResourceConsumed={onResourceConsumed}
-            showCompletedNotificationToast={showCompletedNotificationToast}
-          />
+        // pageInfo={ResourcePageInfo(resource)}
+        // inCompactList={inCompactList}
+        // firstItemInCompactList={firstItemInCompactList}
+        // renderTitle={<TitleLink resource={resource} isLoading={isLoading} />}
+        renderTitle={
+          <Skeleton isLoaded={!isLoading}>
+            <Flex h="36px" w="500px" bgColor="teal.200" />
+          </Skeleton>
         }
-        leftBlockWidth={leftBlockWidth}
-        inCompactList={inCompactList}
-        firstItemInCompactList={firstItemInCompactList}
+        renderTopRight={<Flex h="32px" w="120px" bgColor="cyan.200" />}
+        renderSubTitle={<Flex h="20px" w="150px" bgColor="green.200" />}
+        renderCentralBlock={<Flex h="60px" w="400px" bgColor="gray.200" />}
+        renderPreview={<Flex h="100px" w="180px" bgColor="red.200" />}
+        // renderRight={null}
+        // pageInfo={}
+        // renderBottomLeft={<BottomBlock resource={resource} isLoading={isLoading} />}
+        renderBottomLeft={<Flex h="20px" w="200px" bgColor="purple.200" />}
+        renderBottomRight={<Flex h="20px" w="150px" bgColor="yellow.200" />}
         onClick={() => !isLoading && routerPushToPage(ResourcePageInfo(resource))}
-        renderRight={null}
-        renderBottom={<BottomBlock resource={resource} isLoading={isLoading} />}
-      >
-        <Flex direction="row" flexGrow={1} pt="4px">
+      />
+    );
+  }
+);
+{
+  /* <Flex direction="row" flexGrow={1} pt="4px">
           <Flex direction="column" flexGrow={1} justifyContent="center">
             <Flex direction={{ base: 'column', md: 'row' }} justifyContent={{ base: 'normal', md: 'space-between' }}>
               <Skeleton isLoaded={!isLoading}>
@@ -106,7 +147,6 @@ export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCar
             </Flex>
             <Skeleton isLoaded={!isLoading}>
               <Stack direction="row" spacing={1} alignItems="center">
-                {/* 24px so that height doesn't change when rater appears */}
                 <Stack spacing={1} direction="row" alignItems="center">
                   {resource.types.map((type) => (
                     <ResourceTypeIcon key={type} resourceType={type} boxSize="20px" my="3px" />
@@ -123,11 +163,8 @@ export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCar
             </Skeleton>
             <MainContentBlock expandByDefault={expandByDefault} resource={resource} isLoading={isLoading} />
           </Flex>
-        </Flex>
-      </LearningMaterialCardContainer>
-    );
-  }
-);
+        </Flex> */
+}
 
 const MainContentBlock: React.FC<{
   resource: ResourcePreviewCardDataFragment;
