@@ -54,6 +54,7 @@ interface ResourceFeedCardProps {
   renderTopRight?: ReactNode;
 }
 
+const thumbnailHeight = 80;
 export const ResourceFeedCard = forwardRef<HTMLDivElement, ResourceFeedCardProps>(
   (
     { resource, onResourceConsumed, isLoading, showCompletedNotificationToast, expandByDefault, renderTopRight = null },
@@ -62,7 +63,7 @@ export const ResourceFeedCard = forwardRef<HTMLDivElement, ResourceFeedCardProps
     const resourceIsNew = useMemo(() => {
       return !isLoading && new Date(resource.createdAt).getTime() > Date.now() - 6 * 30 * 24 * 60 * 60 * 1000;
     }, [resource.createdAt, isLoading]);
-
+    const { isOpen: playerIsOpen, onOpen, onClose, onToggle } = useDisclosure();
     return (
       <LearningMaterialFeedCardContainer
         learningMaterial={resource}
@@ -94,8 +95,28 @@ export const ResourceFeedCard = forwardRef<HTMLDivElement, ResourceFeedCardProps
           )
         }
         renderSubTitle={<SubTitle resource={resource} isLoading={isLoading} />}
-        renderCentralBlock={<Flex h="60px" w="400px" bgColor="gray.200" />}
-        renderPreview={<Flex h="100px" w="180px" bgColor="red.200" />}
+        renderCentralBlock={<ResourceDescription description={resource.description} noOfLines={3} size="sm" />}
+        // renderCentralBlock={<Flex h="60px" w="400px" bgColor="gray.200" />}
+        // renderPreview={<Flex h="100px" w="180px" bgColor="red.200" />}
+        renderPreview={
+          intersection(resource.types, [ResourceType.YoutubeVideo, ResourceType.YoutubePlaylist]).length > 0 && (
+            <BoxBlockDefaultClickPropagation
+              // mt={playerIsOpen ? 0 : '-26px'}
+              {...(!playerIsOpen && { h: thumbnailHeight + 'px' })}
+              onClick={onOpen}
+              // mx={playerIsOpen ? 0 : 4}
+              // mb={playerIsOpen ? 3 : 0}
+            >
+              <ResourceYoutubePlayer
+                resource={resource}
+                playing={playerIsOpen}
+                skipThumbnail={expandByDefault}
+                {...(!playerIsOpen && { h: thumbnailHeight + 'px', w: (16 / 9) * thumbnailHeight + 'px' })}
+              />
+            </BoxBlockDefaultClickPropagation>
+          )
+        }
+        playerIsOpen={playerIsOpen}
         // renderRight={null}
         // pageInfo={}
         // renderBottomLeft={<BottomBlock resource={resource} isLoading={isLoading} />}

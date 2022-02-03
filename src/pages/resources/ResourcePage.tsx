@@ -172,10 +172,12 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
           <Stack spacing={4} flexGrow={1}>
             <Box>
               <Skeleton isLoaded={!loading}>
-                {resource.types.map((type) => (
-                  <ResourceTypeBadge key={type} type={type} />
-                ))}{' '}
-                - <ResourceMediaTypeBadge mediaType={resource.mediaType} />{' '}
+                <Stack direction="row">
+                  {resource.types.map((type) => (
+                    <ResourceTypeBadge key={type} type={type} />
+                  ))}
+                </Stack>
+                {/* - <ResourceMediaTypeBadge mediaType={resource.mediaType} />{' '} */}
               </Skeleton>
             </Box>
             <Box>

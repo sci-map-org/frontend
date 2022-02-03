@@ -11,6 +11,7 @@ interface LearningMaterialFeedCardContainerProps {
   renderSubTitle: ReactNode;
   renderCentralBlock: ReactNode;
   renderPreview?: ReactNode;
+  playerIsOpen?: boolean;
   interactionButtons: ReactNode[];
   renderBottomLeft: ReactNode;
   renderBottomRight: ReactNode;
@@ -26,6 +27,7 @@ export const LearningMaterialFeedCardContainer = forwardRef<HTMLDivElement, Lear
       renderSubTitle,
       renderCentralBlock,
       renderPreview,
+      playerIsOpen,
       interactionButtons,
       renderBottomLeft,
       renderBottomRight,
@@ -77,15 +79,20 @@ export const LearningMaterialFeedCardContainer = forwardRef<HTMLDivElement, Lear
             {renderTitle}
             {renderTopRight}
           </Flex>
-          <Flex justifyContent="space-between" flexWrap="wrap">
+          <Flex
+            direction={renderPreview && playerIsOpen ? 'column' : 'row'}
+            justifyContent="space-between"
+            flexWrap={layout === 'mobile' ? 'wrap' : 'nowrap'}
+          >
             <Stack direction="column" flexGrow={12} alignItems="flex-start">
               {renderSubTitle}
               {renderCentralBlock}
             </Stack>
-            <Center flexGrow={1} py={2}>
+            <Center flexGrow={1} py={2} pl={layout === 'desktop' ? '3px' : 0}>
               {renderPreview}
             </Center>
           </Flex>
+          <Flex flexGrow={1} />
           <Flex direction="row" alignItems="stretch">
             {layout === 'mobile' && (
               <BoxBlockDefaultClickPropagation>
@@ -99,6 +106,7 @@ export const LearningMaterialFeedCardContainer = forwardRef<HTMLDivElement, Lear
             )}
             <Flex
               alignItems="center"
+              flexGrow={1}
               justifyContent="space-between"
               my="3px"
               flexWrap="wrap"
