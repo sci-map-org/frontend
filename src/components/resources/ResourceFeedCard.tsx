@@ -33,6 +33,7 @@ import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import { LearningMaterialFeedCardContainer } from '../learning_materials/LearningMaterialFeedCardContainer';
 import { LearningMaterialCardCoveredTopics } from '../learning_materials/LearningMaterialPreviewCardContainer';
 import { LearningMaterialRecommendButton } from '../learning_materials/LearningMaterialRecommendButton';
+import { LearningMaterialTag } from '../learning_materials/LearningMaterialTag';
 import { EditableLearningMaterialTags } from '../learning_materials/LearningMaterialTagsEditor';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { ResourceGroupIcon } from '../lib/icons/ResourceGroupIcon';
@@ -120,7 +121,8 @@ export const ResourceFeedCard = forwardRef<HTMLDivElement, ResourceFeedCardProps
         // renderRight={null}
         // pageInfo={}
         // renderBottomLeft={<BottomBlock resource={resource} isLoading={isLoading} />}
-        renderBottomLeft={<Flex h="20px" w="200px" bgColor="purple.200" />}
+        // renderBottomLeft={<Flex h="20px" w="200px" bgColor="purple.200" />}
+        renderBottomLeft={<BottomLeftBar resource={resource} isLoading={isLoading} />}
         renderBottomRight={<Flex h="20px" w="150px" bgColor="yellow.200" />}
         onClick={() => !isLoading && routerPushToPage(ResourcePageInfo(resource))}
       />
@@ -172,6 +174,19 @@ const SubTitle: React.FC<{ resource: ResourceFeedCardDataFragment; isLoading: bo
           </Flex>
         </Flex> */
 }
+
+const BottomLeftBar: React.FC<{ resource: ResourceFeedCardDataFragment; isLoading?: boolean }> = ({
+  resource,
+  isLoading,
+}) => {
+  return resource.tags ? (
+    <Stack direction="row">
+      {resource.tags.map((tag) => (
+        <LearningMaterialTag tagName={tag.name} size="sm" />
+      ))}
+    </Stack>
+  ) : null;
+};
 
 const MainContentBlock: React.FC<{
   resource: ResourcePreviewCardDataFragment;
