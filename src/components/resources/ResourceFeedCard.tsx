@@ -15,8 +15,11 @@ import {
   PopoverTrigger,
   Skeleton,
   Stack,
+  Text,
   Tooltip,
   useDisclosure,
+  Wrap,
+  WrapItem,
 } from '@chakra-ui/react';
 import { intersection } from 'lodash';
 import React, { forwardRef, ReactElement, ReactNode, useMemo } from 'react';
@@ -38,7 +41,9 @@ import { EditableLearningMaterialTags } from '../learning_materials/LearningMate
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { ResourceGroupIcon } from '../lib/icons/ResourceGroupIcon';
 import { ResourceSeriesIcon } from '../lib/icons/ResourceSeriesIcon';
+import { PopHover } from '../lib/PopHover';
 import { InternalLink } from '../navigation/InternalLink';
+import { TopicBadge } from '../topics/TopicBadge';
 import { DurationViewer } from './elements/Duration';
 import { ResourceCompletedCheckbox } from './elements/ResourceCompletedCheckbox';
 import { ResourceDescription } from './elements/ResourceDescription';
@@ -123,7 +128,8 @@ export const ResourceFeedCard = forwardRef<HTMLDivElement, ResourceFeedCardProps
         // renderBottomLeft={<BottomBlock resource={resource} isLoading={isLoading} />}
         // renderBottomLeft={<Flex h="20px" w="200px" bgColor="purple.200" />}
         renderBottomLeft={<BottomLeftBar resource={resource} isLoading={isLoading} />}
-        renderBottomRight={<Flex h="20px" w="150px" bgColor="yellow.200" />}
+        // renderBottomRight={<Flex h="20px" w="150px" bgColor="yellow.200" />}
+        renderBottomRight={<BottomRightBar resource={resource} isLoading={isLoading} />}
         onClick={() => !isLoading && routerPushToPage(ResourcePageInfo(resource))}
       />
     );
@@ -186,6 +192,79 @@ const BottomLeftBar: React.FC<{ resource: ResourceFeedCardDataFragment; isLoadin
       ))}
     </Stack>
   ) : null;
+};
+
+const MAX_COVERED_SUBTOPICS_DISPLAYED = 2;
+const BottomRightBar: React.FC<{ resource: ResourceFeedCardDataFragment; isLoading?: boolean }> = ({
+  resource,
+  isLoading,
+}) => {
+  return (
+    <BoxBlockDefaultClickPropagation>
+      <Stack direction="row">
+        {!!resource.prerequisites?.length && (
+          <PopHover
+            renderTrigger={
+              <Text fontSize="sm" fontWeight={600} color="gray.400">
+                {resource.prerequisites.length} Prerequisites
+              </Text>
+            }
+            title="Prerequisites"
+          >
+            <Wrap justify="center">
+              {resource.prerequisites.map(({ topic }) => (
+                <WrapItem key={topic._id}>
+                  <TopicBadge topic={topic} size="md" />
+                </WrapItem>
+              ))}
+            </Wrap>
+          </PopHover>
+        )}
+
+        {!!resource.prerequisites?.length && !!resource.coveredSubTopics?.items.length && (
+          <Text fontSize="sm" fontWeight={600} color="gray.400">
+            |
+          </Text>
+        )}
+        {!!resource.coveredSubTopics?.items.length && (
+          <Stack direction="row">
+            <Text fontSize="sm" fontWeight={600} color="gray.600">
+              Covered SubTopics:
+            </Text>
+            <Wrap direction="row" spacing={1} alignItems="baseline">
+              {resource.coveredSubTopics.items.slice(0, MAX_COVERED_SUBTOPICS_DISPLAYED).map((topic) => (
+                <WrapItem key={topic._id}>
+                  <TopicBadge topic={topic} size="sm" />
+                </WrapItem>
+              ))}
+              {resource.coveredSubTopics.items.length > MAX_COVERED_SUBTOPICS_DISPLAYED && (
+                <WrapItem>
+                  <PopHover
+                    renderTrigger={
+                      <Text fontWeight={600} color="gray.800" fontSize="sm">
+                        ... +{resource.coveredSubTopics.items.length}
+                      </Text>
+                    }
+                    title="Covered SubTopics"
+                    maxW="360px"
+                    minW="320px"
+                  >
+                    <Wrap justify="center">
+                      {resource.coveredSubTopics.items.map((topic) => (
+                        <WrapItem key={topic._id}>
+                          <TopicBadge topic={topic} size="md" />
+                        </WrapItem>
+                      ))}
+                    </Wrap>
+                  </PopHover>
+                </WrapItem>
+              )}
+            </Wrap>
+          </Stack>
+        )}
+      </Stack>
+    </BoxBlockDefaultClickPropagation>
+  );
 };
 
 const MainContentBlock: React.FC<{

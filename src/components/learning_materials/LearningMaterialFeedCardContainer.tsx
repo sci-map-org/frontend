@@ -117,7 +117,7 @@ export const LearningMaterialFeedCardContainer = forwardRef<HTMLDivElement, Lear
             </Flex>
           </Flex>
         </Flex>
-        <Flex ml="6px" alignItems="center" justifyContent="flex-end" bgColor="blue.100">
+        <Flex ml="6px" alignItems="center" justifyContent="flex-end">
           <BoxBlockDefaultClickPropagation>
             <Stack px="2px" alignItems="center">
               {interactionButtons.map((iteractionButton) => iteractionButton)}

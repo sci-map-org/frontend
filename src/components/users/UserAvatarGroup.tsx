@@ -1,17 +1,6 @@
-import {
-  Avatar,
-  Box,
-  Center,
-  Flex,
-  Popover,
-  PopoverArrow,
-  PopoverBody,
-  PopoverContent,
-  PopoverHeader,
-  PopoverTrigger,
-  Stack,
-} from '@chakra-ui/react';
+import { Avatar, Box, Center, Flex, Stack } from '@chakra-ui/react';
 import { reverse } from 'lodash';
+import { PopHover } from '../lib/PopHover';
 import { UserDisplayName } from '../lib/Typography';
 import { UserAvatar } from './UserAvatar';
 import { UserAvatarDataFragment } from './UserAvatar.generated';
@@ -45,8 +34,9 @@ export const UserAvatarGroup: React.FC<UserAvatarGroupProps> = ({ users, popover
             <Box borderRadius={12} boxSize="4px" backgroundColor="gray.700" />
             <Box borderRadius={12} boxSize="4px" backgroundColor="gray.700" />
           </Stack>
-          <Popover trigger="hover" isLazy>
-            <PopoverTrigger>
+          <PopHover
+            title={popoverTitle}
+            renderTrigger={
               <Avatar
                 name="test"
                 backgroundColor="gray.400"
@@ -55,31 +45,24 @@ export const UserAvatarGroup: React.FC<UserAvatarGroupProps> = ({ users, popover
                 _hover={{ cursor: 'pointer' }}
                 showBorder
               />
-            </PopoverTrigger>
-            <PopoverContent w="auto">
-              <PopoverArrow />
-              <PopoverHeader bgColor="teal.600" color="white" fontWeight={600}>
-                {popoverTitle}
-              </PopoverHeader>
-              <PopoverBody maxH="240px" overflowY="scroll" maxW="100%" bgColor="white">
-                <Stack>
-                  {users.map((user) => (
-                    <Flex key={user._id} direction="row" maxW="100%">
-                      <Center flexShrink={0} mr={2}>
-                        <UserAvatar user={user} size="sm" disablePopover />
-                      </Center>
-                      <Flex alignItems="center">
-                        <Stack pl={2} direction="row" spacing="4px" alignItems="baseline">
-                          <UserDisplayName>{user.displayName}</UserDisplayName>
-                          <UserKeyLink user={user} flexShrink={1} />
-                        </Stack>
-                      </Flex>
-                    </Flex>
-                  ))}
-                </Stack>
-              </PopoverBody>
-            </PopoverContent>
-          </Popover>
+            }
+          >
+            <Stack>
+              {users.map((user) => (
+                <Flex key={user._id} direction="row" maxW="100%">
+                  <Center flexShrink={0} mr={2}>
+                    <UserAvatar user={user} size="sm" disablePopover />
+                  </Center>
+                  <Flex alignItems="center">
+                    <Stack pl={2} direction="row" spacing="4px" alignItems="baseline">
+                      <UserDisplayName>{user.displayName}</UserDisplayName>
+                      <UserKeyLink user={user} flexShrink={1} />
+                    </Stack>
+                  </Flex>
+                </Flex>
+              ))}
+            </Stack>
+          </PopHover>
         </>
       )}
     </Stack>
