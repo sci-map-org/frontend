@@ -46,6 +46,7 @@ export const UserAvatarGroup: React.FC<UserAvatarGroupProps> = ({ users, popover
                 showBorder
               />
             }
+            colorScheme="teal"
           >
             <Stack>
               {users.map((user) => (

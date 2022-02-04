@@ -1,4 +1,4 @@
-import { Center, Flex, Text } from '@chakra-ui/react';
+import { Center, Flex, Skeleton, SkeletonCircle, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { UserAvatarData } from '../users/UserAvatar';
 import { UserAvatarGroup } from '../users/UserAvatarGroup';
@@ -35,13 +35,16 @@ export const recommendLearningMaterial = gql`
 const sizesMapping: {
   [key in 'sm' | 'md']: {
     recommendedByFontSize: string;
+    skeletonCircleSize: string;
   };
 } = {
   sm: {
     recommendedByFontSize: '14px',
+    skeletonCircleSize: '44px',
   },
   md: {
     recommendedByFontSize: 'md',
+    skeletonCircleSize: '40',
   },
 };
 
@@ -62,16 +65,18 @@ export const LearningMaterialRecommendationsViewer: React.FC<{
       {...(display === 'horizontal' && { spacing: 1 })}
     >
       <Center>
-        <LearningMaterialRecommendButton
-          learningMaterialId={learningMaterial._id}
-          isRecommended={!!learningMaterial.recommended}
-          recommendationsTotalCount={
-            typeof learningMaterial.recommendationsCount === 'number'
-              ? learningMaterial.recommendationsCount
-              : undefined
-          }
-          size={size}
-        />
+        <SkeletonCircle size={sizesMapping[size].skeletonCircleSize} isLoaded={!isLoading}>
+          <LearningMaterialRecommendButton
+            learningMaterialId={learningMaterial._id}
+            isRecommended={!!learningMaterial.recommended}
+            recommendationsTotalCount={
+              typeof learningMaterial.recommendationsCount === 'number'
+                ? learningMaterial.recommendationsCount
+                : undefined
+            }
+            size={size}
+          />
+        </SkeletonCircle>
       </Center>
       <Flex
         direction="column"
@@ -79,21 +84,25 @@ export const LearningMaterialRecommendationsViewer: React.FC<{
         alignItems={display === 'vertical' ? 'center' : 'flex-start'}
         {...(display === 'horizontal' && { ml: 1 })}
       >
-        <Text
-          color="gray.500"
-          fontWeight={600}
-          fontSize={sizesMapping[size].recommendedByFontSize}
-          textAlign="center"
-          {...(display === 'horizontal' && { whiteSpace: 'nowrap' })}
-        >
-          {!!learningMaterial.recommendedBy?.length ? 'Recommended By' : 'No recommendations'}
-        </Text>
+        <Skeleton isLoaded={!isLoading}>
+          <Text
+            color="gray.500"
+            fontWeight={600}
+            fontSize={sizesMapping[size].recommendedByFontSize}
+            textAlign="center"
+            {...(display === 'horizontal' && { whiteSpace: 'nowrap' })}
+          >
+            {!!learningMaterial.recommendedBy?.length ? 'Recommended By' : 'No recommendations'}
+          </Text>
+        </Skeleton>
         {!!learningMaterial.recommendedBy?.length && (
-          <UserAvatarGroup
-            users={learningMaterial.recommendedBy.map(({ user }) => user)}
-            popoverTitle="Recommended By"
-            size={size}
-          />
+          <Skeleton isLoaded={!isLoading}>
+            <UserAvatarGroup
+              users={learningMaterial.recommendedBy.map(({ user }) => user)}
+              popoverTitle="Recommended By"
+              size={size}
+            />
+          </Skeleton>
         )}
       </Flex>
     </Flex>

@@ -1,4 +1,5 @@
-import { Box, Text } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
+import { forwardRef } from 'react';
 import { HeartIcon } from '../lib/icons/HeartIcon';
 import { useRecommendLearningMaterialMutation } from './LearningMaterialRecommendationsViewer.generated';
 
@@ -19,13 +20,18 @@ const sizesMapping = {
 
 const isRecommendedColor = 'red.400';
 const neutralHeartColor = 'gray.700';
+const disabledHeartColor = 'gray.300';
 
-export const LearningMaterialRecommendButton: React.FC<{
-  learningMaterialId: string;
-  isRecommended: boolean;
-  recommendationsTotalCount?: number;
-  size?: 'xs' | 'sm' | 'md';
-}> = ({ learningMaterialId, isRecommended, recommendationsTotalCount, size = 'md' }) => {
+export const LearningMaterialRecommendButton = forwardRef<
+  HTMLDivElement,
+  {
+    learningMaterialId: string;
+    isRecommended: boolean;
+    recommendationsTotalCount?: number;
+    size?: 'xs' | 'sm' | 'md';
+    isDisabled?: boolean;
+  }
+>(({ learningMaterialId, isRecommended, recommendationsTotalCount, size = 'md', isDisabled }, ref) => {
   const [recommendLearningMaterialMutation] = useRecommendLearningMaterialMutation({
     variables: {
       learningMaterialId: learningMaterialId,
@@ -34,14 +40,24 @@ export const LearningMaterialRecommendButton: React.FC<{
   return (
     <Box
       as="button"
+      // weird TS ref issue when using as="button"
+      // @ts-ignore
+      ref={ref}
       position="relative"
       boxSize={sizesMapping[size].heartBoxSize}
-      color={isRecommended ? isRecommendedColor : neutralHeartColor}
+      color={isDisabled ? disabledHeartColor : isRecommended ? isRecommendedColor : neutralHeartColor}
       transition="color ease-in 0.2s"
-      _hover={{
-        ...(!isRecommended && { color: isRecommendedColor }),
-      }}
-      onClick={() => recommendLearningMaterialMutation()}
+      {...(!isDisabled &&
+        !isRecommended && {
+          _hover: {
+            color: isRecommendedColor,
+          },
+        })}
+      {...(isDisabled
+        ? { cursor: 'not-allowed' }
+        : {
+            onClick: () => recommendLearningMaterialMutation(),
+          })}
     >
       <HeartIcon boxSize={sizesMapping[size].heartBoxSize} />
       {typeof recommendationsTotalCount === 'number' && (
@@ -60,4 +76,4 @@ export const LearningMaterialRecommendButton: React.FC<{
       )}
     </Box>
   );
-};
+});

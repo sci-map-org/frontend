@@ -73,26 +73,20 @@ export const ResourceFeedCard = forwardRef<HTMLDivElement, ResourceFeedCardProps
     return (
       <LearningMaterialFeedCardContainer
         learningMaterial={resource}
+        isLoading={isLoading}
         interactionButtons={[
-          <ResourceCompletedCheckbox size="xs" resource={resource} />,
+          <ResourceCompletedCheckbox size="xs" resource={resource} isLoading={isLoading} />,
           <Tooltip label="Recommend">
             <LearningMaterialRecommendButton
               learningMaterialId={resource._id}
               isRecommended={!!resource.recommended}
               size="xs"
+              isDisabled={isLoading}
             />
-            {/* <HeartIcon boxSize={6} /> */}
-            {/* <IconButton aria-label="recommend" icon={<HeartIcon />} variant="ghost" /> */}
           </Tooltip>,
         ]}
         ref={ref}
         renderTitle={<TitleLink resource={resource} isLoading={isLoading} />}
-        // renderTitle={
-        //   <Skeleton isLoaded={!isLoading}>
-        //     <Flex h="36px" w="500px" bgColor="teal.200" />
-        //   </Skeleton>
-        // }
-        // renderTopRight={<Flex h="32px" w="120px" bgColor="cyan.200" />}
         renderTopRight={
           resourceIsNew && (
             <Badge fontSize="md" colorScheme="purple">
@@ -101,9 +95,9 @@ export const ResourceFeedCard = forwardRef<HTMLDivElement, ResourceFeedCardProps
           )
         }
         renderSubTitle={<SubTitle resource={resource} isLoading={isLoading} />}
-        renderCentralBlock={<ResourceDescription description={resource.description} noOfLines={3} size="sm" />}
-        // renderCentralBlock={<Flex h="60px" w="400px" bgColor="gray.200" />}
-        // renderPreview={<Flex h="100px" w="180px" bgColor="red.200" />}
+        renderCentralBlock={
+          <ResourceDescription description={resource.description} noOfLines={3} size="sm" isLoading={isLoading} />
+        }
         renderPreview={
           intersection(resource.types, [ResourceType.YoutubeVideo, ResourceType.YoutubePlaylist]).length > 0 && (
             <BoxBlockDefaultClickPropagation
@@ -113,22 +107,19 @@ export const ResourceFeedCard = forwardRef<HTMLDivElement, ResourceFeedCardProps
               // mx={playerIsOpen ? 0 : 4}
               // mb={playerIsOpen ? 3 : 0}
             >
-              <ResourceYoutubePlayer
-                resource={resource}
-                playing={playerIsOpen}
-                skipThumbnail={expandByDefault}
-                {...(!playerIsOpen && { h: thumbnailHeight + 'px', w: (16 / 9) * thumbnailHeight + 'px' })}
-              />
+              <Skeleton isLoaded={!isLoading}>
+                <ResourceYoutubePlayer
+                  resource={resource}
+                  playing={playerIsOpen}
+                  skipThumbnail={expandByDefault}
+                  {...(!playerIsOpen && { h: thumbnailHeight + 'px', w: (16 / 9) * thumbnailHeight + 'px' })}
+                />
+              </Skeleton>
             </BoxBlockDefaultClickPropagation>
           )
         }
         playerIsOpen={playerIsOpen}
-        // renderRight={null}
-        // pageInfo={}
-        // renderBottomLeft={<BottomBlock resource={resource} isLoading={isLoading} />}
-        // renderBottomLeft={<Flex h="20px" w="200px" bgColor="purple.200" />}
         renderBottomLeft={<BottomLeftBar resource={resource} isLoading={isLoading} />}
-        // renderBottomRight={<Flex h="20px" w="150px" bgColor="yellow.200" />}
         renderBottomRight={<BottomRightBar resource={resource} isLoading={isLoading} />}
         onClick={() => !isLoading && routerPushToPage(ResourcePageInfo(resource))}
       />
@@ -186,11 +177,13 @@ const BottomLeftBar: React.FC<{ resource: ResourceFeedCardDataFragment; isLoadin
   isLoading,
 }) => {
   return resource.tags ? (
-    <Stack direction="row">
-      {resource.tags.map((tag) => (
-        <LearningMaterialTag tagName={tag.name} size="sm" />
-      ))}
-    </Stack>
+    <Skeleton isLoaded={!isLoading}>
+      <Stack direction="row">
+        {resource.tags.map((tag) => (
+          <LearningMaterialTag key={tag.name} tagName={tag.name} size="sm" />
+        ))}
+      </Stack>
+    </Skeleton>
   ) : null;
 };
 
@@ -200,70 +193,74 @@ const BottomRightBar: React.FC<{ resource: ResourceFeedCardDataFragment; isLoadi
   isLoading,
 }) => {
   return (
-    <BoxBlockDefaultClickPropagation>
-      <Stack direction="row">
-        {!!resource.prerequisites?.length && (
-          <PopHover
-            renderTrigger={
-              <Text fontSize="sm" fontWeight={600} color="gray.400">
-                {resource.prerequisites.length} Prerequisites
-              </Text>
-            }
-            title="Prerequisites"
-          >
-            <Wrap justify="center">
-              {resource.prerequisites.map(({ topic }) => (
-                <WrapItem key={topic._id}>
-                  <TopicBadge topic={topic} size="md" />
-                </WrapItem>
-              ))}
-            </Wrap>
-          </PopHover>
-        )}
+    <Skeleton isLoaded={!isLoading}>
+      <BoxBlockDefaultClickPropagation>
+        <Stack direction="row">
+          {!!resource.prerequisites?.length && (
+            <PopHover
+              renderTrigger={
+                <Text fontSize="sm" fontWeight={600} color="gray.400">
+                  {resource.prerequisites.length} Prerequisites
+                </Text>
+              }
+              title="Prerequisites"
+              colorScheme="blue"
+            >
+              <Wrap justify="center">
+                {resource.prerequisites.map(({ topic }) => (
+                  <WrapItem key={topic._id}>
+                    <TopicBadge topic={topic} size="md" />
+                  </WrapItem>
+                ))}
+              </Wrap>
+            </PopHover>
+          )}
 
-        {!!resource.prerequisites?.length && !!resource.coveredSubTopics?.items.length && (
-          <Text fontSize="sm" fontWeight={600} color="gray.400">
-            |
-          </Text>
-        )}
-        {!!resource.coveredSubTopics?.items.length && (
-          <Stack direction="row">
-            <Text fontSize="sm" fontWeight={600} color="gray.600">
-              Covered SubTopics:
+          {!!resource.prerequisites?.length && !!resource.coveredSubTopics?.items.length && (
+            <Text fontSize="sm" fontWeight={600} color="gray.400">
+              |
             </Text>
-            <Wrap direction="row" spacing={1} alignItems="baseline">
-              {resource.coveredSubTopics.items.slice(0, MAX_COVERED_SUBTOPICS_DISPLAYED).map((topic) => (
-                <WrapItem key={topic._id}>
-                  <TopicBadge topic={topic} size="sm" />
-                </WrapItem>
-              ))}
-              {resource.coveredSubTopics.items.length > MAX_COVERED_SUBTOPICS_DISPLAYED && (
-                <WrapItem>
-                  <PopHover
-                    renderTrigger={
-                      <Text fontWeight={600} color="gray.800" fontSize="sm">
-                        ... +{resource.coveredSubTopics.items.length}
-                      </Text>
-                    }
-                    title="Covered SubTopics"
-                    maxW="360px"
-                    minW="320px"
-                  >
-                    <Wrap justify="center">
-                      {resource.coveredSubTopics.items.map((topic) => (
-                        <WrapItem key={topic._id}>
-                          <TopicBadge topic={topic} size="md" />
-                        </WrapItem>
-                      ))}
-                    </Wrap>
-                  </PopHover>
-                </WrapItem>
-              )}
-            </Wrap>
-          </Stack>
-        )}
-      </Stack>
-    </BoxBlockDefaultClickPropagation>
+          )}
+          {!!resource.coveredSubTopics?.items.length && (
+            <Stack direction="row">
+              <Text fontSize="sm" fontWeight={600} color="gray.600">
+                Covered SubTopics:
+              </Text>
+              <Wrap direction="row" spacing={1} alignItems="baseline">
+                {resource.coveredSubTopics.items.slice(0, MAX_COVERED_SUBTOPICS_DISPLAYED).map((topic) => (
+                  <WrapItem key={topic._id}>
+                    <TopicBadge topic={topic} size="sm" />
+                  </WrapItem>
+                ))}
+                {resource.coveredSubTopics.items.length > MAX_COVERED_SUBTOPICS_DISPLAYED && (
+                  <WrapItem>
+                    <PopHover
+                      renderTrigger={
+                        <Text fontWeight={600} color="gray.800" fontSize="sm">
+                          ... +{resource.coveredSubTopics.items.length}
+                        </Text>
+                      }
+                      title="Covered SubTopics"
+                      maxW="360px"
+                      minW="320px"
+                      colorScheme="blue"
+                    >
+                      <Wrap justify="center">
+                        {resource.coveredSubTopics.items.map((topic) => (
+                          <WrapItem key={topic._id}>
+                            <TopicBadge topic={topic} size="md" />
+                          </WrapItem>
+                        ))}
+                      </Wrap>
+                    </PopHover>
+                  </WrapItem>
+                )}
+              </Wrap>
+            </Stack>
+          )}
+        </Stack>
+      </BoxBlockDefaultClickPropagation>
+    </Skeleton>
   );
 };
 

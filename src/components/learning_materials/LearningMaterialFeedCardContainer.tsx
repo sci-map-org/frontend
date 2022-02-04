@@ -1,4 +1,4 @@
-import { Center, Flex, Stack, useBreakpointValue } from '@chakra-ui/react';
+import { Box, Center, Flex, Stack, useBreakpointValue } from '@chakra-ui/react';
 import React, { forwardRef, ReactNode } from 'react';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { LearningMaterialRecommendationsViewer } from './LearningMaterialRecommendationsViewer';
@@ -16,6 +16,7 @@ interface LearningMaterialFeedCardContainerProps {
   renderBottomLeft: ReactNode;
   renderBottomRight: ReactNode;
   onClick: () => void;
+  isLoading: boolean;
 }
 
 export const LearningMaterialFeedCardContainer = forwardRef<HTMLDivElement, LearningMaterialFeedCardContainerProps>(
@@ -32,6 +33,7 @@ export const LearningMaterialFeedCardContainer = forwardRef<HTMLDivElement, Lear
       renderBottomLeft,
       renderBottomRight,
       onClick,
+      isLoading,
     },
     ref
   ) => {
@@ -48,11 +50,13 @@ export const LearningMaterialFeedCardContainer = forwardRef<HTMLDivElement, Lear
         alignItems="stretch"
         borderWidth={1}
         borderColor="gray.300"
-        _hover={{
-          cursor: 'pointer',
-          borderColor: 'gray.400',
-          boxShadow: 'md',
-        }}
+        {...(!isLoading && {
+          _hover: {
+            cursor: 'pointer',
+            borderColor: 'gray.400',
+            boxShadow: 'md',
+          },
+        })}
         // TODO: Accessibility! Haven't found a clean solution so far, but it needs a <a> tag somewhere for the resource page
         // Maybe the comments count component, like reddit ?
         onClick={() => onClick()}
@@ -68,7 +72,7 @@ export const LearningMaterialFeedCardContainer = forwardRef<HTMLDivElement, Lear
           >
             <LearningMaterialRecommendationsViewer
               learningMaterial={learningMaterial}
-              isLoading={false} // TODO
+              isLoading={isLoading}
               display="vertical"
               size="sm"
             />
@@ -93,12 +97,12 @@ export const LearningMaterialFeedCardContainer = forwardRef<HTMLDivElement, Lear
             </Center>
           </Flex>
           <Flex flexGrow={1} />
-          <Flex direction="row" alignItems="stretch">
+          <Flex direction="row" alignItems="stretch" mt="3px">
             {layout === 'mobile' && (
               <BoxBlockDefaultClickPropagation>
                 <LearningMaterialRecommendationsViewer
                   learningMaterial={learningMaterial}
-                  isLoading={false} // TODO
+                  isLoading={isLoading}
                   display="horizontal"
                   size="sm"
                 />
@@ -120,7 +124,9 @@ export const LearningMaterialFeedCardContainer = forwardRef<HTMLDivElement, Lear
         <Flex ml="6px" alignItems="center" justifyContent="flex-end">
           <BoxBlockDefaultClickPropagation>
             <Stack px="2px" alignItems="center">
-              {interactionButtons.map((iteractionButton) => iteractionButton)}
+              {interactionButtons.map((iteractionButton, idx) => (
+                <Box key={idx}>{iteractionButton}</Box>
+              ))}
             </Stack>
           </BoxBlockDefaultClickPropagation>
         </Flex>
