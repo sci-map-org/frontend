@@ -422,6 +422,7 @@ export type LearningMaterial = {
   prerequisites?: Maybe<Array<LearningMaterialHasPrerequisiteTopic>>;
   rating?: Maybe<Scalars['Float']>;
   recommendationsCount?: Maybe<Scalars['Int']>;
+  recommended?: Maybe<LearningMaterialRecommended>;
   recommendedBy?: Maybe<Array<UserRecommendedLearningMaterial>>;
   showedIn?: Maybe<Array<Topic>>;
   tags?: Maybe<Array<LearningMaterialTag>>;
@@ -463,6 +464,11 @@ export type LearningMaterialHasPrerequisiteTopic = {
   topic: Topic;
 };
 
+export type LearningMaterialRecommended = {
+  __typename?: 'LearningMaterialRecommended';
+  recommendedAt: Scalars['Date'];
+};
+
 export type LearningMaterialTag = {
   __typename?: 'LearningMaterialTag';
   name: Scalars['String'];
@@ -495,6 +501,7 @@ export type LearningPath = LearningMaterial & {
   public: Scalars['Boolean'];
   rating?: Maybe<Scalars['Float']>;
   recommendationsCount?: Maybe<Scalars['Int']>;
+  recommended?: Maybe<LearningMaterialRecommended>;
   recommendedBy?: Maybe<Array<UserRecommendedLearningMaterial>>;
   resourceItems?: Maybe<Array<LearningPathResourceItem>>;
   showedIn?: Maybe<Array<Topic>>;
@@ -1306,6 +1313,7 @@ export type Resource = LearningMaterial & {
   previousResource?: Maybe<Resource>;
   rating?: Maybe<Scalars['Float']>;
   recommendationsCount?: Maybe<Scalars['Int']>;
+  recommended?: Maybe<LearningMaterialRecommended>;
   recommendedBy?: Maybe<Array<UserRecommendedLearningMaterial>>;
   seriesParentResource?: Maybe<Resource>;
   showedIn?: Maybe<Array<Topic>>;
@@ -1576,8 +1584,8 @@ export type TopicLearningMaterialsResults = {
 };
 
 export enum TopicLearningMaterialsSortingType {
-  Newest = 'newest',
-  Rating = 'rating'
+  MostRecommended = 'most_recommended',
+  Newest = 'newest'
 }
 
 export type TopicType = {

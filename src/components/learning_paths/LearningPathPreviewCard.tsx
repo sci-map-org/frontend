@@ -1,14 +1,14 @@
 import { Badge, Box, Flex, FlexProps, Skeleton, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { ReactNode } from 'react';
-import {  LearningMaterialWithCoveredTopicsData } from '../../graphql/learning_materials/learning_materials.fragments';
+import { LearningMaterialWithCoveredTopicsData } from '../../graphql/learning_materials/learning_materials.fragments';
 import { LearningPathData } from '../../graphql/learning_paths/learning_paths.fragments';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { LearningPathPageInfo } from '../../pages/RoutesPageInfos';
 import {
   LearningMaterialCardContainer,
   LearningMaterialCardCoveredTopics,
-} from '../learning_materials/LearningMaterialCardContainer';
+} from '../learning_materials/LearningMaterialPreviewCardContainer';
 import { EditableLearningMaterialTags } from '../learning_materials/LearningMaterialTagsEditor';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { StarsRatingViewer } from '../lib/StarsRating';

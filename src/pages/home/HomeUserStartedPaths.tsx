@@ -1,7 +1,7 @@
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { Box, Button, Center, Flex, Heading, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
-import { LearningMaterialCardContainer } from '../../components/learning_materials/LearningMaterialCardContainer';
+import { LearningMaterialCardContainer } from '../../components/learning_materials/LearningMaterialPreviewCardContainer';
 import { LearningMaterialStarsRaterData } from '../../components/learning_materials/LearningMaterialStarsRating';
 import {
   LearningPathCircularCompletion,

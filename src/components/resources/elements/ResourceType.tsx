@@ -3,10 +3,12 @@ import {
   BadgeProps,
   Center,
   CenterProps,
+  Flex,
   FormControl,
   FormLabel,
   Icon,
   Select,
+  Text,
   Tooltip,
 } from '@chakra-ui/react';
 import { upperFirst, values } from 'lodash';
@@ -27,38 +29,46 @@ import { InfographicIcon } from '../../lib/icons/InfographicIcon';
 import { OnlineBookIcon } from '../../lib/icons/OnlineBookIcon';
 import { YoutubePlaylistIcon } from '../../lib/icons/YoutubePlaylistIcon';
 import { IconProps } from '@chakra-ui/icons';
+import { LearningMaterialTypeBaseBadge } from '../../learning_materials/LearningMaterialTypeBadge';
+import { ResourceIcon } from '../../lib/icons/ResourceIcon';
 
 export const resourceTypeColorMapping: { [key in ResourceType]: string } = {
-  [ResourceType.Article]: 'green',
-  [ResourceType.ArticleSeries]: 'green',
-  [ResourceType.Course]: 'red',
-  [ResourceType.Podcast]: 'yellow',
-  [ResourceType.PodcastEpisode]: 'yellow',
-  [ResourceType.Other]: 'gray',
-  [ResourceType.OnlineBook]: 'red',
-  [ResourceType.Book]: 'red',
-  [ResourceType.ResearchPaper]: 'blue',
-  [ResourceType.Documentary]: 'blue',
-  [ResourceType.Tweet]: 'blue',
+  [ResourceType.Article]: 'yellow',
+  [ResourceType.ArticleSeries]: 'yellow',
+  [ResourceType.Book]: 'yellow',
+  [ResourceType.OnlineBook]: 'yellow',
+  [ResourceType.ResearchPaper]: 'yellow',
+  [ResourceType.Podcast]: 'orange',
+  [ResourceType.PodcastEpisode]: 'orange',
   [ResourceType.Talk]: 'orange',
-  [ResourceType.Infographic]: 'yellow',
+  [ResourceType.Course]: 'teal',
+  [ResourceType.Tweet]: 'blue',
+  [ResourceType.Infographic]: 'blue',
   [ResourceType.Website]: 'blue',
-  [ResourceType.Exercise]: 'gray',
   // [ResourceType.Quizz]: 'gray',
-  [ResourceType.Project]: 'gray',
+  [ResourceType.Documentary]: 'red',
   [ResourceType.YoutubeVideo]: 'red',
   [ResourceType.YoutubePlaylist]: 'red',
-  [ResourceType.VideoGame]: 'yellow',
+  [ResourceType.Exercise]: 'gray',
+  [ResourceType.Project]: 'gray',
+  [ResourceType.VideoGame]: 'gray',
+  [ResourceType.Other]: 'gray',
 };
 
 export const resourceTypeToLabel = (type: ResourceType) => type.split('_').map(upperFirst).join(' ');
 
-//ItemRenderer in DomainRecommendedLearningMaterials copies this style. TODO: refactor
 export const ResourceTypeBadge: React.FC<BadgeProps & { type: ResourceType }> = ({ type, ...badgeProps }) => {
+  const icon = useMemo(() => {
+    return resourceTypeIconMapping[type] || defaultResourceTypeIcon;
+  }, [type]);
+
   return (
-    <Badge colorScheme={resourceTypeColorMapping[type]} {...badgeProps}>
-      {resourceTypeToLabel(type)}
-    </Badge>
+    <LearningMaterialTypeBaseBadge
+      name={resourceTypeToLabel(type)}
+      icon={icon}
+      color={resourceTypeColorMapping[type]}
+      {...badgeProps}
+    />
   );
 };
 
@@ -82,13 +92,14 @@ export const resourceTypeIconMapping: { [key in ResourceType]?: IconType | typeo
   [ResourceType.VideoGame]: RiGamepadLine,
 };
 
+const defaultResourceTypeIcon = ResourceIcon;
 export const ResourceTypeIcon: React.FC<
   { resourceType: ResourceType; boxSize?: IconProps['boxSize'] } & CenterProps
 > = ({ resourceType, boxSize, ...centerProps }) => {
   const icon = useMemo(() => {
-    return resourceTypeIconMapping[resourceType];
+    return resourceTypeIconMapping[resourceType] || defaultResourceTypeIcon;
   }, [resourceType]);
-  if (!icon) return null;
+
   return (
     <Tooltip label={resourceTypeToLabel(resourceType)} fontSize="sm">
       <Center {...centerProps}>

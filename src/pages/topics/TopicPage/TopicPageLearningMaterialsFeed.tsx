@@ -1,21 +1,22 @@
 import { NetworkStatus } from '@apollo/client';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
-import { Box, Button, Divider, Flex, Heading, Stack, Text } from '@chakra-ui/react';
+import { Box, Button, Center, Divider, Flex, Heading, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { omit, range } from 'lodash';
 import { useMemo, useRef, useState } from 'react';
-import {
-  LearningPathPreviewCard,
-  LearningPathPreviewCardData,
-} from '../../../components/learning_paths/LearningPathPreviewCard';
-import { LearningPathPreviewCardDataFragment } from '../../../components/learning_paths/LearningPathPreviewCard.generated';
+import { useUnauthentificatedModal } from '../../../components/auth/UnauthentificatedModal';
+import { LearningPathFeedCard } from '../../../components/learning_paths/LearningPathFeedCard';
+import { ResourceIcon } from '../../../components/lib/icons/ResourceIcon';
 import { PageLink } from '../../../components/navigation/InternalLink';
 import { LearningMaterialPreviewCardList } from '../../../components/resources/LearningMaterialPreviewCardList';
-import { ResourcePreviewCard } from '../../../components/resources/ResourcePreviewCard';
+import { NewResourceModal } from '../../../components/resources/NewResource';
+import { ResourceFeedCard } from '../../../components/resources/ResourceFeedCard';
 import { TopicDescription } from '../../../components/topics/fields/TopicDescription';
 import { TopicSubHeader } from '../../../components/topics/TopicSubHeader';
-import { ResourcePreviewCardData } from '../../../graphql/resources/resources.fragments';
-import { ResourcePreviewCardDataFragment } from '../../../graphql/resources/resources.fragments.generated';
+import { LearningPathFeedCardData } from '../../../graphql/learning_paths/learning_paths.fragments';
+import { LearningPathFeedCardDataFragment } from '../../../graphql/learning_paths/learning_paths.fragments.generated';
+import { ResourceFeedCardData } from '../../../graphql/resources/resources.fragments';
+import { ResourceFeedCardDataFragment } from '../../../graphql/resources/resources.fragments.generated';
 import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
 import {
   LearningMaterialType,
@@ -23,6 +24,7 @@ import {
   TopicLearningMaterialsFilterOptions,
   TopicLearningMaterialsSortingType,
 } from '../../../graphql/types';
+import { useCurrentUser } from '../../../graphql/users/users.hooks';
 import { useScroll } from '../../../hooks/useScroll';
 import { TopicPageInfo } from '../../RoutesPageInfos';
 import {
@@ -43,8 +45,8 @@ export const getTopicRecommendedLearningMaterials = gql`
       ...SubTopicFilterData
       learningMaterials(options: $learningMaterialsOptions) {
         items {
-          ...ResourcePreviewCardData
-          ...LearningPathPreviewCardData
+          ...ResourceFeedCardData
+          ...LearningPathFeedCardData
         }
         totalCount
         availableTagFilters {
@@ -61,8 +63,8 @@ export const getTopicRecommendedLearningMaterials = gql`
       }
     }
   }
-  ${ResourcePreviewCardData}
-  ${LearningPathPreviewCardData}
+  ${ResourceFeedCardData}
+  ${LearningPathFeedCardData}
   ${SubTopicFilterData}
 `;
 
@@ -161,24 +163,29 @@ export const useTopicPageLearningMaterialsFeed = (
   feedAvailableFilters?: FeedAvailableFilters;
   totalPages: number;
   lastSelectedTopic: SubTopicFilterDataFragment | null;
-  learningMaterials: Array<ResourcePreviewCardDataFragment | LearningPathPreviewCardDataFragment>;
+  learningMaterials: Array<ResourceFeedCardDataFragment | LearningPathFeedCardDataFragment>;
   loading: boolean;
   initialLoading: boolean;
   isReloading: boolean;
+  isRefetching: boolean;
   refetch: () => void;
 } => {
+  // Why creating a variable here and not using networkStatus along with notifyOnNetworkStatusChange ?
+  // Pretty long story, in short in order to update the cards UI cleanly when recommending/completing a resource
+  // we want to avoid showing a loading state again. useFragment (https://github.com/apollographql/apollo-client/issues/8236)
+  // could help avoid this, but it would still be a bit complicated and fragile.
+  // Overall we're entering Apollo Client's limitations with the feed's logic
+  const [isRefetching, setIsRefetching] = useState(false);
+
   const [lastSelectedTopic, setLastSelectedTopic] = useState<SubTopicFilterDataFragment | null>(null);
-  const [learningMaterialPreviews, setLearningMaterialPreviews] = useState<
-    (ResourcePreviewCardDataFragment | LearningPathPreviewCardDataFragment)[]
-  >([]);
-  const [learningMaterialsTotalCount, setLearningMaterialsTotalCount] = useState<number>();
+
   const [feedAvailableFilters, setFeedAvailableFilters] = useState<FeedAvailableFilters | undefined>();
 
   const filter = useMemo(() => {
     return getFilterOptionsFromFilterTypes(options.typeFilters);
   }, [options.typeFilters]);
 
-  const { loading, refetch, networkStatus } = useGetTopicRecommendedLearningMaterialsQuery({
+  const { data, previousData, loading, refetch, networkStatus } = useGetTopicRecommendedLearningMaterialsQuery({
     variables: {
       key: options.selectedSubTopicKey || options.mainTopicKey,
       learningMaterialsOptions: {
@@ -194,9 +201,10 @@ export const useTopicPageLearningMaterialsFeed = (
         },
       },
     },
-    fetchPolicy: 'no-cache',
+    // nextFetchPolicy: 'standby',
+    fetchPolicy: 'network-only',
     ssr: false,
-    notifyOnNetworkStatusChange: true,
+    // notifyOnNetworkStatusChange: true,
     onCompleted(data) {
       if (!data) throw new Error('Fetch failed');
       setLastSelectedTopic(omit(data.getTopicByKey, ['learningMaterials']));
@@ -209,12 +217,11 @@ export const useTopicPageLearningMaterialsFeed = (
           ...data.getTopicByKey.learningMaterialsAvailableTypeFilters,
         });
       }
-      if (data.getTopicByKey.learningMaterials) {
-        setLearningMaterialsTotalCount(data.getTopicByKey.learningMaterials.totalCount);
-        setLearningMaterialPreviews(data.getTopicByKey.learningMaterials.items);
-      }
     },
   });
+  const lastFetchedData = data?.getTopicByKey || previousData?.getTopicByKey;
+  const learningMaterialPreviews = lastFetchedData?.learningMaterials?.items || [];
+  const learningMaterialsTotalCount = lastFetchedData?.learningMaterials?.totalCount;
 
   const totalPages = !!learningMaterialsTotalCount
     ? 1 + Math.floor((learningMaterialsTotalCount - 0.005) / LM_FEED_RESULTS_PER_PAGE)
@@ -225,7 +232,12 @@ export const useTopicPageLearningMaterialsFeed = (
     loading,
     initialLoading: networkStatus === NetworkStatus.loading,
     isReloading: networkStatus === NetworkStatus.setVariables || networkStatus === NetworkStatus.refetch,
-    refetch,
+    isRefetching,
+    refetch: async () => {
+      setIsRefetching(true);
+      await refetch();
+      setIsRefetching(false);
+    },
     lastSelectedTopic,
     feedAvailableFilters,
     totalPages: totalPages,
@@ -244,7 +256,7 @@ interface TopicPageLearningMaterialsFeedProps {
   subTopics: TopicLinkDataFragment[];
   mainTopic: TopicLinkDataFragment;
   selectedSubTopic: SubTopicFilterDataFragment | null;
-  learningMaterials: Array<ResourcePreviewCardDataFragment | LearningPathPreviewCardDataFragment>;
+  learningMaterials: Array<ResourceFeedCardDataFragment | LearningPathFeedCardDataFragment>;
   totalPages: number;
   feedAvailableFilters?: FeedAvailableFilters;
   feedOptions: TopicPageLearningMaterialsFeedOptions;
@@ -267,11 +279,21 @@ export const TopicPageLearningMaterialsFeed: React.FC<TopicPageLearningMaterials
   initialLoading,
   isReloading,
 }) => {
+  const { currentUser } = useCurrentUser();
+  const { onOpen: onOpenUnauthentificatedModal } = useUnauthentificatedModal();
+
   const scrollRef = useRef<HTMLDivElement>(null);
   const partiallyLoadedSelectedSubTopic =
     selectedSubTopic || subTopics.find((subTopic) => subTopic.key === feedOptions.selectedSubTopicKey) || null;
 
   const { scrollToElement } = useScroll('auto');
+
+  const noFiltersSelected = useMemo(() => {
+    return (
+      !feedOptions.query && !feedOptions.tagsFilters.length && !Object.values(feedOptions.typeFilters).includes(true)
+    );
+  }, [feedOptions.query, feedOptions.tagsFilters, feedOptions.typeFilters]);
+
   return (
     <Stack spacing={5} width="100%" position="relative">
       {!!subTopics.length && (
@@ -334,47 +356,72 @@ export const TopicPageLearningMaterialsFeed: React.FC<TopicPageLearningMaterials
             setFeedOptions({ ...options, page: 1 });
           }}
         />
-        <LearningMaterialPreviewCardList
-          learningMaterialsPreviewItems={learningMaterials.map((learningMaterial) => ({ learningMaterial }))}
-          isLoading={initialLoading}
-          loadingMessage="Finding the most adapted learning resources..."
-          renderCard={({ learningMaterial }, idx) => {
-            if (learningMaterial.__typename === 'Resource')
-              return (
-                <ResourcePreviewCard
-                  key={learningMaterial._id}
-                  resource={learningMaterial}
-                  onResourceConsumed={() => console.log('reloading')}
-                  showCompletedNotificationToast={true}
-                  leftBlockWidth="120px"
-                  inCompactList
-                  firstItemInCompactList={idx === 0}
-                  isLoading={isReloading}
-                />
-              );
-            if (learningMaterial.__typename === 'LearningPath')
-              return (
-                <LearningPathPreviewCard
-                  learningPath={learningMaterial}
-                  key={learningMaterial._id}
-                  leftBlockWidth="120px"
-                  inCompactList
-                  firstItemInCompactList={idx === 0}
-                  isLoading={isReloading}
-                />
-              );
-          }}
-        />
-        <Flex pt={2}>
-          <Pagination
-            currentPage={feedOptions.page}
-            totalPages={totalPages}
-            setCurrentPage={(page) => {
-              scrollToElement(scrollRef);
-              setFeedOptions({ ...feedOptions, page });
-            }}
-          />
-        </Flex>
+        {!learningMaterials.length && noFiltersSelected ? (
+          <Center py={20} flexDir="column">
+            <Heading size="xl" color="gray.600" mb={8}>
+              No Resources found
+            </Heading>
+            <NewResourceModal
+              defaultResourceCreationData={{
+                showInTopics: [selectedSubTopic || mainTopic],
+              }}
+              // onResourceCreated={() => refetchLearningMaterials()}
+              renderButton={(openModal) => (
+                <Button
+                  leftIcon={<ResourceIcon boxSize={7} />}
+                  variant="solid"
+                  size="lg"
+                  colorScheme="teal"
+                  isDisabled={isLoading}
+                  onClick={() => {
+                    if (!currentUser) return onOpenUnauthentificatedModal();
+                    openModal();
+                  }}
+                >
+                  Add First Resource
+                </Button>
+              )}
+            />
+          </Center>
+        ) : (
+          <>
+            <LearningMaterialPreviewCardList
+              learningMaterialsPreviewItems={learningMaterials.map((learningMaterial) => ({ learningMaterial }))}
+              isLoading={initialLoading}
+              loadingMessage="Finding the most adapted learning resources..."
+              renderCard={({ learningMaterial }, idx) => {
+                if (learningMaterial.__typename === 'Resource')
+                  return (
+                    <ResourceFeedCard
+                      key={learningMaterial._id}
+                      resource={learningMaterial}
+                      onResourceConsumed={() => console.log('reloading')}
+                      showCompletedNotificationToast={true}
+                      isLoading={isReloading}
+                    />
+                  );
+                if (learningMaterial.__typename === 'LearningPath')
+                  return (
+                    <LearningPathFeedCard
+                      learningPath={learningMaterial}
+                      key={learningMaterial._id}
+                      isLoading={isReloading}
+                    />
+                  );
+              }}
+            />
+            <Flex pt={2}>
+              <Pagination
+                currentPage={feedOptions.page}
+                totalPages={totalPages}
+                setCurrentPage={(page) => {
+                  scrollToElement(scrollRef);
+                  setFeedOptions({ ...feedOptions, page });
+                }}
+              />
+            </Flex>
+          </>
+        )}
       </Flex>
     </Stack>
   );

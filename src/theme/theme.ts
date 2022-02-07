@@ -1,4 +1,4 @@
-import { extendTheme } from '@chakra-ui/react';
+import { extendTheme, withDefaultProps } from '@chakra-ui/react';
 import { colors } from './colors';
 
 export const fonts = {
@@ -139,6 +139,12 @@ export const theme = extendTheme({
             w: '146px',
           },
         },
+      },
+    },
+    Skeleton: {
+      defaultProps: {
+        startColor: 'gray.300',
+        endColor: 'gray.400',
       },
     },
   },

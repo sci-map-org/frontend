@@ -1,7 +1,12 @@
 import gql from 'graphql-tag';
+import { LearningMaterialRecommendationsViewerData } from '../../components/learning_materials/LearningMaterialRecommendationsViewer';
 import { TopicLinkData } from '../topics/topics.fragments';
 import { ResourceMediaType, ResourceType } from '../types';
-import { ResourceDataFragment, ResourcePreviewCardDataFragment } from './resources.fragments.generated';
+import {
+  ResourceDataFragment,
+  ResourceFeedCardDataFragment,
+  ResourcePreviewCardDataFragment,
+} from './resources.fragments.generated';
 
 export const ResourceData = gql`
   fragment ResourceData on Resource {
@@ -38,6 +43,55 @@ export const generateResourceData = (): ResourceDataFragment => ({
   url: 'https://myresource.url',
 });
 
+export const ResourceFeedCardData = gql`
+  fragment ResourceFeedCardData on Resource {
+    _id
+    name
+    types
+    url
+    description
+    durationSeconds
+    tags {
+      name
+    }
+    consumed {
+      openedAt
+      consumedAt
+    }
+
+    ...LearningMaterialRecommendationsViewerData
+    coveredSubTopics(options: {}) {
+      items {
+        ...TopicLinkData
+      }
+    }
+    prerequisites {
+      topic {
+        ...TopicLinkData
+      }
+    }
+    subResourceSeries {
+      _id
+      name
+    }
+    subResources {
+      _id
+      name
+    }
+    createdAt
+  }
+  ${TopicLinkData}
+  ${LearningMaterialRecommendationsViewerData}
+`;
+export const generateResourceFeedCardData = (): ResourceFeedCardDataFragment => ({
+  _id: Math.random().toString(),
+  name: 'My resource name',
+  types: [ResourceType.Article],
+  url: 'https://myresource.url',
+  recommendationsCount: 2,
+  createdAt: new Date().toISOString(),
+});
+
 export const ResourcePreviewCardData = gql`
   fragment ResourcePreviewCardData on Resource {
     _id
@@ -60,6 +114,7 @@ export const ResourcePreviewCardData = gql`
       }
     }
     rating
+    ...LearningMaterialRecommendationsViewerData
     subResourceSeries {
       _id
       name
@@ -70,6 +125,7 @@ export const ResourcePreviewCardData = gql`
     }
   }
   ${TopicLinkData}
+  ${LearningMaterialRecommendationsViewerData}
 `;
 
 export const generateResourcePreviewCardData = (): ResourcePreviewCardDataFragment => ({

@@ -18,7 +18,7 @@ export const AlsoPartOfTopicsViewer: React.FC<AlsoPartOfTopicsViewerProps> = ({ 
       </Stack>
       <Stack direction="row" ml={2}>
         {topic.partOfTopics?.map(({ partOfTopic }) => (
-          <TopicBadge key={partOfTopic._id} size="sm" topic={partOfTopic} colorScheme="teal" />
+          <TopicBadge key={partOfTopic._id} size="md" topic={partOfTopic} colorScheme="teal" />
         ))}
       </Stack>
     </Flex>

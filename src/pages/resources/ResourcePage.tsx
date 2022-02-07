@@ -37,6 +37,10 @@ import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { GetResourceResourcePageQuery, useGetResourceResourcePageQuery } from './ResourcePage.generated';
 import { LearningMaterialWithCoveredTopicsData } from '../../graphql/learning_materials/learning_materials.fragments';
 import { intersection } from 'lodash';
+import {
+  LearningMaterialRecommendationsViewer,
+  LearningMaterialRecommendationsViewerData,
+} from '../../components/learning_materials/LearningMaterialRecommendationsViewer';
 
 export const getResourceResourcePage = gql`
   query getResourceResourcePage($id: String!) {
@@ -70,6 +74,7 @@ export const getResourceResourcePage = gql`
       ...LearningMaterialWithCoveredTopicsData
       ...EditableLearningMaterialPrerequisitesData
       ...LearningMaterialStarsRaterData
+      ...LearningMaterialRecommendationsViewerData
     }
   }
   ${SquareResourceCardData}
@@ -78,6 +83,7 @@ export const getResourceResourcePage = gql`
   ${EditableLearningMaterialPrerequisitesData}
   ${LearningMaterialStarsRaterData}
   ${LearningMaterialWithCoveredTopicsData}
+  ${LearningMaterialRecommendationsViewerData}
 `;
 
 // TODO
@@ -96,6 +102,7 @@ const resourceDataPlaceholder: GetResourceResourcePageQuery['getResourceById'] =
 
 export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) => {
   const { data, loading, error } = useGetResourceResourcePageQuery({ variables: { id: resourceId } });
+  console.log(data?.getResourceById);
   if (error) return <Box>Resource not found !</Box>;
   const resource = data?.getResourceById || resourceDataPlaceholder;
   const { currentUser } = useCurrentUser();
@@ -165,10 +172,11 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
           <Stack spacing={4} flexGrow={1}>
             <Box>
               <Skeleton isLoaded={!loading}>
-                {resource.types.map((type) => (
-                  <ResourceTypeBadge key={type} type={type} />
-                ))}{' '}
-                - <ResourceMediaTypeBadge mediaType={resource.mediaType} />{' '}
+                <Stack direction="row">
+                  {resource.types.map((type) => (
+                    <ResourceTypeBadge key={type} type={type} />
+                  ))}
+                </Stack>
               </Skeleton>
             </Box>
             <Box>

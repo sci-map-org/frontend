@@ -81,7 +81,7 @@ export const SubTopicFilter: React.FC<SubTopicFilterProps> = ({
               <SubTopicFilterItem
                 name={subTopic.name}
                 isSelected={selectedSubTopic?._id === subTopic._id}
-                onClick={() => onChange(subTopic.key)}
+                onClick={() => onChange(selectedSubTopic?._id === subTopic._id ? null : subTopic.key)}
               />
             </WrapItem>
           ))}
@@ -113,7 +113,7 @@ const SubTopicFilterItem: React.FC<{
       px="8px"
       py="2px"
       _hover={{
-        cursor: isSelected ? 'auto' : 'pointer',
+        cursor: 'pointer',
       }}
     >
       {name}

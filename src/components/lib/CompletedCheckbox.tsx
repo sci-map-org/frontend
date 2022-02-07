@@ -39,7 +39,8 @@ export const CompletedCheckbox: React.FC<CompletedCheckboxProps> = ({
   isChecked,
   tooltipLabel,
   tooltipDelay,
-  uncheckedColor = 'gray.300',
+  uncheckedColor = 'gray.700',
+  isDisabled,
   ...iconButtonProps
 }) => {
   return (
@@ -60,9 +61,12 @@ export const CompletedCheckbox: React.FC<CompletedCheckboxProps> = ({
         w={sizeMapping[size].iconSize + 'px'}
         h={sizeMapping[size].iconSize + 'px'}
         bgColor="transparent"
-        _hover={{
-          color: isChecked ? uncheckedColor : 'main',
-        }}
+        isDisabled={isDisabled}
+        {...(!isDisabled && {
+          _hover: {
+            color: isChecked ? uncheckedColor : 'main',
+          },
+        })}
         _selected={{}}
         _active={{}}
         _focus={{}}

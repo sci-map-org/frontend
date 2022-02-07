@@ -19,6 +19,7 @@ import { debounce, intersection, xor } from 'lodash';
 import { DependencyList, useCallback, useEffect, useRef, useState } from 'react';
 import BeatLoader from 'react-spinners/BeatLoader';
 import { useDebounce } from 'use-debounce';
+import { LearningMaterialTagBase } from '../../../components/learning_materials/LearningMaterialTag';
 import { ResourceType, TopicLearningMaterialsSortingType } from '../../../graphql/types';
 import { theme } from '../../../theme/theme';
 import { FeedAvailableFilters, TopicPageLearningMaterialsFeedOptions } from './TopicPageLearningMaterialsFeed';
@@ -110,7 +111,7 @@ export const LearningMaterialsFilters: React.FC<LearningMaterialFiltersProps> = 
               value={feedOptions.sorting}
             >
               {/* <option value={TopicLearningMaterialsSortingType.Recommended}>Most Relevant</option> */}
-              <option value={TopicLearningMaterialsSortingType.Rating}>Highest Rating</option>
+              <option value={TopicLearningMaterialsSortingType.MostRecommended}>Most Recommended</option>
               <option value={TopicLearningMaterialsSortingType.Newest}>Newest First</option>
             </Select>
           </FormControl>
@@ -313,25 +314,12 @@ const LearningMaterialTagFitlterItem: React.FC<{
   onSelect: () => void;
 }> = ({ name, count, isSelected, onSelect }) => {
   return (
-    <Text
-      fontSize="14px"
-      fontWeight={500}
-      borderRadius="14px"
-      pt="2px"
-      pb="4px"
-      px="8px"
-      _hover={{
-        cursor: 'pointer',
-      }}
-      {...(isSelected ? { color: 'white', bgColor: 'gray.600' } : { color: 'gray.600', bgColor: 'gray.100' })}
-      onClick={() => onSelect()}
-      letterSpacing="0.03em"
-    >
+    <LearningMaterialTagBase size="md" onClick={onSelect} isSelected={isSelected}>
       {name}{' '}
       <Text as="span" fontWeight={600}>
         ({count})
       </Text>
-    </Text>
+    </LearningMaterialTagBase>
   );
 };
 
@@ -371,7 +359,7 @@ const LearningMaterialsTagsFilters: React.FC<{
         ref={containerRef}
         spacing={`${wrapPxSpacing}px`}
         {...(!isExpanded && {
-          maxH: wrapItemPxHeight + wrapPxSpacing + 'px',
+          maxH: wrapItemPxHeight + 'px',
           overflow: 'hidden',
         })}
       >

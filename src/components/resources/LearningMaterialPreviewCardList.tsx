@@ -1,4 +1,4 @@
-import { Flex, Spinner, Text } from '@chakra-ui/react';
+import { Flex, Spinner, Stack, Text } from '@chakra-ui/react';
 import { PropsWithChildren, ReactNode } from 'react';
 
 interface LearningMaterialPreviewCardListProps<T extends object> {
@@ -57,7 +57,7 @@ export const LearningMaterialPreviewCardList = <T extends object>({
           {!!loadingMessage && <Text fontStyle="italic">{loadingMessage}</Text>}
         </Flex>
       ) : (
-        learningMaterialsPreviewItems.map((item, idx) => renderCard(item, idx))
+        <Stack spacing={5}>{learningMaterialsPreviewItems.map((item, idx) => renderCard(item, idx))}</Stack>
       )}
     </Flex>
   );

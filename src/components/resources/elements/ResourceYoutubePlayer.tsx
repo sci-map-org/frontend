@@ -5,7 +5,7 @@ import { YoutubePlayer } from '../../lib/YoutubePlayer';
 import { useSetResourceOpenedMutation } from '../../../graphql/resources/resources.operations.generated';
 
 export const ResourceYoutubePlayer: React.FC<
-  { resource: ResourceDataFragment } & Omit<YouTubePlayerProps, 'onEnded' | 'videoUrl'>
+  { resource: Pick<ResourceDataFragment, '_id' | 'url'> } & Omit<YouTubePlayerProps, 'onEnded' | 'videoUrl'>
 > = ({ resource, ...props }) => {
   const [setResourceConsumed] = useSetResourceConsumed({
     showNotificationToast: false,

@@ -22,6 +22,14 @@ export const CurrentUserData = gql`
   }
 `;
 
+export const UserLinkData = gql`
+  fragment UserLinkData on User {
+    _id
+    key
+    displayName
+  }
+`;
+
 export const PublicUserData = gql`
   fragment PublicUserData on User {
     _id

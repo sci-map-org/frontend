@@ -5,34 +5,46 @@ import { PageLink } from '../navigation/InternalLink';
 
 type TopicBadgeColorScheme = 'default' | 'teal';
 
-interface TopicBadgeProps {
-  size?: 'md' | 'sm' | 'xs';
-  topic: TopicLinkDataFragment;
-  onRemove?: () => void;
-  removable?: boolean;
-  clickable?: boolean;
-  colorScheme?: TopicBadgeColorScheme;
-}
+const sizesMapping = {
+  sm: {
+    px: '4px',
+    pt: '1px',
+    pb: '1px',
+    fontSize: '12px',
+    lineHeight: '14px',
+  },
+  md: {
+    px: '6px',
+    py: '3px',
+    fontSize: '14px',
+  },
+};
 
 const badgeStyleProps = (
   topic: TopicLinkDataFragment,
-  size: 'md' | 'sm' | 'xs',
+  size: 'md' | 'sm',
   colorScheme: TopicBadgeColorScheme
 ): LinkProps & BoxProps => ({
   borderRadius: 16,
   fontWeight: 400,
   borderWidth: '1px',
   textAlign: 'center',
-  px: { xs: '3px', sm: '6px', md: '6px' }[size],
-  py: { xs: '0px', sm: '2px', md: '3px' }[size],
-  fontSize: { xs: 'xs', sm: 'sm', md: 'md' }[size],
   color: colorScheme === 'default' ? 'gray.800' : 'white',
   bgColor: colorScheme === 'default' ? 'white' : 'teal.600',
   borderColor: colorScheme === 'default' ? 'gray.800' : 'teal.600',
+  ...sizesMapping[size],
 });
+
+interface TopicBadgeProps {
+  size?: 'sm' | 'md';
+  topic: TopicLinkDataFragment;
+  onRemove?: () => void;
+  removable?: boolean;
+  clickable?: boolean;
+  colorScheme?: TopicBadgeColorScheme;
+}
 export const TopicBadge: React.FC<TopicBadgeProps> = ({
   topic,
-
   removable,
   onRemove,
   clickable = true,

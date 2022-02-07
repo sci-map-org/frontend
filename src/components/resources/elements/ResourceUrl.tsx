@@ -34,7 +34,8 @@ export const ResourceUrlData = gql`
       consumedAt
     }
     url
-}`
+  }
+`;
 
 export const ResourceUrlLinkWrapper: React.FC<
   {
@@ -44,7 +45,7 @@ export const ResourceUrlLinkWrapper: React.FC<
 > = ({ resource, isLoading, children, ...linkProps }) => {
   const [setResourceOpened] = useSetResourceOpenedMutation({ variables: { resourceId: resource._id } });
   return (
-    <Skeleton as="span" isLoaded={!isLoading}>
+    <Skeleton isLoaded={!isLoading}>
       <Link
         {...linkProps}
         href={resource.url}

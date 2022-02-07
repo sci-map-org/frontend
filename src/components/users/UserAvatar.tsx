@@ -16,8 +16,10 @@ import { forwardRef } from 'react';
 import { CurrentUserDataFragment } from '../../graphql/users/users.fragments.generated';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { UserProfilePageInfo } from '../../pages/RoutesPageInfos';
+import { UserDisplayName } from '../lib/Typography';
 import { PageLink } from '../navigation/InternalLink';
 import { UserAvatarDataFragment } from './UserAvatar.generated';
+import { UserKeyLink } from './UserKeyLink';
 
 export const UserAvatarData = gql`
   fragment UserAvatarData on User {
@@ -50,12 +52,8 @@ export const UserAvatar: React.FC<
               <UserAvatarPicture user={user} isLoading={isLoading} size="sm" />
             </Center>
             <Stack spacing={0}>
-              <PageLink pageInfo={UserProfilePageInfo(user)} fontSize="lg" fontWeight={500}>
-                {user.displayName}
-              </PageLink>
-              <Text fontWeight={600} color="gray.500" fontSize="md">
-                @{user.key}
-              </Text>
+              <UserDisplayName>{user.displayName}</UserDisplayName>
+              <UserKeyLink user={user}>@{user.key}</UserKeyLink>
             </Stack>
           </Flex>
         </PopoverBody>
@@ -78,6 +76,7 @@ const UserAvatarPicture = forwardRef<
       {...avatarProps}
       {...(!!user.profilePictureUrl && { src: user.profilePictureUrl })}
       onClick={() => routerPushToPage(UserProfilePageInfo(user))}
+      color="white"
     />
   );
 });

@@ -36,7 +36,7 @@ export const getBestXPageData = gql`
 
 export const BestXPage: React.FC<{ topicKey: string; x: ResourceType[] }> = ({ topicKey, x }) => {
   const [learningMaterialsOptions, setLearningMaterialsOptions] = useState<TopicLearningMaterialsOptions>({
-    sortingType: TopicLearningMaterialsSortingType.Rating,
+    sortingType: TopicLearningMaterialsSortingType.MostRecommended,
     filter: { completedByUser: false, resourceTypeIn: x, learningMaterialTypeIn: [LearningMaterialType.Resource] },
   });
 

@@ -83,7 +83,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
     useState<TopicPageLearningMaterialsFeedOptions>({
       mainTopicKey: topicKey,
       selectedSubTopicKey: null,
-      sorting: TopicLearningMaterialsSortingType.Rating,
+      sorting: TopicLearningMaterialsSortingType.MostRecommended,
       page: 1,
       typeFilters: {},
       tagsFilters: [],
@@ -94,7 +94,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
     setLearningMaterialsFeedOptions({
       mainTopicKey: topicKey,
       selectedSubTopicKey: null,
-      sorting: TopicLearningMaterialsSortingType.Rating,
+      sorting: TopicLearningMaterialsSortingType.MostRecommended,
       page: 1,
       typeFilters: {},
       tagsFilters: [],
@@ -104,6 +104,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
     loading: learningMaterialsFeedLoading,
     initialLoading: learningMaterialsFeedInitialLoading,
     isReloading: learningMaterialsFeedReloading,
+    isRefetching: learningMaterialsFeedIsRefetching,
     lastSelectedTopic,
     learningMaterials,
     totalPages,
@@ -214,7 +215,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
             totalPages={totalPages}
             isLoading={learningMaterialsFeedLoading}
             initialLoading={learningMaterialsFeedInitialLoading}
-            isReloading={learningMaterialsFeedReloading}
+            isReloading={learningMaterialsFeedReloading || learningMaterialsFeedIsRefetching}
           />
         </Flex>
         <Stack
