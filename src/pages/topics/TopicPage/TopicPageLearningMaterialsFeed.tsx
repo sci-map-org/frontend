@@ -1,23 +1,22 @@
 import { NetworkStatus } from '@apollo/client';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
-import { Box, Button, Divider, Flex, Heading, Stack, Text } from '@chakra-ui/react';
+import { Box, Button, Center, Divider, Flex, Heading, Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { omit, range } from 'lodash';
 import { useMemo, useRef, useState } from 'react';
+import { useUnauthentificatedModal } from '../../../components/auth/UnauthentificatedModal';
 import { LearningPathFeedCard } from '../../../components/learning_paths/LearningPathFeedCard';
+import { ResourceIcon } from '../../../components/lib/icons/ResourceIcon';
 import { PageLink } from '../../../components/navigation/InternalLink';
 import { LearningMaterialPreviewCardList } from '../../../components/resources/LearningMaterialPreviewCardList';
+import { NewResourceModal } from '../../../components/resources/NewResource';
 import { ResourceFeedCard } from '../../../components/resources/ResourceFeedCard';
-import { ResourcePreviewCard } from '../../../components/resources/ResourcePreviewCard';
 import { TopicDescription } from '../../../components/topics/fields/TopicDescription';
 import { TopicSubHeader } from '../../../components/topics/TopicSubHeader';
 import { LearningPathFeedCardData } from '../../../graphql/learning_paths/learning_paths.fragments';
 import { LearningPathFeedCardDataFragment } from '../../../graphql/learning_paths/learning_paths.fragments.generated';
-import { ResourceFeedCardData, ResourcePreviewCardData } from '../../../graphql/resources/resources.fragments';
-import {
-  ResourceFeedCardDataFragment,
-  ResourcePreviewCardDataFragment,
-} from '../../../graphql/resources/resources.fragments.generated';
+import { ResourceFeedCardData } from '../../../graphql/resources/resources.fragments';
+import { ResourceFeedCardDataFragment } from '../../../graphql/resources/resources.fragments.generated';
 import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
 import {
   LearningMaterialType,
@@ -25,6 +24,7 @@ import {
   TopicLearningMaterialsFilterOptions,
   TopicLearningMaterialsSortingType,
 } from '../../../graphql/types';
+import { useCurrentUser } from '../../../graphql/users/users.hooks';
 import { useScroll } from '../../../hooks/useScroll';
 import { TopicPageInfo } from '../../RoutesPageInfos';
 import {
@@ -217,10 +217,6 @@ export const useTopicPageLearningMaterialsFeed = (
           ...data.getTopicByKey.learningMaterialsAvailableTypeFilters,
         });
       }
-      // if (data.getTopicByKey.learningMaterials) {
-      //   setLearningMaterialsTotalCount(data.getTopicByKey.learningMaterials.totalCount);
-      // setLearningMaterialPreviews(data.getTopicByKey.learningMaterials.items);
-      // }
     },
   });
   const lastFetchedData = data?.getTopicByKey || previousData?.getTopicByKey;
@@ -283,11 +279,21 @@ export const TopicPageLearningMaterialsFeed: React.FC<TopicPageLearningMaterials
   initialLoading,
   isReloading,
 }) => {
+  const { currentUser } = useCurrentUser();
+  const { onOpen: onOpenUnauthentificatedModal } = useUnauthentificatedModal();
+
   const scrollRef = useRef<HTMLDivElement>(null);
   const partiallyLoadedSelectedSubTopic =
     selectedSubTopic || subTopics.find((subTopic) => subTopic.key === feedOptions.selectedSubTopicKey) || null;
 
   const { scrollToElement } = useScroll('auto');
+
+  const noFiltersSelected = useMemo(() => {
+    return (
+      !feedOptions.query && !feedOptions.tagsFilters.length && !Object.values(feedOptions.typeFilters).includes(true)
+    );
+  }, [feedOptions.query, feedOptions.tagsFilters, feedOptions.typeFilters]);
+
   return (
     <Stack spacing={5} width="100%" position="relative">
       {!!subTopics.length && (
@@ -350,44 +356,72 @@ export const TopicPageLearningMaterialsFeed: React.FC<TopicPageLearningMaterials
             setFeedOptions({ ...options, page: 1 });
           }}
         />
-        <LearningMaterialPreviewCardList
-          learningMaterialsPreviewItems={learningMaterials.map((learningMaterial) => ({ learningMaterial }))}
-          isLoading={initialLoading}
-          loadingMessage="Finding the most adapted learning resources..."
-          renderCard={({ learningMaterial }, idx) => {
-            if (learningMaterial.__typename === 'Resource')
-              return (
-                <ResourceFeedCard
-                  key={learningMaterial._id}
-                  resource={learningMaterial}
-                  onResourceConsumed={() => console.log('reloading')}
-                  showCompletedNotificationToast={true}
-                  isLoading={isReloading}
-                />
-              );
-            if (learningMaterial.__typename === 'LearningPath')
-              return (
-                <LearningPathFeedCard
-                  learningPath={learningMaterial}
-                  key={learningMaterial._id}
-                  // leftBlockWidth="120px"
-                  // inCompactList
-                  // firstItemInCompactList={idx === 0}
-                  isLoading={isReloading}
-                />
-              );
-          }}
-        />
-        <Flex pt={2}>
-          <Pagination
-            currentPage={feedOptions.page}
-            totalPages={totalPages}
-            setCurrentPage={(page) => {
-              scrollToElement(scrollRef);
-              setFeedOptions({ ...feedOptions, page });
-            }}
-          />
-        </Flex>
+        {!learningMaterials.length && noFiltersSelected ? (
+          <Center py={20} flexDir="column">
+            <Heading size="xl" color="gray.600" mb={8}>
+              No Resources found
+            </Heading>
+            <NewResourceModal
+              defaultResourceCreationData={{
+                showInTopics: [selectedSubTopic || mainTopic],
+              }}
+              // onResourceCreated={() => refetchLearningMaterials()}
+              renderButton={(openModal) => (
+                <Button
+                  leftIcon={<ResourceIcon boxSize={7} />}
+                  variant="solid"
+                  size="lg"
+                  colorScheme="teal"
+                  isDisabled={isLoading}
+                  onClick={() => {
+                    if (!currentUser) return onOpenUnauthentificatedModal();
+                    openModal();
+                  }}
+                >
+                  Add First Resource
+                </Button>
+              )}
+            />
+          </Center>
+        ) : (
+          <>
+            <LearningMaterialPreviewCardList
+              learningMaterialsPreviewItems={learningMaterials.map((learningMaterial) => ({ learningMaterial }))}
+              isLoading={initialLoading}
+              loadingMessage="Finding the most adapted learning resources..."
+              renderCard={({ learningMaterial }, idx) => {
+                if (learningMaterial.__typename === 'Resource')
+                  return (
+                    <ResourceFeedCard
+                      key={learningMaterial._id}
+                      resource={learningMaterial}
+                      onResourceConsumed={() => console.log('reloading')}
+                      showCompletedNotificationToast={true}
+                      isLoading={isReloading}
+                    />
+                  );
+                if (learningMaterial.__typename === 'LearningPath')
+                  return (
+                    <LearningPathFeedCard
+                      learningPath={learningMaterial}
+                      key={learningMaterial._id}
+                      isLoading={isReloading}
+                    />
+                  );
+              }}
+            />
+            <Flex pt={2}>
+              <Pagination
+                currentPage={feedOptions.page}
+                totalPages={totalPages}
+                setCurrentPage={(page) => {
+                  scrollToElement(scrollRef);
+                  setFeedOptions({ ...feedOptions, page });
+                }}
+              />
+            </Flex>
+          </>
+        )}
       </Flex>
     </Stack>
   );
