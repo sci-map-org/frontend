@@ -1,5 +1,7 @@
-import { Box, Flex, SkeletonCircle, Text } from '@chakra-ui/react';
+import { Box, SkeletonCircle, Text } from '@chakra-ui/react';
 import { forwardRef } from 'react';
+import { useCurrentUser } from '../../graphql/users/users.hooks';
+import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import { HeartIcon } from '../lib/icons/HeartIcon';
 import { useRecommendLearningMaterialMutation } from './LearningMaterialRecommendationsViewer.generated';
 
@@ -42,6 +44,8 @@ export const LearningMaterialRecommendButton = forwardRef<
       learningMaterialId: learningMaterialId,
     },
   });
+  const { currentUser } = useCurrentUser();
+  const { onOpen: onOpenUnauthentificatedModal } = useUnauthentificatedModal();
   return (
     <SkeletonCircle
       size={sizesMapping[size].heartBoxSize}
@@ -65,7 +69,10 @@ export const LearningMaterialRecommendButton = forwardRef<
         {...(isDisabled
           ? { cursor: 'not-allowed' }
           : {
-              onClick: () => recommendLearningMaterialMutation(),
+              onClick: () => {
+                if (!currentUser) onOpenUnauthentificatedModal();
+                else recommendLearningMaterialMutation();
+              },
             })}
       >
         <HeartIcon boxSize={sizesMapping[size].heartBoxSize} />

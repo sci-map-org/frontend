@@ -7,7 +7,6 @@ import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickProp
 import { PopHover } from '../lib/PopHover';
 import { TopicBadge } from '../topics/TopicBadge';
 import { LearningMaterialRecommendationsViewer } from './LearningMaterialRecommendationsViewer';
-import { LearningMaterialRecommendationsViewerDataFragment } from './LearningMaterialRecommendationsViewer.generated';
 import { LearningMaterialTag } from './LearningMaterialTag';
 
 interface LearningMaterialFeedCardContainerProps {
