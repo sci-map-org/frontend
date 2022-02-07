@@ -59,8 +59,8 @@ export const resourceTypeToLabel = (type: ResourceType) => type.split('_').map(u
 
 export const ResourceTypeBadge: React.FC<BadgeProps & { type: ResourceType }> = ({ type, ...badgeProps }) => {
   const icon = useMemo(() => {
-    return resourceTypeIconMapping[type] || ResourceIcon;
-  }, [type]); // ?? maybe still show something. Just seeing a "OTHER" badge feels weird though
+    return resourceTypeIconMapping[type] || defaultResourceTypeIcon;
+  }, [type]);
 
   return (
     <LearningMaterialTypeBaseBadge
@@ -92,13 +92,14 @@ export const resourceTypeIconMapping: { [key in ResourceType]?: IconType | typeo
   [ResourceType.VideoGame]: RiGamepadLine,
 };
 
+const defaultResourceTypeIcon = ResourceIcon;
 export const ResourceTypeIcon: React.FC<
   { resourceType: ResourceType; boxSize?: IconProps['boxSize'] } & CenterProps
 > = ({ resourceType, boxSize, ...centerProps }) => {
   const icon = useMemo(() => {
-    return resourceTypeIconMapping[resourceType] || ResourceIcon;
+    return resourceTypeIconMapping[resourceType] || defaultResourceTypeIcon;
   }, [resourceType]);
-  if (!icon) return null;
+
   return (
     <Tooltip label={resourceTypeToLabel(resourceType)} fontSize="sm">
       <Center {...centerProps}>

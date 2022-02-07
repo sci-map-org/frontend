@@ -18,7 +18,7 @@ export const LearningMaterialTypeBadge: React.FC<{ type: LearningMaterialType }>
 
 export const LearningMaterialTypeBaseBadge: React.FC<
   {
-    icon?: IconType | ComponentWithAs<'svg', IconProps>;
+    icon: IconType | ComponentWithAs<'svg', IconProps>;
     name: string;
     color: FlexProps['bgColor'];
   } & Omit<FlexProps, 'color'>
@@ -35,11 +35,10 @@ export const LearningMaterialTypeBaseBadge: React.FC<
       pb="2px"
       opacity={0.96}
     >
-      {icon && (
-        <Center mr="6px">
-          <Icon color="white" as={icon} boxSize="16px" />
-        </Center>
-      )}
+      <Center mr="6px">
+        <Icon color="white" as={icon} boxSize="16px" />
+      </Center>
+
       <Center>
         <Text
           color="white"
