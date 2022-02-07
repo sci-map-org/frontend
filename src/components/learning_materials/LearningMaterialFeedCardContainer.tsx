@@ -85,7 +85,7 @@ export const LearningMaterialFeedCardContainer = forwardRef<HTMLDivElement, Lear
             />
           </BoxBlockDefaultClickPropagation>
         )}
-        <Flex direction="column" alignItems="stretch" flexGrow={1} ml={layout === 'desktop' ? '6px' : '6px'} pt="3px">
+        <Flex direction="column" alignItems="stretch" flexGrow={1} ml="6px" pt="3px">
           <Flex justifyContent="space-between" mb="3px" alignItems="flex-start">
             {renderTitle}
             {renderTopRight}

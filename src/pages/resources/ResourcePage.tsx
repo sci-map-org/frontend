@@ -177,7 +177,6 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
                     <ResourceTypeBadge key={type} type={type} />
                   ))}
                 </Stack>
-                {/* - <ResourceMediaTypeBadge mediaType={resource.mediaType} />{' '} */}
               </Skeleton>
             </Box>
             <Box>
@@ -194,9 +193,9 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
                 <ResourceYoutubePlayer resource={resource} skipThumbnail />
               </Center>
             )}
-            <Center>
+            {/* <Center>
               <LearningMaterialRecommendationsViewer learningMaterial={resource} isLoading={loading} />
-            </Center>
+            </Center> */}
           </Stack>
 
           <Stack spacing={3}>
