@@ -30,6 +30,7 @@ import { OnlineBookIcon } from '../../lib/icons/OnlineBookIcon';
 import { YoutubePlaylistIcon } from '../../lib/icons/YoutubePlaylistIcon';
 import { IconProps } from '@chakra-ui/icons';
 import { LearningMaterialTypeBaseBadge } from '../../learning_materials/LearningMaterialTypeBadge';
+import { ResourceIcon } from '../../lib/icons/ResourceIcon';
 
 export const resourceTypeColorMapping: { [key in ResourceType]: string } = {
   [ResourceType.Article]: 'yellow',
@@ -58,10 +59,8 @@ export const resourceTypeToLabel = (type: ResourceType) => type.split('_').map(u
 
 export const ResourceTypeBadge: React.FC<BadgeProps & { type: ResourceType }> = ({ type, ...badgeProps }) => {
   const icon = useMemo(() => {
-    return resourceTypeIconMapping[type];
-  }, [type]);
-
-  if (!icon) return null; // ?? maybe still show something. Just seeing a "OTHER" badge feels weird though
+    return resourceTypeIconMapping[type] || ResourceIcon;
+  }, [type]); // ?? maybe still show something. Just seeing a "OTHER" badge feels weird though
 
   return (
     <LearningMaterialTypeBaseBadge
@@ -97,7 +96,7 @@ export const ResourceTypeIcon: React.FC<
   { resourceType: ResourceType; boxSize?: IconProps['boxSize'] } & CenterProps
 > = ({ resourceType, boxSize, ...centerProps }) => {
   const icon = useMemo(() => {
-    return resourceTypeIconMapping[resourceType];
+    return resourceTypeIconMapping[resourceType] || ResourceIcon;
   }, [resourceType]);
   if (!icon) return null;
   return (
