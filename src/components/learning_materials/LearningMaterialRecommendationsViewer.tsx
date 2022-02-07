@@ -1,4 +1,4 @@
-import { Center, Flex, Skeleton, SkeletonCircle, Text } from '@chakra-ui/react';
+import { Center, Flex, FlexProps, Skeleton, SkeletonCircle, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { UserAvatarData } from '../users/UserAvatar';
 import { UserAvatarGroup } from '../users/UserAvatarGroup';
@@ -33,50 +33,51 @@ export const recommendLearningMaterial = gql`
 `;
 
 const sizesMapping: {
-  [key in 'sm' | 'md']: {
+  [key in 'sm' | 'md' | 'lg']: {
     recommendedByFontSize: string;
-    skeletonCircleSize: string;
   };
 } = {
   sm: {
-    recommendedByFontSize: '14px',
-    skeletonCircleSize: '44px',
+    recommendedByFontSize: '13px',
   },
   md: {
+    recommendedByFontSize: '14px',
+  },
+  lg: {
     recommendedByFontSize: 'md',
-    skeletonCircleSize: '40',
   },
 };
 
 // TODO: don't load all recommendations, only count
-export const LearningMaterialRecommendationsViewer: React.FC<{
-  learningMaterial: LearningMaterialRecommendationsViewerDataFragment;
-  isLoading: boolean;
-  display?: 'vertical' | 'horizontal';
-  size?: 'md' | 'sm';
-}> = ({ learningMaterial, isLoading, display = 'vertical', size = 'md' }) => {
+export const LearningMaterialRecommendationsViewer: React.FC<
+  {
+    learningMaterial: LearningMaterialRecommendationsViewerDataFragment;
+    isLoading: boolean;
+    display?: 'vertical' | 'horizontal';
+    size?: 'md' | 'sm' | 'lg';
+  } & FlexProps
+> = ({ learningMaterial, isLoading, display = 'vertical', size = 'md', ...props }) => {
   if (typeof learningMaterial.recommendationsCount !== 'number' && !isLoading)
     throw new Error('learningMaterial.recommendationsCount should not be null');
   return (
     <Flex
       direction={display === 'vertical' ? 'column' : 'row'}
       alignItems="stretch"
-      p={1}
       {...(display === 'horizontal' && { spacing: 1 })}
+      {...props}
     >
       <Center>
-        <SkeletonCircle size={sizesMapping[size].skeletonCircleSize} isLoaded={!isLoading}>
-          <LearningMaterialRecommendButton
-            learningMaterialId={learningMaterial._id}
-            isRecommended={!!learningMaterial.recommended}
-            recommendationsTotalCount={
-              typeof learningMaterial.recommendationsCount === 'number'
-                ? learningMaterial.recommendationsCount
-                : undefined
-            }
-            size={size}
-          />
-        </SkeletonCircle>
+        <LearningMaterialRecommendButton
+          learningMaterialId={learningMaterial._id}
+          isRecommended={!!learningMaterial.recommended}
+          recommendationsTotalCount={
+            typeof learningMaterial.recommendationsCount === 'number'
+              ? learningMaterial.recommendationsCount
+              : undefined
+          }
+          isLoading={isLoading}
+          size={size}
+        />
       </Center>
       <Flex
         direction="column"

@@ -229,7 +229,6 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
           flexShrink={0}
         >
           <Stack direction="column" spacing={4} alignItems="flex-end">
-            <Button onClick={() => refetchLearningMaterials()}>Reload</Button>
             <NewResourceModal
               defaultResourceCreationData={{
                 showInTopics: [topic],

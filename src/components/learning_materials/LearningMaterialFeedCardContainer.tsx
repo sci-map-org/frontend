@@ -11,7 +11,7 @@ import { LearningMaterialRecommendationsViewerDataFragment } from './LearningMat
 import { LearningMaterialTag } from './LearningMaterialTag';
 
 interface LearningMaterialFeedCardContainerProps {
-  learningMaterial: LearningMaterialRecommendationsViewerDataFragment;
+  learningMaterial: ResourceFeedCardDataFragment | LearningPathFeedCardDataFragment;
   renderTitle: ReactNode;
   renderTopRight?: ReactNode;
   renderSubTitle: ReactNode;
@@ -19,8 +19,8 @@ interface LearningMaterialFeedCardContainerProps {
   renderPreview?: ReactNode;
   playerIsOpen?: boolean;
   interactionButtons: ReactNode[];
-  renderBottomLeft: ReactNode;
-  renderBottomRight: ReactNode;
+  renderBottomLeft?: ReactNode;
+  renderBottomRight?: ReactNode;
   onClick: () => void;
   isLoading: boolean;
 }
@@ -81,11 +81,12 @@ export const LearningMaterialFeedCardContainer = forwardRef<HTMLDivElement, Lear
               learningMaterial={learningMaterial}
               isLoading={isLoading}
               display="vertical"
-              size="sm"
+              size="md"
+              p={1}
             />
           </BoxBlockDefaultClickPropagation>
         )}
-        <Flex direction="column" alignItems="stretch" flexGrow={1} ml={layout === 'desktop' ? '6px' : 0} pt="3px">
+        <Flex direction="column" alignItems="stretch" flexGrow={1} ml={layout === 'desktop' ? '6px' : '6px'} pt="3px">
           <Flex justifyContent="space-between" mb="3px" alignItems="flex-start">
             {renderTitle}
             {renderTopRight}
@@ -106,7 +107,7 @@ export const LearningMaterialFeedCardContainer = forwardRef<HTMLDivElement, Lear
           <Flex flexGrow={1} />
           <Flex direction="row" alignItems="stretch" mt="3px">
             {layout === 'mobile' && (
-              <BoxBlockDefaultClickPropagation display="flex" justifyContent="center" alignItems="center" p={1}>
+              <BoxBlockDefaultClickPropagation display="flex" justifyContent="center" alignItems="center" pb="2px">
                 <LearningMaterialRecommendationsViewer
                   learningMaterial={learningMaterial}
                   isLoading={isLoading}
@@ -123,8 +124,16 @@ export const LearningMaterialFeedCardContainer = forwardRef<HTMLDivElement, Lear
               flexWrap="wrap"
               ml={layout === 'mobile' ? '3px' : 0}
             >
-              {renderBottomLeft}
-              {renderBottomRight}
+              {renderBottomLeft || (
+                <LearningMaterialFeedCardBottomLeftBar learningMaterial={learningMaterial} isLoading={isLoading} />
+              )}
+              {renderBottomRight || (
+                <LearningMaterialFeedCardBottomRightBar
+                  learningMaterial={learningMaterial}
+                  isLoading={isLoading}
+                  view={layout === 'mobile' ? 'compact' : 'expanded'}
+                />
+              )}
             </Flex>
           </Flex>
         </Flex>
@@ -162,7 +171,8 @@ const MAX_COVERED_SUBTOPICS_DISPLAYED = 2;
 export const LearningMaterialFeedCardBottomRightBar: React.FC<{
   learningMaterial: ResourceFeedCardDataFragment | LearningPathFeedCardDataFragment;
   isLoading?: boolean;
-}> = ({ learningMaterial, isLoading }) => {
+  view?: 'expanded' | 'compact';
+}> = ({ learningMaterial, isLoading, view = 'expanded' }) => {
   return (
     <Skeleton isLoaded={!isLoading}>
       <BoxBlockDefaultClickPropagation>
@@ -170,7 +180,7 @@ export const LearningMaterialFeedCardBottomRightBar: React.FC<{
           {!!learningMaterial.prerequisites?.length && (
             <PopHover
               renderTrigger={
-                <Text fontSize="sm" fontWeight={600} color="gray.400">
+                <Text fontSize="sm" fontWeight={600} color="gray.400" whiteSpace="nowrap">
                   {learningMaterial.prerequisites.length} Prerequisites
                 </Text>
               }
@@ -192,7 +202,11 @@ export const LearningMaterialFeedCardBottomRightBar: React.FC<{
               |
             </Text>
           )}
-          <LearningMaterialCardCoveredSubTopicsViewer learningMaterial={learningMaterial} isLoading={isLoading} />
+          <LearningMaterialCardCoveredSubTopicsViewer
+            learningMaterial={learningMaterial}
+            isLoading={isLoading}
+            view={view}
+          />
         </Stack>
       </BoxBlockDefaultClickPropagation>
     </Skeleton>
@@ -202,44 +216,52 @@ export const LearningMaterialFeedCardBottomRightBar: React.FC<{
 export const LearningMaterialCardCoveredSubTopicsViewer: React.FC<{
   learningMaterial: LearningMaterialWithCoveredTopicsDataFragment;
   isLoading?: boolean;
-}> = ({ learningMaterial, isLoading }) => {
-  return learningMaterial.coveredSubTopics?.items.length ? (
-    <Skeleton isLoaded={!isLoading}>
-      <Stack direction="row" flexWrap="wrap">
-        <Text fontSize="sm" fontWeight={600} color="gray.600" whiteSpace="nowrap">
-          Covered SubTopics:
-        </Text>
-        <Wrap direction="row" spacing={1} alignItems="baseline">
-          {learningMaterial.coveredSubTopics.items.slice(0, MAX_COVERED_SUBTOPICS_DISPLAYED).map((topic) => (
+  view?: 'expanded' | 'compact';
+}> = ({ learningMaterial, isLoading, view = 'expanded' }) => {
+  const renderPopover = (renderTrigger: ReactNode) =>
+    learningMaterial.coveredSubTopics?.items.length ? (
+      <PopHover renderTrigger={renderTrigger} title="Covered SubTopics" maxW="360px" minW="320px" colorScheme="blue">
+        <Wrap justify="center">
+          {learningMaterial.coveredSubTopics.items.map((topic) => (
             <WrapItem key={topic._id}>
-              <TopicBadge topic={topic} size="sm" />
+              <TopicBadge topic={topic} size="md" />
             </WrapItem>
           ))}
-          {learningMaterial.coveredSubTopics.items.length > MAX_COVERED_SUBTOPICS_DISPLAYED && (
-            <WrapItem>
-              <PopHover
-                renderTrigger={
+        </Wrap>
+      </PopHover>
+    ) : null;
+
+  return learningMaterial.coveredSubTopics?.items.length ? (
+    <Skeleton isLoaded={!isLoading}>
+      {view === 'expanded' ? (
+        <Stack direction="row" flexWrap="wrap">
+          <Text fontSize="sm" fontWeight={600} color="gray.600" whiteSpace="nowrap">
+            Covered SubTopics:
+          </Text>
+          <Wrap direction="row" spacing={1} alignItems="baseline">
+            {learningMaterial.coveredSubTopics.items.slice(0, MAX_COVERED_SUBTOPICS_DISPLAYED).map((topic) => (
+              <WrapItem key={topic._id}>
+                <TopicBadge topic={topic} size="sm" />
+              </WrapItem>
+            ))}
+            {learningMaterial.coveredSubTopics.items.length > MAX_COVERED_SUBTOPICS_DISPLAYED && (
+              <WrapItem>
+                {renderPopover(
                   <Text fontWeight={600} color="gray.800" fontSize="sm">
                     ... +{learningMaterial.coveredSubTopics.items.length}
                   </Text>
-                }
-                title="Covered SubTopics"
-                maxW="360px"
-                minW="320px"
-                colorScheme="blue"
-              >
-                <Wrap justify="center">
-                  {learningMaterial.coveredSubTopics.items.map((topic) => (
-                    <WrapItem key={topic._id}>
-                      <TopicBadge topic={topic} size="md" />
-                    </WrapItem>
-                  ))}
-                </Wrap>
-              </PopHover>
-            </WrapItem>
-          )}
-        </Wrap>
-      </Stack>
+                )}
+              </WrapItem>
+            )}
+          </Wrap>
+        </Stack>
+      ) : (
+        renderPopover(
+          <Text fontSize="sm" fontWeight={600} color="gray.600" whiteSpace="nowrap">
+            {learningMaterial.coveredSubTopics.items.length} Covered SubTopics
+          </Text>
+        )
+      )}
     </Skeleton>
   ) : null;
 };

@@ -123,8 +123,6 @@ export const ResourceFeedCard = forwardRef<HTMLDivElement, ResourceFeedCardProps
           )
         }
         playerIsOpen={playerIsOpen}
-        renderBottomLeft={<LearningMaterialFeedCardBottomLeftBar learningMaterial={resource} isLoading={isLoading} />}
-        renderBottomRight={<LearningMaterialFeedCardBottomRightBar learningMaterial={resource} isLoading={isLoading} />}
         onClick={() => !isLoading && routerPushToPage(ResourcePageInfo(resource))}
       />
     );

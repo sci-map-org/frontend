@@ -89,12 +89,6 @@ export const LearningPathFeedCard = forwardRef<HTMLDivElement, LearningPathFeedC
         renderCentralBlock={
           <ResourceDescription description={learningPath.description} noOfLines={3} size="sm" isLoading={isLoading} />
         }
-        renderBottomLeft={
-          <LearningMaterialFeedCardBottomLeftBar learningMaterial={learningPath} isLoading={isLoading} />
-        }
-        renderBottomRight={
-          <LearningMaterialFeedCardBottomRightBar learningMaterial={learningPath} isLoading={isLoading} />
-        }
         onClick={() => !isLoading && routerPushToPage(LearningPathPageInfo(learningPath))}
       />
     );

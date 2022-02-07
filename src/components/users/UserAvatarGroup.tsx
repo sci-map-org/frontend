@@ -9,13 +9,16 @@ import { UserKeyLink } from './UserKeyLink';
 interface UserAvatarGroupProps {
   users: UserAvatarDataFragment[];
   popoverTitle: string;
-  size?: 'sm' | 'md';
+  size?: 'sm' | 'md' | 'lg';
 }
 const sizesMapping = {
   sm: {
-    avatarSize: 'sm',
+    avatarSize: 'xs',
   },
   md: {
+    avatarSize: 'sm',
+  },
+  lg: {
     avatarSize: 'sm',
   },
 };
