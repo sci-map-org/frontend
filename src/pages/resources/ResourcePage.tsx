@@ -193,9 +193,6 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
                 <ResourceYoutubePlayer resource={resource} skipThumbnail />
               </Center>
             )}
-            {/* <Center>
-              <LearningMaterialRecommendationsViewer learningMaterial={resource} isLoading={loading} />
-            </Center> */}
           </Stack>
 
           <Stack spacing={3}>
