@@ -1,8 +1,14 @@
-import { Box, Center, Flex, Stack, useBreakpointValue } from '@chakra-ui/react';
+import { Box, Center, Flex, Skeleton, Stack, Text, useBreakpointValue, Wrap, WrapItem } from '@chakra-ui/react';
 import React, { forwardRef, ReactNode } from 'react';
+import { LearningMaterialWithCoveredTopicsDataFragment } from '../../graphql/learning_materials/learning_materials.fragments.generated';
+import { LearningPathFeedCardDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
+import { ResourceFeedCardDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
+import { PopHover } from '../lib/PopHover';
+import { TopicBadge } from '../topics/TopicBadge';
 import { LearningMaterialRecommendationsViewer } from './LearningMaterialRecommendationsViewer';
 import { LearningMaterialRecommendationsViewerDataFragment } from './LearningMaterialRecommendationsViewer.generated';
+import { LearningMaterialTag } from './LearningMaterialTag';
 
 interface LearningMaterialFeedCardContainerProps {
   learningMaterial: LearningMaterialRecommendationsViewerDataFragment;
@@ -37,10 +43,11 @@ export const LearningMaterialFeedCardContainer = forwardRef<HTMLDivElement, Lear
     },
     ref
   ) => {
-    const layout = useBreakpointValue<'mobile' | 'desktop'>({
+    const responsiveLayout = useBreakpointValue<'mobile' | 'desktop'>({
       base: 'mobile',
       md: 'desktop',
     });
+    const layout = responsiveLayout || 'desktop'; // sometimes responsiveLayout is undefined ?
     return (
       <Flex
         ref={ref}
@@ -99,7 +106,7 @@ export const LearningMaterialFeedCardContainer = forwardRef<HTMLDivElement, Lear
           <Flex flexGrow={1} />
           <Flex direction="row" alignItems="stretch" mt="3px">
             {layout === 'mobile' && (
-              <BoxBlockDefaultClickPropagation>
+              <BoxBlockDefaultClickPropagation display="flex" justifyContent="center" alignItems="center" p={1}>
                 <LearningMaterialRecommendationsViewer
                   learningMaterial={learningMaterial}
                   isLoading={isLoading}
@@ -134,3 +141,105 @@ export const LearningMaterialFeedCardContainer = forwardRef<HTMLDivElement, Lear
     );
   }
 );
+
+export const LearningMaterialFeedCardBottomLeftBar: React.FC<{
+  learningMaterial: ResourceFeedCardDataFragment | LearningPathFeedCardDataFragment;
+  isLoading?: boolean;
+}> = ({ learningMaterial, isLoading }) => {
+  return learningMaterial.tags ? (
+    <Skeleton isLoaded={!isLoading}>
+      <Stack direction="row">
+        {learningMaterial.tags.map((tag) => (
+          <LearningMaterialTag key={tag.name} tagName={tag.name} size="sm" />
+        ))}
+      </Stack>
+    </Skeleton>
+  ) : null;
+};
+
+const MAX_COVERED_SUBTOPICS_DISPLAYED = 2;
+
+export const LearningMaterialFeedCardBottomRightBar: React.FC<{
+  learningMaterial: ResourceFeedCardDataFragment | LearningPathFeedCardDataFragment;
+  isLoading?: boolean;
+}> = ({ learningMaterial, isLoading }) => {
+  return (
+    <Skeleton isLoaded={!isLoading}>
+      <BoxBlockDefaultClickPropagation>
+        <Stack direction="row">
+          {!!learningMaterial.prerequisites?.length && (
+            <PopHover
+              renderTrigger={
+                <Text fontSize="sm" fontWeight={600} color="gray.400">
+                  {learningMaterial.prerequisites.length} Prerequisites
+                </Text>
+              }
+              title="Prerequisites"
+              colorScheme="blue"
+            >
+              <Wrap justify="center">
+                {learningMaterial.prerequisites.map(({ topic }) => (
+                  <WrapItem key={topic._id}>
+                    <TopicBadge topic={topic} size="md" />
+                  </WrapItem>
+                ))}
+              </Wrap>
+            </PopHover>
+          )}
+
+          {!!learningMaterial.prerequisites?.length && !!learningMaterial.coveredSubTopics?.items.length && (
+            <Text fontSize="sm" fontWeight={600} color="gray.400">
+              |
+            </Text>
+          )}
+          <LearningMaterialCardCoveredSubTopicsViewer learningMaterial={learningMaterial} isLoading={isLoading} />
+        </Stack>
+      </BoxBlockDefaultClickPropagation>
+    </Skeleton>
+  );
+};
+
+export const LearningMaterialCardCoveredSubTopicsViewer: React.FC<{
+  learningMaterial: LearningMaterialWithCoveredTopicsDataFragment;
+  isLoading?: boolean;
+}> = ({ learningMaterial, isLoading }) => {
+  return learningMaterial.coveredSubTopics?.items.length ? (
+    <Skeleton isLoaded={!isLoading}>
+      <Stack direction="row" flexWrap="wrap">
+        <Text fontSize="sm" fontWeight={600} color="gray.600" whiteSpace="nowrap">
+          Covered SubTopics:
+        </Text>
+        <Wrap direction="row" spacing={1} alignItems="baseline">
+          {learningMaterial.coveredSubTopics.items.slice(0, MAX_COVERED_SUBTOPICS_DISPLAYED).map((topic) => (
+            <WrapItem key={topic._id}>
+              <TopicBadge topic={topic} size="sm" />
+            </WrapItem>
+          ))}
+          {learningMaterial.coveredSubTopics.items.length > MAX_COVERED_SUBTOPICS_DISPLAYED && (
+            <WrapItem>
+              <PopHover
+                renderTrigger={
+                  <Text fontWeight={600} color="gray.800" fontSize="sm">
+                    ... +{learningMaterial.coveredSubTopics.items.length}
+                  </Text>
+                }
+                title="Covered SubTopics"
+                maxW="360px"
+                minW="320px"
+                colorScheme="blue"
+              >
+                <Wrap justify="center">
+                  {learningMaterial.coveredSubTopics.items.map((topic) => (
+                    <WrapItem key={topic._id}>
+                      <TopicBadge topic={topic} size="md" />
+                    </WrapItem>
+                  ))}
+                </Wrap>
+              </PopHover>
+            </WrapItem>
+          )}
+        </Wrap>
+      </Stack>
+    </Skeleton>
+  ) : null;
+};

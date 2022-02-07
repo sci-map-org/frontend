@@ -29,6 +29,7 @@ import { InfographicIcon } from '../../lib/icons/InfographicIcon';
 import { OnlineBookIcon } from '../../lib/icons/OnlineBookIcon';
 import { YoutubePlaylistIcon } from '../../lib/icons/YoutubePlaylistIcon';
 import { IconProps } from '@chakra-ui/icons';
+import { LearningMaterialTypeBaseBadge } from '../../learning_materials/LearningMaterialTypeBadge';
 
 export const resourceTypeColorMapping: { [key in ResourceType]: string } = {
   [ResourceType.Article]: 'yellow',
@@ -55,44 +56,20 @@ export const resourceTypeColorMapping: { [key in ResourceType]: string } = {
 
 export const resourceTypeToLabel = (type: ResourceType) => type.split('_').map(upperFirst).join(' ');
 
-//ItemRenderer in DomainRecommendedLearningMaterials copies this style. TODO: refactor
 export const ResourceTypeBadge: React.FC<BadgeProps & { type: ResourceType }> = ({ type, ...badgeProps }) => {
   const icon = useMemo(() => {
     return resourceTypeIconMapping[type];
   }, [type]);
 
-  if (!icon) return null;
+  if (!icon) return null; // ?? maybe still show something. Just seeing a "OTHER" badge feels weird though
 
   return (
-    <Flex
-      bgColor={`${resourceTypeColorMapping[type]}.400`}
+    <LearningMaterialTypeBaseBadge
+      name={resourceTypeToLabel(type)}
+      icon={icon}
+      color={resourceTypeColorMapping[type]}
       {...badgeProps}
-      direction="row"
-      alignItems="stretch"
-      borderRadius={3}
-      px="4px"
-      pt="2px"
-      pb="2px"
-      opacity={0.96}
-    >
-      <Center>
-        <Icon color="white" as={icon} boxSize="16px" />
-      </Center>
-      <Center>
-        <Text
-          ml="6px"
-          color="white"
-          fontWeight={400}
-          textTransform="uppercase"
-          letterSpacing="0.11em"
-          fontSize="14px"
-          lineHeight="14px"
-          height="14px"
-        >
-          {resourceTypeToLabel(type)}
-        </Text>
-      </Center>
-    </Flex>
+    />
   );
 };
 

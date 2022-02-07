@@ -4,17 +4,15 @@ import { Box, Button, Divider, Flex, Heading, Stack, Text } from '@chakra-ui/rea
 import gql from 'graphql-tag';
 import { omit, range } from 'lodash';
 import { useMemo, useRef, useState } from 'react';
-import {
-  LearningPathPreviewCard,
-  LearningPathPreviewCardData,
-} from '../../../components/learning_paths/LearningPathPreviewCard';
-import { LearningPathPreviewCardDataFragment } from '../../../components/learning_paths/LearningPathPreviewCard.generated';
+import { LearningPathFeedCard } from '../../../components/learning_paths/LearningPathFeedCard';
 import { PageLink } from '../../../components/navigation/InternalLink';
 import { LearningMaterialPreviewCardList } from '../../../components/resources/LearningMaterialPreviewCardList';
 import { ResourceFeedCard } from '../../../components/resources/ResourceFeedCard';
 import { ResourcePreviewCard } from '../../../components/resources/ResourcePreviewCard';
 import { TopicDescription } from '../../../components/topics/fields/TopicDescription';
 import { TopicSubHeader } from '../../../components/topics/TopicSubHeader';
+import { LearningPathFeedCardData } from '../../../graphql/learning_paths/learning_paths.fragments';
+import { LearningPathFeedCardDataFragment } from '../../../graphql/learning_paths/learning_paths.fragments.generated';
 import { ResourceFeedCardData, ResourcePreviewCardData } from '../../../graphql/resources/resources.fragments';
 import {
   ResourceFeedCardDataFragment,
@@ -48,7 +46,7 @@ export const getTopicRecommendedLearningMaterials = gql`
       learningMaterials(options: $learningMaterialsOptions) {
         items {
           ...ResourceFeedCardData
-          ...LearningPathPreviewCardData
+          ...LearningPathFeedCardData
         }
         totalCount
         availableTagFilters {
@@ -66,7 +64,7 @@ export const getTopicRecommendedLearningMaterials = gql`
     }
   }
   ${ResourceFeedCardData}
-  ${LearningPathPreviewCardData}
+  ${LearningPathFeedCardData}
   ${SubTopicFilterData}
 `;
 
@@ -165,7 +163,7 @@ export const useTopicPageLearningMaterialsFeed = (
   feedAvailableFilters?: FeedAvailableFilters;
   totalPages: number;
   lastSelectedTopic: SubTopicFilterDataFragment | null;
-  learningMaterials: Array<ResourceFeedCardDataFragment | LearningPathPreviewCardDataFragment>;
+  learningMaterials: Array<ResourceFeedCardDataFragment | LearningPathFeedCardDataFragment>;
   loading: boolean;
   initialLoading: boolean;
   isReloading: boolean;
@@ -262,7 +260,7 @@ interface TopicPageLearningMaterialsFeedProps {
   subTopics: TopicLinkDataFragment[];
   mainTopic: TopicLinkDataFragment;
   selectedSubTopic: SubTopicFilterDataFragment | null;
-  learningMaterials: Array<ResourceFeedCardDataFragment | LearningPathPreviewCardDataFragment>;
+  learningMaterials: Array<ResourceFeedCardDataFragment | LearningPathFeedCardDataFragment>;
   totalPages: number;
   feedAvailableFilters?: FeedAvailableFilters;
   feedOptions: TopicPageLearningMaterialsFeedOptions;
@@ -369,12 +367,12 @@ export const TopicPageLearningMaterialsFeed: React.FC<TopicPageLearningMaterials
               );
             if (learningMaterial.__typename === 'LearningPath')
               return (
-                <LearningPathPreviewCard
+                <LearningPathFeedCard
                   learningPath={learningMaterial}
                   key={learningMaterial._id}
-                  leftBlockWidth="120px"
-                  inCompactList
-                  firstItemInCompactList={idx === 0}
+                  // leftBlockWidth="120px"
+                  // inCompactList
+                  // firstItemInCompactList={idx === 0}
                   isLoading={isReloading}
                 />
               );

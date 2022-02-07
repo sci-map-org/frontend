@@ -33,7 +33,11 @@ import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { EditResourcePageInfo, ResourcePageInfo } from '../../pages/RoutesPageInfos';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
-import { LearningMaterialFeedCardContainer } from '../learning_materials/LearningMaterialFeedCardContainer';
+import {
+  LearningMaterialFeedCardBottomLeftBar,
+  LearningMaterialFeedCardBottomRightBar,
+  LearningMaterialFeedCardContainer,
+} from '../learning_materials/LearningMaterialFeedCardContainer';
 import { LearningMaterialCardCoveredTopics } from '../learning_materials/LearningMaterialPreviewCardContainer';
 import { LearningMaterialRecommendButton } from '../learning_materials/LearningMaterialRecommendButton';
 import { LearningMaterialTag } from '../learning_materials/LearningMaterialTag';
@@ -119,8 +123,8 @@ export const ResourceFeedCard = forwardRef<HTMLDivElement, ResourceFeedCardProps
           )
         }
         playerIsOpen={playerIsOpen}
-        renderBottomLeft={<BottomLeftBar resource={resource} isLoading={isLoading} />}
-        renderBottomRight={<BottomRightBar resource={resource} isLoading={isLoading} />}
+        renderBottomLeft={<LearningMaterialFeedCardBottomLeftBar learningMaterial={resource} isLoading={isLoading} />}
+        renderBottomRight={<LearningMaterialFeedCardBottomRightBar learningMaterial={resource} isLoading={isLoading} />}
         onClick={() => !isLoading && routerPushToPage(ResourcePageInfo(resource))}
       />
     );
@@ -171,141 +175,6 @@ const SubTitle: React.FC<{ resource: ResourceFeedCardDataFragment; isLoading: bo
           </Flex>
         </Flex> */
 }
-
-const BottomLeftBar: React.FC<{ resource: ResourceFeedCardDataFragment; isLoading?: boolean }> = ({
-  resource,
-  isLoading,
-}) => {
-  return resource.tags ? (
-    <Skeleton isLoaded={!isLoading}>
-      <Stack direction="row">
-        {resource.tags.map((tag) => (
-          <LearningMaterialTag key={tag.name} tagName={tag.name} size="sm" />
-        ))}
-      </Stack>
-    </Skeleton>
-  ) : null;
-};
-
-const MAX_COVERED_SUBTOPICS_DISPLAYED = 2;
-const BottomRightBar: React.FC<{ resource: ResourceFeedCardDataFragment; isLoading?: boolean }> = ({
-  resource,
-  isLoading,
-}) => {
-  return (
-    <Skeleton isLoaded={!isLoading}>
-      <BoxBlockDefaultClickPropagation>
-        <Stack direction="row">
-          {!!resource.prerequisites?.length && (
-            <PopHover
-              renderTrigger={
-                <Text fontSize="sm" fontWeight={600} color="gray.400">
-                  {resource.prerequisites.length} Prerequisites
-                </Text>
-              }
-              title="Prerequisites"
-              colorScheme="blue"
-            >
-              <Wrap justify="center">
-                {resource.prerequisites.map(({ topic }) => (
-                  <WrapItem key={topic._id}>
-                    <TopicBadge topic={topic} size="md" />
-                  </WrapItem>
-                ))}
-              </Wrap>
-            </PopHover>
-          )}
-
-          {!!resource.prerequisites?.length && !!resource.coveredSubTopics?.items.length && (
-            <Text fontSize="sm" fontWeight={600} color="gray.400">
-              |
-            </Text>
-          )}
-          {!!resource.coveredSubTopics?.items.length && (
-            <Stack direction="row">
-              <Text fontSize="sm" fontWeight={600} color="gray.600">
-                Covered SubTopics:
-              </Text>
-              <Wrap direction="row" spacing={1} alignItems="baseline">
-                {resource.coveredSubTopics.items.slice(0, MAX_COVERED_SUBTOPICS_DISPLAYED).map((topic) => (
-                  <WrapItem key={topic._id}>
-                    <TopicBadge topic={topic} size="sm" />
-                  </WrapItem>
-                ))}
-                {resource.coveredSubTopics.items.length > MAX_COVERED_SUBTOPICS_DISPLAYED && (
-                  <WrapItem>
-                    <PopHover
-                      renderTrigger={
-                        <Text fontWeight={600} color="gray.800" fontSize="sm">
-                          ... +{resource.coveredSubTopics.items.length}
-                        </Text>
-                      }
-                      title="Covered SubTopics"
-                      maxW="360px"
-                      minW="320px"
-                      colorScheme="blue"
-                    >
-                      <Wrap justify="center">
-                        {resource.coveredSubTopics.items.map((topic) => (
-                          <WrapItem key={topic._id}>
-                            <TopicBadge topic={topic} size="md" />
-                          </WrapItem>
-                        ))}
-                      </Wrap>
-                    </PopHover>
-                  </WrapItem>
-                )}
-              </Wrap>
-            </Stack>
-          )}
-        </Stack>
-      </BoxBlockDefaultClickPropagation>
-    </Skeleton>
-  );
-};
-
-const MainContentBlock: React.FC<{
-  resource: ResourcePreviewCardDataFragment;
-  isLoading?: boolean;
-  expandByDefault?: boolean;
-}> = ({ resource, isLoading, expandByDefault }) => {
-  const { isOpen, onOpen, onClose, onToggle } = useDisclosure();
-  const showPlayer = isOpen || expandByDefault;
-  const thumbnailHeight = 80;
-  return (
-    <Flex
-      direction={showPlayer ? 'column-reverse' : 'row'}
-      justifyContent={showPlayer ? 'start' : 'space-between'}
-      alignItems="stretch"
-    >
-      <Box>
-        <ResourceDescription
-          description={resource.description}
-          noOfLines={showPlayer ? undefined : 2}
-          isLoading={isLoading}
-        />
-      </Box>
-      {intersection(resource.types, [ResourceType.YoutubeVideo, ResourceType.YoutubePlaylist]).length > 0 && (
-        <Box display="flex" justifyContent="center">
-          <BoxBlockDefaultClickPropagation
-            mt={showPlayer ? 0 : '-26px'}
-            {...(!showPlayer && { h: thumbnailHeight + 'px' })}
-            onClick={onOpen}
-            mx={showPlayer ? 0 : 4}
-            mb={showPlayer ? 3 : 0}
-          >
-            <ResourceYoutubePlayer
-              resource={resource}
-              playing={isOpen}
-              skipThumbnail={expandByDefault}
-              {...(!showPlayer && { h: thumbnailHeight + 'px', w: (16 / 9) * thumbnailHeight + 'px' })}
-            />
-          </BoxBlockDefaultClickPropagation>
-        </Box>
-      )}
-    </Flex>
-  );
-};
 
 const TitleLink: React.FC<{ resource: ResourceFeedCardDataFragment; isLoading: boolean }> = ({
   resource,
@@ -405,36 +274,5 @@ const SubResourcesButtonPopover: React.FC<{
         </PopoverBody>
       </PopoverContent>
     </Popover>
-  );
-};
-
-const RightBlock: React.FC<{
-  resource: ResourcePreviewCardDataFragment;
-  isLoading?: boolean;
-  onResourceConsumed?: (resourceId: string, consumed: boolean) => void;
-}> = ({ resource, isLoading }) => {
-  const { currentUser } = useCurrentUser();
-  const unauthentificatedModalDisclosure = useUnauthentificatedModal();
-  return (
-    <Flex direction="row">
-      {/* <BoxBlockDefaultClickPropagation alignSelf="center" justifySelf="center" ml="32px" mr="4px">
-        <ResourceUpvoter resource={resource} isLoading={isLoading} />
-      </BoxBlockDefaultClickPropagation> */}
-      <BoxBlockDefaultClickPropagation>
-        <IconButton
-          m={1}
-          aria-label="edit resource"
-          color="gray.600"
-          size="xs"
-          icon={<EditIcon />}
-          variant="ghost"
-          onClick={() => {
-            if (!currentUser) return unauthentificatedModalDisclosure.onOpen();
-            routerPushToPage(EditResourcePageInfo(resource));
-          }}
-          isDisabled={isLoading}
-        />
-      </BoxBlockDefaultClickPropagation>
-    </Flex>
   );
 };

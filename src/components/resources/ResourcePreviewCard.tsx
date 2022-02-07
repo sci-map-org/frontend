@@ -31,6 +31,7 @@ import { routerPushToPage } from '../../pages/PageInfo';
 import { EditResourcePageInfo, ResourcePageInfo } from '../../pages/RoutesPageInfos';
 import { RoleAccess } from '../auth/RoleAccess';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
+import { LearningMaterialCardCoveredSubTopicsViewer } from '../learning_materials/LearningMaterialFeedCardContainer';
 import {
   LearningMaterialCardContainer,
   LearningMaterialCardCoveredTopics,
@@ -46,7 +47,7 @@ import { InternalLink } from '../navigation/InternalLink';
 import { DurationViewer } from './elements/Duration';
 import { ResourceCompletedCheckbox } from './elements/ResourceCompletedCheckbox';
 import { ResourceDescription } from './elements/ResourceDescription';
-import { ResourceTypeIcon } from './elements/ResourceType';
+import { ResourceTypeBadge, ResourceTypeIcon } from './elements/ResourceType';
 import { ResourceUrlLinkViewer, ResourceUrlLinkWrapper } from './elements/ResourceUrl';
 import { ResourceYoutubePlayer } from './elements/ResourceYoutubePlayer';
 
@@ -87,6 +88,7 @@ export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCar
             isLoading={isLoading}
             onResourceConsumed={onResourceConsumed}
             showCompletedNotificationToast={showCompletedNotificationToast}
+            uncheckedColor="gray.300"
           />
         }
         leftBlockWidth={leftBlockWidth}
@@ -106,14 +108,14 @@ export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCar
             </Flex>
             <Skeleton isLoaded={!isLoading}>
               <Stack direction="row" spacing={1} alignItems="center">
-                {/* 24px so that height doesn't change when rater appears */}
-                <Stack spacing={1} direction="row" alignItems="center">
-                  {resource.types.map((type) => (
-                    <ResourceTypeIcon key={type} resourceType={type} boxSize="20px" my="3px" />
-                  ))}
-                  <StarsRatingViewer value={resource.rating} pxSize={15} />
-                  <DurationViewer value={resource.durationSeconds} />
-                </Stack>
+                <Skeleton isLoaded={!isLoading}>
+                  <Stack spacing={1} direction="row" alignItems="center">
+                    {resource.types.map((type) => (
+                      <ResourceTypeBadge key={type} type={type} />
+                    ))}
+                    <DurationViewer value={resource.durationSeconds} />
+                  </Stack>
+                </Skeleton>
                 <RoleAccess accessRule="loggedInUser">
                   <BoxBlockDefaultClickPropagation>
                     <LearningMaterialStarsRater learningMaterial={resource} size="xs" />
@@ -200,7 +202,7 @@ const BottomBlock: React.FC<{
 }> = ({ resource, isLoading }) => {
   const { currentUser } = useCurrentUser();
   return (
-    <Flex pb={2} pt={2} flexWrap="wrap">
+    <Flex pb={1} pt={2} flexWrap="wrap">
       <BoxBlockDefaultClickPropagation display="flex" alignItems="center">
         <EditableLearningMaterialTags learningMaterial={resource} isLoading={isLoading} isDisabled={!currentUser} />
       </BoxBlockDefaultClickPropagation>
@@ -225,14 +227,8 @@ const BottomBlock: React.FC<{
           )}
         </Stack>
       </BoxBlockDefaultClickPropagation>
-      <Flex flexShrink={0} direction="column" justifyContent="center">
-        {!!resource.coveredSubTopics?.items && (
-          <Skeleton isLoaded={!isLoading}>
-            <BoxBlockDefaultClickPropagation>
-              <LearningMaterialCardCoveredTopics learningMaterial={resource} editable />
-            </BoxBlockDefaultClickPropagation>
-          </Skeleton>
-        )}
+      <Flex flexShrink={0} direction="column" justifyContent="center" px={1}>
+        <LearningMaterialCardCoveredSubTopicsViewer learningMaterial={resource} isLoading={isLoading} />
       </Flex>
     </Flex>
   );

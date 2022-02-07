@@ -1,5 +1,7 @@
 import gql from 'graphql-tag';
+import { LearningMaterialRecommendationsViewerData } from '../../components/learning_materials/LearningMaterialRecommendationsViewer';
 import { ResourcePreviewCardData } from '../resources/resources.fragments';
+import { TopicLinkData } from '../topics/topics.fragments';
 import { LearningPathDataFragment } from './learning_paths.fragments.generated';
 
 export const LearningPathData = gql`
@@ -43,3 +45,45 @@ export const generateLearningPathData = (): LearningPathDataFragment => ({
   Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.`,
   public: false,
 });
+
+export const LearningPathFeedCardData = gql`
+  fragment LearningPathFeedCardData on LearningPath {
+    _id
+    key
+    name
+    # types
+    # url
+    description
+    durationSeconds
+    tags {
+      name
+    }
+    started {
+      startedAt
+      completedAt
+    }
+    ...LearningMaterialRecommendationsViewerData
+    coveredSubTopics(options: {}) {
+      items {
+        ...TopicLinkData
+      }
+    }
+    prerequisites {
+      topic {
+        ...TopicLinkData
+      }
+    }
+    # rating
+    # subResourceSeries {
+    #   _id
+    #   name
+    # }
+    # subResources {
+    #   _id
+    #   name
+    # }
+    createdAt
+  }
+  ${TopicLinkData}
+  ${LearningMaterialRecommendationsViewerData}
+`;

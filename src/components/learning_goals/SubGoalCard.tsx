@@ -177,7 +177,8 @@ export const LearningGoalSubGoalCard: React.FC<LearningGoalSubGoalCardProps> = (
             {!mouseHover && learningGoal.description && (
               <ResourceDescription
                 color={subGoalStatusStyleMapping.fontColor[status]}
-                fontSize={getChakraRelativeSize(size, -1)}
+                // size={getChakraRelativeSize(size, -1)}
+                size="sm"
                 description={learningGoal.description}
                 noOfLines={2}
               />
