@@ -51,8 +51,6 @@ export const LearningPathFeedCardData = gql`
     _id
     key
     name
-    # types
-    # url
     description
     durationSeconds
     tags {
@@ -73,15 +71,6 @@ export const LearningPathFeedCardData = gql`
         ...TopicLinkData
       }
     }
-    # rating
-    # subResourceSeries {
-    #   _id
-    #   name
-    # }
-    # subResources {
-    #   _id
-    #   name
-    # }
     createdAt
   }
   ${TopicLinkData}

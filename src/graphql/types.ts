@@ -1098,7 +1098,6 @@ export enum PulledDescriptionSourceName {
 
 export type Query = {
   __typename?: 'Query';
-  Resource: Resource;
   analyzeResourceUrl: AnalyzeResourceUrlResult;
   autocompleteTopicName: SearchTopicsResult;
   checkLearningGoalKeyAvailability: CheckLearningGoalKeyAvailabilityResult;
@@ -1127,11 +1126,6 @@ export type Query = {
   searchSubTopics: SearchTopicsResult;
   searchTopicTypes: Array<TopicType>;
   searchTopics: SearchTopicsResult;
-};
-
-
-export type QueryResourceArgs = {
-  id: Scalars['String'];
 };
 
 

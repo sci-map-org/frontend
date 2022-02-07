@@ -70,7 +70,6 @@ export const ResourceFeedCardData = gql`
         ...TopicLinkData
       }
     }
-    # rating
     subResourceSeries {
       _id
       name
