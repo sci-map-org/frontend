@@ -1590,8 +1590,8 @@ export type TopicLearningMaterialsResults = {
 };
 
 export enum TopicLearningMaterialsSortingType {
-  Newest = 'newest',
-  Rating = 'rating'
+  MostRecommended = 'most_recommended',
+  Newest = 'newest'
 }
 
 export type TopicType = {

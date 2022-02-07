@@ -111,7 +111,7 @@ export const LearningMaterialsFilters: React.FC<LearningMaterialFiltersProps> = 
               value={feedOptions.sorting}
             >
               {/* <option value={TopicLearningMaterialsSortingType.Recommended}>Most Relevant</option> */}
-              <option value={TopicLearningMaterialsSortingType.Rating}>Highest Rating</option>
+              <option value={TopicLearningMaterialsSortingType.MostRecommended}>Most Recommended</option>
               <option value={TopicLearningMaterialsSortingType.Newest}>Newest First</option>
             </Select>
           </FormControl>
