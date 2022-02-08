@@ -19,7 +19,7 @@ import { debounce, intersection, xor } from 'lodash';
 import { DependencyList, useCallback, useEffect, useRef, useState } from 'react';
 import BeatLoader from 'react-spinners/BeatLoader';
 import { useDebounce } from 'use-debounce';
-import { LearningMaterialTagBase } from '../../../components/learning_materials/LearningMaterialTag';
+import { LearningMaterialTagBase } from '../../../components/learning_materials/LearningMaterialTagViewer';
 import { ResourceType, TopicLearningMaterialsSortingType } from '../../../graphql/types';
 import { theme } from '../../../theme/theme';
 import { FeedAvailableFilters, TopicPageLearningMaterialsFeedOptions } from './TopicPageLearningMaterialsFeed';

@@ -26,7 +26,6 @@ export const LearningMaterialTypeBaseBadge: React.FC<
   return (
     <Flex
       bgColor={`${color}.400`}
-      {...props}
       direction="row"
       alignItems="stretch"
       borderRadius={3}
@@ -34,6 +33,7 @@ export const LearningMaterialTypeBaseBadge: React.FC<
       pt="2px"
       pb="2px"
       opacity={0.96}
+      {...props}
     >
       <Center mr="6px">
         <Icon color="white" as={icon} boxSize="16px" />

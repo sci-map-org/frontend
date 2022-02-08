@@ -7,7 +7,7 @@ import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickProp
 import { PopHover } from '../lib/PopHover';
 import { TopicBadge } from '../topics/TopicBadge';
 import { LearningMaterialRecommendationsViewer } from './LearningMaterialRecommendationsViewer';
-import { LearningMaterialTag } from './LearningMaterialTag';
+import { LearningMaterialTagViewer } from './LearningMaterialTagViewer';
 
 interface LearningMaterialFeedCardContainerProps {
   learningMaterial: ResourceFeedCardDataFragment | LearningPathFeedCardDataFragment;
@@ -158,7 +158,7 @@ export const LearningMaterialFeedCardBottomLeftBar: React.FC<{
     <Skeleton isLoaded={!isLoading}>
       <Stack direction="row">
         {learningMaterial.tags.map((tag) => (
-          <LearningMaterialTag key={tag.name} tagName={tag.name} size="sm" />
+          <LearningMaterialTagViewer key={tag.name} tagName={tag.name} size="sm" />
         ))}
       </Stack>
     </Skeleton>

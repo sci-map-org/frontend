@@ -1,7 +1,7 @@
 import { IconProps, Icon } from '@chakra-ui/react';
 
 export const InfographicIcon: typeof Icon = (props: Omit<IconProps, 'css'>) => (
-  <Icon viewBox="15 15 70 70" {...props}>
+  <Icon viewBox="15 15 70 70" {...props} fill="currentcolor">
     <path d="M62.5,81h-26C29.056,81,23,74.944,23,67.5v-34C23,26.056,29.056,20,36.5,20h26C69.944,20,76,26.056,76,33.5v34  C76,74.944,69.944,81,62.5,81z M36.5,23C30.71,23,26,27.71,26,33.5v34C26,73.29,30.71,78,36.5,78h26C68.29,78,73,73.29,73,67.5v-34  C73,27.71,68.29,23,62.5,23H36.5z" />
     <circle cx="39.833" cy="37.88" r="5.833" />
     <path d="M63,37H52c-0.553,0-1-0.448-1-1s0.447-1,1-1h11c0.553,0,1,0.448,1,1S63.553,37,63,37z" />

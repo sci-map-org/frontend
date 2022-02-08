@@ -214,17 +214,3 @@ export const EditableDuration: React.FC<EditableDurationProps> = ({
     </Skeleton>
   );
 };
-
-export const DurationFormField: React.FC<{
-  value?: number | null;
-  onChange: (durationSeconds: number | null) => void;
-}> = ({ value, onChange }) => {
-  return (
-    <FormControl display="flex" alignItems="baseline">
-      <FormLabel htmlFor="duration" whiteSpace="nowrap">
-        Estimated Duration
-      </FormLabel>
-      <DurationInput w="200px" value={value} onChange={onChange} />
-    </FormControl>
-  );
-};

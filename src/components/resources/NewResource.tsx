@@ -1,9 +1,10 @@
 import { CloseIcon, EditIcon } from '@chakra-ui/icons';
 import {
+  Box,
   Button,
+  Center,
   Flex,
-  FormControl,
-  FormLabel,
+  FormErrorMessage,
   IconButton,
   Input,
   Modal,
@@ -11,7 +12,6 @@ import {
   ModalCloseButton,
   ModalContent,
   ModalFooter,
-  ModalHeader,
   ModalOverlay,
   Stack,
   Text,
@@ -30,47 +30,26 @@ import {
   CreateSubResourcePayload,
   LearningMaterialTag,
   ResourceMediaType,
-  ResourceType,
 } from '../../graphql/types';
 import { validateUrl } from '../../services/url.service';
 import { StatelessEditableLearningMaterialCoveredTopics } from '../learning_materials/EditableLearningMaterialCoveredTopics';
 import { StatelessEditableLearningMaterialPrerequisites } from '../learning_materials/EditableLearningMaterialPrerequisites';
-import { LearningMaterialTagsStatelessEditor } from '../learning_materials/LearningMaterialTagsEditor';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { FormButtons } from '../lib/buttons/FormButtons';
+import { CollapsedField } from '../lib/fields/CollapsedField';
+import { Field } from '../lib/fields/Field';
 import { TopicLink } from '../lib/links/TopicLink';
-import { FormFieldLabel } from '../lib/Typography';
+import { FormTitle } from '../lib/Typography';
 import { TopicBadge } from '../topics/TopicBadge';
-import { DurationFormField, DurationViewer } from './elements/Duration';
+import { DurationViewer } from './elements/Duration';
 import { ResourceDescriptionInput } from './elements/ResourceDescription';
-import { ResourceMediaTypeSelector } from './elements/ResourceMediaType';
-import { ResourceTypeBadge, ResourceTypeSelector } from './elements/ResourceType';
+import { ResourceTypeBadge } from './elements/ResourceType';
 import { ResourceUrlInput } from './elements/ResourceUrl';
+import { LearningMaterialDurationField } from './fields/LearningMaterialDurationField';
+import { LearningMaterialTagsField } from './fields/LearningMaterialTagsField';
+import { ResourceTypeField } from './fields/ResourceTypeField';
 import { useCreateResourceMutation } from './NewResource.generated';
 import { ResourceListBasicLayout } from './ResourceList';
-
-const typeToMediaTypeMapping: { [key in ResourceType]: ResourceMediaType | null } = {
-  [ResourceType.Article]: ResourceMediaType.Text,
-  [ResourceType.ArticleSeries]: ResourceMediaType.Text,
-  [ResourceType.Course]: ResourceMediaType.Video,
-  [ResourceType.Podcast]: ResourceMediaType.Audio,
-  [ResourceType.PodcastEpisode]: ResourceMediaType.Audio,
-  [ResourceType.Other]: null,
-  [ResourceType.OnlineBook]: ResourceMediaType.Text,
-  [ResourceType.Book]: ResourceMediaType.Text,
-  [ResourceType.ResearchPaper]: ResourceMediaType.Text,
-  [ResourceType.Documentary]: ResourceMediaType.Video,
-  [ResourceType.Tweet]: ResourceMediaType.Text,
-  [ResourceType.Talk]: ResourceMediaType.Video,
-  [ResourceType.Infographic]: ResourceMediaType.Image,
-  [ResourceType.Website]: null,
-  [ResourceType.YoutubeVideo]: ResourceMediaType.Video,
-  [ResourceType.YoutubePlaylist]: ResourceMediaType.Video,
-  [ResourceType.VideoGame]: ResourceMediaType.InteractiveContent,
-  [ResourceType.Exercise]: null,
-  [ResourceType.Project]: ResourceMediaType.Text,
-  // [ResourceType.Quizz]: ResourceMediaType.InteractiveContent,
-};
 
 type SubResourceCreationData = Omit<
   CreateResourcePayload,
@@ -115,139 +94,160 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
   resourceCreationData,
   updateResourceCreationData,
 }) => {
+  const { isOpen: prerequisitesFieldIsOpen, onToggle: prerequisitesFieldOnToggle } = useDisclosure();
+  const { isOpen: coveredSubTopicsFieldIsOpen, onToggle: coveredSubTopicsFieldOnToggle } = useDisclosure();
   return (
-    <Stack spacing={4}>
-      <FormControl isRequired>
-        <FormLabel htmlFor="title">Title</FormLabel>
-        <Input
-          placeholder="Title"
-          size="md"
-          id="title"
-          value={resourceCreationData.name}
-          onChange={(e) => updateResourceCreationData({ name: e.target.value })}
-        ></Input>
-      </FormControl>
-      <ResourceUrlInput
-        value={resourceCreationData.url}
-        onChange={(url) => updateResourceCreationData({ url })}
-        analyze
-        onAnalyzed={({ resourceData: analyzedResourceData }) => {
-          if (analyzedResourceData) {
-            updateResourceCreationData({
-              ...(!!analyzedResourceData.name && !resourceCreationData.name && { name: analyzedResourceData.name }),
-              ...(!!analyzedResourceData.types && { types: analyzedResourceData.types }),
-              ...(!!analyzedResourceData.mediaType && { mediaType: analyzedResourceData.mediaType }),
-              ...(!!analyzedResourceData.description &&
-                !resourceCreationData.description && { description: analyzedResourceData.description }),
-              ...(!!analyzedResourceData.durationSeconds && { durationSeconds: analyzedResourceData.durationSeconds }),
-              showInTopics: [],
-              prerequisites: [],
-              coveredSubTopics: [],
-              ...(!!analyzedResourceData.subResourceSeries && {
-                subResourceSeries: analyzedResourceData.subResourceSeries.map((sub) => ({
-                  ...pick(sub, ['name', 'url', 'types', 'mediaType', 'durationSeconds']),
-                  tags: [],
-                  description: sub.description || undefined,
-                  prerequisites: [],
-                  coveredSubTopics: [],
-                  showInTopics: [],
-                })),
-              }),
-            });
-          }
-        }}
-      />
-      <Flex flexDirection="row" justifyContent="space-between">
-        {/* 
-        TODO
-        <ResourceTypeSelector
-          value={resourceCreationData.type}
-          onSelect={(t) => {
-            const inferredMediaType = typeToMediaTypeMapping[t];
-            updateResourceCreationData({
-              type: t,
-              ...(!!inferredMediaType && { mediaType: inferredMediaType }),
-            });
-          }}
-        /> */}
-      </Flex>
-      <LearningMaterialTagsStatelessEditor
-        selectedTags={resourceCreationData.tags}
-        setSelectedTags={(tags) => !!tags && updateResourceCreationData({ tags })}
-      />
-      <Flex direction="row" alignItems="center" justifyContent="space-between">
-        <ResourceMediaTypeSelector
-          value={resourceCreationData.mediaType}
-          onSelect={(t) => updateResourceCreationData({ mediaType: t })}
+    <Flex direction="column" w="100%">
+      <Stack spacing={10} alignItems="stretch">
+        <Center>
+          <Field
+            label="Resource Url"
+            // isInvalid={!!formErrors.name && showFormErrors}
+            w="500px"
+          >
+            <ResourceUrlInput
+              value={resourceCreationData.url}
+              onChange={(url) => updateResourceCreationData({ url })}
+              analyze
+              onAnalyzed={({ resourceData: analyzedResourceData }) => {
+                if (analyzedResourceData) {
+                  updateResourceCreationData({
+                    ...(!!analyzedResourceData.name &&
+                      !resourceCreationData.name && { name: analyzedResourceData.name }),
+                    ...(!!analyzedResourceData.types && { types: analyzedResourceData.types }),
+                    ...(!!analyzedResourceData.mediaType && { mediaType: analyzedResourceData.mediaType }),
+                    ...(!!analyzedResourceData.description &&
+                      !resourceCreationData.description && { description: analyzedResourceData.description }),
+                    ...(!!analyzedResourceData.durationSeconds && {
+                      durationSeconds: analyzedResourceData.durationSeconds,
+                    }),
+                    showInTopics: [],
+                    prerequisites: [],
+                    coveredSubTopics: [],
+                    ...(!!analyzedResourceData.subResourceSeries && {
+                      subResourceSeries: analyzedResourceData.subResourceSeries.map((sub) => ({
+                        ...pick(sub, ['name', 'url', 'types', 'mediaType', 'durationSeconds']),
+                        tags: [],
+                        description: sub.description || undefined,
+                        prerequisites: [],
+                        coveredSubTopics: [],
+                        showInTopics: [],
+                      })),
+                    }),
+                  });
+                }
+              }}
+            />
+            <FormErrorMessage>Topic Name is required</FormErrorMessage>
+          </Field>
+        </Center>
+        <Center>
+          <Field label="Title" w="500px">
+            <Input
+              placeholder="Title"
+              size="md"
+              id="title"
+              value={resourceCreationData.name}
+              onChange={(e) => updateResourceCreationData({ name: e.target.value })}
+            ></Input>
+          </Field>
+        </Center>
+        <Field label="Description">
+          <ResourceDescriptionInput
+            value={resourceCreationData.description}
+            onChange={(d) => updateResourceCreationData({ description: d })}
+          />
+        </Field>
+        <ResourceTypeField
+          value={resourceCreationData.types}
+          onChange={(types) => updateResourceCreationData({ types })}
+          // isInvalid={!!formErrors.topicTypes && showFormErrors}
         />
-        <DurationFormField
-          value={resourceCreationData.durationSeconds}
-          onChange={(durationSeconds) => updateResourceCreationData({ durationSeconds })}
+        <LearningMaterialTagsField
+          value={resourceCreationData.tags}
+          onChange={(tags) => updateResourceCreationData({ tags })}
         />
-      </Flex>
-      <ResourceDescriptionInput
-        value={resourceCreationData.description}
-        onChange={(d) => updateResourceCreationData({ description: d })}
-      />
-      <Stack direction="column" spacing={0} py={3}>
-        <FormFieldLabel>Show In:</FormFieldLabel>
-        <Stack pl={3}>
-          {resourceCreationData.showInTopics.map((showedInTopic) => (
-            <TopicLink key={showedInTopic._id} topic={showedInTopic} />
-          ))}
-        </Stack>
+        {/* {showFormErrors && formHasErrors && (
+          <Stack>
+            {Object.keys(formErrors).map((formErrorKey) => (
+              <Alert key={formErrorKey} status="error">
+                <AlertIcon />
+                {formErrors[formErrorKey]}
+              </Alert>
+            ))}
+          </Stack>
+        )} */}
+        <Flex justifyContent="space-between" flexDir="row">
+          <Box w="45%">
+            <Field label="Show In">
+              <Stack pl={3}>
+                {resourceCreationData.showInTopics.map((showedInTopic) => (
+                  <TopicLink key={showedInTopic._id} topic={showedInTopic} />
+                ))}
+              </Stack>
+            </Field>
+          </Box>
+          <Box w="45%">
+            <LearningMaterialDurationField
+              value={resourceCreationData.durationSeconds}
+              onChange={(durationSeconds) => updateResourceCreationData({ durationSeconds })}
+            />
+          </Box>
+        </Flex>
+        <Flex justifyContent="space-between" direction="row">
+          <Box w="45%">
+            <CollapsedField
+              label="Select Prerequisites"
+              alignLabel="left"
+              isOpen={prerequisitesFieldIsOpen}
+              onToggle={prerequisitesFieldOnToggle}
+              // isInvalid={!!formErrors.key && showFormErrors} TODO
+            >
+              <StatelessEditableLearningMaterialPrerequisites
+                editable={true}
+                prerequisites={resourceCreationData.prerequisites}
+                onAdded={(topic) =>
+                  updateResourceCreationData({
+                    prerequisites: [...resourceCreationData.prerequisites, topic],
+                  })
+                }
+                onRemove={(topicId) => {
+                  updateResourceCreationData({
+                    prerequisites: resourceCreationData.prerequisites.filter(
+                      (prerequisite) => prerequisite._id !== topicId
+                    ),
+                  });
+                }}
+              />
+            </CollapsedField>
+          </Box>
+          <Box w="45%">
+            <CollapsedField
+              label="Select SubTopics covered by this Resource"
+              alignLabel="left"
+              isOpen={coveredSubTopicsFieldIsOpen}
+              onToggle={coveredSubTopicsFieldOnToggle}
+              // isInvalid={!!formErrors.key && showFormErrors} TODO
+            >
+              <StatelessEditableLearningMaterialCoveredTopics
+                editable={true}
+                coveredTopics={resourceCreationData.coveredSubTopics}
+                onAdded={(topic) =>
+                  updateResourceCreationData({ coveredSubTopics: [...resourceCreationData.coveredSubTopics, topic] })
+                }
+                onRemove={(topicId) =>
+                  updateResourceCreationData({
+                    coveredSubTopics: resourceCreationData.coveredSubTopics.filter(
+                      (coveredTopic) => coveredTopic._id !== topicId
+                    ),
+                  })
+                }
+              />
+            </CollapsedField>
+          </Box>
+        </Flex>
       </Stack>
-      <Flex direction="row">
-        <Flex w="50%">
-          <StatelessEditableLearningMaterialCoveredTopics
-            editable={true}
-            coveredTopics={resourceCreationData.coveredSubTopics}
-            onAdded={(topic) =>
-              updateResourceCreationData({ coveredSubTopics: [...resourceCreationData.coveredSubTopics, topic] })
-            }
-            onRemove={(topicId) =>
-              updateResourceCreationData({
-                coveredSubTopics: resourceCreationData.coveredSubTopics.filter(
-                  (coveredTopic) => coveredTopic._id !== topicId
-                ),
-              })
-            }
-          />
-        </Flex>
-        <Flex w="50%">
-          <StatelessEditableLearningMaterialPrerequisites
-            editable={true}
-            prerequisites={resourceCreationData.prerequisites}
-            onAdded={(topic) =>
-              updateResourceCreationData({
-                prerequisites: [...resourceCreationData.prerequisites, topic],
-              })
-            }
-            onRemove={(topicId) => {
-              updateResourceCreationData({
-                prerequisites: resourceCreationData.prerequisites.filter(
-                  (prerequisite) => prerequisite._id !== topicId
-                ),
-              });
-            }}
-          />
-          {/* <StatelessEditableLearningMaterialOutcomes
-            editable={true}
-            learningGoalsOutcomes={resourceCreationData.outcomes}
-            onAdded={(learningGoal) =>
-              updateResourceCreationData({
-                outcomes: [...resourceCreationData.outcomes, learningGoal],
-              })
-            }
-            onRemove={(learningGoalId) => {
-              updateResourceCreationData({
-                outcomes: resourceCreationData.outcomes.filter((outcome) => outcome._id !== learningGoalId),
-              });
-            }}
-          /> */}
-        </Flex>
-      </Flex>
-    </Stack>
+    </Flex>
   );
 };
 
@@ -261,7 +261,7 @@ interface NewResourceFormProps {
 const defaultResourceData: ResourceCreationData = {
   name: '',
   mediaType: ResourceMediaType.Text,
-  types: [ResourceType.Article],
+  types: [],
   url: '',
   durationSeconds: null,
   tags: [],
@@ -289,7 +289,30 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
     setIsValid(!!resourceCreationData.name && !!resourceCreationData.url && validateUrl(resourceCreationData.url));
   }, [resourceCreationData.name, resourceCreationData.url]);
   return (
-    <Stack spacing={4}>
+    <Stack spacing={16}>
+      <Center pt={16}>
+        <FormTitle position="relative" zIndex={1} textAlign="center">
+          {!!defaultResourceCreationData?.showInTopics?.length ? (
+            <>
+              Add Resource to{' '}
+              <Text fontWeight={500} color="gray.300">
+                {defaultResourceCreationData?.showInTopics[0].name}
+              </Text>
+            </>
+          ) : (
+            'New Resource'
+          )}
+          {/* <Image
+            position="absolute"
+            src="/images/topostain_pin_add_topic.svg"
+            w="300px"
+            maxW="300px"
+            right="-250px"
+            top="-100px"
+            zIndex={0}
+          /> */}
+        </FormTitle>
+      </Center>
       <StatelessNewResourceForm
         resourceCreationData={resourceCreationData}
         updateResourceCreationData={(newData) =>
@@ -352,10 +375,9 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
             )}
           />
           {typeof selectedSubResourceIndex !== 'undefined' && (
-            <Modal onClose={onClose} size="xl" isOpen={isOpen}>
+            <Modal onClose={onClose} size="4xl" isOpen={isOpen}>
               <ModalOverlay>
                 <ModalContent>
-                  <ModalHeader>New SubResource</ModalHeader>
                   <ModalCloseButton />
                   <ModalBody pb={5}>
                     <StatelessNewResourceForm
@@ -385,6 +407,7 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
       )}
       <FormButtons
         isPrimaryDisabled={!isValid}
+        primaryText="Add Resource"
         isPrimaryLoading={isCreating}
         onCancel={onCancel}
         size="lg"
@@ -448,7 +471,6 @@ export const NewResourceModal: React.FC<{ renderButton: (onClick: () => void) =>
       <Modal onClose={onClose} size="5xl" isOpen={isOpen}>
         <ModalOverlay>
           <ModalContent>
-            <ModalHeader>Create new Resource</ModalHeader>
             <ModalCloseButton />
             <ModalBody pb={5}>
               <NewResource

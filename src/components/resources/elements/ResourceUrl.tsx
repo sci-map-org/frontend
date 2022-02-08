@@ -112,41 +112,38 @@ export const ResourceUrlInput: React.FC<ResourceUrlInputProps> = ({ value, onCha
     if (!!value && analyze && isValidUrl) analyzeResourceUrl({ variables: { url: value } });
   }, [value]);
   return (
-    <FormControl isRequired>
-      <FormLabel htmlFor="url">Url</FormLabel>
-      <InputGroup>
-        <Input
-          id="url"
-          isInvalid={!!value && !isValidUrl}
-          placeholder="https://example.com"
-          size="md"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-        ></Input>
-        <InputRightElement w="auto" display="flex" justifyContent="center">
-          <Stack direction="row" align="center" mr={2}>
-            {loading && <BeatLoader size={8} margin={2} color={theme.colors.main} />}
+    <InputGroup>
+      <Input
+        id="url"
+        isInvalid={!!value && !isValidUrl}
+        placeholder="https://example.com"
+        size="md"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      ></Input>
+      <InputRightElement w="auto" display="flex" justifyContent="center">
+        <Stack direction="row" align="center" mr={2}>
+          {loading && <BeatLoader size={8} margin={2} color={theme.colors.main} />}
 
-            {value && (
-              <Link
-                href={value}
-                isExternal
-                onClick={(e) => {
-                  if (!isValidUrl) e.preventDefault(); // Not good for accessibility. Refactor to entirely remove link
-                }}
-              >
-                <IconButton
-                  isDisabled={!isValidUrl}
-                  size="xs"
-                  aria-label="Open link"
-                  color={isValidUrl ? 'green.400' : 'red.400'}
-                  icon={<ExternalLinkIcon />}
-                />
-              </Link>
-            )}
-          </Stack>
-        </InputRightElement>
-      </InputGroup>
-    </FormControl>
+          {value && (
+            <Link
+              href={value}
+              isExternal
+              onClick={(e) => {
+                if (!isValidUrl) e.preventDefault(); // Not good for accessibility. Refactor to entirely remove link
+              }}
+            >
+              <IconButton
+                isDisabled={!isValidUrl}
+                size="xs"
+                aria-label="Open link"
+                color={isValidUrl ? 'green.400' : 'red.400'}
+                icon={<ExternalLinkIcon />}
+              />
+            </Link>
+          )}
+        </Stack>
+      </InputRightElement>
+    </InputGroup>
   );
 };

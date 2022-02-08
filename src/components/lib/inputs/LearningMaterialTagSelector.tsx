@@ -97,7 +97,15 @@ export const LearningMaterialTagSelector: React.FC<LearningMaterialTagSelectorPr
         )}
         getSuggestionValue={(suggestion) => suggestion.name}
         renderInputComponent={(inputProps: any) => (
-          <Input size={size} isDisabled={isDisabled} variant="flushed" {...inputProps} />
+          <Input
+            size={size}
+            isDisabled={isDisabled}
+            variant="outline"
+            {...inputProps}
+            borderRadius={8}
+            borderColor="gray.400"
+            _hover={{}}
+          />
         )}
       />
     </Box>

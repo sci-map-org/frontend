@@ -41,7 +41,7 @@ export const ResourceDescriptionInput: React.FC<{
       <Textarea
         isInvalid={!(!maxLength || (!!value && value.length <= maxLength))}
         id="description"
-        placeholder="Description (optional)"
+        placeholder="Write a description of this resource"
         size="md"
         value={value}
         onChange={(e) => onChange(e.target.value || undefined)}
