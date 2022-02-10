@@ -2,6 +2,7 @@ import { EditIcon, QuestionIcon } from '@chakra-ui/icons';
 import {
   Flex,
   FormControl,
+  FormHelperText,
   FormLabel,
   IconButton,
   Input,
@@ -13,12 +14,15 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import humanizeDuration from 'humanize-duration';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
+const durationToHumanReadable = (value: number) =>
+  humanizeDuration(value * 1000, { largest: 2, units: ['w', 'd', 'h', 'm', 's'], round: true });
 
 export const DurationViewer: React.FC<{ value?: number | null }> = ({ value }) => {
   return value ? (
     <Text fontSize="sm" color="gray.400" mb={0}>
-      ~ {humanizeDuration(value * 1000, { largest: 2, units: ['h', 'm'], round: true })}
+      ~ {durationToHumanReadable(value)}
     </Text>
   ) : null;
 };
@@ -31,9 +35,17 @@ export const DurationInput: React.FC<
   } & Omit<InputProps, 'value' | 'onChange'>
 > = ({ value, onChange, autoFocus, size, w, ...inputProps }) => {
   const [duration, setDuration] = useState(convertFromValue(value, 's'));
+
   const [isValid, setIsValid] = useState(true);
   const [showTooltip, setShowTooltip] = useState(false);
   let inputRef = useRef<HTMLInputElement>(null);
+
+  const syncValue = useMemo(() => {
+    const v = convertDurationToValue(duration);
+    if (v === null || !isNaN(v)) return v;
+    return null;
+  }, [duration]);
+
   useEffect(() => {
     const { current } = inputRef;
     // autoFocus
@@ -71,36 +83,43 @@ export const DurationInput: React.FC<
   );
 
   return (
-    <InputGroup size={size} w={w}>
-      <Input
-        ref={inputRef}
-        isInvalid={!isValid}
-        id="duration"
-        placeholder="1h 30m"
-        onKeyPress={(e) => {
-          if (e.key === 'Enter') onBlur(e);
-        }}
-        value={duration}
-        onChange={onInputChange}
-        onBlur={onBlur}
-        {...inputProps}
-      />
+    <FormControl position="relative">
+      <InputGroup size={size} w={w}>
+        <Input
+          ref={inputRef}
+          isInvalid={!isValid}
+          id="duration"
+          placeholder="e.g. 1h 30m"
+          onKeyPress={(e) => {
+            if (e.key === 'Enter') onBlur(e);
+          }}
+          value={duration}
+          onChange={onInputChange}
+          onBlur={onBlur}
+          {...inputProps}
+        />
 
-      <InputRightElement>
-        <Tooltip
-          isOpen={showTooltip}
-          hasArrow
-          aria-label="format: #w #d #h #m #s"
-          label="Please use the following format: #w #d #h #m #s"
-          placement="top"
-          {...(!isValid && { bg: 'red.500' })}
-          onOpen={() => setShowTooltip(true)}
-          onClose={() => setShowTooltip(false)}
-        >
-          <QuestionIcon color={isValid ? 'grey.700' : 'red.500'} />
-        </Tooltip>
-      </InputRightElement>
-    </InputGroup>
+        <InputRightElement>
+          <Tooltip
+            isOpen={showTooltip}
+            hasArrow
+            aria-label="format: #w #d #h #m #s"
+            label="Please use the following format: #w #d #h #m #s"
+            placement="top"
+            {...(!isValid && { bg: 'red.500' })}
+            onOpen={() => setShowTooltip(true)}
+            onClose={() => setShowTooltip(false)}
+          >
+            <QuestionIcon color={isValid ? 'grey.700' : 'red.500'} />
+          </Tooltip>
+        </InputRightElement>
+      </InputGroup>
+      {syncValue && (
+        <FormHelperText position="absolute" bottom={-5} left={2}>
+          {durationToHumanReadable(syncValue)}
+        </FormHelperText>
+      )}
+    </FormControl>
   );
 };
 export const SCALE_CONVERSIONS = {

@@ -146,7 +146,6 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
             <Input
               placeholder="Title"
               size="md"
-              id="title"
               value={resourceCreationData.name}
               onChange={(e) => updateResourceCreationData({ name: e.target.value })}
             ></Input>
