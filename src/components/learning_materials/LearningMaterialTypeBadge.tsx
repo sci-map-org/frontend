@@ -1,5 +1,5 @@
 import { Icon, IconProps } from '@chakra-ui/icons';
-import { Center, ComponentWithAs, Flex, FlexProps, Text } from '@chakra-ui/react';
+import { BadgeProps, Center, ComponentWithAs, Flex, FlexProps, Text } from '@chakra-ui/react';
 import { IconType } from '@react-icons/all-files/lib';
 import React from 'react';
 import { ResourceType } from '../../graphql/types';
@@ -7,6 +7,20 @@ import { LearningPathIcon } from '../lib/icons/LearningPathIcon';
 import { ResourceTypeBadge } from '../resources/elements/ResourceType';
 
 export type LearningMaterialType = ResourceType | 'LearningPath';
+
+export type LearningMaterialTypeBadgeColor = 'yellow' | 'orange' | 'teal' | 'blue' | 'red' | 'darkGray' | 'lightGray';
+
+const badgeColorToCssColorMapping: {
+  [key in LearningMaterialTypeBadgeColor]: BadgeProps['color'];
+} = {
+  yellow: 'yellow.400',
+  orange: 'orange.400',
+  teal: 'teal.400',
+  blue: 'blue.400',
+  red: 'red.400',
+  darkGray: 'gray.700',
+  lightGray: 'gray.500',
+};
 
 export const LearningMaterialTypeBadge: React.FC<{ type: LearningMaterialType }> = ({ type }) => {
   return type === 'LearningPath' ? (
@@ -20,12 +34,12 @@ export const LearningMaterialTypeBaseBadge: React.FC<
   {
     icon: IconType | ComponentWithAs<'svg', IconProps>;
     name: string;
-    color: FlexProps['bgColor'];
+    color: LearningMaterialTypeBadgeColor;
   } & Omit<FlexProps, 'color'>
 > = ({ icon, name, color, ...props }) => {
   return (
     <Flex
-      bgColor={`${color}.400`}
+      bgColor={badgeColorToCssColorMapping[color]}
       direction="row"
       alignItems="stretch"
       borderRadius={3}

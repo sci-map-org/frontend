@@ -43,6 +43,7 @@ export const ResourceDescriptionInput: React.FC<{
       size="md"
       value={value}
       onChange={(e) => onChange(e.target.value || undefined)}
+      minH="180px"
     ></Textarea>
   );
 };

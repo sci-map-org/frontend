@@ -191,7 +191,7 @@ export const LearningMaterialsFilters: React.FC<LearningMaterialFiltersProps> = 
             isSelected={feedOptions.typeFilters.Short}
             isDisabled={feedAvailableFilters && feedAvailableFilters.leq30minCount === 0}
           >
-            Short<Text as="span" fontSize="sm">{`(<30min)`}</Text>
+            Short <Text as="span" fontSize="sm">{`(<30min)`}</Text>
           </LearningMaterialFilterItem>
         </WrapItem>
         <WrapItem>
@@ -201,7 +201,7 @@ export const LearningMaterialsFilters: React.FC<LearningMaterialFiltersProps> = 
             isSelected={feedOptions.typeFilters.Long}
             isDisabled={feedAvailableFilters && feedAvailableFilters.geq30minCount === 0}
           >
-            Long<Text as="span" fontSize="sm">{`(>30min)`}</Text>
+            Long <Text as="span" fontSize="sm">{`(>30min)`}</Text>
           </LearningMaterialFilterItem>
         </WrapItem>
 

@@ -27,6 +27,7 @@ export const LearningMaterialTagsField: React.FC<{
   return (
     <Field
       label="Tags"
+      helperText="What makes this resource great?"
       // isInvalid={isInvalid}
       renderRightOfLabel={
         !!value.length && (
@@ -47,7 +48,7 @@ export const LearningMaterialTagsField: React.FC<{
         )
       }
     >
-      <Wrap spacing={4} align="center">
+      <Wrap spacing={4} align="center" pt={1}>
         {/* {uniq([...LearningMaterialTagsSuggestions, ...value]) */}
         {LearningMaterialTagsSuggestions.filter((suggestion) => !value?.find((v) => v.name === suggestion.name)).map(
           (tag) => (

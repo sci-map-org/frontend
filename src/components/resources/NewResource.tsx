@@ -5,8 +5,10 @@ import {
   Center,
   Flex,
   FormErrorMessage,
+  Heading,
   IconButton,
   Input,
+  Link,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -16,12 +18,13 @@ import {
   Stack,
   Text,
   useDisclosure,
+  useOutsideClick,
   Wrap,
   WrapItem,
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
-import { omit, pick } from 'lodash';
-import React, { ReactElement, useEffect, useState } from 'react';
+import { omit, pick, uniq, uniqBy } from 'lodash';
+import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import { ResourceData } from '../../graphql/resources/resources.fragments';
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
@@ -39,14 +42,17 @@ import { FormButtons } from '../lib/buttons/FormButtons';
 import { CollapsedField } from '../lib/fields/CollapsedField';
 import { Field } from '../lib/fields/Field';
 import { TopicLink } from '../lib/links/TopicLink';
-import { FormTitle } from '../lib/Typography';
+import { EditLinkStyleProps, FormTitle } from '../lib/Typography';
 import { TopicBadge } from '../topics/TopicBadge';
+import { TopicSelector } from '../topics/TopicSelector';
 import { DurationViewer } from './elements/Duration';
 import { ResourceDescriptionInput } from './elements/ResourceDescription';
 import { ResourceTypeBadge } from './elements/ResourceType';
 import { ResourceUrlInput } from './elements/ResourceUrl';
 import { LearningMaterialDurationField } from './fields/LearningMaterialDurationField';
 import { LearningMaterialTagsField } from './fields/LearningMaterialTagsField';
+import { ResourceCoveredSubTopicsField } from './fields/ResourceCoveredSubTopicsField';
+import { ResourcePrerequisitesField } from './fields/ResourcePrerequisitesField';
 import { ResourceTypeField } from './fields/ResourceTypeField';
 import { useCreateResourceMutation } from './NewResource.generated';
 import { ResourceListBasicLayout } from './ResourceList';
@@ -96,6 +102,19 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
 }) => {
   const { isOpen: prerequisitesFieldIsOpen, onToggle: prerequisitesFieldOnToggle } = useDisclosure();
   const { isOpen: coveredSubTopicsFieldIsOpen, onToggle: coveredSubTopicsFieldOnToggle } = useDisclosure();
+
+  const [editShowedInTopics, setEditShowedInTopics] = useState(false);
+
+  const showedInTopicFieldRef = useRef<HTMLDivElement>(null);
+
+  useOutsideClick({
+    ref: showedInTopicFieldRef,
+    handler: () => {
+      setEditShowedInTopics(false);
+    },
+    enabled: !!editShowedInTopics,
+  });
+
   return (
     <Flex direction="column" w="100%">
       <Stack spacing={10} alignItems="stretch">
@@ -180,9 +199,50 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
           <Box w="45%">
             <Field label="Show In">
               <Stack pl={3}>
-                {resourceCreationData.showInTopics.map((showedInTopic) => (
-                  <TopicLink key={showedInTopic._id} topic={showedInTopic} />
-                ))}
+                {editShowedInTopics ? (
+                  <Stack ref={showedInTopicFieldRef} w="80%">
+                    {resourceCreationData.showInTopics.map((showedInTopic) => (
+                      <Stack direction="row" alignItems="center">
+                        <IconButton
+                          size="xs"
+                          variant="icon"
+                          icon={<CloseIcon />}
+                          aria-label="Remove"
+                          onClick={() =>
+                            updateResourceCreationData({
+                              showInTopics: resourceCreationData.showInTopics.filter(
+                                (showInTopic) => showInTopic._id !== showedInTopic._id
+                              ),
+                            })
+                          }
+                        />
+                        <Heading color="gray.400" fontSize="20px">
+                          {showedInTopic.name}
+                        </Heading>
+                      </Stack>
+                    ))}
+                    <TopicSelector
+                      placeholder="Select a Topic..."
+                      onSelect={(selectedTopic) => {
+                        updateResourceCreationData({
+                          showInTopics: uniqBy(resourceCreationData.showInTopics.concat([selectedTopic]), '_id'),
+                        });
+                        setEditShowedInTopics(false);
+                      }}
+                    />
+                  </Stack>
+                ) : (
+                  resourceCreationData.showInTopics.map((showedInTopic) => (
+                    <Stack direction="row" alignItems="baseline">
+                      <Heading color="gray.400" fontSize="20px">
+                        {showedInTopic.name}
+                      </Heading>
+                      <Link {...EditLinkStyleProps} mb="8px" onClick={() => setEditShowedInTopics(true)} ml="2px">
+                        (change)
+                      </Link>
+                    </Stack>
+                  ))
+                )}
               </Stack>
             </Field>
           </Box>
@@ -202,21 +262,20 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
               onToggle={prerequisitesFieldOnToggle}
               // isInvalid={!!formErrors.key && showFormErrors} TODO
             >
-              <StatelessEditableLearningMaterialPrerequisites
-                editable={true}
+              <ResourcePrerequisitesField
                 prerequisites={resourceCreationData.prerequisites}
-                onAdded={(topic) =>
+                onAdded={(prereq) =>
                   updateResourceCreationData({
-                    prerequisites: [...resourceCreationData.prerequisites, topic],
+                    prerequisites: uniqBy([...resourceCreationData.prerequisites, prereq], '_id'),
                   })
                 }
-                onRemove={(topicId) => {
+                onRemove={(prereqIdToRemove) =>
                   updateResourceCreationData({
                     prerequisites: resourceCreationData.prerequisites.filter(
-                      (prerequisite) => prerequisite._id !== topicId
+                      (prereq) => prereq._id !== prereqIdToRemove
                     ),
-                  });
-                }}
+                  })
+                }
               />
             </CollapsedField>
           </Box>
@@ -228,9 +287,9 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
               onToggle={coveredSubTopicsFieldOnToggle}
               // isInvalid={!!formErrors.key && showFormErrors} TODO
             >
-              <StatelessEditableLearningMaterialCoveredTopics
-                editable={true}
-                coveredTopics={resourceCreationData.coveredSubTopics}
+              <ResourceCoveredSubTopicsField
+                showedInTopics={resourceCreationData.showInTopics}
+                coveredSubTopics={resourceCreationData.coveredSubTopics}
                 onAdded={(topic) =>
                   updateResourceCreationData({ coveredSubTopics: [...resourceCreationData.coveredSubTopics, topic] })
                 }
@@ -294,7 +353,7 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
           {!!defaultResourceCreationData?.showInTopics?.length ? (
             <>
               Add Resource to{' '}
-              <Text fontWeight={500} color="gray.300">
+              <Text fontWeight={500} color="gray.400">
                 {defaultResourceCreationData?.showInTopics[0].name}
               </Text>
             </>

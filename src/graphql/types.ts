@@ -1246,7 +1246,7 @@ export type QuerySearchResourcesArgs = {
 
 export type QuerySearchSubTopicsArgs = {
   options: SearchTopicsOptions;
-  topicId: Scalars['String'];
+  topicIds: Array<Scalars['String']>;
 };
 
 
