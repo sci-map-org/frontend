@@ -140,9 +140,6 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
                     ...(!!analyzedResourceData.durationSeconds && {
                       durationSeconds: analyzedResourceData.durationSeconds,
                     }),
-                    showInTopics: [],
-                    prerequisites: [],
-                    coveredSubTopics: [],
                     ...(!!analyzedResourceData.subResourceSeries && {
                       subResourceSeries: analyzedResourceData.subResourceSeries.map((sub) => ({
                         ...pick(sub, ['name', 'url', 'types', 'mediaType', 'durationSeconds']),
