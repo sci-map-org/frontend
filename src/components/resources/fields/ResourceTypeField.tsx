@@ -5,7 +5,7 @@ import { ResourceType } from '../../../graphql/types';
 import { Field } from '../../lib/fields/Field';
 import { ResourceTypeBadge } from '../elements/ResourceType';
 
-const ResourceTypeSuggestions: ResourceType[] = [
+export const ResourceTypeSuggestions: ResourceType[] = [
   ResourceType.Article,
   ResourceType.ArticleSeries,
   ResourceType.ResearchPaper,
@@ -39,7 +39,8 @@ export const ResourceTypeField: React.FC<{
   value?: ResourceType[];
   onChange: (types: ResourceType[]) => void;
   isInvalid?: boolean;
-}> = ({ value, onChange, isInvalid }) => {
+  selectableResourceTypes: ResourceType[];
+}> = ({ value, onChange, isInvalid, selectableResourceTypes }) => {
   //   const [showSelector, setShowSelector] = useState(false);
   //   const topicTypeSelectorWrapperRef = useRef(null);
 
@@ -97,15 +98,17 @@ export const ResourceTypeField: React.FC<{
       helperText="Select all that applies. Pick at least one."
     >
       <Wrap spacing={4} align="center">
-        {ResourceTypeSuggestions.filter((suggestion) => !value?.find((v) => v === suggestion)).map((resourceType) => (
-          <WrapItem key={resourceType}>
-            <ResourceTypeBadge
-              type={resourceType}
-              onClick={() => onChange(uniq([...(value || []), resourceType]))}
-              opacity={0.8}
-            />
-          </WrapItem>
-        ))}
+        {selectableResourceTypes
+          .filter((suggestion) => !value?.find((v) => v === suggestion))
+          .map((resourceType) => (
+            <WrapItem key={resourceType}>
+              <ResourceTypeBadge
+                type={resourceType}
+                onClick={() => onChange(uniq([...(value || []), resourceType]))}
+                opacity={0.8}
+              />
+            </WrapItem>
+          ))}
       </Wrap>
       <FormErrorMessage>At least one Resource Type must be selected.</FormErrorMessage>
     </Field>

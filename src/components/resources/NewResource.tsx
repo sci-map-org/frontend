@@ -53,7 +53,7 @@ import { LearningMaterialDurationField } from './fields/LearningMaterialDuration
 import { LearningMaterialTagsField } from './fields/LearningMaterialTagsField';
 import { ResourceCoveredSubTopicsField } from './fields/ResourceCoveredSubTopicsField';
 import { ResourcePrerequisitesField } from './fields/ResourcePrerequisitesField';
-import { ResourceTypeField } from './fields/ResourceTypeField';
+import { ResourceTypeField, ResourceTypeSuggestions } from './fields/ResourceTypeField';
 import { useCreateResourceMutation } from './NewResource.generated';
 import { ResourceListBasicLayout } from './ResourceList';
 
@@ -102,7 +102,7 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
 }) => {
   const { isOpen: prerequisitesFieldIsOpen, onToggle: prerequisitesFieldOnToggle } = useDisclosure();
   const { isOpen: coveredSubTopicsFieldIsOpen, onToggle: coveredSubTopicsFieldOnToggle } = useDisclosure();
-
+  const [selectableResourceTypes, setSelectableResourceTypes] = useState(ResourceTypeSuggestions);
   const [editShowedInTopics, setEditShowedInTopics] = useState(false);
 
   const showedInTopicFieldRef = useRef<HTMLDivElement>(null);
@@ -154,6 +154,8 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
                       })),
                     }),
                   });
+                  if (analyzedResourceData.types)
+                    setSelectableResourceTypes(uniq([...selectableResourceTypes, ...analyzedResourceData.types]));
                 }
               }}
             />
@@ -179,6 +181,7 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
         <ResourceTypeField
           value={resourceCreationData.types}
           onChange={(types) => updateResourceCreationData({ types })}
+          selectableResourceTypes={selectableResourceTypes}
           // isInvalid={!!formErrors.topicTypes && showFormErrors}
         />
         <LearningMaterialTagsField
