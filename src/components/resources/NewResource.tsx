@@ -571,7 +571,9 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
           )}
         </Stack>
       )}
-      {hasErrors && <Text color="red.500">Unable to create this Resource. Please fix the errors and try again.</Text>}
+      {hasErrors && showFormErrors && (
+        <Text color="red.500">Unable to create this Resource. Please fix the errors and try again.</Text>
+      )}
       <FormButtons
         isPrimaryDisabled={showFormErrors && hasErrors}
         primaryText="Add Resource"

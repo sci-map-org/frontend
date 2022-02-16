@@ -20,7 +20,6 @@ import {
   TextProps,
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
-import { debounce } from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BeatLoader } from 'react-spinners';
 import { useDebouncedCallback } from 'use-debounce';
