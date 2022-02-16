@@ -216,7 +216,7 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
                             })
                           }
                         />
-                        <Heading color="gray.400" fontSize="20px">
+                        <Heading color="gray.400" fontSize="20px" pb={1}>
                           {showedInTopic.name}
                         </Heading>
                       </Stack>
@@ -227,23 +227,22 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
                         updateResourceCreationData({
                           showInTopics: uniqBy(resourceCreationData.showInTopics.concat([selectedTopic]), '_id'),
                         });
-                        setEditShowedInTopics(false);
                       }}
                     />
                   </Stack>
                 ) : (
                   resourceCreationData.showInTopics.map((showedInTopic) => (
-                    <Stack direction="row" alignItems="baseline">
-                      <Heading color="gray.400" fontSize="20px">
-                        {showedInTopic.name}
-                      </Heading>
-                      <Link {...EditLinkStyleProps} mb="8px" onClick={() => setEditShowedInTopics(true)} ml="2px">
-                        (change)
-                      </Link>
-                    </Stack>
+                    <Heading color="gray.400" fontSize="20px" pb={1}>
+                      - {showedInTopic.name}
+                    </Heading>
                   ))
                 )}
               </Stack>
+              {!editShowedInTopics && (
+                <Link {...EditLinkStyleProps} mt="8px" onClick={() => setEditShowedInTopics(true)} ml="2px">
+                  (change)
+                </Link>
+              )}
             </Field>
           </Box>
           <Box w="45%">
