@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import { LearningMaterialRecommendationsViewerData } from '../../components/learning_materials/LearningMaterialRecommendationsViewer';
 import { TopicLinkData } from '../topics/topics.fragments';
-import { ResourceMediaType, ResourceType } from '../types';
+import { ResourceType } from '../types';
 import {
   ResourceDataFragment,
   ResourceFeedCardDataFragment,
@@ -13,7 +13,6 @@ export const ResourceData = gql`
     _id
     name
     types
-    mediaType
     url
     description
     durationSeconds
@@ -39,7 +38,6 @@ export const generateResourceData = (): ResourceDataFragment => ({
   _id: Math.random().toString(),
   name: 'My awesome resource name',
   types: [ResourceType.Article],
-  mediaType: ResourceMediaType.Text,
   url: 'https://myresource.url',
 });
 
@@ -97,7 +95,6 @@ export const ResourcePreviewCardData = gql`
     _id
     name
     types
-    mediaType
     url
     description
     durationSeconds
@@ -133,7 +130,6 @@ export const generateResourcePreviewCardData = (): ResourcePreviewCardDataFragme
   name: 'My resource name',
   types: [ResourceType.Article],
   url: 'https://myresource.url',
-  mediaType: ResourceMediaType.Text,
 });
 
 export const ResourceWithCoveredTopicsData = gql`

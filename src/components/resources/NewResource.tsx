@@ -32,12 +32,7 @@ import React, { ReactElement, useMemo, useRef, useState } from 'react';
 import { ResourceData } from '../../graphql/resources/resources.fragments';
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
-import {
-  CreateResourcePayload,
-  CreateSubResourcePayload,
-  LearningMaterialTag,
-  ResourceMediaType,
-} from '../../graphql/types';
+import { CreateResourcePayload, CreateSubResourcePayload, LearningMaterialTag } from '../../graphql/types';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { CollapsedField } from '../lib/fields/CollapsedField';
 import { Field } from '../lib/fields/Field';
@@ -128,7 +123,6 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
         updateResourceCreationData({
           ...(!!analyzedResourceData.name && !resourceCreationData.name && { name: analyzedResourceData.name }),
           ...(!!analyzedResourceData.types && { types: analyzedResourceData.types }),
-          ...(!!analyzedResourceData.mediaType && { mediaType: analyzedResourceData.mediaType }),
           ...(!!analyzedResourceData.description &&
             !resourceCreationData.description && { description: analyzedResourceData.description }),
           ...(!!analyzedResourceData.durationSeconds && {
@@ -136,7 +130,7 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
           }),
           ...(!!analyzedResourceData.subResourceSeries && {
             subResourceSeries: analyzedResourceData.subResourceSeries.map((sub) => ({
-              ...pick(sub, ['name', 'url', 'types', 'mediaType', 'durationSeconds']),
+              ...pick(sub, ['name', 'url', 'types', 'durationSeconds']),
               tags: [],
               description: sub.description || undefined,
               prerequisites: [],
@@ -350,7 +344,6 @@ interface NewResourceFormProps {
 
 const defaultResourceData: ResourceCreationData = {
   name: '',
-  mediaType: ResourceMediaType.Text,
   types: [],
   url: '',
   durationSeconds: null,

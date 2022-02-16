@@ -10,7 +10,6 @@ import { Access } from '../auth/Access';
 import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
 import { ResourceDescriptionInput } from './elements/ResourceDescription';
 import { DurationInput } from './elements/Duration';
-import { ResourceMediaTypeSelector } from './elements/ResourceMediaType';
 import { ResourceTypeSelector } from './elements/ResourceType';
 import { ResourceUrlInput } from './elements/ResourceUrl';
 
@@ -21,7 +20,6 @@ interface ResourceEditorProps {
 
 export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave }) => {
   const [name, setName] = useState(resource.name);
-  const [mediaType, setMediaType] = useState(resource.mediaType);
 
   const [types, setTypes] = useState(resource.types);
   const [url, setUrl] = useState(resource.url);
@@ -52,7 +50,6 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
         <ResourceTypeSelector value={types[0]} onSelect={(t) => setTypes([t])} />
       </Flex>
       <Flex flexDirection="row">
-        <ResourceMediaTypeSelector value={mediaType} onSelect={(t) => setMediaType(t)} />
         <Box flexGrow={1}></Box>
         <DurationInput value={durationSeconds} onChange={setDurationSeconds} />
       </Flex>
@@ -93,7 +90,6 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
             onClick={() =>
               onSave({
                 name,
-                mediaType,
                 types,
                 url,
                 description,

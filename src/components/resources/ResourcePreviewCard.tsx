@@ -25,7 +25,7 @@ import {
   ResourcePreviewCardDataFragment,
 } from '../../graphql/resources/resources.fragments.generated';
 import { TopicLinkData } from '../../graphql/topics/topics.fragments';
-import { ResourceMediaType, ResourceType } from '../../graphql/types';
+import { ResourceType } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { EditResourcePageInfo, ResourcePageInfo } from '../../pages/RoutesPageInfos';

@@ -22,7 +22,6 @@ import { InternalLink } from '../../components/navigation/InternalLink';
 import { DurationViewer } from '../../components/resources/elements/Duration';
 import { ResourceCompletedCheckbox } from '../../components/resources/elements/ResourceCompletedCheckbox';
 import { ResourceDescription } from '../../components/resources/elements/ResourceDescription';
-import { ResourceMediaTypeBadge } from '../../components/resources/elements/ResourceMediaType';
 import { ResourceTypeBadge } from '../../components/resources/elements/ResourceType';
 import { ResourceUrlLink } from '../../components/resources/elements/ResourceUrl';
 import { ResourceYoutubePlayer } from '../../components/resources/elements/ResourceYoutubePlayer';
