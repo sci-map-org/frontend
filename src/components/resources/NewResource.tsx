@@ -252,7 +252,7 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
             />
           </Box>
         </Flex>
-        <Flex justifyContent="space-between" direction="row">
+        <Flex justifyContent="space-between" direction="row" pt={4}>
           <Box w="45%">
             <CollapsedField
               label="Select Prerequisites"
@@ -281,7 +281,6 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
           <Box w="45%">
             <CollapsedField
               label="Select SubTopics covered by this Resource"
-              alignLabel="left"
               isOpen={coveredSubTopicsFieldIsOpen}
               onToggle={coveredSubTopicsFieldOnToggle}
               // isInvalid={!!formErrors.key && showFormErrors} TODO

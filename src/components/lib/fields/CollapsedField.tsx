@@ -17,9 +17,10 @@ export const CollapsedField: React.FC<CollapsedFieldProps> = ({
   helperText,
   children,
   isInvalid,
+  ...props
 }) => {
   return (
-    <Flex direction="column" alignItems="stretch">
+    <Flex direction="column" alignItems="stretch" {...props}>
       <Flex
         justifyContent={alignLabel === 'left' ? 'flex-start' : 'flex-end'}
         w="100%"
