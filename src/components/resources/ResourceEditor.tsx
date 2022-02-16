@@ -9,7 +9,7 @@ import { validateUrl } from '../../services/url.service';
 import { Access } from '../auth/Access';
 import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
 import { ResourceDescriptionInput } from './elements/ResourceDescription';
-import { DurationFormField } from './elements/Duration';
+import { DurationInput } from './elements/Duration';
 import { ResourceMediaTypeSelector } from './elements/ResourceMediaType';
 import { ResourceTypeSelector } from './elements/ResourceType';
 import { ResourceUrlInput } from './elements/ResourceUrl';
@@ -44,7 +44,8 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
         <FormLabel htmlFor="name">Title</FormLabel>
         <Input id="name" placeholder="name" size="md" value={name} onChange={(e) => setName(e.target.value)}></Input>
       </FormControl>
-      <ResourceUrlInput value={url} onChange={setUrl} />
+      {/* TODO */}
+      {/* <ResourceUrlInput value={url} onChange={setUrl} /> */}
 
       {/* TODO  */}
       <Flex direction="row">
@@ -53,7 +54,7 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
       <Flex flexDirection="row">
         <ResourceMediaTypeSelector value={mediaType} onSelect={(t) => setMediaType(t)} />
         <Box flexGrow={1}></Box>
-        <DurationFormField value={durationSeconds} onChange={setDurationSeconds} />
+        <DurationInput value={durationSeconds} onChange={setDurationSeconds} />
       </Flex>
       <ResourceDescriptionInput value={description} onChange={(d) => setDescription(d)} />
       <Stack direction="row" justifyContent="space-between">
