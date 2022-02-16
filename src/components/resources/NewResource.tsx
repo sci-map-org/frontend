@@ -4,6 +4,7 @@ import {
   AlertIcon,
   Box,
   Button,
+  ButtonGroup,
   Center,
   Flex,
   FormErrorMessage,
@@ -38,9 +39,9 @@ import {
   ResourceMediaType,
 } from '../../graphql/types';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
-import { FormButtons } from '../lib/buttons/FormButtons';
 import { CollapsedField } from '../lib/fields/CollapsedField';
 import { Field } from '../lib/fields/Field';
+import { HeartIcon } from '../lib/icons/HeartIcon';
 import { EditLinkStyleProps, FormTitle } from '../lib/Typography';
 import { TopicBadge } from '../topics/TopicBadge';
 import { TopicSelector } from '../topics/TopicSelector';
@@ -340,7 +341,7 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
 
 type NewResourceValidationRules = 'at least one showIn Topic';
 interface NewResourceFormProps {
-  createResource: (payload: CreateResourcePayload) => Promise<ResourceDataFragment>;
+  createResource: (payload: CreateResourcePayload, options: { recommend: boolean }) => Promise<ResourceDataFragment>;
   onResourceCreated?: (createdResource: ResourceDataFragment) => void;
   onCancel?: () => void;
   defaultResourceCreationData?: Partial<ResourceCreationData>;
@@ -419,6 +420,15 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
     return Object.keys(resourceFormErrors).length > 0 || subResourcesHasErrors;
   }, [resourceFormErrors, subResourcesHasErrors]);
 
+  const onCreate = async (recommend: boolean) => {
+    if (hasErrors) return setShowFormErrors(true);
+    setIsCreating(true);
+    const createdResource = await createResource(resourceCreationDataToPayload(resourceCreationData), {
+      recommend,
+    });
+    setIsCreating(false);
+    onResourceCreated && onResourceCreated(createdResource);
+  };
   return (
     <Stack spacing={16}>
       <Center pt={16}>
@@ -574,20 +584,36 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
       {hasErrors && showFormErrors && (
         <Text color="red.500">Unable to create this Resource. Please fix the errors and try again.</Text>
       )}
-      <FormButtons
-        isPrimaryDisabled={showFormErrors && hasErrors}
-        primaryText="Add Resource"
-        isPrimaryLoading={isCreating}
-        onCancel={onCancel}
-        size="lg"
-        onPrimaryClick={async () => {
-          if (hasErrors) return setShowFormErrors(true);
-          setIsCreating(true);
-          const createdResource = await createResource(resourceCreationDataToPayload(resourceCreationData));
-          setIsCreating(false);
-          onResourceCreated && onResourceCreated(createdResource);
-        }}
-      />
+      <ButtonGroup size="lg" spacing={8} justifyContent="flex-end">
+        {!!onCancel && (
+          <Button variant="outline" minW="12rem" onClick={onCancel}>
+            Cancel
+          </Button>
+        )}
+        <Button
+          isLoading={isCreating}
+          minW="12rem"
+          px={5}
+          colorScheme="blue"
+          variant="solid"
+          isDisabled={showFormErrors && hasErrors}
+          onClick={async () => onCreate(false)}
+        >
+          Add Resource
+        </Button>
+
+        <Button
+          isLoading={isCreating}
+          leftIcon={<HeartIcon />}
+          minW="12rem"
+          colorScheme="teal"
+          variant="solid"
+          isDisabled={showFormErrors && hasErrors}
+          onClick={() => onCreate(true)}
+        >
+          Add and Recommend
+        </Button>
+      </ButtonGroup>
     </Stack>
   );
 };
