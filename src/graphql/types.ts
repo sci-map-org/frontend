@@ -126,6 +126,10 @@ export type CreateLearningPathResourceItem = {
   resourceId: Scalars['String'];
 };
 
+export type CreateResourceOptions = {
+  recommend?: InputMaybe<Scalars['Boolean']>;
+};
+
 export type CreateResourcePayload = {
   coveredSubTopicsIds?: InputMaybe<Array<Scalars['String']>>;
   description?: InputMaybe<Scalars['String']>;
@@ -790,6 +794,7 @@ export type MutationCreateLearningPathArgs = {
 
 
 export type MutationCreateResourceArgs = {
+  options?: InputMaybe<CreateResourceOptions>;
   payload: CreateResourcePayload;
 };
 

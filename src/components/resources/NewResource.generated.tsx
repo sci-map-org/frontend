@@ -5,6 +5,7 @@ import * as Apollo from '@apollo/client';
 const defaultOptions =  {}
 export type CreateResourceMutationVariables = Types.Exact<{
   payload: Types.CreateResourcePayload;
+  options?: Types.InputMaybe<Types.CreateResourceOptions>;
 }>;
 
 
@@ -27,6 +28,7 @@ export type CreateResourceMutationFn = Apollo.MutationFunction<CreateResourceMut
  * const [createResourceMutation, { data, loading, error }] = useCreateResourceMutation({
  *   variables: {
  *      payload: // value for 'payload'
+ *      options: // value for 'options'
  *   },
  * });
  */

@@ -619,8 +619,8 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
 };
 
 export const createResource = gql`
-  mutation createResource($payload: CreateResourcePayload!) {
-    createResource(payload: $payload) {
+  mutation createResource($payload: CreateResourcePayload!, $options: CreateResourceOptions) {
+    createResource(payload: $payload, options: $options) {
       ...ResourceData
     }
   }
@@ -644,8 +644,8 @@ export const NewResource: React.FC<NewResourceProps> = ({
 
   return (
     <NewResourceForm
-      createResource={async (payload) => {
-        const { data } = await createResource({ variables: { payload } });
+      createResource={async (payload, { recommend }) => {
+        const { data } = await createResource({ variables: { payload, options: { recommend } } });
         if (!data) throw new Error('failed to create resource');
         return data.createResource;
       }}
