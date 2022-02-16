@@ -233,6 +233,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
               defaultResourceCreationData={{
                 showInTopics: [topic],
               }}
+              validationRules={['at least one showIn Topic']}
               onResourceCreated={() => refetchLearningMaterials()}
               renderButton={(openModal) => (
                 <Button

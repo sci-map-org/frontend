@@ -7,7 +7,8 @@ import {
   AlertDialogHeader,
   AlertDialogOverlay,
   Button,
-  Center, IconButton,
+  Center,
+  IconButton,
   Input,
   InputGroup,
   InputRightElement,
@@ -16,15 +17,17 @@ import {
   Skeleton,
   Stack,
   Text,
-  TextProps
+  TextProps,
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
+import { debounce } from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BeatLoader } from 'react-spinners';
+import { useDebouncedCallback } from 'use-debounce';
 import { ResourceDataFragment } from '../../../graphql/resources/resources.fragments.generated';
 import {
   useAnalyzeResourceUrlLazyQuery,
-  useSetResourceOpenedMutation
+  useSetResourceOpenedMutation,
 } from '../../../graphql/resources/resources.operations.generated';
 import { AnalyzeResourceUrlResult } from '../../../graphql/types';
 import { routerPushToPage } from '../../../pages/PageInfo';
@@ -101,25 +104,32 @@ export const ResourceUrlLink: React.FC<
   );
 };
 
-interface ResourceUrlInputProps {
-  value: string;
-  onChange: (value: string) => void;
-  analyze?: boolean;
+export const useAnalyzeResourceUrl = ({
+  value,
+  onAnalyzed,
+  enabled,
+}: {
+  enabled?: boolean;
+  value?: string;
   onAnalyzed?: (resourceData: AnalyzeResourceUrlResult) => void;
-}
-export const ResourceUrlInput: React.FC<ResourceUrlInputProps> = ({ value, onChange, analyze, onAnalyzed }) => {
-  const isValidUrl = useMemo(() => validateUrl(value), [value]);
+}) => {
+  const isValidUrl = useMemo(() => value && validateUrl(value), [value]);
+  const debouncedAnalyzeResourceUrl = useDebouncedCallback(
+    (url: string) => analyzeResourceUrl({ variables: { url } }),
+    300
+  );
+  useEffect(() => {
+    if (!!value && enabled && isValidUrl) {
+      debouncedAnalyzeResourceUrl.callback(value);
+    }
+    return () => debouncedAnalyzeResourceUrl.cancel();
+  }, [value]);
+
   const [existingResource, setExistingResource] = useState<ResourceDataFragment>();
-
-  const closeAlertDialog = useCallback(() => {
-    onChange('');
-    setExistingResource(undefined);
-  }, [])
-
-  const cancelRef = useRef<HTMLButtonElement>(null);
 
   const [analyzeResourceUrl, { loading }] = useAnalyzeResourceUrlLazyQuery({
     fetchPolicy: 'no-cache',
+
     onCompleted(data) {
       setExistingResource(undefined);
       onAnalyzed && onAnalyzed(data.analyzeResourceUrl);
@@ -135,16 +145,38 @@ export const ResourceUrlInput: React.FC<ResourceUrlInputProps> = ({ value, onCha
       }
     },
   });
-  
+  return { existingResource, isValidUrl, reset: () => setExistingResource(undefined), isAnalysing: loading };
+};
+interface ResourceUrlInputProps {
+  value: string;
+  onChange: (value: string) => void;
+  isInvalid?: boolean;
+  existingResource?: ResourceDataFragment;
+  isAnalysing: boolean;
+  isValidUrl: boolean;
+  resetExistingResource: () => void;
+}
+export const ResourceUrlInput: React.FC<ResourceUrlInputProps> = ({
+  value,
+  onChange,
+  isInvalid,
+  existingResource,
+  isAnalysing,
+  isValidUrl,
+  resetExistingResource,
+}) => {
+  const closeAlertDialog = useCallback(() => {
+    onChange('');
+    resetExistingResource();
+  }, []);
 
-  useEffect(() => {
-    if (!!value && analyze && isValidUrl) analyzeResourceUrl({ variables: { url: value } });
-  }, [value]);
+  const cancelRef = useRef<HTMLButtonElement>(null);
+
   return (
     <>
       <InputGroup>
         <Input
-          isInvalid={!!value && !isValidUrl}
+          isInvalid={(!!value && !isValidUrl) || isInvalid}
           placeholder="https://example.com"
           size="md"
           value={value}
@@ -157,7 +189,7 @@ export const ResourceUrlInput: React.FC<ResourceUrlInputProps> = ({ value, onCha
         ></Input>
         <InputRightElement w="auto" display="flex" justifyContent="center">
           <Stack direction="row" align="center" mr={2}>
-            {loading && <BeatLoader size={8} margin={2} color={theme.colors.main} />}
+            {isAnalysing && <BeatLoader size={8} margin={2} color={theme.colors.main} />}
 
             {value && (
               <Link
@@ -190,28 +222,33 @@ export const ResourceUrlInput: React.FC<ResourceUrlInputProps> = ({ value, onCha
               </AlertDialogHeader>
 
               <AlertDialogBody display="flex" flexDir="column" alignItems="stretch">
-                <Text textAlign="center" fontWeight={500}>A resource with the url <br /><ResourceUrlLink resource={existingResource} maxLength={40}/> already exists</Text>
+                <Text textAlign="center" fontWeight={500}>
+                  A resource with the url <br />
+                  <ResourceUrlLink resource={existingResource} maxLength={40} /> already exists
+                </Text>
                 <Center py={8}>
-                <PageLink pageInfo={ResourcePageInfo(existingResource)} fontWeight={600} fontSize="lg"  color="gray.700" isExternal>{existingResource.name}<ExternalLinkIcon ml={1} /></PageLink>
+                  <PageLink
+                    pageInfo={ResourcePageInfo(existingResource)}
+                    fontWeight={600}
+                    fontSize="lg"
+                    color="gray.700"
+                    isExternal
+                  >
+                    {existingResource.name}
+                    <ExternalLinkIcon ml={1} />
+                  </PageLink>
                 </Center>
               </AlertDialogBody>
 
               <AlertDialogFooter>
-                <Stack direction="row"> 
-                <Button
-                  ref={cancelRef}
-                  onClick={closeAlertDialog}
-                  variant="outline"
-                >
-                  Close
-                </Button>
-                <Button
-                  onClick={() => routerPushToPage(ResourcePageInfo(existingResource))}
-                  colorScheme="blue"
-                >
-                  Go to existing Resource
-                </Button></Stack>
-
+                <Stack direction="row">
+                  <Button ref={cancelRef} onClick={closeAlertDialog} variant="outline">
+                    Close
+                  </Button>
+                  <Button onClick={() => routerPushToPage(ResourcePageInfo(existingResource))} colorScheme="blue">
+                    Go to existing Resource
+                  </Button>
+                </Stack>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialogOverlay>

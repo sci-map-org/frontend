@@ -1,5 +1,7 @@
-import { CloseIcon, EditIcon } from '@chakra-ui/icons';
+import { CloseIcon, EditIcon, InfoIcon } from '@chakra-ui/icons';
 import {
+  Alert,
+  AlertIcon,
   Box,
   Button,
   Center,
@@ -17,6 +19,7 @@ import {
   ModalOverlay,
   Stack,
   Text,
+  Tooltip,
   useDisclosure,
   useOutsideClick,
   Wrap,
@@ -24,7 +27,7 @@ import {
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { omit, pick, uniq, uniqBy } from 'lodash';
-import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import React, { ReactElement, useMemo, useRef, useState } from 'react';
 import { ResourceData } from '../../graphql/resources/resources.fragments';
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
@@ -34,21 +37,17 @@ import {
   LearningMaterialTag,
   ResourceMediaType,
 } from '../../graphql/types';
-import { validateUrl } from '../../services/url.service';
-import { StatelessEditableLearningMaterialCoveredTopics } from '../learning_materials/EditableLearningMaterialCoveredTopics';
-import { StatelessEditableLearningMaterialPrerequisites } from '../learning_materials/EditableLearningMaterialPrerequisites';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { FormButtons } from '../lib/buttons/FormButtons';
 import { CollapsedField } from '../lib/fields/CollapsedField';
 import { Field } from '../lib/fields/Field';
-import { TopicLink } from '../lib/links/TopicLink';
 import { EditLinkStyleProps, FormTitle } from '../lib/Typography';
 import { TopicBadge } from '../topics/TopicBadge';
 import { TopicSelector } from '../topics/TopicSelector';
 import { DurationViewer } from './elements/Duration';
-import { ResourceDescriptionInput } from './elements/ResourceDescription';
+import { ResourceDescriptionInput, RESOURCE_DESCRIPTION_MAX_LENGTH } from './elements/ResourceDescription';
 import { ResourceTypeBadge } from './elements/ResourceType';
-import { ResourceUrlInput } from './elements/ResourceUrl';
+import { ResourceUrlInput, useAnalyzeResourceUrl } from './elements/ResourceUrl';
 import { LearningMaterialDurationField } from './fields/LearningMaterialDurationField';
 import { LearningMaterialTagsField } from './fields/LearningMaterialTagsField';
 import { ResourceCoveredSubTopicsField } from './fields/ResourceCoveredSubTopicsField';
@@ -72,6 +71,8 @@ type ResourceCreationData = SubResourceCreationData & {
   subResourceSeries?: SubResourceCreationData[];
 };
 
+type FormErrors = { [key in 'name' | 'url' | 'description' | 'types' | 'showInTopics']?: string };
+
 const resourceCreationDataToPayload = (resourceCreationData: ResourceCreationData): CreateResourcePayload => {
   const subResourceSeries: CreateSubResourcePayload[] | undefined = resourceCreationData.subResourceSeries?.map(
     (subResource) => ({
@@ -94,18 +95,60 @@ const resourceCreationDataToPayload = (resourceCreationData: ResourceCreationDat
 interface StatelessNewResourceFormProps {
   resourceCreationData: SubResourceCreationData;
   updateResourceCreationData: (data: Partial<ResourceCreationData>) => void;
+  formErrors: FormErrors;
+  showFormErrors: boolean;
+  analyzeUrl?: boolean;
 }
 
 const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
   resourceCreationData,
   updateResourceCreationData,
+  formErrors,
+  showFormErrors,
+  analyzeUrl,
 }) => {
   const { isOpen: prerequisitesFieldIsOpen, onToggle: prerequisitesFieldOnToggle } = useDisclosure();
   const { isOpen: coveredSubTopicsFieldIsOpen, onToggle: coveredSubTopicsFieldOnToggle } = useDisclosure();
   const [selectableResourceTypes, setSelectableResourceTypes] = useState(ResourceTypeSuggestions);
   const [editShowedInTopics, setEditShowedInTopics] = useState(false);
-
+  const formHasErrors = useMemo(() => Object.keys(formErrors).length > 0, [formErrors]);
   const showedInTopicFieldRef = useRef<HTMLDivElement>(null);
+
+  const {
+    existingResource,
+    isAnalysing,
+    isValidUrl,
+    reset: resetExistingResource,
+  } = useAnalyzeResourceUrl({
+    value: resourceCreationData.url,
+    enabled: analyzeUrl,
+    onAnalyzed: ({ resourceData: analyzedResourceData }) => {
+      if (analyzedResourceData) {
+        updateResourceCreationData({
+          ...(!!analyzedResourceData.name && !resourceCreationData.name && { name: analyzedResourceData.name }),
+          ...(!!analyzedResourceData.types && { types: analyzedResourceData.types }),
+          ...(!!analyzedResourceData.mediaType && { mediaType: analyzedResourceData.mediaType }),
+          ...(!!analyzedResourceData.description &&
+            !resourceCreationData.description && { description: analyzedResourceData.description }),
+          ...(!!analyzedResourceData.durationSeconds && {
+            durationSeconds: analyzedResourceData.durationSeconds,
+          }),
+          ...(!!analyzedResourceData.subResourceSeries && {
+            subResourceSeries: analyzedResourceData.subResourceSeries.map((sub) => ({
+              ...pick(sub, ['name', 'url', 'types', 'mediaType', 'durationSeconds']),
+              tags: [],
+              description: sub.description || undefined,
+              prerequisites: [],
+              coveredSubTopics: [],
+              showInTopics: [],
+            })),
+          }),
+        });
+        if (analyzedResourceData.types)
+          setSelectableResourceTypes(uniq([...selectableResourceTypes, ...analyzedResourceData.types]));
+      }
+    },
+  });
 
   useOutsideClick({
     ref: showedInTopicFieldRef,
@@ -119,85 +162,56 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
     <Flex direction="column" w="100%">
       <Stack spacing={10} alignItems="stretch">
         <Center>
-          <Field
-            label="Resource Url"
-            // isInvalid={!!formErrors.name && showFormErrors}
-            w="500px"
-          >
+          <Field label="Resource Url" isInvalid={!!formErrors.url && showFormErrors} w="500px">
             <ResourceUrlInput
               value={resourceCreationData.url}
               onChange={(url) => updateResourceCreationData({ url })}
-              analyze
-              onAnalyzed={({ resourceData: analyzedResourceData }) => {
-                if (analyzedResourceData) {
-                  updateResourceCreationData({
-                    ...(!!analyzedResourceData.name &&
-                      !resourceCreationData.name && { name: analyzedResourceData.name }),
-                    ...(!!analyzedResourceData.types && { types: analyzedResourceData.types }),
-                    ...(!!analyzedResourceData.mediaType && { mediaType: analyzedResourceData.mediaType }),
-                    ...(!!analyzedResourceData.description &&
-                      !resourceCreationData.description && { description: analyzedResourceData.description }),
-                    ...(!!analyzedResourceData.durationSeconds && {
-                      durationSeconds: analyzedResourceData.durationSeconds,
-                    }),
-                    ...(!!analyzedResourceData.subResourceSeries && {
-                      subResourceSeries: analyzedResourceData.subResourceSeries.map((sub) => ({
-                        ...pick(sub, ['name', 'url', 'types', 'mediaType', 'durationSeconds']),
-                        tags: [],
-                        description: sub.description || undefined,
-                        prerequisites: [],
-                        coveredSubTopics: [],
-                        showInTopics: [],
-                      })),
-                    }),
-                  });
-                  if (analyzedResourceData.types)
-                    setSelectableResourceTypes(uniq([...selectableResourceTypes, ...analyzedResourceData.types]));
-                }
-              }}
+              isInvalid={showFormErrors && !!formErrors.url}
+              existingResource={existingResource}
+              isAnalysing={isAnalysing}
+              isValidUrl={!!isValidUrl}
+              resetExistingResource={resetExistingResource}
             />
-            <FormErrorMessage>Topic Name is required</FormErrorMessage>
+            <FormErrorMessage>The resource's Url is required</FormErrorMessage>
           </Field>
         </Center>
         <Center>
-          <Field label="Title" w="500px">
+          <Field isInvalid={showFormErrors && !!formErrors.name} label="Title" w="500px">
             <Input
               placeholder="Title"
               size="md"
               value={resourceCreationData.name}
               onChange={(e) => updateResourceCreationData({ name: e.target.value })}
+              isInvalid={!!formErrors.name && showFormErrors}
             ></Input>
+            <FormErrorMessage>You must give a title to the resource</FormErrorMessage>
           </Field>
         </Center>
-        <Field label="Description">
+        <Field label="Description" isInvalid={!!formErrors.description && showFormErrors}>
           <ResourceDescriptionInput
             value={resourceCreationData.description}
             onChange={(d) => updateResourceCreationData({ description: d })}
+            isInvalid={!!formErrors.description && showFormErrors}
           />
+          <FormErrorMessage>
+            Resource Description is too long (max {RESOURCE_DESCRIPTION_MAX_LENGTH} characters)
+          </FormErrorMessage>
         </Field>
         <ResourceTypeField
           value={resourceCreationData.types}
           onChange={(types) => updateResourceCreationData({ types })}
           selectableResourceTypes={selectableResourceTypes}
-          // isInvalid={!!formErrors.topicTypes && showFormErrors}
+          isInvalid={!!formErrors.types && showFormErrors}
+          errorMessage={formErrors.types}
         />
         <LearningMaterialTagsField
           value={resourceCreationData.tags}
           onChange={(tags) => updateResourceCreationData({ tags })}
         />
-        {/* {showFormErrors && formHasErrors && (
-          <Stack>
-            {Object.keys(formErrors).map((formErrorKey) => (
-              <Alert key={formErrorKey} status="error">
-                <AlertIcon />
-                {formErrors[formErrorKey]}
-              </Alert>
-            ))}
-          </Stack>
-        )} */}
+
         <Flex justifyContent="space-between" flexDir="row">
           <Box w="45%">
-            <Field label="Show In">
+            <Field label="Show In" isInvalid={!!formErrors.showInTopics && showFormErrors}>
               <Stack pl={3}>
                 {editShowedInTopics ? (
                   <Stack ref={showedInTopicFieldRef} w="80%">
@@ -231,11 +245,18 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
                     />
                   </Stack>
                 ) : (
-                  resourceCreationData.showInTopics.map((showedInTopic) => (
-                    <Heading color="gray.400" fontSize="20px" pb={1}>
-                      - {showedInTopic.name}
-                    </Heading>
-                  ))
+                  <>
+                    {resourceCreationData.showInTopics.map((showedInTopic) => (
+                      <Heading color="gray.400" fontSize="20px" pb={1}>
+                        - {showedInTopic.name}
+                      </Heading>
+                    ))}
+                    {!resourceCreationData.showInTopics.length && (
+                      <Text color="red.500" fontWeight={500}>
+                        No Topic selected
+                      </Text>
+                    )}
+                  </>
                 )}
               </Stack>
               {!editShowedInTopics && (
@@ -243,6 +264,7 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
                   (change)
                 </Link>
               )}
+              <FormErrorMessage>{formErrors.showInTopics}</FormErrorMessage>
             </Field>
           </Box>
           <Box w="45%">
@@ -259,7 +281,6 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
               alignLabel="left"
               isOpen={prerequisitesFieldIsOpen}
               onToggle={prerequisitesFieldOnToggle}
-              // isInvalid={!!formErrors.key && showFormErrors} TODO
             >
               <ResourcePrerequisitesField
                 prerequisites={resourceCreationData.prerequisites}
@@ -283,7 +304,6 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
               label="Select SubTopics covered by this Resource"
               isOpen={coveredSubTopicsFieldIsOpen}
               onToggle={coveredSubTopicsFieldOnToggle}
-              // isInvalid={!!formErrors.key && showFormErrors} TODO
             >
               <ResourceCoveredSubTopicsField
                 showedInTopics={resourceCreationData.showInTopics}
@@ -302,16 +322,29 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
             </CollapsedField>
           </Box>
         </Flex>
+        {showFormErrors && formHasErrors && (
+          <Stack>
+            {Object.keys(formErrors).map((formErrorKey) => (
+              <Alert key={formErrorKey} status="error">
+                <AlertIcon />
+                {/* @ts-ignore */}
+                {formErrors[formErrorKey]}
+              </Alert>
+            ))}
+          </Stack>
+        )}
       </Stack>
     </Flex>
   );
 };
 
+type NewResourceValidationRules = 'at least one showIn Topic';
 interface NewResourceFormProps {
   createResource: (payload: CreateResourcePayload) => Promise<ResourceDataFragment>;
   onResourceCreated?: (createdResource: ResourceDataFragment) => void;
   onCancel?: () => void;
   defaultResourceCreationData?: Partial<ResourceCreationData>;
+  validationRules?: NewResourceValidationRules[];
 }
 
 const defaultResourceData: ResourceCreationData = {
@@ -326,24 +359,66 @@ const defaultResourceData: ResourceCreationData = {
   coveredSubTopics: [],
 };
 
+const computeFormErrors = (
+  resourceCreationData: SubResourceCreationData,
+  rules: NewResourceValidationRules[]
+): FormErrors => {
+  let errors: FormErrors = {};
+  // durationSeconds ?
+  if (!resourceCreationData.name) errors.name = 'Resource Title is required';
+  if (!resourceCreationData.url) errors.url = 'The Url of the resource is required';
+  if (resourceCreationData.description && resourceCreationData.description.length > RESOURCE_DESCRIPTION_MAX_LENGTH)
+    errors.description = `Resource Description is too long (max ${RESOURCE_DESCRIPTION_MAX_LENGTH} characters)`;
+  if (resourceCreationData.types.length < 1) errors.types = 'At least one Resource Type must be selected';
+  if (resourceCreationData.types.length > 3) errors.types = 'Maximum 3 Resource Types can be selected';
+  if (rules.includes('at least one showIn Topic') && resourceCreationData.showInTopics.length <= 0)
+    errors.showInTopics = 'The resource must be shown in at least one Topic'; // Are we sure ? Case of adding a resource for oneself or for a LP
+
+  return errors;
+};
 export const NewResourceForm: React.FC<NewResourceFormProps> = ({
   defaultResourceCreationData,
   createResource,
   onResourceCreated,
   onCancel,
+  validationRules,
 }) => {
-  const [isValid, setIsValid] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [resourceCreationData, setResourceCreationData] = useState<ResourceCreationData>({
     ...defaultResourceData,
     ...defaultResourceCreationData,
   });
   const [selectedSubResourceIndex, selectSubResourceIndex] = useState<number>();
+
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  useEffect(() => {
-    setIsValid(!!resourceCreationData.name && !!resourceCreationData.url && validateUrl(resourceCreationData.url));
-  }, [resourceCreationData.name, resourceCreationData.url]);
+  const [showFormErrors, setShowFormErrors] = useState(false);
+
+  const resourceFormErrors = useMemo(
+    () => computeFormErrors(resourceCreationData, validationRules || []),
+    [
+      resourceCreationData.name,
+      resourceCreationData.url,
+      resourceCreationData.description,
+      resourceCreationData.types,
+      resourceCreationData.showInTopics,
+    ]
+  );
+
+  const subResourcesFormErrors = useMemo(
+    () => (resourceCreationData.subResourceSeries || []).map((subResource) => computeFormErrors(subResource, [])),
+    [resourceCreationData.subResourceSeries]
+  );
+
+  const subResourcesHasErrors = useMemo(
+    () => subResourcesFormErrors.map((e) => Object.keys(e).length > 0).includes(true),
+    [subResourcesFormErrors]
+  );
+
+  const hasErrors = useMemo(() => {
+    return Object.keys(resourceFormErrors).length > 0 || subResourcesHasErrors;
+  }, [resourceFormErrors, subResourcesHasErrors]);
+
   return (
     <Stack spacing={16}>
       <Center pt={16}>
@@ -377,6 +452,9 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
             ...newData,
           })
         }
+        formErrors={resourceFormErrors}
+        showFormErrors={showFormErrors}
+        analyzeUrl
       />
       {resourceCreationData.subResourceSeries && (
         <>
@@ -402,6 +480,11 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
             )}
             renderRight={(subResource, index) => (
               <Stack direction="row" alignItems="center" spacing={2}>
+                {Object.keys(subResourcesFormErrors[index]).length > 0 && (
+                  <Tooltip label="This resource is invalid. Please fix the issues in order to create.">
+                    <InfoIcon color="red.500" />
+                  </Tooltip>
+                )}
                 <BoxBlockDefaultClickPropagation display="flex" justifyContent="center" alignItems="center">
                   <IconButton
                     size="xs"
@@ -448,6 +531,8 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
                         };
                         setResourceCreationData({ ...resourceCreationData, subResourceSeries: newSubResourceSeries });
                       }}
+                      formErrors={subResourcesFormErrors[selectedSubResourceIndex]}
+                      showFormErrors={showFormErrors}
                     />
                   </ModalBody>
                   <ModalFooter>
@@ -461,13 +546,40 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
           )}
         </>
       )}
+      {subResourcesHasErrors && showFormErrors && (
+        <Stack>
+          {subResourcesFormErrors.map((subResourceFormErrors, subResourceIndex) =>
+            Object.keys(subResourceFormErrors).map((formErrorKey) => (
+              <Alert key={formErrorKey} status="error" overflowWrap="break-word">
+                <AlertIcon />
+                <Text>
+                  <Text fontWeight={500} as="span">
+                    SubResource {subResourceIndex + 1}{' '}
+                    {resourceCreationData.subResourceSeries &&
+                      !!resourceCreationData.subResourceSeries[subResourceIndex]?.name && (
+                        <i>({resourceCreationData.subResourceSeries[subResourceIndex].name})</i>
+                      )}
+                    :{' '}
+                  </Text>
+                  <Text as="span">
+                    {/* @ts-ignore */}
+                    {subResourceFormErrors[formErrorKey]}
+                  </Text>
+                </Text>
+              </Alert>
+            ))
+          )}
+        </Stack>
+      )}
+      {hasErrors && <Text color="red.500">Unable to create this Resource. Please fix the errors and try again.</Text>}
       <FormButtons
-        isPrimaryDisabled={!isValid}
+        isPrimaryDisabled={showFormErrors && hasErrors}
         primaryText="Add Resource"
         isPrimaryLoading={isCreating}
         onCancel={onCancel}
         size="lg"
         onPrimaryClick={async () => {
+          if (hasErrors) return setShowFormErrors(true);
           setIsCreating(true);
           const createdResource = await createResource(resourceCreationDataToPayload(resourceCreationData));
           setIsCreating(false);
@@ -491,12 +603,14 @@ interface NewResourceProps {
   onResourceCreated?: (createdResource: ResourceDataFragment) => void;
   onCancel?: () => void;
   defaultResourceCreationData?: Partial<ResourceCreationData>;
+  validationRules?: NewResourceValidationRules[];
 }
 
 export const NewResource: React.FC<NewResourceProps> = ({
   onResourceCreated,
   onCancel,
   defaultResourceCreationData,
+  validationRules,
 }) => {
   const [createResource] = useCreateResourceMutation();
 
@@ -510,6 +624,7 @@ export const NewResource: React.FC<NewResourceProps> = ({
       onResourceCreated={onResourceCreated}
       onCancel={onCancel}
       defaultResourceCreationData={defaultResourceCreationData}
+      validationRules={validationRules}
     />
   );
 };
@@ -519,6 +634,7 @@ export const NewResourceModal: React.FC<{ renderButton: (onClick: () => void) =>
   onResourceCreated,
   renderButton,
   onCancel,
+  validationRules,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
@@ -539,6 +655,7 @@ export const NewResourceModal: React.FC<{ renderButton: (onClick: () => void) =>
                   onClose();
                   onCancel && onCancel();
                 }}
+                validationRules={validationRules}
               />
             </ModalBody>
           </ModalContent>

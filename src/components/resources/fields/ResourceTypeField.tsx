@@ -39,8 +39,9 @@ export const ResourceTypeField: React.FC<{
   value?: ResourceType[];
   onChange: (types: ResourceType[]) => void;
   isInvalid?: boolean;
+  errorMessage?: string;
   selectableResourceTypes: ResourceType[];
-}> = ({ value, onChange, isInvalid, selectableResourceTypes }) => {
+}> = ({ value, onChange, isInvalid, selectableResourceTypes, errorMessage }) => {
   //   const [showSelector, setShowSelector] = useState(false);
   //   const topicTypeSelectorWrapperRef = useRef(null);
 
@@ -110,7 +111,7 @@ export const ResourceTypeField: React.FC<{
             </WrapItem>
           ))}
       </Wrap>
-      <FormErrorMessage>At least one Resource Type must be selected.</FormErrorMessage>
+      <FormErrorMessage>{errorMessage}</FormErrorMessage>
     </Field>
   );
 };
