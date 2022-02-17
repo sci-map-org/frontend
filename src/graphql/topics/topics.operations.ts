@@ -14,8 +14,8 @@ export const searchTopics = gql`
 `;
 
 export const searchSubTopics = gql`
-  query searchSubTopics($topicId: String!, $options: SearchTopicsOptions!) {
-    searchSubTopics(topicId: $topicId, options: $options) {
+  query searchSubTopics($topicIds: [String!]!, $options: SearchTopicsOptions!) {
+    searchSubTopics(topicIds: $topicIds, options: $options) {
       items {
         _id
         ...TopicLinkData

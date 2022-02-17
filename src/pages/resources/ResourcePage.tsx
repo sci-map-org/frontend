@@ -18,19 +18,18 @@ import {
 import { EditableLearningMaterialTags } from '../../components/learning_materials/LearningMaterialTagsEditor';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { StarsRatingViewer } from '../../components/lib/StarsRating';
-import { InternalLink } from '../../components/navigation/InternalLink';
+import { InternalLink, PageLink } from '../../components/navigation/InternalLink';
 import { DurationViewer } from '../../components/resources/elements/Duration';
 import { ResourceCompletedCheckbox } from '../../components/resources/elements/ResourceCompletedCheckbox';
 import { ResourceDescription } from '../../components/resources/elements/ResourceDescription';
-import { ResourceMediaTypeBadge } from '../../components/resources/elements/ResourceMediaType';
 import { ResourceTypeBadge } from '../../components/resources/elements/ResourceType';
 import { ResourceUrlLink } from '../../components/resources/elements/ResourceUrl';
 import { ResourceYoutubePlayer } from '../../components/resources/elements/ResourceYoutubePlayer';
 import { EditableLearningMaterialCoveredTopics } from '../../components/learning_materials/EditableLearningMaterialCoveredTopics';
 import { SquareResourceCardData } from '../../components/resources/SquareResourceCard';
 import { UserAvatar, UserAvatarData } from '../../components/users/UserAvatar';
-import { generateResourceData, ResourceData } from '../../graphql/resources/resources.fragments';
-import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import { generateResourceData, ResourceData, ResourceLinkData } from '../../graphql/resources/resources.fragments';
+import { ResourceDataFragment, ResourceLinkDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { useDeleteResourceMutation } from '../../graphql/resources/resources.operations.generated';
 import { ResourceType, UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
@@ -41,10 +40,12 @@ import {
   LearningMaterialRecommendationsViewer,
   LearningMaterialRecommendationsViewerData,
 } from '../../components/learning_materials/LearningMaterialRecommendationsViewer';
+import { NotFoundPage } from '../NotFoundPage';
+import { ResourcePageInfo } from '../RoutesPageInfos';
 
 export const getResourceResourcePage = gql`
-  query getResourceResourcePage($id: String!) {
-    getResourceById(resourceId: $id) {
+  query getResourceResourcePage($resourceKey: String!) {
+    getResourceByKey(resourceKey: $resourceKey) {
       ...ResourceData
       createdBy {
         ...UserAvatarData
@@ -56,20 +57,16 @@ export const getResourceResourcePage = gql`
         ...ResourceData
       }
       parentResources {
-        _id
-        name
+        ...ResourceLinkData
       }
       seriesParentResource {
-        _id
-        name
+        ...ResourceLinkData
       }
       previousResource {
-        _id
-        name
+        ...ResourceLinkData
       }
       nextResource {
-        _id
-        name
+        ...ResourceLinkData
       }
       ...LearningMaterialWithCoveredTopicsData
       ...EditableLearningMaterialPrerequisitesData
@@ -84,28 +81,20 @@ export const getResourceResourcePage = gql`
   ${LearningMaterialStarsRaterData}
   ${LearningMaterialWithCoveredTopicsData}
   ${LearningMaterialRecommendationsViewerData}
+  ${ResourceLinkData}
 `;
 
 // TODO
-// const domainDataPlaceholder = generateDomainData();
-const resourceDataPlaceholder: GetResourceResourcePageQuery['getResourceById'] = {
+const resourceDataPlaceholder: GetResourceResourcePageQuery['getResourceByKey'] = {
   ...generateResourceData(),
-  // coveredConceptsByDomain: [
-  //   {
-  //     domain: domainDataPlaceholder,
-  //     coveredConcepts: [0, 0, 0, 0].map(() => ({
-  //       ...generateConceptData(),
-  //     })),
-  //   },
-  // ],
 };
 
-export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) => {
-  const { data, loading, error } = useGetResourceResourcePageQuery({ variables: { id: resourceId } });
-  console.log(data?.getResourceById);
-  if (error) return <Box>Resource not found !</Box>;
-  const resource = data?.getResourceById || resourceDataPlaceholder;
+export const ResourcePage: React.FC<{ resourceKey: string }> = ({ resourceKey }) => {
+  const { data, loading, error } = useGetResourceResourcePageQuery({ variables: { resourceKey } });
+
+  const resource = data?.getResourceByKey || resourceDataPlaceholder;
   const { currentUser } = useCurrentUser();
+  if (!data && !loading) return <NotFoundPage />;
   return (
     <PageLayout
       title={resource.name}
@@ -241,7 +230,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
 
 const TopRightIconButtons: React.FC<{
   loading?: boolean;
-  resource: GetResourceResourcePageQuery['getResourceById'];
+  resource: GetResourceResourcePageQuery['getResourceByKey'];
 }> = ({ loading, resource }) => {
   const router = useRouter();
   const { currentUser } = useCurrentUser();
@@ -276,7 +265,7 @@ const TopRightIconButtons: React.FC<{
 
 const RelatedResourceLink: React.FC<{
   type: 'previous' | 'next' | 'parent' | 'series_parent';
-  relatedResource: Pick<ResourceDataFragment, '_id' | 'name'>;
+  relatedResource: ResourceLinkDataFragment;
 }> = ({ type, relatedResource }) => {
   return (
     <Stack
@@ -290,14 +279,9 @@ const RelatedResourceLink: React.FC<{
       {type === 'parent' && <BsArrow90DegUp />}
       {type === 'series_parent' && <BsArrow90DegUp />}
 
-      <InternalLink
-        fontWeight={500}
-        fontStyle="italic"
-        asHref={`/resources/${relatedResource._id}`}
-        routePath="/resources/[_id]"
-      >
+      <PageLink fontWeight={500} fontStyle="italic" pageInfo={ResourcePageInfo(relatedResource)}>
         {relatedResource.name}
-      </InternalLink>
+      </PageLink>
     </Stack>
   );
 };

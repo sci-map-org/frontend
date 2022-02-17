@@ -15,7 +15,7 @@ type TopicResultItem = TopicLinkDataFragment;
 interface TopicSelectorProps {
   onSelect: (topic: TopicResultItem) => void;
   placeholder?: string;
-  onlySubTopicsOf?: string; // Search only topics that descend from this topic
+  onlySubTopicsOf?: string[]; // Search only topics that descend from these topics
 }
 
 export const TopicSelector: React.FC<TopicSelectorProps> = ({
@@ -37,7 +37,7 @@ export const TopicSelector: React.FC<TopicSelectorProps> = ({
         pagination: { limit: 10 },
       };
       onlySubTopicsOf
-        ? searchSubTopicsLazyQuery({ variables: { topicId: onlySubTopicsOf, options } })
+        ? searchSubTopicsLazyQuery({ variables: { topicIds: onlySubTopicsOf, options } })
         : searchTopicsLazyQuery({ variables: { options } });
     },
 

@@ -20,6 +20,7 @@ import { GoBrowser } from '@react-icons/all-files/go/GoBrowser';
 import { ImFilm } from '@react-icons/all-files/im/ImFilm';
 import { IconType } from '@react-icons/all-files/lib';
 import { RiBookOpenLine } from '@react-icons/all-files/ri/RiBookOpenLine';
+import { BsPencil } from '@react-icons/all-files/bs/BsPencil';
 import { RiFileTextLine } from '@react-icons/all-files/ri/RiFileTextLine';
 import { RiGamepadLine } from '@react-icons/all-files/ri/RiGamepadLine';
 import { RiTwitterLine } from '@react-icons/all-files/ri/RiTwitterLine';
@@ -29,10 +30,13 @@ import { InfographicIcon } from '../../lib/icons/InfographicIcon';
 import { OnlineBookIcon } from '../../lib/icons/OnlineBookIcon';
 import { YoutubePlaylistIcon } from '../../lib/icons/YoutubePlaylistIcon';
 import { IconProps } from '@chakra-ui/icons';
-import { LearningMaterialTypeBaseBadge } from '../../learning_materials/LearningMaterialTypeBadge';
+import {
+  LearningMaterialTypeBadgeColor,
+  LearningMaterialTypeBaseBadge,
+} from '../../learning_materials/LearningMaterialTypeBadge';
 import { ResourceIcon } from '../../lib/icons/ResourceIcon';
 
-export const resourceTypeColorMapping: { [key in ResourceType]: string } = {
+export const resourceTypeColorMapping: { [key in ResourceType]: LearningMaterialTypeBadgeColor } = {
   [ResourceType.Article]: 'yellow',
   [ResourceType.ArticleSeries]: 'yellow',
   [ResourceType.Book]: 'yellow',
@@ -49,15 +53,19 @@ export const resourceTypeColorMapping: { [key in ResourceType]: string } = {
   [ResourceType.Documentary]: 'red',
   [ResourceType.YoutubeVideo]: 'red',
   [ResourceType.YoutubePlaylist]: 'red',
-  [ResourceType.Exercise]: 'gray',
-  [ResourceType.Project]: 'gray',
-  [ResourceType.VideoGame]: 'gray',
-  [ResourceType.Other]: 'gray',
+  [ResourceType.Exercise]: 'darkGray',
+  [ResourceType.Project]: 'darkGray',
+  [ResourceType.VideoGame]: 'darkGray',
+  [ResourceType.Other]: 'lightGray',
 };
 
 export const resourceTypeToLabel = (type: ResourceType) => type.split('_').map(upperFirst).join(' ');
 
-export const ResourceTypeBadge: React.FC<BadgeProps & { type: ResourceType }> = ({ type, ...badgeProps }) => {
+export const ResourceTypeBadge: React.FC<Omit<BadgeProps, 'color'> & { type: ResourceType }> = ({
+  type,
+  onClick,
+  ...badgeProps
+}) => {
   const icon = useMemo(() => {
     return resourceTypeIconMapping[type] || defaultResourceTypeIcon;
   }, [type]);
@@ -66,6 +74,12 @@ export const ResourceTypeBadge: React.FC<BadgeProps & { type: ResourceType }> = 
     <LearningMaterialTypeBaseBadge
       name={resourceTypeToLabel(type)}
       icon={icon}
+      onClick={onClick}
+      {...(onClick && {
+        _hover: {
+          cursor: 'pointer',
+        },
+      })}
       color={resourceTypeColorMapping[type]}
       {...badgeProps}
     />
@@ -89,6 +103,8 @@ export const resourceTypeIconMapping: { [key in ResourceType]?: IconType | typeo
   [ResourceType.Website]: GoBrowser, //  GoBrowser CgWebsite IoGlobeOutline
   [ResourceType.YoutubeVideo]: RiYoutubeFill, //RiYoutubeLine
   [ResourceType.YoutubePlaylist]: YoutubePlaylistIcon, // or RiPlayList2Line ?
+  [ResourceType.Project]: BsPencil,
+  [ResourceType.Exercise]: BsPencil,
   [ResourceType.VideoGame]: RiGamepadLine,
 };
 

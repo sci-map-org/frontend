@@ -1,4 +1,5 @@
 import gql from 'graphql-tag';
+import { ResourceLinkData } from '../../../graphql/resources/resources.fragments';
 import { useSetResourceConsumed } from '../../../graphql/resources/resources.hooks';
 import { useCurrentUser } from '../../../graphql/users/users.hooks';
 import { useUnauthentificatedModal } from '../../auth/UnauthentificatedModal';
@@ -7,12 +8,13 @@ import { ResourceCompletedCheckboxDataFragment } from './ResourceCompletedCheckb
 
 export const ResourceCompletedCheckboxData = gql`
   fragment ResourceCompletedCheckboxData on Resource {
-    _id
+    ...ResourceLinkData
     consumed {
       consumedAt
       openedAt
     }
   }
+  ${ResourceLinkData}
 `;
 export const ResourceCompletedCheckbox: React.FC<
   {

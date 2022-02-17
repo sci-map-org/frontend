@@ -5,11 +5,11 @@ import { ResourcePage } from '../../../src/pages/resources/ResourcePage';
 const Page: React.FC = () => {
   const router = useRouter();
 
-  const { _id } = router.query;
+  const { key } = router.query;
 
-  if (typeof _id !== 'string') return null;
+  if (typeof key !== 'string') return null;
 
-  return <ResourcePage resourceId={_id} />;
+  return <ResourcePage resourceKey={key} />;
 };
 
 export default Page;

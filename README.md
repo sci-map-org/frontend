@@ -14,11 +14,9 @@ Codegen: use same name for the export as the graphql query/mutation name -> c.f.
 Using @react-icons/all-files as parcel seems to have issues with tree shaking it properly
 react-sortable-tree needs a patch to work with React 17. (https://github.com/frontend-collective/react-sortable-tree/issues/821)
 
-
 Nesting fragments too deeply breaks apollo client, some subfields of data are empty object
 
 ## Setup
-
 
 Create a `.env.local` file with
 
@@ -59,7 +57,8 @@ yarn dev:ext
 yarn build:ext
 ```
 
-In Chrome, go to Extensions, enable developer mode then load unpacked => pick production build or development build
+In Chrome, go to Extensions, enable developer mode then load unpacked => pick production build or development build.
+
 env vars are taken from .env.production.local or .env.development.local, so pick env vars accordingly (dev should point to localhost, prod to sci-map.org)
 
 ## Contributing

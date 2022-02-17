@@ -126,11 +126,14 @@ export type CreateLearningPathResourceItem = {
   resourceId: Scalars['String'];
 };
 
+export type CreateResourceOptions = {
+  recommend?: InputMaybe<Scalars['Boolean']>;
+};
+
 export type CreateResourcePayload = {
   coveredSubTopicsIds?: InputMaybe<Array<Scalars['String']>>;
   description?: InputMaybe<Scalars['String']>;
   durationSeconds?: InputMaybe<Scalars['Int']>;
-  mediaType: ResourceMediaType;
   name: Scalars['String'];
   prerequisitesTopicsIds?: InputMaybe<Array<Scalars['String']>>;
   showInTopicsIds: Array<Scalars['String']>;
@@ -144,7 +147,6 @@ export type CreateSubResourcePayload = {
   coveredSubTopicsIds?: InputMaybe<Array<Scalars['String']>>;
   description?: InputMaybe<Scalars['String']>;
   durationSeconds?: InputMaybe<Scalars['Int']>;
-  mediaType: ResourceMediaType;
   name: Scalars['String'];
   prerequisitesTopicsIds?: InputMaybe<Array<Scalars['String']>>;
   showInTopicsIds: Array<Scalars['String']>;
@@ -790,6 +792,7 @@ export type MutationCreateLearningPathArgs = {
 
 
 export type MutationCreateResourceArgs = {
+  options?: InputMaybe<CreateResourceOptions>;
   payload: CreateResourcePayload;
 };
 
@@ -1246,7 +1249,7 @@ export type QuerySearchResourcesArgs = {
 
 export type QuerySearchSubTopicsArgs = {
   options: SearchTopicsOptions;
-  topicId: Scalars['String'];
+  topicIds: Array<Scalars['String']>;
 };
 
 
@@ -1305,7 +1308,7 @@ export type Resource = LearningMaterial & {
   createdBy?: Maybe<User>;
   description?: Maybe<Scalars['String']>;
   durationSeconds?: Maybe<Scalars['Int']>;
-  mediaType: ResourceMediaType;
+  key: Scalars['String'];
   name: Scalars['String'];
   nextResource?: Maybe<Resource>;
   parentResources?: Maybe<Array<Resource>>;
@@ -1338,19 +1341,10 @@ export type ResourceData = {
   __typename?: 'ResourceData';
   description?: Maybe<Scalars['String']>;
   durationSeconds?: Maybe<Scalars['Int']>;
-  mediaType?: Maybe<ResourceMediaType>;
   name?: Maybe<Scalars['String']>;
   subResourceSeries?: Maybe<Array<SubResourceExtractedData>>;
   types?: Maybe<Array<ResourceType>>;
 };
-
-export enum ResourceMediaType {
-  Audio = 'audio',
-  Image = 'image',
-  InteractiveContent = 'interactive_content',
-  Text = 'text',
-  Video = 'video'
-}
 
 export enum ResourceType {
   Article = 'article',
@@ -1468,7 +1462,6 @@ export type SubResourceExtractedData = {
   __typename?: 'SubResourceExtractedData';
   description?: Maybe<Scalars['String']>;
   durationSeconds?: Maybe<Scalars['Int']>;
-  mediaType: ResourceMediaType;
   name: Scalars['String'];
   types: Array<ResourceType>;
   url: Scalars['String'];
@@ -1645,7 +1638,6 @@ export type UpdateLearningPathPayload = {
 export type UpdateResourcePayload = {
   description?: InputMaybe<Scalars['String']>;
   durationSeconds?: InputMaybe<Scalars['Int']>;
-  mediaType?: InputMaybe<ResourceMediaType>;
   name?: InputMaybe<Scalars['String']>;
   types?: InputMaybe<Array<ResourceType>>;
   url?: InputMaybe<Scalars['String']>;

@@ -10,6 +10,7 @@ import { ResourceTypeIcon } from '../../components/resources/elements/ResourceTy
 import { ResourceUrlLink } from '../../components/resources/elements/ResourceUrl';
 import { LearningMaterialPreviewCardList } from '../../components/resources/LearningMaterialPreviewCardList';
 import { ResourceMiniCardDataFragment } from '../../components/resources/ResourceMiniCard.generated';
+import { ResourceLinkData } from '../../graphql/resources/resources.fragments';
 import { routerPushToPage } from '../PageInfo';
 import { ResourcePageInfo } from '../RoutesPageInfos';
 import { LastOpenedResourceCardDataFragment } from './HomeUserResourcesHistory.generated';
@@ -53,14 +54,14 @@ export const LastOpenedResourceCardData = gql`
     consumedAt
     openedAt
     resource {
-      _id
-      name
+      ...ResourceLinkData
       url
       types
       rating
       durationSeconds
     }
   }
+  ${ResourceLinkData}
 `;
 
 const LastOpenedResourceCard: React.FC<{

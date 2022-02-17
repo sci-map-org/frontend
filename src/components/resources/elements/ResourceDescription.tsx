@@ -31,26 +31,26 @@ export const ResourceDescription: React.FC<
   ) : null;
 };
 
+export const RESOURCE_DESCRIPTION_MAX_LENGTH = 1000;
+
 export const ResourceDescriptionInput: React.FC<{
   value?: string;
   onChange: (value?: string) => void;
-  maxLength?: number;
-}> = ({ value, onChange, maxLength }) => {
+  isInvalid?: boolean;
+}> = ({ value, onChange, isInvalid }) => {
   return (
     <FormControl>
       <Textarea
-        isInvalid={!(!maxLength || (!!value && value.length <= maxLength))}
-        id="description"
-        placeholder="Description (optional)"
+        placeholder="Write a description of this resource"
         size="md"
+        minH="180px"
         value={value}
         onChange={(e) => onChange(e.target.value || undefined)}
+        isInvalid={isInvalid || (!!value && value.length > RESOURCE_DESCRIPTION_MAX_LENGTH)}
       ></Textarea>
-      {maxLength && (
-        <FormHelperText textAlign="right" id="description-helper-text">
-          {value ? value.length : 0}/{maxLength}
-        </FormHelperText>
-      )}
+      <FormHelperText textAlign="right" id="description-helper-text">
+        {value ? value.length : 0}/{RESOURCE_DESCRIPTION_MAX_LENGTH}
+      </FormHelperText>
     </FormControl>
   );
 };

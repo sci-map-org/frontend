@@ -1,6 +1,6 @@
 import { Text } from '@chakra-ui/react';
 
-export const LearningMaterialTag: React.FC<{
+export const LearningMaterialTagViewer: React.FC<{
   tagName: String;
   size?: 'sm' | 'md';
 }> = ({ tagName, size = 'md' }) => {

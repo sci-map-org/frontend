@@ -5,10 +5,11 @@ import * as Apollo from '@apollo/client';
 const defaultOptions =  {}
 export type CreateResourceMutationVariables = Types.Exact<{
   payload: Types.CreateResourcePayload;
+  options?: Types.InputMaybe<Types.CreateResourceOptions>;
 }>;
 
 
-export type CreateResourceMutation = { __typename?: 'Mutation', createResource: { __typename?: 'Resource', _id: string, name: string, types: Array<Types.ResourceType>, mediaType: Types.ResourceMediaType, url: string, description?: string | null | undefined, durationSeconds?: number | null | undefined, rating?: number | null | undefined, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined } };
+export type CreateResourceMutation = { __typename?: 'Mutation', createResource: { __typename?: 'Resource', _id: string, key: string, name: string, types: Array<Types.ResourceType>, url: string, description?: string | null | undefined, durationSeconds?: number | null | undefined, rating?: number | null | undefined, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined } };
 
 
 export type CreateResourceMutationFn = Apollo.MutationFunction<CreateResourceMutation, CreateResourceMutationVariables>;
@@ -27,6 +28,7 @@ export type CreateResourceMutationFn = Apollo.MutationFunction<CreateResourceMut
  * const [createResourceMutation, { data, loading, error }] = useCreateResourceMutation({
  *   variables: {
  *      payload: // value for 'payload'
+ *      options: // value for 'options'
  *   },
  * });
  */

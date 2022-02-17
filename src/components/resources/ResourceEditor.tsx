@@ -8,20 +8,17 @@ import { GetResourceEditResourcePageQuery } from '../../pages/resources/EditReso
 import { validateUrl } from '../../services/url.service';
 import { Access } from '../auth/Access';
 import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
+import { DurationInput } from './elements/Duration';
 import { ResourceDescriptionInput } from './elements/ResourceDescription';
-import { DurationFormField } from './elements/Duration';
-import { ResourceMediaTypeSelector } from './elements/ResourceMediaType';
 import { ResourceTypeSelector } from './elements/ResourceType';
-import { ResourceUrlInput } from './elements/ResourceUrl';
 
 interface ResourceEditorProps {
-  resource: GetResourceEditResourcePageQuery['getResourceById'];
+  resource: GetResourceEditResourcePageQuery['getResourceByKey'];
   onSave: (editedResource: UpdateResourcePayload) => void;
 }
 
 export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave }) => {
   const [name, setName] = useState(resource.name);
-  const [mediaType, setMediaType] = useState(resource.mediaType);
 
   const [types, setTypes] = useState(resource.types);
   const [url, setUrl] = useState(resource.url);
@@ -44,16 +41,16 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
         <FormLabel htmlFor="name">Title</FormLabel>
         <Input id="name" placeholder="name" size="md" value={name} onChange={(e) => setName(e.target.value)}></Input>
       </FormControl>
-      <ResourceUrlInput value={url} onChange={setUrl} />
+      {/* TODO */}
+      {/* <ResourceUrlInput value={url} onChange={setUrl} /> */}
 
       {/* TODO  */}
       <Flex direction="row">
         <ResourceTypeSelector value={types[0]} onSelect={(t) => setTypes([t])} />
       </Flex>
       <Flex flexDirection="row">
-        <ResourceMediaTypeSelector value={mediaType} onSelect={(t) => setMediaType(t)} />
         <Box flexGrow={1}></Box>
-        <DurationFormField value={durationSeconds} onChange={setDurationSeconds} />
+        <DurationInput value={durationSeconds} onChange={setDurationSeconds} />
       </Flex>
       <ResourceDescriptionInput value={description} onChange={(d) => setDescription(d)} />
       <Stack direction="row" justifyContent="space-between">
@@ -92,7 +89,6 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
             onClick={() =>
               onSave({
                 name,
-                mediaType,
                 types,
                 url,
                 description,

@@ -8,8 +8,9 @@ import {
   ResourcePreviewCardDataFragment,
 } from '../../graphql/resources/resources.fragments.generated';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
+import { ResourcePageInfo } from '../../pages/RoutesPageInfos';
 import { StarsRatingViewer } from '../lib/StarsRating';
-import { InternalLink } from '../navigation/InternalLink';
+import { InternalLink, PageLink } from '../navigation/InternalLink';
 import { DurationViewer } from './elements/Duration';
 import { ResourceTypeIcon } from './elements/ResourceType';
 import { ResourceListBasicLayout } from './ResourceList';
@@ -62,9 +63,7 @@ export const StatelessSubResourceSeriesManager: React.FC<StatelessSubResourceSer
                   {resource.types.map((type) => (
                     <ResourceTypeIcon key={type} resourceType={type} boxSize={5} />
                   ))}
-                  <InternalLink routePath="/resources/[_id]" asHref={`/resources/${resource._id}`}>
-                    {resource.name}
-                  </InternalLink>
+                  <PageLink pageInfo={ResourcePageInfo(resource)}>{resource.name}</PageLink>
                   <Stack direction="row" alignItems="center" spacing={1}>
                     <StarsRatingViewer value={resource.rating} pxSize={14} />
 

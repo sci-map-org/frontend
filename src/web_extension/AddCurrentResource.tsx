@@ -23,7 +23,7 @@ export const AddCurrentResource: React.FC<{}> = () => {
       <Stack>
         <Alert status="success" size="lg" fontSize="md">
           <AlertIcon />
-          <Link href={`${env.FRONTEND_URL}${ResourcePagePath(createdResource._id)}`} fontWeight={500} mr={2} isExternal>
+          <Link href={`${env.FRONTEND_URL}${ResourcePagePath(createdResource.key)}`} fontWeight={500} mr={2} isExternal>
             {shortenString(createdResource.name, 40)}
           </Link>
           successfully created !

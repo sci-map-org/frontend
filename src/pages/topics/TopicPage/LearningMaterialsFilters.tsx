@@ -19,7 +19,7 @@ import { debounce, intersection, xor } from 'lodash';
 import { DependencyList, useCallback, useEffect, useRef, useState } from 'react';
 import BeatLoader from 'react-spinners/BeatLoader';
 import { useDebounce } from 'use-debounce';
-import { LearningMaterialTagBase } from '../../../components/learning_materials/LearningMaterialTag';
+import { LearningMaterialTagBase } from '../../../components/learning_materials/LearningMaterialTagViewer';
 import { ResourceType, TopicLearningMaterialsSortingType } from '../../../graphql/types';
 import { theme } from '../../../theme/theme';
 import { FeedAvailableFilters, TopicPageLearningMaterialsFeedOptions } from './TopicPageLearningMaterialsFeed';
@@ -191,7 +191,7 @@ export const LearningMaterialsFilters: React.FC<LearningMaterialFiltersProps> = 
             isSelected={feedOptions.typeFilters.Short}
             isDisabled={feedAvailableFilters && feedAvailableFilters.leq30minCount === 0}
           >
-            Short<Text as="span" fontSize="sm">{`(<30min)`}</Text>
+            Short <Text as="span" fontSize="sm">{`(<30min)`}</Text>
           </LearningMaterialFilterItem>
         </WrapItem>
         <WrapItem>
@@ -201,7 +201,7 @@ export const LearningMaterialsFilters: React.FC<LearningMaterialFiltersProps> = 
             isSelected={feedOptions.typeFilters.Long}
             isDisabled={feedAvailableFilters && feedAvailableFilters.geq30minCount === 0}
           >
-            Long<Text as="span" fontSize="sm">{`(>30min)`}</Text>
+            Long <Text as="span" fontSize="sm">{`(>30min)`}</Text>
           </LearningMaterialFilterItem>
         </WrapItem>
 

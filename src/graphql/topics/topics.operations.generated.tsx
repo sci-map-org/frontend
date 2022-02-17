@@ -11,7 +11,7 @@ export type SearchTopicsQueryVariables = Types.Exact<{
 export type SearchTopicsQuery = { __typename?: 'Query', searchTopics: { __typename?: 'SearchTopicsResult', items: Array<{ __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined }> } };
 
 export type SearchSubTopicsQueryVariables = Types.Exact<{
-  topicId: Types.Scalars['String'];
+  topicIds: Array<Types.Scalars['String']> | Types.Scalars['String'];
   options: Types.SearchTopicsOptions;
 }>;
 
@@ -142,7 +142,7 @@ export type SearchTopicsQueryResult = Apollo.QueryResult<SearchTopicsQuery, Sear
  * @example
  * const { data, loading, error } = useSearchSubTopicsQuery({
  *   variables: {
- *      topicId: // value for 'topicId'
+ *      topicIds: // value for 'topicIds'
  *      options: // value for 'options'
  *   },
  * });

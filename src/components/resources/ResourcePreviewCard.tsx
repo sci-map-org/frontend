@@ -25,7 +25,7 @@ import {
   ResourcePreviewCardDataFragment,
 } from '../../graphql/resources/resources.fragments.generated';
 import { TopicLinkData } from '../../graphql/topics/topics.fragments';
-import { ResourceMediaType, ResourceType } from '../../graphql/types';
+import { ResourceType } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { EditResourcePageInfo, ResourcePageInfo } from '../../pages/RoutesPageInfos';
@@ -43,7 +43,7 @@ import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickProp
 import { ResourceGroupIcon } from '../lib/icons/ResourceGroupIcon';
 import { ResourceSeriesIcon } from '../lib/icons/ResourceSeriesIcon';
 import { StarsRatingViewer } from '../lib/StarsRating';
-import { InternalLink } from '../navigation/InternalLink';
+import { InternalLink, PageLink } from '../navigation/InternalLink';
 import { DurationViewer } from './elements/Duration';
 import { ResourceCompletedCheckbox } from './elements/ResourceCompletedCheckbox';
 import { ResourceDescription } from './elements/ResourceDescription';
@@ -235,7 +235,7 @@ const BottomBlock: React.FC<{
 };
 
 const SubResourcesButtonPopover: React.FC<{
-  subResources: Pick<ResourceLinkDataFragment, '_id' | 'name'>[];
+  subResources: ResourceLinkDataFragment[];
   leftIcon: ReactElement;
   buttonText: string;
   headerTitle: string;
@@ -256,9 +256,7 @@ const SubResourcesButtonPopover: React.FC<{
           <Stack direction="column">
             {subResources.map((subResource) => (
               <Box key={subResource._id}>
-                <InternalLink routePath="/resources/[_id]" asHref={`/resources/${subResource._id}`}>
-                  {subResource.name}
-                </InternalLink>
+                <PageLink pageInfo={ResourcePageInfo(subResource)}>{subResource.name}</PageLink>
               </Box>
             ))}
           </Stack>
