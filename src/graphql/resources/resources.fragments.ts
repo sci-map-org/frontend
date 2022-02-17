@@ -11,6 +11,7 @@ import {
 export const ResourceData = gql`
   fragment ResourceData on Resource {
     _id
+    key
     name
     types
     url
@@ -30,12 +31,14 @@ export const ResourceData = gql`
 export const ResourceLinkData = gql`
   fragment ResourceLinkData on Resource {
     _id
+    key
     name
   }
 `;
 
 export const generateResourceData = (): ResourceDataFragment => ({
   _id: Math.random().toString(),
+  key: '23rmfsw_my_resource',
   name: 'My awesome resource name',
   types: [ResourceType.Article],
   url: 'https://myresource.url',
@@ -44,6 +47,7 @@ export const generateResourceData = (): ResourceDataFragment => ({
 export const ResourceFeedCardData = gql`
   fragment ResourceFeedCardData on Resource {
     _id
+    key
     name
     types
     url
@@ -69,20 +73,20 @@ export const ResourceFeedCardData = gql`
       }
     }
     subResourceSeries {
-      _id
-      name
+      ...ResourceLinkData
     }
     subResources {
-      _id
-      name
+      ...ResourceLinkData
     }
     createdAt
   }
   ${TopicLinkData}
+  ${ResourceLinkData}
   ${LearningMaterialRecommendationsViewerData}
 `;
 export const generateResourceFeedCardData = (): ResourceFeedCardDataFragment => ({
   _id: Math.random().toString(),
+  key: '12r3rf_my_resource',
   name: 'My resource name',
   types: [ResourceType.Article],
   url: 'https://myresource.url',
@@ -93,6 +97,7 @@ export const generateResourceFeedCardData = (): ResourceFeedCardDataFragment => 
 export const ResourcePreviewCardData = gql`
   fragment ResourcePreviewCardData on Resource {
     _id
+    key
     name
     types
     url
@@ -113,20 +118,20 @@ export const ResourcePreviewCardData = gql`
     rating
     ...LearningMaterialRecommendationsViewerData
     subResourceSeries {
-      _id
-      name
+      ...ResourceLinkData
     }
     subResources {
-      _id
-      name
+      ...ResourceLinkData
     }
   }
+  ${ResourceLinkData}
   ${TopicLinkData}
   ${LearningMaterialRecommendationsViewerData}
 `;
 
 export const generateResourcePreviewCardData = (): ResourcePreviewCardDataFragment => ({
   _id: Math.random().toString(),
+  key: '124e3rf_my_resource_name',
   name: 'My resource name',
   types: [ResourceType.Article],
   url: 'https://myresource.url',
@@ -134,11 +139,12 @@ export const generateResourcePreviewCardData = (): ResourcePreviewCardDataFragme
 
 export const ResourceWithCoveredTopicsData = gql`
   fragment ResourceWithCoveredTopicsData on Resource {
-    _id
+    ...ResourceLinkData
     coveredSubTopics(options: {}) {
       items {
         ...TopicLinkData
       }
     }
   }
+  ${ResourceLinkData}
 `;

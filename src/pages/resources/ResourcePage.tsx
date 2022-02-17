@@ -40,10 +40,11 @@ import {
   LearningMaterialRecommendationsViewer,
   LearningMaterialRecommendationsViewerData,
 } from '../../components/learning_materials/LearningMaterialRecommendationsViewer';
+import { NotFoundPage } from '../NotFoundPage';
 
 export const getResourceResourcePage = gql`
-  query getResourceResourcePage($id: String!) {
-    getResourceById(resourceId: $id) {
+  query getResourceResourcePage($resourceKey: String!) {
+    getResourceByKey(resourceKey: $resourceKey) {
       ...ResourceData
       createdBy {
         ...UserAvatarData
@@ -86,25 +87,16 @@ export const getResourceResourcePage = gql`
 `;
 
 // TODO
-// const domainDataPlaceholder = generateDomainData();
-const resourceDataPlaceholder: GetResourceResourcePageQuery['getResourceById'] = {
+const resourceDataPlaceholder: GetResourceResourcePageQuery['getResourceByKey'] = {
   ...generateResourceData(),
-  // coveredConceptsByDomain: [
-  //   {
-  //     domain: domainDataPlaceholder,
-  //     coveredConcepts: [0, 0, 0, 0].map(() => ({
-  //       ...generateConceptData(),
-  //     })),
-  //   },
-  // ],
 };
 
-export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) => {
-  const { data, loading, error } = useGetResourceResourcePageQuery({ variables: { id: resourceId } });
-  console.log(data?.getResourceById);
-  if (error) return <Box>Resource not found !</Box>;
-  const resource = data?.getResourceById || resourceDataPlaceholder;
+export const ResourcePage: React.FC<{ resourceKey: string }> = ({ resourceKey }) => {
+  const { data, loading, error } = useGetResourceResourcePageQuery({ variables: { resourceKey } });
+
+  const resource = data?.getResourceByKey || resourceDataPlaceholder;
   const { currentUser } = useCurrentUser();
+  if (!data && !loading) return <NotFoundPage />;
   return (
     <PageLayout
       title={resource.name}
@@ -240,7 +232,7 @@ export const ResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) =
 
 const TopRightIconButtons: React.FC<{
   loading?: boolean;
-  resource: GetResourceResourcePageQuery['getResourceById'];
+  resource: GetResourceResourcePageQuery['getResourceByKey'];
 }> = ({ loading, resource }) => {
   const router = useRouter();
   const { currentUser } = useCurrentUser();

@@ -1308,6 +1308,7 @@ export type Resource = LearningMaterial & {
   createdBy?: Maybe<User>;
   description?: Maybe<Scalars['String']>;
   durationSeconds?: Maybe<Scalars['Int']>;
+  key: Scalars['String'];
   name: Scalars['String'];
   nextResource?: Maybe<Resource>;
   parentResources?: Maybe<Array<Resource>>;

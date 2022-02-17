@@ -20,8 +20,8 @@ export const updateResourceResourcePage = gql`
 `;
 
 export const getResourceEditResourcePage = gql`
-  query getResourceEditResourcePage($id: String!) {
-    getResourceById(resourceId: $id) {
+  query getResourceEditResourcePage($resourceKey: String!) {
+    getResourceByKey(resourceKey: $resourceKey) {
       ...ResourceData
       createdBy {
         _id
@@ -31,11 +31,11 @@ export const getResourceEditResourcePage = gql`
   ${ResourceData}
 `;
 
-const EditResourcePage: React.FC<{ resourceId: string }> = ({ resourceId }) => {
-  const { data } = useGetResourceEditResourcePageQuery({ variables: { id: resourceId }, returnPartialData: true });
+const EditResourcePage: React.FC<{ resourceKey: string }> = ({ resourceKey }) => {
+  const { data } = useGetResourceEditResourcePageQuery({ variables: { resourceKey }, returnPartialData: true });
   const [updateResource] = useUpdateResourceResourcePageMutation({});
-  if (!data || !data.getResourceById) return <Box>Resource not found !</Box>;
-  const { getResourceById: resource } = data;
+  if (!data || !data.getResourceByKey) return <Box>Resource not found !</Box>;
+  const { getResourceByKey: resource } = data;
   return (
     <PageLayout
       marginSize="xl"

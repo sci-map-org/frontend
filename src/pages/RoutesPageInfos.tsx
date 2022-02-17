@@ -4,7 +4,7 @@ import { TopicLinkStyleProps } from '../components/lib/Typography';
 import { ManageTopicTabIndex } from '../components/topics/ManageTopic';
 import { LearningGoalLinkDataFragment } from '../graphql/learning_goals/learning_goals.fragments.generated';
 import { LearningPathDataFragment } from '../graphql/learning_paths/learning_paths.fragments.generated';
-import { ResourceDataFragment } from '../graphql/resources/resources.fragments.generated';
+import { ResourceDataFragment, ResourceLinkDataFragment } from '../graphql/resources/resources.fragments.generated';
 import { TopicLinkDataFragment } from '../graphql/topics/topics.fragments.generated';
 import { PublicUserDataFragment } from '../graphql/users/users.fragments.generated';
 import { PageInfo } from './PageInfo';
@@ -118,27 +118,19 @@ export const NewResourcePageInfo = {
   routePath: NewResourcePagePath,
 };
 
-export const ResourcePagePath = (resourceId: string) => `/resources/${resourceId}`;
-export const ResourcePageInfo = (resource: Pick<ResourceDataFragment, '_id' | 'name'>): PageInfo => ({
+export const ResourcePagePath = (resourceKey: string) => `/resources/${resourceKey}`;
+export const ResourcePageInfo = (resource: ResourceLinkDataFragment): PageInfo => ({
   name: `${resource.name}`,
-  path: ResourcePagePath(resource._id),
-  routePath: ResourcePagePath('[_id]'),
+  path: ResourcePagePath(resource.key),
+  routePath: ResourcePagePath('[key]'),
 });
 
-export const EditResourcePagePath = (resourceId: string) => `/resources/${resourceId}/edit`;
-export const EditResourcePageInfo = (resource: ResourceDataFragment): PageInfo => ({
+export const EditResourcePagePath = (resourceKey: string) => `/resources/${resourceKey}/edit`;
+export const EditResourcePageInfo = (resource: ResourceLinkDataFragment): PageInfo => ({
   name: `Edit - ${resource.name}`,
-  path: EditResourcePagePath(resource._id),
-  routePath: EditResourcePagePath('[_id]'),
+  path: EditResourcePagePath(resource.key),
+  routePath: EditResourcePagePath('[key]'),
 });
-
-// export const AddResourceToDomainPagePath = (domainKey: string) => `/areas/${domainKey}/resources/new`;
-
-// export const AddResourceToDomainPageInfo = (domain: DomainLinkDataFragment) => ({
-//   name: `Add Resource to ${domain.name}`,
-//   path: AddResourceToDomainPagePath(domain.key),
-//   routePath: AddResourceToDomainPagePath('[key]'),
-// });
 
 // export const DomainResourceListPagePath = (domainKey: string) => `/areas/${domainKey}/resources`;
 // export const DomainResourceListPageInfo = (domain: DomainDataFragment): PageInfo => ({
