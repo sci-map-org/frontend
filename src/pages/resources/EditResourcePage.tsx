@@ -1,9 +1,9 @@
 import { Box } from '@chakra-ui/react';
 import gql from 'graphql-tag';
-import Router from 'next/router';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { ResourceEditor } from '../../components/resources/ResourceEditor';
 import { ResourceData } from '../../graphql/resources/resources.fragments';
+import { routerPushToPage } from '../PageInfo';
 import { EditResourcePageInfo, ResourcePageInfo } from '../RoutesPageInfos';
 import {
   useGetResourceEditResourcePageQuery,
@@ -48,7 +48,7 @@ const EditResourcePage: React.FC<{ resourceKey: string }> = ({ resourceKey }) =>
           await updateResource({
             variables: { id: resource._id, payload },
           });
-          Router.push(`/resources/${resource._id}`);
+          routerPushToPage(ResourcePageInfo(resource));
         }}
       ></ResourceEditor>
     </PageLayout>

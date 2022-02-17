@@ -1,12 +1,6 @@
 import { Alert, AlertDescription, AlertIcon, Box, Button, CloseButton, useToast } from '@chakra-ui/react';
-import { flatten } from 'lodash';
 import { ReactText } from 'react';
-// import {
-//   getDomainCompletedLearningMaterialsHistory,
-//   getDomainCompletedLearningMaterialsHistoryQueryVariables,
-// } from '../../components/domains/DomainUserHistory';
-// import { useSetConceptsKnownMutation } from '../concepts/concepts.operations.generated';
-import {  ResourceWithCoveredTopicsDataFragment } from './resources.fragments.generated';
+import { ResourceLinkDataFragment } from './resources.fragments.generated';
 import { useSetResourceConsumedMutation } from './resources.operations.generated';
 
 const ResourceConsumedToastAlert: React.FC<{
@@ -59,7 +53,7 @@ export const useSetResourceConsumed = ({
   const checkedResourceToast = useToast();
   const [setResourceConsumedMutation] = useSetResourceConsumedMutation();
   // const [setConceptKnown] = useSetConceptsKnownMutation();
-  const setResourceConsumed = async (resource: ResourceWithCoveredTopicsDataFragment, consumed: boolean) => {
+  const setResourceConsumed = async (resource: Pick<ResourceLinkDataFragment, '_id'>, consumed: boolean) => {
     // const coveredConcepts = flatten(
     //   (resource.coveredConceptsByDomain || []).map(({ coveredConcepts }) => coveredConcepts)
     // );

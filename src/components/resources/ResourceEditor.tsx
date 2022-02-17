@@ -8,13 +8,12 @@ import { GetResourceEditResourcePageQuery } from '../../pages/resources/EditReso
 import { validateUrl } from '../../services/url.service';
 import { Access } from '../auth/Access';
 import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
-import { ResourceDescriptionInput } from './elements/ResourceDescription';
 import { DurationInput } from './elements/Duration';
+import { ResourceDescriptionInput } from './elements/ResourceDescription';
 import { ResourceTypeSelector } from './elements/ResourceType';
-import { ResourceUrlInput } from './elements/ResourceUrl';
 
 interface ResourceEditorProps {
-  resource: GetResourceEditResourcePageQuery['getResourceById'];
+  resource: GetResourceEditResourcePageQuery['getResourceByKey'];
   onSave: (editedResource: UpdateResourcePayload) => void;
 }
 

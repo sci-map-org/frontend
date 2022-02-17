@@ -16,10 +16,10 @@ import { ResourceMiniCardDataFragment } from './ResourceMiniCard.generated';
 export const ResourceMiniCardData = gql`
   fragment ResourceMiniCardData on Resource {
     _id
+    key
     name
     types
     url
-    rating
     ...LearningMaterialStarsRaterData
   }
   ${LearningMaterialStarsRaterData}
@@ -50,7 +50,7 @@ export const ResourceMiniCard: React.FC<ResourceMiniCardProps> = ({
           {resource.types.map((type) => (
             <ResourceTypeBadge key={type} fontSize="xs" type={type} />
           ))}
-          <StarsRatingViewer pxSize={13} value={resource.rating} />
+          {/* <StarsRatingViewer pxSize={13} value={resource.rating} /> */}
           <BoxBlockDefaultClickPropagation>
             <LearningMaterialStarsRater learningMaterial={resource} size="xs" />
           </BoxBlockDefaultClickPropagation>

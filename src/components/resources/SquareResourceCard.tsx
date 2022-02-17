@@ -13,6 +13,7 @@ import { SquareResourceCardDataFragment } from './SquareResourceCard.generated';
 export const SquareResourceCardData = gql`
   fragment SquareResourceCardData on Resource {
     _id
+    key
     name
     types
     rating

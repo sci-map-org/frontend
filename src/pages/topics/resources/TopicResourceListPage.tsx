@@ -50,7 +50,7 @@
 //           renderTop={(resource) => (
 //             <Stack direction="row" alignItems="center" spacing={2}>
 //               <ResourceTypeIcon resourceType={resource.type} boxSize={5} />
-//               <InternalLink routePath="/resources/[_id]" asHref={`/resources/${resource._id}`}>
+//               <InternalLink routePath="/resources/[key]" asHref={`/resources/${resource.key}`}>
 //                 {resource.name}
 //               </InternalLink>
 //               <Stack direction="row" alignItems="center" spacing={1}>
