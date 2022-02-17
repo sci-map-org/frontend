@@ -6,7 +6,7 @@ import { ResourcePageInfo } from '../RoutesPageInfos';
 
 export const NewResourcePage: React.FC<{}> = () => {
   return (
-    <PageLayout marginSize="xl" title={`Create new Resource`}>
+    <PageLayout marginSize="xl">
       <NewResource
         onCancel={() => Router.back()}
         onResourceCreated={(createdResource) => routerPushToPage(ResourcePageInfo(createdResource))}

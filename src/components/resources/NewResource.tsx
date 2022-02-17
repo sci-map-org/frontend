@@ -578,39 +578,44 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
           )}
         </Stack>
       )}
-      {hasErrors && showFormErrors && (
-        <Text color="red.500">Unable to create this Resource. Please fix the errors and try again.</Text>
-      )}
-      <ButtonGroup size="lg" spacing={8} justifyContent="flex-end">
-        {!!onCancel && (
-          <Button variant="outline" minW="12rem" onClick={onCancel}>
-            Cancel
-          </Button>
+      <Flex direction="column" alignItems="stretch">
+        {hasErrors && showFormErrors && (
+          <Text color="red.500" pb={3}>
+            Unable to create this Resource. Please fix the errors and try again.
+          </Text>
         )}
-        <Button
-          isLoading={isCreating === 'creating'}
-          minW="12rem"
-          px={5}
-          colorScheme="blue"
-          variant="solid"
-          isDisabled={showFormErrors && hasErrors}
-          onClick={async () => onCreate(false)}
-        >
-          Add Resource
-        </Button>
 
-        <Button
-          isLoading={isCreating === 'creating and recommending'}
-          leftIcon={<HeartIcon />}
-          minW="12rem"
-          colorScheme="teal"
-          variant="solid"
-          isDisabled={showFormErrors && hasErrors}
-          onClick={() => onCreate(true)}
-        >
-          Add and Recommend
-        </Button>
-      </ButtonGroup>
+        <ButtonGroup size="lg" spacing={8} justifyContent="flex-end">
+          {!!onCancel && (
+            <Button variant="outline" minW="12rem" onClick={onCancel}>
+              Cancel
+            </Button>
+          )}
+          <Button
+            isLoading={isCreating === 'creating'}
+            minW="12rem"
+            px={5}
+            colorScheme="blue"
+            variant="solid"
+            isDisabled={showFormErrors && hasErrors}
+            onClick={async () => onCreate(false)}
+          >
+            Add Resource
+          </Button>
+
+          <Button
+            isLoading={isCreating === 'creating and recommending'}
+            leftIcon={<HeartIcon />}
+            minW="12rem"
+            colorScheme="teal"
+            variant="solid"
+            isDisabled={showFormErrors && hasErrors}
+            onClick={() => onCreate(true)}
+          >
+            Add and Recommend
+          </Button>
+        </ButtonGroup>
+      </Flex>
     </Stack>
   );
 };

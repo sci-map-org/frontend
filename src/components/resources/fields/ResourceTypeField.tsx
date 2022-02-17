@@ -14,25 +14,13 @@ export const ResourceTypeSuggestions: ResourceType[] = [
   ResourceType.Course,
   ResourceType.Documentary,
   ResourceType.Talk,
-  //   ResourceType.Infographic,
-
   ResourceType.Podcast,
   ResourceType.PodcastEpisode,
   ResourceType.Website,
   ResourceType.Exercise,
   ResourceType.Project,
-  //   ResourceType.Tweet,
   ResourceType.VideoGame,
   ResourceType.Other,
-  //   ResourceType.YoutubePlaylist,
-  //   ResourceType.YoutubeVideo,
-  //   { name: 'concept', color: TopicTypeColor.Orange },
-  //   { name: 'field', color: TopicTypeColor.Red },
-  //   { name: 'tool', color: TopicTypeColor.Green },
-  //   { name: 'problem', color: TopicTypeColor.Green },
-  //   { name: 'theory', color: TopicTypeColor.Red },
-  //   { name: 'method', color: TopicTypeColor.Orange },
-  //   { name: 'application', color: TopicTypeColor.Green },
 ];
 
 export const ResourceTypeField: React.FC<{
@@ -42,10 +30,6 @@ export const ResourceTypeField: React.FC<{
   errorMessage?: string;
   selectableResourceTypes: ResourceType[];
 }> = ({ value, onChange, isInvalid, selectableResourceTypes, errorMessage }) => {
-  //   const [showSelector, setShowSelector] = useState(false);
-  //   const topicTypeSelectorWrapperRef = useRef(null);
-
-  //   useHandleClickOutside(topicTypeSelectorWrapperRef, () => setShowSelector(false));
   return (
     <Field
       label="Resource Types"

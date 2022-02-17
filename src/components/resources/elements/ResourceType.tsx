@@ -20,6 +20,7 @@ import { GoBrowser } from '@react-icons/all-files/go/GoBrowser';
 import { ImFilm } from '@react-icons/all-files/im/ImFilm';
 import { IconType } from '@react-icons/all-files/lib';
 import { RiBookOpenLine } from '@react-icons/all-files/ri/RiBookOpenLine';
+import { BsPencil } from '@react-icons/all-files/bs/BsPencil';
 import { RiFileTextLine } from '@react-icons/all-files/ri/RiFileTextLine';
 import { RiGamepadLine } from '@react-icons/all-files/ri/RiGamepadLine';
 import { RiTwitterLine } from '@react-icons/all-files/ri/RiTwitterLine';
@@ -102,6 +103,8 @@ export const resourceTypeIconMapping: { [key in ResourceType]?: IconType | typeo
   [ResourceType.Website]: GoBrowser, //  GoBrowser CgWebsite IoGlobeOutline
   [ResourceType.YoutubeVideo]: RiYoutubeFill, //RiYoutubeLine
   [ResourceType.YoutubePlaylist]: YoutubePlaylistIcon, // or RiPlayList2Line ?
+  [ResourceType.Project]: BsPencil,
+  [ResourceType.Exercise]: BsPencil,
   [ResourceType.VideoGame]: RiGamepadLine,
 };
 
