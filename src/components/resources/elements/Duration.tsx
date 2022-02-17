@@ -48,8 +48,7 @@ export const DurationInput: React.FC<
 
   useEffect(() => {
     const { current } = inputRef;
-    // autoFocus
-    if (current) current.focus();
+    if (current && autoFocus) current.focus();
   }, []);
   useEffect(() => {
     setShowTooltip(!isValid);

@@ -10,6 +10,7 @@ import {
   FormErrorMessage,
   Heading,
   IconButton,
+  Image,
   Input,
   Link,
   Modal,
@@ -175,7 +176,7 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
         <Center>
           <Field isInvalid={showFormErrors && !!formErrors.name} label="Title" w="500px">
             <Input
-              placeholder="Title"
+              placeholder="What's the name of this resource ?"
               size="md"
               value={resourceCreationData.name}
               onChange={(e) => updateResourceCreationData({ name: e.target.value })}
@@ -362,7 +363,6 @@ const computeFormErrors = (
   rules: NewResourceValidationRules[]
 ): FormErrors => {
   let errors: FormErrors = {};
-  // durationSeconds ?
   if (!resourceCreationData.name) errors.name = 'Resource Title is required';
   if (!resourceCreationData.url) errors.url = 'The Url of the resource is required';
   if (resourceCreationData.description && resourceCreationData.description.length > RESOURCE_DESCRIPTION_MAX_LENGTH)
@@ -370,7 +370,7 @@ const computeFormErrors = (
   if (resourceCreationData.types.length < 1) errors.types = 'At least one Resource Type must be selected';
   if (resourceCreationData.types.length > 3) errors.types = 'Maximum 3 Resource Types can be selected';
   if (rules.includes('at least one showIn Topic') && resourceCreationData.showInTopics.length <= 0)
-    errors.showInTopics = 'The resource must be shown in at least one Topic'; // Are we sure ? Case of adding a resource for oneself or for a LP
+    errors.showInTopics = 'The resource must be shown in at least one Topic';
 
   return errors;
 };
@@ -440,15 +440,15 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
           ) : (
             'New Resource'
           )}
-          {/* <Image
+          <Image
             position="absolute"
-            src="/images/topostain_pin_add_topic.svg"
-            w="300px"
-            maxW="300px"
-            right="-250px"
-            top="-100px"
+            src="/images/topostain_teal_add_resource.svg"
+            w="220px"
+            maxW="220px"
+            left="-240px"
+            top="-50px"
             zIndex={0}
-          /> */}
+          />
         </FormTitle>
       </Center>
       <StatelessNewResourceForm
