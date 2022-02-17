@@ -56,7 +56,7 @@ export const ResourceUrlLinkWrapper: React.FC<
 > = ({ resource, isLoading, children, ...linkProps }) => {
   const [setResourceOpened] = useSetResourceOpenedMutation({ variables: { resourceId: resource._id } });
   return (
-    <Skeleton isLoaded={!isLoading}>
+    <Skeleton isLoaded={!isLoading} as="span">
       <Link
         {...linkProps}
         href={resource.url}
@@ -79,6 +79,7 @@ export const ResourceUrlLinkViewer: React.FC<
 > = ({ resource, maxLength, ...props }) => {
   return (
     <Text
+      as="span"
       whiteSpace="nowrap"
       color={resource.consumed && resource.consumed.openedAt ? 'blue.700' : 'blue.400'}
       fontSize="sm"

@@ -37,6 +37,8 @@ import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickProp
 import { CollapsedField } from '../lib/fields/CollapsedField';
 import { Field } from '../lib/fields/Field';
 import { HeartIcon } from '../lib/icons/HeartIcon';
+import { useErrorToast } from '../lib/Toasts/ErrorToast';
+import { useSuccessfulCreationToast } from '../lib/Toasts/SuccessfulCreationToast';
 import { EditLinkStyleProps, FormTitle } from '../lib/Typography';
 import { TopicBadge } from '../topics/TopicBadge';
 import { TopicSelector } from '../topics/TopicSelector';
@@ -211,7 +213,7 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
                 {editShowedInTopics ? (
                   <Stack ref={showedInTopicFieldRef} w="80%">
                     {resourceCreationData.showInTopics.map((showedInTopic) => (
-                      <Stack direction="row" alignItems="center">
+                      <Stack key={showedInTopic._id} direction="row" alignItems="center">
                         <IconButton
                           size="xs"
                           variant="icon"
@@ -242,7 +244,7 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
                 ) : (
                   <>
                     {resourceCreationData.showInTopics.map((showedInTopic) => (
-                      <Heading color="gray.400" fontSize="20px" pb={1}>
+                      <Heading key={showedInTopic._id} color="gray.400" fontSize="20px" pb={1}>
                         - {showedInTopic.name}
                       </Heading>
                     ))}
@@ -304,7 +306,9 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
                 showedInTopics={resourceCreationData.showInTopics}
                 coveredSubTopics={resourceCreationData.coveredSubTopics}
                 onAdded={(topic) =>
-                  updateResourceCreationData({ coveredSubTopics: [...resourceCreationData.coveredSubTopics, topic] })
+                  updateResourceCreationData({
+                    coveredSubTopics: uniqBy([...resourceCreationData.coveredSubTopics, topic], '_id'),
+                  })
                 }
                 onRemove={(topicId) =>
                   updateResourceCreationData({
@@ -377,7 +381,7 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
   onCancel,
   validationRules,
 }) => {
-  const [isCreating, setIsCreating] = useState(false);
+  const [isCreating, setIsCreating] = useState<false | 'creating' | 'creating and recommending'>(false);
   const [resourceCreationData, setResourceCreationData] = useState<ResourceCreationData>({
     ...defaultResourceData,
     ...defaultResourceCreationData,
@@ -415,7 +419,7 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
 
   const onCreate = async (recommend: boolean) => {
     if (hasErrors) return setShowFormErrors(true);
-    setIsCreating(true);
+    setIsCreating(recommend ? 'creating and recommending' : 'creating');
     const createdResource = await createResource(resourceCreationDataToPayload(resourceCreationData), {
       recommend,
     });
@@ -553,7 +557,7 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
         <Stack>
           {subResourcesFormErrors.map((subResourceFormErrors, subResourceIndex) =>
             Object.keys(subResourceFormErrors).map((formErrorKey) => (
-              <Alert key={formErrorKey} status="error" overflowWrap="break-word">
+              <Alert key={`${subResourceIndex}_${formErrorKey}`} status="error" overflowWrap="break-word">
                 <AlertIcon />
                 <Text>
                   <Text fontWeight={500} as="span">
@@ -584,7 +588,7 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
           </Button>
         )}
         <Button
-          isLoading={isCreating}
+          isLoading={isCreating === 'creating'}
           minW="12rem"
           px={5}
           colorScheme="blue"
@@ -596,7 +600,7 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
         </Button>
 
         <Button
-          isLoading={isCreating}
+          isLoading={isCreating === 'creating and recommending'}
           leftIcon={<HeartIcon />}
           minW="12rem"
           colorScheme="teal"
@@ -635,11 +639,17 @@ export const NewResource: React.FC<NewResourceProps> = ({
 }) => {
   const [createResource] = useCreateResourceMutation();
 
+  const successToast = useSuccessfulCreationToast();
+  const errorToast = useErrorToast();
   return (
     <NewResourceForm
       createResource={async (payload, { recommend }) => {
         const { data } = await createResource({ variables: { payload, options: { recommend } } });
-        if (!data) throw new Error('failed to create resource');
+        if (!data) {
+          errorToast({ title: 'Failed to create the resource. Please try again.' });
+          throw new Error('failed to create resource');
+        }
+        successToast({ title: 'Resource successfully created!' });
         return data.createResource;
       }}
       onResourceCreated={onResourceCreated}

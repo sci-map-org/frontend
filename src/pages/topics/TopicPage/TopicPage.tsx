@@ -27,7 +27,7 @@ import { TopicSubHeader, TopicSubHeaderData } from '../../../components/topics/T
 import { generateTopicData, TopicLinkData } from '../../../graphql/topics/topics.fragments';
 import { TopicLearningMaterialsSortingType } from '../../../graphql/types';
 import { useCurrentUser } from '../../../graphql/users/users.hooks';
-import { NewLearningPathPageInfo } from '../../RoutesPageInfos';
+import { NewLearningPathPageInfo, ResourcePageInfo } from '../../RoutesPageInfos';
 import { SeeAlso, SeeAlsoData } from './SeeAlso';
 import { GetTopicByKeyTopicPageQuery, useGetTopicByKeyTopicPageQuery } from './TopicPage.generated';
 import {
@@ -35,6 +35,7 @@ import {
   TopicPageLearningMaterialsFeedOptions,
   useTopicPageLearningMaterialsFeed,
 } from './TopicPageLearningMaterialsFeed';
+import { routerPushToPage } from '../../PageInfo';
 
 export const getTopicByKeyTopicPage = gql`
   query getTopicByKeyTopicPage($key: String!) {
@@ -234,7 +235,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
                 showInTopics: [topic],
               }}
               validationRules={['at least one showIn Topic']}
-              onResourceCreated={() => refetchLearningMaterials()}
+              onResourceCreated={(createdResource) => routerPushToPage(ResourcePageInfo(createdResource))}
               renderButton={(openModal) => (
                 <Button
                   leftIcon={<ResourceIcon boxSize={6} />}
