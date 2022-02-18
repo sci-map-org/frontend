@@ -4,6 +4,7 @@ import { uniqBy } from 'lodash';
 import { useState } from 'react';
 import Autosuggest from 'react-autosuggest';
 import { LearningMaterialTagSearchResult } from '../../../graphql/types';
+import { getChakraRelativeSize } from '../../../util/chakra.util';
 import { useSearchLearningMaterialTagsLazyQuery } from './LearningMaterialTagSelector.generated';
 
 interface LearningMaterialTagSelectorProps {
@@ -98,7 +99,7 @@ export const LearningMaterialTagSelector: React.FC<LearningMaterialTagSelectorPr
         getSuggestionValue={(suggestion) => suggestion.name}
         renderInputComponent={(inputProps: any) => (
           <Input
-            size={size}
+            size={getChakraRelativeSize(size, -1)}
             isDisabled={isDisabled}
             variant="outline"
             {...inputProps}

@@ -75,14 +75,15 @@ export const ResourceUrlLinkViewer: React.FC<
   {
     resource: ResourceUrlDataFragment;
     maxLength?: number;
-  } & Omit<TextProps, 'resource'>
-> = ({ resource, maxLength, ...props }) => {
+    size?: 'sm' | 'md' | 'lg';
+  } & Omit<TextProps, 'resource' | 'size'>
+> = ({ resource, maxLength, size, ...props }) => {
   return (
     <Text
       as="span"
       whiteSpace="nowrap"
       color={resource.consumed && resource.consumed.openedAt ? 'blue.700' : 'blue.400'}
-      fontSize="sm"
+      fontSize={size}
       {...props}
     >
       {toUrlPreview(resource.url, maxLength)}
@@ -95,11 +96,12 @@ export const ResourceUrlLink: React.FC<
     resource: ResourceUrlDataFragment;
     isLoading?: boolean;
     maxLength?: number;
-  } & Omit<LinkProps, 'href' | 'onClick' | 'isExternal' | 'resource'>
-> = ({ resource, isLoading, maxLength, children, ...linkProps }) => {
+    size?: 'sm' | 'md' | 'lg';
+  } & Omit<LinkProps, 'size' | 'href' | 'onClick' | 'isExternal' | 'resource'>
+> = ({ resource, isLoading, maxLength, children, size = 'md', ...linkProps }) => {
   return (
     <ResourceUrlLinkWrapper resource={resource} isLoading={isLoading} {...linkProps}>
-      <ResourceUrlLinkViewer resource={resource} maxLength={maxLength} />
+      <ResourceUrlLinkViewer resource={resource} maxLength={maxLength} size={size} />
     </ResourceUrlLinkWrapper>
   );
 };

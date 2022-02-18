@@ -1,4 +1,4 @@
-import { Text } from '@chakra-ui/react';
+import { Tag, TagCloseButton, TagLabel } from '@chakra-ui/react';
 
 export const LearningMaterialTagViewer: React.FC<{
   tagName: String;
@@ -20,18 +20,19 @@ const sizesMapping = {
     fontSize: '14px',
     fontWeight: 500,
     borderRadius: '14px',
-    pt: '2px',
-    pb: '4px',
-    px: '8px',
+    pt: '4px',
+    pb: '5px',
+    px: '10px',
   },
 };
 export const LearningMaterialTagBase: React.FC<{
   isSelected?: boolean;
   size?: 'sm' | 'md';
   onClick?: () => void;
-}> = ({ isSelected, size = 'md', onClick, children }) => {
+  onClose?: () => void;
+}> = ({ isSelected, size = 'md', onClick, onClose, children }) => {
   return (
-    <Text
+    <Tag
       {...sizesMapping[size]}
       letterSpacing="0.03em"
       {...(isSelected ? { color: 'white', bgColor: 'gray.600' } : { color: 'gray.600', bgColor: 'gray.100' })}
@@ -41,8 +42,14 @@ export const LearningMaterialTagBase: React.FC<{
           cursor: 'pointer',
         },
       })}
+      size={size}
+      key={size}
+      borderRadius="full"
+      variant="solid"
+      colorScheme="green"
     >
-      {children}
-    </Text>
+      <TagLabel>{children}</TagLabel>
+      {onClose && <TagCloseButton color={isSelected ? 'white' : 'gray.600'} my={-1} onClick={onClose} />}
+    </Tag>
   );
 };

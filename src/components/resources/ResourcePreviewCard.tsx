@@ -46,7 +46,7 @@ import { StarsRatingViewer } from '../lib/StarsRating';
 import { InternalLink, PageLink } from '../navigation/InternalLink';
 import { DurationViewer } from './elements/Duration';
 import { ResourceCompletedCheckbox } from './elements/ResourceCompletedCheckbox';
-import { ResourceDescription } from './elements/ResourceDescription';
+import { LearningMaterialDescription } from '../learning_materials/LearningMaterialDescription';
 import { ResourceTypeBadge, ResourceTypeIcon } from './elements/ResourceType';
 import { ResourceUrlLinkViewer, ResourceUrlLinkWrapper } from './elements/ResourceUrl';
 import { ResourceYoutubePlayer } from './elements/ResourceYoutubePlayer';
@@ -146,7 +146,7 @@ const MainContentBlock: React.FC<{
       alignItems="stretch"
     >
       <Box>
-        <ResourceDescription
+        <LearningMaterialDescription
           description={resource.description}
           noOfLines={showPlayer ? undefined : 2}
           isLoading={isLoading}
@@ -190,7 +190,7 @@ const TitleLink: React.FC<{ resource: ResourcePreviewCardDataFragment; isLoading
         <Text mr={1} as="span" fontSize="xl">
           {resource.name}
         </Text>
-        <ResourceUrlLinkViewer resource={resource} maxLength={30} />
+        <ResourceUrlLinkViewer resource={resource} maxLength={30} size="sm" />
       </ResourceUrlLinkWrapper>
     </BoxBlockDefaultClickPropagation>
   );
@@ -204,7 +204,12 @@ const BottomBlock: React.FC<{
   return (
     <Flex pb={1} pt={2} flexWrap="wrap">
       <BoxBlockDefaultClickPropagation display="flex" alignItems="center">
-        <EditableLearningMaterialTags learningMaterial={resource} isLoading={isLoading} isDisabled={!currentUser} />
+        <EditableLearningMaterialTags
+          learningMaterial={resource}
+          isLoading={isLoading}
+          isDisabled={!currentUser}
+          size="sm"
+        />
       </BoxBlockDefaultClickPropagation>
       <Box flexGrow={1} flexBasis={0} />
       <BoxBlockDefaultClickPropagation>

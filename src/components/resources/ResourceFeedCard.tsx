@@ -10,7 +10,7 @@ import { LearningMaterialRecommendButton } from '../learning_materials/LearningM
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { DurationViewer } from './elements/Duration';
 import { ResourceCompletedCheckbox } from './elements/ResourceCompletedCheckbox';
-import { ResourceDescription } from './elements/ResourceDescription';
+import { LearningMaterialDescription } from '../learning_materials/LearningMaterialDescription';
 import { ResourceTypeBadge } from './elements/ResourceType';
 import { ResourceUrlLinkViewer, ResourceUrlLinkWrapper } from './elements/ResourceUrl';
 import { ResourceYoutubePlayer } from './elements/ResourceYoutubePlayer';
@@ -60,7 +60,12 @@ export const ResourceFeedCard = forwardRef<HTMLDivElement, ResourceFeedCardProps
         }
         renderSubTitle={<SubTitle resource={resource} isLoading={isLoading} />}
         renderCentralBlock={
-          <ResourceDescription description={resource.description} noOfLines={3} size="sm" isLoading={isLoading} />
+          <LearningMaterialDescription
+            description={resource.description}
+            noOfLines={3}
+            size="sm"
+            isLoading={isLoading}
+          />
         }
         renderPreview={
           intersection(resource.types, [ResourceType.YoutubeVideo, ResourceType.YoutubePlaylist]).length > 0 && (
@@ -116,7 +121,7 @@ const TitleLink: React.FC<{ resource: ResourceFeedCardDataFragment; isLoading: b
         <Heading mr={1} as="h3" fontSize="22px" color="gray.700" noOfLines={1}>
           {resource.name}
         </Heading>
-        <ResourceUrlLinkViewer resource={resource} maxLength={30} />
+        <ResourceUrlLinkViewer resource={resource} maxLength={30} size="sm" />
       </ResourceUrlLinkWrapper>
     </BoxBlockDefaultClickPropagation>
   );

@@ -65,7 +65,7 @@ export const SquareResourceCard: React.FC<SquareResourceCardProps> = ({ resource
             {resource.name}
           </Text>
           <Center>
-            <ResourceUrlLinkViewer resource={resource} as="span" maxLength={15} />
+            <ResourceUrlLinkViewer resource={resource} as="span" maxLength={15} size="sm" />
           </Center>
         </ResourceUrlLinkWrapper>
       </BoxBlockDefaultClickPropagation>

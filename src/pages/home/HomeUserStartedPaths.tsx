@@ -7,7 +7,7 @@ import {
   LearningPathCircularCompletion,
   LearningPathCompletionData,
 } from '../../components/learning_paths/LearningPathCompletion';
-import { ResourceDescription } from '../../components/resources/elements/ResourceDescription';
+import { LearningMaterialDescription } from '../../components/learning_materials/LearningMaterialDescription';
 import { LearningMaterialPreviewCardList } from '../../components/resources/LearningMaterialPreviewCardList';
 import { routerPushToPage } from '../PageInfo';
 import { LearningPathPageInfo } from '../RoutesPageInfos';
@@ -82,7 +82,7 @@ const StartedLearningPathCard: React.FC<{
             </Text>
           </Flex>
 
-          <ResourceDescription description={learningPath.description} noOfLines={1} />
+          <LearningMaterialDescription description={learningPath.description} noOfLines={1} />
         </Flex>
         <Center>
           <Button

@@ -9,7 +9,7 @@ import { validateUrl } from '../../services/url.service';
 import { Access } from '../auth/Access';
 import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
 import { DurationInput } from './elements/Duration';
-import { ResourceDescriptionInput } from './elements/ResourceDescription';
+import { LearningMaterialDescriptionInput } from '../learning_materials/LearningMaterialDescription';
 import { ResourceTypeSelector } from './elements/ResourceType';
 
 interface ResourceEditorProps {
@@ -52,7 +52,7 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onSave
         <Box flexGrow={1}></Box>
         <DurationInput value={durationSeconds} onChange={setDurationSeconds} />
       </Flex>
-      <ResourceDescriptionInput value={description} onChange={(d) => setDescription(d)} />
+      <LearningMaterialDescriptionInput value={description} onChange={(d) => setDescription(d)} />
       <Stack direction="row" justifyContent="space-between">
         <Access
           condition={

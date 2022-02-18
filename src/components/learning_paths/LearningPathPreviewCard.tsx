@@ -13,7 +13,7 @@ import { EditableLearningMaterialTags } from '../learning_materials/LearningMate
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { StarsRatingViewer } from '../lib/StarsRating';
 import { DurationViewer } from '../resources/elements/Duration';
-import { ResourceDescription } from '../resources/elements/ResourceDescription';
+import { LearningMaterialDescription } from '../learning_materials/LearningMaterialDescription';
 import { UserAvatarData } from '../users/UserAvatar';
 import { LearningPathCircularCompletion, LearningPathCompletionData } from './LearningPathCompletion';
 import { LearningPathPreviewCardDataFragment } from './LearningPathPreviewCard.generated';
@@ -70,7 +70,7 @@ export const LearningPathPreviewCard: React.FC<LearningPathPreviewCardProps> = (
       renderBottom={
         <Flex pb={2} pt={2} flexWrap="wrap">
           <BoxBlockDefaultClickPropagation>
-            <EditableLearningMaterialTags learningMaterial={learningPath} isLoading={isLoading} isDisabled />
+            <EditableLearningMaterialTags learningMaterial={learningPath} isLoading={isLoading} isDisabled size="sm" />
           </BoxBlockDefaultClickPropagation>
           <Box flexGrow={1} flexBasis={0} />
 
@@ -103,7 +103,7 @@ export const LearningPathPreviewCard: React.FC<LearningPathPreviewCardProps> = (
             </Badge>
             <DurationViewer value={learningPath.durationSeconds} />
           </Stack>
-          <ResourceDescription description={learningPath.description} noOfLines={2} isLoading={isLoading} />
+          <LearningMaterialDescription description={learningPath.description} noOfLines={2} isLoading={isLoading} />
         </Flex>
         {/* {learningPath.createdBy && (
           <Flex direction="column" flexShrink={0} alignItems="center" pt={1} pr={2}>

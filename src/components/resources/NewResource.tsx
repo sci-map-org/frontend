@@ -40,11 +40,14 @@ import { Field } from '../lib/fields/Field';
 import { HeartIcon } from '../lib/icons/HeartIcon';
 import { useErrorToast } from '../lib/Toasts/ErrorToast';
 import { useSuccessfulCreationToast } from '../lib/Toasts/SuccessfulCreationToast';
-import { EditLinkStyleProps, FormTitle } from '../lib/Typography';
+import { EditLinkStyleProps, FormTitle, ShowedInTopicHeading, ShowedInTopicLink } from '../lib/Typography';
 import { TopicBadge } from '../topics/TopicBadge';
 import { TopicSelector } from '../topics/TopicSelector';
 import { DurationViewer } from './elements/Duration';
-import { ResourceDescriptionInput, RESOURCE_DESCRIPTION_MAX_LENGTH } from './elements/ResourceDescription';
+import {
+  LearningMaterialDescriptionInput,
+  RESOURCE_DESCRIPTION_MAX_LENGTH,
+} from '../learning_materials/LearningMaterialDescription';
 import { ResourceTypeBadge } from './elements/ResourceType';
 import { ResourceUrlInput, useAnalyzeResourceUrl } from './elements/ResourceUrl';
 import { LearningMaterialDurationField } from './fields/LearningMaterialDurationField';
@@ -186,7 +189,7 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
           </Field>
         </Center>
         <Field label="Description" isInvalid={!!formErrors.description && showFormErrors}>
-          <ResourceDescriptionInput
+          <LearningMaterialDescriptionInput
             value={resourceCreationData.description}
             onChange={(d) => updateResourceCreationData({ description: d })}
             isInvalid={!!formErrors.description && showFormErrors}
@@ -228,9 +231,7 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
                             })
                           }
                         />
-                        <Heading color="gray.400" fontSize="20px" pb={1}>
-                          {showedInTopic.name}
-                        </Heading>
+                        <ShowedInTopicHeading pb={1}>{showedInTopic.name}</ShowedInTopicHeading>
                       </Stack>
                     ))}
                     <TopicSelector
@@ -245,9 +246,9 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
                 ) : (
                   <>
                     {resourceCreationData.showInTopics.map((showedInTopic) => (
-                      <Heading key={showedInTopic._id} color="gray.400" fontSize="20px" pb={1}>
+                      <ShowedInTopicHeading key={showedInTopic._id} pb={1}>
                         - {showedInTopic.name}
-                      </Heading>
+                      </ShowedInTopicHeading>
                     ))}
                     {!resourceCreationData.showInTopics.length && (
                       <Text color="red.500" fontWeight={500}>

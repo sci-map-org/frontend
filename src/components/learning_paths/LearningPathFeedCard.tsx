@@ -7,7 +7,7 @@ import { LearningMaterialFeedCardContainer } from '../learning_materials/Learnin
 import { LearningMaterialRecommendButton } from '../learning_materials/LearningMaterialRecommendButton';
 import { LearningMaterialTypeBadge } from '../learning_materials/LearningMaterialTypeBadge';
 import { DurationViewer } from '../resources/elements/Duration';
-import { ResourceDescription } from '../resources/elements/ResourceDescription';
+import { LearningMaterialDescription } from '../learning_materials/LearningMaterialDescription';
 
 interface LearningPathFeedCardProps {
   learningPath: LearningPathFeedCardDataFragment;
@@ -65,7 +65,12 @@ export const LearningPathFeedCard = forwardRef<HTMLDivElement, LearningPathFeedC
         }
         renderSubTitle={<SubTitle learningPath={learningPath} isLoading={isLoading} />}
         renderCentralBlock={
-          <ResourceDescription description={learningPath.description} noOfLines={3} size="sm" isLoading={isLoading} />
+          <LearningMaterialDescription
+            description={learningPath.description}
+            noOfLines={3}
+            size="sm"
+            isLoading={isLoading}
+          />
         }
         onClick={() => !isLoading && routerPushToPage(LearningPathPageInfo(learningPath))}
       />

@@ -1,4 +1,8 @@
 import { Heading, HeadingProps, Text, TextProps, LinkProps } from '@chakra-ui/layout';
+import { graphqlSync } from 'graphql';
+import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
+import { TopicPageInfo } from '../../pages/RoutesPageInfos';
+import { PageLink } from '../navigation/InternalLink';
 
 export const PageTitle: React.FC<HeadingProps> = ({ children, ...props }) => {
   return (
@@ -53,11 +57,7 @@ export const FormFieldHelperText: React.FC<TextProps> = ({ children, ...props })
   );
 };
 
-export const TopicDescriptionStyleProps: Pick<TextProps, 'fontSize' | 'color' | 'fontWeight'> = {
-  fontWeight: 500,
-  color: 'gray.700',
-  fontSize: '15px',
-};
+// Topics
 
 export const TopicLinkStyleProps: {
   [key in 'topicName' | 'contextName']: Pick<LinkProps, 'color' | 'fontWeight'>;
@@ -69,9 +69,42 @@ export const TopicLinkStyleProps: {
   contextName: { fontWeight: 700, color: 'gray.500' },
 };
 
+export const TopicDescriptionStyleProps: Pick<TextProps, 'fontSize' | 'color' | 'fontWeight'> = {
+  fontWeight: 500,
+  color: 'gray.700',
+  fontSize: '15px',
+};
+
 export const EditLinkStyleProps: Pick<LinkProps, 'color' | 'fontSize'> = {
   color: 'blue.500',
   fontSize: 'sm',
+};
+
+export const ShowedInTopicHeadingStyleProps: Pick<LinkProps, 'color' | 'fontSize' | 'fontWeight'> = {
+  color: 'gray.400',
+  fontSize: '20px',
+};
+
+export const ShowedInTopicHeading: React.FC<HeadingProps> = ({ children, ...props }) => {
+  return (
+    <Heading {...ShowedInTopicHeadingStyleProps} {...props}>
+      {children}
+    </Heading>
+  );
+};
+
+export const ShowedInTopicLink: React.FC<{ topic: TopicLinkDataFragment } & HeadingProps> = ({
+  topic,
+  children,
+  ...props
+}) => {
+  return (
+    <PageLink pageInfo={TopicPageInfo(topic)} _hover={{}}>
+      <ShowedInTopicHeading _hover={{ color: 'gray.500' }} transition="color ease-in 0.2s">
+        {children || topic.name}
+      </ShowedInTopicHeading>
+    </PageLink>
+  );
 };
 
 // Users
