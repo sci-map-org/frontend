@@ -80,27 +80,34 @@ export const EditLinkStyleProps: Pick<LinkProps, 'color' | 'fontSize'> = {
   fontSize: 'sm',
 };
 
-export const ShowedInTopicHeadingStyleProps: Pick<LinkProps, 'color' | 'fontSize' | 'fontWeight'> = {
+export const ShowedInTopicHeadingStyleProps = (
+  size: 'sm' | 'md'
+): Pick<LinkProps, 'color' | 'fontSize' | 'fontWeight'> => ({
   color: 'gray.400',
-  fontSize: '20px',
-};
+  fontSize: { sm: '17px', md: '20px' }[size],
+});
 
-export const ShowedInTopicHeading: React.FC<HeadingProps> = ({ children, ...props }) => {
+export const ShowedInTopicHeading: React.FC<HeadingProps & { size?: 'sm' | 'md' }> = ({
+  children,
+  size = 'md',
+  ...props
+}) => {
   return (
-    <Heading {...ShowedInTopicHeadingStyleProps} {...props}>
+    <Heading {...ShowedInTopicHeadingStyleProps(size)} {...props}>
       {children}
     </Heading>
   );
 };
 
-export const ShowedInTopicLink: React.FC<{ topic: TopicLinkDataFragment } & HeadingProps> = ({
+export const ShowedInTopicLink: React.FC<{ topic: TopicLinkDataFragment; size?: 'sm' | 'md' } & HeadingProps> = ({
   topic,
   children,
+  size = 'md',
   ...props
 }) => {
   return (
     <PageLink pageInfo={TopicPageInfo(topic)} _hover={{}}>
-      <ShowedInTopicHeading _hover={{ color: 'gray.500' }} transition="color ease-in 0.2s">
+      <ShowedInTopicHeading _hover={{ color: 'gray.500' }} transition="color ease-in 0.2s" size={size} {...props}>
         {children || topic.name}
       </ShowedInTopicHeading>
     </PageLink>

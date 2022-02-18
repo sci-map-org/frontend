@@ -82,6 +82,8 @@ export const ResourceUrlLinkViewer: React.FC<
     <Text
       as="span"
       whiteSpace="nowrap"
+      overflow="hidden"
+      textOverflow="ellipsis"
       color={resource.consumed && resource.consumed.openedAt ? 'blue.700' : 'blue.400'}
       fontSize={size}
       fontWeight={500}
