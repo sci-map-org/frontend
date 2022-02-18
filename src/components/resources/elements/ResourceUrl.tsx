@@ -181,6 +181,8 @@ export const ResourceUrlInput: React.FC<ResourceUrlInputProps> = ({
     <>
       <InputGroup>
         <Input
+          bgColor="white"
+          zIndex={1}
           isInvalid={(!!value && !isValidUrl) || isInvalid}
           placeholder="https://example.com"
           size="md"

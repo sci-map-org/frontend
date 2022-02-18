@@ -163,7 +163,7 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
     <Flex direction="column" w="100%">
       <Stack spacing={10} alignItems="stretch">
         <Center>
-          <Field label="Resource Url" isInvalid={!!formErrors.url && showFormErrors} w="500px">
+          <Field label="Resource Url" isInvalid={!!formErrors.url && showFormErrors} w="500px" zIndex={1}>
             <ResourceUrlInput
               value={resourceCreationData.url}
               onChange={(url) => updateResourceCreationData({ url })}
@@ -180,6 +180,8 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
           <Field isInvalid={showFormErrors && !!formErrors.name} label="Title" w="500px">
             <Input
               placeholder="What's the name of this resource ?"
+              bgColor="white"
+              zIndex={2}
               size="md"
               value={resourceCreationData.name}
               onChange={(e) => updateResourceCreationData({ name: e.target.value })}
@@ -448,7 +450,7 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
             maxW="220px"
             left="-240px"
             top="-50px"
-            zIndex={0}
+            zIndex={-1}
           />
         </FormTitle>
       </Center>
