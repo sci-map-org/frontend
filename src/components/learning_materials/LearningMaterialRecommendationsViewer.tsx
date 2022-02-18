@@ -1,5 +1,6 @@
 import { Center, Flex, FlexProps, Skeleton, SkeletonCircle, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
+import { SocialWidgetsLabelStyleProps } from '../lib/Typography';
 import { UserAvatarData } from '../users/UserAvatar';
 import { UserAvatarGroup } from '../users/UserAvatarGroup';
 import { LearningMaterialRecommendationsViewerDataFragment } from './LearningMaterialRecommendationsViewer.generated';
@@ -32,21 +33,21 @@ export const recommendLearningMaterial = gql`
   ${LearningMaterialRecommendationsViewerData}
 `;
 
-const sizesMapping: {
-  [key in 'sm' | 'md' | 'lg']: {
-    recommendedByFontSize: string;
-  };
-} = {
-  sm: {
-    recommendedByFontSize: '13px',
-  },
-  md: {
-    recommendedByFontSize: '14px',
-  },
-  lg: {
-    recommendedByFontSize: 'md',
-  },
-};
+// const sizesMapping: {
+//   [key in 'sm' | 'md' | 'lg']: {
+//     recommendedByFontSize: string;
+//   };
+// } = {
+//   sm: {
+//     recommendedByFontSize: '13px',
+//   },
+//   md: {
+//     recommendedByFontSize: '14px',
+//   },
+//   lg: {
+//     recommendedByFontSize: 'md',
+//   },
+// };
 
 // TODO: don't load all recommendations, only count
 export const LearningMaterialRecommendationsViewer: React.FC<
@@ -87,9 +88,7 @@ export const LearningMaterialRecommendationsViewer: React.FC<
       >
         <Skeleton isLoaded={!isLoading}>
           <Text
-            color="gray.500"
-            fontWeight={600}
-            fontSize={sizesMapping[size].recommendedByFontSize}
+            {...SocialWidgetsLabelStyleProps(size)}
             textAlign="center"
             {...(display === 'horizontal' && { whiteSpace: 'nowrap' })}
           >

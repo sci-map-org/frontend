@@ -126,3 +126,12 @@ export const UserKeyLinkStyleProps: Pick<LinkProps, 'color' | 'fontWeight'> = {
   color: 'blue.600',
   fontWeight: 600,
 };
+
+// e.g. Recommended By, Shared By, Created By...
+export const SocialWidgetsLabelStyleProps = (
+  size: 'sm' | 'md' | 'lg'
+): Pick<TextProps, 'color' | 'fontWeight' | 'fontSize'> => ({
+  color: 'gray.500',
+  fontWeight: 600,
+  fontSize: { sm: '13px', md: '14px', lg: 'md' }[size],
+});

@@ -22,7 +22,7 @@ import { LearningMaterialRecommendButton } from '../../components/learning_mater
 import { LearningMaterialStarsRaterData } from '../../components/learning_materials/LearningMaterialStarsRating';
 import { EditableLearningMaterialTags } from '../../components/learning_materials/LearningMaterialTagsEditor';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
-import { ShowedInTopicLink } from '../../components/lib/Typography';
+import { ShowedInTopicLink, SocialWidgetsLabelStyleProps } from '../../components/lib/Typography';
 import { PageLink } from '../../components/navigation/InternalLink';
 import { DurationViewer } from '../../components/resources/elements/Duration';
 import { ResourceCompletedCheckbox } from '../../components/resources/elements/ResourceCompletedCheckbox';
@@ -165,7 +165,9 @@ export const ResourcePage: React.FC<{ resourceKey: string }> = ({ resourceKey })
         </Flex>
         <Flex flexGrow={1} minW="300px" direction="column" alignItems="stretch">
           <Stack h={headerHeight} alignItems="center" spacing={2} justifyContent="center">
-            <Heading color="gray.700">{resource.name}</Heading>
+            <Heading color="gray.700" textAlign="center">
+              {resource.name}
+            </Heading>
             <SubTitleBar resource={resource} isLoading={!!loading} />
           </Stack>
           <Flex direction="column">
@@ -253,9 +255,7 @@ export const ResourcePage: React.FC<{ resourceKey: string }> = ({ resourceKey })
           {resource.createdBy && (
             <Center position="absolute" top={2} w="100%">
               <Stack direction="column" alignItems="center" spacing={1}>
-                <Text fontSize="md" fontWeight={600} color="gray.500">
-                  Shared By
-                </Text>
+                <Text {...SocialWidgetsLabelStyleProps('lg')}>Shared By</Text>
                 <UserAvatar user={resource.createdBy} size="sm" showBorder />
               </Stack>
             </Center>
