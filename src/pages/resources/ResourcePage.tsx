@@ -204,17 +204,25 @@ export const ResourcePage: React.FC<{ resourceKey: string }> = ({ resourceKey })
                 direction: 'row',
               })}
         >
-          {resource.createdBy && (
-            <Flex
-              justifyContent="center"
-              {...(layout === 'mobile' ? { w: '45%', alignItems: 'center' } : { h: headerHeight })}
-            >
-              <Stack direction="column" alignItems="center" spacing={1}>
-                <Text {...SocialWidgetsLabelStyleProps('lg')}>Shared By</Text>
-                <UserAvatar user={resource.createdBy} size="sm" showBorder />
-              </Stack>
-            </Flex>
-          )}
+          <Flex
+            {...(layout === 'desktop'
+              ? { h: headerHeight, direction: 'column', alignItems: 'stretch' }
+              : { w: '45%', alignItems: 'center', justifyContent: 'center' })}
+          >
+            {layout === 'desktop' && (
+              <Flex justifyContent="flex-end" mb={3}>
+                <TopRightIconButtons resource={resource} isLoading={loading} size="sm" />
+              </Flex>
+            )}
+            {resource.createdBy && (
+              <Flex justifyContent="center" {...(layout === 'mobile' ? {} : {})}>
+                <Stack direction="column" alignItems="center" spacing={1}>
+                  <Text {...SocialWidgetsLabelStyleProps('lg')}>Shared By</Text>
+                  <UserAvatar user={resource.createdBy} size="sm" showBorder />
+                </Stack>
+              </Flex>
+            )}
+          </Flex>
 
           <Center {...(layout === 'desktop' ? { w: '100%' } : { w: '45%' })}>
             <LearningMaterialRecommendationsViewer learningMaterial={resource} isLoading={loading} size="lg" />
@@ -236,7 +244,14 @@ const TopRightIconButtons: React.FC<{
   const [deleteResource] = useDeleteResourceMutation();
   return (
     <Stack direction="row" spacing={2}>
-      <RoleAccess accessRule="loggedInUser">
+      <Access
+        condition={
+          currentUser &&
+          (currentUser.role === UserRole.Admin ||
+            currentUser.role === UserRole.Contributor ||
+            currentUser._id === resource.createdBy?._id)
+        }
+      >
         <Button
           size={getChakraRelativeSize(size, -1)}
           variant="outline"
@@ -245,7 +260,7 @@ const TopRightIconButtons: React.FC<{
         >
           Edit
         </Button>
-      </RoleAccess>
+      </Access>
       <Access
         condition={
           currentUser &&
