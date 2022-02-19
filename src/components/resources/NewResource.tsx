@@ -57,6 +57,7 @@ import { ResourcePrerequisitesField } from './fields/ResourcePrerequisitesField'
 import { ResourceTypeField, ResourceTypeSuggestions } from './fields/ResourceTypeField';
 import { useCreateResourceMutation } from './NewResource.generated';
 import { ResourceListBasicLayout } from './ResourceList';
+import { LearningMaterialShowedInField } from '../learning_materials/LearningMaterialShowedInField';
 
 type SubResourceCreationData = Omit<
   CreateResourcePayload,
@@ -112,9 +113,8 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
   const { isOpen: prerequisitesFieldIsOpen, onToggle: prerequisitesFieldOnToggle } = useDisclosure();
   const { isOpen: coveredSubTopicsFieldIsOpen, onToggle: coveredSubTopicsFieldOnToggle } = useDisclosure();
   const [selectableResourceTypes, setSelectableResourceTypes] = useState(ResourceTypeSuggestions);
-  const [editShowedInTopics, setEditShowedInTopics] = useState(false);
+
   const formHasErrors = useMemo(() => Object.keys(formErrors).length > 0, [formErrors]);
-  const showedInTopicFieldRef = useRef<HTMLDivElement>(null);
 
   const {
     existingResource,
@@ -149,14 +149,6 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
           setSelectableResourceTypes(uniq([...selectableResourceTypes, ...analyzedResourceData.types]));
       }
     },
-  });
-
-  useOutsideClick({
-    ref: showedInTopicFieldRef,
-    handler: () => {
-      setEditShowedInTopics(false);
-    },
-    enabled: !!editShowedInTopics,
   });
 
   return (
@@ -214,59 +206,16 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
 
         <Flex justifyContent="space-between" flexDir="row">
           <Box w="45%">
-            <Field label="Show In" isInvalid={!!formErrors.showInTopics && showFormErrors}>
-              <Stack pl={3}>
-                {editShowedInTopics ? (
-                  <Stack ref={showedInTopicFieldRef} w="80%">
-                    {resourceCreationData.showInTopics.map((showedInTopic) => (
-                      <Stack key={showedInTopic._id} direction="row" alignItems="center">
-                        <IconButton
-                          size="xs"
-                          variant="icon"
-                          icon={<CloseIcon />}
-                          aria-label="Remove"
-                          onClick={() =>
-                            updateResourceCreationData({
-                              showInTopics: resourceCreationData.showInTopics.filter(
-                                (showInTopic) => showInTopic._id !== showedInTopic._id
-                              ),
-                            })
-                          }
-                        />
-                        <ShowedInTopicHeading pb={1}>{showedInTopic.name}</ShowedInTopicHeading>
-                      </Stack>
-                    ))}
-                    <TopicSelector
-                      placeholder="Select a Topic..."
-                      onSelect={(selectedTopic) => {
-                        updateResourceCreationData({
-                          showInTopics: uniqBy(resourceCreationData.showInTopics.concat([selectedTopic]), '_id'),
-                        });
-                      }}
-                    />
-                  </Stack>
-                ) : (
-                  <>
-                    {resourceCreationData.showInTopics.map((showedInTopic) => (
-                      <ShowedInTopicHeading key={showedInTopic._id} pb={1}>
-                        - {showedInTopic.name}
-                      </ShowedInTopicHeading>
-                    ))}
-                    {!resourceCreationData.showInTopics.length && (
-                      <Text color="red.500" fontWeight={500}>
-                        No Topic selected
-                      </Text>
-                    )}
-                  </>
-                )}
-              </Stack>
-              {!editShowedInTopics && (
-                <Link {...EditLinkStyleProps} mt="8px" onClick={() => setEditShowedInTopics(true)} ml="2px">
-                  (change)
-                </Link>
-              )}
-              <FormErrorMessage>{formErrors.showInTopics}</FormErrorMessage>
-            </Field>
+            <LearningMaterialShowedInField
+              value={resourceCreationData.showInTopics}
+              onChange={(showedInTopics) =>
+                updateResourceCreationData({
+                  showInTopics: showedInTopics,
+                })
+              }
+              isInvalid={!!formErrors.showInTopics && showFormErrors}
+              errorMessage={formErrors.showInTopics}
+            />
           </Box>
           <Box w="45%">
             <LearningMaterialDurationField

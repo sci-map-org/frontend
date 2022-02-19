@@ -3,49 +3,14 @@ import * as Types from '../../graphql/types';
 import * as Operations from './EditResourcePage';
 import * as Apollo from '@apollo/client';
 const defaultOptions =  {}
-export type UpdateResourceResourcePageMutationVariables = Types.Exact<{
-  id: Types.Scalars['String'];
-  payload: Types.UpdateResourcePayload;
-}>;
-
-
-export type UpdateResourceResourcePageMutation = { __typename?: 'Mutation', updateResource: { __typename?: 'Resource', _id: string, key: string, name: string, types: Array<Types.ResourceType>, url: string, description?: string | null | undefined, durationSeconds?: number | null | undefined, rating?: number | null | undefined, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined } };
-
 export type GetResourceEditResourcePageQueryVariables = Types.Exact<{
   resourceKey: Types.Scalars['String'];
 }>;
 
 
-export type GetResourceEditResourcePageQuery = { __typename?: 'Query', getResourceByKey: { __typename?: 'Resource', _id: string, key: string, name: string, types: Array<Types.ResourceType>, url: string, description?: string | null | undefined, durationSeconds?: number | null | undefined, rating?: number | null | undefined, createdBy?: { __typename?: 'User', _id: string } | null | undefined, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined } };
+export type GetResourceEditResourcePageQuery = { __typename?: 'Query', getResourceByKey: { __typename?: 'Resource', _id: string, key: string, name: string, types: Array<Types.ResourceType>, url: string, description?: string | null | undefined, durationSeconds?: number | null | undefined, rating?: number | null | undefined, createdBy?: { __typename?: 'User', _id: string } | null | undefined, showedIn?: Array<{ __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined }> | null | undefined, tags?: Array<{ __typename?: 'LearningMaterialTag', name: string }> | null | undefined, consumed?: { __typename?: 'ConsumedResource', openedAt?: any | null | undefined, consumedAt?: any | null | undefined } | null | undefined } };
 
 
-export type UpdateResourceResourcePageMutationFn = Apollo.MutationFunction<UpdateResourceResourcePageMutation, UpdateResourceResourcePageMutationVariables>;
-
-/**
- * __useUpdateResourceResourcePageMutation__
- *
- * To run a mutation, you first call `useUpdateResourceResourcePageMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateResourceResourcePageMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateResourceResourcePageMutation, { data, loading, error }] = useUpdateResourceResourcePageMutation({
- *   variables: {
- *      id: // value for 'id'
- *      payload: // value for 'payload'
- *   },
- * });
- */
-export function useUpdateResourceResourcePageMutation(baseOptions?: Apollo.MutationHookOptions<UpdateResourceResourcePageMutation, UpdateResourceResourcePageMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateResourceResourcePageMutation, UpdateResourceResourcePageMutationVariables>(Operations.updateResourceResourcePage, options);
-      }
-export type UpdateResourceResourcePageMutationHookResult = ReturnType<typeof useUpdateResourceResourcePageMutation>;
-export type UpdateResourceResourcePageMutationResult = Apollo.MutationResult<UpdateResourceResourcePageMutation>;
-export type UpdateResourceResourcePageMutationOptions = Apollo.BaseMutationOptions<UpdateResourceResourcePageMutation, UpdateResourceResourcePageMutationVariables>;
 
 /**
  * __useGetResourceEditResourcePageQuery__
