@@ -3,6 +3,10 @@ import gql from 'graphql-tag';
 import { differenceBy, isEqual, pick } from 'lodash';
 import Router from 'next/router';
 import { useCallback, useMemo, useState } from 'react';
+import {
+  useHideLearningMaterialFromTopicMutation,
+  useShowLearningMaterialInTopicMutation,
+} from '../../graphql/learning_materials/learning_materials.operations.generated';
 import { ResourceData } from '../../graphql/resources/resources.fragments';
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { useDeleteResourceMutation } from '../../graphql/resources/resources.operations.generated';
@@ -15,6 +19,10 @@ import {
   RESOURCE_DESCRIPTION_MAX_LENGTH,
 } from '../learning_materials/LearningMaterialDescription';
 import { LearningMaterialShowedInField } from '../learning_materials/LearningMaterialShowedInField';
+import {
+  useAddTagsToLearningMaterialMutation,
+  useRemoveTagsFromLearningMaterialMutation,
+} from '../learning_materials/LearningMaterialTagsEditor.generated';
 import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
 import { Field } from '../lib/fields/Field';
 import { FormTitle } from '../lib/Typography';
@@ -22,6 +30,7 @@ import { ResourceUrlInput, useAnalyzeResourceUrl } from './elements/ResourceUrl'
 import { LearningMaterialDurationField } from './fields/LearningMaterialDurationField';
 import { LearningMaterialTagsField } from './fields/LearningMaterialTagsField';
 import { ResourceTypeField, ResourceTypeSuggestions } from './fields/ResourceTypeField';
+import { useUpdateResourceMutation } from './ResourceEditor.generated';
 
 export const updateResource = gql`
   mutation updateResource($id: String!, $payload: UpdateResourcePayload!) {
@@ -46,7 +55,11 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onReso
       'url' | 'name' | 'description' | 'types' | 'durationSeconds' | 'tags' | 'showedIn'
     >
   >(pick(resource, ['url', 'name', 'description', 'types', 'durationSeconds', 'tags', 'showedIn']));
-  // const [updateResource] = useUpdateResourceResourcePageMutation({});
+  const [updateResourceMutation] = useUpdateResourceMutation();
+  const [addTagsToLearningMaterial] = useAddTagsToLearningMaterialMutation();
+  const [removeTagsFromLearningMaterial] = useRemoveTagsFromLearningMaterialMutation();
+  const [showLearningMaterialInTopicMutation] = useShowLearningMaterialInTopicMutation();
+  const [hideLearningMaterialFromTopicMutation] = useHideLearningMaterialFromTopicMutation();
   const { currentUser } = useCurrentUser();
   const [deleteResource] = useDeleteResourceMutation();
   const {
@@ -86,22 +99,53 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onReso
     if (resourceUpdateData.durationSeconds !== resource.durationSeconds)
       updateResourcePayload.durationSeconds = resourceUpdateData.durationSeconds;
 
-    // await updateResource({
-    //   variables: { id: resource._id, payload },
-    // });
-    console.log(updateResourcePayload);
-    //
+    const promises: Promise<any>[] = [];
+    if (Object.keys(updateResourcePayload).length > 0) {
+      promises.push(
+        updateResourceMutation({
+          variables: { id: resource._id, payload: updateResourcePayload },
+        })
+      );
+    }
+
     const tagsToAdd = differenceBy(resourceUpdateData.tags || [], resource.tags || [], 'name');
-    console.log(tagsToAdd);
+    if (tagsToAdd.length)
+      promises.push(
+        addTagsToLearningMaterial({
+          variables: { learningMaterialId: resource._id, tags: tagsToAdd.map(({ name }) => name) },
+        })
+      );
     const tagsToRemove = differenceBy(resource.tags || [], resourceUpdateData.tags || [], 'name');
-    console.log(tagsToRemove);
+    if (tagsToRemove.length)
+      promises.push(
+        removeTagsFromLearningMaterial({
+          variables: { learningMaterialId: resource._id, tags: tagsToRemove.map(({ name }) => name) },
+        })
+      );
 
     const showInTopics = differenceBy(resourceUpdateData.showedIn || [], resource.showedIn || [], '_id');
-    console.log(showInTopics);
+    promises.push(
+      ...showInTopics.map((showInTopic) =>
+        showLearningMaterialInTopicMutation({
+          variables: { learningMaterialId: resource._id, topicId: showInTopic._id },
+        })
+      )
+    );
     const hideFromTopics = differenceBy(resource.showedIn || [], resourceUpdateData.showedIn || [], '_id');
-    console.log(hideFromTopics);
+    promises.push(
+      ...hideFromTopics.map((hideFromTopic) =>
+        hideLearningMaterialFromTopicMutation({
+          variables: { learningMaterialId: resource._id, topicId: hideFromTopic._id },
+        })
+      )
+    );
 
-    //'url' | 'name' | 'description' | 'types' | 'durationSeconds' | 'tags' | 'showedIn'
+    const responses = await Promise.all(promises);
+    // quite fragile, should be refactored
+    if (Object.keys(updateResourcePayload).length > 0) {
+      return onResourceSaved(responses[0].data.updateResource);
+    }
+    onResourceSaved(resource);
   }, [resourceUpdateData]);
   return (
     <Stack spacing={8}>
