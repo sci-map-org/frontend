@@ -21,6 +21,16 @@ export const getResourceEditResourcePage = gql`
       showedIn {
         ...TopicLinkData
       }
+      prerequisites {
+        topic {
+          ...TopicLinkData
+        }
+      }
+      coveredSubTopics(options: {}) {
+        items {
+          ...TopicLinkData
+        }
+      }
     }
   }
   ${ResourceData}

@@ -1,6 +1,16 @@
-import { Box, Button, ButtonGroup, Center, Flex, FormErrorMessage, Input, Stack } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  Center,
+  Flex,
+  FormErrorMessage,
+  Input,
+  Stack,
+  useDisclosure,
+} from '@chakra-ui/react';
 import gql from 'graphql-tag';
-import { differenceBy, isEqual, pick } from 'lodash';
+import { differenceBy, isEqual, pick, uniqBy } from 'lodash';
 import Router from 'next/router';
 import { useCallback, useMemo, useState } from 'react';
 import {
@@ -10,10 +20,19 @@ import {
 import { ResourceData } from '../../graphql/resources/resources.fragments';
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { useDeleteResourceMutation } from '../../graphql/resources/resources.operations.generated';
+import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import { UpdateResourcePayload, UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { GetResourceEditResourcePageQuery } from '../../pages/resources/EditResourcePage.generated';
 import { Access } from '../auth/Access';
+import {
+  useAttachLearningMaterialCoversTopicsMutation,
+  useDetachLearningMaterialCoversTopicsMutation,
+} from '../learning_materials/EditableLearningMaterialCoveredTopics.generated';
+import {
+  useAddLearningMaterialHasPrerequisiteTopicMutation,
+  useRemoveLearningMaterialHasPrerequisiteTopicMutation,
+} from '../learning_materials/EditableLearningMaterialPrerequisites.generated';
 import {
   LearningMaterialDescriptionInput,
   RESOURCE_DESCRIPTION_MAX_LENGTH,
@@ -24,11 +43,14 @@ import {
   useRemoveTagsFromLearningMaterialMutation,
 } from '../learning_materials/LearningMaterialTagsEditor.generated';
 import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
+import { CollapsedField } from '../lib/fields/CollapsedField';
 import { Field } from '../lib/fields/Field';
 import { FormTitle } from '../lib/Typography';
 import { ResourceUrlInput, useAnalyzeResourceUrl } from './elements/ResourceUrl';
 import { LearningMaterialDurationField } from './fields/LearningMaterialDurationField';
 import { LearningMaterialTagsField } from './fields/LearningMaterialTagsField';
+import { ResourceCoveredSubTopicsField } from './fields/ResourceCoveredSubTopicsField';
+import { ResourcePrerequisitesField } from './fields/ResourcePrerequisitesField';
 import { ResourceTypeField, ResourceTypeSuggestions } from './fields/ResourceTypeField';
 import { useUpdateResourceMutation } from './ResourceEditor.generated';
 
@@ -41,7 +63,9 @@ export const updateResource = gql`
   ${ResourceData}
 `;
 
-type FormErrors = { [key in 'name' | 'url' | 'description' | 'types' | 'showInTopics']?: string };
+type FormErrors = {
+  [key in 'name' | 'url' | 'description' | 'types' | 'showInTopics' | 'prerequisites' | 'coveredSubTopics']?: string;
+};
 interface ResourceEditorProps {
   resource: GetResourceEditResourcePageQuery['getResourceByKey'];
   onCancel: () => void;
@@ -53,13 +77,26 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onReso
     Pick<
       GetResourceEditResourcePageQuery['getResourceByKey'],
       'url' | 'name' | 'description' | 'types' | 'durationSeconds' | 'tags' | 'showedIn'
-    >
-  >(pick(resource, ['url', 'name', 'description', 'types', 'durationSeconds', 'tags', 'showedIn']));
+    > & { prerequisites: TopicLinkDataFragment[]; coveredSubTopics: TopicLinkDataFragment[] }
+  >({
+    ...pick(resource, ['url', 'name', 'description', 'types', 'durationSeconds', 'tags', 'showedIn']),
+    prerequisites: resource.prerequisites?.map(({ topic }) => topic) || [],
+    coveredSubTopics: resource.coveredSubTopics?.items || [],
+  });
+
+  const { isOpen: prerequisitesFieldIsOpen, onToggle: prerequisitesFieldOnToggle } = useDisclosure();
+  const { isOpen: coveredSubTopicsFieldIsOpen, onToggle: coveredSubTopicsFieldOnToggle } = useDisclosure();
+
   const [updateResourceMutation] = useUpdateResourceMutation();
   const [addTagsToLearningMaterial] = useAddTagsToLearningMaterialMutation();
   const [removeTagsFromLearningMaterial] = useRemoveTagsFromLearningMaterialMutation();
   const [showLearningMaterialInTopicMutation] = useShowLearningMaterialInTopicMutation();
   const [hideLearningMaterialFromTopicMutation] = useHideLearningMaterialFromTopicMutation();
+  const [addLearningMaterialHasPrerequisiteTopicMutation] = useAddLearningMaterialHasPrerequisiteTopicMutation();
+  const [removeLearningMaterialHasPrerequisiteTopicMutation] = useRemoveLearningMaterialHasPrerequisiteTopicMutation();
+  const [attachLearningMaterialCoversTopicsMutation] = useAttachLearningMaterialCoversTopicsMutation();
+  const [detachLearningMaterialCoversTopicsMutation] = useDetachLearningMaterialCoversTopicsMutation();
+
   const { currentUser } = useCurrentUser();
   const [deleteResource] = useDeleteResourceMutation();
   const {
@@ -140,6 +177,61 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onReso
       )
     );
 
+    const prereqsToAdd = differenceBy(
+      resourceUpdateData.prerequisites,
+      (resource.prerequisites || []).map(({ topic }) => topic),
+      '_id'
+    );
+    promises.push(
+      ...prereqsToAdd.map((prereqToAdd) =>
+        addLearningMaterialHasPrerequisiteTopicMutation({
+          variables: { learningMaterialId: resource._id, prerequisiteTopicId: prereqToAdd._id },
+        })
+      )
+    );
+    const prereqsToRemove = differenceBy(
+      (resource.prerequisites || []).map(({ topic }) => topic),
+      resourceUpdateData.prerequisites,
+      '_id'
+    );
+    promises.push(
+      ...prereqsToRemove.map((prereqToRemove) =>
+        removeLearningMaterialHasPrerequisiteTopicMutation({
+          variables: { learningMaterialId: resource._id, prerequisiteTopicId: prereqToRemove._id },
+        })
+      )
+    );
+
+    const coveredSubTopicsToAdd = differenceBy(
+      resourceUpdateData.coveredSubTopics,
+      resource.coveredSubTopics?.items || [],
+      '_id'
+    );
+    if (!!coveredSubTopicsToAdd.length)
+      promises.push(
+        attachLearningMaterialCoversTopicsMutation({
+          variables: {
+            learningMaterialId: resource._id,
+            topicsIds: coveredSubTopicsToAdd.map(({ _id }) => _id),
+          },
+        })
+      );
+    const coveredSubTopicsToRemove = differenceBy(
+      resource.coveredSubTopics?.items,
+      resourceUpdateData.coveredSubTopics,
+      '_id'
+    );
+
+    if (!!coveredSubTopicsToRemove.length)
+      promises.push(
+        detachLearningMaterialCoversTopicsMutation({
+          variables: {
+            learningMaterialId: resource._id,
+            topicsIds: coveredSubTopicsToRemove.map(({ _id }) => _id),
+          },
+        })
+      );
+
     const responses = await Promise.all(promises);
     // quite fragile, should be refactored
     if (Object.keys(updateResourcePayload).length > 0) {
@@ -148,7 +240,7 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onReso
     onResourceSaved(resource);
   }, [resourceUpdateData]);
   return (
-    <Stack spacing={8}>
+    <Stack spacing={10}>
       <Center mt={4}>
         <FormTitle>Edit - {resource.name}</FormTitle>
       </Center>
@@ -212,6 +304,58 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onReso
             value={resourceUpdateData.durationSeconds}
             onChange={(durationSeconds) => setResourceUpdateData({ ...resourceUpdateData, durationSeconds })}
           />
+        </Box>
+      </Flex>
+      <Flex justifyContent="space-between" direction="row" pt={4}>
+        <Box w="45%">
+          <CollapsedField
+            label="Select Prerequisites"
+            alignLabel="left"
+            isOpen={prerequisitesFieldIsOpen}
+            onToggle={prerequisitesFieldOnToggle}
+          >
+            <ResourcePrerequisitesField
+              prerequisites={resourceUpdateData.prerequisites}
+              onAdded={(prereq) =>
+                setResourceUpdateData({
+                  ...resourceUpdateData,
+                  prerequisites: uniqBy([...resourceUpdateData.prerequisites, prereq], '_id'),
+                })
+              }
+              onRemove={(prereqIdToRemove) =>
+                setResourceUpdateData({
+                  ...resourceUpdateData,
+                  prerequisites: resourceUpdateData.prerequisites.filter((prereq) => prereq._id !== prereqIdToRemove),
+                })
+              }
+            />
+          </CollapsedField>
+        </Box>
+        <Box w="45%">
+          <CollapsedField
+            label="Covered SubTopics"
+            isOpen={coveredSubTopicsFieldIsOpen}
+            onToggle={coveredSubTopicsFieldOnToggle}
+          >
+            <ResourceCoveredSubTopicsField
+              showedInTopics={resourceUpdateData.showedIn || []}
+              coveredSubTopics={resourceUpdateData.coveredSubTopics}
+              onAdded={(topic) =>
+                setResourceUpdateData({
+                  ...resourceUpdateData,
+                  coveredSubTopics: uniqBy([...resourceUpdateData.coveredSubTopics, topic], '_id'),
+                })
+              }
+              onRemove={(topicId) =>
+                setResourceUpdateData({
+                  ...resourceUpdateData,
+                  coveredSubTopics: resourceUpdateData.coveredSubTopics.filter(
+                    (coveredTopic) => coveredTopic._id !== topicId
+                  ),
+                })
+              }
+            />
+          </CollapsedField>
         </Box>
       </Flex>
       <Stack direction="row" justifyContent="space-between" pt={12}>
