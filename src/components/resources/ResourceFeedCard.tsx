@@ -11,9 +11,9 @@ import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickProp
 import { DurationViewer } from './elements/Duration';
 import { ResourceCompletedCheckbox } from './elements/ResourceCompletedCheckbox';
 import { LearningMaterialDescription } from '../learning_materials/LearningMaterialDescription';
-import { ResourceTypeBadge } from './elements/ResourceType';
 import { ResourceUrlLinkViewer, ResourceUrlLinkWrapper } from './elements/ResourceUrl';
 import { ResourceYoutubePlayer } from './elements/ResourceYoutubePlayer';
+import { LearningMaterialTypeBadge } from '../learning_materials/LearningMaterialTypeBadge';
 
 interface ResourceFeedCardProps {
   resource: ResourceFeedCardDataFragment;
@@ -96,7 +96,7 @@ const SubTitle: React.FC<{ resource: ResourceFeedCardDataFragment; isLoading: bo
     <Skeleton isLoaded={!isLoading}>
       <Stack spacing={1} direction="row" alignItems="center">
         {resource.types.map((type) => (
-          <ResourceTypeBadge key={type} type={type} />
+          <LearningMaterialTypeBadge key={type} type={type} />
         ))}
         <DurationViewer value={resource.durationSeconds} />
       </Stack>

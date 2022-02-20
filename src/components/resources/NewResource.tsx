@@ -7,13 +7,9 @@ import {
   ButtonGroup,
   Center,
   Flex,
-  FormErrorMessage,
-  Heading,
-  IconButton,
+  FormErrorMessage, IconButton,
   Image,
-  Input,
-  Link,
-  Modal,
+  Input, Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
@@ -22,33 +18,31 @@ import {
   Stack,
   Text,
   Tooltip,
-  useDisclosure,
-  useOutsideClick,
-  Wrap,
-  WrapItem,
+  useDisclosure, Wrap,
+  WrapItem
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { omit, pick, uniq, uniqBy } from 'lodash';
-import React, { ReactElement, useMemo, useRef, useState } from 'react';
+import React, { ReactElement, useMemo, useState } from 'react';
 import { ResourceData } from '../../graphql/resources/resources.fragments';
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import { CreateResourcePayload, CreateSubResourcePayload, LearningMaterialTag } from '../../graphql/types';
+import {
+  LearningMaterialDescriptionInput,
+  RESOURCE_DESCRIPTION_MAX_LENGTH
+} from '../learning_materials/LearningMaterialDescription';
+import { LearningMaterialShowedInField } from '../learning_materials/LearningMaterialShowedInField';
+import { LearningMaterialTypeBadge } from '../learning_materials/LearningMaterialTypeBadge';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { CollapsedField } from '../lib/fields/CollapsedField';
 import { Field } from '../lib/fields/Field';
 import { HeartIcon } from '../lib/icons/HeartIcon';
 import { useErrorToast } from '../lib/Toasts/ErrorToast';
 import { useSuccessfulCreationToast } from '../lib/Toasts/SuccessfulCreationToast';
-import { EditLinkStyleProps, FormTitle, ShowedInTopicHeading, ShowedInTopicLink } from '../lib/Typography';
+import { FormTitle } from '../lib/Typography';
 import { TopicBadge } from '../topics/TopicBadge';
-import { TopicSelector } from '../topics/TopicSelector';
 import { DurationViewer } from './elements/Duration';
-import {
-  LearningMaterialDescriptionInput,
-  RESOURCE_DESCRIPTION_MAX_LENGTH,
-} from '../learning_materials/LearningMaterialDescription';
-import { ResourceTypeBadge } from './elements/ResourceType';
 import { ResourceUrlInput, useAnalyzeResourceUrl } from './elements/ResourceUrl';
 import { LearningMaterialDurationField } from './fields/LearningMaterialDurationField';
 import { LearningMaterialTagsField } from './fields/LearningMaterialTagsField';
@@ -57,7 +51,6 @@ import { ResourcePrerequisitesField } from './fields/ResourcePrerequisitesField'
 import { ResourceTypeField, ResourceTypeSuggestions } from './fields/ResourceTypeField';
 import { useCreateResourceMutation } from './NewResource.generated';
 import { ResourceListBasicLayout } from './ResourceList';
-import { LearningMaterialShowedInField } from '../learning_materials/LearningMaterialShowedInField';
 
 type SubResourceCreationData = Omit<
   CreateResourcePayload,
@@ -423,7 +416,7 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
               <Stack direction="row" alignItems="center" spacing={2}>
                 <Text fontWeight={500}>{subResource.name}</Text>
                 {subResource.types.map((type) => (
-                  <ResourceTypeBadge key={type} type={type} />
+                  <LearningMaterialTypeBadge key={type} type={type} />
                 ))}
                 <DurationViewer value={subResource.durationSeconds} />
               </Stack>

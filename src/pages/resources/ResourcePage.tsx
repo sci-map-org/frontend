@@ -21,14 +21,15 @@ import {
 import { LearningMaterialRecommendButton } from '../../components/learning_materials/LearningMaterialRecommendButton';
 import { LearningMaterialStarsRaterData } from '../../components/learning_materials/LearningMaterialStarsRating';
 import { EditableLearningMaterialTags } from '../../components/learning_materials/LearningMaterialTagsEditor';
+import { LearningMaterialTypesViewer } from '../../components/learning_materials/LearningMaterialTypesViewer';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { ShowedInTopicLink, SocialWidgetsLabelStyleProps } from '../../components/lib/Typography';
 import { PageLink } from '../../components/navigation/InternalLink';
 import { DurationViewer } from '../../components/resources/elements/Duration';
 import { ResourceCompletedCheckbox } from '../../components/resources/elements/ResourceCompletedCheckbox';
-import { ResourceTypeBadge } from '../../components/resources/elements/ResourceType';
 import { ResourceUrlLink } from '../../components/resources/elements/ResourceUrl';
 import { ResourceYoutubePlayer } from '../../components/resources/elements/ResourceYoutubePlayer';
+import { ResourceMiniCard, ResourceMiniCardData } from '../../components/resources/ResourceMiniCard';
 import { SquareResourceCardData } from '../../components/resources/SquareResourceCard';
 import { SubResourceSeriesManager } from '../../components/resources/SubResourceSeriesManager';
 import { ResourceSubResourcesManager } from '../../components/resources/SubResourcesManager';
@@ -64,13 +65,13 @@ export const getResourceResourcePage = gql`
         ...ResourceLinkData
       }
       seriesParentResource {
-        ...ResourceLinkData
+        ...ResourceMiniCardData
       }
       previousResource {
-        ...ResourceLinkData
+        ...ResourceMiniCardData
       }
       nextResource {
-        ...ResourceLinkData
+        ...ResourceMiniCardData
       }
       ...LearningMaterialWithCoveredTopicsData
       ...EditableLearningMaterialPrerequisitesData
@@ -86,6 +87,7 @@ export const getResourceResourcePage = gql`
   ${LearningMaterialWithCoveredTopicsData}
   ${LearningMaterialRecommendationsViewerData}
   ${ResourceLinkData}
+  ${ResourceMiniCardData}
 `;
 
 // TODO
@@ -170,6 +172,7 @@ export const ResourcePage: React.FC<{ resourceKey: string }> = ({ resourceKey })
               // domains={resource.coveredConceptsByDomain?.map((i) => i.domain) || []}
             />
           )}
+          <PartOfSeriesBlock resource={resource} isLoading={loading} />
         </Flex>
         {layout === 'mobile' && (
           <Flex justifyContent="space-around" mt={6}>
@@ -311,9 +314,10 @@ const SubTitleBar: React.FC<{ resource: GetResourceResourcePageQuery['getResourc
 }) => {
   return (
     <Stack spacing={2} direction="row" alignItems="center">
-      {resource.types.map((type) => (
+      {/* {resource.types.map((type) => (
         <ResourceTypeBadge key={type} type={type} />
-      ))}
+      ))} */}
+      <LearningMaterialTypesViewer learningMaterialTypes={resource.types} />
       <DurationViewer value={resource.durationSeconds} />
       <LearningMaterialRecommendButton
         learningMaterialId={resource._id}
@@ -386,6 +390,24 @@ const MainContentBlock: React.FC<
           <ResourceYoutubePlayer resource={resource} skipThumbnail />
         </Center>
       )}
+    </Flex>
+  );
+};
+
+const PartOfSeriesBlock: React.FC<{
+  resource: GetResourceResourcePageQuery['getResourceByKey'];
+  isLoading: boolean;
+}> = ({ resource, isLoading }) => {
+  return (
+    <Flex>
+      <Stack>
+        {!!resource.seriesParentResource && (
+          <Flex direction="column">
+            <Text>Part Of</Text>
+            <ResourceMiniCard resource={resource.seriesParentResource} />
+          </Flex>
+        )}
+      </Stack>
     </Flex>
   );
 };

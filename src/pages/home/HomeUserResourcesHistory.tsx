@@ -2,11 +2,11 @@ import { Flex, Heading, Stack, Text } from '@chakra-ui/layout';
 import gql from 'graphql-tag';
 import { LearningMaterialCardContainer } from '../../components/learning_materials/LearningMaterialPreviewCardContainer';
 import { LearningMaterialStarsRater } from '../../components/learning_materials/LearningMaterialStarsRating';
+import { LearningMaterialTypeIcon } from '../../components/learning_materials/LearningMaterialTypeBadge';
 import { BoxBlockDefaultClickPropagation } from '../../components/lib/BoxBlockDefaultClickPropagation';
 import { StarsRatingViewer } from '../../components/lib/StarsRating';
 import { DurationViewer } from '../../components/resources/elements/Duration';
 import { ResourceCompletedCheckbox } from '../../components/resources/elements/ResourceCompletedCheckbox';
-import { ResourceTypeIcon } from '../../components/resources/elements/ResourceType';
 import { ResourceUrlLink } from '../../components/resources/elements/ResourceUrl';
 import { LearningMaterialPreviewCardList } from '../../components/resources/LearningMaterialPreviewCardList';
 import { ResourceMiniCardDataFragment } from '../../components/resources/ResourceMiniCard.generated';
@@ -89,7 +89,7 @@ const LastOpenedResourceCard: React.FC<{
             {/* 24px so that height doesn't change when rater appears */}
             <Stack spacing={1} direction="row" alignItems="center">
               {resourceItem.resource.types.map((type) => (
-                <ResourceTypeIcon key={type} resourceType={type} boxSize="20px" my="3px" />
+                <LearningMaterialTypeIcon key={type} type={type} boxSize="20px" my="3px" />
               ))}
               <StarsRatingViewer value={resourceItem.resource.rating} pxSize={15} />
               <DurationViewer value={resourceItem.resource.durationSeconds} />

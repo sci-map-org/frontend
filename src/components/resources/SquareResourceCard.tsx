@@ -3,10 +3,10 @@ import gql from 'graphql-tag';
 import { ReactElement } from 'react';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { ResourcePageInfo } from '../../pages/RoutesPageInfos';
+import { LearningMaterialTypeIcon } from '../learning_materials/LearningMaterialTypeBadge';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
 import { StarsRatingViewer } from '../lib/StarsRating';
-import { ResourceTypeIcon } from './elements/ResourceType';
 import { ResourceUrlLinkViewer, ResourceUrlLinkWrapper } from './elements/ResourceUrl';
 import { SquareResourceCardDataFragment } from './SquareResourceCard.generated';
 
@@ -54,7 +54,7 @@ export const SquareResourceCard: React.FC<SquareResourceCardProps> = ({ resource
         <Stack direction="row" alignItems="center">
           <StarsRatingViewer value={resource.rating} pxSize={13} />
           {resource.types.map((type) => (
-            <ResourceTypeIcon key={type} boxSize={4} resourceType={type} />
+            <LearningMaterialTypeIcon key={type} boxSize={4} type={type} />
           ))}
         </Stack>
       }

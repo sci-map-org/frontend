@@ -1,9 +1,10 @@
-import { Box, Stack, Text } from '@chakra-ui/react';
+import { Box, Flex, Stack, Text } from '@chakra-ui/react';
 import { useHover } from '../../hooks/useHover';
 import {
   LearningMaterialBadgeColorToCssColorMapping,
   LearningMaterialType,
   LearningMaterialTypeBadge,
+  LearningMaterialTypeBadgeSizesMapping,
   LearningMaterialTypeToBadgeColorMapping,
 } from './LearningMaterialTypeBadge';
 
@@ -12,38 +13,26 @@ const getLearningMaterialTypeBadgeBgColor = (learningMaterialType: LearningMater
 };
 interface LearningMaterialTypesViewerProps {
   learningMaterialTypes: LearningMaterialType[];
-  // size?: 'sm' | 'md';
-  // onClick?: (learningMaterialType: LearningMaterialType) => void;
-  // shade?: 'pale' | 'solid';
+  size?: 'sm' | 'md';
   maxShown?: number;
 }
 
 export const LearningMaterialTypesViewer: React.FC<LearningMaterialTypesViewerProps> = ({
   learningMaterialTypes,
-  // size = 'md',
-  // onClick,
-  // shade = 'solid',
+  size = 'md',
   maxShown,
 }) => {
   if (!learningMaterialTypes.length) return null;
   const [setRef, isHover] = useHover();
 
   return (
-    <Stack
-      direction="row"
-      ref={setRef}
-      //   spacing={{ md: '8px', sm: '4px' }[size]}
-      spacing="8px"
-    >
+    <Stack direction="row" ref={setRef} alignItems="center" spacing={{ md: '8px', sm: '4px' }[size]}>
       {learningMaterialTypes.slice(0, maxShown || learningMaterialTypes.length).map((learningMaterialType) => (
         <LearningMaterialTypeBadge
           key={learningMaterialType}
           type={learningMaterialType}
-          //   size={size}
-          //   {...(onClick && { onClick: () => onClick(topicType) })}
-          //   shade={shade}
-          //   textOverflow="ellipsis"
-          //   whiteSpace="nowrap"
+          size={size}
+          whiteSpace="nowrap"
         />
       ))}
       {!!maxShown && maxShown < learningMaterialTypes.length && (
@@ -54,17 +43,14 @@ export const LearningMaterialTypesViewer: React.FC<LearningMaterialTypesViewerPr
                 <LearningMaterialTypeBadge
                   key={learningMaterialType}
                   type={learningMaterialType}
-                  //   size={size}
-                  //   {...(onClick && { onClick: () => onClick(topicType) })}
-                  //   shade={shade}
-                  //   textOverflow="ellipsis"
-                  //   whiteSpace="nowrap"
+                  size={size}
+                  whiteSpace="nowrap"
                 />
               ))}
             </Stack>
           )}
-          <Text
-            color="white"
+          <Flex
+            {...LearningMaterialTypeBadgeSizesMapping[size].container}
             bgGradient={
               learningMaterialTypes.length - maxShown > 1
                 ? `linear(to-r, ${getLearningMaterialTypeBadgeBgColor(
@@ -78,15 +64,16 @@ export const LearningMaterialTypesViewer: React.FC<LearningMaterialTypesViewerPr
                     learningMaterialTypes[maxShown]
                   )}, ${getLearningMaterialTypeBadgeBgColor(learningMaterialTypes[maxShown])})`
             }
-            // {...sizesMapping[size]}
-            display="flex"
-            alignItems="center"
-            // _hover={{
-            //   ...(!!onClick && { cursor: 'pointer' }),
-            // }}
           >
-            +{learningMaterialTypes.length - maxShown}
-          </Text>
+            <Text
+              color="white"
+              {...LearningMaterialTypeBadgeSizesMapping[size].label}
+              display="flex"
+              alignItems="center"
+            >
+              +{learningMaterialTypes.length - maxShown}
+            </Text>
+          </Flex>
         </Box>
       )}
     </Stack>

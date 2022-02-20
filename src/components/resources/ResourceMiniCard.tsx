@@ -10,8 +10,8 @@ import {
 } from '../learning_materials/LearningMaterialStarsRating';
 import { StarsRatingViewer } from '../lib/StarsRating';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
-import { ResourceTypeBadge } from './elements/ResourceType';
 import { ResourceMiniCardDataFragment } from './ResourceMiniCard.generated';
+import { LearningMaterialTypeBadge } from '../learning_materials/LearningMaterialTypeBadge';
 
 export const ResourceMiniCardData = gql`
   fragment ResourceMiniCardData on Resource {
@@ -48,7 +48,7 @@ export const ResourceMiniCard: React.FC<ResourceMiniCardProps> = ({
       renderSecondRow={
         <Stack direction="row" spacing={1} alignItems="baseline">
           {resource.types.map((type) => (
-            <ResourceTypeBadge key={type} fontSize="xs" type={type} />
+            <LearningMaterialTypeBadge key={type} size="sm" type={type} />
           ))}
           {/* <StarsRatingViewer pxSize={13} value={resource.rating} /> */}
           <BoxBlockDefaultClickPropagation>
