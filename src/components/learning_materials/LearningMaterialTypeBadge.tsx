@@ -4,13 +4,13 @@ import { IconType } from '@react-icons/all-files/lib';
 import React from 'react';
 import { ResourceType } from '../../graphql/types';
 import { LearningPathIcon } from '../lib/icons/LearningPathIcon';
-import { ResourceTypeBadge } from '../resources/elements/ResourceType';
+import { ResourceTypeBadge, resourceTypeColorMapping } from '../resources/elements/ResourceType';
 
 export type LearningMaterialType = ResourceType | 'LearningPath';
 
 export type LearningMaterialTypeBadgeColor = 'yellow' | 'orange' | 'teal' | 'blue' | 'red' | 'darkGray' | 'lightGray';
 
-const badgeColorToCssColorMapping: {
+export const LearningMaterialBadgeColorToCssColorMapping: {
   [key in LearningMaterialTypeBadgeColor]: BadgeProps['color'];
 } = {
   yellow: 'yellow.400',
@@ -22,9 +22,20 @@ const badgeColorToCssColorMapping: {
   lightGray: 'gray.500',
 };
 
+export const LearningMaterialTypeToBadgeColorMapping: {
+  [key in LearningMaterialType]: LearningMaterialTypeBadgeColor;
+} = {
+  LearningPath: 'teal',
+  ...resourceTypeColorMapping,
+};
+
 export const LearningMaterialTypeBadge: React.FC<{ type: LearningMaterialType }> = ({ type }) => {
   return type === 'LearningPath' ? (
-    <LearningMaterialTypeBaseBadge icon={LearningPathIcon} name="Learning Path" color="teal" />
+    <LearningMaterialTypeBaseBadge
+      icon={LearningPathIcon}
+      name="Learning Path"
+      color={LearningMaterialTypeToBadgeColorMapping['LearningPath']}
+    />
   ) : (
     <ResourceTypeBadge type={type} />
   );
@@ -39,7 +50,7 @@ export const LearningMaterialTypeBaseBadge: React.FC<
 > = ({ icon, name, color, ...props }) => {
   return (
     <Flex
-      bgColor={badgeColorToCssColorMapping[color]}
+      bgColor={LearningMaterialBadgeColorToCssColorMapping[color]}
       direction="row"
       alignItems="stretch"
       borderRadius={3}
