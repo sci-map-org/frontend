@@ -35,6 +35,7 @@ export const LearningMaterialTypesViewer: React.FC<LearningMaterialTypesViewerPr
           whiteSpace="nowrap"
         />
       ))}
+
       {!!maxShown && maxShown < learningMaterialTypes.length && (
         <Box position="relative">
           {isHover && (

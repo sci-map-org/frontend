@@ -8,12 +8,7 @@ import {
   ResourcePreviewCardDataFragment,
 } from '../../graphql/resources/resources.fragments.generated';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
-import { ResourcePageInfo } from '../../pages/RoutesPageInfos';
-import { LearningMaterialTypeIcon } from '../learning_materials/LearningMaterialTypeBadge';
-import { StarsRatingViewer } from '../lib/StarsRating';
-import { InternalLink, PageLink } from '../navigation/InternalLink';
-import { DurationViewer } from './elements/Duration';
-import { ResourceListBasicLayout } from './ResourceList';
+import { ResourceMiniCard } from './ResourceMiniCard';
 import { ResourceSelectorModal } from './ResourceSelector';
 import {
   useAddSubResourceToSeriesMutation,
@@ -52,27 +47,15 @@ export const StatelessSubResourceSeriesManager: React.FC<StatelessSubResourceSer
         </Flex>
       ) : (
         <Stack direction="column" spacing={3}>
-          <Heading size="sm" textAlign="center">
+          <Heading size="lg" textAlign="center" color="gray.700">
             Parts
           </Heading>
-          <ResourceListBasicLayout
-            resources={subResourceSeries}
-            renderTop={(resource) => (
-              <Stack spacing={2}>
-                <Stack direction="row" alignItems="center" spacing={2}>
-                  {resource.types.map((type) => (
-                    <LearningMaterialTypeIcon key={type} type={type} boxSize={5} />
-                  ))}
-                  <PageLink pageInfo={ResourcePageInfo(resource)}>{resource.name}</PageLink>
-                  <Stack direction="row" alignItems="center" spacing={1}>
-                    <StarsRatingViewer value={resource.rating} pxSize={14} />
+          <Stack spacing={4}>
+            {subResourceSeries.map((subResource) => (
+              <ResourceMiniCard resource={subResource} />
+            ))}
+          </Stack>
 
-                    <DurationViewer value={resource.durationSeconds} />
-                  </Stack>
-                </Stack>
-              </Stack>
-            )}
-          />
           <Flex direction="column" alignItems="center">
             <ResourceSelectorModal
               onSelect={onSelect}

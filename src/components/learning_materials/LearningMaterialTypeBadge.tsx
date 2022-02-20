@@ -141,7 +141,7 @@ export const LearningMaterialTypeBadgeSizesMapping = {
   sm: {
     container: {
       borderRadius: 3,
-      px: '4px',
+      px: '3px',
       pt: '2px',
       pb: '2px',
     },
@@ -150,7 +150,7 @@ export const LearningMaterialTypeBadgeSizesMapping = {
     },
     spacing: '4px',
     label: {
-      letterSpacing: '0.11em',
+      letterSpacing: '0.07em',
       fontSize: '12px',
       lineHeight: '13px',
       height: '13px',
@@ -190,7 +190,7 @@ const LearningMaterialTypeBaseBadge: React.FC<
       bgColor={LearningMaterialBadgeColorToCssColorMapping[color]}
       direction="row"
       alignItems="stretch"
-      opacity={0.96}
+      // opacity={0.96} => disabled because of https://github.com/chakra-ui/chakra-ui/issues/5630
       {...LearningMaterialTypeBadgeSizesMapping[size].container}
       {...props}
     >

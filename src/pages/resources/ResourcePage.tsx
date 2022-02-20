@@ -1,4 +1,4 @@
-import { Box, Button, Center, Flex, FlexProps, Heading, Stack, Text, useBreakpointValue } from '@chakra-ui/react';
+import { Box, Button, Center, Flex, FlexProps, Heading, Icon, Stack, Text, useBreakpointValue } from '@chakra-ui/react';
 import { BsArrow90DegUp } from '@react-icons/all-files/bs/BsArrow90DegUp';
 import { BsArrowLeft } from '@react-icons/all-files/bs/BsArrowLeft';
 import { BsArrowRight } from '@react-icons/all-files/bs/BsArrowRight';
@@ -6,7 +6,6 @@ import gql from 'graphql-tag';
 import { intersection } from 'lodash';
 import Router, { useRouter } from 'next/router';
 import { Access } from '../../components/auth/Access';
-import { RoleAccess } from '../../components/auth/RoleAccess';
 import { PageLayout, pageLayoutMarginSizesMapping } from '../../components/layout/PageLayout';
 import { EditableLearningMaterialCoveredTopics } from '../../components/learning_materials/EditableLearningMaterialCoveredTopics';
 import {
@@ -24,25 +23,23 @@ import { EditableLearningMaterialTags } from '../../components/learning_material
 import { LearningMaterialTypesViewer } from '../../components/learning_materials/LearningMaterialTypesViewer';
 import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
 import { ShowedInTopicLink, SocialWidgetsLabelStyleProps } from '../../components/lib/Typography';
-import { PageLink } from '../../components/navigation/InternalLink';
 import { DurationViewer } from '../../components/resources/elements/Duration';
 import { ResourceCompletedCheckbox } from '../../components/resources/elements/ResourceCompletedCheckbox';
 import { ResourceUrlLink } from '../../components/resources/elements/ResourceUrl';
 import { ResourceYoutubePlayer } from '../../components/resources/elements/ResourceYoutubePlayer';
 import { ResourceMiniCard, ResourceMiniCardData } from '../../components/resources/ResourceMiniCard';
+import { ResourceMiniCardDataFragment } from '../../components/resources/ResourceMiniCard.generated';
 import { SquareResourceCardData } from '../../components/resources/SquareResourceCard';
 import { SubResourceSeriesManager } from '../../components/resources/SubResourceSeriesManager';
 import { ResourceSubResourcesManager } from '../../components/resources/SubResourcesManager';
 import { UserAvatar, UserAvatarData } from '../../components/users/UserAvatar';
 import { LearningMaterialWithCoveredTopicsData } from '../../graphql/learning_materials/learning_materials.fragments';
 import { generateResourceData, ResourceData, ResourceLinkData } from '../../graphql/resources/resources.fragments';
-import { ResourceLinkDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { useDeleteResourceMutation } from '../../graphql/resources/resources.operations.generated';
 import { ResourceType, UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { getChakraRelativeSize } from '../../util/chakra.util';
 import { NotFoundPage } from '../NotFoundPage';
-import { ResourcePageInfo } from '../RoutesPageInfos';
 import { GetResourceResourcePageQuery, useGetResourceResourcePageQuery } from './ResourcePage.generated';
 
 export const getResourceResourcePage = gql`
@@ -143,7 +140,13 @@ export const ResourcePage: React.FC<{ resourceKey: string }> = ({ resourceKey })
         <Flex direction="column" alignItems="stretch" flexShrink={1} flexGrow={1}>
           <HeaderBlock resource={resource} isLoading={loading} />
           <MainContentBlock resource={resource} isLoading={loading} mt={3} />
-
+          {layout === 'mobile' && (
+            <Center>
+              <Box maxW="80%">
+                <PartOfSeriesBlock resource={resource} isLoading={loading} />
+              </Box>
+            </Center>
+          )}
           {/* {(resource.parentResources && resource.parentResources.length) ||
               (resource.seriesParentResource && (
                 <Stack spacing={1} alignItems="center">
@@ -172,7 +175,6 @@ export const ResourcePage: React.FC<{ resourceKey: string }> = ({ resourceKey })
               // domains={resource.coveredConceptsByDomain?.map((i) => i.domain) || []}
             />
           )}
-          <PartOfSeriesBlock resource={resource} isLoading={loading} />
         </Flex>
         {layout === 'mobile' && (
           <Flex justifyContent="space-around" mt={6}>
@@ -199,6 +201,8 @@ export const ResourcePage: React.FC<{ resourceKey: string }> = ({ resourceKey })
             ? {
                 ml: pageLayoutMarginSizesMapping.sm.px,
                 flexBasis: columnsWidth,
+                maxW: columnsWidth,
+                flexGrow: 0,
                 direction: 'column',
               }
             : {
@@ -230,6 +234,11 @@ export const ResourcePage: React.FC<{ resourceKey: string }> = ({ resourceKey })
           <Center {...(layout === 'desktop' ? { w: '100%' } : { w: '45%' })}>
             <LearningMaterialRecommendationsViewer learningMaterial={resource} isLoading={loading} size="lg" />
           </Center>
+          {layout === 'desktop' && (
+            <Center mt={8} maxW="100%">
+              <PartOfSeriesBlock resource={resource} isLoading={loading} />
+            </Center>
+          )}
         </Flex>
       </Flex>
     </PageLayout>
@@ -398,15 +407,36 @@ const PartOfSeriesBlock: React.FC<{
   resource: GetResourceResourcePageQuery['getResourceByKey'];
   isLoading: boolean;
 }> = ({ resource, isLoading }) => {
+  const element = (type: 'Part Of' | 'Previous' | 'Next', resource: ResourceMiniCardDataFragment) => (
+    <Flex direction="column" overflow="hidden">
+      <Stack direction="row" alignItems="center" spacing={1}>
+        <Icon
+          as={
+            {
+              'Part Of': BsArrow90DegUp,
+              Previous: BsArrowLeft,
+              Next: BsArrowRight,
+            }[type]
+          }
+          boxSize="20px"
+          color="gray.600"
+        />
+
+        <Text fontWeight={600} color="gray.500" fontSize="16px">
+          {type}
+        </Text>
+      </Stack>
+      <Box pl={2}>
+        <ResourceMiniCard resource={resource} />
+      </Box>
+    </Flex>
+  );
   return (
-    <Flex>
-      <Stack>
-        {!!resource.seriesParentResource && (
-          <Flex direction="column">
-            <Text>Part Of</Text>
-            <ResourceMiniCard resource={resource.seriesParentResource} />
-          </Flex>
-        )}
+    <Flex overflow="hidden">
+      <Stack spacing={3} overflow="hidden">
+        {!!resource.seriesParentResource && element('Part Of', resource.seriesParentResource)}
+        {!!resource.previousResource && element('Previous', resource.previousResource)}
+        {!!resource.nextResource && element('Next', resource.nextResource)}
       </Stack>
     </Flex>
   );

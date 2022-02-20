@@ -1,17 +1,7 @@
-import { Stack, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
-import { routerPushToPage } from '../../pages/PageInfo';
 import { ResourcePageInfo } from '../../pages/RoutesPageInfos';
-import { shortenString } from '../../util/utils';
 import { LearningMaterialMiniCardContainer } from '../learning_materials/LearningMaterialMiniCardContainer';
-import {
-  LearningMaterialStarsRater,
-  LearningMaterialStarsRaterData,
-} from '../learning_materials/LearningMaterialStarsRating';
-import { StarsRatingViewer } from '../lib/StarsRating';
-import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { ResourceMiniCardDataFragment } from './ResourceMiniCard.generated';
-import { LearningMaterialTypeBadge } from '../learning_materials/LearningMaterialTypeBadge';
 
 export const ResourceMiniCardData = gql`
   fragment ResourceMiniCardData on Resource {
@@ -20,9 +10,11 @@ export const ResourceMiniCardData = gql`
     name
     types
     url
-    ...LearningMaterialStarsRaterData
+    recommendationsCount
+    recommended {
+      recommendedAt
+    }
   }
-  ${LearningMaterialStarsRaterData}
 `;
 
 interface ResourceMiniCardProps {
@@ -31,32 +23,12 @@ interface ResourceMiniCardProps {
   firstItemInCompactList?: boolean;
 }
 
-export const ResourceMiniCard: React.FC<ResourceMiniCardProps> = ({
-  resource,
-  inCompactList,
-  firstItemInCompactList,
-}) => {
+export const ResourceMiniCard: React.FC<ResourceMiniCardProps> = ({ resource }) => {
   return (
     <LearningMaterialMiniCardContainer
-      inCompactList={inCompactList}
-      firstItemInCompactList={firstItemInCompactList}
-      renderFirstRow={
-        <Text fontSize="sm" textOverflow="ellipsis">
-          {shortenString(resource.name, 32)}
-        </Text>
-      }
-      renderSecondRow={
-        <Stack direction="row" spacing={1} alignItems="baseline">
-          {resource.types.map((type) => (
-            <LearningMaterialTypeBadge key={type} size="sm" type={type} />
-          ))}
-          {/* <StarsRatingViewer pxSize={13} value={resource.rating} /> */}
-          <BoxBlockDefaultClickPropagation>
-            <LearningMaterialStarsRater learningMaterial={resource} size="xs" />
-          </BoxBlockDefaultClickPropagation>
-        </Stack>
-      }
-      onClick={() => routerPushToPage(ResourcePageInfo(resource))}
+      learningMaterial={resource}
+      learningMaterialTypes={resource.types}
+      pageInfo={ResourcePageInfo(resource)}
     />
   );
 };
