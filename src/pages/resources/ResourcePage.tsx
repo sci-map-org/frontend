@@ -1,4 +1,16 @@
-import { Box, Button, Center, Flex, FlexProps, Heading, Icon, Stack, Text, useBreakpointValue } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Center,
+  Flex,
+  FlexProps,
+  Heading,
+  Icon,
+  Stack,
+  Text,
+  useBreakpointValue,
+  Skeleton,
+} from '@chakra-ui/react';
 import { BsArrow90DegUp } from '@react-icons/all-files/bs/BsArrow90DegUp';
 import { BsArrowLeft } from '@react-icons/all-files/bs/BsArrowLeft';
 import { BsArrowRight } from '@react-icons/all-files/bs/BsArrowRight';
@@ -59,7 +71,7 @@ export const getResourceResourcePage = gql`
         ...ResourceData
       }
       parentResources {
-        ...ResourceLinkData
+        ...ResourceMiniCardData
       }
       seriesParentResource {
         ...ResourceMiniCardData
@@ -83,7 +95,6 @@ export const getResourceResourcePage = gql`
   ${LearningMaterialStarsRaterData}
   ${LearningMaterialWithCoveredTopicsData}
   ${LearningMaterialRecommendationsViewerData}
-  ${ResourceLinkData}
   ${ResourceMiniCardData}
 `;
 
@@ -322,20 +333,19 @@ const SubTitleBar: React.FC<{ resource: GetResourceResourcePageQuery['getResourc
   isLoading,
 }) => {
   return (
-    <Stack spacing={2} direction="row" alignItems="center">
-      {/* {resource.types.map((type) => (
-        <ResourceTypeBadge key={type} type={type} />
-      ))} */}
-      <LearningMaterialTypesViewer learningMaterialTypes={resource.types} />
-      <DurationViewer value={resource.durationSeconds} />
-      <LearningMaterialRecommendButton
-        learningMaterialId={resource._id}
-        isRecommended={!!resource.recommended}
-        size="xs"
-        isDisabled={isLoading}
-      />
-      <ResourceCompletedCheckbox size="xs" resource={resource} isLoading={isLoading} />,
-    </Stack>
+    <Skeleton isLoaded={!isLoading}>
+      <Stack spacing={2} direction="row" alignItems="center">
+        <LearningMaterialTypesViewer learningMaterialTypes={resource.types} />
+        <DurationViewer value={resource.durationSeconds} />
+        <LearningMaterialRecommendButton
+          learningMaterialId={resource._id}
+          isRecommended={!!resource.recommended}
+          size="xs"
+          isDisabled={isLoading}
+        />
+        <ResourceCompletedCheckbox size="xs" resource={resource} isLoading={isLoading} />,
+      </Stack>
+    </Skeleton>
   );
 };
 
@@ -364,9 +374,11 @@ const HeaderBlock: React.FC<{ resource: GetResourceResourcePageQuery['getResourc
 }) => {
   return (
     <Stack h={headerHeight} alignItems="center" spacing={2} justifyContent="center">
-      <Heading color="gray.700" textAlign="center">
-        {resource.name}
-      </Heading>
+      <Skeleton isLoaded={!isLoading}>
+        <Heading color="gray.700" textAlign="center">
+          {resource.name}
+        </Heading>
+      </Skeleton>
       <SubTitleBar resource={resource} isLoading={isLoading} />
     </Stack>
   );
@@ -407,7 +419,7 @@ const PartOfSeriesBlock: React.FC<{
   resource: GetResourceResourcePageQuery['getResourceByKey'];
   isLoading: boolean;
 }> = ({ resource, isLoading }) => {
-  const element = (type: 'Part Of' | 'Previous' | 'Next', resource: ResourceMiniCardDataFragment) => (
+  const element = (type: 'Part Of' | 'Previous' | 'Next', resources: ResourceMiniCardDataFragment[]) => (
     <Flex direction="column" overflow="hidden">
       <Stack direction="row" alignItems="center" spacing={1}>
         <Icon
@@ -426,17 +438,20 @@ const PartOfSeriesBlock: React.FC<{
           {type}
         </Text>
       </Stack>
-      <Box pl={2}>
-        <ResourceMiniCard resource={resource} />
-      </Box>
+      {resources.map((resource) => (
+        <Box pl={2}>
+          <ResourceMiniCard resource={resource} />
+        </Box>
+      ))}
     </Flex>
   );
   return (
     <Flex overflow="hidden">
       <Stack spacing={3} overflow="hidden">
-        {!!resource.seriesParentResource && element('Part Of', resource.seriesParentResource)}
-        {!!resource.previousResource && element('Previous', resource.previousResource)}
-        {!!resource.nextResource && element('Next', resource.nextResource)}
+        {!!resource.seriesParentResource && element('Part Of', [resource.seriesParentResource])}
+        {!!resource.parentResources?.length && element('Part Of', resource.parentResources)}
+        {!!resource.previousResource && element('Previous', [resource.previousResource])}
+        {!!resource.nextResource && element('Next', [resource.nextResource])}
       </Stack>
     </Flex>
   );
