@@ -2,8 +2,8 @@ import { Box, FormErrorMessage, Stack, Wrap, WrapItem } from '@chakra-ui/react';
 import { uniq } from 'lodash';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { ResourceType } from '../../../graphql/types';
+import { LearningMaterialTypeBadge } from '../../learning_materials/LearningMaterialTypeBadge';
 import { Field } from '../../lib/fields/Field';
-import { ResourceTypeBadge } from '../elements/ResourceType';
 
 export const ResourceTypeSuggestions: ResourceType[] = [
   ResourceType.Article,
@@ -65,7 +65,7 @@ export const ResourceTypeField: React.FC<{
                           {...provided.dragHandleProps}
                           opacity={snapshot.isDragging ? 0.5 : 1}
                         >
-                          <ResourceTypeBadge
+                          <LearningMaterialTypeBadge
                             type={selectedResourceType}
                             onClick={() => onChange(value.filter((v) => v !== selectedResourceType))}
                           />
@@ -87,7 +87,7 @@ export const ResourceTypeField: React.FC<{
           .filter((suggestion) => !value?.find((v) => v === suggestion))
           .map((resourceType) => (
             <WrapItem key={resourceType}>
-              <ResourceTypeBadge
+              <LearningMaterialTypeBadge
                 type={resourceType}
                 onClick={() => onChange(uniq([...(value || []), resourceType]))}
                 opacity={0.8}

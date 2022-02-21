@@ -1,44 +1,33 @@
 import { EditIcon } from '@chakra-ui/icons';
-import {
-  IconButton,
-  Skeleton,
-  Stack,
-  Tag,
-  TagCloseButton,
-  TagLabel,
-  Text,
-  Tooltip,
-  Wrap,
-  WrapItem,
-} from '@chakra-ui/react';
+import { IconButton, Skeleton, Stack, Text, Tooltip, Wrap, WrapItem } from '@chakra-ui/react';
+import { AiTwotoneTags } from '@react-icons/all-files/ai/AiTwotoneTags';
 import gql from 'graphql-tag';
 import { uniqBy } from 'lodash';
-import { ReactNode, useEffect, useRef, useState } from 'react';
-import { AiTwotoneTags } from '@react-icons/all-files/ai/AiTwotoneTags';
+import { ReactNode, useRef, useState } from 'react';
 import { LearningMaterial, LearningMaterialTag } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
+import { useHandleClickOutside } from '../../hooks/useHandleClickOutside';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
 import { LearningMaterialTagSelector } from '../lib/inputs/LearningMaterialTagSelector';
 import {
   useAddTagsToLearningMaterialMutation,
   useRemoveTagsFromLearningMaterialMutation,
 } from './LearningMaterialTagsEditor.generated';
-import { useHandleClickOutside } from '../../hooks/useHandleClickOutside';
+import { LearningMaterialTagBase, LearningMaterialTagViewer } from './LearningMaterialTagViewer';
 
 export const SelectedTagsViewer: React.FC<{
   selectedTags?: LearningMaterialTag[] | null;
   pb?: number | string;
   renderEnd?: () => ReactNode;
   justify?: string;
-}> = ({ selectedTags, renderEnd, justify, pb = 2 }) => {
+  size?: 'sm' | 'md';
+}> = ({ selectedTags, renderEnd, size, justify, pb = 2 }) => {
   if (!selectedTags || (!selectedTags.length && !renderEnd)) return null;
   return (
     <Wrap fontWeight={250} pb={pb} as="span" justify={justify}>
       {selectedTags.map((tag, idx) => (
         <WrapItem key={idx}>
-          <Tag size="sm" colorScheme="gray" as="span">
-            <TagLabel>{tag.name}</TagLabel>
-          </Tag>
+          <LearningMaterialTagViewer tagName={tag.name} size={size} />
         </WrapItem>
       ))}
       {renderEnd && renderEnd()}
@@ -83,16 +72,15 @@ export const LearningMaterialTagsStatelessEditor: React.FC<{
       </WrapItem>
       {selectedTags.map((selectedTag) => (
         <WrapItem key={selectedTag.name}>
-          <Tag size={size} colorScheme="gray" key={selectedTag.name}>
-            <TagLabel>{selectedTag.name}</TagLabel>
-            <TagCloseButton
-              isDisabled={isDisabled}
-              onClick={() => {
-                setSelectedTags && setSelectedTags(selectedTags.filter((s) => s.name !== selectedTag.name));
-                onRemove && onRemove(selectedTag);
-              }}
-            />
-          </Tag>
+          <LearningMaterialTagBase
+            onClose={() => {
+              setSelectedTags && setSelectedTags(selectedTags.filter((s) => s.name !== selectedTag.name));
+              onRemove && onRemove(selectedTag);
+            }}
+            size={size}
+          >
+            {selectedTag.name}
+          </LearningMaterialTagBase>
         </WrapItem>
       ))}
     </Wrap>
@@ -156,7 +144,8 @@ export const EditableLearningMaterialTags: React.FC<{
   isDisabled?: boolean;
   justify?: 'center';
   placeholder?: string;
-}> = ({ learningMaterial, isLoading, justify, isDisabled, placeholder }) => {
+  size?: 'sm' | 'md';
+}> = ({ learningMaterial, isLoading, justify, size = 'md', isDisabled, placeholder }) => {
   const wrapperRef = useRef(null);
   const { currentUser } = useCurrentUser();
   const unauthentificatedModalDisclosure = useUnauthentificatedModal();
@@ -164,7 +153,12 @@ export const EditableLearningMaterialTags: React.FC<{
   useHandleClickOutside(wrapperRef, () => setTagEditorMode(false));
   return tagEditorMode ? (
     <Skeleton ref={wrapperRef} isLoaded={!isLoading}>
-      <LearningMaterialTagsEditor justify={justify} size="sm" learningMaterial={learningMaterial} inputWidth="100px" />
+      <LearningMaterialTagsEditor
+        size={size}
+        justify={justify}
+        learningMaterial={learningMaterial}
+        inputWidth={size === 'md' ? '140px' : '100px'}
+      />
     </Skeleton>
   ) : (
     <Stack direction="row" alignItems="center">
@@ -180,6 +174,7 @@ export const EditableLearningMaterialTags: React.FC<{
           <Skeleton isLoaded={!isLoading}>
             <SelectedTagsViewer
               pb={0}
+              size={size}
               selectedTags={learningMaterial.tags}
               justify={justify}
               renderEnd={() =>

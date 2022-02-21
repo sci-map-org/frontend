@@ -68,7 +68,6 @@ export const TopicTypeViewer: React.FC<TopicTypeViewerProps> = ({
 interface TopicTypesViewerProps {
   topicTypes: TopicType[];
   size?: 'sm' | 'md';
-  onClick?: (topicType: TopicType) => void;
   shade?: 'pale' | 'solid';
   maxShown?: number;
 }
@@ -76,7 +75,6 @@ interface TopicTypesViewerProps {
 export const TopicTypesViewer: React.FC<TopicTypesViewerProps> = ({
   topicTypes,
   size = 'md',
-  onClick,
   shade = 'solid',
   maxShown,
 }) => {
@@ -90,7 +88,6 @@ export const TopicTypesViewer: React.FC<TopicTypesViewerProps> = ({
           key={topicType.name}
           topicType={topicType}
           size={size}
-          {...(onClick && { onClick: () => onClick(topicType) })}
           shade={shade}
           textOverflow="ellipsis"
           whiteSpace="nowrap"
@@ -100,14 +97,8 @@ export const TopicTypesViewer: React.FC<TopicTypesViewerProps> = ({
         <Box position="relative">
           {isHover && (
             <Stack direction="row" position="absolute" bgColor="white" zIndex={2}>
-              {topicTypes.slice(maxShown, topicTypes.length).map((topicType, idx) => (
-                <TopicTypeViewer
-                  key={topicType.name}
-                  topicType={topicType}
-                  size={size}
-                  {...(onClick && { onClick: () => onClick(topicType) })}
-                  shade={shade}
-                />
+              {topicTypes.slice(maxShown, topicTypes.length).map((topicType) => (
+                <TopicTypeViewer key={topicType.name} topicType={topicType} size={size} shade={shade} />
               ))}
             </Stack>
           )}
@@ -130,9 +121,6 @@ export const TopicTypesViewer: React.FC<TopicTypesViewerProps> = ({
             {...sizesMapping[size]}
             display="flex"
             alignItems="center"
-            _hover={{
-              ...(!!onClick && { cursor: 'pointer' }),
-            }}
           >
             +{topicTypes.length - maxShown}
           </Text>

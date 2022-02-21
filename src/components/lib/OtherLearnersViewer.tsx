@@ -3,7 +3,9 @@ import gql from 'graphql-tag';
 import { useMemo } from 'react';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { UserAvatar, UserAvatarData } from '../users/UserAvatar';
+import { UserAvatarGroup } from '../users/UserAvatarGroup';
 import { OtherLearnersViewerUserDataFragment } from './OtherLearnersViewer.generated';
+import { SocialWidgetsLabelStyleProps } from './Typography';
 
 export const OtherLearnersViewerUserData = gql`
   fragment OtherLearnersViewerUserData on User {
@@ -43,12 +45,8 @@ export const OtherLearnersViewer: React.FC<OtherLearnersViewerProps> = ({
   return (
     <Center>
       <Stack spacing={1}>
-        <Text fontWeight={300}>{title(otherLearnersCount, otherLearners)}</Text>
-        <AvatarGroup alignSelf="center" spacing={-3} size="sm" max={3}>
-          {otherLearners.slice(0, maxUserAvatarsToShow).map((user) => (
-            <UserAvatar key={user._id} user={user} />
-          ))}
-        </AvatarGroup>
+        <Text {...SocialWidgetsLabelStyleProps('md')}>{title(otherLearnersCount, otherLearners)}</Text>
+        <UserAvatarGroup users={otherLearners} popoverTitle="Other Learners" size="lg" />
       </Stack>
     </Center>
   );

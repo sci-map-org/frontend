@@ -9,7 +9,6 @@ import {
   PopoverContent,
   PopoverTrigger,
   Stack,
-  Text,
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { forwardRef } from 'react';
@@ -17,7 +16,6 @@ import { CurrentUserDataFragment } from '../../graphql/users/users.fragments.gen
 import { routerPushToPage } from '../../pages/PageInfo';
 import { UserProfilePageInfo } from '../../pages/RoutesPageInfos';
 import { UserDisplayName } from '../lib/Typography';
-import { PageLink } from '../navigation/InternalLink';
 import { UserAvatarDataFragment } from './UserAvatar.generated';
 import { UserKeyLink } from './UserKeyLink';
 

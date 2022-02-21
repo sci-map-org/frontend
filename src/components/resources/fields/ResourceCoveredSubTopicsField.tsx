@@ -4,22 +4,21 @@ import { FormFieldLabel } from '../../lib/Typography';
 import { TopicBadge } from '../../topics/TopicBadge';
 import { TopicSelector } from '../../topics/TopicSelector';
 
-
 interface ResourceCoveredSubTopicsFieldProps {
-  showedInTopics: TopicLinkDataFragment[]
+  showedInTopics: TopicLinkDataFragment[];
   coveredSubTopics: TopicLinkDataFragment[];
   onRemove: (topiclId: string) => void;
   onAdded: (topic: TopicLinkDataFragment) => void;
 }
 export const ResourceCoveredSubTopicsField: React.FC<ResourceCoveredSubTopicsFieldProps> = ({
   showedInTopics,
-    coveredSubTopics,
+  coveredSubTopics,
   onAdded,
   onRemove,
 }) => {
   return (
     <Stack direction="column" alignItems="center" spacing={3}>
-      <FormFieldLabel>Covered SubTopics</FormFieldLabel>
+      <FormFieldLabel>{showedInTopics.length ? 'Covered SubTopics' : 'Covered Topics'}</FormFieldLabel>
       {coveredSubTopics.length && (
         <Wrap justify="center" spacing={2}>
           {coveredSubTopics.map((topic) => (
@@ -30,7 +29,13 @@ export const ResourceCoveredSubTopicsField: React.FC<ResourceCoveredSubTopicsFie
         </Wrap>
       )}
       <Box w="200px">
-        <TopicSelector onlySubTopicsOf={showedInTopics.map(({_id}) => _id)} placeholder="Add Covered SubTopic..." onSelect={(topic) => onAdded(topic)} />
+        <TopicSelector
+          {...(showedInTopics.length && {
+            onlySubTopicsOf: showedInTopics.map(({ _id }) => _id),
+          })}
+          placeholder="Add Covered SubTopic..."
+          onSelect={(topic) => onAdded(topic)}
+        />
       </Box>
     </Stack>
   );

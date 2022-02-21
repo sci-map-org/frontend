@@ -4,7 +4,7 @@ import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { RoleAccessAllowedRule, userHasAccess } from '../auth/RoleAccess';
 import { NavigationBreadcrumbs, NavigationBreadcrumbsProps } from './NavigationBreadcrumbs';
 
-const marginSizesMapping: { [key in 'sm' | 'md' | 'lg' | 'xl' | '2xl']: { px: FlexProps['px'] } } = {
+export const pageLayoutMarginSizesMapping: { [key in 'sm' | 'md' | 'lg' | 'xl' | '2xl']: { px: FlexProps['px'] } } = {
   sm: {
     px: { sm: '1%', md: '3%' },
   },
@@ -32,7 +32,7 @@ interface PageLayoutProps {
   centerChildren?: boolean;
   isLoading?: boolean;
   accessRule?: RoleAccessAllowedRule | boolean;
-  marginSize?: keyof typeof marginSizesMapping;
+  marginSize?: keyof typeof pageLayoutMarginSizesMapping;
   renderBackgroundImage?: ReactNode;
 }
 export const PageLayout: React.FC<PageLayoutProps> = ({
@@ -80,7 +80,7 @@ interface BasePageLayout {
   renderHeader?: (layoutProps: BoxProps) => ReactNode;
   centerChildren?: boolean;
   accessRule?: RoleAccessAllowedRule | boolean;
-  marginSize?: keyof typeof marginSizesMapping;
+  marginSize?: keyof typeof pageLayoutMarginSizesMapping;
   renderBackgroundImage?: ReactNode;
 }
 export const BasePageLayout: React.FC<BasePageLayout> = ({
@@ -111,8 +111,8 @@ export const BasePageLayout: React.FC<BasePageLayout> = ({
       position="relative"
     >
       {renderBackgroundImage}
-      {renderHeader && renderHeader(marginSizesMapping[marginSize])}
-      <Flex direction="row" justifyContent="stretch" minH="100%" px={marginSizesMapping[marginSize].px}>
+      {renderHeader && renderHeader(pageLayoutMarginSizesMapping[marginSize])}
+      <Flex direction="row" justifyContent="stretch" minH="100%" px={pageLayoutMarginSizesMapping[marginSize].px}>
         {renderLeft && <Box>{renderLeft}</Box>}
         <Box flexGrow={1} {...(centerChildren && { display: 'flex', flexDirection: 'column', alignItems: 'center' })}>
           {children}

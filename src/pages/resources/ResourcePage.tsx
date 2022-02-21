@@ -1,47 +1,58 @@
-import { Box, Button, Center, Flex, Skeleton, Stack, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Center,
+  Flex,
+  FlexProps,
+  Heading,
+  Icon,
+  Stack,
+  Text,
+  useBreakpointValue,
+  Skeleton,
+} from '@chakra-ui/react';
 import { BsArrow90DegUp } from '@react-icons/all-files/bs/BsArrow90DegUp';
 import { BsArrowLeft } from '@react-icons/all-files/bs/BsArrowLeft';
 import { BsArrowRight } from '@react-icons/all-files/bs/BsArrowRight';
 import gql from 'graphql-tag';
+import { intersection } from 'lodash';
 import Router, { useRouter } from 'next/router';
 import { Access } from '../../components/auth/Access';
-import { RoleAccess } from '../../components/auth/RoleAccess';
-import { PageLayout } from '../../components/layout/PageLayout';
+import { PageLayout, pageLayoutMarginSizesMapping } from '../../components/layout/PageLayout';
+import { EditableLearningMaterialCoveredTopics } from '../../components/learning_materials/EditableLearningMaterialCoveredTopics';
 import {
   EditableLearningMaterialPrerequisites,
   EditableLearningMaterialPrerequisitesData,
 } from '../../components/learning_materials/EditableLearningMaterialPrerequisites';
-import {
-  LearningMaterialStarsRater,
-  LearningMaterialStarsRaterData,
-} from '../../components/learning_materials/LearningMaterialStarsRating';
-import { EditableLearningMaterialTags } from '../../components/learning_materials/LearningMaterialTagsEditor';
-import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
-import { StarsRatingViewer } from '../../components/lib/StarsRating';
-import { InternalLink, PageLink } from '../../components/navigation/InternalLink';
-import { DurationViewer } from '../../components/resources/elements/Duration';
-import { ResourceCompletedCheckbox } from '../../components/resources/elements/ResourceCompletedCheckbox';
-import { ResourceDescription } from '../../components/resources/elements/ResourceDescription';
-import { ResourceTypeBadge } from '../../components/resources/elements/ResourceType';
-import { ResourceUrlLink } from '../../components/resources/elements/ResourceUrl';
-import { ResourceYoutubePlayer } from '../../components/resources/elements/ResourceYoutubePlayer';
-import { EditableLearningMaterialCoveredTopics } from '../../components/learning_materials/EditableLearningMaterialCoveredTopics';
-import { SquareResourceCardData } from '../../components/resources/SquareResourceCard';
-import { UserAvatar, UserAvatarData } from '../../components/users/UserAvatar';
-import { generateResourceData, ResourceData, ResourceLinkData } from '../../graphql/resources/resources.fragments';
-import { ResourceDataFragment, ResourceLinkDataFragment } from '../../graphql/resources/resources.fragments.generated';
-import { useDeleteResourceMutation } from '../../graphql/resources/resources.operations.generated';
-import { ResourceType, UserRole } from '../../graphql/types';
-import { useCurrentUser } from '../../graphql/users/users.hooks';
-import { GetResourceResourcePageQuery, useGetResourceResourcePageQuery } from './ResourcePage.generated';
-import { LearningMaterialWithCoveredTopicsData } from '../../graphql/learning_materials/learning_materials.fragments';
-import { intersection } from 'lodash';
+import { LearningMaterialDescription } from '../../components/learning_materials/LearningMaterialDescription';
 import {
   LearningMaterialRecommendationsViewer,
   LearningMaterialRecommendationsViewerData,
 } from '../../components/learning_materials/LearningMaterialRecommendationsViewer';
+import { LearningMaterialRecommendButton } from '../../components/learning_materials/LearningMaterialRecommendButton';
+import { LearningMaterialStarsRaterData } from '../../components/learning_materials/LearningMaterialStarsRating';
+import { EditableLearningMaterialTags } from '../../components/learning_materials/LearningMaterialTagsEditor';
+import { LearningMaterialTypesViewer } from '../../components/learning_materials/LearningMaterialTypesViewer';
+import { DeleteButtonWithConfirmation } from '../../components/lib/buttons/DeleteButtonWithConfirmation';
+import { ShowedInTopicLink, SocialWidgetsLabelStyleProps } from '../../components/lib/Typography';
+import { DurationViewer } from '../../components/resources/elements/Duration';
+import { ResourceCompletedCheckbox } from '../../components/resources/elements/ResourceCompletedCheckbox';
+import { ResourceUrlLink } from '../../components/resources/elements/ResourceUrl';
+import { ResourceYoutubePlayer } from '../../components/resources/elements/ResourceYoutubePlayer';
+import { ResourceMiniCard, ResourceMiniCardData } from '../../components/resources/ResourceMiniCard';
+import { ResourceMiniCardDataFragment } from '../../components/resources/ResourceMiniCard.generated';
+import { SquareResourceCardData } from '../../components/resources/SquareResourceCard';
+import { SubResourceSeriesManager } from '../../components/resources/SubResourceSeriesManager';
+import { ResourceSubResourcesManager } from '../../components/resources/SubResourcesManager';
+import { UserAvatar, UserAvatarData } from '../../components/users/UserAvatar';
+import { LearningMaterialWithCoveredTopicsData } from '../../graphql/learning_materials/learning_materials.fragments';
+import { generateResourceData, ResourceData, ResourceLinkData } from '../../graphql/resources/resources.fragments';
+import { useDeleteResourceMutation } from '../../graphql/resources/resources.operations.generated';
+import { ResourceType, UserRole } from '../../graphql/types';
+import { useCurrentUser } from '../../graphql/users/users.hooks';
+import { getChakraRelativeSize } from '../../util/chakra.util';
 import { NotFoundPage } from '../NotFoundPage';
-import { ResourcePageInfo } from '../RoutesPageInfos';
+import { GetResourceResourcePageQuery, useGetResourceResourcePageQuery } from './ResourcePage.generated';
 
 export const getResourceResourcePage = gql`
   query getResourceResourcePage($resourceKey: String!) {
@@ -50,23 +61,26 @@ export const getResourceResourcePage = gql`
       createdBy {
         ...UserAvatarData
       }
+      showedIn {
+        ...TopicLinkData
+      }
       subResources {
         ...SquareResourceCardData
       }
       subResourceSeries {
-        ...ResourceData
+        ...ResourceMiniCardData
       }
       parentResources {
-        ...ResourceLinkData
+        ...ResourceMiniCardData
       }
       seriesParentResource {
-        ...ResourceLinkData
+        ...ResourceMiniCardData
       }
       previousResource {
-        ...ResourceLinkData
+        ...ResourceMiniCardData
       }
       nextResource {
-        ...ResourceLinkData
+        ...ResourceMiniCardData
       }
       ...LearningMaterialWithCoveredTopicsData
       ...EditableLearningMaterialPrerequisitesData
@@ -81,7 +95,7 @@ export const getResourceResourcePage = gql`
   ${LearningMaterialStarsRaterData}
   ${LearningMaterialWithCoveredTopicsData}
   ${LearningMaterialRecommendationsViewerData}
-  ${ResourceLinkData}
+  ${ResourceMiniCardData}
 `;
 
 // TODO
@@ -89,160 +103,174 @@ const resourceDataPlaceholder: GetResourceResourcePageQuery['getResourceByKey'] 
   ...generateResourceData(),
 };
 
+const headerHeight = '160px';
+const columnsWidth = '210px';
 export const ResourcePage: React.FC<{ resourceKey: string }> = ({ resourceKey }) => {
   const { data, loading, error } = useGetResourceResourcePageQuery({ variables: { resourceKey } });
-
+  const layout: 'mobile' | 'desktop' = useBreakpointValue({ base: 'mobile', lg: 'desktop' }) || 'desktop';
   const resource = data?.getResourceByKey || resourceDataPlaceholder;
   const { currentUser } = useCurrentUser();
   if (!data && !loading) return <NotFoundPage />;
   return (
-    <PageLayout
-      title={resource.name}
-      isLoading={loading}
-      centerChildren
-      renderLeft={
-        (resource.previousResource || resource.nextResource) && (
-          <Box w="200px" pt="100px" fontSize="md">
-            {resource.previousResource && (
-              <RelatedResourceLink type="previous" relatedResource={resource.previousResource} />
-            )}
-          </Box>
-        )
-      }
-      renderRight={
-        (resource.previousResource || resource.nextResource) && (
-          <Box w="200px" pt="100px" fontSize="md">
-            {resource.nextResource && <RelatedResourceLink type="next" relatedResource={resource.nextResource} />}
-          </Box>
-        )
-      }
-      renderTopRight={<TopRightIconButtons loading={loading} resource={resource} />}
-      renderTopLeft={
-        'Showed In'
-        // TODO
-        // <ParentDomainsNavigationBlock domains={(resource.coveredConceptsByDomain || []).map(({ domain }) => domain)} />
-      }
-    >
-      <Stack w={['30rem', '36rem', '40rem', '50rem']} spacing={4}>
-        {(resource.parentResources && resource.parentResources.length) ||
-          (resource.seriesParentResource && (
-            <Stack spacing={1} alignItems="center">
-              {(resource.parentResources || []).map((parentResource, idx) => (
-                <RelatedResourceLink key={parentResource._id} type="parent" relatedResource={parentResource} />
-              ))}
-              {resource.seriesParentResource && (
-                <RelatedResourceLink type="series_parent" relatedResource={resource.seriesParentResource} />
-              )}
-            </Stack>
-          ))}
-        <Flex justifyContent="space-between" alignItems="flex-end">
-          {resource.createdBy && (
-            <Stack direction="row" alignItems="center">
-              <Text fontWeight={300} fontSize="md">
-                Added By
-              </Text>
-              <UserAvatar user={resource.createdBy} size="xs" />
-            </Stack>
-          )}
-          <Stack direction="row" spacing={2} alignItems="baseline">
-            <ResourceUrlLink fontSize="md" resource={resource} isLoading={loading} />
-            <DurationViewer value={resource.durationSeconds} />
-          </Stack>
-          <Stack direction="row" spacing={2} alignItems="center">
-            <RoleAccess accessRule="contributorOrAdmin">
-              <LearningMaterialStarsRater learningMaterial={resource} isDisabled={loading} />
-            </RoleAccess>
-            <StarsRatingViewer value={resource.rating} />
-            <ResourceCompletedCheckbox resource={resource} size="sm" />
-          </Stack>
-        </Flex>
-
-        <Flex direction="row" justifyContent="space-between">
-          <Stack spacing={4} flexGrow={1}>
-            <Box>
-              <Skeleton isLoaded={!loading}>
-                <Stack direction="row">
-                  {resource.types.map((type) => (
-                    <ResourceTypeBadge key={type} type={type} />
-                  ))}
-                </Stack>
-              </Skeleton>
+    <PageLayout marginSize="sm">
+      <Flex direction={layout === 'desktop' ? 'row' : 'column'} alignItems="stretch">
+        {layout === 'desktop' ? (
+          // left column
+          <Flex
+            direction="column"
+            flexBasis={columnsWidth}
+            flexShrink={0}
+            mr={pageLayoutMarginSizesMapping.sm.px}
+            position="relative"
+          >
+            <Box position="absolute">
+              <ShowedInBlock resource={resource} isLoading={loading} size={layout === 'desktop' ? 'md' : 'sm'} />
             </Box>
-            <Box>
-              <EditableLearningMaterialTags
-                learningMaterial={resource}
-                isLoading={loading}
-                isDisabled={!currentUser}
-                placeholder="Add tags"
-              />
-            </Box>
-            {resource.description && <ResourceDescription description={resource.description} />}
-            {intersection(resource.types, [ResourceType.YoutubeVideo, ResourceType.YoutubePlaylist]).length > 1 && (
-              <Center mr={4}>
-                <ResourceYoutubePlayer resource={resource} skipThumbnail />
+            <Stack spacing={5} mt={headerHeight}>
+              <Center>
+                <EditableLearningMaterialPrerequisites
+                  editable={!!currentUser}
+                  learningMaterial={resource}
+                  isLoading={loading}
+                />
               </Center>
-            )}
-          </Stack>
-
-          <Stack spacing={3}>
+              <EditableLearningMaterialCoveredTopics
+                editable={!!currentUser}
+                isLoading={loading}
+                learningMaterial={resource}
+                showedInTopics={resource.showedIn || undefined}
+              />
+            </Stack>
+          </Flex>
+        ) : (
+          // top row
+          <Flex direction="row" justifyContent="space-between" alignItems="center">
+            <Box>
+              <ShowedInBlock resource={resource} isLoading={loading} size="sm" />
+            </Box>
+            <TopRightIconButtons resource={resource} isLoading={loading} size="sm" />
+          </Flex>
+        )}
+        <Flex direction="column" alignItems="stretch" flexShrink={1} flexGrow={1}>
+          <HeaderBlock resource={resource} isLoading={loading} />
+          <MainContentBlock resource={resource} isLoading={loading} mt={3} />
+          {layout === 'mobile' && (
             <Center>
+              <Box maxW="80%">
+                <PartOfSeriesBlock resource={resource} isLoading={loading} />
+              </Box>
+            </Center>
+          )}
+          {!!resource.subResourceSeries?.length && (
+            <Center pt={8}>
+              <SubResourceSeriesManager
+                resourceId={resource._id}
+                subResourceSeries={resource.subResourceSeries || undefined}
+              />
+            </Center>
+          )}
+          {!!resource.subResources?.length && (
+            <ResourceSubResourcesManager resourceId={resource._id} subResources={resource.subResources || []} />
+          )}
+        </Flex>
+        {layout === 'mobile' && (
+          <Flex justifyContent="space-around" mt={6}>
+            <Flex justifyContent="center" w="45%">
               <EditableLearningMaterialPrerequisites
                 editable={!!currentUser}
                 learningMaterial={resource}
                 isLoading={loading}
               />
-            </Center>
-            <EditableLearningMaterialCoveredTopics
-              editable={!!currentUser}
-              isLoading={loading}
-              learningMaterial={resource}
-            />
-            {/* <Center>
-              <EditableLearningMaterialOutcomes
+            </Flex>
+            <Flex justifyContent="center" w="45%">
+              <EditableLearningMaterialCoveredTopics
                 editable={!!currentUser}
-                learningMaterial={resource}
                 isLoading={loading}
+                learningMaterial={resource}
+                showedInTopics={resource.showedIn || undefined}
               />
-          </Center>*/}
-          </Stack>
-        </Flex>
+            </Flex>
+          </Flex>
+        )}
+        <Flex
+          alignItems="stretch"
+          flexShrink={0}
+          {...(layout === 'desktop'
+            ? {
+                ml: pageLayoutMarginSizesMapping.sm.px,
+                flexBasis: columnsWidth,
+                maxW: columnsWidth,
+                flexGrow: 0,
+                direction: 'column',
+              }
+            : {
+                mt: 6,
+                justifyContent: 'space-around',
+                direction: 'row',
+              })}
+        >
+          <Flex
+            {...(layout === 'desktop'
+              ? { h: headerHeight, direction: 'column', alignItems: 'stretch' }
+              : { w: '45%', alignItems: 'center', justifyContent: 'center' })}
+          >
+            {layout === 'desktop' && (
+              <Flex justifyContent="flex-end" mb={3}>
+                <TopRightIconButtons resource={resource} isLoading={loading} size="sm" />
+              </Flex>
+            )}
+            {resource.createdBy && (
+              <Flex justifyContent="center" {...(layout === 'mobile' ? {} : {})}>
+                <Stack direction="column" alignItems="center" spacing={1}>
+                  <Text {...SocialWidgetsLabelStyleProps('lg')}>Shared By</Text>
+                  <UserAvatar user={resource.createdBy} size="sm" showBorder />
+                </Stack>
+              </Flex>
+            )}
+          </Flex>
 
-        {/* TODO */}
-        {/* {(isResourceSeriesType(resource.type) || resource.subResourceSeries?.length) && (
-          <SubResourceSeriesManager
-            resourceId={resourceId}
-            subResourceSeries={resource.subResourceSeries || undefined}
-            domains={resource.coveredConceptsByDomain?.map((i) => i.domain) || []}
-          />
-        )} */}
-        {/* TODO */}
-        {/* {(isResourceGroupType(resource.type) || resource.subResources?.length) && (
-          <ResourceSubResourcesManager
-            resourceId={resourceId}
-            subResources={resource.subResources || []}
-            domains={resource.coveredConceptsByDomain?.map((i) => i.domain) || []}
-          />
-        )} */}
-      </Stack>
+          <Center {...(layout === 'desktop' ? { w: '100%' } : { w: '45%' })}>
+            <LearningMaterialRecommendationsViewer learningMaterial={resource} isLoading={loading} size="lg" />
+          </Center>
+          {layout === 'desktop' && (
+            <Center mt={8} maxW="100%">
+              <PartOfSeriesBlock resource={resource} isLoading={loading} />
+            </Center>
+          )}
+        </Flex>
+      </Flex>
     </PageLayout>
   );
 };
 
 const TopRightIconButtons: React.FC<{
-  loading?: boolean;
+  isLoading: boolean;
   resource: GetResourceResourcePageQuery['getResourceByKey'];
-}> = ({ loading, resource }) => {
+  size?: 'sm' | 'md';
+}> = ({ isLoading, resource, size = 'md' }) => {
   const router = useRouter();
   const { currentUser } = useCurrentUser();
 
   const [deleteResource] = useDeleteResourceMutation();
   return (
     <Stack direction="row" spacing={2}>
-      <RoleAccess accessRule="loggedInUser">
-        <Button size="sm" variant="outline" onClick={() => Router.push(`${router.asPath}/edit`)} isDisabled={loading}>
+      <Access
+        condition={
+          currentUser &&
+          (currentUser.role === UserRole.Admin ||
+            currentUser.role === UserRole.Contributor ||
+            currentUser._id === resource.createdBy?._id)
+        }
+      >
+        <Button
+          size={getChakraRelativeSize(size, -1)}
+          variant="outline"
+          onClick={() => Router.push(`${router.asPath}/edit`)}
+          isDisabled={isLoading}
+        >
           Edit
         </Button>
-      </RoleAccess>
+      </Access>
       <Access
         condition={
           currentUser &&
@@ -255,33 +283,144 @@ const TopRightIconButtons: React.FC<{
           variant="outline"
           modalHeaderText="Delete Resource"
           modalBodyText="Confirm deleting this resource ?"
-          isDisabled={loading}
+          isDisabled={isLoading}
           onConfirmation={() => deleteResource({ variables: { _id: resource._id } }).then(() => Router.back())}
+          size={getChakraRelativeSize(size, -1)}
         />
       </Access>
     </Stack>
   );
 };
 
-const RelatedResourceLink: React.FC<{
-  type: 'previous' | 'next' | 'parent' | 'series_parent';
-  relatedResource: ResourceLinkDataFragment;
-}> = ({ type, relatedResource }) => {
+const SubTitleBar: React.FC<{ resource: GetResourceResourcePageQuery['getResourceByKey']; isLoading: boolean }> = ({
+  resource,
+  isLoading,
+}) => {
   return (
-    <Stack
-      fontWeight={300}
-      textAlign="center"
-      alignItems="center"
-      direction={type === 'parent' || type === 'series_parent' ? 'row' : 'column'}
-    >
-      {type === 'previous' && <BsArrowLeft />}
-      {type === 'next' && <BsArrowRight />}
-      {type === 'parent' && <BsArrow90DegUp />}
-      {type === 'series_parent' && <BsArrow90DegUp />}
+    <Skeleton isLoaded={!isLoading}>
+      <Stack spacing={2} direction="row" alignItems="center">
+        <LearningMaterialTypesViewer learningMaterialTypes={resource.types} />
+        <DurationViewer value={resource.durationSeconds} />
+        <LearningMaterialRecommendButton
+          learningMaterialId={resource._id}
+          isRecommended={!!resource.recommended}
+          size="xs"
+          isDisabled={isLoading}
+        />
+        <ResourceCompletedCheckbox size="xs" resource={resource} isLoading={isLoading} />,
+      </Stack>
+    </Skeleton>
+  );
+};
 
-      <PageLink fontWeight={500} fontStyle="italic" pageInfo={ResourcePageInfo(relatedResource)}>
-        {relatedResource.name}
-      </PageLink>
+const ShowedInBlock: React.FC<{
+  resource: GetResourceResourcePageQuery['getResourceByKey'];
+  isLoading: boolean;
+  size: 'sm' | 'md';
+}> = ({ resource, isLoading, size }) => {
+  return resource.showedIn?.length ? (
+    <Flex direction="column">
+      <Text fontWeight={700} color="gray.600" fontSize={size}>
+        Showed In
+      </Text>
+      <Stack ml={3}>
+        {resource.showedIn.map((showedInTopic) => (
+          <ShowedInTopicLink key={showedInTopic._id} topic={showedInTopic} size={size} />
+        ))}
+      </Stack>
+    </Flex>
+  ) : null;
+};
+
+const HeaderBlock: React.FC<{ resource: GetResourceResourcePageQuery['getResourceByKey']; isLoading: boolean }> = ({
+  resource,
+  isLoading,
+}) => {
+  return (
+    <Stack h={headerHeight} alignItems="center" spacing={2} justifyContent="center">
+      <Skeleton isLoaded={!isLoading}>
+        <Heading color="gray.700" textAlign="center">
+          {resource.name}
+        </Heading>
+      </Skeleton>
+      <SubTitleBar resource={resource} isLoading={isLoading} />
     </Stack>
+  );
+};
+
+const MainContentBlock: React.FC<
+  {
+    resource: GetResourceResourcePageQuery['getResourceByKey'];
+    isLoading: boolean;
+  } & Omit<FlexProps, 'resource'>
+> = ({ resource, isLoading, ...props }) => {
+  const { currentUser } = useCurrentUser();
+  return (
+    <Flex direction="column" {...props}>
+      <Box mb={1}>
+        <EditableLearningMaterialTags
+          learningMaterial={resource}
+          isLoading={isLoading}
+          isDisabled={!currentUser}
+          placeholder="Add tags"
+          size="md"
+        />
+      </Box>
+      <Flex mb={2}>
+        <ResourceUrlLink resource={resource} isLoading={isLoading} maxLength={45} size="lg" />
+      </Flex>
+      <Box mb={1}>
+        {resource.description && (
+          <LearningMaterialDescription description={resource.description} isLoading={isLoading} />
+        )}
+      </Box>
+      {intersection(resource.types, [ResourceType.YoutubeVideo, ResourceType.YoutubePlaylist]).length >= 1 && (
+        <Center mr={4}>
+          <ResourceYoutubePlayer resource={resource} skipThumbnail />
+        </Center>
+      )}
+    </Flex>
+  );
+};
+
+const PartOfSeriesBlock: React.FC<{
+  resource: GetResourceResourcePageQuery['getResourceByKey'];
+  isLoading: boolean;
+}> = ({ resource, isLoading }) => {
+  const element = (type: 'Part Of' | 'Previous' | 'Next', resources: ResourceMiniCardDataFragment[]) => (
+    <Flex direction="column" overflow="hidden">
+      <Stack direction="row" alignItems="center" spacing={1}>
+        <Icon
+          as={
+            {
+              'Part Of': BsArrow90DegUp,
+              Previous: BsArrowLeft,
+              Next: BsArrowRight,
+            }[type]
+          }
+          boxSize="20px"
+          color="gray.600"
+        />
+
+        <Text fontWeight={600} color="gray.500" fontSize="16px">
+          {type}
+        </Text>
+      </Stack>
+      {resources.map((resource) => (
+        <Box key={resource._id} pl={2}>
+          <ResourceMiniCard resource={resource} />
+        </Box>
+      ))}
+    </Flex>
+  );
+  return (
+    <Flex overflow="hidden">
+      <Stack spacing={3} overflow="hidden">
+        {!!resource.seriesParentResource && element('Part Of', [resource.seriesParentResource])}
+        {!!resource.parentResources?.length && element('Part Of', resource.parentResources)}
+        {!!resource.previousResource && element('Previous', [resource.previousResource])}
+        {!!resource.nextResource && element('Next', [resource.nextResource])}
+      </Stack>
+    </Flex>
   );
 };

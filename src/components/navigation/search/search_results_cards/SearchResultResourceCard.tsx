@@ -1,8 +1,8 @@
 import { Flex, Text } from '@chakra-ui/layout';
 import gql from 'graphql-tag';
 import { ResourceLinkData } from '../../../../graphql/resources/resources.fragments';
+import { LearningMaterialTypeIcon } from '../../../learning_materials/LearningMaterialTypeBadge';
 import { StarsRatingViewer } from '../../../lib/StarsRating';
-import { ResourceTypeIcon } from '../../../resources/elements/ResourceType';
 import { SearchResultCardContainer, SearchResultCardContainerProps } from './SearchResultCardContainer';
 import { SearchResultResourceCardDataFragment } from './SearchResultResourceCard.generated';
 
@@ -24,7 +24,7 @@ export const SearchResultResourceCard: React.FC<
   return (
     <SearchResultCardContainer
       // TODO
-      renderIcon={(props) => <ResourceTypeIcon resourceType={resource.resourceTypes[0]} {...props} />}
+      renderIcon={(props) => <LearningMaterialTypeIcon type={resource.resourceTypes[0]} {...props} />}
       borderLeftColor="blue.300"
       {...props}
     >

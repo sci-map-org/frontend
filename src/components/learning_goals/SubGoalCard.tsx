@@ -11,7 +11,7 @@ import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickProp
 import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
 import { SubGoalStatus } from '../lib/DagreViewer';
 import { PageLink } from '../navigation/InternalLink';
-import { ResourceDescription } from '../resources/elements/ResourceDescription';
+import { LearningMaterialDescription } from '../learning_materials/LearningMaterialDescription';
 import { LearningGoalBadge, LearningGoalBadgeData } from './LearningGoalBadge';
 import { LearningGoalCircularProgress, LearningGoalCircularProgressData } from './LearningGoalCircularProgress';
 import { LearningGoalSubGoalCardDataFragment } from './SubGoalCard.generated';
@@ -175,7 +175,7 @@ export const LearningGoalSubGoalCard: React.FC<LearningGoalSubGoalCardProps> = (
 
           <Flex pt={1} ml={{ sm: 1, md: 2, lg: 3 }[size]} flexGrow={1} position="relative" direction="column">
             {!mouseHover && learningGoal.description && (
-              <ResourceDescription
+              <LearningMaterialDescription
                 color={subGoalStatusStyleMapping.fontColor[status]}
                 // size={getChakraRelativeSize(size, -1)}
                 size="sm"

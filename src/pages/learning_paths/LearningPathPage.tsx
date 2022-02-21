@@ -198,7 +198,7 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
           </Flex>
           <Stack flexGrow={1} px={4}>
             <Center>
-              <Stack direction="row" spacing={4}>
+              <Stack direction="row" alignItems="center" spacing={4}>
                 <EditableDuration
                   defaultValue={learningPath.durationSeconds}
                   onSubmit={(newDuration) =>
@@ -218,6 +218,7 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
                   isLoading={loading}
                   isDisabled={!editMode}
                   placeholder="Add tags"
+                  size="md"
                 />
               </Stack>
             </Center>

@@ -14,6 +14,7 @@ interface EditableTopicsWrapperProps {
   displayMode?: 'column' | 'row' | 'wrap';
   inputPlaceholder?: string;
   isLoading?: boolean;
+  searchOnlySubTopicsOf?: TopicLinkDataFragment[];
 }
 export const EditableTopicsWrapper: React.FC<EditableTopicsWrapperProps> = ({
   topics,
@@ -23,6 +24,7 @@ export const EditableTopicsWrapper: React.FC<EditableTopicsWrapperProps> = ({
   displayMode = 'wrap',
   inputPlaceholder,
   isLoading,
+  searchOnlySubTopicsOf,
 }) => {
   const [editMode, setEditMode] = useState(false);
   const wrapperRef = useRef(null);
@@ -50,7 +52,11 @@ export const EditableTopicsWrapper: React.FC<EditableTopicsWrapperProps> = ({
         </>
       )}
       {editMode && (
-        <TopicSelector placeholder={inputPlaceholder || `Add Topic...`} onSelect={(topic) => onAdded(topic)} />
+        <TopicSelector
+          placeholder={inputPlaceholder || `Add Topic...`}
+          onSelect={(topic) => onAdded(topic)}
+          onlySubTopicsOf={searchOnlySubTopicsOf?.map(({ _id }) => _id)}
+        />
       )}
       {editable && !editMode && !isLoading && (
         <Link

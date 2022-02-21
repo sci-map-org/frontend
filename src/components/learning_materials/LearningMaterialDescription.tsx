@@ -8,7 +8,7 @@ const sizesMapping = {
     fontSize: '17px',
   },
 };
-export const ResourceDescription: React.FC<
+export const LearningMaterialDescription: React.FC<
   {
     description?: string | null;
     isLoading?: boolean;
@@ -33,15 +33,16 @@ export const ResourceDescription: React.FC<
 
 export const RESOURCE_DESCRIPTION_MAX_LENGTH = 1000;
 
-export const ResourceDescriptionInput: React.FC<{
+export const LearningMaterialDescriptionInput: React.FC<{
   value?: string;
   onChange: (value?: string) => void;
   isInvalid?: boolean;
-}> = ({ value, onChange, isInvalid }) => {
+  placeholder?: string;
+}> = ({ value, onChange, isInvalid, placeholder = 'Write a description of this resource' }) => {
   return (
     <FormControl>
       <Textarea
-        placeholder="Write a description of this resource"
+        placeholder={placeholder}
         size="md"
         minH="180px"
         value={value}

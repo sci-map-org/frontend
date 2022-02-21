@@ -8,11 +8,9 @@ import {
   Center,
   Flex,
   FormErrorMessage,
-  Heading,
   IconButton,
   Image,
   Input,
-  Link,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -23,29 +21,31 @@ import {
   Text,
   Tooltip,
   useDisclosure,
-  useOutsideClick,
   Wrap,
   WrapItem,
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { omit, pick, uniq, uniqBy } from 'lodash';
-import React, { ReactElement, useMemo, useRef, useState } from 'react';
+import React, { ReactElement, useMemo, useState } from 'react';
 import { ResourceData } from '../../graphql/resources/resources.fragments';
 import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
 import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
 import { CreateResourcePayload, CreateSubResourcePayload, LearningMaterialTag } from '../../graphql/types';
+import {
+  LearningMaterialDescriptionInput,
+  RESOURCE_DESCRIPTION_MAX_LENGTH,
+} from '../learning_materials/LearningMaterialDescription';
+import { LearningMaterialShowedInField } from '../learning_materials/LearningMaterialShowedInField';
+import { LearningMaterialTypeBadge } from '../learning_materials/LearningMaterialTypeBadge';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { CollapsedField } from '../lib/fields/CollapsedField';
 import { Field } from '../lib/fields/Field';
 import { HeartIcon } from '../lib/icons/HeartIcon';
 import { useErrorToast } from '../lib/Toasts/ErrorToast';
 import { useSuccessfulCreationToast } from '../lib/Toasts/SuccessfulCreationToast';
-import { EditLinkStyleProps, FormTitle } from '../lib/Typography';
+import { FormTitle } from '../lib/Typography';
 import { TopicBadge } from '../topics/TopicBadge';
-import { TopicSelector } from '../topics/TopicSelector';
 import { DurationViewer } from './elements/Duration';
-import { ResourceDescriptionInput, RESOURCE_DESCRIPTION_MAX_LENGTH } from './elements/ResourceDescription';
-import { ResourceTypeBadge } from './elements/ResourceType';
 import { ResourceUrlInput, useAnalyzeResourceUrl } from './elements/ResourceUrl';
 import { LearningMaterialDurationField } from './fields/LearningMaterialDurationField';
 import { LearningMaterialTagsField } from './fields/LearningMaterialTagsField';
@@ -109,9 +109,8 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
   const { isOpen: prerequisitesFieldIsOpen, onToggle: prerequisitesFieldOnToggle } = useDisclosure();
   const { isOpen: coveredSubTopicsFieldIsOpen, onToggle: coveredSubTopicsFieldOnToggle } = useDisclosure();
   const [selectableResourceTypes, setSelectableResourceTypes] = useState(ResourceTypeSuggestions);
-  const [editShowedInTopics, setEditShowedInTopics] = useState(false);
+
   const formHasErrors = useMemo(() => Object.keys(formErrors).length > 0, [formErrors]);
-  const showedInTopicFieldRef = useRef<HTMLDivElement>(null);
 
   const {
     existingResource,
@@ -148,19 +147,16 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
     },
   });
 
-  useOutsideClick({
-    ref: showedInTopicFieldRef,
-    handler: () => {
-      setEditShowedInTopics(false);
-    },
-    enabled: !!editShowedInTopics,
-  });
-
   return (
     <Flex direction="column" w="100%">
       <Stack spacing={10} alignItems="stretch">
         <Center>
-          <Field label="Resource Url" isInvalid={!!formErrors.url && showFormErrors} w="500px">
+          <Field
+            label="Resource Url"
+            isInvalid={!!formErrors.url && showFormErrors}
+            w={{ base: '90%', md: '500px' }}
+            zIndex={1}
+          >
             <ResourceUrlInput
               value={resourceCreationData.url}
               onChange={(url) => updateResourceCreationData({ url })}
@@ -174,9 +170,11 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
           </Field>
         </Center>
         <Center>
-          <Field isInvalid={showFormErrors && !!formErrors.name} label="Title" w="500px">
+          <Field isInvalid={showFormErrors && !!formErrors.name} label="Title" w={{ base: '90%', md: '500px' }}>
             <Input
               placeholder="What's the name of this resource ?"
+              bgColor="white"
+              zIndex={2}
               size="md"
               value={resourceCreationData.name}
               onChange={(e) => updateResourceCreationData({ name: e.target.value })}
@@ -186,7 +184,7 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
           </Field>
         </Center>
         <Field label="Description" isInvalid={!!formErrors.description && showFormErrors}>
-          <ResourceDescriptionInput
+          <LearningMaterialDescriptionInput
             value={resourceCreationData.description}
             onChange={(d) => updateResourceCreationData({ description: d })}
             isInvalid={!!formErrors.description && showFormErrors}
@@ -209,61 +207,16 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
 
         <Flex justifyContent="space-between" flexDir="row">
           <Box w="45%">
-            <Field label="Show In" isInvalid={!!formErrors.showInTopics && showFormErrors}>
-              <Stack pl={3}>
-                {editShowedInTopics ? (
-                  <Stack ref={showedInTopicFieldRef} w="80%">
-                    {resourceCreationData.showInTopics.map((showedInTopic) => (
-                      <Stack key={showedInTopic._id} direction="row" alignItems="center">
-                        <IconButton
-                          size="xs"
-                          variant="icon"
-                          icon={<CloseIcon />}
-                          aria-label="Remove"
-                          onClick={() =>
-                            updateResourceCreationData({
-                              showInTopics: resourceCreationData.showInTopics.filter(
-                                (showInTopic) => showInTopic._id !== showedInTopic._id
-                              ),
-                            })
-                          }
-                        />
-                        <Heading color="gray.400" fontSize="20px" pb={1}>
-                          {showedInTopic.name}
-                        </Heading>
-                      </Stack>
-                    ))}
-                    <TopicSelector
-                      placeholder="Select a Topic..."
-                      onSelect={(selectedTopic) => {
-                        updateResourceCreationData({
-                          showInTopics: uniqBy(resourceCreationData.showInTopics.concat([selectedTopic]), '_id'),
-                        });
-                      }}
-                    />
-                  </Stack>
-                ) : (
-                  <>
-                    {resourceCreationData.showInTopics.map((showedInTopic) => (
-                      <Heading key={showedInTopic._id} color="gray.400" fontSize="20px" pb={1}>
-                        - {showedInTopic.name}
-                      </Heading>
-                    ))}
-                    {!resourceCreationData.showInTopics.length && (
-                      <Text color="red.500" fontWeight={500}>
-                        No Topic selected
-                      </Text>
-                    )}
-                  </>
-                )}
-              </Stack>
-              {!editShowedInTopics && (
-                <Link {...EditLinkStyleProps} mt="8px" onClick={() => setEditShowedInTopics(true)} ml="2px">
-                  (change)
-                </Link>
-              )}
-              <FormErrorMessage>{formErrors.showInTopics}</FormErrorMessage>
-            </Field>
+            <LearningMaterialShowedInField
+              value={resourceCreationData.showInTopics}
+              onChange={(showedInTopics) =>
+                updateResourceCreationData({
+                  showInTopics: showedInTopics,
+                })
+              }
+              isInvalid={!!formErrors.showInTopics && showFormErrors}
+              errorMessage={formErrors.showInTopics}
+            />
           </Box>
           <Box w="45%">
             <LearningMaterialDurationField
@@ -299,7 +252,9 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
           </Box>
           <Box w="45%">
             <CollapsedField
-              label="Select SubTopics covered by this Resource"
+              label={`Select ${
+                resourceCreationData.showInTopics.length ? 'SubTopics' : 'Topics'
+              } covered by this Resource`}
               isOpen={coveredSubTopicsFieldIsOpen}
               onToggle={coveredSubTopicsFieldOnToggle}
             >
@@ -447,7 +402,7 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
             maxW="220px"
             left="-240px"
             top="-50px"
-            zIndex={0}
+            zIndex={-1}
           />
         </FormTitle>
       </Center>
@@ -471,7 +426,7 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
               <Stack direction="row" alignItems="center" spacing={2}>
                 <Text fontWeight={500}>{subResource.name}</Text>
                 {subResource.types.map((type) => (
-                  <ResourceTypeBadge key={type} type={type} />
+                  <LearningMaterialTypeBadge key={type} type={type} />
                 ))}
                 <DurationViewer value={subResource.durationSeconds} />
               </Stack>
@@ -585,36 +540,37 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
           </Text>
         )}
 
-        <ButtonGroup size="lg" spacing={8} justifyContent="flex-end">
+        <Stack direction={{ base: 'column', md: 'row' }} justifyContent="space-between" pt={12} spacing={8}>
           {!!onCancel && (
             <Button variant="outline" minW="12rem" onClick={onCancel}>
               Cancel
             </Button>
           )}
-          <Button
-            isLoading={isCreating === 'creating'}
-            minW="12rem"
-            px={5}
-            colorScheme="blue"
-            variant="solid"
-            isDisabled={showFormErrors && hasErrors}
-            onClick={async () => onCreate(false)}
-          >
-            Add Resource
-          </Button>
+          <Stack spacing={4} direction={{ base: 'column', md: 'row' }}>
+            <Button
+              isLoading={isCreating === 'creating'}
+              minW="12rem"
+              colorScheme="blue"
+              variant="solid"
+              isDisabled={showFormErrors && hasErrors}
+              onClick={async () => onCreate(false)}
+            >
+              Add Resource
+            </Button>
 
-          <Button
-            isLoading={isCreating === 'creating and recommending'}
-            leftIcon={<HeartIcon />}
-            minW="12rem"
-            colorScheme="teal"
-            variant="solid"
-            isDisabled={showFormErrors && hasErrors}
-            onClick={() => onCreate(true)}
-          >
-            Add and Recommend
-          </Button>
-        </ButtonGroup>
+            <Button
+              isLoading={isCreating === 'creating and recommending'}
+              leftIcon={<HeartIcon />}
+              minW="12rem"
+              colorScheme="teal"
+              variant="solid"
+              isDisabled={showFormErrors && hasErrors}
+              onClick={() => onCreate(true)}
+            >
+              Add and Recommend
+            </Button>
+          </Stack>
+        </Stack>
       </Flex>
     </Stack>
   );

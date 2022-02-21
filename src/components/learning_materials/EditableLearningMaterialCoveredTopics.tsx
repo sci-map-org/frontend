@@ -24,22 +24,19 @@ export const EditableLearningMaterialPrerequisitesData = gql`
 
 interface StatelessEditableLearningMaterialCoveredTopicsProps {
   coveredTopics?: TopicLinkDataFragment[];
+  showedInTopics?: TopicLinkDataFragment[];
   editable?: boolean;
   isLoading?: boolean;
   onRemove: (topiclId: string) => void;
   onAdded: (topic: TopicLinkDataFragment) => void;
 }
-export const StatelessEditableLearningMaterialCoveredTopics: React.FC<StatelessEditableLearningMaterialCoveredTopicsProps> = ({
-  coveredTopics,
-  editable,
-  isLoading,
-  onRemove,
-  onAdded,
-}) => {
+export const StatelessEditableLearningMaterialCoveredTopics: React.FC<
+  StatelessEditableLearningMaterialCoveredTopicsProps
+> = ({ coveredTopics, showedInTopics, editable, isLoading, onRemove, onAdded }) => {
   return (
     <Stack direction="column" alignItems="center" spacing={1}>
       <Text fontWeight={600} color="gray.500">
-        Covered SubTopics
+        {coveredTopics?.length ? 'Covered SubTopics' : 'No covered SubTopics'}
       </Text>
       {coveredTopics && (
         <EditableTopicsWrapper
@@ -49,6 +46,7 @@ export const StatelessEditableLearningMaterialCoveredTopics: React.FC<StatelessE
           topics={coveredTopics}
           onAdded={onAdded}
           onRemove={onRemove}
+          searchOnlySubTopicsOf={showedInTopics}
         />
       )}
     </Stack>

@@ -17,37 +17,30 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
-import gql from 'graphql-tag';
 import { intersection } from 'lodash';
 import React, { forwardRef, ReactElement, ReactNode } from 'react';
 import {
   ResourceLinkDataFragment,
   ResourcePreviewCardDataFragment,
 } from '../../graphql/resources/resources.fragments.generated';
-import { TopicLinkData } from '../../graphql/topics/topics.fragments';
 import { ResourceType } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { EditResourcePageInfo, ResourcePageInfo } from '../../pages/RoutesPageInfos';
 import { RoleAccess } from '../auth/RoleAccess';
 import { useUnauthentificatedModal } from '../auth/UnauthentificatedModal';
+import { LearningMaterialDescription } from '../learning_materials/LearningMaterialDescription';
 import { LearningMaterialCardCoveredSubTopicsViewer } from '../learning_materials/LearningMaterialFeedCardContainer';
-import {
-  LearningMaterialCardContainer,
-  LearningMaterialCardCoveredTopics,
-} from '../learning_materials/LearningMaterialPreviewCardContainer';
-import { LearningMaterialRecommendationsViewer } from '../learning_materials/LearningMaterialRecommendationsViewer';
+import { LearningMaterialCardContainer } from '../learning_materials/LearningMaterialPreviewCardContainer';
 import { LearningMaterialStarsRater } from '../learning_materials/LearningMaterialStarsRating';
 import { EditableLearningMaterialTags } from '../learning_materials/LearningMaterialTagsEditor';
+import { LearningMaterialTypesViewer } from '../learning_materials/LearningMaterialTypesViewer';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { ResourceGroupIcon } from '../lib/icons/ResourceGroupIcon';
 import { ResourceSeriesIcon } from '../lib/icons/ResourceSeriesIcon';
-import { StarsRatingViewer } from '../lib/StarsRating';
-import { InternalLink, PageLink } from '../navigation/InternalLink';
+import { PageLink } from '../navigation/InternalLink';
 import { DurationViewer } from './elements/Duration';
 import { ResourceCompletedCheckbox } from './elements/ResourceCompletedCheckbox';
-import { ResourceDescription } from './elements/ResourceDescription';
-import { ResourceTypeBadge, ResourceTypeIcon } from './elements/ResourceType';
 import { ResourceUrlLinkViewer, ResourceUrlLinkWrapper } from './elements/ResourceUrl';
 import { ResourceYoutubePlayer } from './elements/ResourceYoutubePlayer';
 
@@ -110,9 +103,7 @@ export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCar
               <Stack direction="row" spacing={1} alignItems="center">
                 <Skeleton isLoaded={!isLoading}>
                   <Stack spacing={1} direction="row" alignItems="center">
-                    {resource.types.map((type) => (
-                      <ResourceTypeBadge key={type} type={type} />
-                    ))}
+                    <LearningMaterialTypesViewer learningMaterialTypes={resource.types} />
                     <DurationViewer value={resource.durationSeconds} />
                   </Stack>
                 </Skeleton>
@@ -146,7 +137,7 @@ const MainContentBlock: React.FC<{
       alignItems="stretch"
     >
       <Box>
-        <ResourceDescription
+        <LearningMaterialDescription
           description={resource.description}
           noOfLines={showPlayer ? undefined : 2}
           isLoading={isLoading}
@@ -190,7 +181,7 @@ const TitleLink: React.FC<{ resource: ResourcePreviewCardDataFragment; isLoading
         <Text mr={1} as="span" fontSize="xl">
           {resource.name}
         </Text>
-        <ResourceUrlLinkViewer resource={resource} maxLength={30} />
+        <ResourceUrlLinkViewer resource={resource} maxLength={30} size="sm" />
       </ResourceUrlLinkWrapper>
     </BoxBlockDefaultClickPropagation>
   );
@@ -204,7 +195,12 @@ const BottomBlock: React.FC<{
   return (
     <Flex pb={1} pt={2} flexWrap="wrap">
       <BoxBlockDefaultClickPropagation display="flex" alignItems="center">
-        <EditableLearningMaterialTags learningMaterial={resource} isLoading={isLoading} isDisabled={!currentUser} />
+        <EditableLearningMaterialTags
+          learningMaterial={resource}
+          isLoading={isLoading}
+          isDisabled={!currentUser}
+          size="sm"
+        />
       </BoxBlockDefaultClickPropagation>
       <Box flexGrow={1} flexBasis={0} />
       <BoxBlockDefaultClickPropagation>

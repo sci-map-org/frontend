@@ -1,5 +1,4 @@
-import ReactPlayer from 'react-player';
-import { ResourceDataFragment } from '../../graphql/resources/resources.fragments.generated';
+import ReactPlayer from 'react-player/youtube';
 
 interface YoutubePlayerProps {
   videoUrl: string;
