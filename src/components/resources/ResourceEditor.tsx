@@ -121,8 +121,8 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onReso
   }, [resourceUpdateData]);
 
   const isValid = useMemo(() => {
-    return Object.keys(resourceUpdateData).length > 0;
-  }, [resourceUpdateData]);
+    return Object.keys(formErrors).length === 0;
+  }, [formErrors]);
 
   const saveChanges = useCallback(async () => {
     if (!isValid) return;
@@ -275,7 +275,7 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onReso
       <Field label="Description" isInvalid={!!formErrors.description}>
         <LearningMaterialDescriptionInput
           value={resourceUpdateData.description || undefined}
-          onChange={(description) => setResourceUpdateData({ ...resourceUpdateData, description })}
+          onChange={(description) => setResourceUpdateData({ ...resourceUpdateData, description: description ?? '' })}
           isInvalid={!!formErrors.description}
         />
         <FormErrorMessage>
@@ -333,7 +333,7 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onReso
         </Box>
         <Box w="45%">
           <CollapsedField
-            label="Covered SubTopics"
+            label={resourceUpdateData.showedIn?.length ? 'Covered SubTopics' : 'Covered Topics'}
             isOpen={coveredSubTopicsFieldIsOpen}
             onToggle={coveredSubTopicsFieldOnToggle}
           >
@@ -358,7 +358,7 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onReso
           </CollapsedField>
         </Box>
       </Flex>
-      <Stack direction="row" justifyContent="space-between" pt={12}>
+      <Stack direction={{ base: 'column', md: 'row' }} justifyContent="space-between" pt={12} spacing={8}>
         <Access
           condition={
             currentUser &&
@@ -375,21 +375,28 @@ export const ResourceEditor: React.FC<ResourceEditorProps> = ({ resource, onReso
             onConfirmation={() => deleteResource({ variables: { _id: resource._id } }).then(() => Router.back())}
             size="lg"
             variant="outline"
-            width="20rem"
+            minW="14rem"
             colorScheme="red"
             mode="button"
           >
             Delete Resource
           </DeleteButtonWithConfirmation>
         </Access>
-        <ButtonGroup size="lg" spacing={8}>
-          <Button variant="outline" width="16rem" onClick={() => onCancel()}>
+        <Stack spacing={4} direction={{ base: 'column', md: 'row' }}>
+          <Button size="lg" variant="outline" minW="14rem" onClick={() => onCancel()}>
             Cancel
           </Button>
-          <Button variant="solid" width="20rem" colorScheme="brand" isDisabled={!isValid} onClick={() => saveChanges()}>
+          <Button
+            size="lg"
+            variant="solid"
+            minW="14rem"
+            colorScheme="brand"
+            isDisabled={!isValid}
+            onClick={() => saveChanges()}
+          >
             Save
           </Button>
-        </ButtonGroup>
+        </Stack>
       </Stack>
     </Stack>
   );

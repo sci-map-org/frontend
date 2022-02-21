@@ -144,7 +144,9 @@ export const ResourcePage: React.FC<{ resourceKey: string }> = ({ resourceKey })
         ) : (
           // top row
           <Flex direction="row" justifyContent="space-between" alignItems="center">
-            <ShowedInBlock resource={resource} isLoading={loading} size="sm" />
+            <Box>
+              <ShowedInBlock resource={resource} isLoading={loading} size="sm" />
+            </Box>
             <TopRightIconButtons resource={resource} isLoading={loading} size="sm" />
           </Flex>
         )}
@@ -354,7 +356,7 @@ const ShowedInBlock: React.FC<{
   isLoading: boolean;
   size: 'sm' | 'md';
 }> = ({ resource, isLoading, size }) => {
-  return resource.showedIn ? (
+  return resource.showedIn?.length ? (
     <Flex direction="column">
       <Text fontWeight={700} color="gray.600" fontSize={size}>
         Showed In
@@ -405,7 +407,11 @@ const MainContentBlock: React.FC<
       <Flex mb={2}>
         <ResourceUrlLink resource={resource} isLoading={isLoading} maxLength={45} size="lg" />
       </Flex>
-      <Box mb={1}>{resource.description && <LearningMaterialDescription description={resource.description} />}</Box>
+      <Box mb={1}>
+        {resource.description && (
+          <LearningMaterialDescription description={resource.description} isLoading={isLoading} />
+        )}
+      </Box>
       {intersection(resource.types, [ResourceType.YoutubeVideo, ResourceType.YoutubePlaylist]).length >= 1 && (
         <Center mr={4}>
           <ResourceYoutubePlayer resource={resource} skipThumbnail />

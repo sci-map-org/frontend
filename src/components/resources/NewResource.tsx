@@ -7,9 +7,11 @@ import {
   ButtonGroup,
   Center,
   Flex,
-  FormErrorMessage, IconButton,
+  FormErrorMessage,
+  IconButton,
   Image,
-  Input, Modal,
+  Input,
+  Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
@@ -18,8 +20,9 @@ import {
   Stack,
   Text,
   Tooltip,
-  useDisclosure, Wrap,
-  WrapItem
+  useDisclosure,
+  Wrap,
+  WrapItem,
 } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { omit, pick, uniq, uniqBy } from 'lodash';
@@ -30,7 +33,7 @@ import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.gen
 import { CreateResourcePayload, CreateSubResourcePayload, LearningMaterialTag } from '../../graphql/types';
 import {
   LearningMaterialDescriptionInput,
-  RESOURCE_DESCRIPTION_MAX_LENGTH
+  RESOURCE_DESCRIPTION_MAX_LENGTH,
 } from '../learning_materials/LearningMaterialDescription';
 import { LearningMaterialShowedInField } from '../learning_materials/LearningMaterialShowedInField';
 import { LearningMaterialTypeBadge } from '../learning_materials/LearningMaterialTypeBadge';
@@ -148,7 +151,12 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
     <Flex direction="column" w="100%">
       <Stack spacing={10} alignItems="stretch">
         <Center>
-          <Field label="Resource Url" isInvalid={!!formErrors.url && showFormErrors} w="500px" zIndex={1}>
+          <Field
+            label="Resource Url"
+            isInvalid={!!formErrors.url && showFormErrors}
+            w={{ base: '90%', md: '500px' }}
+            zIndex={1}
+          >
             <ResourceUrlInput
               value={resourceCreationData.url}
               onChange={(url) => updateResourceCreationData({ url })}
@@ -162,7 +170,7 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
           </Field>
         </Center>
         <Center>
-          <Field isInvalid={showFormErrors && !!formErrors.name} label="Title" w="500px">
+          <Field isInvalid={showFormErrors && !!formErrors.name} label="Title" w={{ base: '90%', md: '500px' }}>
             <Input
               placeholder="What's the name of this resource ?"
               bgColor="white"
@@ -244,7 +252,9 @@ const StatelessNewResourceForm: React.FC<StatelessNewResourceFormProps> = ({
           </Box>
           <Box w="45%">
             <CollapsedField
-              label="Select SubTopics covered by this Resource"
+              label={`Select ${
+                resourceCreationData.showInTopics.length ? 'SubTopics' : 'Topics'
+              } covered by this Resource`}
               isOpen={coveredSubTopicsFieldIsOpen}
               onToggle={coveredSubTopicsFieldOnToggle}
             >
@@ -530,36 +540,37 @@ export const NewResourceForm: React.FC<NewResourceFormProps> = ({
           </Text>
         )}
 
-        <ButtonGroup size="lg" spacing={8} justifyContent="flex-end">
+        <Stack direction={{ base: 'column', md: 'row' }} justifyContent="space-between" pt={12} spacing={8}>
           {!!onCancel && (
             <Button variant="outline" minW="12rem" onClick={onCancel}>
               Cancel
             </Button>
           )}
-          <Button
-            isLoading={isCreating === 'creating'}
-            minW="12rem"
-            px={5}
-            colorScheme="blue"
-            variant="solid"
-            isDisabled={showFormErrors && hasErrors}
-            onClick={async () => onCreate(false)}
-          >
-            Add Resource
-          </Button>
+          <Stack spacing={4} direction={{ base: 'column', md: 'row' }}>
+            <Button
+              isLoading={isCreating === 'creating'}
+              minW="12rem"
+              colorScheme="blue"
+              variant="solid"
+              isDisabled={showFormErrors && hasErrors}
+              onClick={async () => onCreate(false)}
+            >
+              Add Resource
+            </Button>
 
-          <Button
-            isLoading={isCreating === 'creating and recommending'}
-            leftIcon={<HeartIcon />}
-            minW="12rem"
-            colorScheme="teal"
-            variant="solid"
-            isDisabled={showFormErrors && hasErrors}
-            onClick={() => onCreate(true)}
-          >
-            Add and Recommend
-          </Button>
-        </ButtonGroup>
+            <Button
+              isLoading={isCreating === 'creating and recommending'}
+              leftIcon={<HeartIcon />}
+              minW="12rem"
+              colorScheme="teal"
+              variant="solid"
+              isDisabled={showFormErrors && hasErrors}
+              onClick={() => onCreate(true)}
+            >
+              Add and Recommend
+            </Button>
+          </Stack>
+        </Stack>
       </Flex>
     </Stack>
   );
