@@ -33,22 +33,6 @@ export const recommendLearningMaterial = gql`
   ${LearningMaterialRecommendationsViewerData}
 `;
 
-// const sizesMapping: {
-//   [key in 'sm' | 'md' | 'lg']: {
-//     recommendedByFontSize: string;
-//   };
-// } = {
-//   sm: {
-//     recommendedByFontSize: '13px',
-//   },
-//   md: {
-//     recommendedByFontSize: '14px',
-//   },
-//   lg: {
-//     recommendedByFontSize: 'md',
-//   },
-// };
-
 // TODO: don't load all recommendations, only count
 export const LearningMaterialRecommendationsViewer: React.FC<
   {

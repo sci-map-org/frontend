@@ -30,25 +30,12 @@ export const LearningMaterialMiniCardContainer: React.FC<LearningMaterialMiniCar
         />
       </Center>
       <Flex direction="column" alignItems="stretch" overflow="hidden">
-        {/* <Heading
-          as="h3"
-          fontSize="18px"
-          fontWeight={600}
-          color="gray.700"
-          // noOfLines={1}
-          whiteSpace="nowrap"
-          overflow="hidden"
-          textOverflow="ellipsis"
-        >
-          {learningMaterial.name}
-        </Heading> */}
         <LinkOverlay href={pageInfo.path}>
           <Heading
             as="h3"
             fontSize="18px"
             fontWeight={600}
             color="gray.700"
-            // noOfLines={1}
             whiteSpace="nowrap"
             overflow="hidden"
             textOverflow="ellipsis"
@@ -65,8 +52,6 @@ export const LearningMaterialMiniCardContainer: React.FC<LearningMaterialMiniCar
           )}
         </Stack>
       </Flex>
-      {/* <Flex>{renderFirstRow}</Flex>
-      <Flex>{renderSecondRow}</Flex> */}
     </LinkBox>
   );
 };

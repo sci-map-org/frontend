@@ -103,9 +103,6 @@ export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCar
               <Stack direction="row" spacing={1} alignItems="center">
                 <Skeleton isLoaded={!isLoading}>
                   <Stack spacing={1} direction="row" alignItems="center">
-                    {/* {resource.types.map((type) => (
-                      <ResourceTypeBadge key={type} type={type} />
-                    ))} */}
                     <LearningMaterialTypesViewer learningMaterialTypes={resource.types} />
                     <DurationViewer value={resource.durationSeconds} />
                   </Stack>
