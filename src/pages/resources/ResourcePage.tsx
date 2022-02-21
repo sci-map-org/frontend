@@ -68,7 +68,7 @@ export const getResourceResourcePage = gql`
         ...SquareResourceCardData
       }
       subResourceSeries {
-        ...ResourceData
+        ...ResourceMiniCardData
       }
       parentResources {
         ...ResourceMiniCardData
@@ -138,6 +138,7 @@ export const ResourcePage: React.FC<{ resourceKey: string }> = ({ resourceKey })
                 editable={!!currentUser}
                 isLoading={loading}
                 learningMaterial={resource}
+                showedInTopics={resource.showedIn || undefined}
               />
             </Stack>
           </Flex>
@@ -160,33 +161,16 @@ export const ResourcePage: React.FC<{ resourceKey: string }> = ({ resourceKey })
               </Box>
             </Center>
           )}
-          {/* {(resource.parentResources && resource.parentResources.length) ||
-              (resource.seriesParentResource && (
-                <Stack spacing={1} alignItems="center">
-                  {(resource.parentResources || []).map((parentResource, idx) => (
-                    <RelatedResourceLink key={parentResource._id} type="parent" relatedResource={parentResource} />
-                  ))}
-                  {resource.seriesParentResource && (
-                    <RelatedResourceLink type="series_parent" relatedResource={resource.seriesParentResource} />
-                  )}
-                </Stack>
-              ))} */}
-
-          {/* TODO (isResourceSeriesType(resource.type) || */}
           {!!resource.subResourceSeries?.length && (
-            <SubResourceSeriesManager
-              resourceId={resource._id}
-              subResourceSeries={resource.subResourceSeries || undefined}
-              // domains={resource.coveredConceptsByDomain?.map((i) => i.domain) || []}
-            />
+            <Center pt={8}>
+              <SubResourceSeriesManager
+                resourceId={resource._id}
+                subResourceSeries={resource.subResourceSeries || undefined}
+              />
+            </Center>
           )}
-          {/* TODO isResourceGroupType(resource.type) ||  */}
           {!!resource.subResources?.length && (
-            <ResourceSubResourcesManager
-              resourceId={resource._id}
-              subResources={resource.subResources || []}
-              // domains={resource.coveredConceptsByDomain?.map((i) => i.domain) || []}
-            />
+            <ResourceSubResourcesManager resourceId={resource._id} subResources={resource.subResources || []} />
           )}
         </Flex>
         {layout === 'mobile' && (
@@ -203,6 +187,7 @@ export const ResourcePage: React.FC<{ resourceKey: string }> = ({ resourceKey })
                 editable={!!currentUser}
                 isLoading={loading}
                 learningMaterial={resource}
+                showedInTopics={resource.showedIn || undefined}
               />
             </Flex>
           </Flex>
@@ -306,29 +291,6 @@ const TopRightIconButtons: React.FC<{
     </Stack>
   );
 };
-
-// const RelatedResourceLink: React.FC<{
-//   type: 'previous' | 'next' | 'parent' | 'series_parent';
-//   relatedResource: ResourceLinkDataFragment;
-// }> = ({ type, relatedResource }) => {
-//   return (
-//     <Stack
-//       fontWeight={300}
-//       textAlign="center"
-//       alignItems="center"
-//       direction={type === 'parent' || type === 'series_parent' ? 'row' : 'column'}
-//     >
-//       {type === 'previous' && <BsArrowLeft />}
-//       {type === 'next' && <BsArrowRight />}
-//       {type === 'parent' && <BsArrow90DegUp />}
-//       {type === 'series_parent' && <BsArrow90DegUp />}
-
-//       <PageLink fontWeight={500} fontStyle="italic" pageInfo={ResourcePageInfo(relatedResource)}>
-//         {relatedResource.name}
-//       </PageLink>
-//     </Stack>
-//   );
-// };
 
 const SubTitleBar: React.FC<{ resource: GetResourceResourcePageQuery['getResourceByKey']; isLoading: boolean }> = ({
   resource,
@@ -445,7 +407,7 @@ const PartOfSeriesBlock: React.FC<{
         </Text>
       </Stack>
       {resources.map((resource) => (
-        <Box pl={2}>
+        <Box key={resource._id} pl={2}>
           <ResourceMiniCard resource={resource} />
         </Box>
       ))}

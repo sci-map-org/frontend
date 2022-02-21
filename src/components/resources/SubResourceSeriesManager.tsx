@@ -52,7 +52,7 @@ export const StatelessSubResourceSeriesManager: React.FC<StatelessSubResourceSer
           </Heading>
           <Stack spacing={4}>
             {subResourceSeries.map((subResource) => (
-              <ResourceMiniCard resource={subResource} />
+              <ResourceMiniCard key={subResource._id} resource={subResource} />
             ))}
           </Stack>
 
