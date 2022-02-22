@@ -2,6 +2,7 @@ import { Box, Button, Flex, Link, Skeleton, Stack, Text } from '@chakra-ui/react
 import gql from 'graphql-tag';
 import { useEffect, useState } from 'react';
 import { useUnauthentificatedModal } from '../../../components/auth/UnauthentificatedModal';
+import { RandomPrompt } from '../../../components/collaborative/RandomPrompt';
 import { PageLayout } from '../../../components/layout/PageLayout';
 import { TopicPageLayout } from '../../../components/layout/TopicPageLayout';
 import { LearningPathIcon } from '../../../components/lib/icons/LearningPathIcon';
@@ -12,30 +13,29 @@ import { PageTitle } from '../../../components/lib/Typography';
 import { PageButtonLink } from '../../../components/navigation/InternalLink';
 import { NewResourceModal } from '../../../components/resources/NewResource';
 import { AlsoPartOfTopicsViewer } from '../../../components/topics/AlsoPartOfTopicsViewer';
-import { BestXPagesLinks } from '../../../components/topics/BestXPagesLinks';
 import { EditablePartOfTopicsData } from '../../../components/topics/EditablePartOfTopics';
 import { TopicDescription } from '../../../components/topics/fields/TopicDescription';
 import { NewTopicModal } from '../../../components/topics/NewTopic';
 import {
   ParentTopicsBreadcrumbs,
-  ParentTopicsBreadcrumbsData,
+  ParentTopicsBreadcrumbsData
 } from '../../../components/topics/ParentTopicsBreadcrumbs';
-import { SubTopicFilterDataFragment } from './SubTopicFilter.generated';
 import { MapVisualisationTopicData } from '../../../components/topics/SubTopicsMapVisualisation';
 import { SubTopicsMinimap } from '../../../components/topics/SubTopicsMinimap';
 import { TopicSubHeader, TopicSubHeaderData } from '../../../components/topics/TopicSubHeader';
 import { generateTopicData, TopicLinkData } from '../../../graphql/topics/topics.fragments';
 import { TopicLearningMaterialsSortingType } from '../../../graphql/types';
 import { useCurrentUser } from '../../../graphql/users/users.hooks';
+import { routerPushToPage } from '../../PageInfo';
 import { NewLearningPathPageInfo, ResourcePageInfo } from '../../RoutesPageInfos';
 import { SeeAlso, SeeAlsoData } from './SeeAlso';
+import { SubTopicFilterDataFragment } from './SubTopicFilter.generated';
 import { GetTopicByKeyTopicPageQuery, useGetTopicByKeyTopicPageQuery } from './TopicPage.generated';
 import {
   TopicPageLearningMaterialsFeed,
   TopicPageLearningMaterialsFeedOptions,
-  useTopicPageLearningMaterialsFeed,
+  useTopicPageLearningMaterialsFeed
 } from './TopicPageLearningMaterialsFeed';
-import { routerPushToPage } from '../../PageInfo';
 
 export const getTopicByKeyTopicPage = gql`
   query getTopicByKeyTopicPage($key: String!) {
@@ -205,6 +205,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
     >
       <Flex direction={{ base: 'column', lg: 'row' }} mb="60px" mt={10} width="100%">
         <Flex direction="column" flexGrow={1}>
+          <RandomPrompt mb={10} />
           <TopicPageLearningMaterialsFeed
             mainTopic={topic}
             selectedSubTopic={selectedSubTopic}
