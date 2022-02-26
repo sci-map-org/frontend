@@ -84,7 +84,7 @@ export const ShowedInTopicHeadingStyleProps = (
   size: 'sm' | 'md'
 ): Pick<LinkProps, 'color' | 'fontSize' | 'fontWeight'> => ({
   color: 'gray.400',
-  fontSize: { sm: '17px', md: '20px' }[size],
+  fontSize: { sm: '16px', md: '19px' }[size],
 });
 
 export const ShowedInTopicHeading: React.FC<HeadingProps & { size?: 'sm' | 'md' }> = ({
