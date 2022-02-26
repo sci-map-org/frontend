@@ -18,7 +18,7 @@ import { TopicDescription } from '../../../components/topics/fields/TopicDescrip
 import { NewTopicModal } from '../../../components/topics/NewTopic';
 import {
   ParentTopicsBreadcrumbs,
-  ParentTopicsBreadcrumbsData
+  ParentTopicsBreadcrumbsData,
 } from '../../../components/topics/ParentTopicsBreadcrumbs';
 import { MapVisualisationTopicData } from '../../../components/topics/SubTopicsMapVisualisation';
 import { SubTopicsMinimap } from '../../../components/topics/SubTopicsMinimap';
@@ -34,7 +34,7 @@ import { GetTopicByKeyTopicPageQuery, useGetTopicByKeyTopicPageQuery } from './T
 import {
   TopicPageLearningMaterialsFeed,
   TopicPageLearningMaterialsFeedOptions,
-  useTopicPageLearningMaterialsFeed
+  useTopicPageLearningMaterialsFeed,
 } from './TopicPageLearningMaterialsFeed';
 
 export const getTopicByKeyTopicPage = gql`
@@ -110,7 +110,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
     learningMaterials,
     totalPages,
     feedAvailableFilters,
-    refetch: refetchLearningMaterials,
+    // refetch: refetchLearningMaterials,
   } = useTopicPageLearningMaterialsFeed(learningMaterialsFeedOptions);
 
   const [selectedSubTopic, setSelectedSubTopic] = useState<null | SubTopicFilterDataFragment>(null);
@@ -194,7 +194,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
       renderMinimap={(pxWidth, pxHeight) => (
         <SubTopicsMinimap
           topic={topic}
-          isLoading={!!loading || !!learningMaterialsFeedLoading}
+          isLoading={!!loading}
           subTopics={(topic.subTopics || []).map(({ subTopic }) => subTopic)}
           parentTopic={topic.parentTopic || undefined}
           pxWidth={pxWidth}
