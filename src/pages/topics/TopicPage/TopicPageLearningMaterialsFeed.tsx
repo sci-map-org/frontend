@@ -356,7 +356,7 @@ export const TopicPageLearningMaterialsFeed: React.FC<TopicPageLearningMaterials
             setFeedOptions({ ...options, page: 1 });
           }}
         />
-        {!learningMaterials.length && noFiltersSelected ? (
+        {!learningMaterials.length && noFiltersSelected && !initialLoading ? (
           <Center py={20} flexDir="column">
             <Heading size="xl" color="gray.600" mb={8}>
               No Resources found
