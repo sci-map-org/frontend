@@ -5,15 +5,14 @@ import { LearningMaterialWithCoveredTopicsData } from '../../graphql/learning_ma
 import { LearningPathData } from '../../graphql/learning_paths/learning_paths.fragments';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { LearningPathPageInfo } from '../../pages/RoutesPageInfos';
+import { LearningMaterialDescription } from '../learning_materials/LearningMaterialDescription';
 import {
   LearningMaterialCardContainer,
   LearningMaterialCardCoveredTopics,
 } from '../learning_materials/LearningMaterialPreviewCardContainer';
 import { EditableLearningMaterialTags } from '../learning_materials/LearningMaterialTagsEditor';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
-import { StarsRatingViewer } from '../lib/StarsRating';
 import { DurationViewer } from '../resources/elements/Duration';
-import { LearningMaterialDescription } from '../learning_materials/LearningMaterialDescription';
 import { UserAvatarData } from '../users/UserAvatar';
 import { LearningPathCircularCompletion, LearningPathCompletionData } from './LearningPathCompletion';
 import { LearningPathPreviewCardDataFragment } from './LearningPathPreviewCard.generated';
@@ -97,7 +96,6 @@ export const LearningPathPreviewCard: React.FC<LearningPathPreviewCardProps> = (
             {renderTopRight}
           </Flex>
           <Stack direction="row" alignItems="baseline" spacing={2}>
-            <StarsRatingViewer pxSize={13} value={learningPath.rating} />
             <Badge colorScheme="teal" fontSize="0.8em">
               Learning Path
             </Badge>

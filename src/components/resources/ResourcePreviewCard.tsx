@@ -107,11 +107,11 @@ export const ResourcePreviewCard = forwardRef<HTMLDivElement, ResourcePreviewCar
                     <DurationViewer value={resource.durationSeconds} />
                   </Stack>
                 </Skeleton>
-                <RoleAccess accessRule="loggedInUser">
+                {/* <RoleAccess accessRule="loggedInUser">
                   <BoxBlockDefaultClickPropagation>
                     <LearningMaterialStarsRater learningMaterial={resource} size="xs" />
                   </BoxBlockDefaultClickPropagation>
-                </RoleAccess>
+                </RoleAccess> */}
               </Stack>
             </Skeleton>
             <MainContentBlock expandByDefault={expandByDefault} resource={resource} isLoading={isLoading} />

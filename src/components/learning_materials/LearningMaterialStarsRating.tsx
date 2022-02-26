@@ -1,4 +1,4 @@
-import { ButtonProps, UsePopoverProps } from '@chakra-ui/react';
+import { ButtonProps, Text, UsePopoverProps } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useEffect, useState } from 'react';
 import { StarsRater } from '../lib/StarsRating';

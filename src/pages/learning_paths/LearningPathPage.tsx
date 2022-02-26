@@ -222,12 +222,13 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
                 />
               </Stack>
             </Center>
-            <Stack direction="row" justifyContent="center" spacing={2} alignItems="center">
-              <StarsRatingViewer value={learningPath.rating} isLoading={loading} />
-              <RoleAccess accessRule="contributorOrAdmin">
+            {/* TODO */}
+            {/* <Stack direction="row" justifyContent="center" spacing={2} alignItems="center"> */}
+            {/* <StarsRatingViewer value={learningPath.rating} isLoading={loading} /> */}
+            {/* <RoleAccess accessRule="contributorOrAdmin">
                 <LearningMaterialStarsRater learningMaterial={learningPath} isDisabled={loading} />
-              </RoleAccess>
-            </Stack>
+              </RoleAccess> */}
+            {/* </Stack> */}
             <Skeleton isLoaded={!loading}>
               <EditableTextarea
                 textAlign="center"
@@ -327,7 +328,8 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
                   Congratulations!
                 </Heading>
                 <Text textAlign="center">You just finished this learning path!</Text>
-                {!currentUserIsOwner && (
+                {/* TODO */}
+                {/* {!currentUserIsOwner && (
                   <>
                     <Text textAlign="center" mt={3}>
                       Let the creator know if this was useful for you by leaving a rating:
@@ -344,7 +346,7 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
                       </Stack>
                     </Center>
                   </>
-                )}
+                )} */}
               </Stack>
             </SlideFade>
           )}

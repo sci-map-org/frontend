@@ -3,11 +3,11 @@ import gql from 'graphql-tag';
 import { ReactElement } from 'react';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { ResourcePageInfo } from '../../pages/RoutesPageInfos';
+import { LearningMaterialRecommendationsCountHeart } from '../learning_materials/LearningMaterialRecommendationsCountHeart';
 import { LearningMaterialRecommendButton } from '../learning_materials/LearningMaterialRecommendButton';
 import { LearningMaterialTypeIcon } from '../learning_materials/LearningMaterialTypeBadge';
 import { BoxBlockDefaultClickPropagation } from '../lib/BoxBlockDefaultClickPropagation';
 import { DeleteButtonWithConfirmation } from '../lib/buttons/DeleteButtonWithConfirmation';
-import { StarsRatingViewer } from '../lib/StarsRating';
 import { ResourceUrlLinkViewer, ResourceUrlLinkWrapper } from './elements/ResourceUrl';
 import { SquareResourceCardDataFragment } from './SquareResourceCard.generated';
 
@@ -56,11 +56,11 @@ export const SquareResourceCard: React.FC<SquareResourceCardProps> = ({ resource
       }
       renderBottom={
         <Stack direction="row" alignItems="center">
-          <LearningMaterialRecommendButton
-            learningMaterialId={resource._id}
-            isRecommended={!!resource.recommended}
-            recommendationsTotalCount={resource.recommendationsCount ?? undefined}
-            size="xs"
+          <LearningMaterialRecommendationsCountHeart
+            // learningMaterialId={resource._id}
+            // isRecommended={!!resource.recommended}
+            recommendationsCount={resource.recommendationsCount ?? undefined}
+            size="2xs"
           />
           {resource.types.map((type) => (
             <LearningMaterialTypeIcon key={type} boxSize={4} type={type} />

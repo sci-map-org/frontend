@@ -126,7 +126,7 @@ export const LearningGoalRoadmap: React.FC<LearningGoalRoadmapProps> = ({ learni
             )}
 
             <Stack direction="row" justifyContent="center" spacing={2} alignItems="center">
-              <StarsRatingViewer value={learningGoal.rating} isLoading={isLoading} />
+              {/* <StarsRatingViewer value={learningGoal.rating} isLoading={isLoading} /> */}
               {currentUserStartedGoal && !currentUserIsOwner && (
                 <LearningGoalStarsRater learningGoalId={learningGoal._id} isDisabled={isLoading} />
               )}

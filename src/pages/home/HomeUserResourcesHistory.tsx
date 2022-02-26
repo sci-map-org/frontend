@@ -1,10 +1,10 @@
 import { Flex, Heading, Stack, Text } from '@chakra-ui/layout';
 import gql from 'graphql-tag';
 import { LearningMaterialCardContainer } from '../../components/learning_materials/LearningMaterialPreviewCardContainer';
+import { LearningMaterialRecommendationsCountViewer } from '../../components/learning_materials/LearningMaterialRecommendationsCountViewer';
 import { LearningMaterialStarsRater } from '../../components/learning_materials/LearningMaterialStarsRating';
 import { LearningMaterialTypeIcon } from '../../components/learning_materials/LearningMaterialTypeBadge';
 import { BoxBlockDefaultClickPropagation } from '../../components/lib/BoxBlockDefaultClickPropagation';
-import { StarsRatingViewer } from '../../components/lib/StarsRating';
 import { DurationViewer } from '../../components/resources/elements/Duration';
 import { ResourceCompletedCheckbox } from '../../components/resources/elements/ResourceCompletedCheckbox';
 import { ResourceUrlLink } from '../../components/resources/elements/ResourceUrl';
@@ -59,6 +59,7 @@ export const LastOpenedResourceCardData = gql`
       types
       rating
       durationSeconds
+      recommendationsCount
     }
   }
   ${ResourceLinkData}
@@ -91,13 +92,19 @@ const LastOpenedResourceCard: React.FC<{
               {resourceItem.resource.types.map((type) => (
                 <LearningMaterialTypeIcon key={type} type={type} boxSize="20px" my="3px" />
               ))}
-              <StarsRatingViewer value={resourceItem.resource.rating} pxSize={15} />
+              {typeof resourceItem.resource.recommendationsCount === 'number' && (
+                <LearningMaterialRecommendationsCountViewer
+                  recommendationsTotalCount={resourceItem.resource.recommendationsCount}
+                  size="2xs"
+                  isLoading={false}
+                />
+              )}
               <DurationViewer value={resourceItem.resource.durationSeconds} />
             </Stack>
 
-            <BoxBlockDefaultClickPropagation>
+            {/* <BoxBlockDefaultClickPropagation>
               <LearningMaterialStarsRater learningMaterial={resourceItem.resource} size="xs" />
-            </BoxBlockDefaultClickPropagation>
+            </BoxBlockDefaultClickPropagation> */}
 
             <BoxBlockDefaultClickPropagation>
               <ResourceUrlLink resource={resourceItem.resource} />
