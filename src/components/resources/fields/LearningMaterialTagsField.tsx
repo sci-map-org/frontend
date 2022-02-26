@@ -30,18 +30,19 @@ export const LearningMaterialTagsField: React.FC<{
       helperText="What makes this resource great?"
       renderRightOfLabel={
         !!value.length && (
-          <Stack direction="row" alignItems="flex-end">
+          <Wrap>
             {value.map((selectedTag) => (
-              <LearningMaterialTagBase
-                size="md"
-                key={selectedTag.name}
-                isSelected
-                onClick={() => onChange(value.filter((v) => v.name !== selectedTag.name))}
-              >
-                {selectedTag.name}
-              </LearningMaterialTagBase>
+              <WrapItem key={selectedTag.name}>
+                <LearningMaterialTagBase
+                  size="md"
+                  isSelected
+                  onClick={() => onChange(value.filter((v) => v.name !== selectedTag.name))}
+                >
+                  {selectedTag.name}
+                </LearningMaterialTagBase>
+              </WrapItem>
             ))}
-          </Stack>
+          </Wrap>
         )
       }
     >

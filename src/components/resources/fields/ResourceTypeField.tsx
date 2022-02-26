@@ -50,16 +50,11 @@ export const ResourceTypeField: React.FC<{
           >
             <Droppable droppableId="droppable" direction="horizontal">
               {(dropProvided, dropSnapshot) => (
-                <Stack
-                  direction="row"
-                  alignItems="flex-end"
-                  {...dropProvided.droppableProps}
-                  ref={dropProvided.innerRef}
-                >
+                <Wrap {...dropProvided.droppableProps} ref={dropProvided.innerRef}>
                   {value.map((selectedResourceType, index) => (
                     <Draggable key={selectedResourceType} draggableId={selectedResourceType} index={index}>
                       {(provided, snapshot) => (
-                        <Box
+                        <WrapItem
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
@@ -69,12 +64,12 @@ export const ResourceTypeField: React.FC<{
                             type={selectedResourceType}
                             onClick={() => onChange(value.filter((v) => v !== selectedResourceType))}
                           />
-                        </Box>
+                        </WrapItem>
                       )}
                     </Draggable>
                   ))}
                   {dropProvided.placeholder}
-                </Stack>
+                </Wrap>
               )}
             </Droppable>
           </DragDropContext>

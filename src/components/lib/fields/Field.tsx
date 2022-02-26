@@ -16,7 +16,7 @@ export const Field = forwardRef<HTMLDivElement, PropsWithChildren<FieldProps>>(
       <FormControl ref={ref} display="flex" flexDir="column" w="unset" isInvalid={isInvalid} {...props}>
         <Flex justifyContent="space-between" pb={1}>
           <Flex direction="row" alignItems="baseline">
-            <FormLabel {...FormFieldLabelStyleProps} w="unset" mr={1}>
+            <FormLabel {...FormFieldLabelStyleProps} w="unset" mr={1} whiteSpace="nowrap">
               {label}
             </FormLabel>
             {renderRightOfLabel}
