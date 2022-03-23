@@ -47,6 +47,7 @@ export const ManageTopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) =>
         <ManageTopic
           topic={topic}
           tab={tabQueryParam || ManageTopicTabIndex.Data}
+          isLoading={loading}
           onChangeTab={(newTab) => {
             router.push(
               {

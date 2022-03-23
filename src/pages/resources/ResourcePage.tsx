@@ -44,11 +44,12 @@ import { ResourceMiniCardDataFragment } from '../../components/resources/Resourc
 import { SquareResourceCardData } from '../../components/resources/SquareResourceCard';
 import { SubResourceSeriesManager } from '../../components/resources/SubResourceSeriesManager';
 import { ResourceSubResourcesManager } from '../../components/resources/SubResourcesManager';
+import { Discussion, DiscussionData } from '../../components/social/comments/Discussion';
 import { UserAvatar, UserAvatarData } from '../../components/users/UserAvatar';
 import { LearningMaterialWithCoveredTopicsData } from '../../graphql/learning_materials/learning_materials.fragments';
 import { generateResourceData, ResourceData, ResourceLinkData } from '../../graphql/resources/resources.fragments';
 import { useDeleteResourceMutation } from '../../graphql/resources/resources.operations.generated';
-import { ResourceType, UserRole } from '../../graphql/types';
+import { DiscussionLocation, ResourceType, UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { getChakraRelativeSize } from '../../util/chakra.util';
 import { NotFoundPage } from '../NotFoundPage';
@@ -86,6 +87,9 @@ export const getResourceResourcePage = gql`
       ...EditableLearningMaterialPrerequisitesData
       ...LearningMaterialStarsRaterData
       ...LearningMaterialRecommendationsViewerData
+      comments(options: { pagination: {} }) {
+        ...DiscussionData
+      }
     }
   }
   ${SquareResourceCardData}
@@ -96,6 +100,7 @@ export const getResourceResourcePage = gql`
   ${LearningMaterialWithCoveredTopicsData}
   ${LearningMaterialRecommendationsViewerData}
   ${ResourceMiniCardData}
+  ${DiscussionData}
 `;
 
 // TODO
@@ -106,7 +111,7 @@ const resourceDataPlaceholder: GetResourceResourcePageQuery['getResourceByKey'] 
 const headerHeight = '160px';
 const columnsWidth = '210px';
 export const ResourcePage: React.FC<{ resourceKey: string }> = ({ resourceKey }) => {
-  const { data, loading, error } = useGetResourceResourcePageQuery({ variables: { resourceKey } });
+  const { data, loading, error, refetch } = useGetResourceResourcePageQuery({ variables: { resourceKey } });
   const layout: 'mobile' | 'desktop' = useBreakpointValue({ base: 'mobile', lg: 'desktop' }) || 'desktop';
   const resource = data?.getResourceByKey || resourceDataPlaceholder;
   const { currentUser } = useCurrentUser();
@@ -154,6 +159,15 @@ export const ResourcePage: React.FC<{ resourceKey: string }> = ({ resourceKey })
         <Flex direction="column" alignItems="stretch" flexShrink={1} flexGrow={1}>
           <HeaderBlock resource={resource} isLoading={loading} />
           <MainContentBlock resource={resource} isLoading={loading} mt={3} />
+          {!loading && (
+            <Discussion
+              discussionLocation={DiscussionLocation.LearningMaterialPage}
+              discussionEntityId={resource._id}
+              commentResults={resource.comments || undefined}
+              isLoading={loading}
+              onCommentPosted={() => refetch()}
+            />
+          )}
           {layout === 'mobile' && (
             <Center>
               <Box maxW="80%">

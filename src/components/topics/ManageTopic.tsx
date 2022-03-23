@@ -12,6 +12,7 @@ import {
   ModalBody,
   ModalContent,
   ModalOverlay,
+  Skeleton,
   Spinner,
   Stack,
   Tab,
@@ -131,10 +132,11 @@ export const getTopicByKeyManageTopicPage = gql`
 
 export const ManageTopic: React.FC<{
   topic: GetTopicByKeyManageTopicPageQuery['getTopicByKey'];
+  isLoading?: boolean;
   refetch: () => void;
   tab: ManageTopicTabIndex;
   onChangeTab: (tab: ManageTopicTabIndex) => void;
-}> = ({ topic, tab, onChangeTab, refetch }) => {
+}> = ({ topic, tab, onChangeTab, refetch, isLoading }) => {
   const [updateTopicData, setUpdateTopicData] = useState<{
     name?: string;
     key?: string;
@@ -179,12 +181,14 @@ export const ManageTopic: React.FC<{
           />
         </RoleAccess>
       </Flex>
-      <PageTitle mb={12}>
-        Manage{' '}
-        <Text color="blue.600" as="span">
-          {topic.name}
-        </Text>
-      </PageTitle>
+      <Skeleton isLoaded={!isLoading}>
+        <PageTitle mb={12}>
+          Manage{' '}
+          <Text color="blue.600" as="span">
+            {topic.name}
+          </Text>
+        </PageTitle>
+      </Skeleton>
       <Tabs size="lg" isFitted variant="line" isLazy index={tab} onChange={onChangeTab}>
         <TabList mb={6}>
           <Tab _active={{}} _focus={{}} fontSize="2xl" fontWeight={600}>
@@ -546,7 +550,7 @@ export const ManageTopicModal: React.FC<{ topicKey: string; renderButton: (openM
               />
               <ModalBody pt={8} pb={12} px={10}>
                 {topic ? (
-                  <ManageTopic topic={topic} refetch={refetch} tab={tab} onChangeTab={setTab} />
+                  <ManageTopic topic={topic} refetch={refetch} tab={tab} onChangeTab={setTab} isLoading={loading} />
                 ) : (
                   <Spinner m={20} />
                 )}
