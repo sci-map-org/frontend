@@ -47,7 +47,7 @@ export const UserAvatar: React.FC<
         <PopoverBody>
           <Flex direction="row" alignItems="center">
             <Center px={1} mr={3}>
-              <UserAvatarPicture user={user} isLoading={isLoading} size="sm" />
+              <UserAvatarPicture user={user} isLoading={isLoading} size="md" />
             </Center>
             <Stack spacing={0}>
               <UserDisplayName>{user.displayName}</UserDisplayName>

@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { CommentResults, DiscussionLocation } from '../../../graphql/types';
 import { CommentInput } from './CommentInput';
 import { CommentViewer, CommentViewerData } from './CommentViewer';
-import { usePostCommentMutation } from './Discussion.generated';
+import { DiscussionDataFragment, usePostCommentMutation } from './Discussion.generated';
 
 export const DiscussionData = gql`
   fragment DiscussionData on CommentResults {
@@ -16,6 +16,7 @@ export const DiscussionData = gql`
           ...CommentViewerData
           children {
             ...CommentViewerData
+            childrenCount
           }
         }
       }
@@ -33,6 +34,12 @@ export const postComment = gql`
   mutation postComment($payload: PostCommentPayload!) {
     postComment(payload: $payload) {
       ...CommentViewerData
+      parent {
+        _id
+        children {
+          _id
+        }
+      }
     }
   }
   ${CommentViewerData}
@@ -41,8 +48,7 @@ export const postComment = gql`
 interface DiscussionProps {
   discussionLocation: DiscussionLocation;
   discussionEntityId: string;
-  commentResults?: CommentResults;
-  onCommentPosted?: () => void;
+  commentResults?: DiscussionDataFragment;
   isLoading: boolean;
 }
 
@@ -50,7 +56,6 @@ export const Discussion: React.FC<DiscussionProps> = ({
   discussionLocation,
   discussionEntityId,
   commentResults,
-  onCommentPosted,
   isLoading,
 }) => {
   const discussionId = useMemo(
@@ -61,12 +66,14 @@ export const Discussion: React.FC<DiscussionProps> = ({
   const [postCommentMutation] = usePostCommentMutation();
   return (
     <Flex direction="column">
-      <Heading color="gray.700" mb={6}>
+      <Heading color="gray.700" mb={10}>
         Discuss
       </Heading>
       <Stack direction="column" ml={10} alignItems="stretch">
-        {/* <Flex py={12} justifyContent="stretch"> */}
-        <Flex direction="column" alignItems="stretch" px={12}>
+        <Flex direction="column" alignItems="stretch" px="10%">
+          <Heading fontSize="22px" color="gray.700" mb={2}>
+            Your Message
+          </Heading>
           <CommentInput
             post={async (content) => {
               await postCommentMutation({
@@ -77,13 +84,12 @@ export const Discussion: React.FC<DiscussionProps> = ({
                   },
                 },
               });
-              onCommentPosted?.();
             }}
           />
         </Flex>
         <Stack>
           {commentResults?.items.map((comment) => (
-            <CommentViewer discussionId={discussionId} comment={comment} />
+            <CommentViewer key={comment._id} discussionId={discussionId} commentId={comment._id} />
           ))}
         </Stack>
       </Stack>

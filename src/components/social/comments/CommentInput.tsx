@@ -1,5 +1,6 @@
-import { Button, Flex, Heading } from '@chakra-ui/react';
-import { useState } from 'react';
+import { Button, Flex } from '@chakra-ui/react';
+import EasyMDE from 'easymde';
+import { useMemo, useState } from 'react';
 import { MarkdownInput } from '../../lib/inputs/MarkdownInput';
 
 interface CommentInputProps {
@@ -8,13 +9,13 @@ interface CommentInputProps {
 
 export const CommentInput: React.FC<CommentInputProps> = ({ post }) => {
   const [draft, setDraft] = useState('');
+  const options: EasyMDE.Options = useMemo(() => {
+    return { spellChecker: false, minHeight: '120px', status: false, placeholder: 'Write something...' };
+  }, []);
   return (
     <Flex direction="column">
-      <Heading fontSize="24px" color="gray.700" mb={2}>
-        Your Message
-      </Heading>
-      <MarkdownInput content={draft} setContent={setDraft} />
-      <Flex justifyContent="flex-end">
+      <MarkdownInput content={draft} setContent={setDraft} options={options} />
+      <Flex justifyContent="flex-end" pt={2}>
         <Button colorScheme="blue" isDisabled={!draft.length} onClick={() => post(draft)} minW="160px" size="sm">
           Post
         </Button>

@@ -165,7 +165,6 @@ export const ResourcePage: React.FC<{ resourceKey: string }> = ({ resourceKey })
               discussionEntityId={resource._id}
               commentResults={resource.comments || undefined}
               isLoading={loading}
-              onCommentPosted={() => refetch()}
             />
           )}
           {layout === 'mobile' && (

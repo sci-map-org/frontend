@@ -84,6 +84,7 @@ export type Comment = {
   __typename?: 'Comment';
   _id: Scalars['String'];
   children?: Maybe<Array<Comment>>;
+  childrenCount?: Maybe<Scalars['Int']>;
   contentMarkdown: Scalars['String'];
   discussionId: Scalars['String'];
   parent?: Maybe<Comment>;
@@ -100,6 +101,7 @@ export type CommentOptions = {
 export type CommentResults = {
   __typename?: 'CommentResults';
   items: Array<Comment>;
+  rootCommentsTotalCount: Scalars['Int'];
   totalCount: Scalars['Int'];
 };
 
