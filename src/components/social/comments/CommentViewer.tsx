@@ -1,5 +1,5 @@
 import { useApolloClient } from '@apollo/client';
-import { Box, Flex, Link, Stack, Text } from '@chakra-ui/react';
+import { Box, Flex, Link, Stack, Text, useBreakpointValue } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useCallback, useRef, useState } from 'react';
 import { format } from 'timeago.js';
@@ -85,6 +85,11 @@ export const CommentViewer: React.FC<CommentViewerProps> = ({ discussionId, comm
 
   const commentChildren: CommentViewerDataFragment[] | null = commentWithChildren?.children || null;
 
+  const responsiveLayout = useBreakpointValue<'mobile' | 'desktop'>({
+    base: 'mobile',
+    xl: 'desktop',
+  });
+  const [isExpanded, setIsExpanded] = useState(true);
   const [replyMode, setReplyMode] = useState(false);
   const [postCommentMutation] = usePostCommentMutation();
 
@@ -95,11 +100,14 @@ export const CommentViewer: React.FC<CommentViewerProps> = ({ discussionId, comm
     fetchPolicy: 'cache-and-network',
   });
   const expandComment = useCallback(() => {
-    expandCommentLazyQuery({
-      variables: {
-        commentId,
-      },
-    });
+    setIsExpanded(true);
+    if (!commentChildren) {
+      expandCommentLazyQuery({
+        variables: {
+          commentId,
+        },
+      });
+    }
   }, []);
 
   if (!comment.postedBy) {
@@ -108,78 +116,94 @@ export const CommentViewer: React.FC<CommentViewerProps> = ({ discussionId, comm
   }
 
   return (
-    <Flex direction="column" alignItems="stretch">
-      <Flex direction="row" alignItems="stretch">
-        <Flex justifyContent="center" w={16}>
-          <UserAvatar user={comment.postedBy} />
-        </Flex>
-        <Flex direction="column" flexGrow={1}>
-          <Stack direction="row" alignItems="baseline" spacing={1}>
-            <PageLink
-              pageInfo={UserProfilePageInfo(comment.postedBy)}
-              {...UserKeyLinkStyleProps}
-              color="gray.700"
-              _hover={{}}
-            >
-              @{comment.postedBy.key}
-            </PageLink>
-            <Text fontWeight={700} color="gray.400" fontSize="sm">
-              {format(comment.postedAt, 'en_US')}
-            </Text>
-          </Stack>
-          <Text bgColor="gray.50" pt={1} pb={2} px={4} borderRadius={6} color="gray.700" minW="280px">
-            {comment.contentMarkdown}
-          </Text>
-          {replyMode ? (
-            <Flex direction="column" alignItems="stretch" ref={ref}>
-              <CommentInput
-                post={async (content) => {
-                  await postCommentMutation({
-                    variables: {
-                      payload: {
-                        parentId: comment._id,
-                        discussionId,
-                        contentMarkdown: content,
-                      },
-                    },
-                  });
-                  setReplyMode(false);
-                }}
-              />
-            </Flex>
-          ) : (
-            <Flex justifyContent="space-between" h={8} alignItems="center">
-              {!commentChildren && !!comment.childrenCount ? (
-                <Link fontWeight={600} color="gray.600" fontSize="sm" onClick={() => expandComment()}>
-                  + {comment.childrenCount} More {comment.childrenCount === 1 ? 'Reply' : 'Replies'}
-                </Link>
-              ) : (
-                <Box />
-              )}
-              <Link
-                onClick={() => setReplyMode(true)}
-                variant="ghost"
-                color="blue.600"
-                fontWeight={600}
-                _hover={{ color: 'blue.500' }}
-              >
-                Reply
-              </Link>
-            </Flex>
-          )}
-        </Flex>
-      </Flex>
-
-      {!!commentChildren?.length && (
-        <Flex>
-          <Box ml={8} mr={8} borderRightWidth={2} borderColor="gray.200" mb={8} />
-          <Stack flexGrow={1}>
-            {commentChildren.map((child) => (
-              <CommentViewer key={child._id} discussionId={discussionId} commentId={child._id} />
-            ))}
-          </Stack>
+    // <Flex direction="column" alignItems="stretch">
+    <Flex direction="row" alignItems="stretch">
+      {responsiveLayout === 'desktop' && (
+        <Flex justifyContent="center" pr={1}>
+          <UserAvatar user={comment.postedBy} size="sm" />
         </Flex>
       )}
+      <Flex direction="column" flexGrow={1}>
+        <Stack direction="row" alignItems="baseline" spacing="6px" mb="1px">
+          {responsiveLayout === 'mobile' && (
+            // <Flex justifyContent="center">
+            <UserAvatar user={comment.postedBy} size="xs" />
+            // </Flex>
+          )}
+          <PageLink
+            pageInfo={UserProfilePageInfo(comment.postedBy)}
+            {...UserKeyLinkStyleProps}
+            color="gray.700"
+            _hover={{}}
+          >
+            @{comment.postedBy.key}
+          </PageLink>
+          <Text fontWeight={700} color="gray.400" fontSize="sm">
+            {format(comment.postedAt, 'en_US')}
+          </Text>
+        </Stack>
+        <Text bgColor="gray.50" pt={1} pb={2} px={4} borderRadius={6} color="gray.700" minW="280px">
+          {comment.contentMarkdown}
+        </Text>
+        {replyMode ? (
+          <Flex direction="column" alignItems="stretch" ref={ref} pt={2} px={2}>
+            <CommentInput
+              placeholder="Write your reply..."
+              post={async (content) => {
+                await postCommentMutation({
+                  variables: {
+                    payload: {
+                      parentId: comment._id,
+                      discussionId,
+                      contentMarkdown: content,
+                    },
+                  },
+                });
+                setReplyMode(false);
+              }}
+            />
+          </Flex>
+        ) : (
+          <Flex justifyContent="space-between" h={6} alignItems="center">
+            {!!comment.childrenCount && (!commentChildren || !isExpanded) ? (
+              <Link fontWeight={600} color="gray.600" fontSize="sm" onClick={() => expandComment()}>
+                + {comment.childrenCount} More {comment.childrenCount === 1 ? 'Reply' : 'Replies'}
+              </Link>
+            ) : (
+              <Box />
+            )}
+            <Link
+              onClick={() => setReplyMode(true)}
+              variant="ghost"
+              color="blue.600"
+              fontWeight={600}
+              fontSize="sm"
+              _hover={{ color: 'blue.500' }}
+            >
+              Reply
+            </Link>
+          </Flex>
+        )}
+
+        {!!commentChildren?.length && isExpanded && (
+          <Flex>
+            <Box
+              pl={1}
+              mr={1}
+              borderRightWidth={2}
+              borderColor="gray.200"
+              mb={0}
+              _hover={{ cursor: 'pointer', borderColor: 'blue.500' }}
+              onClick={() => setIsExpanded(false)}
+            />
+            <Stack flexGrow={1}>
+              {commentChildren.map((child) => (
+                <CommentViewer key={child._id} discussionId={discussionId} commentId={child._id} />
+              ))}
+            </Stack>
+          </Flex>
+        )}
+      </Flex>
     </Flex>
   );
 };

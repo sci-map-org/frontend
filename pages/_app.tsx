@@ -2,7 +2,7 @@ import NextApp from 'next/app';
 import React from 'react';
 
 import '../public/empty.css';
-import 'easymde/dist/easymde.min.css'; // c.f. https://www.npmjs.com/package/react-simplemde-editor
+import '../public/easymde.css'; // c.f. https://www.npmjs.com/package/react-simplemde-editor -> customized
 import '../public/multi-select.css';
 import { Wrapper } from '../src/components/Wrapper';
 import { withApollo } from '../src/hoc/withApollo';

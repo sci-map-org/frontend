@@ -5,13 +5,14 @@ import { MarkdownInput } from '../../lib/inputs/MarkdownInput';
 
 interface CommentInputProps {
   post: (content: string) => void;
+  placeholder?: string;
 }
 
-export const CommentInput: React.FC<CommentInputProps> = ({ post }) => {
+export const CommentInput: React.FC<CommentInputProps> = ({ post, placeholder = 'Write something...' }) => {
   const [draft, setDraft] = useState('');
   const options: EasyMDE.Options = useMemo(() => {
-    return { spellChecker: false, minHeight: '120px', status: false, placeholder: 'Write something...' };
-  }, []);
+    return { spellChecker: false, minHeight: '120px', status: false, placeholder };
+  }, [placeholder]);
   return (
     <Flex direction="column">
       <MarkdownInput content={draft} setContent={setDraft} options={options} />

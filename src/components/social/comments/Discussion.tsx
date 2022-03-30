@@ -69,7 +69,7 @@ export const Discussion: React.FC<DiscussionProps> = ({
       <Heading color="gray.700" mb={10}>
         Discuss
       </Heading>
-      <Stack direction="column" ml={10} alignItems="stretch">
+      <Stack direction="column" mx={4} alignItems="stretch">
         <Flex direction="column" alignItems="stretch" px="10%">
           <Heading fontSize="22px" color="gray.700" mb={2}>
             Your Message
