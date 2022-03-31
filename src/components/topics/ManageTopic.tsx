@@ -49,7 +49,7 @@ import { SubTopicsTreeProps } from '../../components/topics/tree/SubTopicsTree';
 import { TopicFullData, TopicLinkData } from '../../graphql/topics/topics.fragments';
 import { useDeleteTopicMutation, useUpdateTopicMutation } from '../../graphql/topics/topics.operations.generated';
 import { TopicTypeFullData } from '../../graphql/topic_types/topic_types.fragments';
-import { PulledDescriptionSourceName, TopicType, UserRole } from '../../graphql/types';
+import { DiscussionLocation, PulledDescriptionSourceName, TopicType, UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { routerPushToPage } from '../../pages/PageInfo';
 import { ManageTopicPagePath, TopicPageInfo, UserProfilePageInfo } from '../../pages/RoutesPageInfos';
@@ -64,6 +64,7 @@ import {
   useGetTopicByKeyManageTopicPageQuery,
   useUpdateTopicTopicTypesMutation,
 } from './ManageTopic.generated';
+import { Discussion, DiscussionData } from '../social/comments/Discussion';
 
 export enum ManageTopicTabIndex {
   Data = 0,
@@ -120,6 +121,9 @@ export const getTopicByKeyManageTopicPage = gql`
       createdBy {
         ...UserAvatarData
       }
+      comments(options: { pagination: {} }) {
+        ...DiscussionData
+      }
     }
   }
   ${TopicFullData}
@@ -128,6 +132,7 @@ export const getTopicByKeyManageTopicPage = gql`
   ${EditablePartOfTopicsData}
   ${TopicTypeFullData}
   ${UserAvatarData}
+  ${DiscussionData}
 `;
 
 export const ManageTopic: React.FC<{
@@ -519,6 +524,15 @@ export const ManageTopic: React.FC<{
           </TabPanel>
         </TabPanels>
       </Tabs>
+      <Flex direction="column" alignItems="stretch" pt={20}>
+        <Discussion
+          discussionLocation={DiscussionLocation.ManageTopicPage}
+          discussionEntityId={topic._id}
+          commentResults={topic.comments || undefined}
+          refetch={() => refetch()}
+          isLoading={!!isLoading}
+        />
+      </Flex>
     </>
   );
 };

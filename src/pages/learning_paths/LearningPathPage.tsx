@@ -52,10 +52,11 @@ import {
 import { LearningPathDataFragment } from '../../graphql/learning_paths/learning_paths.fragments.generated';
 import { useDeleteLearningPath } from '../../graphql/learning_paths/learning_paths.hooks';
 import { useUpdateLearningPathMutation } from '../../graphql/learning_paths/learning_paths.operations.generated';
-import { UserRole } from '../../graphql/types';
+import { DiscussionLocation, UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { GetLearningPathPageQuery, useGetLearningPathPageQuery } from './LearningPathPage.generated';
 import { generateResourcePreviewCardData } from '../../graphql/resources/resources.fragments';
+import { Discussion, DiscussionData } from '../../components/social/comments/Discussion';
 
 export const getLearningPathPage = gql`
   query getLearningPathPage($key: String!) {
@@ -83,6 +84,9 @@ export const getLearningPathPage = gql`
       ...LearningMaterialWithCoveredTopicsData
       ...EditableLearningMaterialPrerequisitesData
       ...LearningMaterialStarsRaterData
+      comments(options: { pagination: {} }) {
+        ...DiscussionData
+      }
     }
   }
   ${LearningMaterialWithCoveredTopicsData}
@@ -92,6 +96,7 @@ export const getLearningPathPage = gql`
   ${UserAvatarData}
   ${EditableLearningMaterialPrerequisitesData}
   ${LearningMaterialStarsRaterData}
+  ${DiscussionData}
 `;
 
 const learningPathPlaceholder: GetLearningPathPageQuery['getLearningPathByKey'] = {
@@ -121,7 +126,7 @@ const learningPathPlaceholder: GetLearningPathPageQuery['getLearningPathByKey'] 
 
 export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learningPathKey }) => {
   const [updateLearningPath] = useUpdateLearningPathMutation();
-  const { data, loading, error } = useGetLearningPathPageQuery({
+  const { data, loading, error, refetch } = useGetLearningPathPageQuery({
     variables: { key: learningPathKey },
   });
   const learningPath = data?.getLearningPathByKey || learningPathPlaceholder;
@@ -361,6 +366,15 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
 
         <Flex justify="flex-end">
           {!learningPath.public && <LearningPathPublishButton size="lg" learningPath={learningPath} />}
+        </Flex>
+        <Flex direction="column" alignItems="stretch" pt={20}>
+          <Discussion
+            discussionLocation={DiscussionLocation.LearningMaterialPage}
+            discussionEntityId={learningPath._id}
+            commentResults={learningPath.comments || undefined}
+            refetch={() => refetch()}
+            isLoading={loading}
+          />
         </Flex>
       </Stack>
     </PageLayout>
