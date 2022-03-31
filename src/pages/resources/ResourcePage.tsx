@@ -159,18 +159,10 @@ export const ResourcePage: React.FC<{ resourceKey: string }> = ({ resourceKey })
         <Flex direction="column" alignItems="stretch" flexShrink={1} flexGrow={1}>
           <HeaderBlock resource={resource} isLoading={loading} />
           <MainContentBlock resource={resource} isLoading={loading} mt={3} />
-          {!loading && (
-            <Discussion
-              discussionLocation={DiscussionLocation.LearningMaterialPage}
-              discussionEntityId={resource._id}
-              commentResults={resource.comments || undefined}
-              isLoading={loading}
-            />
-          )}
           {layout === 'mobile' && (
             <Center>
-              <Box maxW="80%">
-                <PartOfSeriesBlock resource={resource} isLoading={loading} />
+              <Box py={4} maxW="80%">
+                <PartOfSeriesBlock resource={resource} isLoading={loading} size="sm" />
               </Box>
             </Center>
           )}
@@ -251,6 +243,15 @@ export const ResourcePage: React.FC<{ resourceKey: string }> = ({ resourceKey })
             </Center>
           )}
         </Flex>
+      </Flex>
+      <Flex px={layout === 'desktop' ? columnsWidth : 4} direction="column" alignItems="stretch" mt={10}>
+        <Discussion
+          discussionLocation={DiscussionLocation.LearningMaterialPage}
+          discussionEntityId={resource._id}
+          commentResults={resource.comments || undefined}
+          refetch={() => refetch()}
+          isLoading={loading}
+        />
       </Flex>
     </PageLayout>
   );
@@ -399,7 +400,8 @@ const MainContentBlock: React.FC<
 const PartOfSeriesBlock: React.FC<{
   resource: GetResourceResourcePageQuery['getResourceByKey'];
   isLoading: boolean;
-}> = ({ resource, isLoading }) => {
+  size?: 'sm' | 'md';
+}> = ({ resource, isLoading, size = 'md' }) => {
   const element = (type: 'Part Of' | 'Previous' | 'Next', resources: ResourceMiniCardDataFragment[]) => (
     <Flex direction="column" overflow="hidden">
       <Stack direction="row" alignItems="center" spacing={1}>
@@ -415,7 +417,7 @@ const PartOfSeriesBlock: React.FC<{
           color="gray.600"
         />
 
-        <Text fontWeight={600} color="gray.500" fontSize="16px">
+        <Text fontWeight={600} color="gray.500">
           {type}
         </Text>
       </Stack>

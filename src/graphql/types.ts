@@ -87,6 +87,7 @@ export type Comment = {
   childrenCount?: Maybe<Scalars['Int']>;
   contentMarkdown: Scalars['String'];
   discussionId: Scalars['String'];
+  lastUpdatedAt: Scalars['String'];
   parent?: Maybe<Comment>;
   parentId?: Maybe<Scalars['String']>;
   postedAt: Scalars['String'];
@@ -296,6 +297,10 @@ export enum DiscussionLocation {
   ManageTopicPage = 'MANAGE_TOPIC_PAGE',
   TopicPage = 'TOPIC_PAGE'
 }
+
+export type EditCommentPayload = {
+  contentMarkdown: Scalars['String'];
+};
 
 export type GetHomePageDataResults = {
   __typename?: 'GetHomePageDataResults';
@@ -675,6 +680,7 @@ export type Mutation = {
   detachTopicIsPartOfTopic: DetachTopicIsPartOfTopicResult;
   detachTopicIsSubTopicOfTopic: DetachTopicIsSubTopicOfTopicResult;
   downvoteLearningMaterial: LearningMaterial;
+  editComment: Comment;
   hideLearningGoalFromTopic: ShowLearningGoalInTopicResult;
   hideLearningMaterialFromTopic: LearningMaterial;
   indexLearningGoal: LearningGoalIndexedResult;
@@ -910,6 +916,12 @@ export type MutationDetachTopicIsSubTopicOfTopicArgs = {
 
 export type MutationDownvoteLearningMaterialArgs = {
   learningMaterialId: Scalars['String'];
+};
+
+
+export type MutationEditCommentArgs = {
+  commentId: Scalars['String'];
+  payload: EditCommentPayload;
 };
 
 

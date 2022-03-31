@@ -1,4 +1,4 @@
-import { Flex, Heading, Stack } from '@chakra-ui/react';
+import { Center, Flex, Heading, Spinner, Stack } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import { useMemo } from 'react';
 import { CommentResults, DiscussionLocation } from '../../../graphql/types';
@@ -50,12 +50,14 @@ interface DiscussionProps {
   discussionEntityId: string;
   commentResults?: DiscussionDataFragment;
   isLoading: boolean;
+  refetch: () => void;
 }
 
 export const Discussion: React.FC<DiscussionProps> = ({
   discussionLocation,
   discussionEntityId,
   commentResults,
+  refetch,
   isLoading,
 }) => {
   const discussionId = useMemo(
@@ -84,14 +86,21 @@ export const Discussion: React.FC<DiscussionProps> = ({
                   },
                 },
               });
+              refetch();
             }}
           />
         </Flex>
-        <Stack>
-          {commentResults?.items.map((comment) => (
-            <CommentViewer key={comment._id} discussionId={discussionId} commentId={comment._id} />
-          ))}
-        </Stack>
+        {isLoading ? (
+          <Center p={12}>
+            <Spinner size="lg" color="gray.600" />
+          </Center>
+        ) : (
+          <Stack>
+            {commentResults?.items.map((comment) => (
+              <CommentViewer key={comment._id} discussionId={discussionId} commentId={comment._id} />
+            ))}
+          </Stack>
+        )}
       </Stack>
     </Flex>
   );
