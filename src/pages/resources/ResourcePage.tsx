@@ -111,8 +111,10 @@ const resourceDataPlaceholder: GetResourceResourcePageQuery['getResourceByKey'] 
 const headerHeight = '160px';
 const columnsWidth = '210px';
 export const ResourcePage: React.FC<{ resourceKey: string }> = ({ resourceKey }) => {
-  const { data, loading, error, refetch } = useGetResourceResourcePageQuery({ variables: { resourceKey } });
+  const { data, loading, refetch } = useGetResourceResourcePageQuery({ variables: { resourceKey } });
+
   const layout: 'mobile' | 'desktop' = useBreakpointValue({ base: 'mobile', lg: 'desktop' }) || 'desktop';
+
   const resource = data?.getResourceByKey || resourceDataPlaceholder;
   const { currentUser } = useCurrentUser();
   if (!data && !loading) return <NotFoundPage />;
@@ -161,7 +163,7 @@ export const ResourcePage: React.FC<{ resourceKey: string }> = ({ resourceKey })
           <MainContentBlock resource={resource} isLoading={loading} mt={3} />
           {layout === 'mobile' && (
             <Center>
-              <Box py={4} maxW="80%">
+              <Box py={4} maxW={{ base: '280px', sm: '400px', md: '600px' }}>
                 <PartOfSeriesBlock resource={resource} isLoading={loading} size="sm" />
               </Box>
             </Center>

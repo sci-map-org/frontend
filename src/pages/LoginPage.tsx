@@ -3,17 +3,11 @@ import Router, { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { LoginForm } from '../components/auth/LoginForm';
 import { PageLayout } from '../components/layout/PageLayout';
+import { PageLink } from '../components/navigation/InternalLink';
 import { DiscourseSso } from '../graphql/types';
 import { useCurrentUser } from '../graphql/users/users.hooks';
 import { PageInfo } from './PageInfo';
-
-export const LoginPagePath = '/login';
-
-export const LoginPageInfo: PageInfo = {
-  name: 'Login',
-  path: LoginPagePath,
-  routePath: LoginPagePath,
-};
+import { RegisterPageInfo } from './RoutesPageInfos';
 
 export const LoginPage: React.FC = () => {
   const router = useRouter();
@@ -50,9 +44,9 @@ export const LoginPage: React.FC = () => {
         <Box textAlign="center">
           <Text fontSize="l">
             No account yet ?{' '}
-            <Link color="blue.400" onClick={() => Router.push('/register')}>
+            <PageLink color="blue.400" pageInfo={RegisterPageInfo}>
               Register
-            </Link>
+            </PageLink>
           </Text>
         </Box>
       </Stack>

@@ -4,7 +4,7 @@ import { Box, Flex, IconButton, Link, Stack, Text, Tooltip, useBreakpointValue }
 import gql from 'graphql-tag';
 import { useCallback, useRef, useState } from 'react';
 import { format } from 'timeago.js';
-import { CurrentUserData } from '../../../graphql/users/users.fragments';
+import { UserRole } from '../../../graphql/types';
 import { useCurrentUser } from '../../../graphql/users/users.hooks';
 import { useHandleClickOutside } from '../../../hooks/useHandleClickOutside';
 import { UserProfilePageInfo } from '../../../pages/RoutesPageInfos';
@@ -81,24 +81,6 @@ export const CommentViewer: React.FC<CommentViewerProps> = ({ discussionId, comm
   const client = useApolloClient();
   const { currentUser } = useCurrentUser();
   const [editCommentMutation] = useEditCommentMutation();
-  const simpleComment = client.readFragment<CommentViewerDataFragment>({
-    id: `Comment:${commentId}`,
-    fragmentName: `CommentViewerData`,
-    fragment: CommentViewerData,
-  });
-  // Should always be non null
-  if (!simpleComment) throw new Error(`Expected Comment ${commentId} to be in cache with fragment CommentViewerData`);
-
-  const commentWithChildren = client.readFragment<CommentWithChildrenViewerDataFragment>({
-    id: `Comment:${commentId}`,
-    fragmentName: `CommentWithChildrenViewerData`,
-    fragment: CommentWithChildrenViewerData,
-  });
-
-  const comment: CommentViewerDataFragment = commentWithChildren || simpleComment; // The reason to do that is that we only query a DiscussionData fragment, so only that is reactive.
-  // However we want to react on the 'children' property changes. Reading such fragments therefore work
-
-  const commentChildren: CommentViewerDataFragment[] | null = commentWithChildren?.children || null;
 
   const responsiveLayout = useBreakpointValue<'mobile' | 'desktop'>({
     base: 'mobile',
@@ -124,6 +106,30 @@ export const CommentViewer: React.FC<CommentViewerProps> = ({ discussionId, comm
       });
     }
   }, []);
+
+  const simpleComment = client.readFragment<CommentViewerDataFragment>({
+    id: `Comment:${commentId}`,
+    fragmentName: `CommentViewerData`,
+    fragment: CommentViewerData,
+  });
+
+  // Should always be non null
+  if (!simpleComment) {
+    // can not just throw an error for now because it fails on logging out (when cache is cleared)
+    console.error(`Expected Comment ${commentId} to be in cache with fragment CommentViewerData`);
+    return null;
+  }
+
+  const commentWithChildren = client.readFragment<CommentWithChildrenViewerDataFragment>({
+    id: `Comment:${commentId}`,
+    fragmentName: `CommentWithChildrenViewerData`,
+    fragment: CommentWithChildrenViewerData,
+  });
+
+  const comment: CommentViewerDataFragment = commentWithChildren || simpleComment; // The reason to do that is that we only query a DiscussionData fragment, so only that is reactive.
+  // However we want to react on the 'children' property changes. Reading such fragments therefore work
+
+  const commentChildren: CommentViewerDataFragment[] | null = commentWithChildren?.children || null;
 
   if (!comment.postedBy) {
     console.error(`No postedBy for comment ${comment._id} - should never happen`);
@@ -153,7 +159,7 @@ export const CommentViewer: React.FC<CommentViewerProps> = ({ discussionId, comm
               {format(comment.postedAt, 'en_US')}
             </Text>
           </Stack>
-          {!mode && !!currentUser && comment.postedBy._id === currentUser._id && (
+          {!mode && !!currentUser && (comment.postedBy._id === currentUser._id || currentUser.role === UserRole.Admin) && (
             <Tooltip label="Edit comment">
               <IconButton
                 variant="ghost"
