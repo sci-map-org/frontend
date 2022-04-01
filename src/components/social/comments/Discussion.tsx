@@ -77,6 +77,7 @@ export const Discussion: React.FC<DiscussionProps> = ({
             Your Message
           </Heading>
           <CommentInput
+            draftLocalStorageKey={discussionId}
             post={async (content) => {
               await postCommentMutation({
                 variables: {

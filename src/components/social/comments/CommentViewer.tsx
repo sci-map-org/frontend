@@ -174,6 +174,7 @@ export const CommentViewer: React.FC<CommentViewerProps> = ({ discussionId, comm
         {mode === 'edit' ? (
           <Flex direction="column" alignItems="stretch" pt={2} px={2}>
             <CommentInput
+              draftLocalStorageKey={`${discussionId}_${comment._id}_edit`}
               initialValue={comment.contentMarkdown}
               postButtonText="Save changes"
               post={async (content) => {
@@ -204,6 +205,7 @@ export const CommentViewer: React.FC<CommentViewerProps> = ({ discussionId, comm
             {mode === 'reply' ? (
               <Flex direction="column" alignItems="stretch" pt={2} px={2}>
                 <CommentInput
+                  draftLocalStorageKey={`${discussionId}_${comment._id}_reply`}
                   placeholder="Write your reply..."
                   post={async (content) => {
                     await postCommentMutation({
