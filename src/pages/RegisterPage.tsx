@@ -3,6 +3,8 @@ import Router from 'next/router';
 import { RegisterForm } from '../components/auth/RegisterForm';
 import { RoleAccess } from '../components/auth/RoleAccess';
 import { PageLayout } from '../components/layout/PageLayout';
+import { PageLink } from '../components/navigation/InternalLink';
+import { LoginPageInfo } from './RoutesPageInfos';
 
 export const RegisterPage: React.FC = () => {
   return (
@@ -13,10 +15,7 @@ export const RegisterPage: React.FC = () => {
           <Divider my={4}></Divider>
           <Box textAlign="center">
             <Text fontSize="l">
-              Already have an account ?{' '}
-              <Link color="blue.400" onClick={() => Router.push('/login')}>
-                Login
-              </Link>
+              Already have an account ? <PageLink pageInfo={LoginPageInfo}>Login</PageLink>
             </Text>
           </Box>
         </Box>

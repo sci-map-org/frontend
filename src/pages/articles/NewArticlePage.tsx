@@ -1,14 +1,10 @@
 import { Box, Button, Input, Text } from '@chakra-ui/react';
 import { NextPage } from 'next';
-import dynamic from 'next/dynamic';
 import Router from 'next/router';
 import React from 'react';
-
+import { MarkdownInput } from '../../components/lib/inputs/MarkdownInput';
 import { useCreateArticle } from '../../graphql/articles/articles.hooks';
 import { ArticleContentType } from '../../graphql/types';
-import NoSSR from 'react-no-ssr';
-
-const SimpleMDE = dynamic(() => import('react-simplemde-editor'));
 
 export const NewArticlePage: NextPage = () => {
   const [title, setTitle] = React.useState('');
@@ -30,9 +26,7 @@ export const NewArticlePage: NextPage = () => {
           onChange={(e) => setTitle(e.target.value)}
         ></Input>
         <Box py={8} width="100%">
-          <NoSSR>
-            <SimpleMDE key="new_article_mde" id="1fdfre" onChange={(e) => setContent(e)} value={content} />
-          </NoSSR>
+          <MarkdownInput content={content} setContent={setContent} />
         </Box>
         <Box>
           <Button

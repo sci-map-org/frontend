@@ -145,7 +145,7 @@ const BasicPageHeader: React.FC<BasicPageHeaderProps> = ({
       {(breadCrumbsLinks || renderTopRight || renderTopLeft) && (
         <Flex direction="row" justifyContent="space-between" pb="8px" pl={6} pr={6}>
           <Flex direction="column">
-            {breadCrumbsLinks && breadCrumbsLinks.length && (
+            {!!breadCrumbsLinks && !!breadCrumbsLinks.length && (
               <Skeleton isLoaded={!isLoading}>
                 <NavigationBreadcrumbs links={breadCrumbsLinks} />
               </Skeleton>

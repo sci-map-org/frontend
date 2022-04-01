@@ -129,9 +129,10 @@ export const UserDisplayNameStyleProps: Pick<TextProps, 'color' | 'fontWeight'> 
   fontWeight: 500,
 };
 
-export const UserKeyLinkStyleProps: Pick<LinkProps, 'color' | 'fontWeight'> = {
+export const UserKeyLinkStyleProps: Pick<LinkProps, 'color' | 'fontWeight' | '_focus'> = {
   color: 'blue.600',
   fontWeight: 600,
+  _focus: {},
 };
 
 // e.g. Recommended By, Shared By, Created By...

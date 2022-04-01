@@ -80,6 +80,32 @@ export type CheckTopicKeyAvailabilityResult = {
   existingTopic?: Maybe<Topic>;
 };
 
+export type Comment = {
+  __typename?: 'Comment';
+  _id: Scalars['String'];
+  children?: Maybe<Array<Comment>>;
+  childrenCount?: Maybe<Scalars['Int']>;
+  contentMarkdown: Scalars['String'];
+  discussionId: Scalars['String'];
+  lastUpdatedAt: Scalars['String'];
+  parent?: Maybe<Comment>;
+  parentId?: Maybe<Scalars['String']>;
+  postedAt: Scalars['String'];
+  postedBy?: Maybe<User>;
+  postedByUserId: Scalars['String'];
+};
+
+export type CommentOptions = {
+  pagination: PaginationOptions;
+};
+
+export type CommentResults = {
+  __typename?: 'CommentResults';
+  items: Array<Comment>;
+  rootCommentsTotalCount: Scalars['Int'];
+  totalCount: Scalars['Int'];
+};
+
 export type ComplementaryResourceUpdatedResult = {
   __typename?: 'ComplementaryResourceUpdatedResult';
   learningPath: LearningPath;
@@ -266,6 +292,16 @@ export type DiscourseSso = {
   sso: Scalars['String'];
 };
 
+export enum DiscussionLocation {
+  LearningMaterialPage = 'LEARNING_MATERIAL_PAGE',
+  ManageTopicPage = 'MANAGE_TOPIC_PAGE',
+  TopicPage = 'TOPIC_PAGE'
+}
+
+export type EditCommentPayload = {
+  contentMarkdown: Scalars['String'];
+};
+
 export type GetHomePageDataResults = {
   __typename?: 'GetHomePageDataResults';
   currentUser?: Maybe<CurrentUser>;
@@ -415,6 +451,7 @@ export enum LearningGoalType {
 
 export type LearningMaterial = {
   _id: Scalars['String'];
+  comments?: Maybe<CommentResults>;
   coveredSubTopics?: Maybe<LearningMaterialCoveredSubTopicsResults>;
   coveredSubTopicsTree?: Maybe<Array<Topic>>;
   createdAt: Scalars['Date'];
@@ -428,6 +465,11 @@ export type LearningMaterial = {
   recommendedBy?: Maybe<Array<UserRecommendedLearningMaterial>>;
   showedIn?: Maybe<Array<Topic>>;
   tags?: Maybe<Array<LearningMaterialTag>>;
+};
+
+
+export type LearningMaterialCommentsArgs = {
+  options: CommentOptions;
 };
 
 
@@ -490,6 +532,7 @@ export enum LearningMaterialType {
 export type LearningPath = LearningMaterial & {
   __typename?: 'LearningPath';
   _id: Scalars['String'];
+  comments?: Maybe<CommentResults>;
   complementaryResources?: Maybe<Array<Resource>>;
   coveredSubTopics?: Maybe<LearningMaterialCoveredSubTopicsResults>;
   coveredSubTopicsTree?: Maybe<Array<Topic>>;
@@ -510,6 +553,11 @@ export type LearningPath = LearningMaterial & {
   started?: Maybe<LearningPathStarted>;
   startedBy?: Maybe<LearningPathStartedByResults>;
   tags?: Maybe<Array<LearningMaterialTag>>;
+};
+
+
+export type LearningPathCommentsArgs = {
+  options: CommentOptions;
 };
 
 
@@ -632,11 +680,13 @@ export type Mutation = {
   detachTopicIsPartOfTopic: DetachTopicIsPartOfTopicResult;
   detachTopicIsSubTopicOfTopic: DetachTopicIsSubTopicOfTopicResult;
   downvoteLearningMaterial: LearningMaterial;
+  editComment: Comment;
   hideLearningGoalFromTopic: ShowLearningGoalInTopicResult;
   hideLearningMaterialFromTopic: LearningMaterial;
   indexLearningGoal: LearningGoalIndexedResult;
   login: LoginResponse;
   loginGoogle: LoginResponse;
+  postComment: Comment;
   publishLearningGoal: LearningGoalPublishedResult;
   rateLearningGoal: LearningGoal;
   rateLearningMaterial: LearningMaterial;
@@ -869,6 +919,12 @@ export type MutationDownvoteLearningMaterialArgs = {
 };
 
 
+export type MutationEditCommentArgs = {
+  commentId: Scalars['String'];
+  payload: EditCommentPayload;
+};
+
+
 export type MutationHideLearningGoalFromTopicArgs = {
   learningGoalId: Scalars['String'];
   topicId: Scalars['String'];
@@ -896,6 +952,11 @@ export type MutationLoginArgs = {
 export type MutationLoginGoogleArgs = {
   discourseSSO?: InputMaybe<DiscourseSso>;
   idToken: Scalars['String'];
+};
+
+
+export type MutationPostCommentArgs = {
+  payload: PostCommentPayload;
 };
 
 
@@ -1079,6 +1140,12 @@ export type PaginationOptions = {
   offset?: InputMaybe<Scalars['Int']>;
 };
 
+export type PostCommentPayload = {
+  contentMarkdown: Scalars['String'];
+  discussionId: Scalars['String'];
+  parentId?: InputMaybe<Scalars['String']>;
+};
+
 export type PullDescriptionsQueryOptions = {
   aliases?: InputMaybe<Array<Scalars['String']>>;
   contextName?: InputMaybe<Scalars['String']>;
@@ -1107,6 +1174,7 @@ export type Query = {
   checkTopicKeyAvailability: CheckTopicKeyAvailabilityResult;
   currentUser?: Maybe<CurrentUser>;
   getArticleByKey: Article;
+  getCommentById: Comment;
   getHomePageData: GetHomePageDataResults;
   getLearningGoalByKey: LearningGoal;
   getLearningPathById: LearningPath;
@@ -1154,6 +1222,11 @@ export type QueryCheckTopicKeyAvailabilityArgs = {
 
 export type QueryGetArticleByKeyArgs = {
   key: Scalars['String'];
+};
+
+
+export type QueryGetCommentByIdArgs = {
+  commentId: Scalars['String'];
 };
 
 
@@ -1301,6 +1374,7 @@ export type ResetPasswordResponse = {
 export type Resource = LearningMaterial & {
   __typename?: 'Resource';
   _id: Scalars['String'];
+  comments?: Maybe<CommentResults>;
   consumed?: Maybe<ConsumedResource>;
   coveredSubTopics?: Maybe<LearningMaterialCoveredSubTopicsResults>;
   coveredSubTopicsTree?: Maybe<Array<Topic>>;
@@ -1325,6 +1399,11 @@ export type Resource = LearningMaterial & {
   tags?: Maybe<Array<LearningMaterialTag>>;
   types: Array<ResourceType>;
   url: Scalars['String'];
+};
+
+
+export type ResourceCommentsArgs = {
+  options: CommentOptions;
 };
 
 
@@ -1488,6 +1567,7 @@ export type Topic = {
   __typename?: 'Topic';
   _id: Scalars['String'];
   aliases?: Maybe<Array<Scalars['String']>>;
+  comments?: Maybe<CommentResults>;
   context?: Maybe<Scalars['String']>;
   contextTopic?: Maybe<Topic>;
   contextualisedTopics?: Maybe<Array<Topic>>;
@@ -1503,6 +1583,7 @@ export type Topic = {
   learningMaterialsAvailableTypeFilters?: Maybe<TopicLearningMaterialsAvailableTypeFilters>;
   learningMaterialsTotalCount?: Maybe<Scalars['Int']>;
   level?: Maybe<Scalars['Float']>;
+  managePageComments?: Maybe<CommentResults>;
   name: Scalars['String'];
   otherContextsTopics?: Maybe<Array<Topic>>;
   parentTopic?: Maybe<Topic>;
@@ -1515,8 +1596,18 @@ export type Topic = {
 };
 
 
+export type TopicCommentsArgs = {
+  options: CommentOptions;
+};
+
+
 export type TopicLearningMaterialsArgs = {
   options: TopicLearningMaterialsOptions;
+};
+
+
+export type TopicManagePageCommentsArgs = {
+  options: CommentOptions;
 };
 
 export type TopicHasPrerequisiteTopic = {

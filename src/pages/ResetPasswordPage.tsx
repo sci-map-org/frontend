@@ -10,9 +10,9 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { PageLayout } from '../components/layout/PageLayout';
 import { PasswordInput } from '../components/lib/inputs/PasswordInput';
-import { LoginPageInfo } from './LoginPage';
 import { routerPushToPage } from './PageInfo';
 import { useResetPasswordMutation, useTriggerResetPasswordMutation } from './ResetPasswordPage.generated';
+import { LoginPageInfo } from './RoutesPageInfos';
 
 export const ResetPasswordPage: React.FC<{}> = () => {
   const router = useRouter();

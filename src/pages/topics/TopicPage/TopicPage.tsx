@@ -12,6 +12,7 @@ import { TopicLink } from '../../../components/lib/links/TopicLink';
 import { PageTitle } from '../../../components/lib/Typography';
 import { PageButtonLink } from '../../../components/navigation/InternalLink';
 import { NewResourceModal } from '../../../components/resources/NewResource';
+import { Discussion, DiscussionData } from '../../../components/social/comments/Discussion';
 import { AlsoPartOfTopicsViewer } from '../../../components/topics/AlsoPartOfTopicsViewer';
 import { EditablePartOfTopicsData } from '../../../components/topics/EditablePartOfTopics';
 import { TopicDescription } from '../../../components/topics/fields/TopicDescription';
@@ -24,7 +25,7 @@ import { MapVisualisationTopicData } from '../../../components/topics/SubTopicsM
 import { SubTopicsMinimap } from '../../../components/topics/SubTopicsMinimap';
 import { TopicSubHeader, TopicSubHeaderData } from '../../../components/topics/TopicSubHeader';
 import { generateTopicData, TopicLinkData } from '../../../graphql/topics/topics.fragments';
-import { TopicLearningMaterialsSortingType } from '../../../graphql/types';
+import { DiscussionLocation, TopicLearningMaterialsSortingType } from '../../../graphql/types';
 import { useCurrentUser } from '../../../graphql/users/users.hooks';
 import { routerPushToPage } from '../../PageInfo';
 import { NewLearningPathPageInfo, ResourcePageInfo } from '../../RoutesPageInfos';
@@ -58,6 +59,9 @@ export const getTopicByKeyTopicPage = gql`
       ...TopicSubHeaderData
       ...EditablePartOfTopicsData
       ...SeeAlsoData
+      comments(options: { pagination: {} }) {
+        ...DiscussionData
+      }
     }
   }
   ${MapVisualisationTopicData}
@@ -66,6 +70,7 @@ export const getTopicByKeyTopicPage = gql`
   ${TopicSubHeaderData}
   ${EditablePartOfTopicsData}
   ${SeeAlsoData}
+  ${DiscussionData}
 `;
 
 const placeholderTopicData: GetTopicByKeyTopicPageQuery['getTopicByKey'] = {
@@ -286,6 +291,15 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
           <SeeAlso topic={topic} />
           {/* <BestXPagesLinks topicKey={topic.key} /> TODO - fix*/}
         </Stack>
+      </Flex>
+      <Flex direction="column" alignItems="stretch" pt={20}>
+        <Discussion
+          discussionLocation={DiscussionLocation.TopicPage}
+          discussionEntityId={topic._id}
+          commentResults={topic.comments || undefined}
+          refetch={() => refetch()}
+          isLoading={loading}
+        />
       </Flex>
     </TopicPageLayout>
   );

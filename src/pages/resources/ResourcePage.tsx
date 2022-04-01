@@ -44,11 +44,12 @@ import { ResourceMiniCardDataFragment } from '../../components/resources/Resourc
 import { SquareResourceCardData } from '../../components/resources/SquareResourceCard';
 import { SubResourceSeriesManager } from '../../components/resources/SubResourceSeriesManager';
 import { ResourceSubResourcesManager } from '../../components/resources/SubResourcesManager';
+import { Discussion, DiscussionData } from '../../components/social/comments/Discussion';
 import { UserAvatar, UserAvatarData } from '../../components/users/UserAvatar';
 import { LearningMaterialWithCoveredTopicsData } from '../../graphql/learning_materials/learning_materials.fragments';
 import { generateResourceData, ResourceData, ResourceLinkData } from '../../graphql/resources/resources.fragments';
 import { useDeleteResourceMutation } from '../../graphql/resources/resources.operations.generated';
-import { ResourceType, UserRole } from '../../graphql/types';
+import { DiscussionLocation, ResourceType, UserRole } from '../../graphql/types';
 import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { getChakraRelativeSize } from '../../util/chakra.util';
 import { NotFoundPage } from '../NotFoundPage';
@@ -86,6 +87,9 @@ export const getResourceResourcePage = gql`
       ...EditableLearningMaterialPrerequisitesData
       ...LearningMaterialStarsRaterData
       ...LearningMaterialRecommendationsViewerData
+      comments(options: { pagination: {} }) {
+        ...DiscussionData
+      }
     }
   }
   ${SquareResourceCardData}
@@ -96,6 +100,7 @@ export const getResourceResourcePage = gql`
   ${LearningMaterialWithCoveredTopicsData}
   ${LearningMaterialRecommendationsViewerData}
   ${ResourceMiniCardData}
+  ${DiscussionData}
 `;
 
 // TODO
@@ -106,8 +111,10 @@ const resourceDataPlaceholder: GetResourceResourcePageQuery['getResourceByKey'] 
 const headerHeight = '160px';
 const columnsWidth = '210px';
 export const ResourcePage: React.FC<{ resourceKey: string }> = ({ resourceKey }) => {
-  const { data, loading, error } = useGetResourceResourcePageQuery({ variables: { resourceKey } });
+  const { data, loading, refetch } = useGetResourceResourcePageQuery({ variables: { resourceKey } });
+
   const layout: 'mobile' | 'desktop' = useBreakpointValue({ base: 'mobile', lg: 'desktop' }) || 'desktop';
+
   const resource = data?.getResourceByKey || resourceDataPlaceholder;
   const { currentUser } = useCurrentUser();
   if (!data && !loading) return <NotFoundPage />;
@@ -156,8 +163,8 @@ export const ResourcePage: React.FC<{ resourceKey: string }> = ({ resourceKey })
           <MainContentBlock resource={resource} isLoading={loading} mt={3} />
           {layout === 'mobile' && (
             <Center>
-              <Box maxW="80%">
-                <PartOfSeriesBlock resource={resource} isLoading={loading} />
+              <Box py={4} maxW={{ base: '280px', sm: '400px', md: '600px' }}>
+                <PartOfSeriesBlock resource={resource} isLoading={loading} size="sm" />
               </Box>
             </Center>
           )}
@@ -238,6 +245,15 @@ export const ResourcePage: React.FC<{ resourceKey: string }> = ({ resourceKey })
             </Center>
           )}
         </Flex>
+      </Flex>
+      <Flex px={layout === 'desktop' ? columnsWidth : 4} direction="column" alignItems="stretch" mt={10}>
+        <Discussion
+          discussionLocation={DiscussionLocation.LearningMaterialPage}
+          discussionEntityId={resource._id}
+          commentResults={resource.comments || undefined}
+          refetch={() => refetch()}
+          isLoading={loading}
+        />
       </Flex>
     </PageLayout>
   );
@@ -386,7 +402,8 @@ const MainContentBlock: React.FC<
 const PartOfSeriesBlock: React.FC<{
   resource: GetResourceResourcePageQuery['getResourceByKey'];
   isLoading: boolean;
-}> = ({ resource, isLoading }) => {
+  size?: 'sm' | 'md';
+}> = ({ resource, isLoading, size = 'md' }) => {
   const element = (type: 'Part Of' | 'Previous' | 'Next', resources: ResourceMiniCardDataFragment[]) => (
     <Flex direction="column" overflow="hidden">
       <Stack direction="row" alignItems="center" spacing={1}>
@@ -402,7 +419,7 @@ const PartOfSeriesBlock: React.FC<{
           color="gray.600"
         />
 
-        <Text fontWeight={600} color="gray.500" fontSize="16px">
+        <Text fontWeight={600} color="gray.500">
           {type}
         </Text>
       </Stack>

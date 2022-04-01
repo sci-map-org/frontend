@@ -190,6 +190,23 @@ export const LearningPathPageInfo = (learningPath: Pick<LearningPathDataFragment
   routePath: LearningPathPagePath(),
 });
 
+//====Auth====
+export const RegisterPagePath = '/register';
+
+export const RegisterPageInfo: PageInfo = {
+  name: 'Register',
+  path: RegisterPagePath,
+  routePath: RegisterPagePath,
+};
+
+export const LoginPagePath = '/login';
+
+export const LoginPageInfo: PageInfo = {
+  name: 'Login',
+  path: LoginPagePath,
+  routePath: LoginPagePath,
+};
+
 //====User Profile====
 export const UserProfilePagePath = (userKey: string) => `/profile/${userKey}`;
 
