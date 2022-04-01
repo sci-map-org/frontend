@@ -121,7 +121,7 @@ export const getTopicByKeyManageTopicPage = gql`
       createdBy {
         ...UserAvatarData
       }
-      comments(options: { pagination: {} }) {
+      managePageComments(options: { pagination: {} }) {
         ...DiscussionData
       }
     }
@@ -528,7 +528,7 @@ export const ManageTopic: React.FC<{
         <Discussion
           discussionLocation={DiscussionLocation.ManageTopicPage}
           discussionEntityId={topic._id}
-          commentResults={topic.comments || undefined}
+          commentResults={topic.managePageComments || undefined}
           refetch={() => refetch()}
           isLoading={!!isLoading}
         />
