@@ -1,4 +1,4 @@
-import { Flex, Spinner, Stack, Text } from '@chakra-ui/react';
+import { Flex, Spinner, Stack, StackProps, Text } from '@chakra-ui/react';
 import { PropsWithChildren, ReactNode } from 'react';
 
 interface LearningMaterialPreviewCardListProps<T extends object> {
@@ -6,6 +6,7 @@ interface LearningMaterialPreviewCardListProps<T extends object> {
   isLoading?: boolean;
   renderCard: (cardItem: T, idx: number) => ReactNode;
   maxH?: string;
+  spacing?: StackProps['spacing'];
   noItemsMessage?: string;
   loadingMessage?: string;
 }
@@ -13,6 +14,7 @@ interface LearningMaterialPreviewCardListProps<T extends object> {
 export const LearningMaterialPreviewCardList = <T extends object>({
   learningMaterialsPreviewItems,
   renderCard,
+  spacing = 0,
   maxH,
   isLoading,
   loadingMessage,
@@ -57,7 +59,7 @@ export const LearningMaterialPreviewCardList = <T extends object>({
           {!!loadingMessage && <Text fontStyle="italic">{loadingMessage}</Text>}
         </Flex>
       ) : (
-        <Stack spacing={5}>{learningMaterialsPreviewItems.map((item, idx) => renderCard(item, idx))}</Stack>
+        <Stack spacing={spacing}>{learningMaterialsPreviewItems.map((item, idx) => renderCard(item, idx))}</Stack>
       )}
     </Flex>
   );

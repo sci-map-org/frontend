@@ -389,6 +389,7 @@ export const TopicPageLearningMaterialsFeed: React.FC<TopicPageLearningMaterials
               learningMaterialsPreviewItems={learningMaterials.map((learningMaterial) => ({ learningMaterial }))}
               isLoading={initialLoading}
               loadingMessage="Finding the most adapted learning resources..."
+              spacing={5}
               renderCard={({ learningMaterial }, idx) => {
                 if (learningMaterial.__typename === 'Resource')
                   return (
