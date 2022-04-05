@@ -244,7 +244,7 @@ const LearningPathResourceItem: React.FC<LearningPathResourceItemProps> = ({
             p={1}
           >
             <Box>
-              <DragHandleIcon size="lg" _hover={{ cursor: 'move' }} />
+              <DragHandleIcon boxSize={4} _hover={{ cursor: 'move' }} />
             </Box>
             {confirmRemove ? (
               <DeleteButtonWithConfirmation

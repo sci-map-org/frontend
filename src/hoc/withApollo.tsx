@@ -90,7 +90,7 @@ export function withApollo(AppComponent: typeof NextApp) {
 
     // getDataFromTree does not call componentWillUnmount
     // head side effect therefore need to be cleared manually
-    Head.rewind();
+    // Head.rewind(); //removed because of Next v11
 
     // Extract query data from the Apollo store
     const apolloState = apolloClient.cache.extract();

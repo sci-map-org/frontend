@@ -109,7 +109,7 @@ export const Header: React.FC = () => {
       >
         <PopoverArrow zIndex={5} />
         <PopoverBody pt={1}>
-          <Flex direction="column" alignItems="stretch" spacing={0}>
+          <Flex direction="column" alignItems="stretch">
             {!!currentUser.startedLearningPaths && !!currentUser.startedLearningPaths.length && (
               <>
                 <Stack>
