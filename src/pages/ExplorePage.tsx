@@ -3,11 +3,11 @@ import { useBreakpointValue } from '@chakra-ui/media-query';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { PageLayout } from '../components/layout/PageLayout';
-import { ExploreMapProps, rootTopic } from '../components/topics/ExploreMap';
+import { ExploreMapProps, rootTopic } from '../components/topics/map/ExploreMap';
 
 const ExploreMap = dynamic<ExploreMapProps>(
   () =>
-    import('../components/topics/ExploreMap').then((res) => {
+    import('../components/topics/map/ExploreMap').then((res) => {
       const { ExploreMap } = res;
       return ExploreMap;
     }),

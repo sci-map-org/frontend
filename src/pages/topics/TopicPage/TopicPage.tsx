@@ -21,8 +21,8 @@ import {
   ParentTopicsBreadcrumbs,
   ParentTopicsBreadcrumbsData,
 } from '../../../components/topics/ParentTopicsBreadcrumbs';
-import { MapVisualisationTopicData } from '../../../components/topics/SubTopicsMapVisualisation';
-import { SubTopicsMinimap } from '../../../components/topics/SubTopicsMinimap';
+import { MapTopicData } from '../../../components/topics/map/Map';
+import { Minimap } from '../../../components/topics/map/Minimap';
 import { TopicSubHeader, TopicSubHeaderData } from '../../../components/topics/TopicSubHeader';
 import { generateTopicData, TopicLinkData } from '../../../graphql/topics/topics.fragments';
 import { DiscussionLocation, TopicLearningMaterialsSortingType } from '../../../graphql/types';
@@ -46,10 +46,10 @@ export const getTopicByKeyTopicPage = gql`
       description
       wikipediaPageUrl
       isDisambiguation
-      ...MapVisualisationTopicData
+      ...MapTopicData
       subTopics {
         subTopic {
-          ...MapVisualisationTopicData
+          ...MapTopicData
         }
       }
       contextualisedTopics {
@@ -64,7 +64,7 @@ export const getTopicByKeyTopicPage = gql`
       }
     }
   }
-  ${MapVisualisationTopicData}
+  ${MapTopicData}
   ${TopicLinkData}
   ${ParentTopicsBreadcrumbsData}
   ${TopicSubHeaderData}
@@ -197,7 +197,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
         </Flex>
       }
       renderMinimap={(pxWidth, pxHeight) => (
-        <SubTopicsMinimap
+        <Minimap
           topic={topic}
           isLoading={!!loading}
           subTopics={(topic.subTopics || []).map(({ subTopic }) => subTopic)}

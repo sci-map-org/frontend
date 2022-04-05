@@ -6,35 +6,32 @@ import gql from 'graphql-tag';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { PuffLoader } from 'react-spinners';
-import { RoleAccess } from '../../components/auth/RoleAccess';
-import { LearningMaterialCountIcon } from '../../components/learning_materials/LearningMaterialCountIcon';
-import { TopicLink } from '../../components/lib/links/TopicLink';
-import { SubTopicsCountIcon } from '../../components/topics/SubTopicsCountIcon';
-import {
-  MapVisualisationTopicData,
-  SubTopicsMapVisualisation,
-} from '../../components/topics/SubTopicsMapVisualisation';
-import { MapVisualisationTopicDataFragment } from '../../components/topics/SubTopicsMapVisualisation.generated';
-import { TopicDescription } from './fields/TopicDescription';
-import { TopicLinkData } from '../../graphql/topics/topics.fragments';
-import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
-import { theme } from '../../theme/theme';
+import { RoleAccess } from '../../auth/RoleAccess';
+import { LearningMaterialCountIcon } from '../../learning_materials/LearningMaterialCountIcon';
+import { TopicLink } from '../../lib/links/TopicLink';
+import { SubTopicsCountIcon } from '../SubTopicsCountIcon';
+import { MapTopicData, Map } from './Map';
+import { MapTopicDataFragment } from './Map.generated';
+import { TopicDescription } from '../fields/TopicDescription';
+import { TopicLinkData } from '../../../graphql/topics/topics.fragments';
+import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
+import { theme } from '../../../theme/theme';
 import {
   GetTopicByIdExplorePageQuery,
   useGetTopicByIdExplorePageLazyQuery,
   useGetTopLevelTopicsLazyQuery,
 } from './ExploreMap.generated';
-import { NewTopicModal } from './NewTopic';
+import { NewTopicModal } from '../NewTopic';
 
 export const getTopicByIdExplorePage = gql`
   query getTopicByIdExplorePage($topicId: String!) {
     getTopicById(topicId: $topicId) {
-      ...MapVisualisationTopicData
+      ...MapTopicData
       description
       learningMaterialsTotalCount
       subTopics {
         subTopic {
-          ...MapVisualisationTopicData
+          ...MapTopicData
         }
       }
       parentTopic {
@@ -42,7 +39,7 @@ export const getTopicByIdExplorePage = gql`
       }
     }
   }
-  ${MapVisualisationTopicData}
+  ${MapTopicData}
   ${TopicLinkData}
 `;
 
@@ -50,14 +47,14 @@ export const getTopLevelTopics = gql`
   query getTopLevelTopics {
     getTopLevelTopics {
       items {
-        ...MapVisualisationTopicData
+        ...MapTopicData
       }
     }
   }
-  ${MapVisualisationTopicData}
+  ${MapTopicData}
 `;
 
-export const rootTopic: MapVisualisationTopicDataFragment = {
+export const rootTopic: MapTopicDataFragment = {
   __typename: 'Topic',
   _id: 'root',
   key: 'root',
@@ -88,7 +85,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
 
   const [loadedTopic, setLoadedTopic] = useState<GetTopicByIdExplorePageQuery['getTopicById']>();
 
-  const [subTopics, setSubtopics] = useState<MapVisualisationTopicDataFragment[]>();
+  const [subTopics, setSubtopics] = useState<MapTopicDataFragment[]>();
   const [parentTopic, setParentTopic] = useState<TopicLinkDataFragment>();
 
   const [getTopLevelDomainsLazyQuery, { loading: isTopLevelQueryLoading }] = useGetTopLevelTopicsLazyQuery({
@@ -181,7 +178,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
                 <PuffLoader size={Math.floor(mapPxWidth / 3)} color={theme.colors.blue[500]} />
               </Center>
             ) : (
-              <SubTopicsMapVisualisation
+              <Map
                 subTopics={subTopics}
                 parentTopic={parentTopic}
                 pxWidth={mapPxWidth}

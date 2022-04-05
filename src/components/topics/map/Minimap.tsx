@@ -6,33 +6,33 @@ import { CgArrowsExpandRight } from '@react-icons/all-files/cg/CgArrowsExpandRig
 import dynamic from 'next/dynamic';
 import { useRef } from 'react';
 import { PuffLoader } from 'react-spinners';
-import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
-import { routerPushToPage } from '../../pages/PageInfo';
-import { TopicPageInfo } from '../../pages/RoutesPageInfos';
-import { theme } from '../../theme/theme';
-import { useElementSize } from '../../util/useElementSize';
-import { SubTopicsMapVisualisationProps } from './SubTopicsMapVisualisation';
-import { MapVisualisationTopicDataFragment } from './SubTopicsMapVisualisation.generated';
+import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
+import { routerPushToPage } from '../../../pages/PageInfo';
+import { TopicPageInfo } from '../../../pages/RoutesPageInfos';
+import { theme } from '../../../theme/theme';
+import { useElementSize } from '../../../util/useElementSize';
+import { MapProps } from './Map';
+import { MapTopicDataFragment } from './Map.generated';
 
-const SubTopicsMapVisualisation = dynamic<SubTopicsMapVisualisationProps>(
+const Map = dynamic<MapProps>(
   () =>
-    import('./SubTopicsMapVisualisation').then((res) => {
-      const { SubTopicsMapVisualisation } = res;
-      return SubTopicsMapVisualisation;
+    import('./Map').then((res) => {
+      const { Map } = res;
+      return Map;
     }),
   { ssr: false }
 );
 
-interface SubTopicsMinimapProps {
+interface MinimapProps {
   isLoading: boolean;
-  topic: MapVisualisationTopicDataFragment;
-  subTopics: MapVisualisationTopicDataFragment[];
+  topic: MapTopicDataFragment;
+  subTopics: MapTopicDataFragment[];
   parentTopic?: TopicLinkDataFragment;
   pxWidth?: number;
   pxHeight?: number;
 }
 
-export const SubTopicsMinimap: React.FC<SubTopicsMinimapProps> = ({
+export const Minimap: React.FC<MinimapProps> = ({
   topic,
   subTopics,
   parentTopic,
@@ -59,7 +59,7 @@ export const SubTopicsMinimap: React.FC<SubTopicsMinimapProps> = ({
           <PuffLoader size={Math.floor(pxWidth / 3)} color={theme.colors.blue[500]} />
         </Center>
       ) : subTopics.length ? (
-        <SubTopicsMapVisualisation
+        <Map
           topic={topic}
           subTopics={subTopics}
           parentTopic={parentTopic}
@@ -95,11 +95,7 @@ export const SubTopicsMinimap: React.FC<SubTopicsMinimapProps> = ({
           <ModalHeader>SubTopics Map</ModalHeader>
           <ModalCloseButton />
           <ModalBody justifyContent="stretch" alignItems="stretch">
-            <SubTopicsMapModalContent
-              parentTopic={parentTopic}
-              topic={topic}
-              subTopics={subTopics}
-            />
+            <SubTopicsMapModalContent parentTopic={parentTopic} topic={topic} subTopics={subTopics} />
           </ModalBody>
         </ModalContent>
       </Modal>
@@ -108,8 +104,8 @@ export const SubTopicsMinimap: React.FC<SubTopicsMinimapProps> = ({
 };
 
 const SubTopicsMapModalContent: React.FC<{
-  subTopics: MapVisualisationTopicDataFragment[];
-  topic: MapVisualisationTopicDataFragment;
+  subTopics: MapTopicDataFragment[];
+  topic: MapTopicDataFragment;
   parentTopic?: TopicLinkDataFragment;
 }> = ({ subTopics, topic, parentTopic }) => {
   const modalContainerRef = useRef<HTMLDivElement>(null);
@@ -127,7 +123,7 @@ const SubTopicsMapModalContent: React.FC<{
       mb={5}
     >
       {modalContainerSize && (
-        <SubTopicsMapVisualisation
+        <Map
           topic={topic}
           subTopics={subTopics}
           parentTopic={parentTopic}

@@ -8,37 +8,32 @@ import * as d3Selection from 'd3-selection';
 import * as d3Zoom from 'd3-zoom';
 import gql from 'graphql-tag';
 import { useEffect, useMemo, useRef } from 'react';
-import { TopicLinkData } from '../../graphql/topics/topics.fragments';
-import { TopicLinkDataFragment } from '../../graphql/topics/topics.fragments.generated';
-import { theme } from '../../theme/theme';
-import { TopicLink } from '../lib/links/TopicLink';
-import { MapVisualisationTopicDataFragment } from './SubTopicsMapVisualisation.generated';
+import { TopicLinkData } from '../../../graphql/topics/topics.fragments';
+import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
+import { theme } from '../../../theme/theme';
+import { TopicLink } from '../../lib/links/TopicLink';
+import { MapTopicDataFragment } from './Map.generated';
 
-export const MapVisualisationTopicData = gql`
-  fragment MapVisualisationTopicData on Topic {
+export const MapTopicData = gql`
+  fragment MapTopicData on Topic {
     ...TopicLinkData
     subTopicsTotalCount
   }
   ${TopicLinkData}
 `;
 
-type NodeElement = SimulationNodeDatum & MapVisualisationTopicDataFragment & { size?: number };
-export interface SubTopicsMapVisualisationProps {
-  topic?: MapVisualisationTopicDataFragment; //only used to force rerendering
-  subTopics: MapVisualisationTopicDataFragment[];
+type NodeElement = SimulationNodeDatum & MapTopicDataFragment & { size?: number };
+
+export interface MapProps {
+  topic?: MapTopicDataFragment; //only used to force rerendering
+  subTopics: MapTopicDataFragment[];
   parentTopic?: TopicLinkDataFragment;
   pxWidth: number;
   pxHeight: number;
   onClick: (node: NodeElement) => void;
 }
-export const SubTopicsMapVisualisation: React.FC<SubTopicsMapVisualisationProps> = ({
-  topic,
-  subTopics,
-  parentTopic,
-  pxWidth,
-  pxHeight,
-  onClick,
-}) => {
+
+export const Map: React.FC<MapProps> = ({ topic, subTopics, parentTopic, pxWidth, pxHeight, onClick }) => {
   const d3Container = useRef<SVGSVGElement>(null);
   const nodes: NodeElement[] = useMemo(
     () =>

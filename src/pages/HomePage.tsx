@@ -19,7 +19,7 @@ import { Accordeon } from '../components/lib/Accordeon';
 import { InternalButtonLink } from '../components/navigation/InternalLink';
 import { GlobalSearchBox } from '../components/navigation/search/GlobalSearchBox';
 import { ResourceMiniCardData } from '../components/resources/ResourceMiniCard';
-import { ExploreMapProps } from '../components/topics/ExploreMap';
+import { ExploreMapProps } from '../components/topics/map/ExploreMap';
 import { useCurrentUser } from '../graphql/users/users.hooks';
 import { HomeLearningPathsRecommendations } from './home/HomeLearningPathsRecommendations';
 import { HomeTopicsRecommendations } from './home/HomeTopicsRecommendations';
