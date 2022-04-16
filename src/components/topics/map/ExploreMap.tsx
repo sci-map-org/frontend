@@ -22,6 +22,7 @@ import {
   useGetTopLevelTopicsLazyQuery,
 } from './ExploreMap.generated';
 import { NewTopicModal } from '../NewTopic';
+import { MapType } from './MapHeader';
 
 export const getTopicByIdExplorePage = gql`
   query getTopicByIdExplorePage($topicId: String!) {
@@ -179,6 +180,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
               </Center>
             ) : (
               <Map
+                mapType={MapType.SUBTOPICS}
                 subTopics={subTopics}
                 parentTopic={parentTopic}
                 pxWidth={mapPxWidth}
