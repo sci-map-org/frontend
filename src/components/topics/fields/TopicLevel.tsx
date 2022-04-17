@@ -23,7 +23,7 @@ export enum TopicLevelValue {
   Expert = 'expert',
 }
 
-const topicLevelColorMap = interpolate([
+export const topicLevelColorMap = interpolate([
   theme.colors.green[400],
   theme.colors.yellow[400],
   theme.colors.orange[400],

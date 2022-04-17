@@ -1,20 +1,13 @@
-import { Icon } from '@chakra-ui/icons';
-import { Box, Center, Flex, Stack, Text } from '@chakra-ui/layout';
-import { BsArrowReturnLeft } from '@react-icons/all-files/bs/BsArrowReturnLeft';
-import * as d3Force from 'd3-force';
 import { SimulationNodeDatum } from 'd3-force';
-import * as d3ScaleChromatic from 'd3-scale-chromatic';
 import * as d3Selection from 'd3-selection';
-import * as d3Zoom from 'd3-zoom';
 import gql from 'graphql-tag';
-import { useEffect, useMemo, useRef } from 'react';
 import { TopicLinkData } from '../../../graphql/topics/topics.fragments';
 import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
 import { theme } from '../../../theme/theme';
-import { TopicLink } from '../../lib/links/TopicLink';
 import { MapTopicDataFragment } from './Map.generated';
 import { MapType } from './MapHeader';
 import { PrerequisiteMap } from './PrerequisiteMap';
+import { ProgressMap } from './ProgressMap';
 import { SubTopicsMap } from './SubTopicsMap';
 
 export const MapTopicData = gql`
@@ -81,5 +74,101 @@ export const Map: React.FC<MapProps> = ({
         onClick={() => console.log('click')}
       />
     );
+  if (mapType === MapType.CONCEPTS && topic)
+    return (
+      <ProgressMap
+        topic={topic}
+        subTopics={[
+          { _id: 'bla', key: 'bla', name: 'Bla 1', level: 10, prerequisites: [] },
+          { _id: 'bla2', key: 'bla2', name: 'Bla 2', level: 30, prerequisites: [{ _id: 'bla' }] },
+          { _id: 'bla3', key: 'bla3', name: 'Bla 3', level: 5, prerequisites: [] },
+          { _id: 'bla4', key: 'bla4', name: 'Bla 4', level: 30, prerequisites: [{ _id: 'bla2' }, { _id: 'bla3' }] },
+          { _id: 'bla5', key: 'bla5', name: 'Bla 5', level: 30, prerequisites: [{ _id: 'bla3' }] },
+          { _id: 'bla6', key: 'bla6', name: 'Bla 6', level: 30, prerequisites: [{ _id: 'bla2' }, { _id: 'bla4' }] },
+          { _id: 'bla7', key: 'bla7', name: 'Bla 7', level: 80, prerequisites: [] },
+          { _id: 'bla8', key: 'bla8', name: 'Bla 8', level: 50, prerequisites: [{ _id: 'bla3' }] },
+        ]}
+        pxWidth={pxWidth}
+        pxHeight={pxHeight}
+        onClick={() => console.log('click')}
+      />
+    );
   return null;
 };
+
+export type DrawMapOptions = {
+  pxWidth: number;
+  pxHeight: number;
+};
+
+export interface TopicNodeElement extends MapTopicDataFragment {
+  radius: number;
+  color: string;
+}
+export function drawTopicNode<T extends TopicNodeElement>(
+  container: d3Selection.Selection<d3Selection.BaseType | SVGGElement, boolean, SVGSVGElement, unknown>,
+  topicNodeElements: T[],
+  className: string,
+  { pxHeight, pxWidth }: DrawMapOptions
+) {
+  const topicNodes = container
+    .selectAll('.' + className)
+    .data(topicNodeElements)
+    .join('g')
+    .attr('transform', `translate(${pxWidth / 2}, ${pxHeight / 2})`)
+    .classed('node', true)
+    .classed(className, true);
+
+  topicNodes
+    .append('circle')
+    .classed('node_circle', true)
+    .attr('r', (n) => n.radius)
+    .attr('fill', (n) => n.color);
+
+  topicNodes
+    .append('text')
+    .classed('node_label', true)
+    .attr('text-anchor', 'middle')
+    .attr('dx', 0)
+    .attr('dy', (d) => {
+      return 24;
+    })
+    .attr('z-index', 10)
+    .attr('font-size', '0.8em')
+    .attr('font-weight', 500)
+    .attr('fill', theme.colors.gray[500])
+    .text(function (d) {
+      return d.name;
+    });
+  return topicNodes;
+}
+
+export function drawDependency<T>(
+  container: d3Selection.Selection<d3Selection.BaseType | SVGGElement, boolean, SVGSVGElement, unknown>,
+  dependencyElements: T[],
+  className: string,
+  { pxHeight, pxWidth }: DrawMapOptions
+) {
+  container
+    .append('defs')
+    .append('marker')
+    .attr('id', 'arrow-head')
+    .attr('refX', 10) // to make sure the arrow starts before the end of the marker
+    .attr('refY', 3.5)
+    .attr('markerWidth', 10)
+    .attr('markerHeight', 7)
+    .attr('orient', 'auto')
+    .append('polygon')
+    .attr('stroke-width', '1.5px')
+    .attr('fill', 'rgb(80, 80, 80)')
+    .attr('points', '0 0, 10 3.5, 0 7');
+
+  return container
+    .selectAll('.' + className)
+    .data(dependencyElements)
+    .join('g')
+    .classed(className, true)
+    .append('line')
+    .classed('linkLineElement', true)
+    .attr('marker-end', (d) => `url(${new URL(`#arrow-head`, window.location.href)})`);
+}
