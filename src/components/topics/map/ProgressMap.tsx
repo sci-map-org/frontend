@@ -15,6 +15,8 @@ type LinkElement = d3Force.SimulationLinkDatum<NodeElement> & {};
 
 const radiusMarginArrow = 2;
 
+const layoutMargin = 20;
+
 export const ProgressMap: React.FC<{
   topic: MapTopicDataFragment;
   subTopics: Array<MapTopicDataFragment & { prerequisites: { _id: string }[]; level?: number }>;
@@ -44,7 +46,9 @@ export const ProgressMap: React.FC<{
         id: subTopic._id,
         type: 'topic',
         radius: 12,
-        xGravityCenter: ((subTopic.level || 50) * pxWidth) / 100, // future: mix of level and rank ?
+        xGravityCenter:
+          (layoutMargin + (typeof subTopic.level === 'number' ? subTopic.level : 50) * (pxWidth - 2 * layoutMargin)) /
+          100, // future: mix of level and rank ?
         color: typeof subTopic.level === 'number' ? topicLevelColorMap(subTopic.level / 100) : 'gray',
         ...subTopic,
       })),
@@ -76,7 +80,10 @@ export const ProgressMap: React.FC<{
         });
 
         const theta = (source: NodeElement, target: NodeElement) =>
-          Math.atan((target.y! - source.y!) / (target.x! - source.x!));
+          target.x! - source.x! > 0
+            ? Math.atan((target.y! - source.y!) / (target.x! - source.x!))
+            : Math.atan((target.y! - source.y!) / (target.x! - source.x!)) + Math.PI;
+
         prerequisiteLinks
           .attr('x1', function (d) {
             const target = d.target as NodeElement;
@@ -91,7 +98,6 @@ export const ProgressMap: React.FC<{
           .attr('x2', function (d) {
             const target = d.target as NodeElement;
             const source = d.source as NodeElement;
-
             return target.x! - (target.radius + radiusMarginArrow) * Math.cos(theta(source, target));
           })
           .attr('y2', function (d) {

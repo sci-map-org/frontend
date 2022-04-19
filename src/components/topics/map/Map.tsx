@@ -79,13 +79,13 @@ export const Map: React.FC<MapProps> = ({
       <ProgressMap
         topic={topic}
         subTopics={[
-          { _id: 'bla', key: 'bla', name: 'Bla 1', level: 10, prerequisites: [] },
+          { _id: 'bla', key: 'bla', name: 'Bla 1', level: 0, prerequisites: [] },
           { _id: 'bla2', key: 'bla2', name: 'Bla 2', level: 30, prerequisites: [{ _id: 'bla' }] },
           { _id: 'bla3', key: 'bla3', name: 'Bla 3', level: 5, prerequisites: [] },
           { _id: 'bla4', key: 'bla4', name: 'Bla 4', level: 30, prerequisites: [{ _id: 'bla2' }, { _id: 'bla3' }] },
           { _id: 'bla5', key: 'bla5', name: 'Bla 5', level: 30, prerequisites: [{ _id: 'bla3' }] },
           { _id: 'bla6', key: 'bla6', name: 'Bla 6', level: 30, prerequisites: [{ _id: 'bla2' }, { _id: 'bla4' }] },
-          { _id: 'bla7', key: 'bla7', name: 'Bla 7', level: 80, prerequisites: [] },
+          { _id: 'bla7', key: 'bla7', name: 'Bla 7', level: 100, prerequisites: [] },
           { _id: 'bla8', key: 'bla8', name: 'Bla 8', level: 50, prerequisites: [{ _id: 'bla3' }] },
         ]}
         pxWidth={pxWidth}
