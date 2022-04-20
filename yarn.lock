@@ -1569,11 +1569,6 @@
   dependencies:
     "@chakra-ui/utils" "1.9.1"
 
-"@crinkles/digl@^0.5.0":
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/@crinkles/digl/-/digl-0.5.0.tgz#ecc6edc5bfa6d12c562f0c10073b4b77bf6bafe0"
-  integrity sha512-y2U3w0uBXtT9zxIQCS9X8wMF14plScsienrz8D1TjgZgXJAPMbBjmux7Xigjc7RwLPTEdDyfiTWQbJDh+VV1EA==
-
 "@ctrl/tinycolor@^3.4.0":
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/@ctrl/tinycolor/-/tinycolor-3.4.0.tgz#c3c5ae543c897caa9c2a68630bed355be5f9990f"

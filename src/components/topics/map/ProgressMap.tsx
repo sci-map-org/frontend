@@ -40,21 +40,45 @@ export const ProgressMap: React.FC<{
     return flatten(relArray);
   }, [subTopics]);
 
+  const topicNodesGravityCenters = useMemo(() => {
+    const alpha = 40;
+    const getNodeIndexFromId = (id: string): number => {
+      const index = subTopics.findIndex(({ _id }) => id === _id);
+      if (index === -1) throw new Error(`Not found node with id ${id}`);
+      return index;
+    };
+
+    let gravityCenters = subTopics.map(
+      (subTopic) =>
+        (layoutMargin + (typeof subTopic.level === 'number' ? subTopic.level : 50) * (pxWidth - 2 * layoutMargin)) / 100 // future: mix of level and rank ?)
+    );
+    for (let i = 0; i < 3; i++) {
+      prerequisiteLinkElements.forEach(({ source, target }) => {
+        const sourceIndex = getNodeIndexFromId(source as string);
+        const targetIndex = getNodeIndexFromId(target as string);
+        const targetGravityCenter = gravityCenters[targetIndex];
+        const sourceGravityCenter = gravityCenters[sourceIndex];
+        if (sourceGravityCenter + alpha >= targetGravityCenter) {
+          gravityCenters[targetIndex] = (targetGravityCenter + sourceGravityCenter + alpha) / 2;
+          gravityCenters[sourceIndex] = (targetGravityCenter + sourceGravityCenter - alpha) / 2;
+        }
+      });
+    }
+    return gravityCenters;
+  }, []);
+
   const topicNodeElements: NodeElement[] = useMemo(
     () =>
       subTopics.map((subTopic, idx) => ({
         id: subTopic._id,
         type: 'topic',
         radius: 12,
-        xGravityCenter:
-          (layoutMargin + (typeof subTopic.level === 'number' ? subTopic.level : 50) * (pxWidth - 2 * layoutMargin)) /
-          100, // future: mix of level and rank ?
+        xGravityCenter: topicNodesGravityCenters[idx],
         color: typeof subTopic.level === 'number' ? topicLevelColorMap(subTopic.level / 100) : 'gray',
         ...subTopic,
       })),
-    [subTopics]
+    [subTopics, topicNodesGravityCenters]
   );
-
   useEffect(() => {
     if (d3Container && d3Container.current) {
       const svg = d3Selection.select(d3Container.current).attr('viewBox', [0, 0, pxWidth, pxHeight].join(','));
