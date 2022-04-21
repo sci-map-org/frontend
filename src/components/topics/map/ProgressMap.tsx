@@ -9,7 +9,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import { topicLevelColorMap } from '../fields/TopicLevel';
 import { BaseMap } from './BaseMap';
 import { drawDependency, drawTopicNode, MapOptions, TopicNodeElement } from './map.utils';
-import { MapTopicDataFragment } from './Map.generated';
+import { MapTopicDataFragment } from './map.utils.generated';
 
 type NodeElement = SimulationNodeDatum & TopicNodeElement & { xGravityCenter: number };
 

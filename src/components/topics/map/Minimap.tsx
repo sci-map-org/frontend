@@ -12,7 +12,7 @@ import { TopicPageInfo } from '../../../pages/RoutesPageInfos';
 import { theme } from '../../../theme/theme';
 import { useElementSize } from '../../../util/useElementSize';
 import { MapProps } from './Map';
-import { MapTopicDataFragment } from './Map.generated';
+import { MapTopicDataFragment } from './map.utils.generated';
 import { MapHeader, MapType } from './MapHeader';
 
 const Map = dynamic<MapProps>(

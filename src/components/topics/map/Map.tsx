@@ -1,11 +1,12 @@
 import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
 import { BaseMap } from './BaseMap';
-import { MapTopicDataFragment } from './Map.generated';
+import { MapTopicDataFragment } from './map.utils.generated';
 import { MapOptions } from './map.utils';
 import { MapType } from './MapHeader';
 import { PrerequisiteMap } from './PrerequisiteMap';
 import { ProgressMap } from './ProgressMap';
 import { SubTopicsMap } from './SubTopicsMap';
+
 export interface MapProps {
   mapType: MapType;
   options: MapOptions;

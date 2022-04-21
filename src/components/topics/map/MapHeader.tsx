@@ -1,5 +1,5 @@
 import { Button, Center, Link, Stack, Text } from '@chakra-ui/react';
-import { Children } from 'react';
+import React, { Children } from 'react';
 import { MapIcon } from '../../lib/icons/MapIcon';
 
 export enum MapType {
@@ -20,18 +20,18 @@ export const MapHeader: React.FC<{ onChange: (mapType: MapType) => void; value: 
       </Center>
       <Stack direction="row" alignItems="stretch" spacing={1} pt="3px">
         {Object.values(MapType).map((mapType, idx) => (
-          <>
+          <React.Fragment key={mapType}>
             {idx !== 0 && (
-              <Center key={`${mapType}_${1}`}>
+              <Center>
                 <Text fontSize={{ sm: 'lg', lg: 'xl' }[size]}>|</Text>
               </Center>
             )}
-            <Center key={`${mapType}_${2}`}>
+            <Center>
               <MapTypeMenuItem onSelect={() => onChange(mapType)} isSelected={mapType === value} size={size}>
                 {mapType}
               </MapTypeMenuItem>
             </Center>
-          </>
+          </React.Fragment>
         ))}
       </Stack>
     </Stack>

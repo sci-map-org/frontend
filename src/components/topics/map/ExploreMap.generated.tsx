@@ -3,6 +3,8 @@ import * as Types from '../../../graphql/types';
 import * as Operations from './ExploreMap';
 import * as Apollo from '@apollo/client';
 const defaultOptions =  {}
+export type ExploreMapFocusedTopicCardDataFragment = { __typename?: 'Topic', description?: string | null | undefined, learningMaterialsTotalCount?: number | null | undefined, subTopicsTotalCount?: number | null | undefined, _id: string, key: string, name: string, context?: string | null | undefined, subTopics?: Array<{ __typename?: 'TopicIsSubTopicOfTopic', subTopic: { __typename?: 'Topic', subTopicsTotalCount?: number | null | undefined, _id: string, key: string, name: string, context?: string | null | undefined } }> | null | undefined, parentTopic?: { __typename?: 'Topic', _id: string, key: string, name: string, context?: string | null | undefined } | null | undefined };
+
 export type GetTopicByIdExplorePageQueryVariables = Types.Exact<{
   topicId: Types.Scalars['String'];
 }>;

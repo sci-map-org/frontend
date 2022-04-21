@@ -37,7 +37,7 @@ export const TopicSubHeaderData = gql`
 
 interface TopicSubHeaderProps {
   topic: TopicSubHeaderDataFragment;
-  size: 'sm' | 'md';
+  size?: 'md'; // Not implemented yet
   isLoading?: boolean;
   subTopicsDisplay?: 'tree' | 'count';
   displayManage?: boolean;
@@ -45,7 +45,7 @@ interface TopicSubHeaderProps {
 
 export const TopicSubHeader: React.FC<TopicSubHeaderProps & WrapProps> = ({
   topic,
-  size,
+  size = 'md',
   isLoading,
   subTopicsDisplay = 'tree',
   displayManage,

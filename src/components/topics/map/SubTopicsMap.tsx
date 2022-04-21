@@ -10,7 +10,7 @@ import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.
 import { TopicLink } from '../../lib/links/TopicLink';
 import { BaseMap } from './BaseMap';
 import { drawTopicNode, MapOptions, TopicNodeColors, TopicNodeElement } from './map.utils';
-import { MapTopicDataFragment } from './Map.generated';
+import { MapTopicDataFragment } from './map.utils.generated';
 
 type NodeElement = TopicNodeElement & SimulationNodeDatum;
 

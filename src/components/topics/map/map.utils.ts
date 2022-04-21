@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import { TopicLinkData } from '../../../graphql/topics/topics.fragments';
 import * as d3Selection from 'd3-selection';
-import { MapTopicDataFragment } from './Map.generated';
+import { MapTopicDataFragment } from './map.utils.generated';
 
 export const MapTopicData = gql`
   fragment MapTopicData on Topic {

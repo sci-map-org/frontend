@@ -1,3 +1,4 @@
+import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Box, Center, Flex, FlexProps, Link, Stack, Text } from '@chakra-ui/layout';
 import { Spinner } from '@chakra-ui/spinner';
 import gql from 'graphql-tag';
@@ -5,40 +6,50 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { TopicLinkData } from '../../../graphql/topics/topics.fragments';
 import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
+import { TopicPageInfo } from '../../../pages/RoutesPageInfos';
 import { RoleAccess } from '../../auth/RoleAccess';
-import { LearningMaterialCountIcon } from '../../learning_materials/LearningMaterialCountIcon';
 import { TopicLink } from '../../lib/links/TopicLink';
+import { PageLink } from '../../navigation/InternalLink';
 import { TopicDescription } from '../fields/TopicDescription';
 import { NewTopicModal } from '../NewTopic';
-import { SubTopicsCountIcon } from '../SubTopicsCountIcon';
+import { TopicSubHeader, TopicSubHeaderData } from '../TopicSubHeader';
 import {
+  ExploreMapFocusedTopicCardDataFragment,
   GetTopicByIdExplorePageQuery,
   useGetTopicByIdExplorePageLazyQuery,
   useGetTopLevelTopicsLazyQuery,
 } from './ExploreMap.generated';
 import { Map } from './Map';
-import { MapTopicDataFragment } from './Map.generated';
+import { MapTopicDataFragment } from './map.utils.generated';
 import { MapTopicData } from './map.utils';
 import { MapHeader, MapType } from './MapHeader';
+
+export const ExploreMapFocusedTopicCardData = gql`
+  fragment ExploreMapFocusedTopicCardData on Topic {
+    ...MapTopicData
+    description
+    ...TopicSubHeaderData
+    subTopics {
+      subTopic {
+        ...MapTopicData
+      }
+    }
+    parentTopic {
+      ...TopicLinkData
+    }
+  }
+  ${TopicSubHeaderData}
+  ${TopicLinkData}
+  ${MapTopicData}
+`;
 
 export const getTopicByIdExplorePage = gql`
   query getTopicByIdExplorePage($topicId: String!) {
     getTopicById(topicId: $topicId) {
-      ...MapTopicData
-      description
-      learningMaterialsTotalCount
-      subTopics {
-        subTopic {
-          ...MapTopicData
-        }
-      }
-      parentTopic {
-        ...TopicLinkData
-      }
+      ...ExploreMapFocusedTopicCardData
     }
   }
-  ${MapTopicData}
-  ${TopicLinkData}
+  ${ExploreMapFocusedTopicCardData}
 `;
 
 export const getTopLevelTopics = gql`
@@ -120,43 +131,26 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
   }, [selectedTopicId]);
 
   return (
-    <Stack direction={direction} spacing={6} alignItems="center">
+    <Stack direction={direction} spacing={4} alignItems="center">
       <Box
         borderBottomWidth={3}
-        minH="168px"
+        minH="148px"
         position="relative"
         borderBottomColor="teal.500"
-        pb={6}
-        pt={1}
+        pb={2}
         borderLeftWidth={2}
         borderLeftColor="gray.300"
-        pl={4}
-        pr={5}
+        pl={3}
+        pr={2}
         flexGrow={1}
+        display="flex"
+        alignItems="stretch"
+        justifyContent="stretch"
         {...(direction === 'column' && { width: `${mapPxWidth}px` })}
         {...(direction === 'row' && { maxHeight: `200px` })}
       >
         {!!loadedTopic && loadedTopic._id !== rootTopic._id ? (
-          <Stack direction="column" spacing={1}>
-            <Stack direction="row" alignItems="flex-start" pb={1}>
-              <TopicLink topic={loadedTopic} size="lg" newTab />
-            </Stack>
-            <Stack direction="row" spacing={8}>
-              {subTopics?.length && (
-                <SubTopicsCountIcon
-                  totalCount={subTopics.length}
-                  tooltipLabel={`${subTopics.length} subTopics in ${loadedTopic.name}`}
-                />
-              )}
-              {loadedTopic.learningMaterialsTotalCount && (
-                <LearningMaterialCountIcon
-                  totalCount={loadedTopic.learningMaterialsTotalCount}
-                  tooltipLabel={`${loadedTopic.learningMaterialsTotalCount} Learning Materials in ${loadedTopic.name}`}
-                />
-              )}
-            </Stack>
-            {loadedTopic.description && <TopicDescription topicDescription={loadedTopic.description} noOfLines={2} />}
-          </Stack>
+          <ExploreMapFocusedTopicCard topic={loadedTopic} />
         ) : (
           <Text fontSize="3xl" fontWeight={700} color="gray.600">
             Explore Topics
@@ -210,5 +204,36 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
         />
       )} */}
     </Stack>
+  );
+};
+
+const ExploreMapFocusedTopicCard: React.FC<{
+  topic: ExploreMapFocusedTopicCardDataFragment;
+}> = ({ topic }) => {
+  return (
+    <Flex direction="row" alignItems="stretch" flexGrow={1}>
+      <Box flexGrow={1}>
+        <Stack direction="column" spacing={1}>
+          <Stack direction="row" alignItems="flex-start" pb={0}>
+            <TopicLink topic={topic} size="2xl" newTab />
+          </Stack>
+          <TopicSubHeader topic={topic} subTopicsDisplay="count" />
+          {topic.description && <TopicDescription topicDescription={topic.description} noOfLines={2} />}
+        </Stack>
+      </Box>
+      <Center>
+        <PageLink
+          color="blue.500"
+          display="flex"
+          alignItems="baseline"
+          fontSize="lg"
+          pageInfo={TopicPageInfo(topic)}
+          isExternal
+        >
+          Explore
+          <ExternalLinkIcon ml="6px" boxSize={4} />
+        </PageLink>
+      </Center>
+    </Flex>
   );
 };

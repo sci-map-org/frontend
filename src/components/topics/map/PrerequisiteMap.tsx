@@ -6,8 +6,8 @@ import * as d3Selection from 'd3-selection';
 import * as d3Zoom from 'd3-zoom';
 import { useEffect, useMemo, useRef } from 'react';
 import { BaseMap } from './BaseMap';
+import { MapTopicDataFragment } from './map.utils.generated';
 import { drawDependency, drawTopicNode, MapOptions, TopicNodeColors, TopicNodeElement } from './map.utils';
-import { MapTopicDataFragment } from './Map.generated';
 
 type NodeElement = SimulationNodeDatum & TopicNodeElement & { type: 'prereq' | 'followUp' | 'topic' };
 
