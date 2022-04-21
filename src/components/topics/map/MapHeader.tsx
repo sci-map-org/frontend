@@ -16,14 +16,14 @@ export const MapHeader: React.FC<{ onChange: (mapType: MapType) => void; value: 
   return (
     <Stack direction="row" alignItems="stretch" spacing={1}>
       <Center p={1}>
-        <MapIcon boxSize={{ sm: 6, lg: 10 }[size]} color="gray.800" />
+        <MapIcon boxSize={{ sm: 6, lg: 8 }[size]} color="gray.800" />
       </Center>
       <Stack direction="row" alignItems="stretch" spacing={1} pt="3px">
         {Object.values(MapType).map((mapType, idx) => (
           <>
             {idx !== 0 && (
               <Center key={`${mapType}_${1}`}>
-                <Text fontSize="lg">|</Text>
+                <Text fontSize={{ sm: 'lg', lg: 'xl' }[size]}>|</Text>
               </Center>
             )}
             <Center key={`${mapType}_${2}`}>
@@ -48,7 +48,7 @@ const MapTypeMenuItem: React.FC<{ onSelect: () => void; isSelected?: boolean; si
     <Link
       onClick={onSelect}
       _hover={{}}
-      fontSize="lg"
+      fontSize={{ sm: 'lg', lg: 'xl' }[size]}
       lineHeight="18px"
       fontWeight={500}
       color={isSelected ? 'blue.600' : 'gray.800'}

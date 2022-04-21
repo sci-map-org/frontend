@@ -1,3 +1,4 @@
+import { Text } from '@chakra-ui/react';
 import * as d3Drag from 'd3-drag';
 import * as d3Force from 'd3-force';
 import { SimulationNodeDatum } from 'd3-force';
@@ -7,7 +8,7 @@ import { flatten } from 'lodash';
 import { useEffect, useMemo, useRef } from 'react';
 import { topicLevelColorMap } from '../fields/TopicLevel';
 import { BaseMap } from './BaseMap';
-import { drawDependency, DrawMapOptions, drawTopicNode, TopicNodeElement } from './Map';
+import { drawDependency, drawTopicNode, MapOptions, TopicNodeElement } from './map.utils';
 import { MapTopicDataFragment } from './Map.generated';
 
 type NodeElement = SimulationNodeDatum & TopicNodeElement & { xGravityCenter: number };
@@ -21,18 +22,10 @@ const layoutMargin = 20;
 export const ProgressMap: React.FC<{
   topic: MapTopicDataFragment;
   subTopics: Array<MapTopicDataFragment & { prerequisites: { _id: string }[]; level?: number }>;
-  pxWidth: number;
-  pxHeight: number;
+  options: MapOptions;
   onClick: (node: NodeElement) => void;
-}> = ({ topic, subTopics, pxWidth, pxHeight, onClick }) => {
+}> = ({ topic, subTopics, options, onClick }) => {
   const d3Container = useRef<SVGSVGElement>(null);
-
-  const mapOptions: DrawMapOptions = useMemo(() => {
-    return {
-      pxWidth: pxWidth,
-      pxHeight: pxHeight,
-    };
-  }, []);
 
   const prerequisiteLinkElements: LinkElement[] = useMemo(() => {
     const relArray = subTopics.map((subTopic) =>
@@ -51,7 +44,9 @@ export const ProgressMap: React.FC<{
 
     let gravityCenters = subTopics.map(
       (subTopic) =>
-        (layoutMargin + (typeof subTopic.level === 'number' ? subTopic.level : 50) * (pxWidth - 2 * layoutMargin)) / 100 // future: mix of level and rank ?)
+        (layoutMargin +
+          (typeof subTopic.level === 'number' ? subTopic.level : 50) * (options.pxWidth - 2 * layoutMargin)) /
+        100 // future: mix of level and rank ?)
     );
     for (let i = 0; i < 3; i++) {
       prerequisiteLinkElements.forEach(({ source, target }) => {
@@ -82,16 +77,15 @@ export const ProgressMap: React.FC<{
   );
   useEffect(() => {
     if (d3Container && d3Container.current) {
-      const svg = d3Selection.select(d3Container.current).attr('viewBox', [0, 0, pxWidth, pxHeight].join(','));
+      const svg = d3Selection
+        .select(d3Container.current)
+        .attr('viewBox', [0, 0, options.pxWidth, options.pxHeight].join(','));
       svg.selectAll('.innerContainer').remove();
       const container = svg.selectAll('.innerContainer').data([true]).join('g').classed('innerContainer', true);
 
-      const prerequisiteLinks = drawDependency(container, prerequisiteLinkElements, 'linkElement', {
-        pxWidth,
-        pxHeight,
-      });
+      const prerequisiteLinks = drawDependency(container, prerequisiteLinkElements, 'linkElement', options);
 
-      const topicNodes = drawTopicNode(container, topicNodeElements, 'topicNode', mapOptions)
+      const topicNodes = drawTopicNode(container, topicNodeElements, 'topicNode', options)
         .classed('node', true)
         .attr('fill-opacity', 1)
         .on('click', (event, n) => {
@@ -136,7 +130,7 @@ export const ProgressMap: React.FC<{
         zoom
           .extent([
             [0, 0],
-            [pxWidth, pxHeight],
+            [options.pxWidth, options.pxHeight],
           ])
           .scaleExtent([0.6, 3])
           .on('zoom', function ({ transform }) {
@@ -163,8 +157,8 @@ export const ProgressMap: React.FC<{
         )
 
         .force('xForce', d3Force.forceX<NodeElement>((n) => n.xGravityCenter).strength(0.04))
-        .force('yForce', d3Force.forceY<NodeElement>(pxHeight / 2).strength(0.002))
-        .force('center', d3Force.forceCenter(pxWidth / 2, pxHeight / 2).strength(1))
+        .force('yForce', d3Force.forceY<NodeElement>(options.pxHeight / 2).strength(0.002))
+        .force('center', d3Force.forceCenter(options.pxWidth / 2, options.pxHeight / 2).strength(1))
         .on('tick', tick);
 
       //   @ts-ignore
@@ -172,7 +166,22 @@ export const ProgressMap: React.FC<{
     }
   }, [topic._id, topicNodeElements.length, prerequisiteLinkElements.length]);
 
-  return <BaseMap ref={d3Container} pxWidth={pxWidth} pxHeight={pxHeight} />;
+  return (
+    <BaseMap
+      ref={d3Container}
+      options={options}
+      renderBottomMiddleLeft={
+        <Text color={topicLevelColorMap(0.1)} fontSize="xl" fontWeight={600}>
+          Basics
+        </Text>
+      }
+      renderBottomMiddleRight={
+        <Text color={topicLevelColorMap(0.9)} fontSize="xl" fontWeight={600}>
+          Advanced
+        </Text>
+      }
+    />
+  );
 };
 
 function drag(simulation: d3Force.Simulation<NodeElement, undefined>) {

@@ -1,3 +1,4 @@
+import { Text } from '@chakra-ui/react';
 import * as d3Force from 'd3-force';
 import { SimulationNodeDatum } from 'd3-force';
 import { schemePastel1 } from 'd3-scale-chromatic';
@@ -5,7 +6,7 @@ import * as d3Selection from 'd3-selection';
 import * as d3Zoom from 'd3-zoom';
 import { useEffect, useMemo, useRef } from 'react';
 import { BaseMap } from './BaseMap';
-import { drawDependency, drawTopicNode, TopicNodeColors, TopicNodeElement } from './Map';
+import { drawDependency, drawTopicNode, MapOptions, TopicNodeColors, TopicNodeElement } from './map.utils';
 import { MapTopicDataFragment } from './Map.generated';
 
 type NodeElement = SimulationNodeDatum & TopicNodeElement & { type: 'prereq' | 'followUp' | 'topic' };
@@ -14,14 +15,16 @@ type LinkElement = d3Force.SimulationLinkDatum<NodeElement> & {};
 
 const radiusMarginArrow = 2;
 
+const PREREQUISITE_COLOR = TopicNodeColors[5];
+const FOLLOW_UP_COLOR = TopicNodeColors[4];
+
 export const PrerequisiteMap: React.FC<{
   topic: MapTopicDataFragment;
   prerequisiteTopics: MapTopicDataFragment[];
   followUpTopics: MapTopicDataFragment[];
-  pxWidth: number;
-  pxHeight: number;
+  options: MapOptions;
   onClick: (node: NodeElement) => void;
-}> = ({ topic, prerequisiteTopics, followUpTopics, pxWidth, pxHeight, onClick }) => {
+}> = ({ topic, prerequisiteTopics, followUpTopics, options, onClick }) => {
   const d3Container = useRef<SVGSVGElement>(null);
 
   const topicNodeElements: NodeElement[] = useMemo(
@@ -30,8 +33,8 @@ export const PrerequisiteMap: React.FC<{
         id: topic._id,
         type: 'topic',
         radius: 24,
-        fx: pxWidth / 2,
-        fy: pxHeight / 2,
+        fx: options.pxWidth / 2,
+        fy: options.pxHeight / 2,
         color: TopicNodeColors[0],
         ...topic,
       },
@@ -44,10 +47,10 @@ export const PrerequisiteMap: React.FC<{
         return {
           id: prereqTopic._id,
           type: 'prereq',
-          x: pxWidth / 2,
-          y: pxHeight / 2,
+          x: options.pxWidth / 2,
+          y: options.pxHeight / 2,
           radius: 13,
-          color: TopicNodeColors[5],
+          color: PREREQUISITE_COLOR,
           ...prereqTopic,
         };
       }),
@@ -60,10 +63,10 @@ export const PrerequisiteMap: React.FC<{
         return {
           id: followTopic._id,
           type: 'followUp',
-          x: pxWidth / 2,
-          y: pxHeight / 2,
+          x: options.pxWidth / 2,
+          y: options.pxHeight / 2,
           radius: 13,
-          color: TopicNodeColors[4],
+          color: FOLLOW_UP_COLOR,
           ...followTopic,
         };
       }),
@@ -89,25 +92,27 @@ export const PrerequisiteMap: React.FC<{
         colorMap[node._id] = schemePastel1[i % 9];
       });
 
-      const svg = d3Selection.select(d3Container.current).attr('viewBox', [0, 0, pxWidth, pxHeight].join(','));
+      const svg = d3Selection
+        .select(d3Container.current)
+        .attr('viewBox', [0, 0, options.pxWidth, options.pxHeight].join(','));
       svg.selectAll('.innerContainer').remove();
       const container = svg.selectAll('.innerContainer').data([true]).join('g').classed('innerContainer', true);
-      const link = drawDependency(container, linksData, 'linkElement', { pxHeight, pxWidth });
-      const prereqNodes = drawTopicNode(container, prereqNodeElements, 'prereqNode', { pxWidth, pxHeight }).on(
+      const link = drawDependency(container, linksData, 'linkElement', options);
+      const prereqNodes = drawTopicNode(container, prereqNodeElements, 'prereqNode', options).on(
         'click',
         (event, n) => {
           onClick(n);
         }
       );
 
-      const followUpNodes = drawTopicNode(container, followUpNodeElements, 'followUpNode', { pxWidth, pxHeight }).on(
+      const followUpNodes = drawTopicNode(container, followUpNodeElements, 'followUpNode', options).on(
         'click',
         (event, n) => {
           onClick(n);
         }
       );
 
-      const maintopicNode = drawTopicNode(container, topicNodeElements, 'mainNode', { pxWidth, pxHeight });
+      const maintopicNode = drawTopicNode(container, topicNodeElements, 'mainNode', options);
 
       const zoom = d3Zoom.zoom<SVGSVGElement, unknown>();
       const tick = () => {
@@ -162,7 +167,7 @@ export const PrerequisiteMap: React.FC<{
         zoom
           .extent([
             [0, 0],
-            [pxWidth, pxHeight],
+            [options.pxWidth, options.pxHeight],
           ])
           .scaleExtent([0.6, 3])
           .on('zoom', function ({ transform }) {
@@ -187,16 +192,33 @@ export const PrerequisiteMap: React.FC<{
 
         .force(
           'prereqAxis',
-          d3Force.forceX<NodeElement>(pxWidth / 4).strength((node) => (node.type === 'prereq' ? 0.1 : 0))
+          d3Force.forceX<NodeElement>(options.pxWidth / 4).strength((node) => (node.type === 'prereq' ? 0.1 : 0))
         )
         .force(
           'followUpAxis',
-          d3Force.forceX<NodeElement>((3 * pxWidth) / 4).strength((node) => (node.type === 'followUp' ? 0.1 : 0))
+          d3Force
+            .forceX<NodeElement>((3 * options.pxWidth) / 4)
+            .strength((node) => (node.type === 'followUp' ? 0.1 : 0))
         )
-        .force('center', d3Force.forceCenter(pxWidth / 2, pxHeight / 2))
+        .force('center', d3Force.forceCenter(options.pxWidth / 2, options.pxHeight / 2))
         .on('tick', tick);
     }
   }, [topic._id, prereqNodeElements.length, followUpNodeElements.length]);
 
-  return <BaseMap ref={d3Container} pxWidth={pxWidth} pxHeight={pxHeight} />;
+  return (
+    <BaseMap
+      ref={d3Container}
+      options={options}
+      renderBottomMiddleLeft={
+        <Text color={PREREQUISITE_COLOR} fontSize="xl" fontWeight={600} filter="brightness(1.1)">
+          Prerequisites
+        </Text>
+      }
+      renderBottomMiddleRight={
+        <Text color={FOLLOW_UP_COLOR} fontSize="xl" fontWeight={600} filter="brightness(1.1)">
+          Follow ups
+        </Text>
+      }
+    />
+  );
 };

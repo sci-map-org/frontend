@@ -9,7 +9,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
 import { TopicLink } from '../../lib/links/TopicLink';
 import { BaseMap } from './BaseMap';
-import { DrawMapOptions, drawTopicNode, TopicNodeColors, TopicNodeElement } from './Map';
+import { drawTopicNode, MapOptions, TopicNodeColors, TopicNodeElement } from './map.utils';
 import { MapTopicDataFragment } from './Map.generated';
 
 type NodeElement = TopicNodeElement & SimulationNodeDatum;
@@ -24,27 +24,10 @@ export const SubTopicsMap: React.FC<{
   topic?: MapTopicDataFragment; //only used to force rerendering
   subTopics: MapTopicDataFragment[];
   parentTopic?: TopicLinkDataFragment;
-  pxWidth: number;
-  pxHeight: number;
-  // ratio?: number;
+  options: MapOptions;
   onClick: (node: TopicLinkDataFragment) => void;
-}> = ({
-  topic,
-  subTopics,
-  parentTopic,
-  pxWidth,
-  pxHeight,
-  // ratio = 4 / 3,
-  onClick,
-}) => {
+}> = ({ topic, subTopics, parentTopic, options, onClick }) => {
   const d3Container = useRef<SVGSVGElement>(null);
-
-  const mapOptions: DrawMapOptions = useMemo(() => {
-    return {
-      pxWidth: pxWidth,
-      pxHeight: pxHeight,
-    };
-  }, []);
 
   const topicNodeElements: NodeElement[] = useMemo(
     () =>
@@ -62,16 +45,15 @@ export const SubTopicsMap: React.FC<{
 
   useEffect(() => {
     if (d3Container && d3Container.current) {
-      const svg = d3Selection.select(d3Container.current).attr('viewBox', [0, 0, pxWidth, pxHeight].join(','));
+      const svg = d3Selection
+        .select(d3Container.current)
+        .attr('viewBox', [0, 0, options.pxWidth, options.pxHeight].join(','));
       svg.selectAll('.innerContainer').remove();
       const container = svg.selectAll('.innerContainer').data([true]).join('g').classed('innerContainer', true);
 
-      const topicNodes = drawTopicNode(container, topicNodeElements, 'topicNode', mapOptions).on(
-        'click',
-        (event, n) => {
-          onClick(n);
-        }
-      );
+      const topicNodes = drawTopicNode(container, topicNodeElements, 'topicNode', options).on('click', (event, n) => {
+        onClick(n);
+      });
 
       const zoom = d3Zoom.zoom<SVGSVGElement, unknown>();
       const tick = () => {
@@ -84,7 +66,7 @@ export const SubTopicsMap: React.FC<{
         zoom
           .extent([
             [0, 0],
-            [pxWidth, pxHeight],
+            [options.pxWidth, options.pxHeight],
           ])
           .scaleExtent([0.6, 3])
           .on('zoom', function ({ transform }) {
@@ -98,20 +80,22 @@ export const SubTopicsMap: React.FC<{
         .force(
           'charge',
           d3Force.forceManyBody<NodeElement>().strength((d) => {
-            return d.subTopicsTotalCount ? -(getNodeRadius(d) * getNodeRadius(d)) / 15 : -8;
+            const coefficient = options.mode === 'explore' ? 1 / 2 : 1 / 3;
+            return -(d.radius * Math.log(d.radius)) * coefficient;
+            // return d.subTopicsTotalCount ? -(getNodeRadius(d) * getNodeRadius(d)) / 15 : -8;
           })
         )
 
-        .force('center', d3Force.forceCenter(pxWidth / 2, pxHeight / 2))
+        .force('center', d3Force.forceCenter(options.pxWidth / 2, options.pxHeight / 2))
         .on('tick', tick);
     }
   }, [topic?._id, topicNodeElements.length]);
 
   return (
-    <Box position="relative" width={`${pxWidth}px`} height={`${pxHeight}px`}>
-      <BaseMap ref={d3Container} pxWidth={pxWidth} pxHeight={pxHeight} />;
+    <Box position="relative" width={`${options.pxWidth}px`} height={`${options.pxHeight}px`}>
+      <BaseMap ref={d3Container} options={options} />;
       {!topicNodeElements.length && (
-        <Center position="absolute" top={0} left={0} width={`${pxWidth}px`} height={`${pxHeight}px`}>
+        <Center position="absolute" top={0} left={0} width={`${options.pxWidth}px`} height={`${options.pxHeight}px`}>
           <Text fontWeight={600} fontSize="lg" color="originalPalette.red" fontStyle="italic">
             No SubTopics found
           </Text>

@@ -14,7 +14,6 @@ import {
 import interpolate from 'color-interpolate';
 import { useMemo, useState } from 'react';
 import { theme } from '../../../theme/theme';
-import { Field } from '../../lib/fields/Field';
 
 export enum TopicLevelValue {
   Beginner = 'beginner',

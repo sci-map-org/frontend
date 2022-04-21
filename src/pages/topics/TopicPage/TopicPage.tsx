@@ -21,7 +21,7 @@ import {
   ParentTopicsBreadcrumbs,
   ParentTopicsBreadcrumbsData,
 } from '../../../components/topics/ParentTopicsBreadcrumbs';
-import { MapTopicData } from '../../../components/topics/map/Map';
+import { MapTopicData } from '../../../components/topics/map/map.utils';
 import { Minimap } from '../../../components/topics/map/Minimap';
 import { TopicSubHeader, TopicSubHeaderData } from '../../../components/topics/TopicSubHeader';
 import { generateTopicData, TopicLinkData } from '../../../graphql/topics/topics.fragments';

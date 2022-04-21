@@ -1,28 +1,25 @@
-import { useDisclosure } from '@chakra-ui/hooks';
-import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Box, Center, Flex, FlexProps, Link, Stack, Text } from '@chakra-ui/layout';
 import { Spinner } from '@chakra-ui/spinner';
 import gql from 'graphql-tag';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { PuffLoader } from 'react-spinners';
+import { TopicLinkData } from '../../../graphql/topics/topics.fragments';
+import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
 import { RoleAccess } from '../../auth/RoleAccess';
 import { LearningMaterialCountIcon } from '../../learning_materials/LearningMaterialCountIcon';
 import { TopicLink } from '../../lib/links/TopicLink';
-import { SubTopicsCountIcon } from '../SubTopicsCountIcon';
-import { MapTopicData, Map } from './Map';
-import { MapTopicDataFragment } from './Map.generated';
 import { TopicDescription } from '../fields/TopicDescription';
-import { TopicLinkData } from '../../../graphql/topics/topics.fragments';
-import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
-import { theme } from '../../../theme/theme';
+import { NewTopicModal } from '../NewTopic';
+import { SubTopicsCountIcon } from '../SubTopicsCountIcon';
 import {
   GetTopicByIdExplorePageQuery,
   useGetTopicByIdExplorePageLazyQuery,
   useGetTopLevelTopicsLazyQuery,
 } from './ExploreMap.generated';
-import { NewTopicModal } from '../NewTopic';
-import { MapType } from './MapHeader';
+import { Map } from './Map';
+import { MapTopicDataFragment } from './Map.generated';
+import { MapTopicData } from './map.utils';
+import { MapHeader, MapType } from './MapHeader';
 
 export const getTopicByIdExplorePage = gql`
   query getTopicByIdExplorePage($topicId: String!) {
@@ -85,7 +82,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
   const [selectedTopicId, setSelectedTopicId] = useState<string | undefined>(propSelectedTopicId);
 
   const [loadedTopic, setLoadedTopic] = useState<GetTopicByIdExplorePageQuery['getTopicById']>();
-
+  const [selectedMapType, setSelectedMapType] = useState<MapType>(MapType.SUBTOPICS);
   const [subTopics, setSubtopics] = useState<MapTopicDataFragment[]>();
   const [parentTopic, setParentTopic] = useState<TopicLinkDataFragment>();
 
@@ -173,25 +170,22 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
       </Box>
       <Stack direction="column">
         <Center>
-          <Box boxShadow="lg" width={mapPxWidth + 'px'} {...mapContainerProps}>
-            {loading || !subTopics ? (
-              <Center w={`${mapPxWidth}px`} h={`${mapPxHeight}px`}>
-                <PuffLoader size={Math.floor(mapPxWidth / 3)} color={theme.colors.blue[500]} />
-              </Center>
-            ) : (
+          <Stack spacing="2px">
+            <MapHeader onChange={setSelectedMapType} value={selectedMapType} size="lg" />
+            <Box boxShadow="lg" width={mapPxWidth + 'px'} {...mapContainerProps}>
               <Map
-                mapType={MapType.SUBTOPICS}
-                subTopics={subTopics}
+                mapType={selectedMapType}
+                isLoading={loading || !subTopics}
+                subTopics={subTopics || []}
                 parentTopic={parentTopic}
-                pxWidth={mapPxWidth}
                 topic={loadedTopic}
-                pxHeight={mapPxHeight}
+                options={{ mode: 'explore', pxWidth: mapPxWidth, pxHeight: mapPxHeight }}
                 onClick={(topic) => {
                   setSelectedTopicId(topic._id);
                 }}
               />
-            )}
-          </Box>
+            </Box>
+          </Stack>
         </Center>
         <RoleAccess accessRule="loggedInUser">
           <Flex direction="row" justifyContent="center" pt={1} pb={1}>

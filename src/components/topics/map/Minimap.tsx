@@ -70,8 +70,7 @@ export const Minimap: React.FC<MinimapProps> = ({
             topic={topic}
             subTopics={subTopics}
             parentTopic={parentTopic}
-            pxWidth={pxWidth}
-            pxHeight={pxHeight}
+            options={{ mode: 'mini', pxWidth, pxHeight }}
             onClick={(n) => routerPushToPage(TopicPageInfo(n))}
           />
         ) : (
@@ -85,8 +84,13 @@ export const Minimap: React.FC<MinimapProps> = ({
         {(isLoading || subTopics.length) && (
           <IconButton
             position="absolute"
-            variant="solid"
-            size="md"
+            variant="ghost"
+            _active={{}}
+            _focus={{}}
+            color="white"
+            fontSize="1.3em"
+            isRound
+            size="xs"
             onClick={() => onOpen()}
             bottom={2}
             right={2}
@@ -96,9 +100,9 @@ export const Minimap: React.FC<MinimapProps> = ({
             icon={<CgArrowsExpandRight />}
           />
         )}
-        <Modal isOpen={isOpen} onClose={onClose} size="xl">
+        <Modal isOpen={isOpen} onClose={onClose} size="4xl">
           <ModalOverlay />
-          <ModalContent w="600px">
+          <ModalContent>
             <ModalHeader>SubTopics Map</ModalHeader>
             <ModalCloseButton />
             <ModalBody justifyContent="stretch" alignItems="stretch">
@@ -142,8 +146,7 @@ const SubTopicsMapModalContent: React.FC<{
           topic={topic}
           subTopics={subTopics}
           parentTopic={parentTopic}
-          pxWidth={modalContainerSize.width}
-          pxHeight={modalContainerSize.width}
+          options={{ mode: 'mini', pxWidth: modalContainerSize.width, pxHeight: (modalContainerSize.width * 3) / 5 }}
           onClick={(n) => routerPushToPage(TopicPageInfo(n))}
         />
       )}
