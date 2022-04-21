@@ -1,0 +1,30 @@
+.node:hover {
+  cursor: pointer;
+}
+
+.node_circle {
+  stroke: var(--chakra-colors-gray-600);
+}
+.node:hover .node_circle {
+  stroke: var(--chakra-colors-gray-300);
+  stroke-width: 1px;
+}
+
+.node_label {
+  fill: var(--chakra-colors-gray-300);
+}
+
+.node:hover .node_label {
+  fill: white;
+}
+
+.linkElement {
+  stroke: var(--chakra-colors-gray-200);
+}
+
+.linkLineElement {
+  stroke-width: 1.5px;
+}
+.arrow-head {
+  fill: var(--chakra-colors-gray-200);
+}

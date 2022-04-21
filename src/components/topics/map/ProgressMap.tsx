@@ -6,6 +6,7 @@ import * as d3Zoom from 'd3-zoom';
 import { flatten } from 'lodash';
 import { useEffect, useMemo, useRef } from 'react';
 import { topicLevelColorMap } from '../fields/TopicLevel';
+import { BaseMap } from './BaseMap';
 import { drawDependency, DrawMapOptions, drawTopicNode, TopicNodeElement } from './Map';
 import { MapTopicDataFragment } from './Map.generated';
 
@@ -171,7 +172,7 @@ export const ProgressMap: React.FC<{
     }
   }, [topic._id, topicNodeElements.length, prerequisiteLinkElements.length]);
 
-  return <svg ref={d3Container} width={`${pxWidth}px`} height={`${pxHeight}px`} fontSize="xs" />;
+  return <BaseMap ref={d3Container} pxWidth={pxWidth} pxHeight={pxHeight} />;
 };
 
 function drag(simulation: d3Force.Simulation<NodeElement, undefined>) {

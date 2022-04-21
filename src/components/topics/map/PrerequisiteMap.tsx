@@ -4,7 +4,8 @@ import { schemePastel1 } from 'd3-scale-chromatic';
 import * as d3Selection from 'd3-selection';
 import * as d3Zoom from 'd3-zoom';
 import { useEffect, useMemo, useRef } from 'react';
-import { drawDependency, drawTopicNode, TopicNodeElement } from './Map';
+import { BaseMap } from './BaseMap';
+import { drawDependency, drawTopicNode, TopicNodeColors, TopicNodeElement } from './Map';
 import { MapTopicDataFragment } from './Map.generated';
 
 type NodeElement = SimulationNodeDatum & TopicNodeElement & { type: 'prereq' | 'followUp' | 'topic' };
@@ -24,7 +25,17 @@ export const PrerequisiteMap: React.FC<{
   const d3Container = useRef<SVGSVGElement>(null);
 
   const topicNodeElements: NodeElement[] = useMemo(
-    () => [{ id: topic._id, type: 'topic', radius: 16, fx: pxWidth / 2, fy: pxHeight / 2, color: 'red', ...topic }],
+    () => [
+      {
+        id: topic._id,
+        type: 'topic',
+        radius: 24,
+        fx: pxWidth / 2,
+        fy: pxHeight / 2,
+        color: TopicNodeColors[0],
+        ...topic,
+      },
+    ],
     []
   );
   const prereqNodeElements: NodeElement[] = useMemo(
@@ -35,8 +46,8 @@ export const PrerequisiteMap: React.FC<{
           type: 'prereq',
           x: pxWidth / 2,
           y: pxHeight / 2,
-          radius: 12,
-          color: 'orange',
+          radius: 13,
+          color: TopicNodeColors[5],
           ...prereqTopic,
         };
       }),
@@ -51,8 +62,8 @@ export const PrerequisiteMap: React.FC<{
           type: 'followUp',
           x: pxWidth / 2,
           y: pxHeight / 2,
-          radius: 12,
-          color: 'blue',
+          radius: 13,
+          color: TopicNodeColors[4],
           ...followTopic,
         };
       }),
@@ -81,9 +92,7 @@ export const PrerequisiteMap: React.FC<{
       const svg = d3Selection.select(d3Container.current).attr('viewBox', [0, 0, pxWidth, pxHeight].join(','));
       svg.selectAll('.innerContainer').remove();
       const container = svg.selectAll('.innerContainer').data([true]).join('g').classed('innerContainer', true);
-
       const link = drawDependency(container, linksData, 'linkElement', { pxHeight, pxWidth });
-
       const prereqNodes = drawTopicNode(container, prereqNodeElements, 'prereqNode', { pxWidth, pxHeight }).on(
         'click',
         (event, n) => {
@@ -189,5 +198,5 @@ export const PrerequisiteMap: React.FC<{
     }
   }, [topic._id, prereqNodeElements.length, followUpNodeElements.length]);
 
-  return <svg ref={d3Container} width={`${pxWidth}px`} height={`${pxHeight}px`} fontSize="xs" />;
+  return <BaseMap ref={d3Container} pxWidth={pxWidth} pxHeight={pxHeight} />;
 };

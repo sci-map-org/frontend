@@ -1,9 +1,7 @@
-import { SimulationNodeDatum } from 'd3-force';
 import * as d3Selection from 'd3-selection';
 import gql from 'graphql-tag';
 import { TopicLinkData } from '../../../graphql/topics/topics.fragments';
 import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
-import { theme } from '../../../theme/theme';
 import { MapTopicDataFragment } from './Map.generated';
 import { MapType } from './MapHeader';
 import { PrerequisiteMap } from './PrerequisiteMap';
@@ -18,7 +16,17 @@ export const MapTopicData = gql`
   ${TopicLinkData}
 `;
 
-type NodeElement = SimulationNodeDatum & MapTopicDataFragment & { size?: number };
+export const TopicNodeColors = [
+  '#7FB0EA', // lightBlue
+  '#EAA67F', // orange
+  '#9FA55F', // kaki
+  '#69A55F', // green apple
+  '#EA7F7F', // salmon
+  '#5FA5A1', // tealish
+  '#8638B7', // violet
+  '#C17FEA', // purple
+  '#817FEA', // mauve
+];
 
 export interface MapProps {
   mapType: MapType;
@@ -28,7 +36,7 @@ export interface MapProps {
   pxWidth: number;
   pxHeight: number;
   // ratio?: number;
-  onClick: (node: NodeElement) => void;
+  onClick: (node: TopicLinkDataFragment) => void;
 }
 
 export const Map: React.FC<MapProps> = ({
@@ -130,13 +138,12 @@ export function drawTopicNode<T extends TopicNodeElement>(
     .classed('node_label', true)
     .attr('text-anchor', 'middle')
     .attr('dx', 0)
-    .attr('dy', (d) => {
-      return 24;
+    .attr('dy', (n) => {
+      return n.radius * 1.15 + 10;
     })
     .attr('z-index', 10)
-    .attr('font-size', '0.8em')
+    .attr('font-size', (n) => 0.7 + n.radius * 0.01 + 'em')
     .attr('font-weight', 500)
-    .attr('fill', theme.colors.gray[500])
     .text(function (d) {
       return d.name;
     });
@@ -158,9 +165,8 @@ export function drawDependency<T>(
     .attr('markerWidth', 10)
     .attr('markerHeight', 7)
     .attr('orient', 'auto')
+    .classed('arrow-head', true)
     .append('polygon')
-    .attr('stroke-width', '1.5px')
-    .attr('fill', 'rgb(80, 80, 80)')
     .attr('points', '0 0, 10 3.5, 0 7');
 
   return container
