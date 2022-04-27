@@ -17,7 +17,7 @@ type LinkElement = d3Force.SimulationLinkDatum<NodeElement> & {};
 
 const radiusMarginArrow = 2;
 
-const layoutMargin = 20;
+const layoutMargin = 40;
 
 export const ProgressMap: React.FC<{
   topic: MapTopicDataFragment;
@@ -42,12 +42,12 @@ export const ProgressMap: React.FC<{
       return index;
     };
 
-    let gravityCenters = subTopics.map(
-      (subTopic) =>
-        (layoutMargin +
-          (typeof subTopic.level === 'number' ? subTopic.level : 50) * (options.pxWidth - 2 * layoutMargin)) /
-        100 // future: mix of level and rank ?)
-    );
+    let gravityCenters = subTopics.map((subTopic) => {
+      return (
+        layoutMargin +
+        ((typeof subTopic.level === 'number' ? subTopic.level : 50) * (options.pxWidth - 2 * layoutMargin)) / 100
+      ); // future: mix of level and rank ?)
+    });
     for (let i = 0; i < 3; i++) {
       prerequisiteLinkElements.forEach(({ source, target }) => {
         const sourceIndex = getNodeIndexFromId(source as string);
@@ -71,6 +71,8 @@ export const ProgressMap: React.FC<{
         radius: 12,
         xGravityCenter: topicNodesGravityCenters[idx],
         color: typeof subTopic.level === 'number' ? topicLevelColorMap(subTopic.level / 100) : 'gray',
+        x: topicNodesGravityCenters[idx], //(topicNodesGravityCenters[idx] + (2 * options.pxWidth) / 2) / 3,
+        y: options.pxHeight / 2 + (Math.random() - 0.5) * options.pxHeight * 0.03,
         ...subTopic,
       })),
     [subTopics, topicNodesGravityCenters]
@@ -156,9 +158,11 @@ export const ProgressMap: React.FC<{
             .links(prerequisiteLinkElements)
         )
 
-        .force('xForce', d3Force.forceX<NodeElement>((n) => n.xGravityCenter).strength(0.04))
-        .force('yForce', d3Force.forceY<NodeElement>(options.pxHeight / 2).strength(0.002))
-        .force('center', d3Force.forceCenter(options.pxWidth / 2, options.pxHeight / 2).strength(1))
+        .force('xForce', d3Force.forceX<NodeElement>((n) => n.xGravityCenter).strength(0.1))
+        // .force('yForce', d3Force.forceY<NodeElement>(options.pxHeight / 2).strength(0.002))
+        // .force('center', d3Force.forceCenter(options.pxWidth / 2, options.pxHeight / 2).strength(0.01))
+        .force('y', d3Force.forceY(options.pxHeight / 2).strength(0.01))
+        .force('x', d3Force.forceX(options.pxWidth / 2).strength(0.01))
         .on('tick', tick);
 
       //   @ts-ignore
