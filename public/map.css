@@ -19,12 +19,28 @@
 }
 
 .linkElement {
-  stroke: var(--chakra-colors-gray-200);
+  stroke: var(--chakra-colors-gray-400);
+  margin: 10px;
 }
 
 .linkLineElement {
-  stroke-width: 1.5px;
+  stroke-width: 1.6px;
 }
+
+.linkLineHoverElement {
+  stroke-width: 20px;
+  stroke-opacity: 0;
+}
+
 .arrow-head {
-  fill: var(--chakra-colors-gray-200);
+  fill: var(--chakra-colors-gray-400);
+}
+
+.arrow-head-hover {
+  fill: var(--chakra-colors-gray-50);
+}
+
+.linkLineHoverElement:hover + .linkLineElement {
+  stroke: var(--chakra-colors-gray-50);
+  marker-end: url('#arrow-head-hover');
 }

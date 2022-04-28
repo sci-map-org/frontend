@@ -77,8 +77,8 @@ export function drawDependency<T>(
   className: string,
   { pxHeight, pxWidth }: MapOptions
 ) {
-  container
-    .append('defs')
+  const defs = container.append('defs');
+  defs
     .append('marker')
     .attr('id', 'arrow-head')
     .attr('refX', 10) // to make sure the arrow starts before the end of the marker
@@ -90,12 +90,29 @@ export function drawDependency<T>(
     .append('polygon')
     .attr('points', '0 0, 10 3.5, 0 7');
 
-  return container
+  defs
+    .append('marker')
+    .attr('id', 'arrow-head-hover')
+    .attr('refX', 10) // to make sure the arrow starts before the end of the marker
+    .attr('refY', 3.5)
+    .attr('markerWidth', 10)
+    .attr('markerHeight', 7)
+    .attr('orient', 'auto')
+    .classed('arrow-head-hover', true)
+    .append('polygon')
+    .attr('points', '0 0, 10 3.5, 0 7');
+
+  const dependencies = container
     .selectAll('.' + className)
     .data(dependencyElements)
     .join('g')
-    .classed(className, true)
+    .classed(className, true);
+
+  dependencies.append('line').classed('linkLineHoverElement', true);
+  dependencies
     .append('line')
     .classed('linkLineElement', true)
-    .attr('marker-end', (d) => `url(${new URL(`#arrow-head`, window.location.href)})`);
+    .attr('marker-end', (d) => `url("#arrow-head")`);
+
+  return dependencies.selectAll('line');
 }
