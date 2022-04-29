@@ -8,7 +8,7 @@ import { flatten } from 'lodash';
 import { useEffect, useMemo, useRef } from 'react';
 import { topicLevelColorMap } from '../fields/TopicLevel';
 import { BaseMap } from './BaseMap';
-import { drawDependency, drawTopicNode, MapOptions, TopicNodeElement } from './map.utils';
+import { drawLink, drawTopicNode, MapOptions, TopicNodeElement } from './map.utils';
 import { MapTopicDataFragment } from './map.utils.generated';
 
 type NodeElement = SimulationNodeDatum & TopicNodeElement & { xGravityCenter: number };
@@ -85,7 +85,7 @@ export const ProgressMap: React.FC<{
       svg.selectAll('.innerContainer').remove();
       const container = svg.selectAll('.innerContainer').data([true]).join('g').classed('innerContainer', true);
 
-      const prerequisiteLinks = drawDependency(container, prerequisiteLinkElements, 'linkElement', options);
+      const prerequisiteLinks = drawLink(container, prerequisiteLinkElements, 'linkElement', options);
 
       const topicNodes = drawTopicNode(container, topicNodeElements, 'topicNode', options)
         .classed('node', true)
@@ -142,6 +142,7 @@ export const ProgressMap: React.FC<{
       const simulation = d3Force
         .forceSimulation<NodeElement>()
         .alphaDecay(0.005)
+        // .alphaDecay(0.01)
         .nodes(topicNodeElements)
         .force('charge', d3Force.forceManyBody<NodeElement>().strength(-15))
         .force(
@@ -162,7 +163,7 @@ export const ProgressMap: React.FC<{
         // .force('yForce', d3Force.forceY<NodeElement>(options.pxHeight / 2).strength(0.002))
         // .force('center', d3Force.forceCenter(options.pxWidth / 2, options.pxHeight / 2).strength(0.01))
         .force('y', d3Force.forceY(options.pxHeight / 2).strength(0.01))
-        .force('x', d3Force.forceX(options.pxWidth / 2).strength(0.01))
+        // .force('x', d3Force.forceX(options.pxWidth / 2).strength(0.01))
         .on('tick', tick);
 
       //   @ts-ignore

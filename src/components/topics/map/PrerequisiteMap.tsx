@@ -7,13 +7,14 @@ import * as d3Zoom from 'd3-zoom';
 import { useEffect, useMemo, useRef } from 'react';
 import { BaseMap } from './BaseMap';
 import { MapTopicDataFragment } from './map.utils.generated';
-import { drawDependency, drawTopicNode, MapOptions, TopicNodeColors, TopicNodeElement } from './map.utils';
+import { drawLink, drawTopicNode, MapOptions, TopicNodeColors, TopicNodeElement } from './map.utils';
 
 type NodeElement = SimulationNodeDatum & TopicNodeElement & { type: 'prereq' | 'followUp' | 'topic' };
 
 type LinkElement = d3Force.SimulationLinkDatum<NodeElement> & {};
 
 const radiusMarginArrow = 2;
+const layoutMargin = 40;
 
 const PREREQUISITE_COLOR = TopicNodeColors[5];
 const FOLLOW_UP_COLOR = TopicNodeColors[4];
@@ -27,6 +28,11 @@ export const PrerequisiteMap: React.FC<{
 }> = ({ topic, prerequisiteTopics, followUpTopics, options, onClick }) => {
   const d3Container = useRef<SVGSVGElement>(null);
 
+  const linksLength = useMemo(
+    () =>
+      options.mode === 'explore' ? (options.pxWidth - 2 * layoutMargin) / 6 : (options.pxWidth - 2 * layoutMargin) / 3,
+    [options]
+  );
   const topicNodeElements: NodeElement[] = useMemo(
     () => [
       {
@@ -43,12 +49,12 @@ export const PrerequisiteMap: React.FC<{
   );
   const prereqNodeElements: NodeElement[] = useMemo(
     () =>
-      prerequisiteTopics.map((prereqTopic) => {
+      prerequisiteTopics.map((prereqTopic, i) => {
         return {
           id: prereqTopic._id,
           type: 'prereq',
-          x: options.pxWidth / 2,
-          y: options.pxHeight / 2,
+          x: options.pxWidth / 2 - linksLength,
+          y: options.pxHeight / 2 - (13 * prerequisiteTopics.length) / 2 + i * 13,
           radius: 13,
           color: PREREQUISITE_COLOR,
           ...prereqTopic,
@@ -59,12 +65,12 @@ export const PrerequisiteMap: React.FC<{
 
   const followUpNodeElements: NodeElement[] = useMemo(
     () =>
-      followUpTopics.map((followTopic) => {
+      followUpTopics.map((followTopic, i) => {
         return {
           id: followTopic._id,
           type: 'followUp',
-          x: options.pxWidth / 2,
-          y: options.pxHeight / 2,
+          x: options.pxWidth / 2 + linksLength,
+          y: options.pxHeight / 2 - (13 * followUpTopics.length) / 2 + i * 13,
           radius: 13,
           color: FOLLOW_UP_COLOR,
           ...followTopic,
@@ -77,7 +83,7 @@ export const PrerequisiteMap: React.FC<{
     return [...prereqNodeElements, ...topicNodeElements, ...followUpNodeElements];
   }, [prereqNodeElements, topicNodeElements, followUpNodeElements]);
 
-  const linksData: LinkElement[] = useMemo(() => {
+  const prerequisiteLinkElements: LinkElement[] = useMemo(() => {
     return [
       ...prereqNodeElements.map((prereq, idx) => ({ source: prereq._id, target: topicNodeElements[0]._id })),
       ...followUpNodeElements.map((followUp, idx) => ({ source: topicNodeElements[0]._id, target: followUp._id })),
@@ -97,7 +103,7 @@ export const PrerequisiteMap: React.FC<{
         .attr('viewBox', [0, 0, options.pxWidth, options.pxHeight].join(','));
       svg.selectAll('.innerContainer').remove();
       const container = svg.selectAll('.innerContainer').data([true]).join('g').classed('innerContainer', true);
-      const link = drawDependency(container, linksData, 'linkElement', options);
+      const prerequisiteLinks = drawLink(container, prerequisiteLinkElements, 'linkElement', options);
       const prereqNodes = drawTopicNode(container, prereqNodeElements, 'prereqNode', options).on(
         'click',
         (event, n) => {
@@ -124,42 +130,31 @@ export const PrerequisiteMap: React.FC<{
           return 'translate(' + d.x + ',' + d.y + ')';
         });
 
-        link
+        const theta = (source: NodeElement, target: NodeElement) =>
+          target.x! - source.x! > 0
+            ? Math.atan((target.y! - source.y!) / (target.x! - source.x!))
+            : Math.atan((target.y! - source.y!) / (target.x! - source.x!)) + Math.PI;
+
+        prerequisiteLinks
           .attr('x1', function (d) {
             const target = d.target as NodeElement;
             const source = d.source as NodeElement;
-            return (
-              source.x! +
-              (source.radius + radiusMarginArrow) *
-                Math.cos(Math.atan((target.y! - source.y!) / (target.x! - source.x!)))
-            );
+            return source.x! + (source.radius + radiusMarginArrow) * Math.cos(theta(source, target));
           })
           .attr('y1', function (d) {
             const target = d.target as NodeElement;
             const source = d.source as NodeElement;
-            return (
-              source.y! +
-              (source.radius + radiusMarginArrow) *
-                Math.sin(Math.atan((target.y! - source.y!) / (target.x! - source.x!)))
-            );
+            return source.y! + (source.radius + radiusMarginArrow) * Math.sin(theta(source, target));
           })
           .attr('x2', function (d) {
             const target = d.target as NodeElement;
             const source = d.source as NodeElement;
-            return (
-              target.x! -
-              (target.radius + radiusMarginArrow) *
-                Math.cos(Math.atan((target.y! - source.y!) / (target.x! - source.x!)))
-            );
+            return target.x! - (target.radius + radiusMarginArrow) * Math.cos(theta(source, target));
           })
           .attr('y2', function (d) {
             const target = d.target as NodeElement;
             const source = d.source as NodeElement;
-            return (
-              target.y! -
-              (target.radius + radiusMarginArrow) *
-                Math.sin(Math.atan((target.y! - source.y!) / (target.x! - source.x!)))
-            );
+            return target.y! - (target.radius + radiusMarginArrow) * Math.sin(theta(source, target));
           });
       };
 
@@ -178,29 +173,38 @@ export const PrerequisiteMap: React.FC<{
         .forceSimulation<NodeElement>()
         // .alpha(0.8)
         .alphaDecay(0.005)
+        // .alphaDecay(1)
         .nodes(nodeElements)
-        .force('charge', d3Force.forceManyBody<NodeElement>().strength(-30))
+        .force('charge', d3Force.forceManyBody<NodeElement>().strength(-40))
+        .force(
+          'collision',
+          d3Force.forceCollide<NodeElement>().radius((n) => n.radius + radiusMarginArrow)
+        )
         .force(
           'link',
           d3Force
             .forceLink<NodeElement, d3Force.SimulationLinkDatum<NodeElement>>()
             .id((node) => node._id)
-            .distance(120)
-            // .strength(0.1)
-            .links(linksData)
+            .distance(linksLength)
+            .strength(0.2)
+            .links(prerequisiteLinkElements)
         )
 
         .force(
           'prereqAxis',
-          d3Force.forceX<NodeElement>(options.pxWidth / 4).strength((node) => (node.type === 'prereq' ? 0.1 : 0))
+          d3Force.forceX<NodeElement>(options.pxWidth / 4).strength((node) => (node.type === 'prereq' ? 0.05 : 0))
         )
         .force(
           'followUpAxis',
           d3Force
             .forceX<NodeElement>((3 * options.pxWidth) / 4)
-            .strength((node) => (node.type === 'followUp' ? 0.1 : 0))
+            .strength((node) => (node.type === 'followUp' ? 0.05 : 0))
         )
-        .force('center', d3Force.forceCenter(options.pxWidth / 2, options.pxHeight / 2))
+        .force(
+          'yAxis',
+          d3Force.forceY<NodeElement>(options.pxHeight / 2).strength(options.mode === 'mini' ? 0.02 : 0.001)
+        )
+        // .force('center', d3Force.forceCenter(options.pxWidth / 2, options.pxHeight / 2))
         .on('tick', tick);
     }
   }, [topic._id, prereqNodeElements.length, followUpNodeElements.length]);

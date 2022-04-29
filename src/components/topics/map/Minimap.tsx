@@ -11,6 +11,7 @@ import { routerPushToPage } from '../../../pages/PageInfo';
 import { TopicPageInfo } from '../../../pages/RoutesPageInfos';
 import { theme } from '../../../theme/theme';
 import { useElementSize } from '../../../util/useElementSize';
+import { ExploreMap } from './ExploreMap';
 import { MapProps } from './Map';
 import { MapTopicDataFragment } from './map.utils.generated';
 import { MapHeader, MapType } from './MapHeader';
@@ -141,14 +142,20 @@ const SubTopicsMapModalContent: React.FC<{
       mb={5}
     >
       {modalContainerSize && (
-        <Map
-          mapType={selectedMapType}
-          topic={topic}
-          subTopics={subTopics}
-          parentTopic={parentTopic}
-          options={{ mode: 'mini', pxWidth: modalContainerSize.width, pxHeight: (modalContainerSize.width * 3) / 5 }}
-          onClick={(n) => routerPushToPage(TopicPageInfo(n))}
+        <ExploreMap
+          direction="column"
+          mapPxWidth={modalContainerSize.width}
+          mapPxHeight={(modalContainerSize.width * 3) / 5}
+          selectedTopicId={topic._id}
         />
+        // <Map
+        //   mapType={selectedMapType}
+        //   topic={topic}
+        //   subTopics={subTopics}
+        //   parentTopic={parentTopic}
+        //   options={{ mode: 'mini', pxWidth: modalContainerSize.width, pxHeight: (modalContainerSize.width * 3) / 5 }}
+        //   onClick={(n) => routerPushToPage(TopicPageInfo(n))}
+        // />
       )}
     </Box>
   );

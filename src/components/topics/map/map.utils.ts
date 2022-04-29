@@ -2,6 +2,7 @@ import gql from 'graphql-tag';
 import { TopicLinkData } from '../../../graphql/topics/topics.fragments';
 import * as d3Selection from 'd3-selection';
 import { MapTopicDataFragment } from './map.utils.generated';
+import * as d3Force from 'd3-force';
 
 export const MapTopicData = gql`
   fragment MapTopicData on Topic {
@@ -71,12 +72,19 @@ export function drawTopicNode<T extends TopicNodeElement>(
   return topicNodes;
 }
 
-export function drawDependency<T>(
+interface LinkElement {}
+
+export function drawLink<T>(
   container: d3Selection.Selection<d3Selection.BaseType | SVGGElement, boolean, SVGSVGElement, unknown>,
-  dependencyElements: T[],
+  dependencyElements: d3Force.SimulationLinkDatum<T>[],
   className: string,
   { pxHeight, pxWidth }: MapOptions
-) {
+): d3Selection.Selection<
+  d3Selection.BaseType,
+  d3Force.SimulationLinkDatum<T>,
+  d3Selection.BaseType | SVGGElement,
+  d3Force.SimulationLinkDatum<T>
+> {
   const defs = container.append('defs');
   defs
     .append('marker')
