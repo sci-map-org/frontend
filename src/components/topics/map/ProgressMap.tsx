@@ -4,12 +4,82 @@ import * as d3Force from 'd3-force';
 import { SimulationNodeDatum } from 'd3-force';
 import * as d3Selection from 'd3-selection';
 import * as d3Zoom from 'd3-zoom';
-import { flatten } from 'lodash';
-import { useEffect, useMemo, useRef } from 'react';
+import gql from 'graphql-tag';
+import { flatten, flattenDeep, omit } from 'lodash';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { topicLevelColorMap } from '../fields/TopicLevel';
 import { BaseMap } from './BaseMap';
-import { drawLink, drawTopicNode, MapOptions, TopicNodeElement } from './map.utils';
+import { drawLink, drawTopicNode, MapOptions, MapTopicData, TopicNodeElement } from './map.utils';
 import { MapTopicDataFragment } from './map.utils.generated';
+import { PrerequisiteMap } from './PrerequisiteMap';
+import { useGetProgressMapTopicsQuery } from './ProgressMap.generated';
+
+export const getProgressMapTopics = gql`
+  query getProgressMapTopics($topicId: String!) {
+    getTopicById(topicId: $topicId) {
+      ...MapTopicData
+      level
+      subTopics {
+        subTopic {
+          ...MapTopicData
+          level
+          topicTypes {
+            name
+          }
+          prerequisites {
+            prerequisiteTopic {
+              _id
+            }
+          }
+          followUps {
+            followUpTopic {
+              _id
+            }
+          }
+          subTopics {
+            subTopic {
+              ...MapTopicData
+              level
+              topicTypes {
+                name
+              }
+              prerequisites {
+                prerequisiteTopic {
+                  _id
+                }
+              }
+              followUps {
+                followUpTopic {
+                  _id
+                }
+              }
+              subTopics {
+                subTopic {
+                  ...MapTopicData
+                  level
+                  topicTypes {
+                    name
+                  }
+                  prerequisites {
+                    prerequisiteTopic {
+                      _id
+                    }
+                  }
+                  followUps {
+                    followUpTopic {
+                      _id
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  ${MapTopicData}
+`;
 
 type NodeElement = SimulationNodeDatum & TopicNodeElement & { xGravityCenter: number };
 
@@ -19,33 +89,114 @@ const radiusMarginArrow = 2;
 
 const layoutMargin = 40;
 
-export const ProgressMap: React.FC<{
+export const ProgressMap: React.FC<{ topicId: string; options: MapOptions; onClick: (node: NodeElement) => void }> = ({
+  topicId,
+  options,
+  onClick,
+}) => {
+  const { data, loading } = useGetProgressMapTopicsQuery({ variables: { topicId } });
+  const [topic, setTopic] = useState<
+    MapTopicDataFragment & {
+      level?: number;
+    }
+  >();
+  const [concepts, setConcepts] = useState<
+    Array<
+      MapTopicDataFragment & {
+        level?: number;
+      }
+    >
+  >([]);
+
+  const [prerequisites, setPrerequisites] = useState<{ prerequisite: string; followUp: string }[]>([]);
+  useEffect(() => {
+    if (data) {
+      const r = (data.getTopicById.subTopics || []).map(({ subTopic }) => {
+        return [
+          omit(subTopic, 'subTopics'),
+          ...(subTopic.subTopics || []).map(({ subTopic }) => {
+            return [
+              omit(subTopic, 'subTopics'),
+              ...(subTopic.subTopics || []).map(({ subTopic }) => {
+                return subTopic;
+              }),
+            ];
+          }),
+        ];
+      });
+      const flattened = flatten(flatten(r)).filter((c) => typeof c['level'] === 'number'); // to disable at some point ?
+      const prereqs: { prerequisite: string; followUp: string }[] = [];
+      flattened.forEach((concept) => {
+        concept.prerequisites?.forEach(({ prerequisiteTopic }) => {
+          if (flattened.find((flat) => flat._id === prerequisiteTopic._id)) {
+            prereqs.push({ prerequisite: prerequisiteTopic._id, followUp: concept._id });
+          } else {
+            console.log(`${prerequisiteTopic._id} is an external concept (prereq of ${concept.name})`);
+          }
+        });
+        concept.followUps?.forEach(({ followUpTopic }) => {
+          if (flattened.find((flat) => flat._id === followUpTopic._id)) {
+            prereqs.push({ prerequisite: concept._id, followUp: followUpTopic._id });
+          } else {
+            console.log(`${followUpTopic._id} is an external concept (followUp of ${concept.name})`);
+          }
+        });
+      });
+      setPrerequisites(prereqs);
+      setConcepts(flattened.map((concept) => omit(concept, ['prerequisites', 'followUps'])));
+    }
+  }, [data]);
+
+  if (loading || !data || !concepts.length || !prerequisites.length)
+    return <BaseMap options={options} isLoading={true} />;
+  console.log(concepts);
+  console.log(prerequisites);
+  return (
+    // <BaseMap options={options} />
+    <StatelessProgressMap
+      topic={data.getTopicById}
+      concepts={concepts}
+      prerequisites={prerequisites}
+      options={options}
+      onClick={onClick}
+    />
+  );
+};
+
+export const StatelessProgressMap: React.FC<{
   topic: MapTopicDataFragment;
-  subTopics: Array<MapTopicDataFragment & { prerequisites: { _id: string }[]; level?: number }>;
+  concepts: Array<
+    MapTopicDataFragment & {
+      //prerequisites: { _id: string }[];
+      level?: number | null;
+    }
+  >;
+  prerequisites: { prerequisite: string; followUp: string }[];
   options: MapOptions;
   onClick: (node: NodeElement) => void;
-}> = ({ topic, subTopics, options, onClick }) => {
+}> = ({ topic, concepts, prerequisites, options, onClick }) => {
   const d3Container = useRef<SVGSVGElement>(null);
 
   const prerequisiteLinkElements: LinkElement[] = useMemo(() => {
-    const relArray = subTopics.map((subTopic) =>
-      subTopic.prerequisites.map((prereq) => ({ source: prereq._id, target: subTopic._id }))
-    );
-    return flatten(relArray);
-  }, [subTopics]);
+    // const relArray = subTopics.map((subTopic) =>
+    //   subTopic.prerequisites.map((prereq) => ({ source: prereq._id, target: subTopic._id }))
+    // );
+    // return flatten(relArray);
+    return prerequisites.map(({ prerequisite, followUp }) => ({ source: prerequisite, target: followUp }));
+  }, [PrerequisiteMap]);
 
   const topicNodesGravityCenters = useMemo(() => {
     const alpha = 40;
     const getNodeIndexFromId = (id: string): number => {
-      const index = subTopics.findIndex(({ _id }) => id === _id);
+      const index = concepts.findIndex(({ _id }) => id === _id);
       if (index === -1) throw new Error(`Not found node with id ${id}`);
       return index;
     };
 
-    let gravityCenters = subTopics.map((subTopic) => {
+    let gravityCenters = concepts.map((concept) => {
       return (
         layoutMargin +
-        ((typeof subTopic.level === 'number' ? subTopic.level : 50) * (options.pxWidth - 2 * layoutMargin)) / 100
+        ((typeof concept.level === 'number' ? concept.level : 50) * (options.pxWidth - 2 * layoutMargin)) / 100
       ); // future: mix of level and rank ?)
     });
     for (let i = 0; i < 3; i++) {
@@ -62,10 +213,10 @@ export const ProgressMap: React.FC<{
     }
     return gravityCenters;
   }, []);
-
+  console.log({ topicNodesGravityCenters });
   const topicNodeElements: NodeElement[] = useMemo(
     () =>
-      subTopics.map((subTopic, idx) => ({
+      concepts.map((subTopic, idx) => ({
         id: subTopic._id,
         type: 'topic',
         radius: 12,
@@ -75,8 +226,9 @@ export const ProgressMap: React.FC<{
         y: options.pxHeight / 2 + (Math.random() - 0.5) * options.pxHeight * 0.03,
         ...subTopic,
       })),
-    [subTopics, topicNodesGravityCenters]
+    [concepts, topicNodesGravityCenters]
   );
+  console.log({ topicNodeElements });
   useEffect(() => {
     if (d3Container && d3Container.current) {
       const svg = d3Selection
@@ -144,7 +296,7 @@ export const ProgressMap: React.FC<{
         .alphaDecay(0.005)
         // .alphaDecay(0.01)
         .nodes(topicNodeElements)
-        .force('charge', d3Force.forceManyBody<NodeElement>().strength(-15))
+        .force('charge', d3Force.forceManyBody<NodeElement>().strength(-30))
         .force(
           'collision',
           d3Force.forceCollide<NodeElement>().radius((n) => n.radius + radiusMarginArrow)
