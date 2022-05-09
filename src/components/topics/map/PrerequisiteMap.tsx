@@ -7,7 +7,10 @@ import * as d3Zoom from 'd3-zoom';
 import { useEffect, useMemo, useRef } from 'react';
 import { BaseMap } from './BaseMap';
 import { MapTopicDataFragment } from './map.utils.generated';
-import { drawLink, drawTopicNode, MapOptions, TopicNodeColors, TopicNodeElement } from './map.utils';
+import { drawLink, drawTopicNode, MapOptions, MapTopicData, TopicNodeColors, TopicNodeElement } from './map.utils';
+import gql from 'graphql-tag';
+import { useGetPrerequisiteMapTopicsQuery } from './PrerequisiteMap.generated';
+import { omit } from 'lodash';
 
 type NodeElement = SimulationNodeDatum & TopicNodeElement & { type: 'prereq' | 'followUp' | 'topic' };
 
@@ -19,7 +22,44 @@ const layoutMargin = 40;
 const PREREQUISITE_COLOR = TopicNodeColors[5];
 const FOLLOW_UP_COLOR = TopicNodeColors[4];
 
+export const getPrerequisiteMapTopics = gql`
+  query getPrerequisiteMapTopics($topicId: String!) {
+    getTopicById(topicId: $topicId) {
+      ...MapTopicData
+      prerequisites {
+        prerequisiteTopic {
+          ...MapTopicData
+        }
+      }
+      followUps {
+        followUpTopic {
+          ...MapTopicData
+        }
+      }
+    }
+  }
+  ${MapTopicData}
+`;
+
 export const PrerequisiteMap: React.FC<{
+  topicId: string;
+  options: MapOptions;
+  onClick: (node: NodeElement) => void;
+}> = ({ topicId, options, onClick }) => {
+  const { data, loading } = useGetPrerequisiteMapTopicsQuery({ variables: { topicId } });
+  if (loading || !data) return <BaseMap options={options} isLoading={true} />;
+  return (
+    <StatelessPrerequisiteMap
+      topic={omit(data.getTopicById, ['prerequisites', 'followUps'])}
+      prerequisiteTopics={(data.getTopicById.prerequisites || []).map(({ prerequisiteTopic }) => prerequisiteTopic)}
+      followUpTopics={(data.getTopicById.followUps || []).map(({ followUpTopic }) => followUpTopic)}
+      options={options}
+      onClick={onClick}
+    />
+  );
+};
+
+export const StatelessPrerequisiteMap: React.FC<{
   topic: MapTopicDataFragment;
   prerequisiteTopics: MapTopicDataFragment[];
   followUpTopics: MapTopicDataFragment[];
@@ -209,6 +249,17 @@ export const PrerequisiteMap: React.FC<{
     }
   }, [topic._id, prereqNodeElements.length, followUpNodeElements.length]);
 
+  if (!prereqNodeElements.length && !followUpNodeElements.length)
+    return (
+      <BaseMap
+        options={options}
+        renderCenter={
+          <Text fontWeight={600} fontSize="lg" color="gray.100" fontStyle="italic" textAlign="center">
+            No prerequisite or follow up topics found
+          </Text>
+        }
+      />
+    );
   return (
     <BaseMap
       ref={d3Container}

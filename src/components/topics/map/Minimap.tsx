@@ -61,26 +61,15 @@ export const Minimap: React.FC<MinimapProps> = ({
         overflow="hidden"
         position="relative"
       >
-        {isLoading ? (
-          <Center w="100%" h="100%">
-            <PuffLoader size={Math.floor(pxWidth / 3)} color={theme.colors.blue[500]} />
-          </Center>
-        ) : subTopics.length ? (
-          <Map
-            mapType={selectedMapType}
-            topic={topic}
-            subTopics={subTopics}
-            parentTopic={parentTopic}
-            options={{ mode: 'mini', pxWidth, pxHeight }}
-            onClick={(n) => routerPushToPage(TopicPageInfo(n))}
-          />
-        ) : (
-          <Center w="100%" h="100%">
-            <Text textAlign="center" fontWeight={600} fontStyle="italic" color="gray.400">
-              No SubTopics found
-            </Text>
-          </Center>
-        )}
+        <Map
+          mapType={selectedMapType}
+          topic={topic}
+          isLoading={isLoading}
+          subTopics={subTopics}
+          parentTopic={parentTopic}
+          options={{ mode: 'mini', pxWidth, pxHeight }}
+          onClick={(n) => routerPushToPage(TopicPageInfo(n))}
+        />
 
         {(isLoading || subTopics.length) && (
           <IconButton

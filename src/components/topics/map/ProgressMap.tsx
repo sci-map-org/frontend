@@ -97,13 +97,13 @@ export const ProgressMap: React.FC<{ topicId: string; options: MapOptions; onCli
   const { data, loading } = useGetProgressMapTopicsQuery({ variables: { topicId } });
   const [topic, setTopic] = useState<
     MapTopicDataFragment & {
-      level?: number;
+      level?: number | null;
     }
   >();
   const [concepts, setConcepts] = useState<
     Array<
       MapTopicDataFragment & {
-        level?: number;
+        level?: number | null;
       }
     >
   >([]);
@@ -147,12 +147,19 @@ export const ProgressMap: React.FC<{ topicId: string; options: MapOptions; onCli
     }
   }, [data]);
 
-  if (loading || !data || !concepts.length || !prerequisites.length)
-    return <BaseMap options={options} isLoading={true} />;
-  console.log(concepts);
-  console.log(prerequisites);
+  if (loading || !data) return <BaseMap options={options} isLoading={true} />;
+  if (!concepts.length)
+    return (
+      <BaseMap
+        options={options}
+        renderCenter={
+          <Text fontWeight={600} fontSize="lg" color="gray.100" fontStyle="italic" textAlign="center">
+            No concepts found for this topic
+          </Text>
+        }
+      />
+    );
   return (
-    // <BaseMap options={options} />
     <StatelessProgressMap
       topic={data.getTopicById}
       concepts={concepts}
@@ -167,7 +174,6 @@ export const StatelessProgressMap: React.FC<{
   topic: MapTopicDataFragment;
   concepts: Array<
     MapTopicDataFragment & {
-      //prerequisites: { _id: string }[];
       level?: number | null;
     }
   >;
@@ -178,10 +184,6 @@ export const StatelessProgressMap: React.FC<{
   const d3Container = useRef<SVGSVGElement>(null);
 
   const prerequisiteLinkElements: LinkElement[] = useMemo(() => {
-    // const relArray = subTopics.map((subTopic) =>
-    //   subTopic.prerequisites.map((prereq) => ({ source: prereq._id, target: subTopic._id }))
-    // );
-    // return flatten(relArray);
     return prerequisites.map(({ prerequisite, followUp }) => ({ source: prerequisite, target: followUp }));
   }, [PrerequisiteMap]);
 
@@ -314,7 +316,7 @@ export const StatelessProgressMap: React.FC<{
         .force('xForce', d3Force.forceX<NodeElement>((n) => n.xGravityCenter).strength(0.1))
         // .force('yForce', d3Force.forceY<NodeElement>(options.pxHeight / 2).strength(0.002))
         // .force('center', d3Force.forceCenter(options.pxWidth / 2, options.pxHeight / 2).strength(0.01))
-        .force('y', d3Force.forceY(options.pxHeight / 2).strength(0.01))
+        .force('y', d3Force.forceY(options.pxHeight / 2).strength(0.02))
         // .force('x', d3Force.forceX(options.pxWidth / 2).strength(0.01))
         .on('tick', tick);
 

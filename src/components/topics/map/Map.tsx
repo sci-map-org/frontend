@@ -3,7 +3,7 @@ import { BaseMap } from './BaseMap';
 import { MapTopicDataFragment } from './map.utils.generated';
 import { MapOptions } from './map.utils';
 import { MapType } from './MapHeader';
-import { PrerequisiteMap } from './PrerequisiteMap';
+import { PrerequisiteMap, StatelessPrerequisiteMap } from './PrerequisiteMap';
 import { ProgressMap } from './ProgressMap';
 import { SubTopicsMap } from './SubTopicsMap';
 
@@ -26,23 +26,24 @@ export const Map: React.FC<MapProps> = ({ mapType, topic, subTopics, parentTopic
 
   if (mapType === MapType.PREREQUISITES && topic)
     return (
-      <PrerequisiteMap
-        topic={topic}
-        prerequisiteTopics={[
-          { _id: 'bla', key: 'bla', name: 'Bla 1' },
-          { _id: 'bla2', key: 'bla2', name: 'Bla 2' },
-          { _id: 'bla3', key: 'bla3', name: 'Bla 3' },
-          { _id: 'bla4', key: 'bla4', name: 'Bla 4' },
-        ]}
-        followUpTopics={[
-          { _id: 'bli', key: 'bli', name: 'Bli' },
-          { _id: 'bli2', key: 'bli2', name: 'Bli 2' },
-          { _id: 'bli3', key: 'bli3', name: 'Bli 3' },
-          { _id: 'bli4', key: 'bli4', name: 'Bli 4' },
-        ]}
-        options={options}
-        onClick={onClick}
-      />
+      <PrerequisiteMap topicId={topic._id} options={options} onClick={onClick} />
+      // <StatelessPrerequisiteMap
+      //   topic={topic}
+      //   prerequisiteTopics={[
+      //     { _id: 'bla', key: 'bla', name: 'Bla 1' },
+      //     { _id: 'bla2', key: 'bla2', name: 'Bla 2' },
+      //     { _id: 'bla3', key: 'bla3', name: 'Bla 3' },
+      //     { _id: 'bla4', key: 'bla4', name: 'Bla 4' },
+      //   ]}
+      //   followUpTopics={[
+      //     { _id: 'bli', key: 'bli', name: 'Bli' },
+      //     { _id: 'bli2', key: 'bli2', name: 'Bli 2' },
+      //     { _id: 'bli3', key: 'bli3', name: 'Bli 3' },
+      //     { _id: 'bli4', key: 'bli4', name: 'Bli 4' },
+      //   ]}
+      //   options={options}
+      //   onClick={onClick}
+      // />
     );
   if (mapType === MapType.CONCEPTS && topic)
     return (

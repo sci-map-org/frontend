@@ -7,12 +7,13 @@ import { MapOptions } from './map.utils';
 interface BaseMapProps {
   options: MapOptions;
   renderTopLeft?: ReactNode;
+  renderCenter?: ReactNode;
   renderBottomMiddleLeft?: ReactNode;
   renderBottomMiddleRight?: ReactNode;
   isLoading?: boolean;
 }
 export const BaseMap = forwardRef<SVGSVGElement, BaseMapProps>(
-  ({ options, renderTopLeft, renderBottomMiddleLeft, renderBottomMiddleRight, isLoading }, ref) => {
+  ({ options, renderTopLeft, renderCenter, renderBottomMiddleLeft, renderBottomMiddleRight, isLoading }, ref) => {
     return (
       <Box position="relative">
         {isLoading && (
@@ -26,11 +27,21 @@ export const BaseMap = forwardRef<SVGSVGElement, BaseMapProps>(
           height={`${options.pxHeight}px`}
           style={{ backgroundColor: theme.colors.gray[600] }}
         />
+        {renderCenter && (
+          <Box
+            position="absolute"
+            top={`${options.pxHeight / 2}px`}
+            left={`${options.pxWidth / 2}px`}
+            transform="translate(-50%, -50%)"
+          >
+            {renderCenter}
+          </Box>
+        )}
         {renderBottomMiddleLeft && (
           <Box
             position="absolute"
             bottom={`${options.pxHeight / 20}px`}
-            left={options.pxWidth / 4}
+            left={`${options.pxWidth / 4}px`}
             transform="translate(-50%, 0)"
           >
             {renderBottomMiddleLeft}

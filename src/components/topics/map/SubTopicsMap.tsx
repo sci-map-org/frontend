@@ -91,16 +91,20 @@ export const SubTopicsMap: React.FC<{
     }
   }, [topic?._id, topicNodeElements.length]);
 
+  if (!topicNodeElements.length)
+    return (
+      <BaseMap
+        options={options}
+        renderCenter={
+          <Text fontWeight={600} fontSize="lg" color="gray.100" fontStyle="italic" textAlign="center">
+            No SubTopics found
+          </Text>
+        }
+      />
+    );
   return (
     <Box position="relative" width={`${options.pxWidth}px`} height={`${options.pxHeight}px`}>
       <BaseMap ref={d3Container} options={options} />;
-      {!topicNodeElements.length && (
-        <Center position="absolute" top={0} left={0} width={`${options.pxWidth}px`} height={`${options.pxHeight}px`}>
-          <Text fontWeight={600} fontSize="lg" color="originalPalette.red" fontStyle="italic">
-            No SubTopics found
-          </Text>
-        </Center>
-      )}
       {parentTopic && (
         <Flex
           direction="row"
