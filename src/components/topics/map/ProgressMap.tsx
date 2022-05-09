@@ -7,6 +7,7 @@ import * as d3Zoom from 'd3-zoom';
 import gql from 'graphql-tag';
 import { flatten, flattenDeep, omit } from 'lodash';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { isTopicArea } from '../../../services/topics.service';
 import { topicLevelColorMap } from '../fields/TopicLevel';
 import { BaseMap } from './BaseMap';
 import { drawLink, drawTopicNode, MapOptions, MapTopicData, TopicNodeElement } from './map.utils';
@@ -81,7 +82,7 @@ export const getProgressMapTopics = gql`
   ${MapTopicData}
 `;
 
-type NodeElement = SimulationNodeDatum & TopicNodeElement & { xGravityCenter: number };
+type NodeElement = SimulationNodeDatum & TopicNodeElement & { level: number | null; xGravityCenter: number };
 
 type LinkElement = d3Force.SimulationLinkDatum<NodeElement> & {};
 
@@ -114,17 +115,22 @@ export const ProgressMap: React.FC<{ topicId: string; options: MapOptions; onCli
       const r = (data.getTopicById.subTopics || []).map(({ subTopic }) => {
         return [
           omit(subTopic, 'subTopics'),
-          ...(subTopic.subTopics || []).map(({ subTopic }) => {
-            return [
-              omit(subTopic, 'subTopics'),
-              ...(subTopic.subTopics || []).map(({ subTopic }) => {
-                return subTopic;
-              }),
-            ];
-          }),
+          ...(subTopic.subTopics || [])
+            .filter(({ subTopic }) => !!subTopic.topicTypes && !isTopicArea(subTopic.topicTypes))
+            .map(({ subTopic }) => {
+              return [
+                omit(subTopic, 'subTopics'),
+                ...(subTopic.subTopics || [])
+                  .filter(({ subTopic }) => !!subTopic.topicTypes && !isTopicArea(subTopic.topicTypes))
+                  .map(({ subTopic }) => {
+                    return subTopic;
+                  }),
+              ];
+            }),
         ];
       });
       const flattened = flatten(flatten(r)).filter((c) => typeof c['level'] === 'number'); // to disable at some point ?
+      console.log(flattened.length);
       const prereqs: { prerequisite: string; followUp: string }[] = [];
       flattened.forEach((concept) => {
         concept.prerequisites?.forEach(({ prerequisiteTopic }) => {
@@ -222,6 +228,7 @@ export const StatelessProgressMap: React.FC<{
         id: subTopic._id,
         type: 'topic',
         radius: 12,
+        level: typeof subTopic.level === 'number' ? subTopic.level : null,
         xGravityCenter: topicNodesGravityCenters[idx],
         color: typeof subTopic.level === 'number' ? topicLevelColorMap(subTopic.level / 100) : 'gray',
         x: topicNodesGravityCenters[idx], //(topicNodesGravityCenters[idx] + (2 * options.pxWidth) / 2) / 3,
@@ -313,10 +320,20 @@ export const StatelessProgressMap: React.FC<{
             .links(prerequisiteLinkElements)
         )
 
-        .force('xForce', d3Force.forceX<NodeElement>((n) => n.xGravityCenter).strength(0.1))
+        .force(
+          'xForce',
+          d3Force.forceX<NodeElement>((n) => n.xGravityCenter).strength((n) => (n.level !== null ? 0.1 : 0.005))
+        )
         // .force('yForce', d3Force.forceY<NodeElement>(options.pxHeight / 2).strength(0.002))
         // .force('center', d3Force.forceCenter(options.pxWidth / 2, options.pxHeight / 2).strength(0.01))
-        .force('y', d3Force.forceY(options.pxHeight / 2).strength(0.02))
+        .force(
+          'y',
+          d3Force
+            .forceY<NodeElement>((n, i) =>
+              n.level !== null ? options.pxHeight / 2 : options.pxHeight / 5 + (i % 2) * ((3 * options.pxHeight) / 5)
+            )
+            .strength((n) => (n.level !== null ? 0.02 : 0.03))
+        )
         // .force('x', d3Force.forceX(options.pxWidth / 2).strength(0.01))
         .on('tick', tick);
 

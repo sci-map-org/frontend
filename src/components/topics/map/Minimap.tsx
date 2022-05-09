@@ -71,25 +71,24 @@ export const Minimap: React.FC<MinimapProps> = ({
           onClick={(n) => routerPushToPage(TopicPageInfo(n))}
         />
 
-        {(isLoading || subTopics.length) && (
-          <IconButton
-            position="absolute"
-            variant="ghost"
-            _active={{}}
-            _focus={{}}
-            color="white"
-            fontSize="1.3em"
-            isRound
-            size="xs"
-            onClick={() => onOpen()}
-            bottom={2}
-            right={2}
-            opacity={0.8}
-            _hover={{ opacity: 1 }}
-            aria-label="expand minimap"
-            icon={<CgArrowsExpandRight />}
-          />
-        )}
+        <IconButton
+          position="absolute"
+          variant="ghost"
+          _active={{}}
+          _focus={{}}
+          color="white"
+          fontSize="1.3em"
+          isRound
+          size="xs"
+          onClick={() => onOpen()}
+          bottom={2}
+          right={2}
+          opacity={0.8}
+          _hover={{ opacity: 1 }}
+          aria-label="expand minimap"
+          icon={<CgArrowsExpandRight />}
+        />
+
         <Modal isOpen={isOpen} onClose={onClose} size="4xl">
           <ModalOverlay />
           <ModalContent>

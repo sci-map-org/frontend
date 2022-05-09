@@ -23,12 +23,15 @@ import { Map } from './Map';
 import { MapTopicDataFragment } from './map.utils.generated';
 import { MapTopicData } from './map.utils';
 import { MapHeader, MapType } from './MapHeader';
+import { AlsoPartOfTopicsViewer } from '../AlsoPartOfTopicsViewer';
+import { EditablePartOfTopicsData } from '../EditablePartOfTopics';
 
 export const ExploreMapFocusedTopicCardData = gql`
   fragment ExploreMapFocusedTopicCardData on Topic {
     ...MapTopicData
     description
     ...TopicSubHeaderData
+    ...EditablePartOfTopicsData
     subTopics {
       subTopic {
         ...MapTopicData
@@ -41,6 +44,7 @@ export const ExploreMapFocusedTopicCardData = gql`
   ${TopicSubHeaderData}
   ${TopicLinkData}
   ${MapTopicData}
+  ${EditablePartOfTopicsData}
 `;
 
 export const getTopicByIdExplorePage = gql`
@@ -165,7 +169,10 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
       <Stack direction="column">
         <Center>
           <Stack spacing="2px">
-            <MapHeader onChange={setSelectedMapType} value={selectedMapType} size="lg" />
+            <Flex justifyContent="space-between" alignItems="center">
+              <MapHeader onChange={setSelectedMapType} value={selectedMapType} size="lg" />
+              {!!loadedTopic && <AlsoPartOfTopicsViewer topic={loadedTopic} />}
+            </Flex>
             <Box boxShadow="lg" width={mapPxWidth + 'px'} {...mapContainerProps}>
               <Map
                 mapType={selectedMapType}
