@@ -72,8 +72,6 @@ export function drawTopicNode<T extends TopicNodeElement>(
   return topicNodes;
 }
 
-interface LinkElement {}
-
 export function drawLink<T>(
   container: d3Selection.Selection<d3Selection.BaseType | SVGGElement, boolean, SVGSVGElement, unknown>,
   dependencyElements: d3Force.SimulationLinkDatum<T>[],

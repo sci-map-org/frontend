@@ -221,7 +221,7 @@ export const StatelessProgressMap: React.FC<{
     }
     return gravityCenters;
   }, []);
-  console.log({ topicNodesGravityCenters });
+
   const topicNodeElements: NodeElement[] = useMemo(
     () =>
       concepts.map((subTopic, idx) => ({
@@ -237,9 +237,9 @@ export const StatelessProgressMap: React.FC<{
       })),
     [concepts, topicNodesGravityCenters]
   );
-  console.log({ topicNodeElements });
   useEffect(() => {
     if (d3Container && d3Container.current) {
+      console.log('rerendering');
       const svg = d3Selection
         .select(d3Container.current)
         .attr('viewBox', [0, 0, options.pxWidth, options.pxHeight].join(','));

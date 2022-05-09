@@ -1,5 +1,6 @@
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Box, Center, Flex, FlexProps, Link, Stack, Text } from '@chakra-ui/layout';
+import { Button } from '@chakra-ui/react';
 import { Spinner } from '@chakra-ui/spinner';
 import gql from 'graphql-tag';
 import { useRouter } from 'next/router';
@@ -25,6 +26,7 @@ import { MapTopicData } from './map.utils';
 import { MapHeader, MapType } from './MapHeader';
 import { AlsoPartOfTopicsViewer } from '../AlsoPartOfTopicsViewer';
 import { EditablePartOfTopicsData } from '../EditablePartOfTopics';
+import { Skeleton } from '@chakra-ui/react';
 
 export const ExploreMapFocusedTopicCardData = gql`
   fragment ExploreMapFocusedTopicCardData on Topic {
@@ -39,6 +41,9 @@ export const ExploreMapFocusedTopicCardData = gql`
     }
     parentTopic {
       ...TopicLinkData
+      parentTopic {
+        ...TopicLinkData
+      }
     }
   }
   ${TopicSubHeaderData}
@@ -78,7 +83,8 @@ export interface ExploreMapProps {
   mapPxWidth: number;
   mapPxHeight: number;
   selectedTopicId?: string;
-  onTopicChange?: (topicId: string) => void;
+  selectedMapType?: MapType;
+  onTopicOrMapTypeChange?: (topicId: string, mapType: MapType) => void;
   direction: 'row' | 'column';
   mapContainerProps?: FlexProps;
 }
@@ -86,7 +92,8 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
   mapPxWidth,
   mapPxHeight,
   selectedTopicId: propSelectedTopicId,
-  onTopicChange,
+  selectedMapType: propSelectedMapType,
+  onTopicOrMapTypeChange,
   direction,
   mapContainerProps,
 }) => {
@@ -97,10 +104,13 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
   const [selectedTopicId, setSelectedTopicId] = useState<string | undefined>(propSelectedTopicId);
 
   const [loadedTopic, setLoadedTopic] = useState<GetTopicByIdExplorePageQuery['getTopicById']>();
-  const [selectedMapType, setSelectedMapType] = useState<MapType>(MapType.SUBTOPICS);
+  const [selectedMapType, setSelectedMapType] = useState<MapType>(propSelectedMapType || MapType.SUBTOPICS);
   const [subTopics, setSubtopics] = useState<MapTopicDataFragment[]>();
   const [parentTopic, setParentTopic] = useState<TopicLinkDataFragment>();
 
+  useEffect(() => {
+    onTopicOrMapTypeChange && onTopicOrMapTypeChange(selectedTopicId || rootTopic._id, selectedMapType);
+  }, [selectedMapType, selectedTopicId]);
   const [getTopLevelDomainsLazyQuery, { loading: isTopLevelQueryLoading }] = useGetTopLevelTopicsLazyQuery({
     onCompleted(d) {
       d && setSubtopics(d.getTopLevelTopics.items);
@@ -123,10 +133,10 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
   const loadTopic = (topicId?: string) => {
     if (!topicId || topicId === rootTopic._id) {
       getTopLevelDomainsLazyQuery();
-      onTopicChange && onTopicChange(rootTopic._id);
+      // onTopicOrMapTypeChange && onTopicOrMapTypeChange(rootTopic._id, selectedMapType);
     } else {
       getTopicById({ variables: { topicId } });
-      onTopicChange && onTopicChange(topicId);
+      // onTopicOrMapTypeChange && onTopicOrMapTypeChange(topicId, selectedMapType);
     }
   };
 
@@ -186,20 +196,23 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
                 }}
               />
             </Box>
+            <Flex justifyContent="space-between" alignItems="center">
+              <ExploreMapBreadcrumbs topic={loadedTopic} onSelect={(topicId) => setSelectedTopicId(topicId)} />
+              <RoleAccess accessRule="loggedInUser">
+                {/* <Flex direction="row" justifyContent="center" pt={1} pb={1}> */}
+                <NewTopicModal
+                  parentTopic={loadedTopic}
+                  renderButton={(openModal) => (
+                    <Button colorScheme="blue" size="xs" variant="outline" onClick={() => openModal()}>
+                      + Add SubTopic
+                    </Button>
+                  )}
+                />
+                {/* </Flex> */}
+              </RoleAccess>
+            </Flex>
           </Stack>
         </Center>
-        <RoleAccess accessRule="loggedInUser">
-          <Flex direction="row" justifyContent="center" pt={1} pb={1}>
-            <NewTopicModal
-              parentTopic={loadedTopic}
-              renderButton={(openModal) => (
-                <Link color="originalPalette.red" fontSize="md" fontWeight={600} onClick={() => openModal()}>
-                  + Add SubTopic
-                </Link>
-              )}
-            />
-          </Flex>
-        </RoleAccess>
       </Stack>
       {/* {loadedTopic && (
         <AddSubTopicModal
@@ -242,5 +255,50 @@ const ExploreMapFocusedTopicCard: React.FC<{
         </PageLink>
       </Center>
     </Flex>
+  );
+};
+
+const ExploreMapBreadcrumbs: React.FC<{
+  topic?: ExploreMapFocusedTopicCardDataFragment;
+  onSelect: (topicId: string) => void;
+}> = ({ topic, onSelect }) => {
+  const breadcrumbLink = (topic: TopicLinkDataFragment, isCurrent?: boolean) => (
+    <Link
+      fontSize="17px"
+      fontWeight={500}
+      textDecoration={isCurrent ? 'underline' : 'none'}
+      onClick={() => onSelect(topic._id)}
+    >
+      {topic._id !== rootTopic._id ? topic.name : 'Explore'}
+    </Link>
+  );
+  return (
+    <Stack direction="row" alignItems="center">
+      {topic?._id !== rootTopic._id &&
+        (!topic?.parentTopic || !topic.parentTopic?.parentTopic ? (
+          <>
+            {breadcrumbLink(rootTopic)}
+            <Text>/</Text>
+          </>
+        ) : (
+          <>
+            <Text>..</Text>
+            <Text>/</Text>
+          </>
+        ))}
+      {!!topic?.parentTopic?.parentTopic && (
+        <>
+          {breadcrumbLink(topic.parentTopic.parentTopic)}
+          <Text>/</Text>
+        </>
+      )}
+      {!!topic?.parentTopic && (
+        <>
+          {breadcrumbLink(topic.parentTopic)}
+          <Text>/</Text>
+        </>
+      )}
+      {topic && breadcrumbLink(topic, true)}
+    </Stack>
   );
 };

@@ -104,7 +104,7 @@ export const SubTopicsMap: React.FC<{
     );
   return (
     <Box position="relative" width={`${options.pxWidth}px`} height={`${options.pxHeight}px`}>
-      <BaseMap ref={d3Container} options={options} />;
+      <BaseMap ref={d3Container} options={options} />
       {parentTopic && (
         <Flex
           direction="row"
