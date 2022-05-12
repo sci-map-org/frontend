@@ -6,6 +6,7 @@ import { MapType } from './MapHeader';
 import { PrerequisiteMap, StatelessPrerequisiteMap } from './PrerequisiteMap';
 import { ProgressMap } from './ProgressMap';
 import { SubTopicsMap } from './SubTopicsMap';
+import { useEffect, useState } from 'react';
 
 export interface MapProps {
   mapType: MapType;
@@ -18,10 +19,15 @@ export interface MapProps {
 }
 
 export const Map: React.FC<MapProps> = ({ mapType, topic, subTopics, parentTopic, options, onClick, isLoading }) => {
+  const [history, setHistory] = useState(!!topic ? [topic] : []);
+  useEffect(() => {
+    if (!!topic) setHistory([...history, topic]);
+  }, [topic]);
+
   if (isLoading) return <BaseMap options={options} isLoading={isLoading} />;
   if (mapType === MapType.SUBTOPICS)
     return (
-      <SubTopicsMap topic={topic} subTopics={subTopics} parentTopic={parentTopic} options={options} onClick={onClick} />
+      <SubTopicsMap topic={topic} subTopics={subTopics} parentTopic={parentTopic} options={options} onClick={onClick} history={history}/>
     );
 
   if (mapType === MapType.PREREQUISITES && topic)

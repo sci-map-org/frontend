@@ -130,7 +130,6 @@ export const ProgressMap: React.FC<{ topicId: string; options: MapOptions; onCli
         ];
       });
       const flattened = flatten(flatten(r)).filter((c) => typeof c['level'] === 'number'); // to disable at some point ?
-      console.log(flattened.length);
       const prereqs: { prerequisite: string; followUp: string }[] = [];
       flattened.forEach((concept) => {
         concept.prerequisites?.forEach(({ prerequisiteTopic }) => {
@@ -190,7 +189,10 @@ export const StatelessProgressMap: React.FC<{
   const d3Container = useRef<SVGSVGElement>(null);
 
   const prerequisiteLinkElements: LinkElement[] = useMemo(() => {
-    return prerequisites.map(({ prerequisite, followUp }) => ({ source: prerequisite, target: followUp }));
+    return prerequisites.map(({ prerequisite, followUp }) => ({
+      source: prerequisite,
+      target: followUp,
+    }));
   }, [PrerequisiteMap]);
 
   const topicNodesGravityCenters = useMemo(() => {
@@ -239,7 +241,6 @@ export const StatelessProgressMap: React.FC<{
   );
   useEffect(() => {
     if (d3Container && d3Container.current) {
-      console.log('rerendering');
       const svg = d3Selection
         .select(d3Container.current)
         .attr('viewBox', [0, 0, options.pxWidth, options.pxHeight].join(','));
@@ -248,12 +249,9 @@ export const StatelessProgressMap: React.FC<{
 
       const prerequisiteLinks = drawLink(container, prerequisiteLinkElements, 'linkElement', options);
 
-      const topicNodes = drawTopicNode(container, topicNodeElements, 'topicNode', options)
-        .classed('node', true)
-        .attr('fill-opacity', 1)
-        .on('click', (event, n) => {
-          onClick(n);
-        });
+      const topicNodes = drawTopicNode(container, topicNodeElements, 'topicNode', options).on('click', (event, n) => {
+        onClick(n);
+      });
 
       const zoom = d3Zoom.zoom<SVGSVGElement, unknown>();
       const tick = () => {

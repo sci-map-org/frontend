@@ -26,7 +26,6 @@ import { MapTopicData } from './map.utils';
 import { MapHeader, MapType } from './MapHeader';
 import { AlsoPartOfTopicsViewer } from '../AlsoPartOfTopicsViewer';
 import { EditablePartOfTopicsData } from '../EditablePartOfTopics';
-import { Skeleton } from '@chakra-ui/react';
 
 export const ExploreMapFocusedTopicCardData = gql`
   fragment ExploreMapFocusedTopicCardData on Topic {
@@ -190,7 +189,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
                 subTopics={subTopics || []}
                 parentTopic={parentTopic}
                 topic={loadedTopic}
-                options={{ mode: 'explore', pxWidth: mapPxWidth, pxHeight: mapPxHeight }}
+                options={{ mode: 'explore', pxWidth: mapPxWidth, pxHeight: mapPxHeight, enableHistory: true }}
                 onClick={(topic) => {
                   setSelectedTopicId(topic._id);
                 }}

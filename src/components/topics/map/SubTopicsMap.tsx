@@ -25,8 +25,9 @@ export const SubTopicsMap: React.FC<{
   subTopics: MapTopicDataFragment[];
   parentTopic?: TopicLinkDataFragment;
   options: MapOptions;
+  history: MapTopicDataFragment[]
   onClick: (node: TopicLinkDataFragment) => void;
-}> = ({ topic, subTopics, parentTopic, options, onClick }) => {
+}> = ({ topic, subTopics, parentTopic, options, history, onClick }) => {
   const d3Container = useRef<SVGSVGElement>(null);
 
   const topicNodeElements: NodeElement[] = useMemo(

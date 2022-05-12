@@ -29,6 +29,7 @@ export interface MapOptions {
   pxHeight: number;
   radiusCoefficient?: number;
   mode: 'explore' | 'mini';
+  enableHistory?: boolean;
 }
 
 export interface TopicNodeElement extends MapTopicDataFragment {
