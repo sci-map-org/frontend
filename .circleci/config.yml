@@ -16,7 +16,7 @@ jobs:
                 name: Publish Docker Image to Docker Hub
                 command: |
                   echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-                  docker push scimaporg/frontend:latest
+                  docker push scimaporg/mapedia-frontend:latest
             - run: yarn dist
             - run:
                 name: Installing deployment dependencies
@@ -28,7 +28,7 @@ jobs:
                   sudo pip3 install awsebcli
             - run:
                 name: Deploying
-                command: eb deploy SciMapFrontendProduction
+                command: eb deploy mapedia-frontend-production
 
 workflows:
   build-and-test:
