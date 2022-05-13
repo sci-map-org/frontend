@@ -59,17 +59,15 @@ export const RegisterFormAuthInfo: React.FC<RegisterFormAuthInfoProps> = ({ onNe
       <Text fontSize="xl" fontWeight={300}>
         Register using your Google account
       </Text>
-      <Stack spacing={2} textAlign="center" onClick={(e: any) => e.stopPropagation()}>
+      <Stack spacing={2} alignItems="center" onClick={(e: any) => e.stopPropagation()}>
         <GoogleAuthButton
-          buttonText="Register with Google"
           onSuccessfulLogin={onSuccessfulLogin}
-          onFailedLogin={(googleUser) => {
-            const profile = googleUser.getBasicProfile();
+          onFailedLogin={(decodedJwt, token) => {
             onNext({
               type: 'google',
-              id_token: googleUser.getAuthResponse().id_token,
-              email: profile.getEmail(),
-              name: profile.getName(),
+              id_token: token,
+              email: decodedJwt.email,
+              name: decodedJwt.name,
             });
           }}
           onFailure={() => {}}

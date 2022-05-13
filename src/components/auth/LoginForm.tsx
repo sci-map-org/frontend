@@ -4,8 +4,10 @@ import { useState } from 'react';
 import { DiscourseSso } from '../../graphql/types';
 import { LoginResponseDataFragment } from '../../graphql/users/users.fragments.generated';
 import { useLogin } from '../../graphql/users/users.hooks';
-import { ResetPasswordPageInfo } from '../../pages/RoutesPageInfos';
+import { routerPushToPage } from '../../pages/PageInfo';
+import { RegisterPageInfo, ResetPasswordPageInfo } from '../../pages/RoutesPageInfos';
 import { PasswordInput } from '../lib/inputs/PasswordInput';
+import { useErrorToast } from '../lib/Toasts/ErrorToast';
 import { GoogleAuthButton } from './GoogleAuthButton';
 
 export const LoginForm: React.FC<{
@@ -20,19 +22,23 @@ export const LoginForm: React.FC<{
       onSuccessfulLogin && onSuccessfulLogin(data.login);
     },
   });
+  const errorToast = useErrorToast();
   return (
     <Stack spacing={6} textAlign="center">
       <Text fontSize="xl" fontWeight={300}>
         Using your Google account
       </Text>
-      <Stack spacing={2} textAlign="center" onClick={(e: any) => e.stopPropagation()}>
+      <Stack spacing={2} alignItems="center" textAlign="center" onClick={(e: any) => e.stopPropagation()}>
         <GoogleAuthButton
-          buttonText="Login with Google"
+          // buttonText="Login with Google"
           discourseSSO={discourseSSO}
           onSuccessfulLogin={(loginResponse) => {
             if (onSuccessfulLogin) onSuccessfulLogin(loginResponse);
           }}
-          onFailedLogin={() => console.error('')}
+          onFailedLogin={() => {
+            errorToast({ title: 'Failed to login - Please register an account first' });
+            routerPushToPage(RegisterPageInfo);
+          }}
           onFailure={() => {}}
         />
       </Stack>
