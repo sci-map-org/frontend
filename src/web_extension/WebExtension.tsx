@@ -24,7 +24,7 @@ const App: React.FC<{}> = () => {
       <Stack direction="row" alignItems="baseline">
         <Link href={env.FRONTEND_URL} isExternal>
           <Heading color="mainDarker" size="lg">
-            Sci-Map{env.NODE_ENV === 'development' && ' Dev'}
+            Mapdedia{env.NODE_ENV === 'development' && ' Dev'}
           </Heading>
         </Link>
         {!!currentUser && (
@@ -44,7 +44,7 @@ const App: React.FC<{}> = () => {
           <Heading size="md">
             Please{' '}
             <Link href={env.FRONTEND_URL + '/login'} isExternal color="blue">
-              login to Sci-Map
+              login to Mapedia
             </Link>{' '}
             to use the extension
           </Heading>

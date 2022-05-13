@@ -19,7 +19,7 @@ export const Wrapper: React.FC<WrapperProps> = ({ children, apolloClient }) => {
     <ApolloProvider client={apolloClient}>
       <GoogleOAuthProvider clientId={env.GOOGLE_CLIENT_ID}>
         <ChakraProvider resetCSS theme={theme}>
-          <DefaultSeo title="Sci-Map.org" />
+          <DefaultSeo title="Mapedia.org" />
           <UnauthentificatedModalProvider>
             <Layout>{children}</Layout>
           </UnauthentificatedModalProvider>
@@ -39,7 +39,12 @@ export const Wrapper: React.FC<WrapperProps> = ({ children, apolloClient }) => {
               }
             `}
           </style>
-          <script async defer data-domain="sci-map.org" src="https://analytics.sci-map.org/js/plausible.js"></script>
+          <script
+            async
+            defer
+            data-domain="beta.mapedia.org"
+            src="https://analytics.sci-map.org/js/plausible.js"
+          ></script>
           {/* <link
           href="http://fonts.googleapis.com/css?family=Lato:100,300,400,700&subset=latin,latin-ext"
           rel="stylesheet"

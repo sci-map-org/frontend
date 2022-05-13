@@ -150,19 +150,19 @@ export const HomePage: React.FC = () => {
             items={[
               {
                 title: 'Find the best learning content out there',
-                content: `Don’t waste your time going through hundreds of search results. Sci-Map provides a curated selection of the web’s finest learning resources reviewed by the community.`,
+                content: `Don’t waste your time going through hundreds of search results. Mapedia provides a curated selection of the web's finest learning resources reviewed by the community.`,
               },
               {
                 title: 'Visualize what you know... and what you don’t',
-                content: `Find out what to learn next, how concepts are related, and discover multiple ways to reach your goals. Sci-Map is powered by graph database technology, which allows for a precise representation of the concepts that constitute any area of knowledge.`,
+                content: `Find out what to learn next, how concepts are related, and discover multiple ways to reach your goals. Mapedia is powered by graph database technology, which allows for a precise representation of the concepts that constitute any area of knowledge.`,
               },
               {
                 title: 'Powered by the people',
-                content: `Take advantage of the web’s collective intelligence with Sci-Map’s collaboratively built map of knowledge. Enjoy a range of crowdsourced content, continuously improved through feedback and suggestions.`,
+                content: `Take advantage of the web’s collective intelligence with Mapedia's collaboratively built map of knowledge. Enjoy a range of crowdsourced content, continuously improved through feedback and suggestions.`,
               },
               {
                 title: 'Free, non profit and open source',
-                content: `Sci-Map is free to use and its recommendations favor free content by default. 
+                content: `Mapedia is free to use and its recommendations favor free content by default. 
                 Our mission is to accelerate the spreading of knowledge by structuring it in an innovative way. In order to remain unbiased and transparent, the project is open source and not for profit.`,
               },
             ]}
@@ -257,7 +257,7 @@ export const HomePage: React.FC = () => {
               },
               {
                 title: 'Connect with other learners',
-                content: `Learning online doesn’t have to be lonely, even if you’re a self-directed learner. With Sci-Map you can easily meet other like-minded learners on the same trajectory as yours and support each other to reach your goals. `,
+                content: `Learning online doesn’t have to be lonely, even if you’re a self-directed learner. With Mapedia you can easily meet other like-minded learners on the same trajectory as yours and support each other to reach your goals. `,
               },
               {
                 title: 'Follow in other users’ footsteps',
