@@ -44,8 +44,9 @@ export const getPrerequisiteMapTopics = gql`
 export const PrerequisiteMap: React.FC<{
   topicId: string;
   options: MapOptions;
-  onClick: (node: NodeElement) => void;
-}> = ({ topicId, options, onClick }) => {
+  onSelectTopic: (node: NodeElement) => void;
+  onBack?: () => void;
+}> = ({ topicId, options, onSelectTopic, onBack }) => {
   const { data, loading } = useGetPrerequisiteMapTopicsQuery({ variables: { topicId } });
   if (loading || !data) return <BaseMap options={options} isLoading={true} />;
   return (
@@ -54,7 +55,8 @@ export const PrerequisiteMap: React.FC<{
       prerequisiteTopics={(data.getTopicById.prerequisites || []).map(({ prerequisiteTopic }) => prerequisiteTopic)}
       followUpTopics={(data.getTopicById.followUps || []).map(({ followUpTopic }) => followUpTopic)}
       options={options}
-      onClick={onClick}
+      onSelectTopic={onSelectTopic}
+      onBack={onBack}
     />
   );
 };
@@ -64,8 +66,9 @@ export const StatelessPrerequisiteMap: React.FC<{
   prerequisiteTopics: MapTopicDataFragment[];
   followUpTopics: MapTopicDataFragment[];
   options: MapOptions;
-  onClick: (node: NodeElement) => void;
-}> = ({ topic, prerequisiteTopics, followUpTopics, options, onClick }) => {
+  onSelectTopic: (node: NodeElement) => void;
+  onBack?: () => void;
+}> = ({ topic, prerequisiteTopics, followUpTopics, options, onSelectTopic, onBack }) => {
   const d3Container = useRef<SVGSVGElement>(null);
 
   const linksLength = useMemo(
@@ -147,14 +150,14 @@ export const StatelessPrerequisiteMap: React.FC<{
       const prereqNodes = drawTopicNode(container, prereqNodeElements, 'prereqNode', options).on(
         'click',
         (event, n) => {
-          onClick(n);
+          onSelectTopic(n);
         }
       );
 
       const followUpNodes = drawTopicNode(container, followUpNodeElements, 'followUpNode', options).on(
         'click',
         (event, n) => {
-          onClick(n);
+          onSelectTopic(n);
         }
       );
 

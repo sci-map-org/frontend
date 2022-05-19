@@ -190,7 +190,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
                 parentTopic={parentTopic}
                 topic={loadedTopic}
                 options={{ mode: 'explore', pxWidth: mapPxWidth, pxHeight: mapPxHeight, enableHistory: true }}
-                onClick={(topic) => {
+                onSelectTopic={(topic) => {
                   setSelectedTopicId(topic._id);
                 }}
               />

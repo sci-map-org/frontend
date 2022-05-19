@@ -90,11 +90,12 @@ const radiusMarginArrow = 2;
 
 const layoutMargin = 40;
 
-export const ProgressMap: React.FC<{ topicId: string; options: MapOptions; onClick: (node: NodeElement) => void }> = ({
-  topicId,
-  options,
-  onClick,
-}) => {
+export const ProgressMap: React.FC<{
+  topicId: string;
+  options: MapOptions;
+  onSelectTopic: (node: NodeElement) => void;
+  onBack?: () => void;
+}> = ({ topicId, options, onSelectTopic, onBack }) => {
   const { data, loading } = useGetProgressMapTopicsQuery({ variables: { topicId } });
   const [topic, setTopic] = useState<
     MapTopicDataFragment & {
@@ -170,7 +171,8 @@ export const ProgressMap: React.FC<{ topicId: string; options: MapOptions; onCli
       concepts={concepts}
       prerequisites={prerequisites}
       options={options}
-      onClick={onClick}
+      onClick={onSelectTopic}
+      onBack={onBack}
     />
   );
 };
@@ -185,6 +187,7 @@ export const StatelessProgressMap: React.FC<{
   prerequisites: { prerequisite: string; followUp: string }[];
   options: MapOptions;
   onClick: (node: NodeElement) => void;
+  onBack?: () => void;
 }> = ({ topic, concepts, prerequisites, options, onClick }) => {
   const d3Container = useRef<SVGSVGElement>(null);
 

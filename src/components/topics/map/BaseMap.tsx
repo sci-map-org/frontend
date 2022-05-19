@@ -27,6 +27,17 @@ export const BaseMap = forwardRef<SVGSVGElement, BaseMapProps>(
           height={`${options.pxHeight}px`}
           style={{ backgroundColor: theme.colors.gray[600] }}
         />
+        {renderTopLeft && (
+          <Box
+            position="absolute"
+            // top={`${options.pxHeight / 20}px`}
+            // left={`${options.pxWidth / 20}px`}
+            top={2}
+            left={2}
+          >
+            {renderTopLeft}
+          </Box>
+        )}
         {renderCenter && (
           <Box
             position="absolute"

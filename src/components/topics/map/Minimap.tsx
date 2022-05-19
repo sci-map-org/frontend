@@ -68,7 +68,7 @@ export const Minimap: React.FC<MinimapProps> = ({
           subTopics={subTopics}
           parentTopic={parentTopic}
           options={{ mode: 'mini', pxWidth, pxHeight }}
-          onClick={(n) => routerPushToPage(TopicPageInfo(n))}
+          onSelectTopic={(n) => routerPushToPage(TopicPageInfo(n))}
         />
 
         <IconButton

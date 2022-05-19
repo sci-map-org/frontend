@@ -1,12 +1,12 @@
+import { useCallback, useEffect, useState } from 'react';
 import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
 import { BaseMap } from './BaseMap';
-import { MapTopicDataFragment } from './map.utils.generated';
 import { MapOptions } from './map.utils';
+import { MapTopicDataFragment } from './map.utils.generated';
 import { MapType } from './MapHeader';
-import { PrerequisiteMap, StatelessPrerequisiteMap } from './PrerequisiteMap';
+import { PrerequisiteMap } from './PrerequisiteMap';
 import { ProgressMap } from './ProgressMap';
 import { SubTopicsMap } from './SubTopicsMap';
-import { useEffect, useState } from 'react';
 
 export interface MapProps {
   mapType: MapType;
@@ -14,25 +14,71 @@ export interface MapProps {
   topic?: MapTopicDataFragment; //only used to force rerendering
   subTopics: MapTopicDataFragment[];
   parentTopic?: TopicLinkDataFragment;
-  onClick: (node: TopicLinkDataFragment) => void;
+  onSelectTopic: (node: TopicLinkDataFragment) => void;
   isLoading?: boolean;
 }
 
-export const Map: React.FC<MapProps> = ({ mapType, topic, subTopics, parentTopic, options, onClick, isLoading }) => {
-  const [history, setHistory] = useState(!!topic ? [topic] : []);
+export const Map: React.FC<MapProps> = ({
+  mapType,
+  topic,
+  subTopics,
+  parentTopic,
+  options,
+  onSelectTopic,
+  isLoading,
+}) => {
+  const [topicHistory, setTopicHistory] = useState<MapTopicDataFragment[]>([]);
+
   useEffect(() => {
-    if (!!topic) setHistory([...history, topic]);
+    if (!!topic && !topicHistory.length) setTopicHistory([topic]);
   }, [topic]);
+  const onSelect = useCallback(
+    (topic: MapTopicDataFragment) => {
+      console.log(`move to`);
+      console.log(topicHistory);
+      setTopicHistory([...topicHistory, topic]);
+      onSelectTopic(topic);
+    },
+    [topicHistory, onSelectTopic]
+  );
+
+  const onBack =
+    topicHistory.length > 1
+      ? () => {
+          console.log({ topicHistory });
+          const newTopicHistory = [...topicHistory];
+          const topic = newTopicHistory.pop();
+          if (!topic) throw new Error('No history to back to');
+          setTopicHistory(newTopicHistory);
+          console.log('select' + topic.name);
+          onSelectTopic(newTopicHistory[newTopicHistory.length - 1]);
+        }
+      : undefined;
 
   if (isLoading) return <BaseMap options={options} isLoading={isLoading} />;
   if (mapType === MapType.SUBTOPICS)
     return (
-      <SubTopicsMap topic={topic} subTopics={subTopics} parentTopic={parentTopic} options={options} onClick={onClick} history={history}/>
+      <SubTopicsMap
+        topic={topic}
+        subTopics={subTopics}
+        parentTopic={parentTopic}
+        options={options}
+        onSelectTopic={onSelect}
+        onBack={onBack}
+      />
     );
 
   if (mapType === MapType.PREREQUISITES && topic)
     return (
-      <PrerequisiteMap topicId={topic._id} options={options} onClick={onClick} />
+      <PrerequisiteMap
+        topicId={topic._id}
+        options={options}
+        onSelectTopic={(topic) => {
+          setTopicHistory([...topicHistory, topic]);
+          onSelectTopic(topic);
+        }}
+        onBack={onBack}
+      />
       // <StatelessPrerequisiteMap
       //   topic={topic}
       //   prerequisiteTopics={[
@@ -66,7 +112,11 @@ export const Map: React.FC<MapProps> = ({ mapType, topic, subTopics, parentTopic
         //   { _id: 'bla8', key: 'bla8', name: 'Bla 8', level: 50, prerequisites: [{ _id: 'bla3' }] },
         // ]}
         options={options}
-        onClick={onClick}
+        onSelectTopic={(topic) => {
+          setTopicHistory([...topicHistory, topic]);
+          onSelectTopic(topic);
+        }}
+        onBack={onBack}
       />
     );
   return null;

@@ -1,16 +1,14 @@
-import { Icon } from '@chakra-ui/icons';
-import { Box, Center, Flex, Stack, Text } from '@chakra-ui/layout';
-import { BsArrowReturnLeft } from '@react-icons/all-files/bs/BsArrowReturnLeft';
+import { Box, Text } from '@chakra-ui/layout';
 import * as d3Force from 'd3-force';
 import { SimulationNodeDatum } from 'd3-force';
 import * as d3Selection from 'd3-selection';
 import * as d3Zoom from 'd3-zoom';
 import { useEffect, useMemo, useRef } from 'react';
 import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
-import { TopicLink } from '../../lib/links/TopicLink';
 import { BaseMap } from './BaseMap';
 import { drawTopicNode, MapOptions, TopicNodeColors, TopicNodeElement } from './map.utils';
 import { MapTopicDataFragment } from './map.utils.generated';
+import { MapBackButton } from './MapBackButton';
 
 type NodeElement = TopicNodeElement & SimulationNodeDatum;
 
@@ -25,11 +23,17 @@ export const SubTopicsMap: React.FC<{
   subTopics: MapTopicDataFragment[];
   parentTopic?: TopicLinkDataFragment;
   options: MapOptions;
-  history: MapTopicDataFragment[]
-  onClick: (node: TopicLinkDataFragment) => void;
-}> = ({ topic, subTopics, parentTopic, options, history, onClick }) => {
-  const d3Container = useRef<SVGSVGElement>(null);
+  onSelectTopic: (node: TopicLinkDataFragment) => void;
+  onBack?: () => void;
+}> = ({ topic, subTopics, parentTopic, options, onSelectTopic, onBack }) => {
+  // Pretty important, otherwise the onClick callback will not use updated state
+  const onTopicClick = useRef(onSelectTopic);
 
+  useEffect(() => {
+    onTopicClick.current = onSelectTopic;
+  }, [onSelectTopic]);
+
+  const d3Container = useRef<SVGSVGElement>(null);
   const topicNodeElements: NodeElement[] = useMemo(
     () =>
       subTopics.map((subTopic, idx) => {
@@ -53,7 +57,7 @@ export const SubTopicsMap: React.FC<{
       const container = svg.selectAll('.innerContainer').data([true]).join('g').classed('innerContainer', true);
 
       const topicNodes = drawTopicNode(container, topicNodeElements, 'topicNode', options).on('click', (event, n) => {
-        onClick(n);
+        onTopicClick.current(n);
       });
 
       const zoom = d3Zoom.zoom<SVGSVGElement, unknown>();
@@ -105,8 +109,8 @@ export const SubTopicsMap: React.FC<{
     );
   return (
     <Box position="relative" width={`${options.pxWidth}px`} height={`${options.pxHeight}px`}>
-      <BaseMap ref={d3Container} options={options} />
-      {parentTopic && (
+      <BaseMap ref={d3Container} options={options} renderTopLeft={onBack && <MapBackButton onClick={onBack} />} />
+      {/* {parentTopic && (
         <Flex
           direction="row"
           alignItems="stretch"
@@ -123,12 +127,12 @@ export const SubTopicsMap: React.FC<{
           <Flex pt={1}>
             <Stack mr={2} spacing={1} pt={1}>
               <Flex pl={1} alignItems="center">
-                <TopicLink topic={parentTopic} onClick={() => onClick(parentTopic)} />
+                <TopicLink topic={parentTopic} onClick={() => onSelectTopic(parentTopic)} />
               </Flex>
             </Stack>
           </Flex>
         </Flex>
-      )}
+      )} */}
     </Box>
   );
 };
