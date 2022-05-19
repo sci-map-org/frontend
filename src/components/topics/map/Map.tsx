@@ -70,15 +70,7 @@ export const Map: React.FC<MapProps> = ({
 
   if (mapType === MapType.PREREQUISITES && topic)
     return (
-      <PrerequisiteMap
-        topicId={topic._id}
-        options={options}
-        onSelectTopic={(topic) => {
-          setTopicHistory([...topicHistory, topic]);
-          onSelectTopic(topic);
-        }}
-        onBack={onBack}
-      />
+      <PrerequisiteMap topicId={topic._id} options={options} onSelectTopic={onSelect} onBack={onBack} />
       // <StatelessPrerequisiteMap
       //   topic={topic}
       //   prerequisiteTopics={[
@@ -112,10 +104,7 @@ export const Map: React.FC<MapProps> = ({
         //   { _id: 'bla8', key: 'bla8', name: 'Bla 8', level: 50, prerequisites: [{ _id: 'bla3' }] },
         // ]}
         options={options}
-        onSelectTopic={(topic) => {
-          setTopicHistory([...topicHistory, topic]);
-          onSelectTopic(topic);
-        }}
+        onSelectTopic={onSelect}
         onBack={onBack}
       />
     );

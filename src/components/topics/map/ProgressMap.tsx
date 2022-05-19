@@ -12,6 +12,7 @@ import { topicLevelColorMap } from '../fields/TopicLevel';
 import { BaseMap } from './BaseMap';
 import { drawLink, drawTopicNode, MapOptions, MapTopicData, TopicNodeElement } from './map.utils';
 import { MapTopicDataFragment } from './map.utils.generated';
+import { MapBackButton } from './MapBackButton';
 import { PrerequisiteMap } from './PrerequisiteMap';
 import { useGetProgressMapTopicsQuery } from './ProgressMap.generated';
 
@@ -163,6 +164,7 @@ export const ProgressMap: React.FC<{
             No concepts found for this topic
           </Text>
         }
+        renderTopLeft={onBack && <MapBackButton onClick={onBack} />}
       />
     );
   return (
@@ -171,7 +173,7 @@ export const ProgressMap: React.FC<{
       concepts={concepts}
       prerequisites={prerequisites}
       options={options}
-      onClick={onSelectTopic}
+      onSelectTopic={onSelectTopic}
       onBack={onBack}
     />
   );
@@ -186,10 +188,15 @@ export const StatelessProgressMap: React.FC<{
   >;
   prerequisites: { prerequisite: string; followUp: string }[];
   options: MapOptions;
-  onClick: (node: NodeElement) => void;
+  onSelectTopic: (node: NodeElement) => void;
   onBack?: () => void;
-}> = ({ topic, concepts, prerequisites, options, onClick }) => {
+}> = ({ topic, concepts, prerequisites, options, onSelectTopic, onBack }) => {
   const d3Container = useRef<SVGSVGElement>(null);
+  const onTopicClick = useRef(onSelectTopic);
+
+  useEffect(() => {
+    onTopicClick.current = onSelectTopic;
+  }, [onSelectTopic]);
 
   const prerequisiteLinkElements: LinkElement[] = useMemo(() => {
     return prerequisites.map(({ prerequisite, followUp }) => ({
@@ -253,7 +260,7 @@ export const StatelessProgressMap: React.FC<{
       const prerequisiteLinks = drawLink(container, prerequisiteLinkElements, 'linkElement', options);
 
       const topicNodes = drawTopicNode(container, topicNodeElements, 'topicNode', options).on('click', (event, n) => {
-        onClick(n);
+        onTopicClick.current(n);
       });
 
       const zoom = d3Zoom.zoom<SVGSVGElement, unknown>();
@@ -357,6 +364,7 @@ export const StatelessProgressMap: React.FC<{
           Advanced
         </Text>
       }
+      renderTopLeft={onBack && <MapBackButton onClick={onBack} />}
     />
   );
 };

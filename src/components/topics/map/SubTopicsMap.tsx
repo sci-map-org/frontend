@@ -105,6 +105,7 @@ export const SubTopicsMap: React.FC<{
             No SubTopics found
           </Text>
         }
+        renderTopLeft={onBack && <MapBackButton onClick={onBack} />}
       />
     );
   return (

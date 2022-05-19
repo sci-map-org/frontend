@@ -11,6 +11,7 @@ import { drawLink, drawTopicNode, MapOptions, MapTopicData, TopicNodeColors, Top
 import gql from 'graphql-tag';
 import { useGetPrerequisiteMapTopicsQuery } from './PrerequisiteMap.generated';
 import { omit } from 'lodash';
+import { MapBackButton } from './MapBackButton';
 
 type NodeElement = SimulationNodeDatum & TopicNodeElement & { type: 'prereq' | 'followUp' | 'topic' };
 
@@ -261,6 +262,7 @@ export const StatelessPrerequisiteMap: React.FC<{
             No prerequisite or follow up topics found
           </Text>
         }
+        renderTopLeft={onBack && <MapBackButton onClick={onBack} />}
       />
     );
   return (
@@ -277,6 +279,7 @@ export const StatelessPrerequisiteMap: React.FC<{
           Follow ups
         </Text>
       }
+      renderTopLeft={onBack && <MapBackButton onClick={onBack} />}
     />
   );
 };
