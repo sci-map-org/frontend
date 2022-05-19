@@ -33,6 +33,8 @@ module.exports = {
         tagName: 'gql',
       },
     ],
+    'react-hooks/rules-of-hooks': 'error', // Checks rules of Hooks
+    'react-hooks/exhaustive-deps': 'warn', // Checks effect dependencies
   },
-  plugins: ['graphql'],
+  plugins: ['graphql', 'react-hooks'],
 };
