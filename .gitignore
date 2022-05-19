@@ -27,7 +27,7 @@ yarn-error.log*
 schema.graphql
 .env.local
 
-sci-map-frontend.zip
+mapedia-frontend.zip
 
 #web extension
 .cache

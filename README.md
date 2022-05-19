@@ -1,6 +1,6 @@
-## Sci-Map.org frontend
+## Mapedia.org frontend
 
-Frontend for [Sci-map.org](https://sci-map.org).
+Frontend for [Mapedia.org](https://mapedia.org).
 
 ### Tech stack and design
 
@@ -22,10 +22,10 @@ Create a `.env.local` file with
 
 ```
 NODE_ENV=development or production
-FRONTEND_URL=http://localhost:3000 or https://sci-map.org
-API_URL="http://localhost:8000/graphql" or "https://api.sci-map.org/graphql"
+FRONTEND_URL=http://localhost:3000 or https://mapedia.org
+API_URL="http://localhost:8000/graphql" or "https://api.mapedia.org/graphql"
 GOOGLE_CLIENT_ID=390325140829-njk2aup9efs7tprmpmqmke93886q602i.apps.googleusercontent.com
-DISCOURSE_FORUM_URL=https://forum.sci-map.org
+DISCOURSE_FORUM_URL=https://forum.mapedia.org
 AWS_ACCESS_KEY_ID=key
 AWS_SECRET_KEY=secret
 AWS_REGION=eu-central-1
@@ -59,11 +59,11 @@ yarn build:ext
 
 In Chrome, go to Extensions, enable developer mode then load unpacked => pick production build or development build.
 
-env vars are taken from .env.production.local or .env.development.local, so pick env vars accordingly (dev should point to localhost, prod to sci-map.org)
+env vars are taken from .env.production.local or .env.development.local, so pick env vars accordingly (dev should point to localhost, prod to mapedia.org)
 
 ## Contributing
 
-Please check out our [Contribution guide](https://sci-map.org/about/contributing).
+Please check out our [Contribution guide](https://mapedia.org/about/contributing).
 
 ## License
 

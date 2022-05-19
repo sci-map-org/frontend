@@ -9,7 +9,7 @@ if (typeof window !== 'undefined' && env.NODE_ENV === 'production') {
   const secretAccessKey = env.AWS_SECRET_KEY;
   const region = env.AWS_REGION;
 
-  const logGroupName = 'sci-map-frontend';
+  const logGroupName = 'mapedia-frontend';
 
   const logger = new Logger(accessKeyId, secretAccessKey, region, logGroupName);
   logger.install({
