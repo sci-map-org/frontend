@@ -35,7 +35,7 @@ export const Map: React.FC<MapProps> = ({
   const onSelectTopic = useCallback(onSelectTopicProp, [onSelectTopicProp]);
   // const isLoading = true;
   useEffect(() => {
-    if (!topic) return;
+    if (!topic || isLoading) return;
     if (!!topicHistory.length) {
       if (topic._id === topicHistory[topicHistory.length - 1].topic._id) {
         return;
