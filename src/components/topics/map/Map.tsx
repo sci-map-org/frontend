@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
 import { BaseMap } from './BaseMap';
 import { MapOptions } from './map.utils';
@@ -27,31 +27,32 @@ export const Map: React.FC<MapProps> = ({
   onSelectTopic,
   isLoading,
 }) => {
+  // last topic is the current one
   const [topicHistory, setTopicHistory] = useState<MapTopicDataFragment[]>([]);
+  console.log(topicHistory.map(({ name }) => name));
 
   useEffect(() => {
-    if (!!topic && !topicHistory.length) setTopicHistory([topic]);
-  }, [topic]);
-  const onSelect = useCallback(
-    (topic: MapTopicDataFragment) => {
-      console.log(`move to`);
-      console.log(topicHistory);
+    if (!topic) return;
+    console.log('effect ' + topic._id);
+    if (!!topicHistory.length) {
+      if (topic._id === topicHistory[topicHistory.length - 1]._id) {
+        console.log('You just clicked back to ' + topic.name);
+        return;
+      }
       setTopicHistory([...topicHistory, topic]);
-      onSelectTopic(topic);
-    },
-    [topicHistory, onSelectTopic]
-  );
+    } else {
+      setTopicHistory([topic]);
+    }
+  }, [topic?._id]);
 
   const onBack =
-    topicHistory.length > 1
+    topicHistory.length > 1 && !isLoading && topicHistory[topicHistory.length - 2]._id !== topic?._id
       ? () => {
-          console.log({ topicHistory });
           const newTopicHistory = [...topicHistory];
           const topic = newTopicHistory.pop();
           if (!topic) throw new Error('No history to back to');
-          setTopicHistory(newTopicHistory);
-          console.log('select' + topic.name);
           onSelectTopic(newTopicHistory[newTopicHistory.length - 1]);
+          setTopicHistory(newTopicHistory);
         }
       : undefined;
 
@@ -63,14 +64,14 @@ export const Map: React.FC<MapProps> = ({
         subTopics={subTopics}
         parentTopic={parentTopic}
         options={options}
-        onSelectTopic={onSelect}
+        onSelectTopic={onSelectTopic}
         onBack={onBack}
       />
     );
 
   if (mapType === MapType.PREREQUISITES && topic)
     return (
-      <PrerequisiteMap topicId={topic._id} options={options} onSelectTopic={onSelect} onBack={onBack} />
+      <PrerequisiteMap topicId={topic._id} options={options} onSelectTopic={onSelectTopic} onBack={onBack} />
       // <StatelessPrerequisiteMap
       //   topic={topic}
       //   prerequisiteTopics={[
@@ -104,7 +105,7 @@ export const Map: React.FC<MapProps> = ({
         //   { _id: 'bla8', key: 'bla8', name: 'Bla 8', level: 50, prerequisites: [{ _id: 'bla3' }] },
         // ]}
         options={options}
-        onSelectTopic={onSelect}
+        onSelectTopic={onSelectTopic}
         onBack={onBack}
       />
     );

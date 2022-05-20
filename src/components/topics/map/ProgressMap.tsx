@@ -153,8 +153,8 @@ export const ProgressMap: React.FC<{
       setConcepts(flattened.map((concept) => omit(concept, ['prerequisites', 'followUps'])));
     }
   }, [data]);
+  if (!data) return <BaseMap options={options} isLoading={true} />;
 
-  if (loading || !data) return <BaseMap options={options} isLoading={true} />;
   if (!concepts.length)
     return (
       <BaseMap
@@ -173,6 +173,7 @@ export const ProgressMap: React.FC<{
       concepts={concepts}
       prerequisites={prerequisites}
       options={options}
+      isLoading={!!loading}
       onSelectTopic={onSelectTopic}
       onBack={onBack}
     />
@@ -187,10 +188,11 @@ export const StatelessProgressMap: React.FC<{
     }
   >;
   prerequisites: { prerequisite: string; followUp: string }[];
+  isLoading: boolean;
   options: MapOptions;
   onSelectTopic: (node: NodeElement) => void;
   onBack?: () => void;
-}> = ({ topic, concepts, prerequisites, options, onSelectTopic, onBack }) => {
+}> = ({ topic, concepts, prerequisites, options, isLoading, onSelectTopic, onBack }) => {
   const d3Container = useRef<SVGSVGElement>(null);
   const onTopicClick = useRef(onSelectTopic);
 
@@ -203,7 +205,7 @@ export const StatelessProgressMap: React.FC<{
       source: prerequisite,
       target: followUp,
     }));
-  }, [PrerequisiteMap]);
+  }, [prerequisites]);
 
   const topicNodesGravityCenters = useMemo(() => {
     const alpha = 40;
@@ -232,21 +234,23 @@ export const StatelessProgressMap: React.FC<{
       });
     }
     return gravityCenters;
-  }, []);
+  }, [concepts, prerequisiteLinkElements]);
 
   const topicNodeElements: NodeElement[] = useMemo(
     () =>
-      concepts.map((subTopic, idx) => ({
-        id: subTopic._id,
-        type: 'topic',
-        radius: 12,
-        level: typeof subTopic.level === 'number' ? subTopic.level : null,
-        xGravityCenter: topicNodesGravityCenters[idx],
-        color: typeof subTopic.level === 'number' ? topicLevelColorMap(subTopic.level / 100) : 'gray',
-        x: topicNodesGravityCenters[idx], //(topicNodesGravityCenters[idx] + (2 * options.pxWidth) / 2) / 3,
-        y: options.pxHeight / 2 + (Math.random() - 0.5) * options.pxHeight * 0.03,
-        ...subTopic,
-      })),
+      isLoading
+        ? []
+        : concepts.map((subTopic, idx) => ({
+            id: subTopic._id,
+            type: 'topic',
+            radius: 12,
+            level: typeof subTopic.level === 'number' ? subTopic.level : null,
+            xGravityCenter: topicNodesGravityCenters[idx],
+            color: typeof subTopic.level === 'number' ? topicLevelColorMap(subTopic.level / 100) : 'gray',
+            x: topicNodesGravityCenters[idx], //(topicNodesGravityCenters[idx] + (2 * options.pxWidth) / 2) / 3,
+            y: options.pxHeight / 2 + (Math.random() - 0.5) * options.pxHeight * 0.03,
+            ...subTopic,
+          })),
     [concepts, topicNodesGravityCenters]
   );
   useEffect(() => {
@@ -348,7 +352,9 @@ export const StatelessProgressMap: React.FC<{
       //   @ts-ignore
       topicNodes.call(drag(simulation));
     }
-  }, [topic._id, topicNodeElements.length, prerequisiteLinkElements.length]);
+  }, [topic._id, topicNodeElements.length, prerequisiteLinkElements.length, isLoading]);
+
+  if (isLoading) return <BaseMap options={options} isLoading={true} />;
 
   return (
     <BaseMap
