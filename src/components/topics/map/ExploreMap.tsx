@@ -1,6 +1,6 @@
-import { ExternalLinkIcon } from '@chakra-ui/icons';
+import { ExternalLinkIcon, SearchIcon } from '@chakra-ui/icons';
 import { Box, Center, Flex, FlexProps, Link, Stack, Text } from '@chakra-ui/layout';
-import { Button } from '@chakra-ui/react';
+import { Button, Input, InputGroup, InputLeftElement } from '@chakra-ui/react';
 import { Spinner } from '@chakra-ui/spinner';
 import gql from 'graphql-tag';
 import { useRouter } from 'next/router';
@@ -153,6 +153,16 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
 
   return (
     <Stack direction={direction} spacing={4} alignItems="center">
+      <InputGroup size="sm" variant="outline">
+        <InputLeftElement pointerEvents="none" children={<SearchIcon />} />
+        <Input
+        // variant="flushed"
+        // isDisabled={isDisabled}
+        // {...inheritedInputProps}
+        // {...inputProps}
+        // w={width}
+        />
+      </InputGroup>
       <Box
         borderBottomWidth={3}
         minH="148px"

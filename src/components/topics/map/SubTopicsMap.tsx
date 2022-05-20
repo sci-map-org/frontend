@@ -1,4 +1,4 @@
-import { Box, Text } from '@chakra-ui/layout';
+import { Box, Stack, Text } from '@chakra-ui/layout';
 import * as d3Force from 'd3-force';
 import { SimulationNodeDatum } from 'd3-force';
 import * as d3Selection from 'd3-selection';
@@ -9,6 +9,7 @@ import { BaseMap } from './BaseMap';
 import { drawTopicNode, MapOptions, TopicNodeColors, TopicNodeElement } from './map.utils';
 import { MapTopicDataFragment } from './map.utils.generated';
 import { MapBackButton } from './MapBackButton';
+import { MapSearchBox } from './MapSearchBox';
 
 type NodeElement = TopicNodeElement & SimulationNodeDatum;
 
@@ -105,12 +106,26 @@ export const SubTopicsMap: React.FC<{
             No SubTopics found
           </Text>
         }
-        renderTopLeft={onBack && <MapBackButton onClick={onBack} />}
+        renderTopLeft={
+          <Stack spacing="2px">
+            {options.mode === 'explore' && <MapSearchBox onSelectTopic={onSelectTopic} />}
+            {onBack && <MapBackButton onClick={onBack} />}
+          </Stack>
+        }
       />
     );
   return (
     <Box position="relative" width={`${options.pxWidth}px`} height={`${options.pxHeight}px`}>
-      <BaseMap ref={d3Container} options={options} renderTopLeft={onBack && <MapBackButton onClick={onBack} />} />
+      <BaseMap
+        ref={d3Container}
+        options={options}
+        renderTopLeft={
+          <Stack spacing="2px">
+            {options.mode === 'explore' && <MapSearchBox onSelectTopic={onSelectTopic} />}
+            {onBack && <MapBackButton onClick={onBack} />}
+          </Stack>
+        }
+      />
       {/* {parentTopic && (
         <Flex
           direction="row"

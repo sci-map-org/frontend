@@ -1,4 +1,4 @@
-import { Text } from '@chakra-ui/react';
+import { Stack, Text } from '@chakra-ui/react';
 import * as d3Drag from 'd3-drag';
 import * as d3Force from 'd3-force';
 import { SimulationNodeDatum } from 'd3-force';
@@ -7,12 +7,14 @@ import * as d3Zoom from 'd3-zoom';
 import gql from 'graphql-tag';
 import { flatten, omit } from 'lodash';
 import { useEffect, useMemo, useRef } from 'react';
+import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
 import { isTopicArea } from '../../../services/topics.service';
 import { topicLevelColorMap } from '../fields/TopicLevel';
 import { BaseMap } from './BaseMap';
 import { drawLink, drawTopicNode, MapOptions, MapTopicData, TopicNodeElement } from './map.utils';
 import { MapTopicDataFragment } from './map.utils.generated';
 import { MapBackButton } from './MapBackButton';
+import { MapSearchBox } from './MapSearchBox';
 import { useGetProgressMapTopicsQuery } from './ProgressMap.generated';
 
 export const getProgressMapTopics = gql`
@@ -93,7 +95,7 @@ const layoutMargin = 40;
 export const ProgressMap: React.FC<{
   topicId: string;
   options: MapOptions;
-  onSelectTopic: (node: NodeElement) => void;
+  onSelectTopic: (node: TopicLinkDataFragment) => void;
   onBack?: () => void;
 }> = ({ topicId, options, onSelectTopic, onBack }) => {
   const { data, loading } = useGetProgressMapTopicsQuery({
@@ -177,7 +179,12 @@ export const ProgressMap: React.FC<{
             No concepts found for this topic
           </Text>
         }
-        renderTopLeft={onBack && <MapBackButton onClick={onBack} />}
+        renderTopLeft={
+          <Stack spacing="2px">
+            {options.mode === 'explore' && <MapSearchBox onSelectTopic={onSelectTopic} />}
+            {onBack && <MapBackButton onClick={onBack} />}
+          </Stack>
+        }
       />
     );
   return (
@@ -203,7 +210,7 @@ export const StatelessProgressMap: React.FC<{
   prerequisites: { prerequisite: string; followUp: string }[];
   isLoading: boolean;
   options: MapOptions;
-  onSelectTopic: (node: NodeElement) => void;
+  onSelectTopic: (node: TopicLinkDataFragment) => void;
   onBack?: () => void;
 }> = ({ topic, concepts, prerequisites, options, onSelectTopic, isLoading, onBack }) => {
   const d3Container = useRef<SVGSVGElement>(null);
@@ -392,7 +399,12 @@ export const StatelessProgressMap: React.FC<{
           Advanced
         </Text>
       }
-      renderTopLeft={onBack && <MapBackButton onClick={onBack} />}
+      renderTopLeft={
+        <Stack spacing="2px">
+          {options.mode === 'explore' && <MapSearchBox onSelectTopic={onSelectTopic} />}
+          {onBack && <MapBackButton onClick={onBack} />}
+        </Stack>
+      }
     />
   );
 };

@@ -1,4 +1,4 @@
-import { Text } from '@chakra-ui/react';
+import { Stack, Text } from '@chakra-ui/react';
 import * as d3Force from 'd3-force';
 import { SimulationNodeDatum } from 'd3-force';
 import { schemePastel1 } from 'd3-scale-chromatic';
@@ -12,6 +12,8 @@ import gql from 'graphql-tag';
 import { useGetPrerequisiteMapTopicsQuery } from './PrerequisiteMap.generated';
 import { omit } from 'lodash';
 import { MapBackButton } from './MapBackButton';
+import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
+import { MapSearchBox } from './MapSearchBox';
 
 type NodeElement = SimulationNodeDatum & TopicNodeElement & { type: 'prereq' | 'followUp' | 'topic' };
 
@@ -45,7 +47,7 @@ export const getPrerequisiteMapTopics = gql`
 export const PrerequisiteMap: React.FC<{
   topicId: string;
   options: MapOptions;
-  onSelectTopic: (node: NodeElement) => void;
+  onSelectTopic: (node: TopicLinkDataFragment) => void;
   onBack?: () => void;
 }> = ({ topicId, options, onSelectTopic, onBack }) => {
   const { data, loading } = useGetPrerequisiteMapTopicsQuery({ variables: { topicId } });
@@ -67,7 +69,7 @@ export const StatelessPrerequisiteMap: React.FC<{
   prerequisiteTopics: MapTopicDataFragment[];
   followUpTopics: MapTopicDataFragment[];
   options: MapOptions;
-  onSelectTopic: (node: NodeElement) => void;
+  onSelectTopic: (node: TopicLinkDataFragment) => void;
   onBack?: () => void;
 }> = ({ topic, prerequisiteTopics, followUpTopics, options, onSelectTopic, onBack }) => {
   const d3Container = useRef<SVGSVGElement>(null);
@@ -269,7 +271,12 @@ export const StatelessPrerequisiteMap: React.FC<{
             No prerequisite or follow up topics found
           </Text>
         }
-        renderTopLeft={onBack && <MapBackButton onClick={onBack} />}
+        renderTopLeft={
+          <Stack spacing="2px">
+            {options.mode === 'explore' && <MapSearchBox onSelectTopic={onSelectTopic} />}
+            {onBack && <MapBackButton onClick={onBack} />}
+          </Stack>
+        }
       />
     );
   return (
@@ -286,7 +293,12 @@ export const StatelessPrerequisiteMap: React.FC<{
           Follow ups
         </Text>
       }
-      renderTopLeft={onBack && <MapBackButton onClick={onBack} />}
+      renderTopLeft={
+        <Stack spacing="2px">
+          {options.mode === 'explore' && <MapSearchBox onSelectTopic={onSelectTopic} />}
+          {onBack && <MapBackButton onClick={onBack} />}
+        </Stack>
+      }
     />
   );
 };
