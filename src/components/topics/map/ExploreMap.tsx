@@ -4,7 +4,7 @@ import { Button } from '@chakra-ui/react';
 import { Spinner } from '@chakra-ui/spinner';
 import gql from 'graphql-tag';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { TopicLinkData } from '../../../graphql/topics/topics.fragments';
 import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
 import { TopicPageInfo } from '../../../pages/RoutesPageInfos';
@@ -97,6 +97,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
   mapContainerProps,
 }) => {
   const router = useRouter();
+
   const urlSelectedTopicId = router.query.selectedTopicId;
   if (urlSelectedTopicId && typeof urlSelectedTopicId !== 'string')
     throw new Error(`Invalid url param urlSelectedTopicId ${urlSelectedTopicId}`);
@@ -143,6 +144,13 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
     loadTopic(selectedTopicId);
   }, [selectedTopicId]);
 
+  const onSelectTopic = useCallback(
+    (topic) => {
+      setSelectedTopicId(topic._id);
+    },
+    [setSelectedTopicId]
+  );
+
   return (
     <Stack direction={direction} spacing={4} alignItems="center">
       <Box
@@ -185,14 +193,13 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
             <Box boxShadow="lg" width={mapPxWidth + 'px'} {...mapContainerProps}>
               <Map
                 mapType={selectedMapType}
+                setMapType={setSelectedMapType}
                 isLoading={loading || !subTopics}
                 subTopics={subTopics || []}
                 parentTopic={parentTopic}
                 topic={loadedTopic}
                 options={{ mode: 'explore', pxWidth: mapPxWidth, pxHeight: mapPxHeight, enableHistory: true }}
-                onSelectTopic={(topic) => {
-                  setSelectedTopicId(topic._id);
-                }}
+                onSelectTopic={onSelectTopic}
               />
             </Box>
             <Flex justifyContent="space-between" alignItems="center">
@@ -234,21 +241,14 @@ const ExploreMapFocusedTopicCard: React.FC<{
       <Box flexGrow={1}>
         <Stack direction="column" spacing={1}>
           <Stack direction="row" alignItems="flex-start" pb={0}>
-            <TopicLink topic={topic} size="2xl" newTab />
+            <TopicLink topic={topic} size="2xl" />
           </Stack>
           <TopicSubHeader topic={topic} subTopicsDisplay="count" />
           {topic.description && <TopicDescription topicDescription={topic.description} noOfLines={2} />}
         </Stack>
       </Box>
       <Center>
-        <PageLink
-          color="blue.500"
-          display="flex"
-          alignItems="baseline"
-          fontSize="lg"
-          pageInfo={TopicPageInfo(topic)}
-          isExternal
-        >
+        <PageLink color="blue.500" display="flex" alignItems="baseline" fontSize="lg" pageInfo={TopicPageInfo(topic)}>
           Explore
           <ExternalLinkIcon ml="6px" boxSize={4} />
         </PageLink>

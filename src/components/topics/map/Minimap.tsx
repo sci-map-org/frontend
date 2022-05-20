@@ -63,6 +63,7 @@ export const Minimap: React.FC<MinimapProps> = ({
       >
         <Map
           mapType={selectedMapType}
+          setMapType={setSelectedMapType}
           topic={topic}
           isLoading={isLoading}
           subTopics={subTopics}

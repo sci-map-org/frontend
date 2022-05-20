@@ -5,15 +5,14 @@ import { SimulationNodeDatum } from 'd3-force';
 import * as d3Selection from 'd3-selection';
 import * as d3Zoom from 'd3-zoom';
 import gql from 'graphql-tag';
-import { flatten, flattenDeep, omit } from 'lodash';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { flatten, omit } from 'lodash';
+import { useEffect, useMemo, useRef } from 'react';
 import { isTopicArea } from '../../../services/topics.service';
 import { topicLevelColorMap } from '../fields/TopicLevel';
 import { BaseMap } from './BaseMap';
 import { drawLink, drawTopicNode, MapOptions, MapTopicData, TopicNodeElement } from './map.utils';
 import { MapTopicDataFragment } from './map.utils.generated';
 import { MapBackButton } from './MapBackButton';
-import { PrerequisiteMap } from './PrerequisiteMap';
 import { useGetProgressMapTopicsQuery } from './ProgressMap.generated';
 
 export const getProgressMapTopics = gql`
@@ -97,63 +96,77 @@ export const ProgressMap: React.FC<{
   onSelectTopic: (node: NodeElement) => void;
   onBack?: () => void;
 }> = ({ topicId, options, onSelectTopic, onBack }) => {
-  const { data, loading } = useGetProgressMapTopicsQuery({ variables: { topicId } });
-  const [topic, setTopic] = useState<
-    MapTopicDataFragment & {
+  const { data, loading } = useGetProgressMapTopicsQuery({
+    variables: { topicId },
+    fetchPolicy: 'network-only', // without this the map might get rendered twice (no loading state)
+  });
+  const {
+    topic,
+    concepts,
+    prerequisites,
+  }: {
+    topic?: MapTopicDataFragment & {
       level?: number | null;
-    }
-  >();
-  const [concepts, setConcepts] = useState<
-    Array<
+    };
+    concepts: Array<
       MapTopicDataFragment & {
         level?: number | null;
       }
-    >
-  >([]);
+    >;
+    prerequisites: { prerequisite: string; followUp: string }[];
+  } = useMemo(() => {
+    if (!data || loading)
+      return {
+        topic: undefined,
+        concepts: [],
+        prerequisites: [],
+      };
+    const r = (data.getTopicById.subTopics || []).map(({ subTopic }) => {
+      return [
+        omit(subTopic, 'subTopics'),
+        ...(subTopic.subTopics || [])
+          .filter(({ subTopic }) => !!subTopic.topicTypes && !isTopicArea(subTopic.topicTypes))
+          .map(({ subTopic }) => {
+            return [
+              omit(subTopic, 'subTopics'),
+              ...(subTopic.subTopics || [])
+                .filter(({ subTopic }) => !!subTopic.topicTypes && !isTopicArea(subTopic.topicTypes))
+                .map(({ subTopic }) => {
+                  return subTopic;
+                }),
+            ];
+          }),
+      ];
+    });
+    const flattened = flatten(flatten(r)).filter((c) => typeof c['level'] === 'number'); // to disable at some point ?
+    const prereqs: { prerequisite: string; followUp: string }[] = [];
+    flattened.forEach((concept) => {
+      concept.prerequisites?.forEach(({ prerequisiteTopic }) => {
+        if (flattened.find((flat) => flat._id === prerequisiteTopic._id)) {
+          prereqs.push({ prerequisite: prerequisiteTopic._id, followUp: concept._id });
+        } else {
+          console.log(`${prerequisiteTopic._id} is an external concept (prereq of ${concept.name})`);
+        }
+      });
+      concept.followUps?.forEach(({ followUpTopic }) => {
+        if (flattened.find((flat) => flat._id === followUpTopic._id)) {
+          prereqs.push({ prerequisite: concept._id, followUp: followUpTopic._id });
+        } else {
+          console.log(`${followUpTopic._id} is an external concept (followUp of ${concept.name})`);
+        }
+      });
+    });
 
-  const [prerequisites, setPrerequisites] = useState<{ prerequisite: string; followUp: string }[]>([]);
-  useEffect(() => {
-    if (data) {
-      const r = (data.getTopicById.subTopics || []).map(({ subTopic }) => {
-        return [
-          omit(subTopic, 'subTopics'),
-          ...(subTopic.subTopics || [])
-            .filter(({ subTopic }) => !!subTopic.topicTypes && !isTopicArea(subTopic.topicTypes))
-            .map(({ subTopic }) => {
-              return [
-                omit(subTopic, 'subTopics'),
-                ...(subTopic.subTopics || [])
-                  .filter(({ subTopic }) => !!subTopic.topicTypes && !isTopicArea(subTopic.topicTypes))
-                  .map(({ subTopic }) => {
-                    return subTopic;
-                  }),
-              ];
-            }),
-        ];
-      });
-      const flattened = flatten(flatten(r)).filter((c) => typeof c['level'] === 'number'); // to disable at some point ?
-      const prereqs: { prerequisite: string; followUp: string }[] = [];
-      flattened.forEach((concept) => {
-        concept.prerequisites?.forEach(({ prerequisiteTopic }) => {
-          if (flattened.find((flat) => flat._id === prerequisiteTopic._id)) {
-            prereqs.push({ prerequisite: prerequisiteTopic._id, followUp: concept._id });
-          } else {
-            console.log(`${prerequisiteTopic._id} is an external concept (prereq of ${concept.name})`);
-          }
-        });
-        concept.followUps?.forEach(({ followUpTopic }) => {
-          if (flattened.find((flat) => flat._id === followUpTopic._id)) {
-            prereqs.push({ prerequisite: concept._id, followUp: followUpTopic._id });
-          } else {
-            console.log(`${followUpTopic._id} is an external concept (followUp of ${concept.name})`);
-          }
-        });
-      });
-      setPrerequisites(prereqs);
-      setConcepts(flattened.map((concept) => omit(concept, ['prerequisites', 'followUps'])));
-    }
-  }, [data]);
-  if (!data) return <BaseMap options={options} isLoading={true} />;
+    return {
+      topic: omit(data.getTopicById, 'subTopics'),
+      concepts: flattened.map((concept) => omit(concept, ['prerequisites', 'followUps'])),
+      prerequisites: prereqs,
+    };
+  }, [data, loading]);
+
+  if (!topic || loading) {
+    return <BaseMap options={options} isLoading={true} />;
+  }
 
   if (!concepts.length)
     return (
@@ -169,7 +182,7 @@ export const ProgressMap: React.FC<{
     );
   return (
     <StatelessProgressMap
-      topic={data.getTopicById}
+      topic={topic}
       concepts={concepts}
       prerequisites={prerequisites}
       options={options}
@@ -192,7 +205,7 @@ export const StatelessProgressMap: React.FC<{
   options: MapOptions;
   onSelectTopic: (node: NodeElement) => void;
   onBack?: () => void;
-}> = ({ topic, concepts, prerequisites, options, isLoading, onSelectTopic, onBack }) => {
+}> = ({ topic, concepts, prerequisites, options, onSelectTopic, isLoading, onBack }) => {
   const d3Container = useRef<SVGSVGElement>(null);
   const onTopicClick = useRef(onSelectTopic);
 
@@ -238,20 +251,27 @@ export const StatelessProgressMap: React.FC<{
 
   const topicNodeElements: NodeElement[] = useMemo(
     () =>
-      isLoading
-        ? []
-        : concepts.map((subTopic, idx) => ({
-            id: subTopic._id,
-            type: 'topic',
-            radius: 12,
-            level: typeof subTopic.level === 'number' ? subTopic.level : null,
-            xGravityCenter: topicNodesGravityCenters[idx],
-            color: typeof subTopic.level === 'number' ? topicLevelColorMap(subTopic.level / 100) : 'gray',
-            x: topicNodesGravityCenters[idx], //(topicNodesGravityCenters[idx] + (2 * options.pxWidth) / 2) / 3,
-            y: options.pxHeight / 2 + (Math.random() - 0.5) * options.pxHeight * 0.03,
-            ...subTopic,
-          })),
+      concepts.map((subTopic, idx) => ({
+        id: subTopic._id,
+        type: 'topic',
+        radius: 12,
+        level: typeof subTopic.level === 'number' ? subTopic.level : null,
+        xGravityCenter: topicNodesGravityCenters[idx],
+        color: typeof subTopic.level === 'number' ? topicLevelColorMap(subTopic.level / 100) : 'gray',
+        x: topicNodesGravityCenters[idx], //(topicNodesGravityCenters[idx] + (2 * options.pxWidth) / 2) / 3,
+        y: options.pxHeight / 2 + (Math.random() - 0.5) * options.pxHeight * 0.03,
+        ...subTopic,
+      })),
     [concepts, topicNodesGravityCenters]
+  );
+
+  const topicNodeElementsIds = useMemo(
+    () => topic._id + '-' + topicNodeElements.map(({ _id }) => _id).join(','),
+    [topic, topicNodeElements]
+  );
+  const prerequisiteLinkElementsIds = useMemo(
+    () => prerequisiteLinkElements.map(({ source, target }) => `${source}_${target}`).join(','),
+    [topicNodeElements]
   );
   useEffect(() => {
     if (d3Container && d3Container.current) {
@@ -352,9 +372,11 @@ export const StatelessProgressMap: React.FC<{
       //   @ts-ignore
       topicNodes.call(drag(simulation));
     }
-  }, [topic._id, topicNodeElements.length, prerequisiteLinkElements.length, isLoading]);
+  }, [topicNodeElementsIds, prerequisiteLinkElementsIds]);
 
-  if (isLoading) return <BaseMap options={options} isLoading={true} />;
+  if (isLoading) {
+    return <BaseMap options={options} isLoading={true} />;
+  }
 
   return (
     <BaseMap

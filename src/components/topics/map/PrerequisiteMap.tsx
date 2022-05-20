@@ -89,7 +89,7 @@ export const StatelessPrerequisiteMap: React.FC<{
         ...topic,
       },
     ],
-    []
+    [topic]
   );
   const prereqNodeElements: NodeElement[] = useMemo(
     () =>
@@ -104,7 +104,7 @@ export const StatelessPrerequisiteMap: React.FC<{
           ...prereqTopic,
         };
       }),
-    [prerequisiteTopics]
+    [prerequisiteTopics, options]
   );
 
   const followUpNodeElements: NodeElement[] = useMemo(
@@ -120,7 +120,7 @@ export const StatelessPrerequisiteMap: React.FC<{
           ...followTopic,
         };
       }),
-    [followUpTopics]
+    [followUpTopics, options]
   );
 
   const nodeElements: NodeElement[] = useMemo(() => {
@@ -133,6 +133,13 @@ export const StatelessPrerequisiteMap: React.FC<{
       ...followUpNodeElements.map((followUp, idx) => ({ source: topicNodeElements[0]._id, target: followUp._id })),
     ];
   }, [prereqNodeElements, followUpNodeElements, topicNodeElements]);
+
+  // Hack to avoid useless rerenders in useEffect.
+  const nodeElementsIds = useMemo(() => nodeElements.map(({ _id }) => _id).join(','), [nodeElements]);
+  const prerequisiteLinkElementsIds = useMemo(
+    () => prerequisiteLinkElements.map(({ source, target }) => `${source}_${target}`).join(','),
+    [prerequisiteLinkElements]
+  );
 
   useEffect(() => {
     if (d3Container && d3Container.current) {
@@ -251,7 +258,7 @@ export const StatelessPrerequisiteMap: React.FC<{
         // .force('center', d3Force.forceCenter(options.pxWidth / 2, options.pxHeight / 2))
         .on('tick', tick);
     }
-  }, [topic._id, prereqNodeElements.length, followUpNodeElements.length]);
+  }, [nodeElementsIds, prerequisiteLinkElementsIds]);
 
   if (!prereqNodeElements.length && !followUpNodeElements.length)
     return (

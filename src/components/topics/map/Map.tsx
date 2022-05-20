@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
 import { BaseMap } from './BaseMap';
 import { MapOptions } from './map.utils';
@@ -10,6 +10,7 @@ import { SubTopicsMap } from './SubTopicsMap';
 
 export interface MapProps {
   mapType: MapType;
+  setMapType: (mapType: MapType) => void;
   options: MapOptions;
   topic?: MapTopicDataFragment; //only used to force rerendering
   subTopics: MapTopicDataFragment[];
@@ -20,41 +21,59 @@ export interface MapProps {
 
 export const Map: React.FC<MapProps> = ({
   mapType,
+  setMapType,
   topic,
   subTopics,
   parentTopic,
   options,
-  onSelectTopic,
+  onSelectTopic: onSelectTopicProp,
   isLoading,
 }) => {
   // last topic is the current one
-  const [topicHistory, setTopicHistory] = useState<MapTopicDataFragment[]>([]);
-  console.log(topicHistory.map(({ name }) => name));
-
+  const [topicHistory, setTopicHistory] = useState<{ topic: MapTopicDataFragment; mapType: MapType }[]>([]);
+  console.log(topicHistory.map(({ topic, mapType }) => `${topic.name}:${mapType}`));
+  const onSelectTopic = useCallback(onSelectTopicProp, [onSelectTopicProp]);
+  // const isLoading = true;
   useEffect(() => {
     if (!topic) return;
-    console.log('effect ' + topic._id);
     if (!!topicHistory.length) {
-      if (topic._id === topicHistory[topicHistory.length - 1]._id) {
-        console.log('You just clicked back to ' + topic.name);
+      if (topic._id === topicHistory[topicHistory.length - 1].topic._id) {
         return;
       }
-      setTopicHistory([...topicHistory, topic]);
+      setTopicHistory([...topicHistory, { topic, mapType }]);
     } else {
-      setTopicHistory([topic]);
+      setTopicHistory([{ topic, mapType }]);
     }
   }, [topic?._id]);
 
-  const onBack =
-    topicHistory.length > 1 && !isLoading && topicHistory[topicHistory.length - 2]._id !== topic?._id
-      ? () => {
+  useEffect(() => {
+    if (
+      topicHistory.length === 0 ||
+      (topicHistory[topicHistory.length - 1].topic._id === topic?._id &&
+        topicHistory[topicHistory.length - 1].mapType === mapType)
+    )
+      return;
+    if (!!topic) {
+      setTopicHistory([...topicHistory, { topic, mapType }]);
+    } else {
+      setTopicHistory([...topicHistory, { topic: topicHistory[topicHistory.length - 1].topic, mapType }]);
+    }
+  }, [mapType]);
+
+  const onBack = useMemo(() => {
+    return topicHistory.length > 1 && !isLoading //&&
+      ? // (topicHistory[topicHistory.length - 2].topic._id !== topic?._id ||
+        //   topicHistory[topicHistory.length - 2].mapType !== mapType)
+        () => {
           const newTopicHistory = [...topicHistory];
-          const topic = newTopicHistory.pop();
-          if (!topic) throw new Error('No history to back to');
-          onSelectTopic(newTopicHistory[newTopicHistory.length - 1]);
+          newTopicHistory.pop();
+          const previous = newTopicHistory[newTopicHistory.length - 1];
+          previous.topic._id !== topic?._id && onSelectTopic(previous.topic);
+          previous.mapType !== mapType && setMapType(previous.mapType);
           setTopicHistory(newTopicHistory);
         }
       : undefined;
+  }, [topicHistory, isLoading]);
 
   if (isLoading) return <BaseMap options={options} isLoading={isLoading} />;
   if (mapType === MapType.SUBTOPICS)
