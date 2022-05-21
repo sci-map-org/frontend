@@ -96,17 +96,22 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
   direction,
   mapContainerProps,
 }) => {
-  const router = useRouter();
-
-  const urlSelectedTopicId = router.query.selectedTopicId;
-  if (urlSelectedTopicId && typeof urlSelectedTopicId !== 'string')
-    throw new Error(`Invalid url param urlSelectedTopicId ${urlSelectedTopicId}`);
   const [selectedTopicId, setSelectedTopicId] = useState<string | undefined>(propSelectedTopicId);
 
   const [loadedTopic, setLoadedTopic] = useState<GetTopicByIdExplorePageQuery['getTopicById']>();
   const [selectedMapType, setSelectedMapType] = useState<MapType>(propSelectedMapType || MapType.SUBTOPICS);
   const [subTopics, setSubtopics] = useState<MapTopicDataFragment[]>();
   const [parentTopic, setParentTopic] = useState<TopicLinkDataFragment>();
+
+  useEffect(() => {
+    // for handling browser "Previous page" action
+    if (propSelectedMapType && propSelectedMapType !== selectedMapType) setSelectedMapType(propSelectedMapType);
+  }, [propSelectedMapType]);
+
+  useEffect(() => {
+    // for handling browser "Previous page" action
+    if (propSelectedTopicId !== selectedTopicId) setSelectedTopicId(propSelectedTopicId || rootTopic._id);
+  }, [propSelectedTopicId]);
 
   useEffect(() => {
     onTopicOrMapTypeChange && onTopicOrMapTypeChange(selectedTopicId || rootTopic._id, selectedMapType);
@@ -153,16 +158,6 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
 
   return (
     <Stack direction={direction} spacing={4} alignItems="center">
-      <InputGroup size="sm" variant="outline">
-        <InputLeftElement pointerEvents="none" children={<SearchIcon />} />
-        <Input
-        // variant="flushed"
-        // isDisabled={isDisabled}
-        // {...inheritedInputProps}
-        // {...inputProps}
-        // w={width}
-        />
-      </InputGroup>
       <Box
         borderBottomWidth={3}
         minH="148px"

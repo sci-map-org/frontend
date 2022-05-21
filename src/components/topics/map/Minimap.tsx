@@ -133,6 +133,7 @@ const SubTopicsMapModalContent: React.FC<{
       {modalContainerSize && (
         <ExploreMap
           direction="column"
+          selectedMapType={selectedMapType}
           mapPxWidth={modalContainerSize.width}
           mapPxHeight={(modalContainerSize.width * 3) / 5}
           selectedTopicId={topic._id}
