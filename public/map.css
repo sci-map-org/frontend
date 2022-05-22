@@ -44,3 +44,19 @@
   stroke: var(--chakra-colors-gray-50);
   marker-end: url('#arrow-head-hover');
 }
+
+.subtopics_count_viewer {
+  visibility: hidden;
+}
+
+.subtopics_count_viewer_hidden {
+  visibility: hidden !important;
+}
+
+.node:hover .subtopics_count_viewer {
+  visibility: visible;
+}
+
+.subtopics_count {
+  fill: white;
+}

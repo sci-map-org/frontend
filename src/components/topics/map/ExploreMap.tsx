@@ -203,7 +203,13 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
                 subTopics={subTopics || []}
                 parentTopic={parentTopic}
                 topic={loadedTopic}
-                options={{ mode: 'explore', pxWidth: mapPxWidth, pxHeight: mapPxHeight, enableHistory: true }}
+                options={{
+                  mode: 'explore',
+                  pxWidth: mapPxWidth,
+                  pxHeight: mapPxHeight,
+                  enableHistory: true,
+                  showTotalSubTopicsCount: true,
+                }}
                 onSelectTopic={onSelectTopic}
               />
             </Box>

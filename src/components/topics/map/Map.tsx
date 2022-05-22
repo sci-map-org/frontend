@@ -32,14 +32,7 @@ export const Map: React.FC<MapProps> = ({
   // last topic is the current one
   const [topicHistory, setTopicHistory] = useState<{ topic: MapTopicDataFragment; mapType: MapType }[]>([]);
   const onSelectTopic = useCallback(onSelectTopicProp, [onSelectTopicProp]);
-  // const isLoading = true;
-  // useEffect(() => {
-  //   console.log('yo');
-  //   if (!!topic && topic.subTopicsTotalCount === 0 && mapType !== MapType.PREREQUISITES) {
-  //     console.log('hi');
-  //     setMapType(MapType.PREREQUISITES);
-  //   }
-  // }, [topic?._id]);
+
   useEffect(() => {
     if (!topic || isLoading) return;
     if (!!topicHistory.length) {
