@@ -8,6 +8,7 @@ export const MapTopicData = gql`
   fragment MapTopicData on Topic {
     ...TopicLinkData
     subTopicsTotalCount
+    learningMaterialsTotalCount
   }
   ${TopicLinkData}
 `;
@@ -31,19 +32,22 @@ export interface MapOptions {
   mode: 'explore' | 'mini';
   enableHistory?: boolean;
   showTotalSubTopicsCount?: boolean;
-  // showLearningMaterialsTotalCount?: boolean;
+  showLearningMaterialsTotalCount?: boolean;
 }
 
 export interface TopicNodeElement extends MapTopicDataFragment {
   radius: number;
   color: string;
-  learningMaterialsTotalCount?: number;
+  learningMaterialsTotalCount?: number | null;
 }
+
+const spacingBetweenCounts = (radius: number) => radius / 6 + 4;
+
 export function drawTopicNode<T extends TopicNodeElement>(
   container: d3Selection.Selection<d3Selection.BaseType | SVGGElement, boolean, SVGSVGElement, unknown>,
   topicNodeElements: T[],
   className: string,
-  { pxHeight, pxWidth, showTotalSubTopicsCount }: MapOptions
+  { pxHeight, pxWidth, showTotalSubTopicsCount, showLearningMaterialsTotalCount }: MapOptions
 ) {
   const topicNodes = container
     .selectAll('.' + className)
@@ -60,12 +64,14 @@ export function drawTopicNode<T extends TopicNodeElement>(
     .attr('fill', (n) => n.color);
 
   if (showTotalSubTopicsCount) {
-    const getIconSize = (radius: number) => radius * 0.18 + 12;
-    const getFontSize = (radius: number) => radius * 0.14 + 12 + 'px';
+    const getIconSize = (radius: number) => radius * 0.18 + 10;
+    const getFontSize = (radius: number) => radius * 0.14 + 10 + 'px';
 
     const subTopicsCountViewers = topicNodes
       .append('g')
-      .attr('transform', (n) => (n.learningMaterialsTotalCount ? `translate(0, -${n.radius / 3})` : ''))
+      .attr('transform', (n) =>
+        n.learningMaterialsTotalCount ? `translate(0, -${spacingBetweenCounts(n.radius)})` : ''
+      )
       .classed('subtopics_count_viewer', (n) => !!n.subTopicsTotalCount && n.subTopicsTotalCount > 0)
       .classed('subtopics_count_viewer_hidden', (n) => !n.subTopicsTotalCount);
 
@@ -88,6 +94,39 @@ export function drawTopicNode<T extends TopicNodeElement>(
       .append('g')
       .attr('transform', (n) => `translate(0, -${getIconSize(n.radius) / 2})`)
       .html((n) => renderTopicIcon(getIconSize(n.radius) + 'px'));
+  }
+  if (showLearningMaterialsTotalCount) {
+    const getIconSize = (radius: number) => radius * 0.12 + 10;
+    const getFontSize = (radius: number) => radius * 0.14 + 10 + 'px';
+
+    const learningMaterialsCountViewers = topicNodes
+      .append('g')
+      .attr('transform', (n) => (n.subTopicsTotalCount ? `translate(0, ${spacingBetweenCounts(n.radius)})` : ''))
+      .classed(
+        'learning_materials_count_viewer',
+        (n) => !!n.learningMaterialsTotalCount && n.learningMaterialsTotalCount > 0
+      )
+      .classed('learning_materials_count_viewer_hidden', (n) => !n.learningMaterialsTotalCount);
+
+    learningMaterialsCountViewers
+      .append('text')
+      .classed('learning_materials_count', true)
+      .attr('z-index', 10)
+      .attr('text-anchor', 'end')
+      .attr('dx', (n) => -n.radius * 0.05)
+      .attr('dy', (n) => {
+        return '0.38em';
+      })
+      .attr('font-size', (n) => getFontSize(n.radius))
+      .attr('font-weight', 500)
+      .text(function (d) {
+        return d.learningMaterialsTotalCount || '';
+      });
+
+    learningMaterialsCountViewers
+      .append('g')
+      .attr('transform', (n) => `translate(0, -${getIconSize(n.radius) / 2})`)
+      .html((n) => renderLearningMaterialIcon(getIconSize(n.radius) + 'px'));
   }
 
   topicNodes
@@ -168,4 +207,13 @@ const renderTopicIcon = (
 <path d="M15.3,47.6H5.6c-1.7,0-3.1,1.4-3.1,3.1s1.4,3.1,3.1,3.1h9.7c1.7,0,3.1-1.4,3.1-3.1S17,47.6,15.3,47.6z" />
 <path d="M94.4,47.6h-9.7c-1.7,0-3.1,1.4-3.1,3.1s1.4,3.1,3.1,3.1h9.7c1.7,0,3.1-1.4,3.1-3.1S96.1,47.6,94.4,47.6z" />
 <path d="M83.6,17.1c-1.2-1.2-3.2-1.2-4.4,0L72.3,24c-1.2,1.2-1.2,3.2,0,4.4c0.6,0.6,1.4,0.9,2.2,0.9s1.6-0.3,2.2-0.9l6.9-6.9     C84.8,20.2,84.8,18.3,83.6,17.1z" />
+</svg>`;
+
+const renderLearningMaterialIcon = (
+  boxSize: string
+) => `<svg viewBox="0 0 19 19" width="${boxSize}" height="${boxSize}" fill="none" xmlns="http://www.w3.org/2000/svg" >
+<path
+  d="M15.8568 5.35488L11.8639 1.36191C11.7525 1.25059 11.6022 1.1875 11.4445 1.1875H3.5625C3.23408 1.1875 2.96875 1.45283 2.96875 1.78125V17.2188C2.96875 17.5472 3.23408 17.8125 3.5625 17.8125H15.4375C15.7659 17.8125 16.0312 17.5472 16.0312 17.2188V5.77607C16.0312 5.61836 15.9682 5.46621 15.8568 5.35488ZM14.6619 6.04883H11.1699V2.55684L14.6619 6.04883ZM14.6953 16.4766H4.30469V2.52344H9.9082V6.53125C9.9082 6.73793 9.99031 6.93615 10.1365 7.0823C10.2826 7.22844 10.4808 7.31055 10.6875 7.31055H14.6953V16.4766ZM9.35156 11.4668H5.9375C5.85586 11.4668 5.78906 11.5336 5.78906 11.6152V12.5059C5.78906 12.5875 5.85586 12.6543 5.9375 12.6543H9.35156C9.4332 12.6543 9.5 12.5875 9.5 12.5059V11.6152C9.5 11.5336 9.4332 11.4668 9.35156 11.4668ZM5.78906 9.0918V9.98242C5.78906 10.0641 5.85586 10.1309 5.9375 10.1309H13.0625C13.1441 10.1309 13.2109 10.0641 13.2109 9.98242V9.0918C13.2109 9.01016 13.1441 8.94336 13.0625 8.94336H5.9375C5.85586 8.94336 5.78906 9.01016 5.78906 9.0918Z"
+  fill="white"
+/>
 </svg>`;

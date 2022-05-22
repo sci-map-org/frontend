@@ -60,3 +60,19 @@
 .subtopics_count {
   fill: white;
 }
+
+.learning_materials_count_viewer {
+  visibility: hidden;
+}
+
+.learning_materials_count_viewer_hidden {
+  visibility: hidden !important;
+}
+
+.node:hover .learning_materials_count_viewer {
+  visibility: visible;
+}
+
+.learning_materials_count {
+  fill: white;
+}

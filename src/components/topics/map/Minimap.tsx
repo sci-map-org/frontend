@@ -68,7 +68,13 @@ export const Minimap: React.FC<MinimapProps> = ({
           isLoading={isLoading}
           subTopics={subTopics}
           parentTopic={parentTopic}
-          options={{ mode: 'mini', pxWidth, pxHeight }}
+          options={{
+            mode: 'mini',
+            pxWidth,
+            pxHeight,
+            showLearningMaterialsTotalCount: true,
+            showTotalSubTopicsCount: true,
+          }}
           onSelectTopic={(n) => routerPushToPage(TopicPageInfo(n))}
         />
 

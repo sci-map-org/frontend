@@ -209,6 +209,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
                   pxHeight: mapPxHeight,
                   enableHistory: true,
                   showTotalSubTopicsCount: true,
+                  showLearningMaterialsTotalCount: true,
                 }}
                 onSelectTopic={onSelectTopic}
               />

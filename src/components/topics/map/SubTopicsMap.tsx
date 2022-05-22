@@ -15,8 +15,8 @@ type NodeElement = TopicNodeElement & SimulationNodeDatum;
 
 const getNodeRadius = (topic: MapTopicDataFragment): number => {
   return topic.subTopicsTotalCount
-    ? 12 + (topic.subTopicsTotalCount > 1 ? Math.log(topic.subTopicsTotalCount) * 12 : 0)
-    : 12;
+    ? 15 + (topic.subTopicsTotalCount > 0 ? Math.log(topic.subTopicsTotalCount + 1) * 12 : 0)
+    : 15;
 };
 
 export const SubTopicsMap: React.FC<{

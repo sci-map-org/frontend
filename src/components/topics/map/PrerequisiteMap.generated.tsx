@@ -8,7 +8,7 @@ export type GetPrerequisiteMapTopicsQueryVariables = Types.Exact<{
 }>;
 
 
-export type GetPrerequisiteMapTopicsQuery = { __typename?: 'Query', getTopicById: { __typename?: 'Topic', subTopicsTotalCount?: number | null | undefined, _id: string, key: string, name: string, context?: string | null | undefined, prerequisites?: Array<{ __typename?: 'TopicHasPrerequisiteTopic', prerequisiteTopic: { __typename?: 'Topic', subTopicsTotalCount?: number | null | undefined, _id: string, key: string, name: string, context?: string | null | undefined } }> | null | undefined, followUps?: Array<{ __typename?: 'TopicHasPrerequisiteTopic', followUpTopic: { __typename?: 'Topic', subTopicsTotalCount?: number | null | undefined, _id: string, key: string, name: string, context?: string | null | undefined } }> | null | undefined } };
+export type GetPrerequisiteMapTopicsQuery = { __typename?: 'Query', getTopicById: { __typename?: 'Topic', subTopicsTotalCount?: number | null | undefined, learningMaterialsTotalCount?: number | null | undefined, _id: string, key: string, name: string, context?: string | null | undefined, prerequisites?: Array<{ __typename?: 'TopicHasPrerequisiteTopic', prerequisiteTopic: { __typename?: 'Topic', subTopicsTotalCount?: number | null | undefined, learningMaterialsTotalCount?: number | null | undefined, _id: string, key: string, name: string, context?: string | null | undefined } }> | null | undefined, followUps?: Array<{ __typename?: 'TopicHasPrerequisiteTopic', followUpTopic: { __typename?: 'Topic', subTopicsTotalCount?: number | null | undefined, learningMaterialsTotalCount?: number | null | undefined, _id: string, key: string, name: string, context?: string | null | undefined } }> | null | undefined } };
 
 
 
