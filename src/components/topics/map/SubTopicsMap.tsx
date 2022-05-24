@@ -6,18 +6,19 @@ import * as d3Zoom from 'd3-zoom';
 import { useEffect, useMemo, useRef } from 'react';
 import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
 import { BaseMap } from './BaseMap';
-import { dragNode, drawTopicNode, MapOptions, TopicNodeColors, TopicNodeElement } from './map.utils';
+import {
+  dragNode,
+  drawTopicNode,
+  getTopicNodeRadius,
+  MapOptions,
+  TopicNodeColors,
+  TopicNodeElement,
+} from './map.utils';
 import { MapTopicDataFragment } from './map.utils.generated';
 import { MapBackButton } from './MapBackButton';
 import { MapSearchBox } from './MapSearchBox';
 
 type NodeElement = TopicNodeElement & SimulationNodeDatum;
-
-const getNodeRadius = (topic: MapTopicDataFragment): number => {
-  return topic.subTopicsTotalCount
-    ? 15 + (topic.subTopicsTotalCount > 0 ? Math.log(topic.subTopicsTotalCount + 1) * 12 : 0)
-    : 15;
-};
 
 export const SubTopicsMap: React.FC<{
   topic?: MapTopicDataFragment; //only used to force rerendering
@@ -43,7 +44,7 @@ export const SubTopicsMap: React.FC<{
           ...subTopic,
           color: TopicNodeColors[idx % 9],
           size: subTopic.subTopicsTotalCount || undefined,
-          radius: getNodeRadius(subTopic),
+          radius: getTopicNodeRadius(subTopic),
         };
       }),
     [subTopics]

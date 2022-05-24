@@ -4,20 +4,28 @@ import { SimulationNodeDatum } from 'd3-force';
 import * as d3Selection from 'd3-selection';
 import * as d3Zoom from 'd3-zoom';
 import gql from 'graphql-tag';
-import { flatten, omit } from 'lodash';
+import { flatten, omit, uniqBy } from 'lodash';
 import { useEffect, useMemo, useRef } from 'react';
 import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
-import { isTopicArea } from '../../../services/topics.service';
+import { AREA_TOPIC_TYPE_NAMES, isTopicArea } from '../../../services/topics.service';
 import { topicLevelColorMap } from '../fields/TopicLevel';
 import { BaseMap } from './BaseMap';
-import { dragNode, drawLink, drawTopicNode, MapOptions, MapTopicData, TopicNodeElement } from './map.utils';
+import {
+  dragNode,
+  drawLink,
+  drawTopicNode,
+  getTopicNodeRadius,
+  MapOptions,
+  MapTopicData,
+  TopicNodeElement,
+} from './map.utils';
 import { MapTopicDataFragment } from './map.utils.generated';
 import { MapBackButton } from './MapBackButton';
 import { MapSearchBox } from './MapSearchBox';
 import { useGetProgressMapTopicsQuery } from './ProgressMap.generated';
 
 export const getProgressMapTopics = gql`
-  query getProgressMapTopics($topicId: String!) {
+  query getProgressMapTopics($topicId: String!, $areaTopicTypes: [String!]!) {
     getTopicById(topicId: $topicId) {
       ...MapTopicData
       level
@@ -38,7 +46,17 @@ export const getProgressMapTopics = gql`
               _id
             }
           }
-          subTopics {
+          aggregatedSubtopicsPrerequisites(
+            options: { onlyIfTopicHasTopicTypes: $areaTopicTypes, prereqParentsPathStopCondition: common_parent }
+          ) {
+            # subTopicPath {
+            #   name
+            # }
+            prerequisiteParentsPath {
+              name
+            }
+          }
+          subTopics(options: { filter: { currentTopicTypesNotIn: $areaTopicTypes } }) {
             subTopic {
               ...MapTopicData
               level
@@ -55,7 +73,17 @@ export const getProgressMapTopics = gql`
                   _id
                 }
               }
-              subTopics {
+              aggregatedSubtopicsPrerequisites(
+                options: { onlyIfTopicHasTopicTypes: $areaTopicTypes, prereqParentsPathStopCondition: common_parent }
+              ) {
+                # subTopicPath {
+                #   name
+                # }
+                prerequisiteParentsPath {
+                  name
+                }
+              }
+              subTopics(options: { filter: { currentTopicTypesNotIn: $areaTopicTypes } }) {
                 subTopic {
                   ...MapTopicData
                   level
@@ -70,6 +98,20 @@ export const getProgressMapTopics = gql`
                   followUps {
                     followUpTopic {
                       _id
+                    }
+                  }
+                  # not sure if needed here, but why not
+                  aggregatedSubtopicsPrerequisites(
+                    options: {
+                      onlyIfTopicHasTopicTypes: $areaTopicTypes
+                      prereqParentsPathStopCondition: common_parent
+                    }
+                  ) {
+                    # subTopicPath {
+                    #   name
+                    # }
+                    prerequisiteParentsPath {
+                      name
                     }
                   }
                 }
@@ -98,7 +140,7 @@ export const ProgressMap: React.FC<{
   onBack?: () => void;
 }> = ({ topicId, options, onSelectTopic, onBack }) => {
   const { data, loading } = useGetProgressMapTopicsQuery({
-    variables: { topicId },
+    variables: { topicId, areaTopicTypes: AREA_TOPIC_TYPE_NAMES },
     fetchPolicy: 'network-only', // without this the map might get rendered twice (no loading state)
   });
   const {
@@ -112,6 +154,7 @@ export const ProgressMap: React.FC<{
     concepts: Array<
       MapTopicDataFragment & {
         level?: number | null;
+        topicTypes?: { name: string }[] | null;
       }
     >;
     prerequisites: { prerequisite: string; followUp: string }[];
@@ -125,21 +168,19 @@ export const ProgressMap: React.FC<{
     const r = (data.getTopicById.subTopics || []).map(({ subTopic }) => {
       return [
         omit(subTopic, 'subTopics'),
-        ...(subTopic.subTopics || [])
-          .filter(({ subTopic }) => !!subTopic.topicTypes && !isTopicArea(subTopic.topicTypes))
-          .map(({ subTopic }) => {
-            return [
-              omit(subTopic, 'subTopics'),
-              ...(subTopic.subTopics || [])
-                .filter(({ subTopic }) => !!subTopic.topicTypes && !isTopicArea(subTopic.topicTypes))
-                .map(({ subTopic }) => {
-                  return subTopic;
-                }),
-            ];
-          }),
+        ...(subTopic.subTopics || []).map(({ subTopic }) => {
+          return [
+            omit(subTopic, 'subTopics'),
+            ...(subTopic.subTopics || []).map(({ subTopic }) => {
+              return subTopic;
+            }),
+          ];
+        }),
       ];
     });
-    const flattened = flatten(flatten(r)).filter((c) => typeof c['level'] === 'number'); // to disable at some point ?
+    const flattened = uniqBy(flatten(flatten(r)), '_id')
+      .filter((c) => typeof c['level'] === 'number')
+      .filter((c) => !!c.topicTypes); // to disable at some point ?
     const prereqs: { prerequisite: string; followUp: string }[] = [];
     flattened.forEach((concept) => {
       concept.prerequisites?.forEach(({ prerequisiteTopic }) => {
@@ -204,6 +245,7 @@ export const StatelessProgressMap: React.FC<{
   concepts: Array<
     MapTopicDataFragment & {
       level?: number | null;
+      topicTypes?: { name: string }[] | null;
     }
   >;
   prerequisites: { prerequisite: string; followUp: string }[];
@@ -253,14 +295,14 @@ export const StatelessProgressMap: React.FC<{
       });
     }
     return gravityCenters;
-  }, [concepts, prerequisiteLinkElements]);
+  }, [concepts, prerequisiteLinkElements, options.pxWidth]);
 
   const topicNodeElements: NodeElement[] = useMemo(
     () =>
       concepts.map((subTopic, idx) => ({
         id: subTopic._id,
         type: 'topic',
-        radius: 12,
+        radius: subTopic.topicTypes && isTopicArea(subTopic.topicTypes) ? getTopicNodeRadius(subTopic, 12) : 12,
         level: typeof subTopic.level === 'number' ? subTopic.level : null,
         xGravityCenter: topicNodesGravityCenters[idx],
         color: typeof subTopic.level === 'number' ? topicLevelColorMap(subTopic.level / 100) : 'gray',
@@ -268,7 +310,7 @@ export const StatelessProgressMap: React.FC<{
         y: options.pxHeight / 2 + (Math.random() - 0.5) * options.pxHeight * 0.03,
         ...subTopic,
       })),
-    [concepts, topicNodesGravityCenters]
+    [concepts, topicNodesGravityCenters, options.pxHeight]
   );
 
   const topicNodeElementsIds = useMemo(
@@ -277,7 +319,7 @@ export const StatelessProgressMap: React.FC<{
   );
   const prerequisiteLinkElementsIds = useMemo(
     () => prerequisiteLinkElements.map(({ source, target }) => `${source}_${target}`).join(','),
-    [topicNodeElements]
+    [prerequisiteLinkElements]
   );
   useEffect(() => {
     if (d3Container && d3Container.current) {
@@ -343,7 +385,16 @@ export const StatelessProgressMap: React.FC<{
         .alphaDecay(0.005)
         // .alphaDecay(0.01)
         .nodes(topicNodeElements)
-        .force('charge', d3Force.forceManyBody<NodeElement>().strength(-30))
+        .force(
+          'charge',
+          d3Force.forceManyBody<NodeElement>().strength((n) => {
+            // -30
+            const coefficient = options.mode === 'explore' ? 1 : 1 / 4;
+            const s = -(n.radius * Math.log(n.radius)) * coefficient;
+            console.log(s);
+            return s;
+          })
+        )
         .force(
           'collision',
           d3Force.forceCollide<NodeElement>().radius((n) => n.radius + radiusMarginArrow)

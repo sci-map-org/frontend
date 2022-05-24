@@ -5,6 +5,7 @@ import * as Apollo from '@apollo/client';
 const defaultOptions =  {}
 export type GetProgressMapTopicsQueryVariables = Types.Exact<{
   topicId: Types.Scalars['String'];
+  areaTopicTypes: Array<Types.Scalars['String']> | Types.Scalars['String'];
 }>;
 
 
@@ -25,6 +26,7 @@ export type GetProgressMapTopicsQuery = { __typename?: 'Query', getTopicById: { 
  * const { data, loading, error } = useGetProgressMapTopicsQuery({
  *   variables: {
  *      topicId: // value for 'topicId'
+ *      areaTopicTypes: // value for 'areaTopicTypes'
  *   },
  * });
  */

@@ -239,3 +239,9 @@ const renderLearningMaterialIcon = (
   fill="white"
 />
 </svg>`;
+
+export const getTopicNodeRadius = (topic: MapTopicDataFragment, defaultRadius: number = 15): number => {
+  return topic.subTopicsTotalCount
+    ? defaultRadius + (topic.subTopicsTotalCount > 0 ? Math.log(topic.subTopicsTotalCount + 1) * 12 : 0)
+    : defaultRadius;
+};
