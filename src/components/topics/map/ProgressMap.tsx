@@ -1,5 +1,4 @@
 import { Stack, Text } from '@chakra-ui/react';
-import * as d3Drag from 'd3-drag';
 import * as d3Force from 'd3-force';
 import { SimulationNodeDatum } from 'd3-force';
 import * as d3Selection from 'd3-selection';
@@ -11,7 +10,7 @@ import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.
 import { isTopicArea } from '../../../services/topics.service';
 import { topicLevelColorMap } from '../fields/TopicLevel';
 import { BaseMap } from './BaseMap';
-import { drawLink, drawTopicNode, MapOptions, MapTopicData, TopicNodeElement } from './map.utils';
+import { dragNode, drawLink, drawTopicNode, MapOptions, MapTopicData, TopicNodeElement } from './map.utils';
 import { MapTopicDataFragment } from './map.utils.generated';
 import { MapBackButton } from './MapBackButton';
 import { MapSearchBox } from './MapSearchBox';
@@ -377,7 +376,7 @@ export const StatelessProgressMap: React.FC<{
         .on('tick', tick);
 
       //   @ts-ignore
-      topicNodes.call(drag(simulation));
+      topicNodes.call(dragNode(simulation));
     }
   }, [topicNodeElementsIds, prerequisiteLinkElementsIds]);
 
@@ -408,24 +407,3 @@ export const StatelessProgressMap: React.FC<{
     />
   );
 };
-
-function drag(simulation: d3Force.Simulation<NodeElement, undefined>) {
-  function dragstarted(event: any) {
-    if (!event.active) simulation.alphaTarget(0.3).restart();
-    event.subject.fx = event.subject.x;
-    event.subject.fy = event.subject.y;
-  }
-
-  function dragged(event: any) {
-    event.subject.fx = event.x;
-    event.subject.fy = event.y;
-  }
-
-  function dragended(event: any) {
-    if (!event.active) simulation.alphaTarget(0);
-    event.subject.fx = null;
-    event.subject.fy = null;
-  }
-
-  return d3Drag.drag().on('start', dragstarted).on('drag', dragged).on('end', dragended);
-}

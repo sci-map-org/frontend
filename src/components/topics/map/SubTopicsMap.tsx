@@ -6,7 +6,7 @@ import * as d3Zoom from 'd3-zoom';
 import { useEffect, useMemo, useRef } from 'react';
 import { TopicLinkDataFragment } from '../../../graphql/topics/topics.fragments.generated';
 import { BaseMap } from './BaseMap';
-import { drawTopicNode, MapOptions, TopicNodeColors, TopicNodeElement } from './map.utils';
+import { dragNode, drawTopicNode, MapOptions, TopicNodeColors, TopicNodeElement } from './map.utils';
 import { MapTopicDataFragment } from './map.utils.generated';
 import { MapBackButton } from './MapBackButton';
 import { MapSearchBox } from './MapSearchBox';
@@ -83,17 +83,28 @@ export const SubTopicsMap: React.FC<{
       const simulation = d3Force
         .forceSimulation<NodeElement>()
         .nodes(topicNodeElements)
+        .alphaDecay(0.005)
         .force(
           'charge',
           d3Force.forceManyBody<NodeElement>().strength((d) => {
-            const coefficient = options.mode === 'explore' ? 1 / 2 : 1 / 3;
-            return -(d.radius * Math.log(d.radius)) * coefficient;
+            const coefficient = options.mode === 'explore' ? 1 / 5 : 1 / 4;
+            const s = -(d.radius * Math.log(d.radius)) * coefficient;
+            return s;
             // return d.subTopicsTotalCount ? -(getNodeRadius(d) * getNodeRadius(d)) / 15 : -8;
           })
         )
 
-        .force('center', d3Force.forceCenter(options.pxWidth / 2, options.pxHeight / 2))
+        .force('center', d3Force.forceCenter(options.pxWidth / 2, options.pxHeight / 2).strength(1))
+        .force('xForce', d3Force.forceX<NodeElement>((n) => options.pxWidth / 2).strength(0.005))
+        .force('yForce', d3Force.forceY<NodeElement>((n) => options.pxHeight / 2).strength(0.005))
+        .force(
+          'collision',
+          d3Force.forceCollide<NodeElement>().radius((n) => n.radius)
+        )
         .on('tick', tick);
+
+      // @ts-ignore
+      topicNodes.call(dragNode(simulation));
     }
   }, [topic?._id, topicNodeElements.length]);
 

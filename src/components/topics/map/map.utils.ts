@@ -3,6 +3,7 @@ import * as d3Selection from 'd3-selection';
 import gql from 'graphql-tag';
 import { TopicLinkData } from '../../../graphql/topics/topics.fragments';
 import { MapTopicDataFragment } from './map.utils.generated';
+import * as d3Drag from 'd3-drag';
 
 export const MapTopicData = gql`
   fragment MapTopicData on Topic {
@@ -24,6 +25,27 @@ export const TopicNodeColors = [
   '#C17FEA', // purple
   '#817FEA', // mauve
 ];
+
+export function dragNode(simulation: d3Force.Simulation<d3Force.SimulationNodeDatum, undefined>) {
+  function dragstarted(event: any) {
+    if (!event.active) simulation.alphaTarget(0.3).restart();
+    event.subject.fx = event.subject.x;
+    event.subject.fy = event.subject.y;
+  }
+
+  function dragged(event: any) {
+    event.subject.fx = event.x;
+    event.subject.fy = event.y;
+  }
+
+  function dragended(event: any) {
+    if (!event.active) simulation.alphaTarget(0);
+    event.subject.fx = null;
+    event.subject.fy = null;
+  }
+
+  return d3Drag.drag().on('start', dragstarted).on('drag', dragged).on('end', dragended);
+}
 
 export interface MapOptions {
   pxWidth: number;
