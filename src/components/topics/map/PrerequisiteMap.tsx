@@ -7,7 +7,15 @@ import * as d3Zoom from 'd3-zoom';
 import { useEffect, useMemo, useRef } from 'react';
 import { BaseMap } from './BaseMap';
 import { MapTopicDataFragment } from './map.utils.generated';
-import { drawLink, drawTopicNode, MapOptions, MapTopicData, TopicNodeColors, TopicNodeElement } from './map.utils';
+import {
+  drawLink,
+  drawTopicNode,
+  getTopicNodeRadius,
+  MapOptions,
+  MapTopicData,
+  TopicNodeColors,
+  TopicNodeElement,
+} from './map.utils';
 import gql from 'graphql-tag';
 import { useGetPrerequisiteMapTopicsQuery } from './PrerequisiteMap.generated';
 import { omit } from 'lodash';
@@ -17,7 +25,7 @@ import { MapSearchBox } from './MapSearchBox';
 
 type NodeElement = SimulationNodeDatum & TopicNodeElement & { type: 'prereq' | 'followUp' | 'topic' };
 
-type LinkElement = d3Force.SimulationLinkDatum<NodeElement> & {};
+type LinkElement = d3Force.SimulationLinkDatum<NodeElement> & { size: number };
 
 const radiusMarginArrow = 2;
 const layoutMargin = 40;
@@ -88,6 +96,7 @@ export const StatelessPrerequisiteMap: React.FC<{
         fx: options.pxWidth / 2,
         fy: options.pxHeight / 2,
         color: TopicNodeColors[0],
+        clickable: false,
         ...topic,
       },
     ],
@@ -101,8 +110,9 @@ export const StatelessPrerequisiteMap: React.FC<{
           type: 'prereq',
           x: options.pxWidth / 2 - linksLength,
           y: options.pxHeight / 2 - (13 * prerequisiteTopics.length) / 2 + i * 13,
-          radius: 13,
+          radius: getTopicNodeRadius(prereqTopic, { defaultRadius: 13, coefficient: 0.3 }), // 13,
           color: PREREQUISITE_COLOR,
+          clickable: true,
           ...prereqTopic,
         };
       }),
@@ -117,8 +127,10 @@ export const StatelessPrerequisiteMap: React.FC<{
           type: 'followUp',
           x: options.pxWidth / 2 + linksLength,
           y: options.pxHeight / 2 - (13 * followUpTopics.length) / 2 + i * 13,
-          radius: 13,
+          // radius: 13,
+          radius: getTopicNodeRadius(followTopic, { defaultRadius: 13, coefficient: 0.3 }), // 13,
           color: FOLLOW_UP_COLOR,
+          clickable: true,
           ...followTopic,
         };
       }),
@@ -131,8 +143,12 @@ export const StatelessPrerequisiteMap: React.FC<{
 
   const prerequisiteLinkElements: LinkElement[] = useMemo(() => {
     return [
-      ...prereqNodeElements.map((prereq, idx) => ({ source: prereq._id, target: topicNodeElements[0]._id })),
-      ...followUpNodeElements.map((followUp, idx) => ({ source: topicNodeElements[0]._id, target: followUp._id })),
+      ...prereqNodeElements.map((prereq, idx) => ({ source: prereq._id, target: topicNodeElements[0]._id, size: 2 })),
+      ...followUpNodeElements.map((followUp, idx) => ({
+        source: topicNodeElements[0]._id,
+        target: followUp._id,
+        size: 2,
+      })),
     ];
   }, [prereqNodeElements, followUpNodeElements, topicNodeElements]);
 
@@ -262,23 +278,23 @@ export const StatelessPrerequisiteMap: React.FC<{
     }
   }, [nodeElementsIds, prerequisiteLinkElementsIds]);
 
-  if (!prereqNodeElements.length && !followUpNodeElements.length)
-    return (
-      <BaseMap
-        options={options}
-        renderCenter={
-          <Text fontWeight={600} fontSize="lg" color="gray.100" fontStyle="italic" textAlign="center">
-            No prerequisite or follow up topics found
-          </Text>
-        }
-        renderTopLeft={
-          <Stack spacing="2px">
-            {options.mode === 'explore' && <MapSearchBox onSelectTopic={onSelectTopic} />}
-            {onBack && <MapBackButton onClick={onBack} />}
-          </Stack>
-        }
-      />
-    );
+  // if (!prereqNodeElements.length && !followUpNodeElements.length)
+  //   return (
+  //     <BaseMap
+  //       options={options}
+  //       renderCenter={
+  //         <Text fontWeight={600} fontSize="lg" color="gray.100" fontStyle="italic" textAlign="center">
+  //           No prerequisite or follow up topics found
+  //         </Text>
+  //       }
+  //       renderTopLeft={
+  //         <Stack spacing="2px">
+  //           {options.mode === 'explore' && <MapSearchBox onSelectTopic={onSelectTopic} />}
+  //           {onBack && <MapBackButton onClick={onBack} />}
+  //         </Stack>
+  //       }
+  //     />
+  //   );
   return (
     <BaseMap
       ref={d3Container}

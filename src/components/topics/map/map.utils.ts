@@ -61,6 +61,7 @@ export interface TopicNodeElement extends MapTopicDataFragment {
   radius: number;
   color: string;
   learningMaterialsTotalCount?: number | null;
+  clickable: boolean;
 }
 
 const spacingBetweenCounts = (radius: number) => radius / 6 + 4;
@@ -77,6 +78,7 @@ export function drawTopicNode<T extends TopicNodeElement>(
     .join('g')
     .attr('transform', `translate(${pxWidth / 2}, ${pxHeight / 2})`)
     .classed('node', true)
+    .classed('clickable_node', (n) => n.clickable)
     .classed(className, true);
 
   topicNodes
@@ -168,17 +170,14 @@ export function drawTopicNode<T extends TopicNodeElement>(
   return topicNodes;
 }
 
-export function drawLink<T>(
+export function drawLink<
+  LinkElement extends d3Force.SimulationLinkDatum<d3Force.SimulationNodeDatum> & { size: number }
+>(
   container: d3Selection.Selection<d3Selection.BaseType | SVGGElement, boolean, SVGSVGElement, unknown>,
-  dependencyElements: d3Force.SimulationLinkDatum<T>[],
+  dependencyElements: LinkElement[],
   className: string,
   { pxHeight, pxWidth }: MapOptions
-): d3Selection.Selection<
-  d3Selection.BaseType,
-  d3Force.SimulationLinkDatum<T>,
-  d3Selection.BaseType | SVGGElement,
-  d3Force.SimulationLinkDatum<T>
-> {
+): d3Selection.Selection<d3Selection.BaseType, LinkElement, d3Selection.BaseType | SVGGElement, LinkElement> {
   const defs = container.append('defs');
   defs
     .append('marker')
@@ -214,6 +213,8 @@ export function drawLink<T>(
   dependencies
     .append('line')
     .classed('linkLineElement', true)
+    .classed('linkLineElementSize2', (n) => !!n['size'] && n.size === 2)
+    .classed('linkLineElementSize3', (n) => !!n['size'] && n.size > 2)
     .attr('marker-end', (d) => `url("#arrow-head")`);
 
   return dependencies.selectAll('line');

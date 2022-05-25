@@ -14,6 +14,7 @@ export const MapSearchBox: React.FC<{ onSelectTopic: (topic: TopicLinkDataFragme
         _focus: { _placeholder: { color: 'gray.200' } },
         color: 'white',
       }}
+      highlightFirstSuggestion={false}
     />
   );
 };

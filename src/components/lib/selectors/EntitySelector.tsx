@@ -27,6 +27,7 @@ type EntitySelectorProps<T extends EntityType> = {
   inputLeftIcon?: ReactNode;
   inputProps?: InputProps;
   renderSuggestion?: (suggestion: T | NewEntity, options: { isHighlighted?: boolean }) => ReactNode;
+  highlightFirstSuggestion?: boolean;
 };
 
 export const EntitySelector = <T extends EntityType>({
@@ -43,6 +44,7 @@ export const EntitySelector = <T extends EntityType>({
   inputLeftIcon,
   inputProps: inheritedInputProps,
   renderSuggestion,
+  highlightFirstSuggestion = true,
 }: PropsWithChildren<EntitySelectorProps<T>>) => {
   const [value, setValue] = useState('');
   const suggestions: (T | NewEntity)[] = [
@@ -119,7 +121,7 @@ export const EntitySelector = <T extends EntityType>({
             </Box>
           )
         }
-        highlightFirstSuggestion={true}
+        highlightFirstSuggestion={highlightFirstSuggestion}
         getSuggestionValue={(suggestion) => suggestion.name}
         renderInputComponent={(suggestInputProps: any) => (
           <InputGroup {...pick(inheritedInputProps, ['variant', 'size'])}>

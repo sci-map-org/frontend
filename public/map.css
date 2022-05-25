@@ -1,11 +1,11 @@
-.node:hover {
+.clickable_node:hover {
   cursor: pointer;
 }
 
 .node_circle {
   stroke: var(--chakra-colors-gray-600);
 }
-.node:hover .node_circle {
+.clickable_node:hover .node_circle {
   stroke: var(--chakra-colors-gray-300);
   stroke-width: 1px;
 }
@@ -14,7 +14,7 @@
   fill: var(--chakra-colors-gray-300);
 }
 
-.node:hover .node_label {
+.clickable_node:hover .node_label {
   fill: white;
 }
 
@@ -25,6 +25,14 @@
 
 .linkLineElement {
   stroke-width: 1.1px;
+}
+
+.linkLineElementSize2 {
+  stroke-width: 1.4px !important;
+}
+
+.linkLineElementSize3 {
+  stroke-width: 1.8px !important;
 }
 
 .linkLineHoverElement {

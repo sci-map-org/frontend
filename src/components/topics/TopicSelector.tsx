@@ -17,6 +17,7 @@ interface TopicSelectorProps {
   inputProps?: InputProps;
   placeholder?: string;
   onlySubTopicsOf?: string[]; // Search only topics that descend from these topics
+  highlightFirstSuggestion?: boolean;
 }
 
 export const TopicSelector: React.FC<TopicSelectorProps> = ({
@@ -24,6 +25,7 @@ export const TopicSelector: React.FC<TopicSelectorProps> = ({
   inputProps = {},
   placeholder,
   onlySubTopicsOf,
+  highlightFirstSuggestion,
   //   popoverTitle,
   //   allowedSubTopicTypes,
 }) => {
@@ -78,6 +80,7 @@ export const TopicSelector: React.FC<TopicSelectorProps> = ({
             _focus: { borderColor: 'blue.500' },
             ...inputProps,
           }}
+          highlightFirstSuggestion={highlightFirstSuggestion}
           renderSuggestion={(suggestion, { isHighlighted }) => (
             <Flex
               direction="row"

@@ -45,6 +45,7 @@ export const SubTopicsMap: React.FC<{
           color: TopicNodeColors[idx % 9],
           size: subTopic.subTopicsTotalCount || undefined,
           radius: getTopicNodeRadius(subTopic, { defaultRadius: 15, coefficient: 0.9 }),
+          clickable: true,
         };
       }),
     [subTopics]
@@ -138,29 +139,6 @@ export const SubTopicsMap: React.FC<{
           </Stack>
         }
       />
-      {/* {parentTopic && (
-        <Flex
-          direction="row"
-          alignItems="stretch"
-          position="absolute"
-          top={0}
-          bgColor="white"
-          opacity={0.7}
-          _hover={{ opacity: 1 }}
-          borderBottomEndRadius={4}
-        >
-          <Flex p={1}>
-            <Icon as={BsArrowReturnLeft} boxSize={6} />
-          </Flex>
-          <Flex pt={1}>
-            <Stack mr={2} spacing={1} pt={1}>
-              <Flex pl={1} alignItems="center">
-                <TopicLink topic={parentTopic} onClick={() => onSelectTopic(parentTopic)} />
-              </Flex>
-            </Stack>
-          </Flex>
-        </Flex>
-      )} */}
     </Box>
   );
 };

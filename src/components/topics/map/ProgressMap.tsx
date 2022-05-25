@@ -133,7 +133,9 @@ export const getProgressMapTopics = gql`
 
 type NodeElement = SimulationNodeDatum & TopicNodeElement & { level: number | null; xGravityCenter: number };
 
-type LinkElement = d3Force.SimulationLinkDatum<NodeElement> & {};
+type LinkElement = d3Force.SimulationLinkDatum<NodeElement> & {
+  size: number;
+};
 
 const radiusMarginArrow = 2;
 
@@ -163,7 +165,7 @@ export const ProgressMap: React.FC<{
         topicTypes?: { name: string }[] | null;
       }
     >;
-    prerequisites: { prerequisite: string; followUp: string; size?: number; aggregated?: boolean }[];
+    prerequisites: { prerequisite: string; followUp: string; size: number; aggregated?: boolean }[];
   } = useMemo(() => {
     if (!data || loading)
       return {
@@ -274,7 +276,7 @@ export const StatelessProgressMap: React.FC<{
       topicTypes?: { name: string }[] | null;
     }
   >;
-  prerequisites: { prerequisite: string; followUp: string; size?: number; aggregated?: boolean }[];
+  prerequisites: { prerequisite: string; followUp: string; size: number; aggregated?: boolean }[];
   isLoading: boolean;
   options: MapOptions;
   onSelectTopic: (node: TopicLinkDataFragment) => void;
@@ -288,9 +290,10 @@ export const StatelessProgressMap: React.FC<{
   }, [onSelectTopic]);
 
   const prerequisiteLinkElements: LinkElement[] = useMemo(() => {
-    return prerequisites.map(({ prerequisite, followUp }) => ({
+    return prerequisites.map(({ prerequisite, followUp, size }) => ({
       source: prerequisite,
       target: followUp,
+      size,
     }));
   }, [prerequisites]);
 
@@ -326,18 +329,26 @@ export const StatelessProgressMap: React.FC<{
   const topicNodeElements: NodeElement[] = useMemo(
     () =>
       concepts.map((subTopic, idx) => ({
+        _id: subTopic._id,
+        key: subTopic.key,
+        name: subTopic.name,
         id: subTopic._id,
         type: 'topic',
         radius:
           subTopic.topicTypes && isTopicArea(subTopic.topicTypes)
             ? getTopicNodeRadius(subTopic, { defaultRadius: 12, coefficient: 0.7 })
             : 12,
+        clickable: true,
         level: typeof subTopic.level === 'number' ? subTopic.level : null,
         xGravityCenter: topicNodesGravityCenters[idx],
         color: typeof subTopic.level === 'number' ? topicLevelColorMap(subTopic.level / 100) : 'gray',
         x: topicNodesGravityCenters[idx], //(topicNodesGravityCenters[idx] + (2 * options.pxWidth) / 2) / 3,
         y: options.pxHeight / 2 + (Math.random() - 0.5) * options.pxHeight * 0.03,
-        ...subTopic,
+        ...(subTopic.topicTypes &&
+          isTopicArea(subTopic.topicTypes) && {
+            subTopicsTotalCount: subTopic.subTopicsTotalCount,
+            learningMaterialsTotalCount: subTopic.learningMaterialsTotalCount,
+          }), // if atomic nodes (concepts), we don't show the counts (nodes are too small). If area, we do
       })),
     [concepts, topicNodesGravityCenters, options.pxHeight]
   );
@@ -418,9 +429,8 @@ export const StatelessProgressMap: React.FC<{
           'charge',
           d3Force.forceManyBody<NodeElement>().strength((n) => {
             // -30
-            const coefficient = options.mode === 'explore' ? 1 : 1 / 4;
+            const coefficient = options.mode === 'explore' ? 1 : 1 / 1.5;
             const s = -(n.radius * Math.log(n.radius)) * coefficient;
-            console.log(s);
             return s;
           })
         )
