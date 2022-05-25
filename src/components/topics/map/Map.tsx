@@ -8,6 +8,53 @@ import { PrerequisiteMap } from './PrerequisiteMap';
 import { ProgressMap } from './ProgressMap';
 import { SubTopicsMap } from './SubTopicsMap';
 
+interface MapHistoryState {
+  topic: MapTopicDataFragment;
+  mapType: MapType;
+}
+interface MapHistory {
+  current?: MapHistoryState;
+  previous?: MapHistoryState;
+  push: (newState: MapHistoryState) => void;
+  pop: () => void;
+}
+// History is duplicated, not used as unique source of truth. Tried a bit to refactor that in a better way,
+// but it's not obvious as state changes come from varied sources.
+const useMapHistory = (): MapHistory => {
+  const [topicHistory, setTopicHistory] = useState<MapHistoryState[]>([]);
+
+  const current = useMemo(
+    () => (topicHistory.length > 0 ? topicHistory[topicHistory.length - 1] : undefined),
+    [topicHistory]
+  );
+
+  const previous = useMemo(
+    () => (topicHistory.length > 1 ? topicHistory[topicHistory.length - 2] : undefined),
+    [topicHistory]
+  );
+
+  const push = useCallback(
+    (newState: MapHistoryState) => {
+      setTopicHistory((h) => [...h, newState]);
+    },
+    [setTopicHistory]
+  );
+
+  const pop = useCallback(() => {
+    setTopicHistory((h) => {
+      h.pop();
+      return [...h];
+    });
+  }, [setTopicHistory]);
+
+  return {
+    current,
+    previous,
+    push,
+    pop,
+  };
+};
+
 export interface MapProps {
   mapType: MapType;
   setMapType: (mapType: MapType) => void;
@@ -30,49 +77,31 @@ export const Map: React.FC<MapProps> = ({
   isLoading,
 }) => {
   // last topic is the current one
-  const [topicHistory, setTopicHistory] = useState<{ topic: MapTopicDataFragment; mapType: MapType }[]>([]);
+  const { current, previous, push, pop } = useMapHistory();
+
   const onSelectTopic = useCallback(onSelectTopicProp, [onSelectTopicProp]);
 
   useEffect(() => {
-    if (!topic || isLoading) return;
-    if (!!topicHistory.length) {
-      if (topic._id === topicHistory[topicHistory.length - 1].topic._id) {
-        return;
-      }
-      setTopicHistory([...topicHistory, { topic, mapType }]);
-    } else {
-      setTopicHistory([{ topic, mapType }]);
-    }
+    // synchronizes the last fetched topic with the history, no matter how it's set
+    if (!topic || isLoading || (current && topic._id === current.topic._id)) return;
+    push({ topic, mapType });
   }, [topic?._id]);
 
   useEffect(() => {
-    if (
-      topicHistory.length === 0 ||
-      (topicHistory[topicHistory.length - 1].topic._id === topic?._id &&
-        topicHistory[topicHistory.length - 1].mapType === mapType)
-    )
-      return;
-    if (!!topic) {
-      setTopicHistory([...topicHistory, { topic, mapType }]);
-    } else {
-      setTopicHistory([...topicHistory, { topic: topicHistory[topicHistory.length - 1].topic, mapType }]);
-    }
+    // synchronizes the mapType with the history
+    if (!current || (current.topic._id === topic?._id && current.mapType === mapType)) return;
+    push({ mapType, topic: current.topic });
   }, [mapType]);
 
   const onBack = useMemo(() => {
-    return topicHistory.length > 1 && !isLoading //&&
-      ? // (topicHistory[topicHistory.length - 2].topic._id !== topic?._id ||
-        //   topicHistory[topicHistory.length - 2].mapType !== mapType)
-        () => {
-          const newTopicHistory = [...topicHistory];
-          newTopicHistory.pop();
-          const previous = newTopicHistory[newTopicHistory.length - 1];
+    return !!previous && !isLoading
+      ? () => {
           previous.topic._id !== topic?._id && onSelectTopic(previous.topic);
           previous.mapType !== mapType && setMapType(previous.mapType);
-          setTopicHistory(newTopicHistory);
+          pop();
         }
       : undefined;
-  }, [topicHistory, isLoading]);
+  }, [previous, isLoading]);
 
   if (isLoading) return <BaseMap options={options} isLoading={isLoading} />;
   if (mapType === MapType.SUBTOPICS)
@@ -88,44 +117,8 @@ export const Map: React.FC<MapProps> = ({
     );
 
   if (mapType === MapType.PREREQUISITES && topic)
-    return (
-      <PrerequisiteMap topicId={topic._id} options={options} onSelectTopic={onSelectTopic} onBack={onBack} />
-      // <StatelessPrerequisiteMap
-      //   topic={topic}
-      //   prerequisiteTopics={[
-      //     { _id: 'bla', key: 'bla', name: 'Bla 1' },
-      //     { _id: 'bla2', key: 'bla2', name: 'Bla 2' },
-      //     { _id: 'bla3', key: 'bla3', name: 'Bla 3' },
-      //     { _id: 'bla4', key: 'bla4', name: 'Bla 4' },
-      //   ]}
-      //   followUpTopics={[
-      //     { _id: 'bli', key: 'bli', name: 'Bli' },
-      //     { _id: 'bli2', key: 'bli2', name: 'Bli 2' },
-      //     { _id: 'bli3', key: 'bli3', name: 'Bli 3' },
-      //     { _id: 'bli4', key: 'bli4', name: 'Bli 4' },
-      //   ]}
-      //   options={options}
-      //   onClick={onClick}
-      // />
-    );
+    return <PrerequisiteMap topicId={topic._id} options={options} onSelectTopic={onSelectTopic} onBack={onBack} />;
   if (mapType === MapType.CONCEPTS && topic)
-    return (
-      <ProgressMap
-        topicId={topic._id}
-        // subTopics={[
-        //   { _id: 'bla', key: 'bla', name: 'Bla 1', level: 0, prerequisites: [] },
-        //   { _id: 'bla2', key: 'bla2', name: 'Bla 2', level: 30, prerequisites: [{ _id: 'bla' }] },
-        //   { _id: 'bla3', key: 'bla3', name: 'Bla 3', level: 5, prerequisites: [] },
-        //   { _id: 'bla4', key: 'bla4', name: 'Bla 4', level: 30, prerequisites: [{ _id: 'bla2' }, { _id: 'bla3' }] },
-        //   { _id: 'bla5', key: 'bla5', name: 'Bla 5', level: 30, prerequisites: [{ _id: 'bla3' }] },
-        //   { _id: 'bla6', key: 'bla6', name: 'Bla 6', level: 30, prerequisites: [{ _id: 'bla2' }, { _id: 'bla4' }] },
-        //   { _id: 'bla7', key: 'bla7', name: 'Bla 7', level: 100, prerequisites: [] },
-        //   { _id: 'bla8', key: 'bla8', name: 'Bla 8', level: 50, prerequisites: [{ _id: 'bla3' }] },
-        // ]}
-        options={options}
-        onSelectTopic={onSelectTopic}
-        onBack={onBack}
-      />
-    );
+    return <ProgressMap topicId={topic._id} options={options} onSelectTopic={onSelectTopic} onBack={onBack} />;
   return null;
 };
