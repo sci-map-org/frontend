@@ -53,6 +53,8 @@ export const getProgressMapTopics = gql`
             #   name
             # }
             prerequisiteParentsPath {
+              _id
+              key
               name
             }
           }
@@ -80,6 +82,8 @@ export const getProgressMapTopics = gql`
                 #   name
                 # }
                 prerequisiteParentsPath {
+                  _id
+                  key
                   name
                 }
               }
@@ -111,6 +115,8 @@ export const getProgressMapTopics = gql`
                     #   name
                     # }
                     prerequisiteParentsPath {
+                      _id
+                      key
                       name
                     }
                   }
@@ -157,7 +163,7 @@ export const ProgressMap: React.FC<{
         topicTypes?: { name: string }[] | null;
       }
     >;
-    prerequisites: { prerequisite: string; followUp: string }[];
+    prerequisites: { prerequisite: string; followUp: string; size?: number; aggregated?: boolean }[];
   } = useMemo(() => {
     if (!data || loading)
       return {
@@ -181,21 +187,41 @@ export const ProgressMap: React.FC<{
     const flattened = uniqBy(flatten(flatten(r)), '_id')
       .filter((c) => typeof c['level'] === 'number')
       .filter((c) => !!c.topicTypes); // to disable at some point ?
-    const prereqs: { prerequisite: string; followUp: string }[] = [];
+
+    const prereqs: { prerequisite: string; followUp: string; size: number; aggregated?: boolean }[] = [];
     flattened.forEach((concept) => {
       concept.prerequisites?.forEach(({ prerequisiteTopic }) => {
         if (flattened.find((flat) => flat._id === prerequisiteTopic._id)) {
-          prereqs.push({ prerequisite: prerequisiteTopic._id, followUp: concept._id });
+          prereqs.push({ prerequisite: prerequisiteTopic._id, followUp: concept._id, size: 1 });
         } else {
           console.log(`${prerequisiteTopic._id} is an external concept (prereq of ${concept.name})`);
         }
       });
       concept.followUps?.forEach(({ followUpTopic }) => {
         if (flattened.find((flat) => flat._id === followUpTopic._id)) {
-          prereqs.push({ prerequisite: concept._id, followUp: followUpTopic._id });
+          prereqs.push({ prerequisite: concept._id, followUp: followUpTopic._id, size: 1 });
         } else {
           console.log(`${followUpTopic._id} is an external concept (followUp of ${concept.name})`);
         }
+      });
+      concept.aggregatedSubtopicsPrerequisites?.forEach(({ prerequisiteParentsPath }) => {
+        let i = 0;
+        while (i < prerequisiteParentsPath.length) {
+          const foundPrereqParent = flattened.find((flat) => flat._id === prerequisiteParentsPath[i]._id);
+          if (foundPrereqParent) {
+            const existingPrereq = prereqs.find(
+              (prereq) => prereq.prerequisite === foundPrereqParent._id && prereq.followUp === concept._id
+            );
+            if (existingPrereq) {
+              existingPrereq.size = existingPrereq.size ? existingPrereq.size + 1 : 1;
+            } else {
+              prereqs.push({ prerequisite: foundPrereqParent._id, followUp: concept._id, size: 1, aggregated: true });
+            }
+            break;
+          }
+          i++;
+        }
+        prerequisiteParentsPath.forEach((parent) => {});
       });
     });
 
@@ -248,7 +274,7 @@ export const StatelessProgressMap: React.FC<{
       topicTypes?: { name: string }[] | null;
     }
   >;
-  prerequisites: { prerequisite: string; followUp: string }[];
+  prerequisites: { prerequisite: string; followUp: string; size?: number; aggregated?: boolean }[];
   isLoading: boolean;
   options: MapOptions;
   onSelectTopic: (node: TopicLinkDataFragment) => void;
@@ -302,7 +328,10 @@ export const StatelessProgressMap: React.FC<{
       concepts.map((subTopic, idx) => ({
         id: subTopic._id,
         type: 'topic',
-        radius: subTopic.topicTypes && isTopicArea(subTopic.topicTypes) ? getTopicNodeRadius(subTopic, 12) : 12,
+        radius:
+          subTopic.topicTypes && isTopicArea(subTopic.topicTypes)
+            ? getTopicNodeRadius(subTopic, { defaultRadius: 12, coefficient: 0.7 })
+            : 12,
         level: typeof subTopic.level === 'number' ? subTopic.level : null,
         xGravityCenter: topicNodesGravityCenters[idx],
         color: typeof subTopic.level === 'number' ? topicLevelColorMap(subTopic.level / 100) : 'gray',

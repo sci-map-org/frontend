@@ -44,7 +44,7 @@ export const SubTopicsMap: React.FC<{
           ...subTopic,
           color: TopicNodeColors[idx % 9],
           size: subTopic.subTopicsTotalCount || undefined,
-          radius: getTopicNodeRadius(subTopic),
+          radius: getTopicNodeRadius(subTopic, { defaultRadius: 15, coefficient: 0.9 }),
         };
       }),
     [subTopics]

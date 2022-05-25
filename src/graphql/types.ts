@@ -33,9 +33,9 @@ export type AdminUpdateUserPayload = {
 
 export type AggregatedSubtopicPrerequisite = {
   __typename?: 'AggregatedSubtopicPrerequisite';
-  prerequisiteParentsPath?: Maybe<Array<Topic>>;
+  prerequisiteParentsPath: Array<Topic>;
   relationship: TopicHasPrerequisiteTopic;
-  subTopicPath?: Maybe<Array<Topic>>;
+  subTopicPath: Array<Topic>;
 };
 
 export type AggregatedSubtopicsPrerequisitesOptions = {
