@@ -44,7 +44,10 @@ export const SubTopicsMap: React.FC<{
           ...subTopic,
           color: TopicNodeColors[idx % 9],
           size: subTopic.subTopicsTotalCount || undefined,
-          radius: getTopicNodeRadius(subTopic, { defaultRadius: 15, coefficient: 0.9 }),
+          radius: getTopicNodeRadius(subTopic, {
+            defaultRadius: options.mode === 'explore' ? 15 : 12,
+            coefficient: options.mode === 'explore' ? 0.9 : 0.7,
+          }),
           clickable: true,
         };
       }),
@@ -89,10 +92,9 @@ export const SubTopicsMap: React.FC<{
         .force(
           'charge',
           d3Force.forceManyBody<NodeElement>().strength((d) => {
-            const coefficient = options.mode === 'explore' ? 1 / 5 : 1 / 4;
+            const coefficient = options.mode === 'explore' ? 1 / 6 : 1 / 6;
             const s = -(d.radius * Math.log(d.radius)) * coefficient;
             return s;
-            // return d.subTopicsTotalCount ? -(getNodeRadius(d) * getNodeRadius(d)) / 15 : -8;
           })
         )
 

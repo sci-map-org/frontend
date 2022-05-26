@@ -1,5 +1,5 @@
-import { Button, Center, Link, Stack, Text } from '@chakra-ui/react';
-import React, { Children } from 'react';
+import { Center, Link, Stack, Text } from '@chakra-ui/react';
+import React from 'react';
 import { MapIcon } from '../../lib/icons/MapIcon';
 
 export enum MapType {
@@ -8,11 +8,12 @@ export enum MapType {
   PREREQUISITES = 'PREREQUISITES',
 }
 
-export const MapHeader: React.FC<{ onChange: (mapType: MapType) => void; value: MapType; size: 'lg' | 'sm' }> = ({
-  onChange,
-  size,
-  value,
-}) => {
+export const MapHeader: React.FC<{
+  onChange: (mapType: MapType) => void;
+  value: MapType;
+  size: 'lg' | 'sm';
+  disabledMapTypes?: MapType[];
+}> = ({ onChange, size, value, disabledMapTypes }) => {
   return (
     <Stack direction="row" alignItems="stretch" spacing={1}>
       <Center p={1}>
@@ -27,7 +28,12 @@ export const MapHeader: React.FC<{ onChange: (mapType: MapType) => void; value: 
               </Center>
             )}
             <Center>
-              <MapTypeMenuItem onSelect={() => onChange(mapType)} isSelected={mapType === value} size={size}>
+              <MapTypeMenuItem
+                onSelect={() => onChange(mapType)}
+                isSelected={mapType === value}
+                size={size}
+                isDisabled={!!disabledMapTypes?.length && disabledMapTypes.includes(mapType)}
+              >
                 {mapType}
               </MapTypeMenuItem>
             </Center>
@@ -38,20 +44,22 @@ export const MapHeader: React.FC<{ onChange: (mapType: MapType) => void; value: 
   );
 };
 
-const MapTypeMenuItem: React.FC<{ onSelect: () => void; isSelected?: boolean; size: 'lg' | 'sm' }> = ({
-  size,
-  isSelected,
-  onSelect,
-  children,
-}) => {
+const MapTypeMenuItem: React.FC<{
+  onSelect: () => void;
+  isSelected?: boolean;
+  size: 'lg' | 'sm';
+  isDisabled: boolean;
+}> = ({ size, isSelected, onSelect, children, isDisabled }) => {
   return (
     <Link
-      onClick={onSelect}
-      _hover={{}}
+      onClick={isDisabled ? undefined : onSelect}
+      _hover={{
+        cursor: isDisabled ? 'initial' : 'pointer',
+      }}
       fontSize={{ sm: 'lg', lg: 'xl' }[size]}
       lineHeight="18px"
       fontWeight={500}
-      color={isSelected ? 'blue.600' : 'gray.800'}
+      color={isSelected ? 'blue.600' : isDisabled ? 'gray.500' : 'gray.800'}
     >
       {children}
     </Link>

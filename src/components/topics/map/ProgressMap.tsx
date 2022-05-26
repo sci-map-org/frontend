@@ -135,6 +135,8 @@ type NodeElement = SimulationNodeDatum &
   TopicNodeElement & { level: number | null; xGravityCenter: number; nodeType: 'concept' | 'area' };
 
 type LinkElement = d3Force.SimulationLinkDatum<NodeElement> & {
+  sourceId: string;
+  targetId: string;
   size: number;
 };
 
@@ -292,7 +294,9 @@ export const StatelessProgressMap: React.FC<{
 
   const prerequisiteLinkElements: LinkElement[] = useMemo(() => {
     return prerequisites.map(({ prerequisite, followUp, size }) => ({
+      sourceId: prerequisite,
       source: prerequisite,
+      targetId: followUp,
       target: followUp,
       size,
     }));
@@ -313,9 +317,9 @@ export const StatelessProgressMap: React.FC<{
       ); // future: mix of level and rank ?)
     });
     for (let i = 0; i < 3; i++) {
-      prerequisiteLinkElements.forEach(({ source, target }) => {
-        const sourceIndex = getNodeIndexFromId(source as string);
-        const targetIndex = getNodeIndexFromId(target as string);
+      prerequisiteLinkElements.forEach(({ sourceId, targetId }) => {
+        const sourceIndex = getNodeIndexFromId(sourceId);
+        const targetIndex = getNodeIndexFromId(targetId);
         const targetGravityCenter = gravityCenters[targetIndex];
         const sourceGravityCenter = gravityCenters[sourceIndex];
         if (sourceGravityCenter + alpha >= targetGravityCenter) {
@@ -346,12 +350,15 @@ export const StatelessProgressMap: React.FC<{
         ...(subTopic.topicTypes && isTopicArea(subTopic.topicTypes)
           ? {
               nodeType: 'area',
-              radius: getTopicNodeRadius(subTopic, { defaultRadius: 12, coefficient: 0.7 }),
+              radius: getTopicNodeRadius(subTopic, {
+                defaultRadius: options.mode === 'explore' ? 12 : 10,
+                coefficient: options.mode === 'explore' ? 0.7 : 0.5,
+              }),
               subTopicsTotalCount: subTopic.subTopicsTotalCount,
               learningMaterialsTotalCount: subTopic.learningMaterialsTotalCount,
             }
           : {
-              radius: 12,
+              radius: options.mode === 'explore' ? 12 : 10,
               nodeType: 'concept',
             }), // if atomic nodes (concepts), we don't show the counts (nodes are too small). If area, we do
       })),
@@ -457,8 +464,6 @@ export const StatelessProgressMap: React.FC<{
           'xForce',
           d3Force.forceX<NodeElement>((n) => n.xGravityCenter).strength((n) => (n.level !== null ? 0.1 : 0.005))
         )
-        // .force('yForce', d3Force.forceY<NodeElement>(options.pxHeight / 2).strength(0.002))
-        // .force('center', d3Force.forceCenter(options.pxWidth / 2, options.pxHeight / 2).strength(0.01))
         .force(
           'y',
           d3Force
@@ -467,7 +472,6 @@ export const StatelessProgressMap: React.FC<{
             )
             .strength((n) => (n.level !== null ? 0.02 : 0.03))
         )
-        // .force('x', d3Force.forceX(options.pxWidth / 2).strength(0.01))
         .on('tick', tick);
 
       //   @ts-ignore

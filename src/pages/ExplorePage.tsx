@@ -2,9 +2,11 @@ import { Center } from '@chakra-ui/layout';
 import { useBreakpointValue } from '@chakra-ui/media-query';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
+import { useRef } from 'react';
 import { PageLayout } from '../components/layout/PageLayout';
 import { ExploreMapProps, rootTopic } from '../components/topics/map/ExploreMap';
 import { MapType } from '../components/topics/map/MapHeader';
+import { useElementSize } from '../util/useElementSize';
 
 const ExploreMap = dynamic<ExploreMapProps>(
   () =>
@@ -27,14 +29,14 @@ export const ExplorePage: React.FC<{}> = () => {
   if (urlSelectedMapType && typeof urlSelectedMapType !== 'string')
     throw new Error(`Invalid url param mapType ${urlSelectedMapType}`);
 
-  const pxWidth = useBreakpointValue<number>({ base: 340, sm: 500, md: 700, lg: 900 });
+  const containerRef = useRef<HTMLDivElement>(null);
+  const containerSize = useElementSize(containerRef);
+  const pxWidth = useBreakpointValue<number>({ base: containerSize?.width || 300, sm: 500, md: 700, lg: 900 }) || 400;
   return (
     <PageLayout marginSize="md">
-      <Center>
+      <Center ref={containerRef} p={1}>
         <ExploreMap
-          direction="column"
-          mapPxWidth={pxWidth || 400}
-          mapPxHeight={pxHeight}
+          options={{ direction: 'column', mapPxHeight: (pxWidth * 3) / 5, mapPxWidth: pxWidth }}
           selectedTopicId={urlSelectedTopicId}
           selectedMapType={urlSelectedMapType as MapType}
           onTopicOrMapTypeChange={(topicId, mapType) =>

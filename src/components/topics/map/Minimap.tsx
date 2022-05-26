@@ -99,9 +99,7 @@ export const Minimap: React.FC<MinimapProps> = ({
         <Modal isOpen={isOpen} onClose={onClose} size="4xl">
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>SubTopics Map</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody justifyContent="stretch" alignItems="stretch">
+            <ModalBody justifyContent="stretch" alignItems="stretch" p={8}>
               <SubTopicsMapModalContent
                 parentTopic={parentTopic}
                 topic={topic}
@@ -126,32 +124,17 @@ const SubTopicsMapModalContent: React.FC<{
   const modalContainerSize = useElementSize(modalContainerRef);
 
   return (
-    <Box
-      ref={modalContainerRef}
-      boxShadow="lg"
-      bgColor="white"
-      zIndex={4}
-      borderWidth={1}
-      borderRadius={4}
-      borderColor="deepBlue.200"
-      mb={5}
-    >
+    <Box ref={modalContainerRef} bgColor="white" zIndex={4} mb={5}>
       {modalContainerSize && (
         <ExploreMap
-          direction="column"
+          options={{
+            direction: 'column',
+            mapPxHeight: (modalContainerSize.width * 3) / 5,
+            mapPxWidth: modalContainerSize.width,
+          }}
           selectedMapType={selectedMapType}
-          mapPxWidth={modalContainerSize.width}
-          mapPxHeight={(modalContainerSize.width * 3) / 5}
           selectedTopicId={topic._id}
         />
-        // <Map
-        //   mapType={selectedMapType}
-        //   topic={topic}
-        //   subTopics={subTopics}
-        //   parentTopic={parentTopic}
-        //   options={{ mode: 'mini', pxWidth: modalContainerSize.width, pxHeight: (modalContainerSize.width * 3) / 5 }}
-        //   onClick={(n) => routerPushToPage(TopicPageInfo(n))}
-        // />
       )}
     </Box>
   );

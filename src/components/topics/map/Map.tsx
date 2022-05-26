@@ -124,9 +124,8 @@ export const Map: React.FC<MapProps> = ({
     return (
       <ProgressMap
         topicId={topic._id}
-        options={{ ...options, showLearningMaterialsTotalCount: true, showTotalSubTopicsCount: false }}
+        options={{ ...options, showLearningMaterialsTotalCount: false, showTotalSubTopicsCount: false }}
         onSelectTopic={(topic, nodeType) => {
-          console.log(topic);
           onSelectTopic(topic);
           if (nodeType === 'concept') {
             // Will trigger to state pushes in history, but better to have this behaviour still
