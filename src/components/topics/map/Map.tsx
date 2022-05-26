@@ -12,12 +12,14 @@ interface MapHistoryState {
   topic: MapTopicDataFragment;
   mapType: MapType;
 }
+
 interface MapHistory {
   current?: MapHistoryState;
   previous?: MapHistoryState;
   push: (newState: MapHistoryState) => void;
   pop: () => void;
 }
+
 // History is duplicated, not used as unique source of truth. Tried a bit to refactor that in a better way,
 // but it's not obvious as state changes come from varied sources.
 const useMapHistory = (): MapHistory => {
@@ -119,6 +121,20 @@ export const Map: React.FC<MapProps> = ({
   if (mapType === MapType.PREREQUISITES && topic)
     return <PrerequisiteMap topicId={topic._id} options={options} onSelectTopic={onSelectTopic} onBack={onBack} />;
   if (mapType === MapType.CONCEPTS && topic)
-    return <ProgressMap topicId={topic._id} options={options} onSelectTopic={onSelectTopic} onBack={onBack} />;
+    return (
+      <ProgressMap
+        topicId={topic._id}
+        options={{ ...options, showLearningMaterialsTotalCount: true, showTotalSubTopicsCount: false }}
+        onSelectTopic={(topic, nodeType) => {
+          console.log(topic);
+          onSelectTopic(topic);
+          if (nodeType === 'concept') {
+            // Will trigger to state pushes in history, but better to have this behaviour still
+            setMapType(MapType.PREREQUISITES);
+          }
+        }}
+        onBack={onBack}
+      />
+    );
   return null;
 };

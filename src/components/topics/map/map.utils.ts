@@ -94,7 +94,9 @@ export function drawTopicNode<T extends TopicNodeElement>(
     const subTopicsCountViewers = topicNodes
       .append('g')
       .attr('transform', (n) =>
-        n.learningMaterialsTotalCount ? `translate(0, -${spacingBetweenCounts(n.radius)})` : ''
+        n.learningMaterialsTotalCount && showLearningMaterialsTotalCount
+          ? `translate(0, -${spacingBetweenCounts(n.radius)})`
+          : ''
       )
       .classed('subtopics_count_viewer', (n) => !!n.subTopicsTotalCount && n.subTopicsTotalCount > 0)
       .classed('subtopics_count_viewer_hidden', (n) => !n.subTopicsTotalCount);
@@ -125,7 +127,9 @@ export function drawTopicNode<T extends TopicNodeElement>(
 
     const learningMaterialsCountViewers = topicNodes
       .append('g')
-      .attr('transform', (n) => (n.subTopicsTotalCount ? `translate(0, ${spacingBetweenCounts(n.radius)})` : ''))
+      .attr('transform', (n) =>
+        n.subTopicsTotalCount && showTotalSubTopicsCount ? `translate(0, ${spacingBetweenCounts(n.radius)})` : ''
+      )
       .classed(
         'learning_materials_count_viewer',
         (n) => !!n.learningMaterialsTotalCount && n.learningMaterialsTotalCount > 0

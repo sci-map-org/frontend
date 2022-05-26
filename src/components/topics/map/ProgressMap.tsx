@@ -131,7 +131,8 @@ export const getProgressMapTopics = gql`
   ${MapTopicData}
 `;
 
-type NodeElement = SimulationNodeDatum & TopicNodeElement & { level: number | null; xGravityCenter: number };
+type NodeElement = SimulationNodeDatum &
+  TopicNodeElement & { level: number | null; xGravityCenter: number; nodeType: 'concept' | 'area' };
 
 type LinkElement = d3Force.SimulationLinkDatum<NodeElement> & {
   size: number;
@@ -144,7 +145,7 @@ const layoutMargin = 40;
 export const ProgressMap: React.FC<{
   topicId: string;
   options: MapOptions;
-  onSelectTopic: (node: TopicLinkDataFragment) => void;
+  onSelectTopic: (node: MapTopicDataFragment | TopicLinkDataFragment, nodeType?: 'area' | 'concept') => void;
   onBack?: () => void;
 }> = ({ topicId, options, onSelectTopic, onBack }) => {
   const { data, loading } = useGetProgressMapTopicsQuery({
@@ -279,7 +280,7 @@ export const StatelessProgressMap: React.FC<{
   prerequisites: { prerequisite: string; followUp: string; size: number; aggregated?: boolean }[];
   isLoading: boolean;
   options: MapOptions;
-  onSelectTopic: (node: TopicLinkDataFragment) => void;
+  onSelectTopic: (node: MapTopicDataFragment, nodeType?: 'concept' | 'area') => void;
   onBack?: () => void;
 }> = ({ topic, concepts, prerequisites, options, onSelectTopic, isLoading, onBack }) => {
   const d3Container = useRef<SVGSVGElement>(null);
@@ -334,21 +335,25 @@ export const StatelessProgressMap: React.FC<{
         name: subTopic.name,
         id: subTopic._id,
         type: 'topic',
-        radius:
-          subTopic.topicTypes && isTopicArea(subTopic.topicTypes)
-            ? getTopicNodeRadius(subTopic, { defaultRadius: 12, coefficient: 0.7 })
-            : 12,
+
         clickable: true,
         level: typeof subTopic.level === 'number' ? subTopic.level : null,
         xGravityCenter: topicNodesGravityCenters[idx],
         color: typeof subTopic.level === 'number' ? topicLevelColorMap(subTopic.level / 100) : 'gray',
         x: topicNodesGravityCenters[idx], //(topicNodesGravityCenters[idx] + (2 * options.pxWidth) / 2) / 3,
         y: options.pxHeight / 2 + (Math.random() - 0.5) * options.pxHeight * 0.03,
-        ...(subTopic.topicTypes &&
-          isTopicArea(subTopic.topicTypes) && {
-            subTopicsTotalCount: subTopic.subTopicsTotalCount,
-            learningMaterialsTotalCount: subTopic.learningMaterialsTotalCount,
-          }), // if atomic nodes (concepts), we don't show the counts (nodes are too small). If area, we do
+
+        ...(subTopic.topicTypes && isTopicArea(subTopic.topicTypes)
+          ? {
+              nodeType: 'area',
+              radius: getTopicNodeRadius(subTopic, { defaultRadius: 12, coefficient: 0.7 }),
+              subTopicsTotalCount: subTopic.subTopicsTotalCount,
+              learningMaterialsTotalCount: subTopic.learningMaterialsTotalCount,
+            }
+          : {
+              radius: 12,
+              nodeType: 'concept',
+            }), // if atomic nodes (concepts), we don't show the counts (nodes are too small). If area, we do
       })),
     [concepts, topicNodesGravityCenters, options.pxHeight]
   );
@@ -372,7 +377,7 @@ export const StatelessProgressMap: React.FC<{
       const prerequisiteLinks = drawLink(container, prerequisiteLinkElements, 'linkElement', options);
 
       const topicNodes = drawTopicNode(container, topicNodeElements, 'topicNode', options).on('click', (event, n) => {
-        onTopicClick.current(n);
+        onTopicClick.current(n, n.nodeType);
       });
 
       const zoom = d3Zoom.zoom<SVGSVGElement, unknown>();
