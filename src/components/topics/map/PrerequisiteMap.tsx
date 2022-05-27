@@ -127,7 +127,6 @@ export const StatelessPrerequisiteMap: React.FC<{
           type: 'followUp',
           x: options.pxWidth / 2 + linksLength,
           y: options.pxHeight / 2 - (13 * followUpTopics.length) / 2 + i * 13,
-          // radius: 13,
           radius: getTopicNodeRadius(followTopic, { defaultRadius: 13, coefficient: 0.3 }), // 13,
           color: FOLLOW_UP_COLOR,
           clickable: true,
@@ -240,9 +239,7 @@ export const StatelessPrerequisiteMap: React.FC<{
       );
       const simulation = d3Force
         .forceSimulation<NodeElement>()
-        // .alpha(0.8)
         .alphaDecay(0.005)
-        // .alphaDecay(1)
         .nodes(nodeElements)
         .force('charge', d3Force.forceManyBody<NodeElement>().strength(-40))
         .force(
@@ -273,28 +270,10 @@ export const StatelessPrerequisiteMap: React.FC<{
           'yAxis',
           d3Force.forceY<NodeElement>(options.pxHeight / 2).strength(options.mode === 'mini' ? 0.02 : 0.001)
         )
-        // .force('center', d3Force.forceCenter(options.pxWidth / 2, options.pxHeight / 2))
         .on('tick', tick);
     }
   }, [nodeElementsIds, prerequisiteLinkElementsIds]);
 
-  // if (!prereqNodeElements.length && !followUpNodeElements.length)
-  //   return (
-  //     <BaseMap
-  //       options={options}
-  //       renderCenter={
-  //         <Text fontWeight={600} fontSize="lg" color="gray.100" fontStyle="italic" textAlign="center">
-  //           No prerequisite or follow up topics found
-  //         </Text>
-  //       }
-  //       renderTopLeft={
-  //         <Stack spacing="2px">
-  //           {options.mode === 'explore' && <MapSearchBox onSelectTopic={onSelectTopic} />}
-  //           {onBack && <MapBackButton onClick={onBack} />}
-  //         </Stack>
-  //       }
-  //     />
-  //   );
   return (
     <BaseMap
       ref={d3Container}
