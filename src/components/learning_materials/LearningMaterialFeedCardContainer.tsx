@@ -156,11 +156,13 @@ export const LearningMaterialFeedCardBottomLeftBar: React.FC<{
 }> = ({ learningMaterial, isLoading }) => {
   return learningMaterial.tags ? (
     <Skeleton isLoaded={!isLoading}>
-      <Stack direction="row">
+      <Wrap direction="row">
         {learningMaterial.tags.map((tag) => (
-          <LearningMaterialTagViewer key={tag.name} tagName={tag.name} size="sm" />
+          <WrapItem>
+            <LearningMaterialTagViewer key={tag.name} tagName={tag.name} size="sm" />
+          </WrapItem>
         ))}
-      </Stack>
+      </Wrap>
     </Skeleton>
   ) : null;
 };
