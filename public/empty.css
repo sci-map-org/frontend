@@ -21,38 +21,6 @@
   background-image: url(/images/topography_bg.svg);
 }
 
-.node:hover .node_circle {
-  stroke: rgb(30, 30, 30);
-}
-
-.node:hover .node_label {
-  fill: rgb(40, 40, 40);
-}
-
-.node:hover {
-  cursor: pointer;
-}
-.node_circle {
-  stroke: rgb(80, 80, 80);
-  stroke-width: 1px;
-}
-
-.node.fixed {
-  fill: #f00;
-}
-
-.parentCircle:hover {
-  cursor: pointer;
-}
-
-.parentCircle:hover .parentLabel {
-  fill: rgb(40, 40, 40);
-}
-.parentLabel:hover {
-  cursor: pointer;
-  fill: rgb(40, 40, 40);
-}
-
 .rst__lineHalfHorizontalRight::before,
 .rst__lineFullVertical::after,
 .rst__lineHalfVerticalTop::after,

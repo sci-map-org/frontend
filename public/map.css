@@ -1,0 +1,86 @@
+.clickable_node:hover {
+  cursor: pointer;
+}
+
+.node_circle {
+  stroke: var(--chakra-colors-gray-600);
+}
+.clickable_node:hover .node_circle {
+  stroke: var(--chakra-colors-gray-300);
+  stroke-width: 1px;
+}
+
+.node_label {
+  fill: var(--chakra-colors-gray-300);
+}
+
+.clickable_node:hover .node_label {
+  fill: white;
+}
+
+.linkElement {
+  stroke: var(--chakra-colors-gray-400);
+  margin: 10px;
+}
+
+.linkLineElement {
+  stroke-width: 1.1px;
+}
+
+.linkLineElementSize2 {
+  stroke-width: 1.4px !important;
+}
+
+.linkLineElementSize3 {
+  stroke-width: 1.8px !important;
+}
+
+.linkLineHoverElement {
+  stroke-width: 20px;
+  stroke-opacity: 0;
+}
+
+.arrow-head {
+  fill: var(--chakra-colors-gray-400);
+}
+
+.arrow-head-hover {
+  fill: var(--chakra-colors-gray-50);
+}
+
+.linkLineHoverElement:hover + .linkLineElement {
+  stroke: var(--chakra-colors-gray-50);
+  marker-end: url('#arrow-head-hover');
+}
+
+.subtopics_count_viewer {
+  visibility: hidden;
+}
+
+.subtopics_count_viewer_hidden {
+  visibility: hidden !important;
+}
+
+.node:hover .subtopics_count_viewer {
+  visibility: visible;
+}
+
+.subtopics_count {
+  fill: white;
+}
+
+.learning_materials_count_viewer {
+  visibility: hidden;
+}
+
+.learning_materials_count_viewer_hidden {
+  visibility: hidden !important;
+}
+
+.node:hover .learning_materials_count_viewer {
+  visibility: visible;
+}
+
+.learning_materials_count {
+  fill: white;
+}

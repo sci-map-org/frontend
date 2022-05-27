@@ -1,4 +1,5 @@
 import { Box, Flex, Input, InputGroup, InputLeftElement, InputProps, Text } from '@chakra-ui/react';
+import { pick } from 'lodash';
 import { PropsWithChildren, ReactNode, useRef, useState } from 'react';
 import Autosuggest from 'react-autosuggest';
 
@@ -20,13 +21,13 @@ type EntitySelectorProps<T extends EntityType> = {
   showSuggestionsOnClear?: boolean;
   fetchEntitySuggestions: (value: string) => any;
   width?: number | string;
-  inputSize?: InputProps['size'];
   isDisabled?: boolean;
   suggestionContainerWidth?: number | string;
   creationHelperText?: string;
   inputLeftIcon?: ReactNode;
   inputProps?: InputProps;
   renderSuggestion?: (suggestion: T | NewEntity, options: { isHighlighted?: boolean }) => ReactNode;
+  highlightFirstSuggestion?: boolean;
 };
 
 export const EntitySelector = <T extends EntityType>({
@@ -35,7 +36,6 @@ export const EntitySelector = <T extends EntityType>({
   placeholder,
   fetchEntitySuggestions,
   width = '180px',
-  inputSize = 'md',
   suggestionContainerWidth,
   isDisabled,
   allowCreation,
@@ -44,9 +44,9 @@ export const EntitySelector = <T extends EntityType>({
   inputLeftIcon,
   inputProps: inheritedInputProps,
   renderSuggestion,
+  highlightFirstSuggestion = true,
 }: PropsWithChildren<EntitySelectorProps<T>>) => {
   const [value, setValue] = useState('');
-
   const suggestions: (T | NewEntity)[] = [
     ...(!!allowCreation && !entitySuggestions.find((e) => e.name === value) && value.length
       ? [
@@ -121,17 +121,16 @@ export const EntitySelector = <T extends EntityType>({
             </Box>
           )
         }
-        highlightFirstSuggestion={true}
+        highlightFirstSuggestion={highlightFirstSuggestion}
         getSuggestionValue={(suggestion) => suggestion.name}
-        renderInputComponent={(inputProps: any) => (
-          <InputGroup>
+        renderInputComponent={(suggestInputProps: any) => (
+          <InputGroup {...pick(inheritedInputProps, ['variant', 'size'])}>
             {inputLeftIcon && <InputLeftElement pointerEvents="none" children={inputLeftIcon} />}
             <Input
-              size={inputSize}
               variant="flushed"
               isDisabled={isDisabled}
               {...inheritedInputProps}
-              {...inputProps}
+              {...suggestInputProps}
               w={width}
             />
           </InputGroup>

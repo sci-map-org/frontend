@@ -283,7 +283,7 @@ export const ManageTopic: React.FC<{
                   }}
                   editModeChildren={
                     <TopicLevelEditor
-                      value={updateTopicData.level || null}
+                      value={updateTopicData.level ?? null}
                       onChange={(newLevelValue) => setUpdateTopicData({ ...updateTopicData, level: newLevelValue })}
                       w="100%"
                     />

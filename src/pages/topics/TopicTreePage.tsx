@@ -1,4 +1,4 @@
-import { Box, Flex, Image, Text } from '@chakra-ui/react';
+import { Box, Flex, Image, Skeleton, Text } from '@chakra-ui/react';
 import gql from 'graphql-tag';
 import dynamic from 'next/dynamic';
 import { RoleAccess } from '../../components/auth/RoleAccess';
@@ -57,12 +57,14 @@ export const TopicTreePage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
       }
     >
       <Flex>
-        <PageTitle mb={2} mt={10}>
-          <Text color="blue.600" as="span">
-            {topic.name}
-          </Text>
-          - SubTopics Tree
-        </PageTitle>
+        <Skeleton isLoaded={!loading}>
+          <PageTitle mb={2} mt={10}>
+            <Text color="blue.600" as="span">
+              {topic.name}
+            </Text>
+            - SubTopics Tree
+          </PageTitle>
+        </Skeleton>
       </Flex>
       <Flex direction="row" mb={20}>
         <RoleAccess accessRule="contributorOrAdmin">

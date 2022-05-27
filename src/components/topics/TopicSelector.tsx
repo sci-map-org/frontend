@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, InputProps, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { SearchIcon } from '@chakra-ui/icons';
@@ -14,14 +14,18 @@ type TopicResultItem = TopicLinkDataFragment;
 
 interface TopicSelectorProps {
   onSelect: (topic: TopicResultItem) => void;
+  inputProps?: InputProps;
   placeholder?: string;
   onlySubTopicsOf?: string[]; // Search only topics that descend from these topics
+  highlightFirstSuggestion?: boolean;
 }
 
 export const TopicSelector: React.FC<TopicSelectorProps> = ({
   onSelect,
+  inputProps = {},
   placeholder,
   onlySubTopicsOf,
+  highlightFirstSuggestion,
   //   popoverTitle,
   //   allowedSubTopicTypes,
 }) => {
@@ -74,7 +78,9 @@ export const TopicSelector: React.FC<TopicSelectorProps> = ({
             size: 'sm',
             borderRadius: 4,
             _focus: { borderColor: 'blue.500' },
+            ...inputProps,
           }}
+          highlightFirstSuggestion={highlightFirstSuggestion}
           renderSuggestion={(suggestion, { isHighlighted }) => (
             <Flex
               direction="row"

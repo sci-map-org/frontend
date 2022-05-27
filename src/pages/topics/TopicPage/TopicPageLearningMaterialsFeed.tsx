@@ -340,9 +340,9 @@ export const TopicPageLearningMaterialsFeed: React.FC<TopicPageLearningMaterials
                   </Heading>
                 </PageLink>
                 {selectedSubTopic ? (
-                  <TopicSubHeader topic={selectedSubTopic} size="sm" justify="center" subTopicsDisplay="count" />
+                  <TopicSubHeader topic={selectedSubTopic} justify="center" subTopicsDisplay="count" />
                 ) : (
-                  <TopicSubHeader topic={partiallyLoadedSelectedSubTopic} size="sm" isLoading={true} />
+                  <TopicSubHeader topic={partiallyLoadedSelectedSubTopic} isLoading={true} />
                 )}
                 {selectedSubTopic && <TopicDescription topicDescription={selectedSubTopic.description || undefined} />}
               </Stack>

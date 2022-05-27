@@ -31,6 +31,18 @@ export type AdminUpdateUserPayload = {
   role?: InputMaybe<UserRole>;
 };
 
+export type AggregatedSubtopicPrerequisite = {
+  __typename?: 'AggregatedSubtopicPrerequisite';
+  prerequisiteParentsPath: Array<Topic>;
+  relationship: TopicHasPrerequisiteTopic;
+  subTopicPath: Array<Topic>;
+};
+
+export type AggregatedSubtopicsPrerequisitesOptions = {
+  onlyIfTopicHasTopicTypes?: InputMaybe<Array<Scalars['String']>>;
+  prereqParentsPathStopCondition: PrereqParentsPathStopCondition;
+};
+
 export type AnalyzeResourceUrlResult = {
   __typename?: 'AnalyzeResourceUrlResult';
   resourceData?: Maybe<ResourceData>;
@@ -1146,6 +1158,10 @@ export type PostCommentPayload = {
   parentId?: InputMaybe<Scalars['String']>;
 };
 
+export enum PrereqParentsPathStopCondition {
+  CommonParent = 'common_parent'
+}
+
 export type PullDescriptionsQueryOptions = {
   aliases?: InputMaybe<Array<Scalars['String']>>;
   contextName?: InputMaybe<Scalars['String']>;
@@ -1566,6 +1582,7 @@ export type TagFilter = {
 export type Topic = {
   __typename?: 'Topic';
   _id: Scalars['String'];
+  aggregatedSubtopicsPrerequisites?: Maybe<Array<AggregatedSubtopicPrerequisite>>;
   aliases?: Maybe<Array<Scalars['String']>>;
   comments?: Maybe<CommentResults>;
   context?: Maybe<Scalars['String']>;
@@ -1596,6 +1613,11 @@ export type Topic = {
 };
 
 
+export type TopicAggregatedSubtopicsPrerequisitesArgs = {
+  options: AggregatedSubtopicsPrerequisitesOptions;
+};
+
+
 export type TopicCommentsArgs = {
   options: CommentOptions;
 };
@@ -1608,6 +1630,11 @@ export type TopicLearningMaterialsArgs = {
 
 export type TopicManagePageCommentsArgs = {
   options: CommentOptions;
+};
+
+
+export type TopicSubTopicsArgs = {
+  options?: InputMaybe<TopicSubTopicsOptions>;
 };
 
 export type TopicHasPrerequisiteTopic = {
@@ -1671,6 +1698,14 @@ export enum TopicLearningMaterialsSortingType {
   MostRecommended = 'most_recommended',
   Newest = 'newest'
 }
+
+export type TopicSubTopicsFilterOptions = {
+  currentTopicTypesNotIn?: InputMaybe<Array<Scalars['String']>>;
+};
+
+export type TopicSubTopicsOptions = {
+  filter?: InputMaybe<TopicSubTopicsFilterOptions>;
+};
 
 export type TopicType = {
   __typename?: 'TopicType';

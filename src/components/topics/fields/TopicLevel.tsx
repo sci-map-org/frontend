@@ -14,7 +14,6 @@ import {
 import interpolate from 'color-interpolate';
 import { useMemo, useState } from 'react';
 import { theme } from '../../../theme/theme';
-import { Field } from '../../lib/fields/Field';
 
 export enum TopicLevelValue {
   Beginner = 'beginner',
@@ -23,7 +22,7 @@ export enum TopicLevelValue {
   Expert = 'expert',
 }
 
-const topicLevelColorMap = interpolate([
+export const topicLevelColorMap = interpolate([
   theme.colors.green[400],
   theme.colors.yellow[400],
   theme.colors.orange[400],
@@ -93,7 +92,6 @@ export const TopicLevelEditor: React.FC<{
   w?: FlexProps['w'];
 }> = ({ value, onChange, w }) => {
   const [sliderValue, setSliderValue] = useState<number>(value || TOPIC_LEVEL_DEFAULT_VALUE);
-
   return (
     <Flex direction="column" alignItems="stretch" w={w}>
       <Slider
