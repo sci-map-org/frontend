@@ -291,7 +291,7 @@ export const ManageTopic: React.FC<{
                   w="50%"
                 >
                   <Box alignSelf="flex-start">
-                    <TopicLevelViewer topicId={topic._id} level={topic.level || undefined} showNotApplicable />
+                    <TopicLevelViewer topicId={topic._id} level={topic.level ?? undefined} showNotApplicable />
                   </Box>
                 </EditableField>
                 <EditableField

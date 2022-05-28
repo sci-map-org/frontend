@@ -54,7 +54,7 @@ export const TopicSubHeader: React.FC<TopicSubHeaderProps & WrapProps> = ({
   const { currentUser } = useCurrentUser();
   const menuItems = [
     ...(!!topic.topicTypes ? [<TopicTypesViewer topicTypes={topic.topicTypes} maxShown={2} />] : []),
-    ...(!!topic.level ? [<TopicLevelViewer level={topic.level} />] : []),
+    ...(typeof topic.level === 'number' ? [<TopicLevelViewer level={topic.level} />] : []),
     subTopicsDisplay === 'tree' ? (
       <TextSubHeaderItem
         size={size}

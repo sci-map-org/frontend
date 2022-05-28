@@ -91,11 +91,11 @@ export const TopicLevelEditor: React.FC<{
   onChange: (value: number | null) => void;
   w?: FlexProps['w'];
 }> = ({ value, onChange, w }) => {
-  const [sliderValue, setSliderValue] = useState<number>(value || TOPIC_LEVEL_DEFAULT_VALUE);
+  const [sliderValue, setSliderValue] = useState<number>(value ?? TOPIC_LEVEL_DEFAULT_VALUE);
   return (
     <Flex direction="column" alignItems="stretch" w={w}>
       <Slider
-        defaultValue={value || undefined}
+        defaultValue={value ?? undefined}
         value={sliderValue}
         min={0}
         max={100}

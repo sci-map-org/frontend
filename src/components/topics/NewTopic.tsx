@@ -385,7 +385,7 @@ export const NewTopic: React.FC<NewTopicProps> = ({
       descriptionSourceUrl: topicCreationData.descriptionSourceUrl,
       wikipediaPageUrl: topicCreationData.wikipediaPageUrl,
       aliases: topicCreationData.aliases.map(({ value }) => value),
-      level: topicCreationData.level || undefined,
+      level: topicCreationData.level ?? undefined,
       topicTypes: topicCreationData.topicTypes?.map(({ name }) => name),
       prerequisitesTopicsIds: topicCreationData.prerequisiteTopics.map(({ _id }) => _id),
     };
