@@ -6,7 +6,7 @@ import { ResourcePageInfo } from '../RoutesPageInfos';
 
 export const NewResourcePage: React.FC<{}> = () => {
   return (
-    <PageLayout marginSize="xl">
+    <PageLayout marginSize="xl" accessRule="loggedInUser">
       <NewResource
         onCancel={() => Router.back()}
         onResourceCreated={(createdResource) => routerPushToPage(ResourcePageInfo(createdResource))}

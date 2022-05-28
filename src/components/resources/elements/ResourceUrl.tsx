@@ -29,6 +29,7 @@ import {
   useSetResourceOpenedMutation,
 } from '../../../graphql/resources/resources.operations.generated';
 import { AnalyzeResourceUrlResult } from '../../../graphql/types';
+import { useCurrentUser } from '../../../graphql/users/users.hooks';
 import { routerPushToPage } from '../../../pages/PageInfo';
 import { ResourcePageInfo } from '../../../pages/RoutesPageInfos';
 import { toUrlPreview, validateUrl } from '../../../services/url.service';
@@ -55,13 +56,14 @@ export const ResourceUrlLinkWrapper: React.FC<
   } & Omit<LinkProps, 'href' | 'onClick' | 'isExternal' | 'resource'>
 > = ({ resource, isLoading, children, ...linkProps }) => {
   const [setResourceOpened] = useSetResourceOpenedMutation({ variables: { resourceId: resource._id } });
+  const { currentUser } = useCurrentUser();
   return (
     <Skeleton isLoaded={!isLoading} as="span">
       <Link
         {...linkProps}
         href={resource.url}
         onClick={() => {
-          setResourceOpened();
+          !!currentUser && setResourceOpened();
         }}
         isExternal
       >
