@@ -334,7 +334,7 @@ export const TopicPageLearningMaterialsFeed: React.FC<TopicPageLearningMaterials
               <Divider borderColor="gray.400" />
 
               <Stack alignItems="center">
-                <PageLink pageInfo={TopicPageInfo(partiallyLoadedSelectedSubTopic)} isExternal>
+                <PageLink pageInfo={TopicPageInfo(partiallyLoadedSelectedSubTopic)}>
                   <Heading color="gray.600" size="lg">
                     {partiallyLoadedSelectedSubTopic.name}
                   </Heading>

@@ -81,7 +81,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
   const { data, loading, error, refetch } = useGetTopicByKeyTopicPageQuery({
     variables: { key: topicKey },
   });
-
+  const topic = data?.getTopicByKey || placeholderTopicData;
   const { currentUser } = useCurrentUser();
   const { onOpen: onOpenUnauthentificatedModal } = useUnauthentificatedModal();
 
@@ -106,6 +106,7 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
       tagsFilters: [],
     });
   }, [topicKey]);
+
   const {
     loading: learningMaterialsFeedLoading,
     initialLoading: learningMaterialsFeedInitialLoading,
@@ -115,20 +116,14 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
     learningMaterials,
     totalPages,
     feedAvailableFilters,
-    // refetch: refetchLearningMaterials,
   } = useTopicPageLearningMaterialsFeed(learningMaterialsFeedOptions);
 
-  const [selectedSubTopic, setSelectedSubTopic] = useState<null | SubTopicFilterDataFragment>(null);
-
-  useEffect(() => {
-    lastSelectedTopic && lastSelectedTopic._id !== topic._id && setSelectedSubTopic(lastSelectedTopic);
-  }, [lastSelectedTopic]);
-
-  useEffect(() => {
-    if (!learningMaterialsFeedOptions.selectedSubTopicKey) setSelectedSubTopic(null);
-  }, [learningMaterialsFeedOptions.selectedSubTopicKey]);
-
-  const topic = data?.getTopicByKey || placeholderTopicData;
+  const selectedSubTopic =
+    learningMaterialsFeedOptions.selectedSubTopicKey &&
+    !!lastSelectedTopic &&
+    learningMaterialsFeedOptions.selectedSubTopicKey === lastSelectedTopic.key
+      ? lastSelectedTopic
+      : null;
 
   if (error) return null;
 
