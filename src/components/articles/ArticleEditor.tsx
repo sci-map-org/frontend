@@ -1,5 +1,5 @@
 import { Box, Button, ButtonProps, Flex, Heading, Input, Stack } from '@chakra-ui/react';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { ArticleViewerDataFragment } from '../../graphql/articles/articles.fragments.generated';
 import { useUpdateArticle } from '../../graphql/articles/articles.hooks';
@@ -16,9 +16,19 @@ export const ArticleEditor: React.FC<{
 }> = ({ article, setMode }) => {
   const [articleId, setArticleId] = React.useState(article._id);
   const [title, setTitle] = React.useState(article.title);
+
   const [content, setContent] = React.useState(article.content);
+
   const { updateArticle, loading, error } = useUpdateArticle();
   const { currentUser } = useCurrentUser();
+  const markdownInputOptions = useMemo(() => {
+    // important to memoize
+    return {
+      previewRender(text: string) {
+        return ReactDOMServer.renderToString(<ArticleMarkdownViewer content={text} />);
+      },
+    };
+  }, []);
   useEffect(() => {
     if (article._id !== articleId) {
       if (currentUser && article.author && currentUser.key === article.author.key) {
@@ -58,6 +68,7 @@ export const ArticleEditor: React.FC<{
       {children}
     </Button>
   );
+
   return (
     <ArticleLayout
       renderLeft={null}
@@ -85,15 +96,7 @@ export const ArticleEditor: React.FC<{
           ></Input>
         </Heading>
         <Box py={8} width="100%">
-          <MarkdownInput
-            content={content}
-            setContent={setContent}
-            options={{
-              previewRender(text) {
-                return ReactDOMServer.renderToString(<ArticleMarkdownViewer content={text} />);
-              },
-            }}
-          />
+          <MarkdownInput content={content} setContent={setContent} options={markdownInputOptions} />
         </Box>
         <Stack spacing={5}>
           <SaveButton size="lg">Save</SaveButton>

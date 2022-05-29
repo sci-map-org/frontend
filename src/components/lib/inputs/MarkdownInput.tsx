@@ -1,5 +1,4 @@
 import dynamic from 'next/dynamic';
-
 import { SimpleMDEReactProps } from 'react-simplemde-editor';
 
 const SimpleMDE = dynamic(import('react-simplemde-editor'), { ssr: false });
