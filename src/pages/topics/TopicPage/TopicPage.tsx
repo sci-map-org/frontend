@@ -176,18 +176,17 @@ export const TopicPage: React.FC<{ topicKey: string }> = ({ topicKey }) => {
             </Skeleton>
           )}
           {topic.wikipediaPageUrl && (
-            <Skeleton isLoaded={!loading}>
-              <Link
-                href={topic.wikipediaPageUrl}
-                color="blue.500"
-                fontSize="sm"
-                fontWeight={500}
-                textDecor="underline"
-                isExternal
-              >
-                Wikipedia
-              </Link>
-            </Skeleton>
+            <Link
+              alignSelf="flex-end"
+              href={topic.wikipediaPageUrl}
+              color="blue.500"
+              fontSize="sm"
+              fontWeight={500}
+              textDecor="underline"
+              isExternal
+            >
+              Wikipedia
+            </Link>
           )}
         </Flex>
       }

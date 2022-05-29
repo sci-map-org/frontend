@@ -4,6 +4,7 @@ import {
   Center,
   Flex,
   FormControl,
+  FormHelperText,
   FormLabel,
   Heading,
   Input,
@@ -60,6 +61,7 @@ export const NewLearningPathForm: React.FC<NewLearningPathProps> = ({
               value={key}
               onChange={(e) => setKey(e.target.value)}
             ></Input>
+            <FormHelperText>(admin only field, optional)</FormHelperText>
           </FormControl>
         </RoleAccess>
       </Stack>
