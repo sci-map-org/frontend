@@ -51,6 +51,9 @@ export const LearningMaterialFeedCardContainer = forwardRef<HTMLDivElement, Lear
       <Flex
         ref={ref}
         boxShadow="sm"
+        minH={{ base: '220px', md: '160px' }}
+        py="3px"
+        px="3px"
         display="flex"
         flexDir="row"
         alignItems="stretch"
@@ -95,7 +98,7 @@ export const LearningMaterialFeedCardContainer = forwardRef<HTMLDivElement, Lear
             justifyContent="space-between"
             flexWrap={layout === 'mobile' ? 'wrap' : 'nowrap'}
           >
-            <Stack direction="column" flexGrow={12} alignItems="flex-start">
+            <Stack py="2px" direction="column" flexGrow={12} alignItems="flex-start">
               {renderSubTitle}
               {renderCentralBlock}
             </Stack>

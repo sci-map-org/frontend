@@ -84,10 +84,6 @@ export const TopicDescription: React.FC<TopicDescriptionProps> = ({
         {...props}
         {...(!!clamped && {
           noOfLines: noOfLines,
-          // display: '-webkit-box',
-          // overflow: 'hidden',
-          // 'text-overflow': 'ellipsis',
-          // 'overflow-wrap': 'break-word',
         })}
       >
         {topicDescription}
