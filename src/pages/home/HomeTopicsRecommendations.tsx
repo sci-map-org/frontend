@@ -6,7 +6,7 @@ const recommendedTopics: TopicLinkDataFragment[] = [
   {
     _id: 'AvgsEAdEM',
     name: 'Functional programming',
-    key: 'functional_programming',
+    key: 'functional_programming_(programming_paradigms)',
   },
   {
     _id: 'rbmJ0zwLg',
@@ -18,11 +18,11 @@ const recommendedTopics: TopicLinkDataFragment[] = [
     name: 'Object Oriented Programming',
     key: 'object_oriented_programming',
   },
-    {
-      _id: '71ExPVDej',
-      name: 'Computer Science',
-      key: 'computer_science',
-    },
+  {
+    _id: '71ExPVDej',
+    name: 'Computer Science',
+    key: 'computer_science',
+  },
   {
     _id: 'A-y9qLFzH',
     name: 'Machine Learning',
