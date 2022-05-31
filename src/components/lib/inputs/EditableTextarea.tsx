@@ -1,14 +1,40 @@
 import { EditIcon } from '@chakra-ui/icons';
-import { Flex, FlexProps, IconButton, Skeleton, Text, Textarea, useEditable, UseEditableProps } from '@chakra-ui/react';
+import {
+  Flex,
+  FlexProps,
+  IconButton,
+  Skeleton,
+  Text,
+  Textarea,
+  TextProps,
+  useEditable,
+  UseEditableProps,
+} from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 
 const estimateNbRows = (value?: string) =>
   value ? Math.ceil(value.length / 128) + value.split(/\r\n|\r|\n/).length : 1;
 
-export const EditableTextarea: React.FC<
-  Pick<UseEditableProps, 'onSubmit' | 'placeholder' | 'isDisabled'> &
-    Omit<FlexProps, 'onSubmit'> & { minRows?: number; rows?: number; defaultValue?: string; isLoading?: boolean }
-> = ({ defaultValue, onSubmit, isDisabled, placeholder, rows, minRows, isLoading, ...flexProps }) => {
+export interface EditableTextareaProps
+  extends Pick<UseEditableProps, 'onSubmit' | 'placeholder' | 'isDisabled'>,
+    Omit<FlexProps, 'onSubmit'> {
+  minRows?: number;
+  rows?: number;
+  defaultValue?: string;
+  isLoading?: boolean;
+  previewProps?: TextProps;
+}
+export const EditableTextarea: React.FC<EditableTextareaProps> = ({
+  defaultValue,
+  onSubmit,
+  isDisabled,
+  placeholder,
+  rows,
+  minRows,
+  isLoading,
+  previewProps,
+  ...flexProps
+}) => {
   const [updatedValue, setUpdatedValue] = useState(defaultValue);
   useEffect(() => {
     setUpdatedValue(defaultValue);
@@ -31,7 +57,12 @@ export const EditableTextarea: React.FC<
       ></Textarea>
       <Skeleton isLoaded={!isLoading}>
         {!(isDisabled && !defaultValue) && (
-          <Text {...getPreviewProps()} {...(!defaultValue && { color: 'gray.500' })} whiteSpace="pre-wrap">
+          <Text
+            {...getPreviewProps()}
+            {...(!defaultValue && { color: 'gray.500' })}
+            whiteSpace="pre-wrap"
+            {...previewProps}
+          >
             <>
               {!isEditing && !isDisabled && (
                 <IconButton

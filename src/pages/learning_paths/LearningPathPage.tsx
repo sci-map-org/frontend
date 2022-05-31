@@ -57,6 +57,7 @@ import { useCurrentUser } from '../../graphql/users/users.hooks';
 import { GetLearningPathPageQuery, useGetLearningPathPageQuery } from './LearningPathPage.generated';
 import { generateResourcePreviewCardData } from '../../graphql/resources/resources.fragments';
 import { Discussion, DiscussionData } from '../../components/social/comments/Discussion';
+import { EditableLearningMaterialDescription } from '../../components/learning_materials/LearningMaterialDescription';
 
 export const getLearningPathPage = gql`
   query getLearningPathPage($key: String!) {
@@ -235,14 +236,11 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
               </RoleAccess> */}
             {/* </Stack> */}
             <Skeleton isLoaded={!loading}>
-              <EditableTextarea
+              <EditableLearningMaterialDescription
                 textAlign="center"
                 minRows={3}
                 justifyContent="center"
                 backgroundColor="backgroundColor.0"
-                fontSize="lg"
-                fontWeight={300}
-                color="gray.700"
                 defaultValue={learningPath.description || ''}
                 placeholder="Add a description..."
                 onSubmit={(newDescription: any) =>

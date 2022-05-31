@@ -114,6 +114,25 @@ export const ShowedInTopicLink: React.FC<{ topic: TopicLinkDataFragment; size?: 
   );
 };
 
+// Learning materials
+const LearningMaterialDescriptionSizesMapping = {
+  sm: {
+    fontSize: '15px',
+  },
+  md: {
+    fontSize: '17px',
+  },
+};
+export const LearningMaterialDescriptionStyleProps = (
+  size: 'sm' | 'md' = 'md'
+): Pick<TextProps, 'fontWeight' | 'color' | 'fontSize' | 'whiteSpace' | 'letterSpacing'> => ({
+  fontWeight: 400,
+  color: 'gray.600',
+  fontSize: LearningMaterialDescriptionSizesMapping[size].fontSize,
+  whiteSpace: 'pre-wrap',
+  letterSpacing: '-0.015em',
+});
+
 // Users
 
 export const UserDisplayName: React.FC<TextProps> = ({ children, ...props }) => {
