@@ -30,6 +30,7 @@ const TopicTypeSuggestions: TopicType[] = [
   { name: 'theory', color: TopicTypeColor.Red },
   { name: 'method', color: TopicTypeColor.Orange },
   { name: 'application', color: TopicTypeColor.Green },
+  { name: 'programming language', color: TopicTypeColor.Red },
 ];
 export const TopicTypeField: React.FC<{
   value?: TopicType[];
