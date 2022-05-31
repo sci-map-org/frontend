@@ -11,6 +11,7 @@ export const LearningPathData = gql`
     public
     name
     description
+    outro
     durationSeconds
   }
 `;

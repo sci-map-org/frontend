@@ -286,7 +286,7 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
                   updateLearningPath({
                     variables: {
                       _id: learningPath._id,
-                      payload: { description: (newDescription as string) || null },
+                      payload: { description: newDescription },
                     },
                   })
                 }
@@ -362,6 +362,28 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
           currentUserStartedPath={currentUserStartedPath}
           {...(!learningPath.resourceItems?.length && { resourceSelectorButtonColorScheme: 'blue' })}
         />
+
+        <Skeleton isLoaded={!loading}>
+          <EditableLearningMaterialDescription
+            textAlign="center"
+            minRows={3}
+            justifyContent="center"
+            backgroundColor="backgroundColor.0"
+            defaultValue={learningPath.outro || ''}
+            placeholder="Add a conclusion..."
+            onSubmit={(newOutro: any) =>
+              updateLearningPath({
+                variables: {
+                  _id: learningPath._id,
+                  payload: { outro: newOutro },
+                },
+              })
+            }
+            isDisabled={!editMode}
+            pt={8}
+            pb={6}
+          />
+        </Skeleton>
         <SimpleGrid pt={5} columns={{ base: 1, md: currentUserCompletedPath ? 2 : 1 }} spacing={10}>
           {currentUserCompletedPath && (
             <SlideFade in={currentUserCompletedPath}>

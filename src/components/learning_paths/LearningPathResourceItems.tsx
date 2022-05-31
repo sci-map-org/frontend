@@ -129,7 +129,7 @@ export const StatelessLearningPathResourceItemsManager: React.FC<StatelessLearni
                             !hideProgressArrow &&
                             !dropSnapshot.isDraggingOver && (
                               <ProgressArrow
-                                pxWidth={8}
+                                pxWidth={7}
                                 position="absolute"
                                 top={getArrowTopPosition(index, previewCardsHeight)}
                                 color={

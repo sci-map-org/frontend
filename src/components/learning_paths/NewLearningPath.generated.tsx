@@ -8,7 +8,7 @@ export type CreateLearningPathMutationVariables = Types.Exact<{
 }>;
 
 
-export type CreateLearningPathMutation = { __typename?: 'Mutation', createLearningPath: { __typename?: 'LearningPath', _id: string, key: string, public: boolean, name: string, description?: string | null | undefined, durationSeconds?: number | null | undefined } };
+export type CreateLearningPathMutation = { __typename?: 'Mutation', createLearningPath: { __typename?: 'LearningPath', _id: string, key: string, public: boolean, name: string, description?: string | null | undefined, outro?: string | null | undefined, durationSeconds?: number | null | undefined } };
 
 
 export type CreateLearningPathMutationFn = Apollo.MutationFunction<CreateLearningPathMutation, CreateLearningPathMutationVariables>;
