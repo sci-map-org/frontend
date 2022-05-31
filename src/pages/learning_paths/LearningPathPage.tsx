@@ -58,6 +58,16 @@ import { GetLearningPathPageQuery, useGetLearningPathPageQuery } from './Learnin
 import { generateResourcePreviewCardData } from '../../graphql/resources/resources.fragments';
 import { Discussion, DiscussionData } from '../../components/social/comments/Discussion';
 import { EditableLearningMaterialDescription } from '../../components/learning_materials/LearningMaterialDescription';
+import {
+  LearningMaterialShowedIn,
+  LearningMaterialShowedInData,
+} from '../../components/learning_materials/LearningMaterialShowedIn';
+import { LearningMaterialShowedInField } from '../../components/learning_materials/LearningMaterialShowedInField';
+import {
+  useHideLearningMaterialFromTopicMutation,
+  useShowLearningMaterialInTopicMutation,
+} from '../../graphql/learning_materials/learning_materials.operations.generated';
+import { differenceBy } from 'lodash';
 
 export const getLearningPathPage = gql`
   query getLearningPathPage($key: String!) {
@@ -85,6 +95,7 @@ export const getLearningPathPage = gql`
       ...LearningMaterialWithCoveredTopicsData
       ...EditableLearningMaterialPrerequisitesData
       ...LearningMaterialStarsRaterData
+      ...LearningMaterialShowedInData
       comments(options: { pagination: {} }) {
         ...DiscussionData
       }
@@ -98,6 +109,7 @@ export const getLearningPathPage = gql`
   ${EditableLearningMaterialPrerequisitesData}
   ${LearningMaterialStarsRaterData}
   ${DiscussionData}
+  ${LearningMaterialShowedInData}
 `;
 
 const learningPathPlaceholder: GetLearningPathPageQuery['getLearningPathByKey'] = {
@@ -127,6 +139,10 @@ const learningPathPlaceholder: GetLearningPathPageQuery['getLearningPathByKey'] 
 
 export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learningPathKey }) => {
   const [updateLearningPath] = useUpdateLearningPathMutation();
+
+  const [hideLearningMaterialFromTopic] = useHideLearningMaterialFromTopicMutation();
+  const [showLearningMaterialInTopic] = useShowLearningMaterialInTopicMutation();
+
   const { data, loading, error, refetch } = useGetLearningPathPageQuery({
     variables: { key: learningPathKey },
   });
@@ -167,8 +183,32 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
         />
       }
       renderTopLeft={
-        null
-        // TODO: Showed In
+        editMode ? (
+          <LearningMaterialShowedInField
+            value={learningPath.showedIn || []}
+            onChange={async (updatedShowedIn) => {
+              const hideFromTopics = differenceBy(learningPath.showedIn || [], updatedShowedIn, (topic) => topic._id);
+              const showInTopics = differenceBy(updatedShowedIn, learningPath.showedIn || [], (topic) => topic._id);
+              await Promise.all([
+                ...hideFromTopics.map((hideFromTopic) =>
+                  hideLearningMaterialFromTopic({
+                    variables: { topicId: hideFromTopic._id, learningMaterialId: learningPath._id },
+                  })
+                ),
+                ...showInTopics.map((showInTopic) =>
+                  showLearningMaterialInTopic({
+                    variables: {
+                      topicId: showInTopic._id,
+                      learningMaterialId: learningPath._id,
+                    },
+                  })
+                ),
+              ]);
+            }}
+          />
+        ) : (
+          <LearningMaterialShowedIn learningMaterial={learningPath} size="md" />
+        )
       }
     >
       <Stack w="100%">
@@ -204,7 +244,15 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
           </Flex>
           <Stack flexGrow={1} px={4}>
             <Center>
-              <Stack direction="row" alignItems="center" spacing={4}>
+              <Stack direction="row" alignItems="center" spacing={2}>
+                <EditableLearningMaterialTags
+                  justify="center"
+                  learningMaterial={learningPath}
+                  isLoading={loading}
+                  isDisabled={!editMode}
+                  placeholder="Add tags"
+                  size="md"
+                />
                 <EditableDuration
                   defaultValue={learningPath.durationSeconds}
                   onSubmit={(newDuration) =>
@@ -216,15 +264,6 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
                   placeholder="Estimated Duration"
                   isDisabled={!editMode}
                   isLoading={loading}
-                />
-
-                <EditableLearningMaterialTags
-                  justify="center"
-                  learningMaterial={learningPath}
-                  isLoading={loading}
-                  isDisabled={!editMode}
-                  placeholder="Add tags"
-                  size="md"
                 />
               </Stack>
             </Center>
