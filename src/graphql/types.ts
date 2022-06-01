@@ -154,6 +154,7 @@ export type CreateLearningPathPayload = {
   durationSeconds?: InputMaybe<Scalars['Int']>;
   key?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
+  outro?: InputMaybe<Scalars['String']>;
   public?: InputMaybe<Scalars['Boolean']>;
   resourceItems: Array<CreateLearningPathResourceItem>;
   tags?: InputMaybe<Array<Scalars['String']>>;
@@ -554,6 +555,7 @@ export type LearningPath = LearningMaterial & {
   durationSeconds?: Maybe<Scalars['Int']>;
   key: Scalars['String'];
   name: Scalars['String'];
+  outro?: Maybe<Scalars['String']>;
   prerequisites?: Maybe<Array<LearningMaterialHasPrerequisiteTopic>>;
   public: Scalars['Boolean'];
   rating?: Maybe<Scalars['Float']>;
@@ -1757,6 +1759,7 @@ export type UpdateLearningPathPayload = {
   description?: InputMaybe<Scalars['String']>;
   durationSeconds?: InputMaybe<Scalars['Int']>;
   name?: InputMaybe<Scalars['String']>;
+  outro?: InputMaybe<Scalars['String']>;
   public?: InputMaybe<Scalars['Boolean']>;
   resourceItems?: InputMaybe<Array<CreateLearningPathResourceItem>>;
 };

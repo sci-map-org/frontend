@@ -78,8 +78,8 @@ export const TopicTypesViewer: React.FC<TopicTypesViewerProps> = ({
   shade = 'solid',
   maxShown,
 }) => {
-  if (!topicTypes.length) return null;
   const [setRef, isHover] = useHover();
+  if (!topicTypes.length) return null;
 
   return (
     <Stack direction="row" ref={setRef} spacing={{ md: '8px', sm: '4px' }[size]}>

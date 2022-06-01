@@ -22,8 +22,8 @@ export const LearningMaterialTypesViewer: React.FC<LearningMaterialTypesViewerPr
   size = 'md',
   maxShown,
 }) => {
-  if (!learningMaterialTypes.length) return null;
   const [setRef, isHover] = useHover();
+  if (!learningMaterialTypes.length) return null;
 
   return (
     <Stack direction="row" ref={setRef} alignItems="center" spacing={{ md: '8px', sm: '4px' }[size]}>

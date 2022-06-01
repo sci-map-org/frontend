@@ -30,6 +30,7 @@ import {
   LearningMaterialRecommendationsViewerData,
 } from '../../components/learning_materials/LearningMaterialRecommendationsViewer';
 import { LearningMaterialRecommendButton } from '../../components/learning_materials/LearningMaterialRecommendButton';
+import { LearningMaterialShowedIn } from '../../components/learning_materials/LearningMaterialShowedIn';
 import { LearningMaterialStarsRaterData } from '../../components/learning_materials/LearningMaterialStarsRating';
 import { EditableLearningMaterialTags } from '../../components/learning_materials/LearningMaterialTagsEditor';
 import { LearningMaterialTypesViewer } from '../../components/learning_materials/LearningMaterialTypesViewer';
@@ -131,7 +132,11 @@ export const ResourcePage: React.FC<{ resourceKey: string }> = ({ resourceKey })
             position="relative"
           >
             <Box position="absolute">
-              <ShowedInBlock resource={resource} isLoading={loading} size={layout === 'desktop' ? 'md' : 'sm'} />
+              <LearningMaterialShowedIn
+                learningMaterial={resource}
+                isLoading={loading}
+                size={layout === 'desktop' ? 'md' : 'sm'}
+              />
             </Box>
             <Stack spacing={5} mt={headerHeight}>
               <Center>
@@ -153,7 +158,7 @@ export const ResourcePage: React.FC<{ resourceKey: string }> = ({ resourceKey })
           // top row
           <Flex direction="row" justifyContent="space-between" alignItems="center">
             <Box>
-              <ShowedInBlock resource={resource} isLoading={loading} size="sm" />
+              <LearningMaterialShowedIn learningMaterial={resource} isLoading={loading} size="sm" />
             </Box>
             <TopRightIconButtons resource={resource} isLoading={loading} size="sm" />
           </Flex>
@@ -327,25 +332,6 @@ const SubTitleBar: React.FC<{ resource: GetResourceResourcePageQuery['getResourc
       </Stack>
     </Skeleton>
   );
-};
-
-const ShowedInBlock: React.FC<{
-  resource: GetResourceResourcePageQuery['getResourceByKey'];
-  isLoading: boolean;
-  size: 'sm' | 'md';
-}> = ({ resource, isLoading, size }) => {
-  return resource.showedIn?.length ? (
-    <Flex direction="column">
-      <Text fontWeight={700} color="gray.600" fontSize={size}>
-        Showed In
-      </Text>
-      <Stack ml={3}>
-        {resource.showedIn.map((showedInTopic) => (
-          <ShowedInTopicLink key={showedInTopic._id} topic={showedInTopic} size={size} />
-        ))}
-      </Stack>
-    </Flex>
-  ) : null;
 };
 
 const HeaderBlock: React.FC<{ resource: GetResourceResourcePageQuery['getResourceByKey']; isLoading: boolean }> = ({

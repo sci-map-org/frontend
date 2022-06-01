@@ -1,13 +1,7 @@
 import { FormControl, FormHelperText, Skeleton, Text, Textarea, TextProps } from '@chakra-ui/react';
+import { EditableTextarea, EditableTextareaProps } from '../lib/inputs/EditableTextarea';
+import { LearningMaterialDescriptionStyleProps } from '../lib/Typography';
 
-const sizesMapping = {
-  sm: {
-    fontSize: '15px',
-  },
-  md: {
-    fontSize: '17px',
-  },
-};
 export const LearningMaterialDescription: React.FC<
   {
     description?: string | null;
@@ -17,14 +11,7 @@ export const LearningMaterialDescription: React.FC<
 > = ({ description, isLoading, size = 'md', ...props }) => {
   return description ? (
     <Skeleton isLoaded={!isLoading}>
-      <Text
-        fontWeight={400}
-        color="gray.600"
-        fontSize={sizesMapping[size].fontSize}
-        {...props}
-        whiteSpace="pre-wrap"
-        letterSpacing="-0.015em"
-      >
+      <Text {...LearningMaterialDescriptionStyleProps(size)} {...props}>
         {description}
       </Text>
     </Skeleton>
@@ -54,4 +41,8 @@ export const LearningMaterialDescriptionInput: React.FC<{
       </FormHelperText>
     </FormControl>
   );
+};
+
+export const EditableLearningMaterialDescription: React.FC<Omit<EditableTextareaProps, 'previewProps'>> = (props) => {
+  return <EditableTextarea {...props} previewProps={LearningMaterialDescriptionStyleProps()} />;
 };
