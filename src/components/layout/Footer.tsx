@@ -51,6 +51,9 @@ export const Footer: React.FC<{}> = () => {
                 About
               </Link>
               <Link href="mailto:info@mapedia.org">Contact</Link>
+              <Link href="https://forms.gle/uiRKX8qMrCP9SV3W9" isExternal>
+                Feedback
+              </Link>
             </Stack>
             <Stack direction="column" spacing={2} alignItems="center" textAlign="center">
               <Link href="https://forum.mapedia.org/c/tech/bugs/8" isExternal>

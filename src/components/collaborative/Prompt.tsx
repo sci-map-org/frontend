@@ -1,5 +1,5 @@
 import { CloseIcon } from '@chakra-ui/icons';
-import { Box, Flex, FlexProps, IconButton, Text } from '@chakra-ui/react';
+import { Box, Flex, FlexProps, IconButton, Link, Text } from '@chakra-ui/react';
 import { random } from 'lodash';
 import { PageInfo } from '../../pages/PageInfo';
 import { NewLearningPathPageInfo, NewResourcePageInfo } from '../../pages/RoutesPageInfos';
@@ -10,7 +10,7 @@ export type PromptConfig = {
   borderColor: FlexProps['borderColor'];
   promptLabel: string;
   linkLabel: string;
-  pageInfo: PageInfo;
+  linkedPage: PageInfo | string; // if string: handled as external url
 };
 
 const promptStyles = {
@@ -28,36 +28,37 @@ const promptStyles = {
   },
 };
 
-export const promptConfigs = {
+export const promptConfigs: { [key in string]: PromptConfig } = {
   book: {
     ...promptStyles.teal,
     promptLabel: `What's the best book you learned from recently ?`,
     linkLabel: 'Share Resource',
-    pageInfo: NewResourcePageInfo,
+    linkedPage: NewResourcePageInfo,
   },
   podcast: {
     ...promptStyles.teal,
     promptLabel: `What's the best podcast you learned from recently ?`,
     linkLabel: 'Share Resource',
-    pageInfo: NewResourcePageInfo,
+    linkedPage: NewResourcePageInfo,
   },
   course: {
     ...promptStyles.teal,
     promptLabel: `What's the best course you learned from recently ?`,
     linkLabel: 'Share Resource',
-    pageInfo: NewResourcePageInfo,
+    linkedPage: NewResourcePageInfo,
   },
   // TODO
-  //   feedback: {
-  //     ...promptStyles.orange,
-  //     promptLabel: `Do you have any feedback for us ? Help us build a great learning map`,
-  //     linkLabel: 'Give Feedback',
-  //   },
+  feedback: {
+    ...promptStyles.orange,
+    promptLabel: `Do you have any feedback for us ? Help us build a great learning map`,
+    linkLabel: 'Give Feedback',
+    linkedPage: 'https://forms.gle/uiRKX8qMrCP9SV3W9',
+  },
   learning_path: {
     ...promptStyles.green,
     promptLabel: 'Have you successfully learned a topic recently ? Help others by sharing your learning journey',
     linkLabel: 'Share your path',
-    pageInfo: NewLearningPathPageInfo,
+    linkedPage: NewLearningPathPageInfo,
   },
 };
 
@@ -91,25 +92,48 @@ export const Prompt: React.FC<{ onDismiss: () => void; config: PromptConfig } & 
         <Text color="white" fontSize="15px" fontWeight={600} textAlign={{ base: 'center', md: 'left' }}>
           {config.promptLabel}
         </Text>
-        <PageLink
-          pageInfo={config.pageInfo}
-          color={config.mainBackgroundColor}
-          bgColor="white"
-          borderWidth={2}
-          borderColor={config.borderColor}
-          px={2}
-          ml={5}
-          my={2}
-          borderRadius={8}
-          fontWeight={600}
-          _hover={{
-            opacity: 0.9,
-          }}
-          whiteSpace="nowrap"
-          flexShrink={0}
-        >
-          {config.linkLabel}
-        </PageLink>
+        {typeof config.linkedPage === 'string' ? (
+          <Link
+            color={config.mainBackgroundColor}
+            href={config.linkedPage}
+            bgColor="white"
+            borderWidth={2}
+            borderColor={config.borderColor}
+            px={2}
+            ml={5}
+            my={2}
+            borderRadius={8}
+            fontWeight={600}
+            _hover={{
+              opacity: 0.9,
+            }}
+            whiteSpace="nowrap"
+            flexShrink={0}
+            isExternal
+          >
+            {config.linkLabel}
+          </Link>
+        ) : (
+          <PageLink
+            pageInfo={config.linkedPage}
+            color={config.mainBackgroundColor}
+            bgColor="white"
+            borderWidth={2}
+            borderColor={config.borderColor}
+            px={2}
+            ml={5}
+            my={2}
+            borderRadius={8}
+            fontWeight={600}
+            _hover={{
+              opacity: 0.9,
+            }}
+            whiteSpace="nowrap"
+            flexShrink={0}
+          >
+            {config.linkLabel}
+          </PageLink>
+        )}
       </Flex>
       <IconButton
         size="sm"
