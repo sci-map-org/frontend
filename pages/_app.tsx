@@ -1,5 +1,6 @@
 import NextApp from 'next/app';
 import React from 'react';
+import { hotjar } from 'react-hotjar';
 
 import '../public/empty.css';
 import '../public/map.css';
@@ -14,6 +15,10 @@ interface AppProps {
 }
 
 class App extends NextApp<AppProps> {
+  componentDidMount() {
+    hotjar.initialize(3001220, 6);
+  }
+
   render() {
     const { Component, pageProps, apolloClient } = this.props;
 
