@@ -26,12 +26,14 @@ interface TopicDescriptionProps extends TextProps {
   topicDescription?: string;
   placeholder?: string;
   noOfLines?: number;
+  textAlign?: TextProps['textAlign'];
 }
 
 export const TopicDescription: React.FC<TopicDescriptionProps> = ({
   topicDescription,
   placeholder,
   noOfLines,
+  textAlign,
   ...props
 }) => {
   const [clamped, setClamped] = useState(true);
@@ -85,6 +87,7 @@ export const TopicDescription: React.FC<TopicDescriptionProps> = ({
         {...(!!clamped && {
           noOfLines: noOfLines,
         })}
+        textAlign={textAlign}
       >
         {topicDescription}
       </Text>

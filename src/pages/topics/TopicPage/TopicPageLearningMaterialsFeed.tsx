@@ -344,7 +344,13 @@ export const TopicPageLearningMaterialsFeed: React.FC<TopicPageLearningMaterials
                 ) : (
                   <TopicSubHeader topic={partiallyLoadedSelectedSubTopic} isLoading={true} />
                 )}
-                {selectedSubTopic && <TopicDescription topicDescription={selectedSubTopic.description || undefined} />}
+                {selectedSubTopic && (
+                  <TopicDescription
+                    topicDescription={selectedSubTopic.description || undefined}
+                    noOfLines={3}
+                    textAlign="center"
+                  />
+                )}
               </Stack>
             </Stack>
           </Box>
