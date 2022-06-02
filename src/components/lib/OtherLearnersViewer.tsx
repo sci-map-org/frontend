@@ -46,7 +46,9 @@ export const OtherLearnersViewer: React.FC<OtherLearnersViewerProps> = ({
     <Center>
       <Stack spacing={1}>
         <Text {...SocialWidgetsLabelStyleProps('md')}>{title(otherLearnersCount, otherLearners)}</Text>
-        <UserAvatarGroup users={otherLearners} popoverTitle="Other Learners" size="lg" />
+        <Center>
+          <UserAvatarGroup users={otherLearners} popoverTitle="Other Learners" size="lg" />
+        </Center>
       </Stack>
     </Center>
   );

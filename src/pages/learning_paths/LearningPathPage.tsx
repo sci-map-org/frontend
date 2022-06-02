@@ -339,7 +339,7 @@ export const LearningPathPage: React.FC<{ learningPathKey: string }> = ({ learni
                   users={learningPath.startedBy.items.map(({ user }) => user)}
                   totalCount={learningPath.startedBy.count}
                   currentUserIsLearner={currentUserStartedPath}
-                  minUsers={currentUserIsOwner ? 1 : 4}
+                  minUsers={1}
                   title={(otherLearnersCount) =>
                     `Path taken by ${otherLearnersCount} ${otherLearnersCount === 1 ? 'user' : 'users'}`
                   }
