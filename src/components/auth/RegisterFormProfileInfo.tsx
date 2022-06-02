@@ -8,6 +8,7 @@ import {
   InputRightElement,
   Spinner,
   Stack,
+  Switch,
   Text,
   Tooltip,
 } from '@chakra-ui/react';
@@ -38,6 +39,7 @@ export const RegisterFormProfileInfo: React.FC<{
 }> = ({ defaultProfileInfo, onRegister }) => {
   const [displayName, setDisplayName] = useState(defaultProfileInfo.displayName || '');
   const [key, setKey] = useState(defaultProfileInfo.key || '');
+  const [subscribeToNewsletter, setSubscribeToNewsletter] = useState(false);
 
   const { loading, refetch, data } = useGetUserByKeyQuery({
     variables: { key },
@@ -117,6 +119,16 @@ export const RegisterFormProfileInfo: React.FC<{
           The user alias must be at least 3 characters long and by url readable (no caps, spaces, special characters
           aside from underscores)
         </FormErrorMessage>
+      </FormControl>
+      <FormControl display="flex" alignItems="center" pt={10}>
+        <FormLabel htmlFor="subscribe-newsletter" mb="0">
+          Follow our newsletter ?
+        </FormLabel>
+        <Switch
+          id="subscribe-newsletter"
+          isChecked={subscribeToNewsletter}
+          onChange={(e) => setSubscribeToNewsletter(e.target.checked)}
+        />
       </FormControl>
       <Button
         isDisabled={!displayName || !key || !isKeyAvailable || !isKeyValid}
