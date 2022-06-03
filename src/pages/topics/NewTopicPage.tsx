@@ -8,7 +8,7 @@ import { TopicPageInfo } from '../RoutesPageInfos';
 
 export const NewTopicPage: NextPage = () => {
   return (
-    <PageLayout title="New Area" marginSize="xl" accessRule="contributorOrAdmin" centerChildren>
+    <PageLayout marginSize="xl" accessRule="contributorOrAdmin" centerChildren>
       <NewTopic
         size="md"
         onCancel={() => Router.back()}
