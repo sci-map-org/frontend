@@ -41,7 +41,7 @@ export const LoginForm: React.FC<{
         />
       </Stack>
       <Divider />
-      <Stack spacing={2}>
+      <Stack spacing={4}>
         <Stack spacing={0}>
           <Text fontSize="xl">Or with your email address</Text>
           <NextLink
@@ -53,7 +53,7 @@ export const LoginForm: React.FC<{
             passHref
           >
             {/* Used rather than PageLink to avoid a circular dependency */}
-            <Link color="blue.500" fontSize="xs" fontWeight={400}>
+            <Link color="blue.500" fontSize="xs" fontWeight={400} _active={{}} _focus={{}}>
               Forgot password?
             </Link>
           </NextLink>
@@ -61,12 +61,13 @@ export const LoginForm: React.FC<{
         <Input
           placeholder="Email"
           size="md"
-          variant="flushed"
+          variant="outline"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <PasswordInput
           value={password}
+          variant="outline"
           onChange={(e) => setPassword(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter') login({ variables: { email, password, discourseSSO } });
@@ -75,6 +76,8 @@ export const LoginForm: React.FC<{
       </Stack>
       <Button
         size="lg"
+        isDisabled={!email || password.length < 6}
+        colorScheme="teal"
         variant="solid"
         onClick={async () => {
           login({ variables: { email, password, discourseSSO } });

@@ -81,7 +81,7 @@ export const RegisterFormAuthInfo: React.FC<RegisterFormAuthInfoProps> = ({ onNe
         <FormLabel htmlFor="email">Email</FormLabel>
         <Input
           id="email"
-          placeholder="example@domain.com"
+          placeholder="example@mail.com"
           size="md"
           variant="outline"
           value={email}

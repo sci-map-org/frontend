@@ -116,10 +116,13 @@ const TriggerResetPasswordForm: React.FC<{}> = () => {
     <Flex w="100%">
       {!data?.triggerResetPassword.success ? (
         <Stack w="100%" spacing={4}>
+          <Text py={2} fontWeight={500} color="gray.600">
+            Please enter your email address
+          </Text>
           <Input
-            placeholder="Email"
+            placeholder="my@email.com"
             size="md"
-            variant="flushed"
+            variant="outline"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />

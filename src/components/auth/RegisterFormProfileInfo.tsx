@@ -1,7 +1,10 @@
+import { CheckIcon, NotAllowedIcon } from '@chakra-ui/icons';
 import {
   Button,
+  Flex,
   FormControl,
   FormErrorMessage,
+  FormHelperText,
   FormLabel,
   Input,
   InputGroup,
@@ -12,7 +15,6 @@ import {
   Text,
   Tooltip,
 } from '@chakra-ui/react';
-import { CheckIcon, NotAllowedIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import { useEffect, useState } from 'react';
 import { generateUrlKey } from '../../services/url.service';
@@ -61,19 +63,18 @@ export const RegisterFormProfileInfo: React.FC<{
           id="display_name"
           placeholder="John Doe"
           size="md"
-          variant="flushed"
+          variant="outline"
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
         />
       </FormControl>
       <FormControl isRequired isInvalid={!!key && !isKeyValid}>
         <FormLabel htmlFor="key">Unique alias</FormLabel>
-        <InputGroup>
+        <InputGroup size="sm">
           <Input
             id="key"
             placeholder="john_doe"
-            size="sm"
-            variant="flushed"
+            variant="outline"
             value={key}
             onChange={(e) => {
               const newKey: string = e.target.value;
@@ -117,20 +118,28 @@ export const RegisterFormProfileInfo: React.FC<{
           aside from underscores)
         </FormErrorMessage>
       </FormControl>
-      <FormControl display="flex" alignItems="center" pt={10}>
-        <FormLabel htmlFor="subscribe-newsletter" mb="0">
-          Follow our newsletter ?
-        </FormLabel>
-        <Switch
-          id="subscribe-newsletter"
-          isChecked={subscribeToNewsletter}
-          onChange={(e) => setSubscribeToNewsletter(e.target.checked)}
-        />
+
+      <FormControl pt={5}>
+        <Flex display="flex" alignItems="baseline">
+          <FormLabel htmlFor="subscribe-newsletter" mb="0">
+            Follow our newsletter ?
+          </FormLabel>
+          <Switch
+            id="subscribe-newsletter"
+            size="sm"
+            isChecked={subscribeToNewsletter}
+            onChange={(e) => setSubscribeToNewsletter(e.target.checked)}
+          />
+        </Flex>
+        <FormHelperText>
+          Stay up to date with the journey of Mapedia, and receive updates from our community
+        </FormHelperText>
       </FormControl>
       <Button
         isDisabled={!displayName || !key || !isKeyAvailable || !isKeyValid}
         size="lg"
         variant="solid"
+        colorScheme="teal"
         onClick={() =>
           onRegister({
             displayName,
