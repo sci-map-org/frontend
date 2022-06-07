@@ -16,17 +16,17 @@ import { CheckIcon, NotAllowedIcon } from '@chakra-ui/icons';
 import gql from 'graphql-tag';
 import { useEffect, useState } from 'react';
 import { generateUrlKey } from '../../services/url.service';
-import { useGetUserByKeyQuery } from './RegisterFormProfileInfo.generated';
+import { useCheckUserKeyAvailabilityLazyQuery } from './RegisterFormProfileInfo.generated';
 
 export interface RegisterProfileInfo {
   displayName: string;
   key: string;
 }
 
-export const getUserByKey = gql`
-  query getUserByKey($key: String!) {
-    getUser(key: $key) {
-      _id
+export const checkUserKeyAvailability = gql`
+  query checkUserKeyAvailability($key: String!) {
+    checkUserKeyAvailability(key: $key) {
+      available
     }
   }
 `;
@@ -41,12 +41,9 @@ export const RegisterFormProfileInfo: React.FC<{
   const [key, setKey] = useState(defaultProfileInfo.key || '');
   const [subscribeToNewsletter, setSubscribeToNewsletter] = useState(false);
 
-  const { loading, refetch, data } = useGetUserByKeyQuery({
-    variables: { key },
-    errorPolicy: 'ignore',
-  });
+  const [checkUserKeyAvailability, { loading, data }] = useCheckUserKeyAvailabilityLazyQuery();
 
-  const isKeyAvailable = !loading && !data;
+  const isKeyAvailable = !loading && !!data?.checkUserKeyAvailability.available;
 
   const [isKeyValid, setIsKeyValid] = useState(false);
   useEffect(() => {
@@ -82,7 +79,7 @@ export const RegisterFormProfileInfo: React.FC<{
               const newKey: string = e.target.value;
               setKey(newKey);
               if (newKey.length >= MIN_USER_KEY_LENGTH) {
-                refetch();
+                checkUserKeyAvailability({ variables: { key: newKey } });
               }
             }}
             onKeyDown={(e) => {

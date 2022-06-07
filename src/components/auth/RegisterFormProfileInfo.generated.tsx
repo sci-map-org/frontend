@@ -3,39 +3,39 @@ import * as Types from '../../graphql/types';
 import * as Operations from './RegisterFormProfileInfo';
 import * as Apollo from '@apollo/client';
 const defaultOptions =  {}
-export type GetUserByKeyQueryVariables = Types.Exact<{
+export type CheckUserKeyAvailabilityQueryVariables = Types.Exact<{
   key: Types.Scalars['String'];
 }>;
 
 
-export type GetUserByKeyQuery = { __typename?: 'Query', getUser: { __typename?: 'User', _id: string } };
+export type CheckUserKeyAvailabilityQuery = { __typename?: 'Query', checkUserKeyAvailability: { __typename?: 'CheckUserKeyAvailabilityResult', available: boolean } };
 
 
 
 /**
- * __useGetUserByKeyQuery__
+ * __useCheckUserKeyAvailabilityQuery__
  *
- * To run a query within a React component, call `useGetUserByKeyQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetUserByKeyQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useCheckUserKeyAvailabilityQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCheckUserKeyAvailabilityQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetUserByKeyQuery({
+ * const { data, loading, error } = useCheckUserKeyAvailabilityQuery({
  *   variables: {
  *      key: // value for 'key'
  *   },
  * });
  */
-export function useGetUserByKeyQuery(baseOptions: Apollo.QueryHookOptions<GetUserByKeyQuery, GetUserByKeyQueryVariables>) {
+export function useCheckUserKeyAvailabilityQuery(baseOptions: Apollo.QueryHookOptions<CheckUserKeyAvailabilityQuery, CheckUserKeyAvailabilityQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetUserByKeyQuery, GetUserByKeyQueryVariables>(Operations.getUserByKey, options);
+        return Apollo.useQuery<CheckUserKeyAvailabilityQuery, CheckUserKeyAvailabilityQueryVariables>(Operations.checkUserKeyAvailability, options);
       }
-export function useGetUserByKeyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserByKeyQuery, GetUserByKeyQueryVariables>) {
+export function useCheckUserKeyAvailabilityLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CheckUserKeyAvailabilityQuery, CheckUserKeyAvailabilityQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetUserByKeyQuery, GetUserByKeyQueryVariables>(Operations.getUserByKey, options);
+          return Apollo.useLazyQuery<CheckUserKeyAvailabilityQuery, CheckUserKeyAvailabilityQueryVariables>(Operations.checkUserKeyAvailability, options);
         }
-export type GetUserByKeyQueryHookResult = ReturnType<typeof useGetUserByKeyQuery>;
-export type GetUserByKeyLazyQueryHookResult = ReturnType<typeof useGetUserByKeyLazyQuery>;
-export type GetUserByKeyQueryResult = Apollo.QueryResult<GetUserByKeyQuery, GetUserByKeyQueryVariables>;
+export type CheckUserKeyAvailabilityQueryHookResult = ReturnType<typeof useCheckUserKeyAvailabilityQuery>;
+export type CheckUserKeyAvailabilityLazyQueryHookResult = ReturnType<typeof useCheckUserKeyAvailabilityLazyQuery>;
+export type CheckUserKeyAvailabilityQueryResult = Apollo.QueryResult<CheckUserKeyAvailabilityQuery, CheckUserKeyAvailabilityQueryVariables>;

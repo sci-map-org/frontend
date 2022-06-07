@@ -56,7 +56,7 @@ export const RegisterFormAuthInfo: React.FC<RegisterFormAuthInfoProps> = ({ onNe
           </Text>
         </List>
       </Box>
-      <Text fontSize="xl" fontWeight={300}>
+      <Text fontSize="xl" fontWeight={500} color="gray.700">
         Register using your Google account
       </Text>
       <Stack spacing={2} alignItems="center" onClick={(e: any) => e.stopPropagation()}>
@@ -74,7 +74,7 @@ export const RegisterFormAuthInfo: React.FC<RegisterFormAuthInfoProps> = ({ onNe
         />
       </Stack>
       <Divider />
-      <Text fontSize="xl" fontWeight={300}>
+      <Text fontSize="xl" fontWeight={500} color="gray.700">
         Or with your email address
       </Text>
       <FormControl isRequired isInvalid={!!email && !isEmailValid}>
@@ -83,7 +83,7 @@ export const RegisterFormAuthInfo: React.FC<RegisterFormAuthInfoProps> = ({ onNe
           id="email"
           placeholder="example@domain.com"
           size="md"
-          variant="flushed"
+          variant="outline"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
@@ -92,6 +92,7 @@ export const RegisterFormAuthInfo: React.FC<RegisterFormAuthInfoProps> = ({ onNe
         <FormLabel htmlFor="password">Password</FormLabel>
         <PasswordInput
           value={password}
+          variant="outline"
           onChange={(e) => setPassword(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter')

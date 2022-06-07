@@ -92,6 +92,12 @@ export type CheckTopicKeyAvailabilityResult = {
   existingTopic?: Maybe<Topic>;
 };
 
+export type CheckUserKeyAvailabilityResult = {
+  __typename?: 'CheckUserKeyAvailabilityResult';
+  available: Scalars['Boolean'];
+  existingUser?: Maybe<User>;
+};
+
 export type Comment = {
   __typename?: 'Comment';
   _id: Scalars['String'];
@@ -1190,6 +1196,7 @@ export type Query = {
   autocompleteTopicName: SearchTopicsResult;
   checkLearningGoalKeyAvailability: CheckLearningGoalKeyAvailabilityResult;
   checkTopicKeyAvailability: CheckTopicKeyAvailabilityResult;
+  checkUserKeyAvailability: CheckUserKeyAvailabilityResult;
   currentUser?: Maybe<CurrentUser>;
   getArticleByKey: Article;
   getCommentById: Comment;
@@ -1234,6 +1241,11 @@ export type QueryCheckLearningGoalKeyAvailabilityArgs = {
 
 
 export type QueryCheckTopicKeyAvailabilityArgs = {
+  key: Scalars['String'];
+};
+
+
+export type QueryCheckUserKeyAvailabilityArgs = {
   key: Scalars['String'];
 };
 

@@ -14,8 +14,11 @@ export const RegisterPage: React.FC = () => {
           <RegisterForm onSuccess={() => Router.push(`/`)} />
           <Divider my={4}></Divider>
           <Box textAlign="center">
-            <Text fontSize="l">
-              Already have an account ? <PageLink pageInfo={LoginPageInfo}>Login</PageLink>
+            <Text fontSize="lg" fontWeight={500}>
+              Already have an account ?{' '}
+              <PageLink color="blue.500" fontWeight={600} pageInfo={LoginPageInfo}>
+                Login
+              </PageLink>
             </Text>
           </Box>
         </Box>

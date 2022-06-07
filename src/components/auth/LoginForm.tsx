@@ -25,9 +25,7 @@ export const LoginForm: React.FC<{
   const errorToast = useErrorToast();
   return (
     <Stack spacing={6} textAlign="center">
-      <Text fontSize="xl" fontWeight={300}>
-        Using your Google account
-      </Text>
+      <Text fontSize="xl">Using your Google account</Text>
       <Stack spacing={2} alignItems="center" textAlign="center" onClick={(e: any) => e.stopPropagation()}>
         <GoogleAuthButton
           // buttonText="Login with Google"
@@ -45,9 +43,7 @@ export const LoginForm: React.FC<{
       <Divider />
       <Stack spacing={2}>
         <Stack spacing={0}>
-          <Text fontSize="xl" fontWeight={300}>
-            Or with your email address
-          </Text>
+          <Text fontSize="xl">Or with your email address</Text>
           <NextLink
             href={{
               pathname: ResetPasswordPageInfo.routePath,
