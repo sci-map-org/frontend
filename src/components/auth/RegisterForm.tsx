@@ -20,17 +20,13 @@ export const RegisterForm: React.FC<{
   onSuccess: () => void;
 }> = ({ onSuccess }) => {
   const [authInfo, setAuthInfo] = useState<RegisterAuthInfo>();
-  const [profileInfo, setProfileInfo] = useState<RegisterProfileInfo>();
   const [register, { error, loading, data: registerResult }] = useRegisterMutation();
-  const [
-    registerGoogle,
-    { error: googleError, loading: googleLoading, data: registerGoogleResult },
-  ] = useRegisterGoogleMutation();
+  const [registerGoogle, { error: googleError, loading: googleLoading, data: registerGoogleResult }] =
+    useRegisterGoogleMutation();
   const { loginGoogle } = useLoginGoogle();
 
   const onRegister = async (profileData: RegisterProfileInfo) => {
     if (loading || googleLoading) return;
-    setProfileInfo(profileInfo);
     if (!authInfo) {
       throw new Error('Unreachable code reached');
     }

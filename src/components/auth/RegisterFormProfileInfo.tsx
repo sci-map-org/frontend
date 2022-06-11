@@ -23,6 +23,7 @@ import { useCheckUserKeyAvailabilityLazyQuery } from './RegisterFormProfileInfo.
 export interface RegisterProfileInfo {
   displayName: string;
   key: string;
+  subscribeToNewsletter?: boolean;
 }
 
 export const checkUserKeyAvailability = gql`
@@ -88,6 +89,7 @@ export const RegisterFormProfileInfo: React.FC<{
                 onRegister({
                   displayName,
                   key,
+                  subscribeToNewsletter,
                 });
             }}
           />
@@ -144,6 +146,7 @@ export const RegisterFormProfileInfo: React.FC<{
           onRegister({
             displayName,
             key,
+            subscribeToNewsletter,
           })
         }
       >

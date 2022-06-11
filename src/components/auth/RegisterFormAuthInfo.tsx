@@ -108,6 +108,7 @@ export const RegisterFormAuthInfo: React.FC<RegisterFormAuthInfoProps> = ({ onNe
       <Button
         isDisabled={!password || !isPasswordValid || !email || !isEmailValid}
         size="lg"
+        colorScheme="blue"
         variant="solid"
         onClick={() => {
           onNext({
