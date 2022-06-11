@@ -39,7 +39,8 @@ const MIN_USER_KEY_LENGTH = 3;
 export const RegisterFormProfileInfo: React.FC<{
   defaultProfileInfo: Partial<RegisterProfileInfo>;
   onRegister: (profileInfo: RegisterProfileInfo) => void;
-}> = ({ defaultProfileInfo, onRegister }) => {
+  isRegistering: boolean;
+}> = ({ defaultProfileInfo, onRegister, isRegistering }) => {
   const [displayName, setDisplayName] = useState(defaultProfileInfo.displayName || '');
   const [key, setKey] = useState(defaultProfileInfo.key || '');
   const [subscribeToNewsletter, setSubscribeToNewsletter] = useState(false);
@@ -139,6 +140,7 @@ export const RegisterFormProfileInfo: React.FC<{
       </FormControl>
       <Button
         isDisabled={!displayName || !key || !isKeyAvailable || !isKeyValid}
+        isLoading={isRegistering}
         size="lg"
         variant="solid"
         colorScheme="teal"

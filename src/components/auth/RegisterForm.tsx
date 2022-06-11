@@ -60,6 +60,7 @@ export const RegisterForm: React.FC<{
             authInfo.type === 'google' ? { displayName: authInfo.name, key: generateUrlKey(authInfo.name) } : {}
           }
           onRegister={onRegister}
+          isRegistering={!!loading || !!googleLoading}
         />
       )}
       {!!error && (
