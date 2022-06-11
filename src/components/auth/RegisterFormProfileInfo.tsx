@@ -116,8 +116,8 @@ export const RegisterFormProfileInfo: React.FC<{
           )}
         </InputGroup>
         <FormErrorMessage>
-          The user alias must be at least 3 characters long and by url readable (no caps, spaces, special characters
-          aside from underscores)
+          The user alias must be at least 3 characters long and url readable (no caps, spaces, special characters aside
+          from underscores)
         </FormErrorMessage>
       </FormControl>
 
